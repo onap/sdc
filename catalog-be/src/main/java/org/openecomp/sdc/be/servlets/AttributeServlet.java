@@ -31,9 +31,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -41,9 +39,10 @@ import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -76,8 +75,8 @@ import java.io.IOException;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDC Internal APIs")
+@Server(url = "/sdc2/rest")
 @Controller
 public class AttributeServlet extends AbstractValidationsServlet {
     private static final Logger log = Logger.getLogger(AttributeServlet.class);
@@ -124,13 +123,13 @@ public class AttributeServlet extends AbstractValidationsServlet {
 
         try {
             Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-            Wrapper<PropertyDefinition> attributesWrapper = new Wrapper<>();
+            Wrapper<AttributeDataDefinition> attributesWrapper = new Wrapper<>();
             // convert json to AttributeDefinition
 
             buildAttributeFromString(data, attributesWrapper, errorWrapper);
             if (errorWrapper.isEmpty()) {
                 AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-                Either<PropertyDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
+                Either<AttributeDataDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
                 if (createAttribute.isRight()) {
                     errorWrapper.setInnerElement(createAttribute.right().value());
                 } else {
@@ -143,7 +142,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
                 log.info("Failed to create Attribute. Reason - ", errorWrapper.getInnerElement());
                 response = buildErrorResponse(errorWrapper.getInnerElement());
             } else {
-                PropertyDefinition createdAttDef = attributesWrapper.getInnerElement();
+                AttributeDataDefinition createdAttDef = attributesWrapper.getInnerElement();
                 log.debug("Attribute {} created successfully with id {}", createdAttDef.getName(), createdAttDef.getUniqueId());
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.CREATED);
                 response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(createdAttDef));
@@ -200,14 +199,14 @@ public class AttributeServlet extends AbstractValidationsServlet {
         try {
             // convert json to PropertyDefinition
             Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-            Wrapper<PropertyDefinition> attributesWrapper = new Wrapper<>();
+            Wrapper<AttributeDataDefinition> attributesWrapper = new Wrapper<>();
             // convert json to AttributeDefinition
 
             buildAttributeFromString(data, attributesWrapper, errorWrapper);
 
             if (errorWrapper.isEmpty()) {
                 AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-                Either<PropertyDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic.updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
+                Either<AttributeDataDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic.updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
                 // update property
                 if (eitherUpdateAttribute.isRight()) {
                     errorWrapper.setInnerElement(eitherUpdateAttribute.right().value());
@@ -221,7 +220,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
                 log.info("Failed to update Attribute. Reason - ", errorWrapper.getInnerElement());
                 response = buildErrorResponse(errorWrapper.getInnerElement());
             } else {
-                PropertyDefinition updatedAttribute = attributesWrapper.getInnerElement();
+                AttributeDataDefinition updatedAttribute = attributesWrapper.getInnerElement();
                 log.debug("Attribute id {} updated successfully ", updatedAttribute.getUniqueId());
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(updatedAttribute));
@@ -271,15 +270,14 @@ public class AttributeServlet extends AbstractValidationsServlet {
         log.debug("modifier id is {}", userId);
 
         try {
-
             // delete the property
             AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-            Either<PropertyDefinition, ResponseFormat> eitherAttribute = businessLogic.deleteAttribute(resourceId, attributeId, userId);
+            Either<AttributeDataDefinition, ResponseFormat> eitherAttribute = businessLogic.deleteAttribute(resourceId, attributeId, userId);
             if (eitherAttribute.isRight()) {
                 log.debug("Failed to delete Attribute. Reason - ", eitherAttribute.right().value());
                 return buildErrorResponse(eitherAttribute.right().value());
             }
-            PropertyDefinition attributeDefinition = eitherAttribute.left().value();
+            AttributeDataDefinition attributeDefinition = eitherAttribute.left().value();
             String name = attributeDefinition.getName();
 
             log.debug("Attribute {} deleted successfully with id {}", name, attributeDefinition.getUniqueId());
@@ -293,11 +291,11 @@ public class AttributeServlet extends AbstractValidationsServlet {
         }
     }
 
-    private void buildAttributeFromString(String data, Wrapper<PropertyDefinition> attributesWrapper,
+    private void buildAttributeFromString(String data, Wrapper<AttributeDataDefinition> attributesWrapper,
             Wrapper<ResponseFormat> errorWrapper) {
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            final PropertyDefinition attribute = gson.fromJson(data, PropertyDefinition.class);
+            final AttributeDataDefinition attribute = gson.fromJson(data, AttributeDefinition.class);
             if (attribute == null) {
                 log.info(ATTRIBUTE_CONTENT_IS_INVALID, data);
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);

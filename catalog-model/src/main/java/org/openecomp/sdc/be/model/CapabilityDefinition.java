@@ -21,6 +21,11 @@
 package org.openecomp.sdc.be.model;
 
 import com.google.common.collect.Lists;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.SetUtils;
@@ -31,9 +36,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 /**
  * Specifies the capabilities that the Node Type exposes.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString
 public class CapabilityDefinition extends CapabilityDataDefinition {
 
     /**
@@ -41,11 +52,6 @@ public class CapabilityDefinition extends CapabilityDataDefinition {
      * CapabilityDefinition
      */
     private List<ComponentInstanceProperty> properties;
-
-
-    public CapabilityDefinition() {
-        super();
-    }
 
     public CapabilityDefinition(CapabilityDataDefinition cap) {
         super(cap);
@@ -68,44 +74,6 @@ public class CapabilityDefinition extends CapabilityDataDefinition {
         if (other.properties != null) {
 			this.properties = new ArrayList<>(other.properties.stream().map(ComponentInstanceProperty::new).collect(Collectors.toList()));
         }
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CapabilityDefinition other = (CapabilityDefinition) obj;
-        if (properties == null) {
-            if (other.properties != null)
-                return false;
-        } else if (!SetUtils.isEqualSet(properties, other.getProperties()))
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "CapabilityDefinition [properties=" + properties + "]";
-    }
-
-    public List<ComponentInstanceProperty> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<ComponentInstanceProperty> properties) {
-        this.properties = properties;
     }
 
 	public void updateCapabilityProperties(CapabilityDefinition capabilityDefinition) {

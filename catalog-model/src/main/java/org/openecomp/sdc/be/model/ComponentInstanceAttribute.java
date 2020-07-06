@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,36 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.model.jsonjanusgraph.datamodel;
+package org.openecomp.sdc.be.model;
 
 import java.util.List;
-import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
 @Getter
 @Setter
-public class NodeType extends ToscaElement {
+public class ComponentInstanceAttribute extends AttributeDefinition implements IComponentInstanceConnectedElement, IAttributeInputCommon {
 
-    public NodeType() {
-        super(ToscaElementTypeEnum.NODE_TYPE);
+    public ComponentInstanceAttribute(final AttributeDataDefinition value) {
+    }
+    public ComponentInstanceAttribute() {
+        super();
     }
 
-    private List<String> derivedFrom;
-    private List<String> derivedList;
-    private Map<String, String> derivedFromMapOfIdToName;
-    private Map<String, AttributeDataDefinition> attributes;
-    private Map<String, InterfaceDataDefinition> interfaceArtifacts;
+    /**
+     * The unique id of the property value on graph
+     */
+    private String valueUniqueUid;
+
+    private List<String> path;
+
+    private List<PropertyRule> rules ;
+
+    private String componentInstanceName;
+
+    private String componentInstanceId;
+
 }

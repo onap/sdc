@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.datatypes.tosca;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import fj.data.Either;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 import java.util.HashMap;
@@ -133,4 +134,5 @@ public abstract class ToscaDataDefinition {
         return false;
     }
 
+    public void setSchema(final SchemaDefinition schemaDef){};
 }
