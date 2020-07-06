@@ -22,75 +22,25 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ToscaNodeType {
-
-    public ToscaNodeType() {
-    }
 
     private ToscaMetadata metadata;
     private String derived_from;
     private String description;
 
     private Map<String, ToscaProperty> properties;
-    private Map<String, Object> interfaces; //ToscaInterfaceDefinition
+    private Map<String, Object> interfaces;
     private Map<String, ToscaCapability> capabilities;
 
     private List<Map<String, ToscaRequirement>> requirements;
+    private Map<String, AttributeDataDefinition> attributes;
 
-    public Map<String, ToscaProperty> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, ToscaProperty> properties) {
-        this.properties = properties;
-    }
-
-    public Map<String, ToscaCapability> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(Map<String, ToscaCapability> capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public List<Map<String, ToscaRequirement>> getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(List<Map<String, ToscaRequirement>> requirements) {
-        this.requirements = requirements;
-    }
-
-    public String getDerived_from() {
-        return derived_from;
-    }
-
-    public void setDerived_from(String derived_from) {
-        this.derived_from = derived_from;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ToscaMetadata getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(ToscaMetadata metadata) {
-        this.metadata = metadata;
-    }
-
-    public Map<String, Object> getInterfaces() {
-        return interfaces;
-    }
-
-    public void setInterfaces(Map<String, Object> interfaces) {
-        this.interfaces = interfaces;
-    }
 }

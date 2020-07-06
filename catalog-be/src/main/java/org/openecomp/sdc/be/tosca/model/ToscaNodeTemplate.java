@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.tosca.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -31,6 +32,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ToscaNodeTemplate {
 
     private String type;
@@ -45,11 +47,7 @@ public class ToscaNodeTemplate {
     private Map<String, Object> interfaces;
 
     public void setDirectives(List<String> directives) {
-        if (CollectionUtils.isEmpty(directives)) {
-            this.directives = null;
-            return;
-        }
-        this.directives = directives;
+        this.directives = CollectionUtils.isEmpty(directives) ? null : directives;
     }
 
     public void addInterface(String interfaceName, Object interfaceDataDefinition) {
@@ -60,4 +58,3 @@ public class ToscaNodeTemplate {
         this.interfaces.put(interfaceName, interfaceDataDefinition);
     }
 }
-

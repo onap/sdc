@@ -29,6 +29,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
 
@@ -42,66 +43,6 @@ public class ResourceTest extends ModelConfDependentTest {
     public void testCtor() throws Exception {
         ComponentMetadataDefinition componentMetadataDefinition = new ResourceMetadataDefinition();
         new Resource(componentMetadataDefinition);
-    }
-
-    @Test
-    public void testGetProperties() throws Exception {
-        Resource testSubject;
-        List<PropertyDefinition> result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getProperties();
-    }
-
-    @Test
-    public void testSetProperties() throws Exception {
-        Resource testSubject;
-        List<PropertyDefinition> properties = null;
-
-        // default test
-        testSubject = createTestSubject();
-        testSubject.setProperties(properties);
-    }
-
-    @Test
-    public void testGetAttributes() throws Exception {
-        Resource testSubject;
-        List<PropertyDefinition> result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getAttributes();
-    }
-
-    @Test
-    public void testSetAttributes() throws Exception {
-        Resource testSubject;
-        List<PropertyDefinition> attributes = null;
-
-        // default test
-        testSubject = createTestSubject();
-        testSubject.setAttributes(attributes);
-    }
-
-    @Test
-    public void testGetInterfaces() throws Exception {
-        Resource testSubject;
-        Map<String, InterfaceDefinition> result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getInterfaces();
-    }
-
-    @Test
-    public void testSetInterfaces() throws Exception {
-        Resource testSubject;
-        Map<String, InterfaceDefinition> interfaces = null;
-
-        // default test
-        testSubject = createTestSubject();
-        testSubject.setInterfaces(interfaces);
     }
 
     @Test
@@ -162,47 +103,6 @@ public class ResourceTest extends ModelConfDependentTest {
         // default test
         testSubject = createTestSubject();
         testSubject.setLicenseType(licenseType);
-    }
-
-    @Test
-    public void testHashCode() throws Exception {
-        Resource testSubject;
-        int result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.hashCode();
-    }
-
-    @Test
-    public void testEquals() throws Exception {
-        Resource testSubject;
-        Object obj = null;
-        boolean result;
-
-        // test 1
-        testSubject = createTestSubject();
-        result = testSubject.equals(obj);
-        Assert.assertEquals(false, result);
-        obj = new Object();
-        result = testSubject.equals(obj);
-        Assert.assertEquals(false, result);
-        result = testSubject.equals(testSubject);
-        Assert.assertEquals(true, result);
-
-        Resource testSubject2 = createTestSubject();
-        result = testSubject.equals(testSubject2);
-        Assert.assertEquals(true, result);
-    }
-
-    @Test
-    public void testToString() throws Exception {
-        Resource testSubject;
-        String result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.toString();
     }
 
     @Test

@@ -19,9 +19,7 @@
  */
 package org.openecomp.sdc.be.model;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
@@ -33,17 +31,6 @@ public class ComponentInstanceInterfaceBeanTest {
     private static final InterfaceDataDefinition INTERFACE_DATA_DEFINITION = new InterfaceDataDefinition();
     private static final InterfaceInstanceDataDefinition INTERFACE_INSTANCE_DATA_DEFINITION = new InterfaceInstanceDataDefinition();
     private static final String ID = "ID";
-
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(ComponentInstanceInterface.class,
-            hasValidGettersAndSettersExcluding(
-                "definition",
-                "ownerIdIfEmpty",
-                "empty",
-                "operationsMap",
-                "version"));
-    }
 
     @Test
     public void verifyConstructors() {
