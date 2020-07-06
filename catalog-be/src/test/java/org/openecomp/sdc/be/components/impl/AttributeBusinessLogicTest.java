@@ -31,9 +31,10 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
@@ -53,6 +54,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.when;
 
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
@@ -73,7 +75,6 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 	Field baseBusinessLogic3;
 	AttributeBusinessLogic attributeBusinessLogic=createTestSubject();
 	IGraphLockOperation igraphLockOperation = Mockito.mock(IGraphLockOperation.class);
-
 
 	@Before
 	public void setup() throws Exception{
@@ -107,23 +108,21 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		baseBusinessLogic.set(attributeBusinessLogic, propertyOperation);
 	}
 
-
 	@Test
 	public void testCreateAttribute() throws Exception {
 		AttributeBusinessLogic testSubject;
 		String resourceId = "";
 		PropertyDefinition newAttributeDef = null;
 		String userId = "";
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		// default test
 		testSubject = createTestSubject();
 	}
 
-
 	@Test
 	public void testIsAttributeExist() throws Exception {
-		AttributeBusinessLogic testSubject;List<PropertyDefinition> attributes = null;
+		AttributeBusinessLogic testSubject;List<AttributeDataDefinition> attributes = null;
 		String resourceUid = "";
 		String propertyName = "";
 		boolean result;
@@ -131,7 +130,6 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		// test 1
 		testSubject=createTestSubject();attributes = null;
 	}
-
 
 	@Test
 	public void testGetAttribute() throws Exception {
@@ -144,7 +142,6 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		// default test
 		testSubject = createTestSubject();
 	}
-
 
 	@Test
 	public void testUpdateAttribute() throws Exception {
@@ -159,7 +156,6 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		testSubject = createTestSubject();
 	}
 
-
 	@Test
 	public void testDeleteAttribute() throws Exception {
 		AttributeBusinessLogic testSubject;
@@ -172,11 +168,10 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		testSubject = createTestSubject();
 	}
 
-
 	@Test
 	public void createAttribute_lockfail() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> response;
-		PropertyDefinition prop= new PropertyDefinition();
+		Either<AttributeDataDefinition, ResponseFormat> response;
+		AttributeDataDefinition prop= new AttributeDataDefinition();
 
 		response = attributeBusinessLogic.createAttribute("RES01", prop, "USR01");
 
@@ -187,36 +182,36 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 	@Test
 	public void createAttribute_Success() throws Exception {
 
-		Component resource= new Resource();
+		Component resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
 
-		PropertyDefinition prop= new PropertyDefinition();
-		prop.setType(ToscaPropertyType.STRING.getType());
+		AttributeDefinition attrib = new AttributeDefinition();
+		attrib.setType(ToscaPropertyType.STRING.getType());
 
-		when(igraphLockOperation.lockComponent(any(),any())).thenReturn(StorageOperationStatus.OK);
+		when(igraphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
 		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
-		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
+		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-		PropertyDefinition propertyDefinition = new PropertyDefinition();
-		Either<PropertyDefinition, StorageOperationStatus> either = Either.left(propertyDefinition);
-		when(toscaOperationFacade.addAttributeOfResource(anyObject(),anyObject())).thenReturn(either);
+		AttributeDataDefinition attributeDataDefinition = new AttributeDataDefinition();
+		Either<AttributeDataDefinition, StorageOperationStatus> either = Either.left(attributeDataDefinition);
+		when(toscaOperationFacade.addAttributeOfResource(anyObject(), anyObject())).thenReturn(either);
 
 		when(propertyOperation.isPropertyTypeValid(anyObject())).thenReturn(true);
 
-		Map<String,DataTypeDefinition> data=new HashMap<>();
-		data.put("ONE",new DataTypeDefinition());
+		Map<String, DataTypeDefinition> data = new HashMap<>();
+		data.put("ONE", new DataTypeDefinition());
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
 		when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
 
-		when(propertyOperation.isPropertyDefaultValueValid(anyObject(),anyObject())).thenReturn(true);
-		Either<PropertyDefinition, ResponseFormat> response;
+		when(propertyOperation.isPropertyDefaultValueValid(anyObject(), anyObject())).thenReturn(true);
+		Either<AttributeDataDefinition, ResponseFormat> response;
 
-		response = attributeBusinessLogic.createAttribute("RES01", prop, "USR01");
+		response = attributeBusinessLogic.createAttribute("RES01", attrib, "USR01");
 
-		Assert.assertEquals(true,response.isLeft());
+		Assert.assertEquals(true, response.isLeft());
 
 	}
 
@@ -230,8 +225,8 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 		when(igraphLockOperation.lockComponent(any(),any())).thenReturn(StorageOperationStatus.OK);
 
-		Either<PropertyDefinition, ResponseFormat> response;
-		PropertyDefinition prop= new PropertyDefinition();
+		Either<AttributeDataDefinition, ResponseFormat> response;
+		AttributeDataDefinition prop= new AttributeDataDefinition();
 
 		baseBusinessLogic = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("toscaOperationFacade");
 		baseBusinessLogic.setAccessible(true);
@@ -256,8 +251,8 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 		when(igraphLockOperation.lockComponent(any(),any())).thenReturn(StorageOperationStatus.OK);
 
-		Either<PropertyDefinition, ResponseFormat> response;
-		PropertyDefinition prop= new PropertyDefinition();
+		Either<AttributeDataDefinition, ResponseFormat> response;
+		AttributeDataDefinition prop= new AttributeDataDefinition();
 
 		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
 		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
@@ -272,73 +267,71 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 	@Test
 	public void createAttribute_componentalreadyexist_fails() throws Exception {
 
-		Either<PropertyDefinition, ResponseFormat> response;
-		PropertyDefinition prop= new PropertyDefinition();
-		prop.setName("RES01");
-		prop.setParentUniqueId("RES01");
+		Either<AttributeDataDefinition, ResponseFormat> response;
+		AttributeDefinition attrib = new AttributeDefinition();
+		attrib.setName("RES01");
+		attrib.setParentUniqueId("RES01");
 
-		List<PropertyDefinition> attributes = new ArrayList<>();
-		attributes.add(prop);
+		List<AttributeDataDefinition> attributes = new ArrayList<>();
+		attributes.add(attrib);
 
-		Component resource= new Resource();
+		Component resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
 		((Resource) resource).setAttributes(attributes);
 
-		when(igraphLockOperation.lockComponent(any(),any())).thenReturn(StorageOperationStatus.OK);
+		when(igraphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
 		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
-		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
+		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
-		response = attributeBusinessLogic.createAttribute("RES01", prop, "USR01");
+		response = attributeBusinessLogic.createAttribute("RES01", attrib, "USR01");
 
-		Assert.assertEquals(true,response.isRight());
+		Assert.assertEquals(true, response.isRight());
 
 	}
-
 
 	@Test
 	public void createAttribute_addresourcetostoragefails() throws Exception {
 
-		Component resource= new Resource();
+		Component resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
 
-		PropertyDefinition prop= new PropertyDefinition();
-		prop.setType(ToscaPropertyType.STRING.getType());
-
 		IGraphLockOperation igraphLockOperation = Mockito.mock(IGraphLockOperation.class);
-		when(igraphLockOperation.lockComponent(any(),any())).thenReturn(StorageOperationStatus.OK);
+		when(igraphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
 		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
-		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
+		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-		PropertyDefinition propertyDefinition = new PropertyDefinition();
-		Either<PropertyDefinition, StorageOperationStatus> either = Either.right(StorageOperationStatus.CONNECTION_FAILURE);
-		when(toscaOperationFacade.addAttributeOfResource(anyObject(),anyObject())).thenReturn(either);
+		AttributeDataDefinition attributeDataDefinition = new AttributeDataDefinition();
+		Either<AttributeDataDefinition, StorageOperationStatus> either = Either
+			.right(StorageOperationStatus.CONNECTION_FAILURE);
+		when(toscaOperationFacade.addAttributeOfResource(anyObject(), anyObject())).thenReturn(either);
 
 		when(propertyOperation.isPropertyTypeValid(anyObject())).thenReturn(true);
 
-		Map<String,DataTypeDefinition> data=new HashMap<>();
-		data.put("ONE",new DataTypeDefinition());
+		Map<String, DataTypeDefinition> data = new HashMap<>();
+		data.put("ONE", new DataTypeDefinition());
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
 		when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
 
-		when(propertyOperation.isPropertyDefaultValueValid(anyObject(),anyObject())).thenReturn(true);
-		Either<PropertyDefinition, ResponseFormat> response;
+		when(propertyOperation.isPropertyDefaultValueValid(anyObject(), anyObject())).thenReturn(true);
+		Either<AttributeDataDefinition, ResponseFormat> response;
 
-		response = attributeBusinessLogic.createAttribute("RES01", prop, "USR01");
+		AttributeDataDefinition attrib = new AttributeDefinition();
+		response = attributeBusinessLogic.createAttribute("RES01", attrib, "USR01");
 
-		Assert.assertEquals(true,response.isRight());
+		Assert.assertEquals(true, response.isRight());
 
 	}
 
 	@Test
 	public void testgetAttribute_ATTRIBUTE_NOT_FOUND() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		Component resource= new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -353,31 +346,31 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 	@Test
 	public void testgetAttribute_success() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
-		Component resource= new Resource();
+		Component resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
 
-		PropertyDefinition prop= new PropertyDefinition();
-		prop.setUniqueId("ATTR01");
-		prop.setParentUniqueId("RES01");
+		AttributeDefinition attrib = new AttributeDefinition();
+		attrib.setUniqueId("ATTR01");
+		attrib.setParentUniqueId("RES01");
 
-		List<PropertyDefinition> attr = new ArrayList<>();
-		attr.add(prop);
+		List<AttributeDataDefinition> attr = new ArrayList<>();
+		attr.add(attrib);
 
 		((Resource) resource).setAttributes(attr);
-		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
+		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
-		result=attributeBusinessLogic.getAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isLeft());
+		result = attributeBusinessLogic.getAttribute("RES01", "ATTR01", "USR01");
+		Assert.assertEquals(true, result.isLeft());
 	}
 
 	@Test
 	public void testgetAttribute_RESOURCE_NOT_FOUND() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
@@ -388,7 +381,7 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 	@Test
 	public void testdeleteAttribute_FAILED_TO_LOCK_COMPONENT() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		result=attributeBusinessLogic.deleteAttribute("RES01","ATTR01", "USR01");
 		Assert.assertEquals(true,result.isRight());
@@ -396,7 +389,7 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 	@Test
 	public void testdeleteAttribute_get_RESOURCE_from_DB_failed() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.CONNECTION_FAILURE);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
@@ -407,7 +400,7 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 	@Test
 	public void testdeleteAttribute_get_RESOURCE_verification_failed() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 
 		Component resource= new Resource();
@@ -430,7 +423,7 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 	@Test
 	public void testdeleteAttribute_nonexistingresource() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 
 		Component resource= new Resource();
@@ -449,7 +442,7 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 	@Test
 	public void testdeleteAttribute_success() throws Exception {
-		Either<PropertyDefinition, ResponseFormat> result;
+		Either<AttributeDataDefinition, ResponseFormat> result;
 
 
 		Component resource= new Resource();
@@ -457,23 +450,21 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
 
+		when(igraphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
-		when(igraphLockOperation.lockComponent(any(),any())).thenReturn(StorageOperationStatus.OK);
-
-		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
+		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-		when(toscaOperationFacade.deleteAttributeOfResource(any(),any())).thenReturn(StorageOperationStatus.OK);
+		when(toscaOperationFacade.deleteAttributeOfResource(any(), any())).thenReturn(StorageOperationStatus.OK);
 
-		PropertyDefinition prop= new PropertyDefinition();
-		prop.setUniqueId("ATTR01");
-		prop.setParentUniqueId("RES01");
-		List<PropertyDefinition> attributes = new ArrayList<>();
-		attributes.add(prop);
+		AttributeDefinition attrib = new AttributeDefinition();
+		attrib.setUniqueId("ATTR01");
+		attrib.setParentUniqueId("RES01");
+		List<AttributeDataDefinition> attributes = new ArrayList<>();
+		attributes.add(attrib);
 		((Resource) resource).setAttributes(attributes);
 
-		result=attributeBusinessLogic.deleteAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isLeft());
+		result = attributeBusinessLogic.deleteAttribute("RES01", "ATTR01", "USR01");
+		Assert.assertEquals(true, result.isLeft());
 	}
-
 
 }

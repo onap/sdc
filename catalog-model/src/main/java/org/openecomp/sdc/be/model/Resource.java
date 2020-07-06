@@ -32,6 +32,7 @@ import lombok.ToString;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -57,7 +58,7 @@ public class Resource extends Component {
 
     private Map<String, String> derivedFromMapOfIdToName;
 
-    private List<PropertyDefinition> attributes;
+    private List<AttributeDataDefinition> attributes;
 
     private String toscaVersion;
 

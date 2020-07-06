@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
@@ -58,6 +59,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -879,7 +881,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         clonedComponent.setDerivedFromGenericVersion(currentGenericVersion);
     }
 
-    private <T extends PropertyDataDefinition> Either<Map<String, T>, String> validateNoConflictingProperties(List<T> currentList, List<T> upgradedList) {
+    private <T extends ToscaDataDefinition> Either<Map<String, T>, String> validateNoConflictingProperties(List<T> currentList, List<T> upgradedList) {
         Map<String, T> currentMap = ToscaDataDefinition.listToMapByName(currentList);
         Map<String, T> upgradedMap = ToscaDataDefinition.listToMapByName(upgradedList);
         return ToscaDataDefinition.mergeDataMaps(upgradedMap, currentMap, true);
@@ -888,15 +890,16 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     private boolean shouldUpgradeNodeType(Component componentToCheckOut, Resource latestGeneric){
 
         List<PropertyDefinition> genericTypeProps = latestGeneric.getProperties();
-        Either<Map<String, PropertyDefinition>, String> validMerge = validateNoConflictingProperties(genericTypeProps, ((Resource)componentToCheckOut).getProperties());
-        if (validMerge.isRight()) {
-            log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic", validMerge.right().value());
+        Either<Map<String, PropertyDefinition>, String> validPropertiesMerge = validateNoConflictingProperties(genericTypeProps, ((Resource)componentToCheckOut).getProperties());
+        if (validPropertiesMerge.isRight()) {
+            log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic", validPropertiesMerge.right().value());
             return false;
         }
-        List<PropertyDefinition> genericTypeAttributes = latestGeneric.getAttributes();
-        validMerge = validateNoConflictingProperties(genericTypeAttributes, ((Resource)componentToCheckOut).getAttributes());
-        if (validMerge.isRight()) {
-            log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic", validMerge.right().value());
+        List<AttributeDataDefinition> genericTypeAttributes = latestGeneric.getAttributes();
+        final Either<Map<String, AttributeDataDefinition>, String> validAttributesMerge = validateNoConflictingProperties(
+            genericTypeAttributes, ((Resource) componentToCheckOut).getAttributes());
+        if (validAttributesMerge.isRight()) {
+            log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic", validAttributesMerge.right().value());
             return false;
         }
         return true;

@@ -248,6 +248,8 @@ public enum JsonPresentationFields {
     GET_INPUT("get_input", null),
     GET_OPERATION_OUTPUT("get_operation_output", null),
 
+    ATTRIBUTES("attributes", null),
+
     TOSCA_DEFINITIONS_VERSION("tosca_definitions_version", null);
 
 

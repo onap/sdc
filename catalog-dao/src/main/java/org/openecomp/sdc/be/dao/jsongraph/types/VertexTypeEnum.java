@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
@@ -60,7 +61,7 @@ public enum VertexTypeEnum {
 	CAPABILITIES				("capabilities",				ListCapabilityDataDefinition.class),
 	CAPABILITIES_PROPERTIES		("capabilities_properties",	MapPropertiesDataDefinition.class),
 	REQUIREMENTS				("requirements",				ListRequirementDataDefinition.class),
-	ATTRIBUTES					("attributes",				PropertyDataDefinition.class),
+	ATTRIBUTES					("attributes",				AttributeDataDefinition.class),
 	RESOURCE_CATEGORY			("resourceNewCategory",		null),
 	RESOURCE_SUBCATEGORY		("resourceSubcategory",		null),
 	SERVICE_CATEGORY			("serviceNewCategory", 		null),
