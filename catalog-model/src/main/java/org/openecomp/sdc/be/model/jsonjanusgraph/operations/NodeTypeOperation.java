@@ -389,7 +389,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
     }
 
     private JanusGraphOperationStatus setResourceAttributesFromGraph(GraphVertex componentV, NodeType toscaElement) {
-        Either<Map<String, PropertyDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.ATTRIBUTES);
+        Either<Map<String, AttributeDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.ATTRIBUTES);
         if (result.isLeft()) {
             toscaElement.setAttributes(result.left().value());
         } else {
@@ -531,13 +531,13 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     private StorageOperationStatus associateAttributesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
         // Note : currently only one derived supported!!!!
-        Either<Map<String, PropertyDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.ATTRIBUTES);
+        Either<Map<String, AttributeDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.ATTRIBUTES);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
-        Map<String, PropertyDataDefinition> attributesAll = dataFromDerived.left().value();
+        Map<String, AttributeDataDefinition> attributesAll = dataFromDerived.left().value();
 
-        Map<String, PropertyDataDefinition> attributes = nodeType.getAttributes();
+        Map<String, AttributeDataDefinition> attributes = nodeType.getAttributes();
         if (attributes != null) {
             attributes.values().stream().filter(p -> p.getUniqueId() == null).forEach(p -> {
                 String uid = UniqueIdBuilder.buildAttributeUid(nodeTypeVertex.getUniqueId(), p.getName());
@@ -660,6 +660,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         nodeTypeVertex.setLabel(VertexTypeEnum.NODE_TYPE);
 
         fillCommonMetadata(nodeTypeVertex, nodeType);
+        nodeTypeVertex.setJsonMetadataField(JsonPresentationFields.ATTRIBUTES, nodeType.getAttributes());
 
         return nodeTypeVertex;
     }

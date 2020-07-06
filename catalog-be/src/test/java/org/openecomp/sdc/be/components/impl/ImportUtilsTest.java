@@ -28,10 +28,12 @@ import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -305,7 +307,7 @@ public class ImportUtilsTest {
     public void testGetAttributesFromYml() throws IOException {
 
         Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaWithAttribute.yml");
-        Either<Map<String, PropertyDefinition>, ResultStatusEnum> actualAttributes = ImportUtils.getAttributes(toscaJson);
+        Either<Map<String, AttributeDataDefinition>, ResultStatusEnum> actualAttributes = ImportUtils.getAttributes(toscaJson);
         assertTrue(actualAttributes.isLeft());
         Map<String, Map<String, Object>> expectedAttributes = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.ATTRIBUTES);
         compareAttributes(expectedAttributes, actualAttributes.left().value());
@@ -364,10 +366,10 @@ public class ImportUtilsTest {
 
     }
 
-    private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, PropertyDefinition> actual) {
+    private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, AttributeDataDefinition> actual) {
 
         Map<String, Object> singleExpectedAttribute;
-        PropertyDefinition actualAttribute, expectedAttributeModel;
+        AttributeDataDefinition actualAttribute, expectedAttributeModel;
         // attributes of resource
         for (Map.Entry<String, Map<String, Object>> expectedAttribute : expected.entrySet()) {
 
@@ -379,11 +381,11 @@ public class ImportUtilsTest {
             expectedAttributeModel = ImportUtils.createModuleAttribute(singleExpectedAttribute);
             expectedAttributeModel.setName(expectedAttribute.getKey().toString());
 
-            assertEquals(expectedAttributeModel.getDefaultValue(), actualAttribute.getDefaultValue());
-            assertEquals(expectedAttributeModel.getDescription(), actualAttribute.getDescription());
-            assertEquals(expectedAttributeModel.getName(), actualAttribute.getName());
-            assertEquals(expectedAttributeModel.getStatus(), actualAttribute.getStatus());
-            assertEquals(expectedAttributeModel.getType(), actualAttribute.getType());
+            assertEquals(((AttributeDefinition)expectedAttributeModel).getDefaultValue(), ((AttributeDefinition)actualAttribute).getDefaultValue());
+            assertEquals(((AttributeDefinition)expectedAttributeModel).getDescription(), ((AttributeDefinition)actualAttribute).getDescription());
+            assertEquals(((AttributeDefinition)expectedAttributeModel).getName(), ((AttributeDefinition)actualAttribute).getName());
+            assertEquals(((AttributeDefinition)expectedAttributeModel).getStatus(), ((AttributeDefinition)actualAttribute).getStatus());
+            assertEquals(((AttributeDefinition)expectedAttributeModel).getType(), ((AttributeDefinition)actualAttribute).getType());
 
             compareSchemas(expectedAttributeModel.getSchema(), actualAttribute.getSchema());
 

@@ -32,6 +32,7 @@ import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -63,7 +64,7 @@ public class UiComponentDataTransfer {
     private List<RequirementCapabilityRelDef> componentInstancesRelations;
     private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
     private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
-    private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
+    private Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes;
     private Map<String, List<CapabilityDefinition>> capabilities;
     private List<PolicyDefinition> policies;
     private Map<String, List<RequirementDefinition>> requirements;
