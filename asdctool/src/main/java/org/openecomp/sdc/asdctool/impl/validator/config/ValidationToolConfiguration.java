@@ -26,10 +26,9 @@ import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.executor.IArtifactValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceToscaArtifactsValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.TopologyTemplateValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.VFToscaArtifactValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.ValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executor.VfValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
@@ -78,8 +77,8 @@ import java.util.List;
 public class ValidationToolConfiguration {
 
     @Bean
-    public ServiceValidatorExecutor basicServiceValidator(JanusGraphDao janusGraphDao) {
-        return new ServiceValidatorExecutor(janusGraphDao);
+    public ValidatorExecutor basicServiceValidator(JanusGraphDao janusGraphDao) {
+        return TopologyTemplateValidatorExecutor.serviceValidatorExecutor(janusGraphDao);
     }
 
     @Bean
@@ -126,8 +125,8 @@ public class ValidationToolConfiguration {
     }
 
     @Bean
-    public VfValidatorExecutor basicVfValidator(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
-        return new VfValidatorExecutor(tasks, janusGraphDao);
+    public ValidatorExecutor basicVfValidator(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
+        return TopologyTemplateValidatorExecutor.vfValidatorExecutor(tasks, janusGraphDao);
     }
 
     @Bean(name = "artifact-cassandra-dao")

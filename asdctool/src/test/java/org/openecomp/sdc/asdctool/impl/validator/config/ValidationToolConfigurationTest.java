@@ -25,9 +25,7 @@ import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.executor.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceToscaArtifactsValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.VFToscaArtifactValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executor.VfValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
@@ -56,13 +54,9 @@ public class ValidationToolConfigurationTest {
 
 	@Test
 	public void testBasicServiceValidator() {
-		ValidationToolConfiguration testSubject;
-		ServiceValidatorExecutor result;
+		ValidationToolConfiguration testSubject = createTestSubject();
 		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.basicServiceValidator(janusGraphDaoMock);
+		testSubject.basicServiceValidator(janusGraphDaoMock);
 	}
 
 	@Test
@@ -110,13 +104,9 @@ public class ValidationToolConfigurationTest {
 
 	@Test
 	public void testBasicVfValidator() {
-		ValidationToolConfiguration testSubject;
-		VfValidatorExecutor result;
+		ValidationToolConfiguration testSubject = createTestSubject();
 		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.basicVfValidator(new ArrayList<>(), janusGraphDaoMock);
+		testSubject.basicVfValidator(new ArrayList<>(), janusGraphDaoMock);
 	}
 
 	@Test
