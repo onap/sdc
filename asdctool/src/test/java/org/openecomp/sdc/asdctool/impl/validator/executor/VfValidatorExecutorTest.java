@@ -20,34 +20,14 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import static org.mockito.Mockito.mock;
-import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
-import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
-
 import java.util.ArrayList;
-import java.util.List;
-import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.report.Report;
-import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
-public class VfValidatorExecutorTest {
+public class VfValidatorExecutorTest
+    implements ValidatorExecutorContract, TopologyTemplateValidatorExecutorContract {
 
-    private VfValidatorExecutor createTestSubject() {
-        List<VfValidationTask> validationTasks = new ArrayList<>();
-        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-
-        return new VfValidatorExecutor(validationTasks, janusGraphDaoMock);
-    }
-
-    @Test
-    public void testGetName() {
-        createTestSubject().getName();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testExecuteValidations() {
-        Report report = Report.make();
-        createTestSubject().executeValidations(report, makeTxtFile(makeConsoleWriter()));
+    @Override
+    public VfValidatorExecutor createTestSubject(JanusGraphDao dao) {
+        return new VfValidatorExecutor(new ArrayList<>(), dao);
     }
 }
