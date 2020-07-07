@@ -103,6 +103,8 @@ def get_nfv(base_file_location="/"):
                                    "vnfExtCp",
                                    "vduCp",
                                    "VNF",
+                                   "accessConnectivity",
+                                   "OntPnf",
                                    "PonUni",
                                    "OltNni",
                                    "OntNni"])

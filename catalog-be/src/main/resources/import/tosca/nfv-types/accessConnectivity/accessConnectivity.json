@@ -1,0 +1,15 @@
+{
+  "payloadName": "accessConnectivity.yml",
+  "contactId": "jh0003",
+  "name": "Access Connectivity",
+  "description": "Access Connectivity",
+  "resourceIconPath": "defaulticon",
+  "resourceType": "VFC",
+  "categories": [{
+    "name": "Generic",
+    "subcategories": [{
+      "name": "Infrastructure"
+    }]
+  }],
+  "tags": ["Access Connectivity"]
+}
