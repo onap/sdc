@@ -34,17 +34,15 @@ public class ValidationToolBL {
 
     private static final Logger log = Logger.getLogger(ValidationToolBL.class);
 
-    protected List<ValidatorExecutor> validators;
-
-    private boolean allValid = true;
+    private final List<ValidatorExecutor> validators;
 
     @Autowired
-    public ValidationToolBL(
-        List<ValidatorExecutor> validators) {
+    public ValidationToolBL(List<ValidatorExecutor> validators) {
         this.validators = validators;
     }
 
     public boolean validateAll(Report report, ReportFile.TXTFile textFile) {
+        boolean allValid = true;
         for (ValidatorExecutor validatorExec: validators) {
             log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
             if (!validatorExec.executeValidations(report, textFile)) {

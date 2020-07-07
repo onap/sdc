@@ -20,19 +20,12 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import fj.data.Either;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.Getter;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
+import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -40,45 +33,56 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class TopologyTemplateValidatorExecutor {
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-    private static final Logger log = Logger.getLogger(VfValidatorExecutor.class);
+public class TopologyTemplateValidatorExecutor implements ValidatorExecutor {
+
+    private static final Logger log = Logger.getLogger(TopologyTemplateValidatorExecutor.class);
 
     private final JanusGraphDao janusGraphDao;
+    private final ComponentTypeEnum componentType;
+    private final List<? extends TopologyTemplateValidationTask> tasks;
 
     @Getter
     private final String name;
 
-    public TopologyTemplateValidatorExecutor(JanusGraphDao janusGraphDao, String name) {
+    @Autowired(required = false)
+    public static ValidatorExecutor serviceValidatorExecutor(JanusGraphDao janusGraphDao) {
+        return new TopologyTemplateValidatorExecutor(
+                janusGraphDao, "SERVICE_VALIDATOR", ComponentTypeEnum.SERVICE, new ArrayList<>()
+        );
+    }
+
+    @Autowired(required = false)
+    public static ValidatorExecutor vfValidatorExecutor(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
+        return new TopologyTemplateValidatorExecutor(
+                janusGraphDao, "BASIC_VF_VALIDATOR", ComponentTypeEnum.RESOURCE, tasks
+        );
+    }
+
+    private TopologyTemplateValidatorExecutor(
+            JanusGraphDao janusGraphDao,
+            String name,
+            ComponentTypeEnum componentType,
+            List<? extends TopologyTemplateValidationTask> tasks
+    ) {
         this.janusGraphDao = janusGraphDao;
         this.name = name;
+        this.componentType = componentType;
+        this.tasks = tasks;
     }
 
-    protected List<GraphVertex> getVerticesToValidate(ComponentTypeEnum type) {
-        Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
-        props.put(GraphPropertyEnum.COMPONENT_TYPE, type.name());
-        if (type.equals(ComponentTypeEnum.RESOURCE)) {
-            props.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF);
-        }
-
-        Either<List<GraphVertex>, JanusGraphOperationStatus> results = janusGraphDao
-            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props);
-        if (results.isRight()) {
-            log.error("getVerticesToValidate failed " + results.right().value());
-            return new ArrayList<>();
-        }
-        log.info("getVerticesToValidate: " + results.left().value().size() + " vertices to scan");
-        return results.left().value();
-    }
-
-    protected boolean validate(
-        Report report,
-        List<? extends TopologyTemplateValidationTask> tasks,
-        List<GraphVertex> vertices,
-        TXTFile reportFile
-    ) {
-        reportFile.reportStartValidatorRun(getName(), vertices.size());
+    @Override
+    public boolean executeValidations(Report report, TXTFile reportFile) {
+        List<GraphVertex> vertices = getVerticesToValidate();
+        reportFile.reportStartValidatorRun(name, vertices.size());
         Set<String> failedTasks = new HashSet<>();
         Set<String> successTasks = new HashSet<>();
         boolean successAllVertices = true;
@@ -102,9 +106,33 @@ public class TopologyTemplateValidatorExecutor {
                 report.addSuccess(vertex.getUniqueId(), task.getTaskName(), result);
             }
             String componentScanStatus = successAllTasks ? "success" : "failed";
-            log.info("Topology Template " + vertex.getUniqueId() + " Validation finished with " + componentScanStatus);
+            log.info("Topology Template {} Validation finished with {}", vertex.getUniqueId(), componentScanStatus);
         }
-        reportFile.reportValidatorTypeSummary(getName(), failedTasks, successTasks);
+        reportFile.reportValidatorTypeSummary(name, failedTasks, successTasks);
         return successAllVertices;
+    }
+
+    private List<GraphVertex> getVerticesToValidate() {
+        return janusGraphDao
+                .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, buildProps())
+                .either(
+                        vs -> {
+                            log.info("getVerticesToValidate: {} vertices to scan", vs.size());
+                            return vs;
+                        },
+                        sos -> {
+                            log.error("getVerticesToValidate failed {}", sos);
+                            return new ArrayList<>();
+                        }
+                );
+    }
+
+    private Map<GraphPropertyEnum, Object> buildProps() {
+        Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+        props.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
+        if (componentType.equals(ComponentTypeEnum.RESOURCE)) {
+            props.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF);
+        }
+        return props;
     }
 }
