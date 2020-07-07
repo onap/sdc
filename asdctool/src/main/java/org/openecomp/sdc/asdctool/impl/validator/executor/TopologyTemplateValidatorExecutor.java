@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.Getter;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
@@ -45,21 +46,18 @@ public class TopologyTemplateValidatorExecutor {
 
     private static final Logger log = Logger.getLogger(VfValidatorExecutor.class);
 
-    protected JanusGraphDao janusGraphDao;
+    private final JanusGraphDao janusGraphDao;
 
-    protected String name;
+    @Getter
+    private final String name;
 
     @Autowired
     public TopologyTemplateValidatorExecutor(JanusGraphDao janusGraphDao) {
         this.janusGraphDao = janusGraphDao;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+    public TopologyTemplateValidatorExecutor(JanusGraphDao janusGraphDao, String name) {
+        this.janusGraphDao = janusGraphDao;
     }
 
     protected List<GraphVertex> getVerticesToValidate(ComponentTypeEnum type) {

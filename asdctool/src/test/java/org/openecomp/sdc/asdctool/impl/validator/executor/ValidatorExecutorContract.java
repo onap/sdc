@@ -2,14 +2,14 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 Bell Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,34 +17,27 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
-import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
-import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface ValidatorExecutorContract {
 
-@Component
-public class ServiceValidatorExecutor extends TopologyTemplateValidatorExecutor implements ValidatorExecutor {
+    ValidatorExecutor createTestSubject(JanusGraphDao dao);
 
-    List<ServiceValidationTask> tasks = new ArrayList<>();
-
-    @Autowired(required = false)
-    public ServiceValidatorExecutor(JanusGraphDao janusGraphDao) {
-        super(janusGraphDao, "SERVICE_VALIDATOR");
-    }
-
-    @Override
-    public boolean executeValidations(Report report, TXTFile reportFile) {
-        List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
-        return validate(report, tasks, vertices, reportFile);
+    @Test
+    default void testExecuteValidations() {
+        Report report = Report.make();
+        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+        assertThrows(NullPointerException.class, () ->
+            createTestSubject(janusGraphDaoMock).executeValidations(report, makeTxtFile(makeConsoleWriter()))
+        );
     }
 }

@@ -36,9 +36,8 @@ public class VfValidatorExecutor extends TopologyTemplateValidatorExecutor imple
 
     @Autowired(required = false)
     public VfValidatorExecutor(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
-        super(janusGraphDao);
+        super(janusGraphDao, "BASIC_VF_VALIDATOR");
         this.tasks = tasks;
-        setName("BASIC_VF_VALIDATOR");
     }
 
     @Override
