@@ -20,32 +20,34 @@
 
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.asdctool.impl.validator.executor.IArtifactValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+
 public class ArtifactToolBLTest {
 
-    private ArtifactToolBL createTestSubject() {
-        return new ArtifactToolBL(new ArrayList<>());
-    }
-
-    //Generated test
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testValidateAll() {
         JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
         ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
 
-        ArtifactToolBL testSubject = createTestSubject();
-        testSubject.validators = new LinkedList<>();
-        testSubject.validators.add(new NodeToscaArtifactsValidatorExecutor(janusGraphDaoMock, toscaOperationFacade));
+        List<IArtifactValidatorExecutor> validators = new ArrayList<>();
+        validators.add(new NodeToscaArtifactsValidatorExecutor(janusGraphDaoMock, toscaOperationFacade));
+        ArtifactToolBL testSubject = new ArtifactToolBL(validators);
+
         // Initially no outputFilePath was passed to this function (hence it is set to null)
         // TODO: Fix this null and see if the argument is used by this function
-        testSubject.validateAll(null);
+        assertThrows(
+                NullPointerException.class,
+                () -> testSubject.validateAll(null)
+        );
     }
 }
