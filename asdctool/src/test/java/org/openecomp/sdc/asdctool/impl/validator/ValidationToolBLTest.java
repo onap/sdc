@@ -20,32 +20,33 @@
 
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceValidatorExecutor;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.asdctool.impl.validator.executor.TopologyTemplateValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.ValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
 import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import static org.mockito.Mockito.mock;
-
 public class ValidationToolBLTest {
 
-    private ValidationToolBL createTestSubject() {
-        return new ValidationToolBL(new ArrayList<>());
-    }
-
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testValidateAll() {
         JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-        ValidationToolBL testSubject = createTestSubject();
-        testSubject.validators = new LinkedList<>();
-        testSubject.validators.add(new ServiceValidatorExecutor(janusGraphDaoMock));
+
+        ArrayList<ValidatorExecutor> validators = new ArrayList<>();
+        validators.add(TopologyTemplateValidatorExecutor.serviceValidatorExecutor(janusGraphDaoMock));
+        ValidationToolBL testSubject = new ValidationToolBL(validators);
+
         Report report = Report.make();
-        testSubject.validateAll(report, makeTxtFile(makeConsoleWriter()));
+        assertThrows(
+                NullPointerException.class,
+                () -> testSubject.validateAll(report, makeTxtFile(makeConsoleWriter()))
+        );
     }
 }

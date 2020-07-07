@@ -28,19 +28,17 @@ import java.util.List;
 
 public class ArtifactToolBL {
 
-    private static final Logger log = Logger.getLogger(ValidationToolBL.class.getName());
+    private static final Logger log = Logger.getLogger(ValidationToolBL.class);
 
-    protected List<IArtifactValidatorExecutor> validators;
-
-    private boolean allValid = true;
+    private final List<IArtifactValidatorExecutor> validators;
 
     @Autowired
-    public ArtifactToolBL(
-        List<IArtifactValidatorExecutor> validators) {
+    public ArtifactToolBL(List<IArtifactValidatorExecutor> validators) {
         this.validators = validators;
     }
 
     public boolean validateAll(String outputFilePath) {
+        boolean allValid = true;
         for (IArtifactValidatorExecutor validatorExec : validators) {
             log.debug("ValidatorExecuter " + validatorExec.getName() + " started");
             if (!validatorExec.executeValidations(outputFilePath)) {

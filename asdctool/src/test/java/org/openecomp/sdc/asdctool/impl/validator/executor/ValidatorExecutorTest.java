@@ -19,22 +19,36 @@
  */
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.PRODUCT;
-
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
-public interface TopologyTemplateValidatorExecutorContract {
+import java.util.ArrayList;
+import java.util.function.Function;
 
-    TopologyTemplateValidatorExecutor createTestSubject(JanusGraphDao dao);
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.openecomp.sdc.asdctool.impl.validator.executor.TopologyTemplateValidatorExecutor.vfValidatorExecutor;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
+
+public final class ValidatorExecutorTest {
 
     @Test
-    default void testGetVerticesToValidate() {
+    public void executeValidationsWithServiceValidator() {
+        testExecuteValidations(TopologyTemplateValidatorExecutor::serviceValidatorExecutor);
+    }
+
+    @Test
+    public void executeValidationsWithVFValidator() {
+        testExecuteValidations(dao -> vfValidatorExecutor(new ArrayList<>(), dao));
+    }
+
+    private void testExecuteValidations(Function<JanusGraphDao, ValidatorExecutor> factory) {
+        Report report = Report.make();
         JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-        TopologyTemplateValidatorExecutor testSubject = createTestSubject(janusGraphDaoMock);
-        assertThrows(NullPointerException.class,
-            () -> testSubject.getVerticesToValidate(PRODUCT));
+        assertThrows(NullPointerException.class, () ->
+            factory.apply(janusGraphDaoMock).executeValidations(report, makeTxtFile(makeConsoleWriter()))
+        );
     }
 }
