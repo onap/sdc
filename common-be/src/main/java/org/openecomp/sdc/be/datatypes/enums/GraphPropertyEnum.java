@@ -17,6 +17,7 @@ package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public enum GraphPropertyEnum {
@@ -50,6 +51,8 @@ public enum GraphPropertyEnum {
     LAST_LOGIN_TIME("lastLoginTime", Long.class, false, false),
     //used for category (old format, no json for categories)
     ICONS("icons", String.class, false, false),
+
+    DATA_TYPES("data_types", Map.class, false, false),
 
     //Archive/Restore
     IS_ARCHIVED("isArchived", Boolean.class, false, true),
