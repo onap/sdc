@@ -258,6 +258,30 @@
       "revId": "5749a307c318f836b09633897d0138adb339ed49",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf9c09a3_ee25f4bb",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T14:52:37Z",
+      "side": 1,
+      "message": "So overall the problem is that it impacts performances as using an interface here will require the compiler to use dynamic dispatch to retrieve which implementation of the functions called on `List` should be used. In this case, this does not really make a difference but applying this principle without knowing what it implies could significantly impact performances.",
+      "parentUuid": "3d42510d_8e086ef5",
+      "range": {
+        "startLine": 42,
+        "startChar": 8,
+        "endLine": 42,
+        "endChar": 17
+      },
+      "revId": "5749a307c318f836b09633897d0138adb339ed49",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
