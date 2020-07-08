@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c4ef28b_1b89445a",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBLTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T12:18:42Z",
+      "side": 1,
+      "message": "Note: We would probably need more tests here but the change being already pretty significant, it seemed wiser to address this in another change.",
+      "revId": "7a0a198e251a7ab747f6301d7a9e330dea47b38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a372624a_a7c0db5e",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T12:18:42Z",
+      "side": 1,
+      "message": "Note: This test suite seems really incomplete. We should add more tests in another change.",
+      "revId": "7a0a198e251a7ab747f6301d7a9e330dea47b38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c18f760f_6ebf1c53",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationToolConfigurationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T12:18:42Z",
+      "side": 1,
+      "message": "Note: I\u0027m honestly not sure about the purpose of these tests. They seem to test Spring itself (which should not be done in SDC). Moreover no assertions is done here.\n\nI did not know what to test, and because the change is already pretty significant, decided to address this in another change.",
+      "revId": "7a0a198e251a7ab747f6301d7a9e330dea47b38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

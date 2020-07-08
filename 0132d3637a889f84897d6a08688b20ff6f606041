@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73624a1e_02114b8e",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executor/ServiceValidatorExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T12:18:42Z",
+      "side": 0,
+      "message": "Note: This has been factored in TopologyTemplateValidatorExecutor.",
+      "revId": "0132d3637a889f84897d6a08688b20ff6f606041",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e2cd30a_4b8f85d7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executor/TopologyTemplateValidatorExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T12:18:42Z",
+      "side": 0,
+      "message": "Note: The type is now passed through the constructor of TopologyTemplateValidatorExecutor.",
+      "revId": "0132d3637a889f84897d6a08688b20ff6f606041",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "959d98f1_61b76b8e",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executor/TopologyTemplateValidatorExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T12:18:42Z",
+      "side": 0,
+      "message": "Note: This function has been replaced by `executeValidations`. There is no longer need to make a distinction between these as TopologyTemplateValidatorExecutor is now the only implementation of the ValidatorExecutor interface (which makes wonder about the need to have the latest).",
+      "revId": "0132d3637a889f84897d6a08688b20ff6f606041",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca7fa9b4_0a69a7a1",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ElementTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T12:18:42Z",
+      "side": 0,
+      "message": "Note: This class is not used anywhere and its implementation looks incomplete (It seemed to handle only one specific case). From what I\u0027ve seen, it was only used in tests (which do not really tested anything)",
+      "revId": "0132d3637a889f84897d6a08688b20ff6f606041",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
