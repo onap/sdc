@@ -57,7 +57,6 @@ public class TopologyTemplate extends ToscaElement{
     private Map<String, InterfaceDataDefinition> interfaces;
     private Map<String, MapInterfaceInstanceDataDefinition> instInterfaces;
     private Map<String, MapInterfaceDataDefinition> componentInstInterfaces;
-    private Map<String, DataTypeDataDefinition> dataTypes;
 
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
     private Map<String, SubstitutionFilterDataDefinition> substitutionFilterDataDefinitionMap;
@@ -248,22 +247,6 @@ public class TopologyTemplate extends ToscaElement{
     public void setSubstitutionFilterDataDefinitionMap(
         Map<String, SubstitutionFilterDataDefinition> substitutionFilterDataDefinitionMap) {
         this.substitutionFilterDataDefinitionMap = substitutionFilterDataDefinitionMap;
-    }
-
-    /**
-     * Gets data types.
-     * @return Current data types.
-     */
-    public Map<String, DataTypeDataDefinition> getDataTypes() {
-        return dataTypes;
-    }
-
-    /**
-     * Sets data types.
-     * @param dataTypes New data types.
-     */
-    public void setDataTypes(Map<String, DataTypeDataDefinition> dataTypes) {
-        this.dataTypes = dataTypes;
     }
 
       /**
