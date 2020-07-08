@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e581b742_897b16de",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBL.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T14:10:41Z",
+      "side": 1,
+      "message": "Right, this probably results from a copy-paste of the ValidationToolBL class.",
+      "parentUuid": "4bfea402_9a6b30c2",
+      "range": {
+        "startLine": 31,
+        "startChar": 55,
+        "endLine": 31,
+        "endChar": 71
+      },
+      "revId": "5749a307c318f836b09633897d0138adb339ed49",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4f5266df_5e712fd7",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executor/TopologyTemplateValidatorExecutor.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "5749a307c318f836b09633897d0138adb339ed49",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "361b33b8_34563f19",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executor/TopologyTemplateValidatorExecutor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T14:10:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4f5266df_5e712fd7",
+      "range": {
+        "startLine": 120,
+        "startChar": 28,
+        "endLine": 120,
+        "endChar": 98
+      },
+      "revId": "5749a307c318f836b09633897d0138adb339ed49",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "1f715b89_766384ed",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executor/TopologyTemplateValidatorExecutor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T14:10:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7fb9efa_a50174a1",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 77
+      },
+      "revId": "5749a307c318f836b09633897d0138adb339ed49",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "376b8198_1500eba4",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBLTest.java",
         "patchSetId": 2
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "d225ac54_27381e39",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBLTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T14:10:41Z",
+      "side": 1,
+      "message": "Could you please provide me with the benefits of using an interface in this specific case?",
+      "parentUuid": "376b8198_1500eba4",
+      "range": {
+        "startLine": 41,
+        "startChar": 8,
+        "endLine": 41,
+        "endChar": 17
+      },
+      "revId": "5749a307c318f836b09633897d0138adb339ed49",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "512fe2fb_a1386cf2",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
         "patchSetId": 2
@@ -114,6 +210,30 @@
       "revId": "5749a307c318f836b09633897d0138adb339ed49",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6abb0bb4_169b4a56",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-08T14:10:41Z",
+      "side": 1,
+      "message": "Could you please provide me with the benefits of using an interface in this specific case?",
+      "parentUuid": "512fe2fb_a1386cf2",
+      "range": {
+        "startLine": 42,
+        "startChar": 8,
+        "endLine": 42,
+        "endChar": 17
+      },
+      "revId": "5749a307c318f836b09633897d0138adb339ed49",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
