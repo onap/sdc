@@ -21,13 +21,64 @@
 package org.openecomp.sdc.be.tosca;
 
 
-import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
-
 import fj.F;
 import fj.data.Either;
-import io.vavr.Tuple2;
-import io.vavr.control.Try;
 import io.vavr.control.Option;
+import io.vavr.control.Try;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.config.ArtifactConfigManager;
+import org.openecomp.sdc.be.config.ArtifactConfiguration;
+import org.openecomp.sdc.be.config.ComponentType;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
+import org.openecomp.sdc.be.tosca.ZipIO.ZipWriter;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -53,64 +104,12 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang.WordUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.be.components.impl.ImportUtils;
-import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
-import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
-import org.openecomp.sdc.be.config.ArtifactConfigManager;
-import org.openecomp.sdc.be.config.ArtifactConfiguration;
-import org.openecomp.sdc.be.config.ComponentType;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
-import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
-import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
-import org.openecomp.sdc.be.resources.data.DAOArtifactData;
-import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
-import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
-import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.log.elements.LoggerSupportability;
-import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
-import org.openecomp.sdc.common.log.enums.StatusCode;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.GeneralUtility;
-import org.openecomp.sdc.common.util.ValidationUtils;
-import org.openecomp.sdc.common.zip.ZipUtils;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.yaml.snakeyaml.Yaml;
 
+import static org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter.isAtomicComponent;
+import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
 import static org.openecomp.sdc.be.tosca.FJToVavrHelper.Try0.fromEither;
+import static org.openecomp.sdc.be.tosca.ToscaExportHandler.getInterfaceFilename;
+import static org.openecomp.sdc.be.tosca.ZipIO.writeTry;
 
 /**
  * @author tg851x
@@ -272,7 +271,7 @@ public class CsarUtils {
         zip.write(mainYaml);
 
         //US798487 - Abstraction of complex types
-        if (!ModelConverter.isAtomicComponent(component)){
+        if (!isAtomicComponent(component)){
             log.debug("Component {} is complex - generating abstract type for it..", component.getName());
 			      writeComponentInterface(component, zip, fileName, false);
         }
@@ -447,7 +446,7 @@ public class CsarUtils {
     private Either<ZipOutputStream, ResponseFormat> getZipOutputStreamResponseFormatEither(
         ZipOutputStream zip,
         List<Triple<String, String, Component>> dependencies
-    ) throws IOException {
+    ) {
 
         ComponentCache innerComponentsCache = ComponentCache
             .overwritable(overwriteIfSameVersions())
@@ -476,48 +475,65 @@ public class CsarUtils {
             }
 
             //add inner components to CSAR
-            return addInnerComponentsToCSAR(zip, innerComponentsCache);
+            ZipWriter writer = ZipWriter.live(zip);
+            return addInnerComponentsToCSAR(innerComponentsCache).run(writer)
+                    .map(void0 -> Either.<ZipOutputStream, ResponseFormat>left(zip))
+                    .recover(WithResponseFormat.class, e -> {
+                        log.debug("#addInnerComponentsToCSAR Error while writing zip: ", e);
+                        return Either.right(e.asResponseFormat(componentsUtils));
+                    }).get();
         }
         return null;
     }
 
-    private Either<ZipOutputStream, ResponseFormat> addInnerComponentsToCSAR(
-        ZipOutputStream zip,
-        ComponentCache innerComponentsCache
-    ) throws IOException {
-        for (ImmutableTriple<String, String, Component> ict : innerComponentsCache.iterable()) {
-            Component innerComponent = ict.getRight();
+    private ZipIO addInnerComponentsToCSAR(ComponentCache innerComponentsCache) {
+        return ZipIO.writeAll(innerComponentsCache.all().map(e -> {
+            ZipIO writeEntryData = writeTry(DEFINITIONS_PATH + e.fileName, () -> fetchEntryData(e.id, e.component));
+            ZipIO writeInnerComponent =
+                    writeTry(
+                            DEFINITIONS_PATH + getInterfaceFilename(e.fileName),
+                            () -> exportComponentInterface(e.component)
+                    ).writeIf(isAtomicComponent(e.component));
 
-            String icFileName = ict.getMiddle();
-            // add component to zip
-            Either<Tuple2<byte[], ZipEntry>, ResponseFormat> zipEntry = toZipEntry(ict);
-            // TODO: this should not be done, we should instead compose this either further,
-            // but in order to keep this refactoring small, we'll stop here.
-            if (zipEntry.isRight()) {
-                return Either.right(zipEntry.right().value());
-            }
-            Tuple2<byte[], ZipEntry> value = zipEntry.left().value();
-            zip.putNextEntry(value._2);
-            zip.write(value._1);
-            // add component interface to zip
-            if (!ModelConverter.isAtomicComponent(innerComponent)) {
-                writeComponentInterface(innerComponent, zip, icFileName, true);
-            }
-        }
-        return null;
+            return ZipIO.both(writeEntryData, writeInnerComponent);
+        }));
     }
 
-    private Either<Tuple2<byte[], ZipEntry>, ResponseFormat> toZipEntry(
-        ImmutableTriple<String, String, Component> cachedEntry
-    ) {
-        String cassandraId = cachedEntry.getLeft();
-        String fileName = cachedEntry.getMiddle();
-        Component innerComponent = cachedEntry.getRight();
-        return getEntryData(cassandraId, innerComponent)
-            .right().map(status -> {
-                log.debug("Failed adding to zip component {}, error {}", cassandraId, status);
-                return componentsUtils.getResponseFormat(status);
-            }).left().map(content -> new Tuple2<>(content, new ZipEntry(DEFINITIONS_PATH + fileName)));
+    private Try<byte[]> fetchEntryData(String cassandraId, Component childComponent) {
+        return fromEither(getEntryData(cassandraId, childComponent),
+                status -> new EntryDataFetchingFailure(cassandraId, status)
+        );
+    }
+
+    private Try<byte[]> exportComponentInterface(final Component component) {
+        return fromEither(toscaExportUtils
+                        .exportComponentInterface(component, true)
+                        .left().map(ToscaRepresentation::getMainYaml),
+                ToscaErrorException::new
+        );
+    }
+
+    public static abstract class WithResponseFormat extends Exception {
+        abstract ResponseFormat asResponseFormat(ComponentsUtils cu);
+
+        public WithResponseFormat(String message) {
+            super(message);
+        }
+    }
+
+    public static class EntryDataFetchingFailure extends WithResponseFormat {
+
+        private final ActionStatus status;
+
+        EntryDataFetchingFailure(String cassandraId, ActionStatus status) {
+            super("Failed fetching entry data for " + cassandraId + ", error: " + status);
+            this.status = status;
+        }
+
+        @Override
+        public ResponseFormat asResponseFormat(ComponentsUtils cu) {
+            return cu.getResponseFormat(status);
+        }
     }
 
     /**
@@ -604,7 +620,7 @@ public class CsarUtils {
                 //if not atomic - insert inner components as well
                 // TODO: This could potentially create a StackOverflowException if the call stack
                 // happens to be too large. Tail-recursive optimization should be used here.
-                if (!ModelConverter.isAtomicComponent(componentRI)) {
+                if (!isAtomicComponent(componentRI)) {
                     addInnerComponentsToCache(componentCache, componentRI);
                 }
             });
@@ -646,32 +662,37 @@ public class CsarUtils {
         boolean isAssociatedComponent
     ) {
         // TODO: This should not be done but we need this to keep the refactoring small enough to be easily reviewable
-        return writeComponentInterface(component, fileName, isAssociatedComponent, ZipWriter.live(zip))
-            .map(void0 -> Either.<ZipOutputStream, ResponseFormat>left(zip))
-            .recover(th -> {
-                log.error("#writeComponentInterface - zip writing failed with error: ", th);
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-            }).get();
+        return writeComponentInterface(component, fileName, isAssociatedComponent)
+                .run(ZipWriter.live(zip))
+                .map(void0 -> Either.<ZipOutputStream, ResponseFormat>left(zip))
+                .recover(th -> {
+                    log.error("#writeComponentInterface - zip writing failed with error: ", th);
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+                }).get();
     }
 
-    private Try<Void> writeComponentInterface(
+    private ZipIO writeComponentInterface(
         Component component,
         String fileName,
-        boolean isAssociatedComponent,
-        ZipWriter zw
+        boolean isAssociatedComponent
     ) {
         Either<byte[], ToscaError> yml = toscaExportUtils
             .exportComponentInterface(component, isAssociatedComponent)
             .left().map(ToscaRepresentation::getMainYaml);
 
-        return fromEither(yml, ToscaErrorException::new)
-            .flatMap(zw.write(DEFINITIONS_PATH + ToscaExportHandler.getInterfaceFilename(fileName)));
+        return ZipIO.writeTry(DEFINITIONS_PATH + getInterfaceFilename(fileName),
+                fromEither(yml, ToscaErrorException::new));
     }
 
-    public static class ToscaErrorException extends Exception {
+    public static class ToscaErrorException extends WithResponseFormat {
 
         ToscaErrorException(ToscaError error) {
             super("Error while exporting component's interface (toscaError:" + error + ")");
+        }
+
+        @Override
+        public ResponseFormat asResponseFormat(ComponentsUtils cu) {
+            return cu.getResponseFormat(ActionStatus.GENERAL_ERROR);
         }
     }
 
