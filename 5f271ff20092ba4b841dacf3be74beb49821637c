@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d61cae85_82fa749b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-09T12:49:49Z",
+      "side": 1,
+      "message": "Note: This class (along with its implementations) may have to be moved to another one (probably called CsarUtilsException or something like that). I\u0027d like to get further in this refactoring before making any decision.",
+      "revId": "5f271ff20092ba4b841dacf3be74beb49821637c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e3f931d_7944983d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ZipIO.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-07-09T12:49:49Z",
+      "side": 1,
+      "message": "I\u0027d like to add a test contract for this class. However as the interface may change in the future (depending on the refactoring of CsarUtils), I decided to delay this to another change. For now, the class is still covered by tests (thanks to CsarUtilsTest), but this is not ideal. I\u0027ll figure this out in another change.",
+      "revId": "5f271ff20092ba4b841dacf3be74beb49821637c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
