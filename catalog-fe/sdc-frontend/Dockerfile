@@ -1,4 +1,4 @@
-FROM onap/base_sdc-jetty:1.6.0
+FROM onap/base_sdc-jetty:1.7.0
 
 RUN mkdir -p ${JETTY_BASE}/config/catalog-fe
 

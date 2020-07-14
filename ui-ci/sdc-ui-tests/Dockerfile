@@ -1,4 +1,4 @@
-FROM onap/base_sdc-vnc:1.4.1
+FROM onap/base_sdc-vnc:1.7.0
 
 # install packages
 RUN DEBIAN_FRONTEND=noninteractive \

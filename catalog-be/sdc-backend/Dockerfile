@@ -1,4 +1,4 @@
-FROM onap/base_sdc-jetty:1.6.0
+FROM onap/base_sdc-jetty:1.7.0
  
 COPY --chown=jetty:jetty chef-solo ${JETTY_BASE}/chef-solo/
 COPY --chown=jetty:jetty chef-repo/cookbooks/. ${JETTY_BASE}/chef-solo/cookbooks/
