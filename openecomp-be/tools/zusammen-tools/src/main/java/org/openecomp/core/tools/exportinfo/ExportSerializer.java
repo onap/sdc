@@ -35,7 +35,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.core.tools.importinfo.ImportProperties;
 import org.openecomp.core.tools.model.ColumnDefinition;
 import org.openecomp.core.tools.model.TableData;

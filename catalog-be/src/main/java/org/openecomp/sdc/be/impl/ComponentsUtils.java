@@ -1765,7 +1765,7 @@ public class ComponentsUtils {
             return Collections.emptyList();
         }
 
-        return uiConstraintsMaps.stream().map(dataMap -> new org.codehaus.jackson.map.ObjectMapper()
+        return uiConstraintsMaps.stream().map(dataMap -> new com.fasterxml.jackson.databind.ObjectMapper()
             .convertValue(dataMap, UIConstraint.class)).collect(Collectors.toList());
     }
 
