@@ -22,7 +22,7 @@ package org.openecomp.sdcrests.vendorlicense.types;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
