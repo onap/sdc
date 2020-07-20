@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
-import org.codehaus.jackson.map.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
