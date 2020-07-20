@@ -174,107 +174,107 @@
       <version>${httpcore.version}</version>
       <scope>compile</scope>
     </dependency>
+    <!--
+        <dependency>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-mapper-asl</artifactId>
+          <version>1.9.2</version>
+          <scope>compile</scope>
+        </dependency> -->
 
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.9.2</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
+        <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+          <artifactId>jackson-databind</artifactId>
+          <version>${jackson.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>com.fasterxml.jackson.core</groupId>
+              <artifactId>jackson-core</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
 
-    <dependency>
-      <groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
-      <artifactId>sdc-distribution-client</artifactId>
-      <version>1.2.3</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
+          <artifactId>sdc-distribution-client</artifactId>
+          <version>1.2.3</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>${hamcrest.version}</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest</artifactId>
+          <version>${hamcrest.version}</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
-      <version>${hamcrest.version}</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-library</artifactId>
+          <version>${hamcrest.version}</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+          <version>${junitJupiter.version}</version>
+          <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>${mockitoJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-junit-jupiter</artifactId>
+          <version>${mockitoJupiter.version}</version>
+          <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>6.11</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+          <version>6.11</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.4.01</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+          <version>1.4.01</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>${json-simple.version}</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>com.googlecode.json-simple</groupId>
+          <artifactId>json-simple</artifactId>
+          <version>${json-simple.version}</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jci-core</artifactId>
-      <version>${commons-jci-core.version}</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-jci-core</artifactId>
+          <version>${commons-jci-core.version}</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>${commons-codec}</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+          <version>${commons-codec}</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>com.aventstack</groupId>
-      <artifactId>extentreports</artifactId>
-      <version>3.0.6</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+          <groupId>com.aventstack</groupId>
+          <artifactId>extentreports</artifactId>
+          <version>3.0.6</version>
+          <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>net.lightbody.bmp</groupId>
-      <!-- To use the legacy, Jetty-based implementation, change the artifactId
-        to browsermob-core -->
+        <dependency>
+          <groupId>net.lightbody.bmp</groupId>
+          <!-- To use the legacy, Jetty-based implementation, change the artifactId
+            to browsermob-core -->
       <artifactId>browsermob-core</artifactId>
       <version>2.1.4</version>
       <exclusions>

@@ -747,11 +747,12 @@
       <artifactId>commons-collections4</artifactId>
       <version>${commons.collections.version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
       <version>${jackson.mapper.version}</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.onap.sdc.sdc-be-common</groupId>
       <artifactId>security-util-lib</artifactId>
