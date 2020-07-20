@@ -16,11 +16,11 @@
     <!-- Needed for JSR-303 validations. May be removed when moving to JAX-RS 2.0 -->
     <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
 
-    <bean id="jacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper">
+    <bean id="jacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
         <property name="serializationInclusion" value="NON_NULL"/>
     </bean>
 
-    <bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
         <property name="mapper" ref="jacksonObjectMapper"/>
     </bean>
 
