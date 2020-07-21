@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3af7ab2d_b1400eba",
+        "filename": "catalog-dao/src/test/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.\n\nI preferred to keep log4j 1.x configurations in case we needed to revert back to log4j 1.x.\n\nAll the configs before \"#########log4j2 Configuration############\" are commented out.",
+      "parentUuid": "2959b245_fe6f7993",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ebc39db0_6724a1ad",
         "filename": "pom.xml",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2020-06-27T11:42:50Z",
       "side": 1,
       "message": "any particular reason for not using this version but not latest .3 ?",
+      "range": {
+        "startLine": 89,
+        "startChar": 24,
+        "endLine": 89,
+        "endChar": 25
+      },
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b10f240_4f3b93bb",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "I\u0027m sticking to the new version recommended by this report: https://wiki.onap.org/pages/viewpage.action?spaceKey\u003dSV\u0026title\u003dSDC",
+      "parentUuid": "ebc39db0_6724a1ad",
       "range": {
         "startLine": 89,
         "startChar": 24,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "43c10a5e_e6057932",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "According to https://logging.apache.org/log4j/2.0/faq.html , and answering the FAQ Which JAR files do I need? Answer: \"You need at least the log4j-api-2.x and the log4j-core-2.x jar files.\"\n\nGot it, including only the core, Maven will take care of fetching both the core and api. Will update.",
+      "parentUuid": "54a6fda9_0ce20474",
+      "range": {
+        "startLine": 87,
+        "startChar": 4,
+        "endLine": 92,
+        "endChar": 17
+      },
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d8708a23_eb1e72fa",
         "filename": "test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/conf/log4j2.properties",
         "patchSetId": 1
@@ -82,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "3214c266_3325defe",
+        "filename": "test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.\n\nI preferred to keep log4j 1.x configurations in case we needed to revert back to log4j 1.x.\n\nAll the configs before \"#########log4j2 Configuration############\" are commented out.",
+      "parentUuid": "d8708a23_eb1e72fa",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cb31d97c_132ae4ac",
         "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/Utils.java",
         "patchSetId": 1
@@ -93,6 +177,30 @@
       "writtenOn": "2020-06-27T11:42:50Z",
       "side": 1,
       "message": "redundant, can be removed",
+      "range": {
+        "startLine": 58,
+        "startChar": 56,
+        "endLine": 58,
+        "endChar": 66
+      },
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2743dd4_ed05172b",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/Utils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "I will remove it.",
+      "parentUuid": "cb31d97c_132ae4ac",
       "range": {
         "startLine": 58,
         "startChar": 56,
@@ -128,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "53d64410_53129c48",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/rest/ResponseParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "I will remove it.",
+      "parentUuid": "9083abaf_35968e9f",
+      "range": {
+        "startLine": 122,
+        "startChar": 65,
+        "endLine": 122,
+        "endChar": 75
+      },
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "477f763c_118e9543",
         "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
         "patchSetId": 1
@@ -139,6 +271,24 @@
       "writtenOn": "2020-06-27T00:02:37Z",
       "side": 1,
       "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9cca39c8_4ed10020",
+        "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.\n\nI preferred to keep log4j 1.x configurations in case we needed to revert back to log4j 1.x.\n\nAll the configs before \"#########log4j2 Configuration############\" are commented out.",
+      "parentUuid": "477f763c_118e9543",
       "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -162,6 +312,24 @@
     },
     {
       "key": {
+        "uuid": "30026ae9_cd1742d2",
+        "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.\n\nI preferred to keep log4j 1.x configurations in case we needed to revert back to log4j 1.x.\n\nAll the configs before \"#########log4j2 Configuration############\" are commented out.",
+      "parentUuid": "0ebbebca_bcc76a20",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cf75ee56_43a32842",
         "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
         "patchSetId": 1
@@ -173,6 +341,24 @@
       "writtenOn": "2020-06-27T00:02:37Z",
       "side": 1,
       "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e637ec2a_2e70bf95",
+        "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.\n\nI preferred to keep log4j 1.x configurations in case we needed to revert back to log4j 1.x.\n\nAll the configs before \"#########log4j2 Configuration############\" are commented out.",
+      "parentUuid": "cf75ee56_43a32842",
       "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -196,6 +382,24 @@
     },
     {
       "key": {
+        "uuid": "8154e206_ab2b69fe",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "9d30142f_42467a83",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "995caab7_f2e78f71",
         "filename": "test-apis-ci/src/main/resources/log4j2.properties",
         "patchSetId": 1
@@ -207,6 +411,24 @@
       "writtenOn": "2020-06-27T00:02:37Z",
       "side": 1,
       "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25f53080_b3118e21",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "995caab7_f2e78f71",
       "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -230,6 +452,24 @@
     },
     {
       "key": {
+        "uuid": "e4e1b754_06d2bb88",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "8f352c55_43d14639",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cbd8fe7e_d43929a3",
         "filename": "test-apis-ci/src/main/resources/log4j2.properties",
         "patchSetId": 1
@@ -247,6 +487,24 @@
     },
     {
       "key": {
+        "uuid": "959e0222_32428bf6",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "cbd8fe7e_d43929a3",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7a8d4c7b_d7847086",
         "filename": "ui-ci/src/main/resources/ci/conf/log4j2.properties",
         "patchSetId": 1
@@ -258,6 +516,24 @@
       "writtenOn": "2020-06-27T00:02:37Z",
       "side": 1,
       "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9a60ede_a9cd1748",
+        "filename": "ui-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "7a8d4c7b_d7847086",
       "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -304,6 +580,24 @@
     },
     {
       "key": {
+        "uuid": "2e80dd6a_95b6f335",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "acb0786e_69e69408",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c0ed8f64_59646029",
         "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
         "patchSetId": 1
@@ -321,6 +615,24 @@
     },
     {
       "key": {
+        "uuid": "621ebb88_4a07db78",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "c0ed8f64_59646029",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ec26d6d4_65885ace",
         "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
         "patchSetId": 1
@@ -332,6 +644,24 @@
       "writtenOn": "2020-06-27T00:02:37Z",
       "side": 1,
       "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6309593_d1231a7b",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 6705
+      },
+      "writtenOn": "2020-07-21T18:54:42Z",
+      "side": 1,
+      "message": "This part of configuration is commented using the \"!\" char to distinguish between an original comment starting with \"#\" and a commented config line.",
+      "parentUuid": "ec26d6d4_65885ace",
       "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
