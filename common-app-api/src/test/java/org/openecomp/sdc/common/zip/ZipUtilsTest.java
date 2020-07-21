@@ -19,12 +19,12 @@
 
 package org.openecomp.sdc.common.zip;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isIn;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,27 +41,32 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.common.zip.exception.ZipSlipException;
 
-public class ZipUtilsTest {
+class ZipUtilsTest {
+
+    private static final String ZIP_SLIP_LINUX_ZIP = "zip-slip/zip-slip-linux.zip";
+    private static final String ZIP_SLIP_WINDOWS_ZIP = "zip-slip/zip-slip-windows.zip";
+    private static final ClassLoader CLASS_LOADER = ZipUtilsTest.class.getClassLoader();
 
     @Test
-    public void testZipSlipInRead() {
+    void testZipSlipInRead() {
         final byte[] windowsZipBytes;
         final byte[] linuxZipBytes;
         try {
-            final InputStream linuxZipAsStream = ZipUtilsTest.class.getClassLoader().getResourceAsStream("zip-slip/zip-slip-linux.zip");
-            final InputStream windowsZipAsStream = ZipUtilsTest.class.getClassLoader().getResourceAsStream("zip-slip/zip-slip-windows.zip");
-            if(linuxZipAsStream == null || windowsZipAsStream == null) {
+            final InputStream linuxZipAsStream = CLASS_LOADER.getResourceAsStream(ZIP_SLIP_LINUX_ZIP);
+            final InputStream windowsZipAsStream = CLASS_LOADER.getResourceAsStream(ZIP_SLIP_WINDOWS_ZIP);
+            if (linuxZipAsStream == null || windowsZipAsStream == null) {
                 fail("Could not load the zip slip files");
             }
             linuxZipBytes = IOUtils.toByteArray(linuxZipAsStream);
             windowsZipBytes = IOUtils.toByteArray(windowsZipAsStream);
         } catch (final IOException e) {
-            e.printStackTrace();
-            fail("Could not load the required zip slip files");
+            fail("Could not load the required zip slip files", e);
             return;
         }
 
@@ -81,24 +86,19 @@ public class ZipUtilsTest {
     }
 
     @Test
-    public void testZipSlipInUnzip() throws IOException {
-        final Path tempDirectoryWindows = Files.createTempDirectory("zipSlipWindows" + System.currentTimeMillis());
+    @EnabledOnOs(OS.LINUX)
+    void testZipSlipInUnzipLinux() throws IOException {
         final Path tempDirectoryLinux = Files.createTempDirectory("zipSlipLinux" + System.currentTimeMillis());
         try {
             final Path linuxZipPath;
-            final Path windowsZipPath;
             try {
-                linuxZipPath = Paths
-                    .get(ZipUtilsTest.class.getClassLoader().getResource("zip-slip/zip-slip-linux.zip").toURI());
-                windowsZipPath = Paths
-                    .get(ZipUtilsTest.class.getClassLoader().getResource("zip-slip/zip-slip-windows.zip").toURI());
+                linuxZipPath = Paths.get(CLASS_LOADER.getResource(ZIP_SLIP_LINUX_ZIP).toURI());
             } catch (final URISyntaxException e) {
-                fail("Could not load the required zip slip files");
+                fail("Could not load the required zip slip files", e);
                 return;
             }
 
             try {
-                ZipUtils.unzip(windowsZipPath, tempDirectoryWindows);
                 ZipUtils.unzip(linuxZipPath, tempDirectoryLinux);
                 fail("Zip slip should be detected");
             } catch (final ZipException ex) {
@@ -106,23 +106,46 @@ public class ZipUtilsTest {
                     ex, is(instanceOf(ZipSlipException.class)));
             }
         } finally {
-            org.apache.commons.io.FileUtils.deleteDirectory(tempDirectoryLinux.toFile());
-            org.apache.commons.io.FileUtils.deleteDirectory(tempDirectoryWindows.toFile());
+            FileUtils.deleteDirectory(tempDirectoryLinux.toFile());
         }
     }
 
     @Test
-    public void testUnzipAndZip() throws IOException, ZipException {
+    @EnabledOnOs(OS.WINDOWS)
+    void testZipSlipInUnzipWindows() throws IOException {
+        final Path tempDirectoryWindows = Files.createTempDirectory("zipSlipWindows" + System.currentTimeMillis());
+        try {
+            final Path windowsZipPath;
+            try {
+                windowsZipPath = Paths.get(CLASS_LOADER.getResource(ZIP_SLIP_WINDOWS_ZIP).toURI());
+            } catch (final URISyntaxException e) {
+                fail("Could not load the required zip slip files", e);
+                return;
+            }
+
+            try {
+                ZipUtils.unzip(windowsZipPath, tempDirectoryWindows);
+                fail("Zip slip should be detected");
+            } catch (final ZipException ex) {
+                assertThat("At least one of the zip files should throw ZipSlipException",
+                    ex, is(instanceOf(ZipSlipException.class)));
+            }
+        } finally {
+            FileUtils.deleteDirectory(tempDirectoryWindows.toFile());
+        }
+    }
+
+    @Test
+    void testUnzipAndZip() throws IOException, ZipException {
         final Path unzipTempPath = Files.createTempDirectory("testUnzip").toRealPath();
         final Path zipTempPath = Files.createTempDirectory("testZip").toRealPath();
         final Path testZipPath;
         try {
             try {
-                testZipPath = Paths
-                    .get(ZipUtilsTest.class.getClassLoader().getResource("zip/extract-test.zip").toURI());
+                testZipPath = Paths.get(CLASS_LOADER.getResource("zip/extract-test.zip").toURI());
                 ZipUtils.unzip(testZipPath, unzipTempPath);
             } catch (final URISyntaxException e) {
-                fail("Could not load the required zip file");
+                fail("Could not load the required zip file", e);
                 return;
             }
 
@@ -141,7 +164,7 @@ public class ZipUtilsTest {
             expectedPaths.add(Paths.get(unzipTempPath.toString(), "TwoLvlFolder", "SingleLvlFolder", "singleLvlFolderFileNoExtension"));
 
             final AtomicLong actualPathCount = new AtomicLong(0);
-            try (Stream<Path> stream = Files.walk(unzipTempPath)) {
+            try (final Stream<Path> stream = Files.walk(unzipTempPath)) {
                 stream.filter(path -> !unzipTempPath.equals(path)).forEach(actualPath -> {
                     actualPathCount.getAndIncrement();
                     assertThat("Unzipped file should be in the expected list", actualPath, isIn(expectedPaths));
@@ -166,7 +189,5 @@ public class ZipUtilsTest {
             FileUtils.deleteDirectory(zipTempPath.toFile());
         }
     }
-
-
 
 }
