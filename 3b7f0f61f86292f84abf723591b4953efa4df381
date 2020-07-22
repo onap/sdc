@@ -70,6 +70,24 @@
       "revId": "3b7f0f61f86292f84abf723591b4953efa4df381",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "467b2200_b8af853c",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/zip/ZipUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-07-22T09:56:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9c298f8_21198103",
+      "revId": "3b7f0f61f86292f84abf723591b4953efa4df381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
