@@ -16,6 +16,24 @@
       "revId": "3b7f0f61f86292f84abf723591b4953efa4df381",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "951b8907_1148c0da",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/zip/ZipUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-07-22T08:53:07Z",
+      "side": 1,
+      "message": "1st, Junit 5 does not have \u0027unique\u0027 assertThat, so it is not one-to-one\n2nd, according to junit documentation https://junit.org/junit5/docs/snapshot/user-guide/#writing-tests-assertions-third-party usage of third-party library can in-reach TCs\n3rd, it was outside of scope of this commit\n\nI\u0027d prefer to leave it as is, what do you think?",
+      "parentUuid": "51d45b04_66963719",
+      "revId": "3b7f0f61f86292f84abf723591b4953efa4df381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
