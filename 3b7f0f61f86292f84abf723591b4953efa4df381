@@ -34,6 +34,24 @@
       "revId": "3b7f0f61f86292f84abf723591b4953efa4df381",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bda54252_9583936a",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/zip/ZipUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2020-07-22T09:00:07Z",
+      "side": 1,
+      "message": "Is that possible to replace assertThat by Junit 5 supported assertions? It is on the roadmap to replace Junit 4 by Junit 5 completly, it will be easier if we change here already.",
+      "parentUuid": "951b8907_1148c0da",
+      "revId": "3b7f0f61f86292f84abf723591b4953efa4df381",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
