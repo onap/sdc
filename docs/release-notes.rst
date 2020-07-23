@@ -5,6 +5,65 @@
 Release Notes
 =============
 
+Version: 1.6.7
+==============
+
+:Release Date: 2020-07-23
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.1
+
+-  sdc-tosca
+
+   :Version: 1.6.2
+
+Release Purpose
+----------------
+Frankfurt maintenance release : fix high severity bugs identified post Frankfurt
+
+**Stories/Bug fixes/Tasks implemented**
+
+*  `SDC-2930 <https://jira.onap.org/browse/SDC-2930>`_ - [El Alto] Can't create VF via a newly created VSP
+*  `SDC-3189 <https://jira.onap.org/browse/SDC-3189>`_ - release artifacts for Frankfurt Maintenance
+*  `SDC-3190 <https://jira.onap.org/browse/SDC-3190>`_ - update sdc pom to 1.6.7 for frankfurt maintenance release
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+-  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
+-  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+	N/A
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
 
 Version: 1.6.6
 ==============
