@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5671179b_d0acb1a5",
+        "filename": "catalog-model/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-07-23T17:03:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2aeab1a2_2a64b30d",
+      "revId": "2f987be4ec4884dc1a4385bfc39b62354faa39d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b79740eb_b762b63c",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2020-07-23T10:14:53Z",
       "side": 1,
       "message": "is it functionally the same ?",
+      "revId": "2f987be4ec4884dc1a4385bfc39b62354faa39d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36454b7e_e31f311b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1774,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-07-23T17:03:39Z",
+      "side": 1,
+      "message": "Yes, but now grabs information from configuration.\n\nThis is where they config filters to query the graph searching for type that will be populated in the composition interface. Filters the allowed instances based on the component type. Now those values are coming from the configuration file instead of hardcoded values.\n\nhasProps includes a type and hasNotProps excludes.\n\nIf no configuration is present for a type, all resource types are allowed (default behavior).\nFor each type I\u0027ve tried to have the same behavior of adding the allowed types to hasProps or the not allowed to hasNotProps.\n\nVL uses the hasProps, and that is why there is a specific condition for it to add allowed types to hasProps.\nThe rest, VF, CVFC, PNF, SERVICE, CR uses the hasNotProps adding the not allowed types.",
+      "parentUuid": "b79740eb_b762b63c",
       "revId": "2f987be4ec4884dc1a4385bfc39b62354faa39d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -50,6 +86,24 @@
       "revId": "2f987be4ec4884dc1a4385bfc39b62354faa39d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68dbacc3_e41b0d48",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/config/ContainerInstanceTypesDataTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-07-23T17:03:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e6a0136_ea42cb00",
+      "revId": "2f987be4ec4884dc1a4385bfc39b62354faa39d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
