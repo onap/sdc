@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "289430e4_fc94751d",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-23T12:43:10Z",
+      "side": 0,
+      "message": "Just curious, why are they being removed ?",
+      "revId": "b3c3aa64d65e59e8c8ead8d99312267b00d4fe77",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

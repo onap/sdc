@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2866bebc_fdc71e6c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-23T12:43:10Z",
+      "side": 1,
+      "message": "Hmm I\u0027m pretty sure that sonar will complain about the length of this method, and maybe about the many indentation levels :)",
+      "revId": "ee1086c40b5947aa3a1fc068ebca06ffad925f05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f55bd47_d14a465a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-23T12:43:10Z",
+      "side": 1,
+      "message": "should go on the line below :)",
+      "revId": "ee1086c40b5947aa3a1fc068ebca06ffad925f05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "027a0c02_e7c1658a",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/category/CategoryData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-23T12:43:10Z",
+      "side": 1,
+      "message": "might be replaced with a simpler `final boolean useServiceSubstitutionForNestedServices \u003d useServiceSubstitutionForNestedServicesProperty !\u003d null \u0026\u0026 (boolean) useServiceSubstitutionForNestedServicesProperty;` ?",
+      "revId": "ee1086c40b5947aa3a1fc068ebca06ffad925f05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d99fee2_e26f1a37",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 810,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-23T12:43:10Z",
+      "side": 1,
+      "message": "I see both indentation being used in sdc, but looks like in most cases the case is more indented then the switch statement",
+      "revId": "ee1086c40b5947aa3a1fc068ebca06ffad925f05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
