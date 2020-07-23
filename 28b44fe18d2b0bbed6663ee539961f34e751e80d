@@ -16,6 +16,24 @@
       "revId": "28b44fe18d2b0bbed6663ee539961f34e751e80d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "596cf93a_89c32be1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 942,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-07-23T11:57:24Z",
+      "side": 1,
+      "message": "yes, it possible, but in current usage does not make any difference, bcz of \nMapUtils.isNotEmpty(dataTypes)\ncheck for both null and empty.",
+      "parentUuid": "0ccb5526_670d5d67",
+      "revId": "28b44fe18d2b0bbed6663ee539961f34e751e80d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
