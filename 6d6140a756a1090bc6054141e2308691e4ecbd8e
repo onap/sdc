@@ -16,6 +16,24 @@
       "revId": "6d6140a756a1090bc6054141e2308691e4ecbd8e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "475f9987_58223ce1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/AttributeDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-07-23T13:52:31Z",
+      "side": 1,
+      "message": "yes, those names come from TOSCA\nhttps://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/os/TOSCA-Simple-Profile-YAML-v1.3-os.html#DEFN_ELEMENT_ATTRIBUTE_DEFN\n\nso, I decided to give them same names, and \u0027_default vs default\u0027 for obvious reason.\nWhat do you think?",
+      "parentUuid": "8dca71c1_21719b60",
+      "revId": "6d6140a756a1090bc6054141e2308691e4ecbd8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
