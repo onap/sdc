@@ -4,6 +4,78 @@
 Release Notes
 =============
 
+Version: 1.5.3
+==============
+
+:Release Date: 2020-08-24
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.0
+
+-  sdc-tosca
+
+   :Version: 1.6.2
+
+SDC DCAE-D Versions
+-----------------
+DCAE DS containers upgraded to 1.3.2-1
+
+
+Release Purpose
+----------------
+
+El Alto Maintenance release is meant to fix expiring SSL certificates on El Alto build
+
+**Stories/Bugs/Tasks implemented**
+
+-  [`SDC-3157`_] - fix el alto certificates for maintenance release
+-  [`SDC-3162`_] - Update pom to 1.5.3 for new elato maintenance release
+-  [`SDC-3174`_] - Update DCAE-Ds pom to 1.3.2-1 for El alto maintenance
+-  [`SDC-3199`_] - release elalto maintenance release on OOM
+
+.. _SDC-3157: https://jira.onap.org/browse/SDC-3157
+.. _SDC-3162: https://jira.onap.org/browse/SDC-3162
+.. _SDC-3174: https://jira.onap.org/browse/SDC-3174
+.. _SDC-3199: https://jira.onap.org/browse/SDC-3199
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+-  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
+-  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+-  [`OJSI-126 <https://jira.onap.org/browse/OJSI-126>`__\ ] - In default deployment SDC (sdc-wfd-fe) exposes HTTP port 30256 outside of cluster.
+-  [`OJSI-127 <https://jira.onap.org/browse/OJSI-127>`__\ ] - In default deployment SDC (sdc-wfd-be) exposes HTTP port 30257 outside of cluster.
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-  [`SDC-2541 <https://jira.onap.org/browse/SDC-2541>`__\ ] - Custom WF not present in the CSAR package
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
 
 Version: 1.5.2
 ==============
