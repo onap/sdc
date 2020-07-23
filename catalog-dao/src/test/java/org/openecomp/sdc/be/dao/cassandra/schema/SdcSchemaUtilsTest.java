@@ -157,7 +157,7 @@ public class SdcSchemaUtilsTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testCreateClusterWithAuthSsl() {
 		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
 		cfg.setAuthenticate(true);
