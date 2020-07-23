@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8dca71c1_21719b60",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/AttributeDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-23T13:41:40Z",
+      "side": 1,
+      "message": "`_default` and `entry_schema` are conflicting with the naming convention we use, is there a specific reason ?",
+      "revId": "6d6140a756a1090bc6054141e2308691e4ecbd8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
