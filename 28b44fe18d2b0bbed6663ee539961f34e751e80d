@@ -34,6 +34,24 @@
       "revId": "28b44fe18d2b0bbed6663ee539961f34e751e80d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f92bdc85_dbaccbbb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 942,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-07-23T13:37:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "596cf93a_89c32be1",
+      "revId": "28b44fe18d2b0bbed6663ee539961f34e751e80d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
