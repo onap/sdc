@@ -34,6 +34,24 @@
       "revId": "6d6140a756a1090bc6054141e2308691e4ecbd8e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7a140a5_a55b60ad",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/AttributeDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-23T18:44:07Z",
+      "side": 1,
+      "message": "Yep, I agree with you on that :) \nSeems better to stick to the actual stuff then a convention. Maybe a comment to justify that for future reference ?",
+      "parentUuid": "475f9987_58223ce1",
+      "revId": "6d6140a756a1090bc6054141e2308691e4ecbd8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
