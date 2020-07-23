@@ -156,27 +156,4 @@ public class SdcSchemaUtilsTest {
 			Assert.assertNull(cluster);
 		}
 	}
-
-	@Test
-	public void testCreateClusterWithAuthSsl() {
-		Configuration.CassandrConfig cfg = new Configuration.CassandrConfig();
-		cfg.setAuthenticate(true);
-		cfg.setCassandraHosts(CASSANDRA_HOSTS);
-		cfg.setCassandraPort(CASSANDRA_PORT);
-		cfg.setUsername(CASSANDRA_USERNAME);
-		cfg.setPassword(CASSANDRA_PASSWORD);
-		cfg.setSsl(true);
-		cfg.setTruststorePath(TRUSTSTORE_PATH);
-		cfg.setTruststorePassword(TRUSTSTORE_PASSWORD);
-
-		SdcSchemaUtils sdcSchemaUtils = Mockito.mock(SdcSchemaUtils.class);
-		when(sdcSchemaUtils.getCassandraConfig()).thenReturn(cfg);
-		when(sdcSchemaUtils.createCluster()).thenCallRealMethod();
-
-		try(Cluster cluster = sdcSchemaUtils.createCluster()) {
-			Assert.assertNotNull(cluster);
-			Assert.assertEquals(System.getProperty("javax.net.ssl.trustStore"), TRUSTSTORE_PATH);
-			Assert.assertEquals(System.getProperty("javax.net.ssl.trustStorePassword"), TRUSTSTORE_PASSWORD);
-		}
-	}
 }
