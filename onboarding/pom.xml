@@ -86,7 +86,7 @@
     <http.core.version>4.4.1</http.core.version>
     <httpasyncclient.version>4.1.2</httpasyncclient.version>
     <janino.version>2.7.7</janino.version>
-    <jaxb.impl.version>2.2.11</jaxb.impl.version>
+    <com.sun.xml.version>2.3.3</com.sun.xml.version>
     <javax.el.version>2.2.4</javax.el.version>
     <javax.el-api.version>3.0.1-b04</javax.el-api.version>
     <javax.inject.version>1</javax.inject.version>
@@ -151,7 +151,7 @@
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
-        <version>${jaxb.impl.version}</version>
+        <version>${com.sun.xml.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beanshell</groupId>
