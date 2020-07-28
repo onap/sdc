@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95b1e699_9ce3deba",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/lifecycle/LCSbaseTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove commented lines",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1019ee91_3ddef970",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/lifecycle/LCSbaseTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Same here",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9ebd33f_cfdf6465",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/product/ProductTestBase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5bca260_a1fd14a3",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/product/ProductTestBase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8ca9440_a71be262",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/preRequisites/DownloadArtifactBaseTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b352d7dc_a4adcb80",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/preRequisites/DownloadArtifactBaseTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68c9fa2a_7be067f0",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/preRequisites/SimpleOneRsrcOneServiceTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90007e71_b6bdf302",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/preRequisites/SimpleOneRsrcOneServiceTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01ca264c_8797b00a",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/run/StartTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef39d986_af92c193",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/run/StartTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a592ba71_39e13f62",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/run/StartTest2backup.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de469e3d_8a9d2686",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/run/StartTest2backup.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-28T12:16:41Z",
+      "side": 1,
+      "message": "Remove the commented code",
+      "revId": "21954420846f9aa07bca10c9f01a2c9eb3f22ee0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
