@@ -52,6 +52,24 @@
       "revId": "28b44fe18d2b0bbed6663ee539961f34e751e80d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5647e3ac_f4381233",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 942,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-07-29T11:55:28Z",
+      "side": 1,
+      "message": "For now maybe, but, for me, you may shoot yourself in the foot in the future :)",
+      "parentUuid": "f92bdc85_dbaccbbb",
+      "revId": "28b44fe18d2b0bbed6663ee539961f34e751e80d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
