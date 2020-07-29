@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7fd70c7_fa8ed9a4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementOperation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 966,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-29T12:00:15Z",
+      "side": 1,
+      "message": "All new methods added should be JUnit tested. It\u0027s easier to validate that it works as expected and it gives also example to others developers.\n\nCould you please add some tests.",
+      "revId": "b415f3ba062ac6b4db291cadbb5de60c176f67b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
