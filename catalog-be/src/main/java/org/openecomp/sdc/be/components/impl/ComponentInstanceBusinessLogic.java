@@ -2637,6 +2637,66 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
     }
+    
+    public Either<RequirementDefinition, ResponseFormat> updateInstanceRequirement(ComponentTypeEnum componentTypeEnum, String containerComponentId, String componentInstanceUniqueId, String capabilityType, String capabilityName,
+            RequirementDefinition requirementDef, String userId) {
+        
+        Either<RequirementDefinition, ResponseFormat> resultOp = null;
+
+        validateUserExists(userId);
+        if (componentTypeEnum == null) {
+            BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceRequirement", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+        }
+        Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaFullElement(containerComponentId);
+
+        if (getResourceResult.isRight()) {
+            log.debug(FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID, containerComponentId);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+        }
+        Component containerComponent = getResourceResult.left().value();
+
+        if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
+            log.info("Restricted operation for user: {} on component {}", userId, containerComponentId);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+        }
+        Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, componentInstanceUniqueId);
+        if (resourceInstanceStatus.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId));
+        }
+        // lock resource
+        StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, componentTypeEnum.getNodeType());
+        if (lockStatus != StorageOperationStatus.OK) {
+            log.debug("Failed to lock component {}", containerComponentId);
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
+        }
+        
+        try {
+            StorageOperationStatus updateRequirementStatus = toscaOperationFacade.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDef);
+            if (updateRequirementStatus != StorageOperationStatus.OK) {
+                log.debug("Failed to update component instance requirement on instance {} in container {}", componentInstanceUniqueId, containerComponentId);
+                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateRequirementStatus)));
+            }
+            Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
+
+            if (updateContainerRes.isRight()) {
+                ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
+                resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+                return resultOp;
+            }
+            resultOp = Either.left(requirementDef);
+            return resultOp;
+
+        } finally {
+            if (resultOp == null || resultOp.isRight()) {
+                janusGraphDao.rollback();
+            } else {
+                janusGraphDao.commit();
+            }
+            // unlock resource
+            graphLockOperation.unlockComponent(containerComponentId, componentTypeEnum.getNodeType());
+        }  
+    }
 
     public Either<List<ComponentInstanceProperty>, ResponseFormat> updateInstanceCapabilityProperties(ComponentTypeEnum componentTypeEnum, String containerComponentId, String componentInstanceUniqueId, String capabilityType, String capabilityName,
                                                                                                       List<ComponentInstanceProperty> properties, String userId) {

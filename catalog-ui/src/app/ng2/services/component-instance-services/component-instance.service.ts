@@ -20,7 +20,7 @@
 
 import {Injectable, Inject} from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {PropertyFEModel, PropertyBEModel} from "app/models";
+import {PropertyFEModel, PropertyBEModel, Requirement} from "app/models";
 import {CommonUtils, ComponentType, ServerTypeUrl, ComponentInstanceFactory} from "app/utils";
 import {Component, ComponentInstance, Capability, PropertyModel, ArtifactGroupModel, ArtifactModel, AttributeModel, IFileDownload} from "app/models";
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
@@ -123,6 +123,11 @@ export class ComponentInstanceServiceNg2 {
                 });
                 return savedProperties;
             })
+    }
+
+    updateInstanceRequirement(componentType: string, componentId: string, componentInstanceId: string, requirement: Requirement): Observable<Requirement> {
+        return this.http.put<Requirement>(this.baseUrl + componentType + componentId + '/componentInstances/' + componentInstanceId + '/requirement/' +  requirement.capability +
+            '/requirementName/' +  requirement.name, requirement);
     }
 
     updateInstanceInputs(component: Component, componentInstanceId: string, inputs: PropertyBEModel[]): Observable<PropertyBEModel[]> {
