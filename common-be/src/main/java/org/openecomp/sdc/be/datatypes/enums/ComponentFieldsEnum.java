@@ -15,6 +15,11 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ComponentFieldsEnum {
 
     PROPERTIES("properties"),
@@ -47,19 +52,9 @@ public enum ComponentFieldsEnum {
     NODE_FILTER("nodeFilter"),
     SUBSTITUTION_FILTER("substitutionFilter"),
     COMPONENT_INSTANCES_INTERFACES("componentInstancesInterfaces"),
-    DATA_TYPES("dataTypes");
+    DATA_TYPES("data_types");
 
-
-    private String value;
-
-    ComponentFieldsEnum(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
+    private final String value;
 
     public static ComponentFieldsEnum findByValue(String value) {
         ComponentFieldsEnum ret = null;
