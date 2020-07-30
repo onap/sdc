@@ -79,7 +79,6 @@ public class TopologyTemplate extends ToscaElement {
     private Map<String, InterfaceDataDefinition> interfaces;
     private Map<String, MapInterfaceInstanceDataDefinition> instInterfaces;
     private Map<String, MapInterfaceDataDefinition> componentInstInterfaces;
-    private Map<String, DataTypeDataDefinition> dataTypes;
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
     private Map<String, SubstitutionFilterDataDefinition> substitutionFilterDataDefinitionMap;
 

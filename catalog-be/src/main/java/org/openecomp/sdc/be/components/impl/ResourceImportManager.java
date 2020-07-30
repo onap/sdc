@@ -23,11 +23,16 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
+import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataType;
+import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataTypeDefinitionWithName;
 import static org.openecomp.sdc.be.utils.TypeUtils.setField;
 
 import fj.data.Either;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
@@ -37,12 +42,14 @@ import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -59,6 +66,7 @@ import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -241,7 +249,7 @@ public class ResourceImportManager {
                 componentsUtils
                     .getResponseFormat(((ComponentException) e).getActionStatus(), ((ComponentException) e).getParams())
                 :
-                    ((ComponentException) e).getResponseFormat();
+                ((ComponentException) e).getResponseFormat();
         }
         return null;
     }
@@ -326,6 +334,15 @@ public class ResourceImportManager {
                 toscaJson = new HashMap<>();
                 toscaJson.put(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName(),
                     toscaJsonAll.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName()));
+            }
+            final List<Object> foundElements = new ArrayList<>();
+            final Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements(toscaJsonAll,
+                ToscaTagNamesEnum.DATA_TYPES.getElementName(), ToscaElementTypeEnum.MAP, foundElements);
+            if (toscaElements.isLeft()) {
+                final Map<String, Object> toscaAttributes = (Map<String, Object>) foundElements.get(0);
+                if (MapUtils.isNotEmpty(toscaAttributes)) {
+                    resource.setDataTypes(extractDataTypeFromJson(resourceBusinessLogic, toscaAttributes));
+                }
             }
             // Derived From
             Resource parentResource = setDerivedFrom(toscaJson, resource);
@@ -482,7 +499,7 @@ public class ResourceImportManager {
     }
 
     private boolean entryIsInterfaceType(final Entry<String, Object> entry) {
-        if (entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
+        if(entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
             if (entry.getValue() instanceof String) {
                 return true;
             }
@@ -493,8 +510,8 @@ public class ResourceImportManager {
 
     private boolean entryContainsImplementationForAKnownOperation(final Entry<String, Object> entry,
                                                                   final String interfaceType) {
-        if (entry.getValue() instanceof Map && ((Map<?, ?>) entry.getValue()).containsKey(IMPLEMENTATION)) {
-            if (isAKnownOperation(interfaceType, entry.getKey())) {
+        if (entry.getValue() instanceof Map && ((Map<?, ?>)entry.getValue()).containsKey(IMPLEMENTATION)) {
+            if (isAKnownOperation(interfaceType, entry.getKey())){
                 return true;
             }
             throw new ByActionStatusComponentException(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
@@ -832,8 +849,8 @@ public class ResourceImportManager {
                 log.debug("Couldn't check whether imported resource capability derives from its parent's capability");
                 throw new ByActionStatusComponentException(
                     componentsUtils.convertFromStorageResponse(capabilityTypeDerivedFrom
-                        .right()
-                        .value()));
+                    .right()
+                    .value()));
             }
             return capabilityTypeDerivedFrom.left().value();
         }
@@ -858,7 +875,7 @@ public class ResourceImportManager {
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES.getElementName())) {
                 capabilityDefinition.setValidSourceTypes(
                     (List<String>) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES
-                        .getElementName()));
+                    .getElementName()));
             }
             // ValidSourceTypes
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName())) {
@@ -1023,7 +1040,22 @@ public class ResourceImportManager {
         final Map<String, Object> mappedToscaTemplate = decodePayload(payloadData);
         final Either<String, ResultStatusEnum> findFirstToscaStringElement =
             ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
-        return findFirstToscaStringElement.left().value();
+        if (findFirstToscaStringElement.isLeft()) {
+            return findFirstToscaStringElement.left().value();
+        } else {
+            return null;
+        }
+    }
+
+    private Map<String, Object> getDataTypes(final String payloadData) {
+        final Map<String, Object> mappedToscaTemplate = decodePayload(payloadData);
+        final Either<Map<String, Object>, ResultStatusEnum> findFirstToscaStringElement =
+            ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.DATA_TYPES);
+        if (findFirstToscaStringElement.isLeft()) {
+            return findFirstToscaStringElement.left().value();
+        } else {
+            return Collections.EMPTY_MAP;
+        }
     }
 
     private void calculateResourceIsAbstract(Resource resource, List<CategoryDefinition> categories) {
@@ -1172,4 +1204,29 @@ public class ResourceImportManager {
         this.auditingManager = auditingManager;
     }
 
+    private List<DataTypeDefinition> extractDataTypeFromJson(final ResourceBusinessLogic resourceBusinessLogic,
+                                                             final Map<String, Object> foundElements) {
+        final List<DataTypeDefinition> dataTypeDefinitionList = new ArrayList<>();
+        if (MapUtils.isNotEmpty(foundElements)) {
+            final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypeCacheAll =
+                resourceBusinessLogic.dataTypeCache.getAll();
+            if (dataTypeCacheAll.isLeft()) {
+                for (final Entry<String, Object> attributeNameValue : foundElements.entrySet()) {
+                    final Object value = attributeNameValue.getValue();
+                    if (value instanceof Map) {
+                        final DataTypeDefinition dataTypeDefinition =
+                            createDataTypeDefinitionWithName(attributeNameValue);
+                        final DataTypeDefinition dataTypeDefinitionParent =
+                            dataTypeCacheAll.left().value().get(dataTypeDefinition.getDerivedFromName());
+                        dataTypeDefinition.setDerivedFrom(dataTypeDefinitionParent);
+
+                        dataTypeDefinitionList.add(dataTypeDefinition);
+                    } else {
+                        dataTypeDefinitionList.add(createDataType(String.valueOf(value)));
+                    }
+                }
+            }
+        }
+        return dataTypeDefinitionList;
+    }
 }

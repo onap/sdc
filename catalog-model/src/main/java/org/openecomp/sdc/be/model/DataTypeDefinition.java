@@ -20,13 +20,19 @@
 
 package org.openecomp.sdc.be.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.dao.utils.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class DataTypeDefinition extends DataTypeDataDefinition {
 
     private DataTypeDefinition derivedFrom;
@@ -34,10 +40,6 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
     private List<PropertyConstraint> constraints;
 
     private List<PropertyDefinition> properties;
-
-    public DataTypeDefinition() {
-        super();
-    }
 
     public DataTypeDefinition(DataTypeDataDefinition p) {
         super(p);
@@ -52,38 +54,8 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
         this.setDescription(pd.getDescription());
     }
 
-    public List<PropertyConstraint> getConstraints() {
-        return constraints;
-    }
-
     public List<PropertyConstraint> safeGetConstraints() {
         return CollectionUtils.safeGetList(constraints);
-    }
-
-    public void setConstraints(List<PropertyConstraint> constraints) {
-        this.constraints = constraints;
-    }
-
-    public DataTypeDefinition getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(DataTypeDefinition derivedFrom) {
-        this.derivedFrom = derivedFrom;
-    }
-
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " DataTypeDefinition [derivedFrom=" + derivedFrom + ", constraints=" + constraints
-                + ", properties=" + properties + "]";
     }
 
 }
