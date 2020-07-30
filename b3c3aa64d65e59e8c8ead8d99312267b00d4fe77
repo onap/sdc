@@ -16,6 +16,24 @@
       "revId": "b3c3aa64d65e59e8c8ead8d99312267b00d4fe77",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d473a6a0_07ec4645",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-07-30T10:46:22Z",
+      "side": 0,
+      "message": "Switched the implementation to use lombok, so seemed pointless",
+      "parentUuid": "289430e4_fc94751d",
+      "revId": "b3c3aa64d65e59e8c8ead8d99312267b00d4fe77",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
