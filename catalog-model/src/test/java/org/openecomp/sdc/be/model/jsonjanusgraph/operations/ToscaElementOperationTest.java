@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
+import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -31,20 +32,25 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.GraphTestUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.resources.data.EntryData;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -53,7 +59,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
-public class ToscaElementOperationTest extends ModelTestBase{
+public class ToscaElementOperationTest extends ModelTestBase {
 
     private List<GraphVertex> allVertices = new ArrayList<>();
     private boolean isInitialized = false;
@@ -65,7 +71,7 @@ public class ToscaElementOperationTest extends ModelTestBase{
     private JanusGraphDao janusGraphDao;
 
     @BeforeClass
-    public static void initTest(){
+    public static void initTest() {
         ModelTestBase.init();
 
     }
@@ -83,11 +89,11 @@ public class ToscaElementOperationTest extends ModelTestBase{
         }
     }
 
-
     @Test
     public void testGetAllHighestResourcesNoFilter() {
 
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.RESOURCE, null, true);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.RESOURCE, null, true);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -99,13 +105,11 @@ public class ToscaElementOperationTest extends ModelTestBase{
         }, null);
         assertEquals(highestResources.stream().count(), highestResourcesExpectedCount);
     }
-    
-   
-
 
     @Test
     public void testGetAllResourcesCertifiedNoFilter() {
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.RESOURCE, null, false);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.RESOURCE, null, false);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -140,7 +144,8 @@ public class ToscaElementOperationTest extends ModelTestBase{
         assertTrue(genericTestGetResourcesWithExcludeList(excludeList));
 
         // exclude CP & VL & VF & VFC
-        excludeList = Arrays.asList(ResourceTypeEnum.VL, ResourceTypeEnum.CP, ResourceTypeEnum.VF, ResourceTypeEnum.VFC);
+        excludeList = Arrays
+            .asList(ResourceTypeEnum.VL, ResourceTypeEnum.CP, ResourceTypeEnum.VF, ResourceTypeEnum.VFC);
         assertTrue(genericTestGetResourcesWithExcludeList(excludeList));
     }
 
@@ -155,13 +160,15 @@ public class ToscaElementOperationTest extends ModelTestBase{
         assertTrue(genericTestGetCertifiedResourcesWithExcludeList(excludeList));
 
         // exclude CP & VL & VF & VFC
-        excludeList = Arrays.asList(ResourceTypeEnum.VL, ResourceTypeEnum.CP, ResourceTypeEnum.VF, ResourceTypeEnum.VFC);
+        excludeList = Arrays
+            .asList(ResourceTypeEnum.VL, ResourceTypeEnum.CP, ResourceTypeEnum.VF, ResourceTypeEnum.VFC);
         assertTrue(genericTestGetCertifiedResourcesWithExcludeList(excludeList));
     }
 
     @Test
     public void testGetAllHighestServicesNoFilter() {
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.SERVICE, null, true);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.SERVICE, null, true);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -176,7 +183,8 @@ public class ToscaElementOperationTest extends ModelTestBase{
 
     @Test
     public void testGetAllCertifiedServicesNoFilter() {
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.SERVICE, null, false);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.SERVICE, null, false);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -202,7 +210,8 @@ public class ToscaElementOperationTest extends ModelTestBase{
     @Test
     public void testGetServicesExcludeList() {
         List<ResourceTypeEnum> excludeList = Arrays.asList(ResourceTypeEnum.VF, ResourceTypeEnum.VFCMT);
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.SERVICE, excludeList, true);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.SERVICE, excludeList, true);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -218,7 +227,8 @@ public class ToscaElementOperationTest extends ModelTestBase{
     @Test
     public void testGetCertifiedServicesExcludeList() {
         List<ResourceTypeEnum> excludeList = Arrays.asList(ResourceTypeEnum.VL);
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.SERVICE, excludeList, false);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.SERVICE, excludeList, false);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -253,8 +263,54 @@ public class ToscaElementOperationTest extends ModelTestBase{
         assertEquals(null, result);
     }
 
+    @Test
+    public void testCreateDataType() {
+        final String expected = "newDataType";
+        final DataTypeDefinition result = ToscaElementOperation.createDataType(expected);
+        assertNotNull(result);
+        assertEquals(expected, result.getName());
+    }
+
+    @Test
+    public void testCreateDataTypeDefinitionWithName() {
+        final String expected = "newDataType";
+        final String description = "DESCRIPTION";
+        final String derivedFromName = "DERIVED_FROM_NAME";
+        final String uniqueId = "UNIQUE_ID";
+
+        final Map<String, Object> attributeMap = new HashMap<>();
+        attributeMap.put(TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), description);
+        attributeMap.put(TypeUtils.ToscaTagNamesEnum.DERIVED_FROM_NAME.getElementName(), derivedFromName);
+
+        final Map<String, Object> derivedFromMap = new HashMap<>();
+        derivedFromMap.put(JsonPresentationFields.NAME.getPresentation(), derivedFromName);
+        derivedFromMap.put(JsonPresentationFields.UNIQUE_ID.getPresentation(), uniqueId);
+        final long creationTime = System.currentTimeMillis();
+        derivedFromMap.put(JsonPresentationFields.CREATION_TIME.getPresentation(), creationTime);
+        final long modificationTime = System.currentTimeMillis();
+        derivedFromMap.put(JsonPresentationFields.MODIFICATION_TIME.getPresentation(), modificationTime);
+
+        attributeMap.put(JsonPresentationFields.DERIVED_FROM.getPresentation(), derivedFromMap);
+
+        final Entry<String, Object> attributeNameValue = new EntryData<>(expected, attributeMap);
+        final DataTypeDefinition result = ToscaElementOperation.createDataTypeDefinitionWithName(attributeNameValue);
+
+        assertNotNull(result);
+        assertEquals(derivedFromName, result.getDerivedFromName());
+        assertEquals(description, result.getDescription());
+
+        final DataTypeDefinition resultDerivedFrom = result.getDerivedFrom();
+        assertNotNull(resultDerivedFrom);
+        assertEquals(derivedFromName, resultDerivedFrom.getName());
+        assertEquals(uniqueId, resultDerivedFrom.getUniqueId());
+        assertEquals(creationTime, resultDerivedFrom.getCreationTime().longValue());
+        assertEquals(modificationTime, resultDerivedFrom.getModificationTime().longValue());
+
+    }
+
     private boolean genericTestGetResourcesWithExcludeList(List<ResourceTypeEnum> excludeList) {
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.RESOURCE,excludeList, true);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.RESOURCE, excludeList, true);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -272,7 +328,8 @@ public class ToscaElementOperationTest extends ModelTestBase{
     }
 
     private boolean genericTestGetCertifiedResourcesWithExcludeList(List<ResourceTypeEnum> excludeList) {
-        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation.getElementCatalogData(ComponentTypeEnum.RESOURCE, excludeList, false);
+        Either<List<ToscaElement>, StorageOperationStatus> highestResourcesRes = toscaElementOperation
+            .getElementCatalogData(ComponentTypeEnum.RESOURCE, excludeList, false);
         assertTrue(highestResourcesRes.isLeft());
         List<ToscaElement> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -313,34 +370,41 @@ public class ToscaElementOperationTest extends ModelTestBase{
             {
                 put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
                 put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-        }
+            }
         };
 
         // add vertices with higestVersion = true
         allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, highstVerticesProps, ResourceTypeEnum.VF));
         allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, highstVerticesProps, ResourceTypeEnum.VFC));
-        allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, highstVerticesProps, ResourceTypeEnum.VFCMT));
+        allVertices
+            .add(GraphTestUtils.createResourceVertex(janusGraphDao, highstVerticesProps, ResourceTypeEnum.VFCMT));
         allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, highstVerticesProps, ResourceTypeEnum.VL));
         allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, highstVerticesProps, ResourceTypeEnum.CP));
         allVertices.add(GraphTestUtils.createServiceVertex(janusGraphDao, highstVerticesProps));
 
         // add vertices with non-additional properties
-        for (int i=0 ; i<2 ; i++) {
+        for (int i = 0; i < 2; i++) {
             allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VF));
             allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VFC));
-            allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VFCMT));
+            allVertices
+                .add(GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VFCMT));
             allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VL));
             allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.CP));
             allVertices.add(GraphTestUtils.createServiceVertex(janusGraphDao, new HashMap<>()));
         }
 
         // add certified vertices
-        for (int i=0; i<3; i++) {
-            allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VF));
-            allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VFC));
-            allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VFCMT));
-            allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VL));
-            allVertices.add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.CP));
+        for (int i = 0; i < 3; i++) {
+            allVertices
+                .add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VF));
+            allVertices
+                .add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VFC));
+            allVertices.add(
+                GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VFCMT));
+            allVertices
+                .add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.VL));
+            allVertices
+                .add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.CP));
             allVertices.add(GraphTestUtils.createServiceVertex(janusGraphDao, certifiedVerticesProps));
         }
         //allVertices.stream().forEach( v -> System.out.println("type: "+v.getMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE)));
@@ -348,36 +412,36 @@ public class ToscaElementOperationTest extends ModelTestBase{
         //System.out.println("graph is: " + result);
     }
 
-    private long calculateCount(HashMap<GraphPropertyEnum, Object> hasProps, Map<GraphPropertyEnum, Object> doesntHaveProps){
+    private long calculateCount(HashMap<GraphPropertyEnum, Object> hasProps,
+                                Map<GraphPropertyEnum, Object> doesntHaveProps) {
         return allVertices.stream().
-                filter(v -> {
-                    Map<GraphPropertyEnum, Object> vertexProps = v.getMetadataProperties();
-                    if (hasProps != null) {
-                        for (Map.Entry<GraphPropertyEnum, Object> prop: hasProps.entrySet()){
-                            Object value = vertexProps.get(prop.getKey());
-                            if ( value == null || !value.equals(prop.getValue())) {
-                                return false;
-                            }
+            filter(v -> {
+                Map<GraphPropertyEnum, Object> vertexProps = v.getMetadataProperties();
+                if (hasProps != null) {
+                    for (Map.Entry<GraphPropertyEnum, Object> prop : hasProps.entrySet()) {
+                        Object value = vertexProps.get(prop.getKey());
+                        if (value == null || !value.equals(prop.getValue())) {
+                            return false;
                         }
                     }
+                }
 
-                    if (doesntHaveProps != null) {
-                        for (Map.Entry<GraphPropertyEnum, Object> prop : doesntHaveProps.entrySet()) {
-                            Object value = vertexProps.get(prop.getKey());
-                            Object propValue = prop.getValue();
-                            if ( value != null && propValue != null && propValue instanceof List ) {
-                                for (ResourceTypeEnum propVal : (List<ResourceTypeEnum>)propValue) {
-                                    if (propVal.name().equals(value)) {
-                                        return false;
-                                    }
+                if (doesntHaveProps != null) {
+                    for (Map.Entry<GraphPropertyEnum, Object> prop : doesntHaveProps.entrySet()) {
+                        Object value = vertexProps.get(prop.getKey());
+                        Object propValue = prop.getValue();
+                        if (value != null && propValue != null && propValue instanceof List) {
+                            for (ResourceTypeEnum propVal : (List<ResourceTypeEnum>) propValue) {
+                                if (propVal.name().equals(value)) {
+                                    return false;
                                 }
                             }
-                            else if (value != null && value.equals(propValue)){
-                                return false;
-                            }
+                        } else if (value != null && value.equals(propValue)) {
+                            return false;
                         }
                     }
-                    return true;
-                }).count();
+                }
+                return true;
+            }).count();
     }
 }

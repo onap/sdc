@@ -4015,22 +4015,25 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 			newResource.setAbstract(oldResource.isAbstract());
 
-			if (CollectionUtils.isEmpty(newResource.getDerivedFrom())) {
+			if (CollectionUtils.isEmpty(newResource.getDerivedFrom())){
 				newResource.setDerivedFrom(oldResource.getDerivedFrom());
 			}
-			if (StringUtils.isEmpty(newResource.getDerivedFromGenericType())) {
+			if (CollectionUtils.isEmpty(newResource.getDataTypes())){
+				newResource.setDataTypes(oldResource.getDataTypes());
+			}
+			if (StringUtils.isEmpty(newResource.getDerivedFromGenericType())){
 				newResource.setDerivedFromGenericType(oldResource.getDerivedFromGenericType());
 			}
-			if (StringUtils.isEmpty(newResource.getDerivedFromGenericVersion())) {
+			if (StringUtils.isEmpty(newResource.getDerivedFromGenericVersion())){
 				newResource.setDerivedFromGenericVersion(oldResource.getDerivedFromGenericVersion());
 			}
 			// add for new)
 			// created without tosca artifacts - add the placeholders
-			if (MapUtils.isEmpty(newResource.getToscaArtifacts())) {
+			if (MapUtils.isEmpty(newResource.getToscaArtifacts())){
 				setToscaArtifactsPlaceHolders(newResource, user);
 			}
 
-			if (MapUtils.isEmpty(newResource.getInterfaces())) {
+			if (MapUtils.isEmpty(newResource.getInterfaces())){
 				newResource.setInterfaces(oldResource.getInterfaces());
 			}
 			if (CollectionUtils.isEmpty(newResource.getAttributes())) {

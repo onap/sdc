@@ -28,6 +28,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
@@ -56,6 +57,7 @@ public abstract class ToscaElement {
     private Map<String, ListCapabilityDataDefinition> capabilities;
     private Map<String, MapPropertiesDataDefinition> capabilitiesProperties;
     private Map<String, ListRequirementDataDefinition> requirements;
+    private Map<String, DataTypeDataDefinition> dataTypes;
     // User
     private String creatorUserId;
     private String creatorFullName;

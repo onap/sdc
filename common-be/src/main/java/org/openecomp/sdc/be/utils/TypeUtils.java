@@ -21,6 +21,8 @@ package org.openecomp.sdc.be.utils;
 
 import java.util.Map;
 import java.util.function.Consumer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 public class TypeUtils {
 
@@ -38,6 +40,8 @@ public class TypeUtils {
         return FIRST_CERTIFIED_VERSION_VERSION;
     }
 
+    @Getter
+    @AllArgsConstructor
     public enum ToscaTagNamesEnum {
         DERIVED_FROM("derived_from"), IS_PASSWORD("is_password"),
         // Properties
@@ -64,17 +68,11 @@ public class TypeUtils {
         //functions
         GET_INPUT("get_input"),
         // Definitions
-        DATA_TYPES("data_types"), NODE_TYPES("node_types"), IMPORTS("imports");
+        DATA_TYPES("data_types"), NODE_TYPES("node_types"), IMPORTS("imports"),
+
+        DERIVED_FROM_NAME("derivedFromName");
 
         private final String elementName;
-
-        ToscaTagNamesEnum(final String elementName) {
-            this.elementName = elementName;
-        }
-
-        public String getElementName() {
-            return elementName;
-        }
 
     }
 }
