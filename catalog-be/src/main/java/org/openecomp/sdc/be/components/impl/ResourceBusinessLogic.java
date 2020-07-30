@@ -4008,26 +4008,25 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 			newResource.setAbstract(oldResource.isAbstract());
 
-			if (newResource.getDerivedFrom() == null || newResource.getDerivedFrom()
-					.isEmpty()) {
+			if (CollectionUtils.isEmpty(newResource.getDerivedFrom())){
 				newResource.setDerivedFrom(oldResource.getDerivedFrom());
 			}
-			if (newResource.getDerivedFromGenericType() == null || newResource.getDerivedFromGenericType()
-					.isEmpty()) {
+			if (CollectionUtils.isEmpty(newResource.getDataTypes())){
+				newResource.setDataTypes(oldResource.getDataTypes());
+			}
+			if (StringUtils.isEmpty(newResource.getDerivedFromGenericType())){
 				newResource.setDerivedFromGenericType(oldResource.getDerivedFromGenericType());
 			}
-			if (newResource.getDerivedFromGenericVersion() == null || newResource.getDerivedFromGenericVersion()
-					.isEmpty()) {
+			if (StringUtils.isEmpty(newResource.getDerivedFromGenericVersion())){
 				newResource.setDerivedFromGenericVersion(oldResource.getDerivedFromGenericVersion());
 			}
 			// add for new)
 			// created without tosca artifacts - add the placeholders
-			if (newResource.getToscaArtifacts() == null || newResource.getToscaArtifacts()
-					.isEmpty()) {
+			if (MapUtils.isEmpty(newResource.getToscaArtifacts())){
 				setToscaArtifactsPlaceHolders(newResource, user);
 			}
 
-			if (newResource.getInterfaces() == null || newResource.getInterfaces().isEmpty()) {
+			if (MapUtils.isEmpty(newResource.getInterfaces())){
 				newResource.setInterfaces(oldResource.getInterfaces());
 			}
 
