@@ -20,11 +20,13 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.openecomp.sdc.be.utils.TypeUtils.setField;
+
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -43,6 +45,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -51,6 +54,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -62,6 +66,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
@@ -167,7 +172,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         if (createNextVersionRes.isRight()) {
             status = createNextVersionRes.right().value();
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create tosca element vertex {} with version {} on graph. Status is {}. ", previousToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME),
-                    previousToscaElement.getMetadataProperty(GraphPropertyEnum.VERSION), status);
+                previousToscaElement.getMetadataProperty(GraphPropertyEnum.VERSION), status);
             result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         if (result == null) {
@@ -178,7 +183,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 .createEdge(user.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.STATE, properties);
             if (status != JanusGraphOperationStatus.OK) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.STATE, user.getUniqueId(),
-                        previousToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
+                    previousToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
@@ -187,26 +192,26 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 .createEdge(user.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.LAST_MODIFIER, new HashMap<>());
             if (status != JanusGraphOperationStatus.OK) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.LAST_MODIFIER, user.getUniqueId(),
-                        nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
+                    nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
         if (result == null) {
             Either<GraphVertex, JanusGraphOperationStatus> creatorVertexRes = janusGraphDao.getParentVertex(previousToscaElement,
-                    EdgeLabelEnum.CREATOR, JsonParseFlagEnum.NoParse);
+                EdgeLabelEnum.CREATOR, JsonParseFlagEnum.NoParse);
             if (creatorVertexRes.isRight()) {
                 status = creatorVertexRes.right().value();
                 CommonUtility.addRecordToLog(log,
-                        LogLevelEnum.DEBUG, FAILED_TO_GET_CREATOR_VERTEX_OF_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS,
-                        EdgeLabelEnum.CREATOR,
-                        nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
+                    LogLevelEnum.DEBUG, FAILED_TO_GET_CREATOR_VERTEX_OF_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS,
+                    EdgeLabelEnum.CREATOR,
+                    nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
             status = janusGraphDao.createEdge(creatorVertexRes.left().value().getVertex(), createdToscaElementVertex.getVertex(),
-                    EdgeLabelEnum.CREATOR, new HashMap<>());
+                EdgeLabelEnum.CREATOR, new HashMap<>());
             if (status != JanusGraphOperationStatus.OK) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.CREATOR, user.getUniqueId(),
-                        nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
+                    nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
@@ -219,7 +224,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
                     .createEdge(createdToscaElementVertex.getVertex(), currVertex, EdgeLabelEnum.getEdgeLabelEnum(currEdge.label()), currEdge);
                 if (status != JanusGraphOperationStatus.OK) {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create edge with label {} from tosca element vertex {} to vertex with label {} on graph. Status is {}. ", currEdge.label(), createdToscaElementVertex.getUniqueId(),
-                            currVertex.property(GraphPropertyEnum.LABEL.getProperty()), status);
+                        currVertex.property(GraphPropertyEnum.LABEL.getProperty()), status);
                     result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                     break;
                 }
@@ -326,6 +331,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
         final String toscaVersion = toscaElement.getToscaVersion();
         if (toscaVersion != null) {
             nodeTypeVertex.setJsonMetadataField(JsonPresentationFields.TOSCA_DEFINITIONS_VERSION, toscaVersion);
+        }
+        final Map<String, DataTypeDataDefinition> dataTypes = toscaElement.getDataTypes();
+        if (MapUtils.isNotEmpty(dataTypes)) {
+            nodeTypeVertex.setJsonMetadataField(JsonPresentationFields.DATA_TYPES, dataTypes);
         }
     }
 
@@ -738,12 +747,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
         Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = janusGraphDao.getChildrenVertices(userV, EdgeLabelEnum.STATE, JsonParseFlagEnum.NoParse);
         if (childrenVertecies.isRight() && childrenVertecies.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
             log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.STATE, childrenVertecies.right().value());
-                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenVertecies.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenVertecies.right().value()));
         }
 
         // get all resource with current state
         if (childrenVertecies.isLeft()) {
-                componentsPerUser = fetchComponents(userId, lifecycleStates, childrenVertecies.left().value(), neededType, EdgeLabelEnum.STATE);
+            componentsPerUser = fetchComponents(userId, lifecycleStates, childrenVertecies.left().value(), neededType, EdgeLabelEnum.STATE);
 
             if (componentsPerUser != null) {
                 for (T comp : componentsPerUser) {
@@ -932,9 +941,58 @@ public abstract class ToscaElementOperation extends BaseOperation {
                 if (toscaVersion != null) {
                     toscaElement.setToscaVersion((String) toscaVersion);
                 }
+                final Object dataTypes = jsonMetada.get(ToscaTagNamesEnum.DATA_TYPES.getElementName());
+                if (dataTypes != null) {
+                    final Map<String, DataTypeDataDefinition> dataTypeDefinitionMap = new HashMap<>();
+
+                    final Map<String, Object> toscaAttributes = (Map<String, Object>) dataTypes;
+
+                    for (final Entry<String, Object> attributeNameValue : toscaAttributes.entrySet()) {
+                        final Object value = attributeNameValue.getValue();
+                        final String key = attributeNameValue.getKey();
+                        if (value instanceof Map) {
+                            final DataTypeDefinition dataTypeDefinition =
+                                createDataTypeDefinitionWithName(attributeNameValue);
+                            dataTypeDefinitionMap.put(dataTypeDefinition.getName(), dataTypeDefinition);
+                        } else {
+                            dataTypeDefinitionMap.put(key, createDataType(String.valueOf(value)));
+                        }
+                    }
+                    toscaElement.setDataTypes(dataTypeDefinitionMap);
+                }
             }
         }
         return (T) toscaElement;
+    }
+
+    public static DataTypeDefinition createDataType(final String dataTypeName) {
+        final DataTypeDefinition dataType = new DataTypeDefinition();
+        dataType.setName(dataTypeName);
+        return dataType;
+    }
+
+    public static DataTypeDefinition createDataTypeDefinitionWithName(final Entry<String, Object> attributeNameValue) {
+        final Map<String, Object> attributeMap = (Map<String, Object>) attributeNameValue.getValue();
+        final DataTypeDefinition dataType = createDataType(attributeNameValue.getKey());
+        setField(attributeMap, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, dataType::setDescription);
+        setField(attributeMap, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM_NAME, dataType::setDerivedFromName);
+        // TODO - find the way to set the properties
+//        CommonImportManager.setProperties(attributeMap, dataType::setProperties);
+        final Object derivedFrom = attributeMap.get(JsonPresentationFields.DERIVED_FROM.getPresentation());
+        if (derivedFrom instanceof Map) {
+            final Map<String, Object> derivedFromMap = (Map<String, Object>) derivedFrom;
+            final DataTypeDefinition parentDataTypeDataDefinition = new DataTypeDefinition();
+            parentDataTypeDataDefinition
+                .setName((String) derivedFromMap.get(JsonPresentationFields.NAME.getPresentation()));
+            parentDataTypeDataDefinition
+                .setUniqueId((String) derivedFromMap.get(JsonPresentationFields.UNIQUE_ID.getPresentation()));
+            parentDataTypeDataDefinition
+                .setCreationTime((Long) derivedFromMap.get(JsonPresentationFields.CREATION_TIME.getPresentation()));
+            parentDataTypeDataDefinition.setModificationTime(
+                (Long) derivedFromMap.get(JsonPresentationFields.MODIFICATION_TIME.getPresentation()));
+            dataType.setDerivedFrom(parentDataTypeDataDefinition);
+        }
+        return dataType;
     }
 
     private Map<String, AttributeDataDefinition> getAttributesFromComponentV(final GraphVertex componentV) {
@@ -1184,7 +1242,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     private void generateNewToscaFileName(String componentType, String componentName, ArtifactDataDefinition artifactInfo) {
         Map<String, Object> getConfig = (Map<String, Object>) ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts().entrySet().stream().filter(p -> p.getKey().equalsIgnoreCase(artifactInfo.getArtifactLabel()))
-                .findAny().get().getValue();
+            .findAny().get().getValue();
         artifactInfo.setArtifactName(componentType + "-" + componentName + getConfig.get("artifactName"));
     }
 
@@ -1354,7 +1412,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getListOfHighestComponents(ComponentTypeEnum
-                                                                                              componentType, List<ResourceTypeEnum> excludeTypes, JsonParseFlagEnum parseFlag) {
+                                                                                               componentType, List<ResourceTypeEnum> excludeTypes, JsonParseFlagEnum parseFlag) {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         Map<GraphPropertyEnum, Object> propertiesHasNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
@@ -1412,7 +1470,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     protected Either<List<GraphVertex>, StorageOperationStatus> getAllComponentsMarkedForDeletion(ComponentTypeEnum
-                                                                                                          componentType) {
+                                                                                                      componentType) {
 
         // get all components marked for delete
         Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
@@ -1436,7 +1494,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     protected JanusGraphOperationStatus setAdditionalInformationFromGraph(GraphVertex componentV, ToscaElement
-            toscaElement) {
+        toscaElement) {
         Either<Map<String, AdditionalInfoParameterDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.ADDITIONAL_INFORMATION);
         if (result.isLeft()) {
             toscaElement.setAdditionalInformation(result.left().value());
@@ -1450,16 +1508,16 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     // --------------------------------------------
     public abstract <T extends
-            ToscaElement> Either<T, StorageOperationStatus> getToscaElement(String uniqueId, ComponentParametersView componentParametersView);
+        ToscaElement> Either<T, StorageOperationStatus> getToscaElement(String uniqueId, ComponentParametersView componentParametersView);
 
     public abstract <T extends
-            ToscaElement> Either<T, StorageOperationStatus> getToscaElement(GraphVertex toscaElementVertex, ComponentParametersView componentParametersView);
+        ToscaElement> Either<T, StorageOperationStatus> getToscaElement(GraphVertex toscaElementVertex, ComponentParametersView componentParametersView);
 
     public abstract <T extends
-            ToscaElement> Either<T, StorageOperationStatus> deleteToscaElement(GraphVertex toscaElementVertex);
+        ToscaElement> Either<T, StorageOperationStatus> deleteToscaElement(GraphVertex toscaElementVertex);
 
     public abstract <T extends
-            ToscaElement> Either<T, StorageOperationStatus> createToscaElement(ToscaElement toscaElement);
+        ToscaElement> Either<T, StorageOperationStatus> createToscaElement(ToscaElement toscaElement);
 
     protected abstract <T extends ToscaElement> JanusGraphOperationStatus
     setCategoriesFromGraph(GraphVertex vertexComponent, T toscaElement);
@@ -1477,6 +1535,6 @@ public abstract class ToscaElementOperation extends BaseOperation {
     updateDerived(T toscaElementToUpdate, GraphVertex updateElementV);
 
     public abstract <T extends ToscaElement> void fillToscaElementVertexData(GraphVertex elementV, T
-            toscaElementToUpdate, JsonParseFlagEnum flag);
+        toscaElementToUpdate, JsonParseFlagEnum flag);
 
 }
