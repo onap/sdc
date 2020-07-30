@@ -13,6 +13,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="checkbox-label-mark-as-external"
+                         *ngIf="isInstanceSelected">
+                        <checkbox
+                                class="checkbox-label"
+                                data-tests-id="checkbox-mark-as-external"
+                                [label]="'External'"
+                                (checkedChange)="onMarkAsExternal(requirement)"
+                                [(checked)]="requirement.external"
+                                [disabled]="isViewOnly">
+                        </checkbox>
+                    </div>
                 </div>
             </div>
         </div>

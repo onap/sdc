@@ -868,8 +868,10 @@ public class NodeTemplateOperation extends BaseOperation {
             calculatedRequirements.forEach((key, value) -> {
                 Map<String, ListRequirementDataDefinition> mapByType =
                         value.getMapToscaDataDefinition();
-                mapByType.forEach((key1, value1) -> value1.getListToscaDataDefinition().forEach(req -> {
+                mapByType.forEach((key1, value1) -> value1.getListToscaDataDefinition().stream()
+                        .filter(RequirementDataDefinition::isExternal).forEach(req -> {
                     req.addToPath(componentInstance.getUniqueId());
+                    req.setExternal(false);
                     allCalculatedReq.add(key1, req);
                 }));
             });
@@ -938,6 +940,72 @@ public class NodeTemplateOperation extends BaseOperation {
         }
         return StorageOperationStatus.OK;
     }
+    
+    public StorageOperationStatus updateComponentInstanceRequirement(String componentId, String componentInstanceUniqueId, RequirementDataDefinition requirementDataDefinition) {
+        Either<GraphVertex, JanusGraphOperationStatus> containerVEither = janusGraphDao
+                .getVertexById(componentId, JsonParseFlagEnum.ParseAll);
+        if (containerVEither.isRight()) {
+            JanusGraphOperationStatus error = containerVEither.right().value();
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_FETCH_CONTAINER_VERTEX_ERROR, componentId, error);
+            return StorageOperationStatus.GENERAL_ERROR;
+        }
+        GraphVertex containerV = containerVEither.left().value();
+        return updateComponentInstanceRequirement(componentId, componentInstanceUniqueId, requirementDataDefinition, containerV);
+    }
+
+    private StorageOperationStatus updateComponentInstanceRequirement(String componentId, String componentInstanceUniqueId, RequirementDataDefinition requirementDataDefinition, GraphVertex containerV) {
+        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> existingReqs = getCalculatedRequirements(componentId);
+        if (existingReqs.isRight()) {
+            return existingReqs.right().value();
+        }
+        MapListRequirementDataDefinition componentInstanceRequirementsMap = existingReqs.left().value().getRight().get(componentInstanceUniqueId);
+        if (componentInstanceRequirementsMap == null) {
+            return StorageOperationStatus.NOT_FOUND;
+        }
+        ListRequirementDataDefinition listRequirementDataDefinition = componentInstanceRequirementsMap.getMapToscaDataDefinition().get(requirementDataDefinition.getCapability());
+            
+        listRequirementDataDefinition.getListToscaDataDefinition().stream()
+                .filter(e -> requirementDataDefinition.getOwnerId().equals(e.getOwnerId()) && requirementDataDefinition.getName().equals(e.getName()))
+                .forEach(r -> r.setExternal(requirementDataDefinition.isExternal()));
+
+        return updateCalculatedReqOnGraph(componentId, containerV, existingReqs);
+    }
+    
+    private Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> getCalculatedRequirements(String componentId) {
+        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> result = null;
+        Either<GraphVertex, JanusGraphOperationStatus> containerVEither = janusGraphDao
+            .getVertexById(componentId, JsonParseFlagEnum.ParseAll);
+        if (containerVEither.isRight()) {
+            JanusGraphOperationStatus error = containerVEither.right().value();
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_FETCH_CONTAINER_VERTEX_ERROR, componentId, error);
+            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error));
+        }
+        if (result == null) {
+            GraphVertex containerV = containerVEither.left().value();
+            result = fetchContainerCalculatedRequirement(containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
+        }
+        return result;
+    }
+    
+    private StorageOperationStatus updateCalculatedReqOnGraph(String componentId, GraphVertex containerV, Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult
+            ) {
+        containerV.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
+        Either<GraphVertex, JanusGraphOperationStatus> updateElement = janusGraphDao.updateVertex(containerV);
+        if (updateElement.isRight()) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update topology template {} with new relations error {}. ", componentId, updateElement.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateElement.right().value());
+        }
+
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Update calculated requirement for container {}", containerV.getUniqueId());
+        Either<GraphVertex, JanusGraphOperationStatus> status = updateOrCopyOnUpdate(reqResult.left().value().getLeft(), containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
+        if (status.isRight()) {
+            JanusGraphOperationStatus error = status.right().value();
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update calculated requiremnt for container {} error {}", containerV.getUniqueId(), error);
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error);
+        }
+        return StorageOperationStatus.OK;
+    }
+    
     private StorageOperationStatus addComponentInstanceToscaDataToNodeTypeContainer(NodeType originNodeType,
             ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex) {
 

@@ -2577,6 +2577,10 @@ public class ToscaOperationFacade {
                 .map(instanceCapProps -> topologyTemplateOperation.updateComponentInstanceCapabilityProperties(containerComponent, componentInstanceUniqueId, instanceCapProps))
                 .orElse(StorageOperationStatus.NOT_FOUND);
     }
+    
+    public StorageOperationStatus updateComponentInstanceRequirement(String containerComponentId, String componentInstanceUniqueId, RequirementDataDefinition requirementDataDefinition) {
+        return nodeTemplateOperation.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
+    }
 
     public StorageOperationStatus updateComponentInstanceInterfaces(Component containerComponent, String componentInstanceUniqueId) {
         MapInterfaceDataDefinition mapInterfaceDataDefinition =

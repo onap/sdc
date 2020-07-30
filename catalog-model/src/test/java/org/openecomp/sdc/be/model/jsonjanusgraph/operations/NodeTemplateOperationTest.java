@@ -32,6 +32,10 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 import com.google.common.collect.Lists;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraphVertex;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,9 +50,9 @@ import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -56,6 +60,7 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -285,6 +290,51 @@ public class NodeTemplateOperationTest extends ModelTestBase {
 
 		result = operation.generateCustomizationUUIDOnInstanceGroup(componentId, instanceId, groupInstances);
 		Assert.assertEquals(StorageOperationStatus.OK, result);
+	}
+	
+	@Test
+	public void testUpdateComponentInstanceRequirement() {
+        String componentId = "";
+        String componentInstanceId = "requirementOwnerId";
+        
+        GraphVertex graphVertex = new GraphVertex();
+        graphVertex.setUniqueId("uniqueId");
+        when(janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+        when(janusGraphDao.updateVertex(graphVertex)).thenReturn(Either.left(graphVertex));
+        
+        MapListRequirementDataDefinition mapListRequirementDataDefinition = new MapListRequirementDataDefinition();
+        mapListRequirementDataDefinition.add(requirement.getCapability(), requirement);
+        Map<String, MapListRequirementDataDefinition> mapOfRequirements = new HashMap<>();
+        mapOfRequirements.put(requirement.getOwnerId(), mapListRequirementDataDefinition);
+        GraphVertex childVertex = new GraphVertex();
+        childVertex.setJson(mapOfRequirements);
+        when(janusGraphDao.getChildVertex(graphVertex, EdgeLabelEnum.CALCULATED_REQUIREMENTS, JsonParseFlagEnum.ParseJson)).thenReturn(Either.left(childVertex));
+        
+        JanusGraphVertex outVertex = Mockito.mock(JanusGraphVertex.class);
+        Edge edge = Mockito.mock(Edge.class);
+        when(edge.outVertex()).thenReturn(outVertex);
+        Iterator<Edge> edgeIterator = new Iterator<Edge>() {
+            private int counter = 0;
+            @Override
+            public boolean hasNext() {
+                return counter++ < 1;
+            }
+
+            @Override
+            public Edge next() {
+                return edge;
+            }
+        };
+        String outId = (String) janusGraphDao
+                .getProperty((JanusGraphVertex) outVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
+        when(janusGraphDao.getProperty(outVertex, GraphPropertyEnum.UNIQUE_ID.getProperty())).thenReturn("uniqueId");
+        when(janusGraphDao.updateVertex(childVertex)).thenReturn(Either.left(childVertex));
+        JanusGraphVertex janusGraphVertex = Mockito.mock(JanusGraphVertex.class);
+        childVertex.setVertex(janusGraphVertex);
+        when(janusGraphVertex.edges(Direction.IN, EdgeLabelEnum.CALCULATED_REQUIREMENTS.name())).thenReturn(edgeIterator);
+                
+	    StorageOperationStatus result = operation.updateComponentInstanceRequirement(componentId, componentInstanceId, requirement);
+	    assertEquals(StorageOperationStatus.OK, result);
 	}
 
     private ComponentInstance createCompInstance() {

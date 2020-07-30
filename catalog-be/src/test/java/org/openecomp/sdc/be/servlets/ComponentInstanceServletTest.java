@@ -39,6 +39,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.Path;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -66,6 +67,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -432,5 +434,38 @@ public class ComponentInstanceServletTest extends JerseyTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header("USER_ID", USER_ID).post(Entity.entity(inputs, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND_404);
+    }
+    
+    @Test
+    public void testUpdateInstanceRequirement(){
+
+        String containerComponentType = "services";
+        String componentId = "componentId";
+        String componentInstanceId = "componentInstanceIdInstanceId";
+        String capabilityType = "capabilityType";
+        String requirementName = "requirementName";
+        RequirementDefinition requirementDefinition = new RequirementDefinition();
+        ObjectMapper mapper = new ObjectMapper();
+        String requirementJson = null;
+        try {
+            requirementJson = mapper.writeValueAsString(requirementDefinition);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/componentInstances/" +
+                componentInstanceId + "/requirement/" + capabilityType + "/requirementName/" + requirementName;
+        when(componentsUtils.convertJsonToObjectUsingObjectMapper(eq(requirementJson), any(User.class), eq(RequirementDefinition.class),
+                eq(AuditingActionEnum.GET_TOSCA_MODEL), eq(ComponentTypeEnum.SERVICE))).thenReturn(Either.left(requirementDefinition));
+        when(componentInstanceBusinessLogic.updateInstanceRequirement(ComponentTypeEnum.SERVICE,
+                componentId, componentInstanceId, capabilityType, requirementName, requirementDefinition, USER_ID))
+                .thenReturn(Either.left(requirementDefinition));
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+
+        Response response = target()
+                .path(path)
+                .request(MediaType.APPLICATION_JSON)
+                .header("USER_ID", USER_ID).put(Entity.entity(requirementDefinition, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
 }
