@@ -258,6 +258,7 @@ public class ModelConverter {
             convertCapabilities(nodeType, resource);
             convertRequirements(nodeType, resource);
             convertInterfaces(nodeType, resource);
+            convertDataTypes(nodeType, resource);
 
 		} else {
 			TopologyTemplate topologyTemplate = (TopologyTemplate) toscaElement;
@@ -810,6 +811,11 @@ public class ModelConverter {
         if (toscaVersion != null) {
             nodeType.setToscaVersion(toscaVersion);
         }
+        final List<DataTypeDefinition> dataTypes = resource.getDataTypes();
+        if (CollectionUtils.isNotEmpty(dataTypes)) {
+            nodeType.setDataTypes(dataTypes.stream()
+                .collect(Collectors.toMap(DataTypeDefinition::getName, dataTypeDefinition -> dataTypeDefinition)));
+        }
         convertCommonToscaData(component, nodeType);
         convertAdditionalInformation(component, nodeType);
         convertArtifacts(resource, nodeType);
@@ -1255,23 +1261,24 @@ public class ModelConverter {
 		}
 	}
 
-    private static void convertDataTypes(TopologyTemplate topologyTemplate, Component component) {
-        Map<String, DataTypeDataDefinition> dataTypeDataMap = topologyTemplate.getDataTypes();
+    private static void convertDataTypes(final ToscaElement toscaElement, final Component component) {
+        final Map<String, DataTypeDataDefinition> dataTypeDataMap = toscaElement.getDataTypes();
         if (MapUtils.isNotEmpty(dataTypeDataMap)) {
-            List<DataTypeDefinition> dataTypeMap = dataTypeDataMap.values().stream().map(e -> {
-                DataTypeDefinition dataType = new DataTypeDefinition(e);
+            final List<DataTypeDefinition> dataTypeDefinitionList =
+                dataTypeDataMap.values().stream().map(dataTypeDataDefinition -> {
+                    final DataTypeDefinition dataTypeDefinition = new DataTypeDefinition(dataTypeDataDefinition);
 
-                if(CollectionUtils.isNotEmpty(e.getPropertiesData())) {
-                    log.debug("#convertDataTypes - propertiesData is not null. {}",
-                            ReflectionToStringBuilder.toString(e.getPropertiesData()));
-                    dataType.setProperties(e.getPropertiesData().stream()
+                    if (CollectionUtils.isNotEmpty(dataTypeDataDefinition.getPropertiesData())) {
+                        log.debug("#convertDataTypes - propertiesData is not null. {}",
+                            ReflectionToStringBuilder.toString(dataTypeDataDefinition.getPropertiesData()));
+                        dataTypeDefinition.setProperties(dataTypeDataDefinition.getPropertiesData().stream()
                             .map(PropertyDefinition::new).collect(Collectors.toList()));
-                } else {
-                    log.debug("#convertDataTypes - propertiesData is null. ignore.");
-                }
-                return dataType;
-            }).collect(Collectors.toList());
-            component.setDataTypes(dataTypeMap);
+                    } else {
+                        log.debug("#convertDataTypes - propertiesData is null. ignore.");
+                    }
+                    return dataTypeDefinition;
+                }).collect(Collectors.toList());
+            component.setDataTypes(dataTypeDefinitionList);
         }
     }
 
@@ -1338,10 +1345,12 @@ public class ModelConverter {
         toscaElement.setMetadataValue(JsonPresentationFields.TAGS, component.getTags());
         toscaElement.setMetadataValue(JsonPresentationFields.INVARIANT_UUID, component.getInvariantUUID());
         toscaElement.setMetadataValue(JsonPresentationFields.CONTACT_ID, component.getContactId());
+        final List<DataTypeDefinition> dataTypes = component.getDataTypes();
+        if (CollectionUtils.isNotEmpty(dataTypes)) {
+            toscaElement.setDataTypes(dataTypes.stream()
+                .collect(Collectors.toMap(DataTypeDefinition::getName, dataTypeDefinition -> dataTypeDefinition)));
+        }
     }
-
-
-
 
     private static void setComponentInstancesToComponent(TopologyTemplate topologyTemplate, Component component) {
 
