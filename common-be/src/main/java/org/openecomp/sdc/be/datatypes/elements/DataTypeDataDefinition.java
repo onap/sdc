@@ -20,10 +20,18 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class DataTypeDataDefinition extends ToscaDataDefinition {
 
     private String name;
@@ -47,10 +55,6 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
 
     private List<PropertyDataDefinition> propertiesData;
 
-    public DataTypeDataDefinition() {
-
-    }
-
     public DataTypeDataDefinition(DataTypeDataDefinition p) {
         this.name = p.name;
         this.uniqueId = p.uniqueId;
@@ -60,67 +64,5 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
         this.modificationTime = p.modificationTime;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDerivedFromName() {
-        return derivedFromName;
-    }
-
-    public void setDerivedFromName(String derivedFromName) {
-        this.derivedFromName = derivedFromName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public Long getCreationTime() {
-        return creationTime;
-    }
-
-    public void setCreationTime(Long creationTime) {
-        this.creationTime = creationTime;
-    }
-
-    public Long getModificationTime() {
-        return modificationTime;
-    }
-
-    public void setModificationTime(Long modificationTime) {
-        this.modificationTime = modificationTime;
-    }
-
-    public List<PropertyDataDefinition> getPropertiesData() {
-        return propertiesData;
-    }
-
-    public void setPropertiesData(List<PropertyDataDefinition> propertiesData) {
-        this.propertiesData = propertiesData;
-    }
-
-    @Override
-    public String toString() {
-        return "DataTypeDataDefinition [name=" + name + ", uniqueId=" + uniqueId + ", derivedFromName="
-                + derivedFromName + ", description=" + description + ", creationTime=" + creationTime
-                + ", modificationTime=" + modificationTime + ", propertiesData=" + propertiesData + "]";
-    }
 
 }
