@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "758f07a6_10a6f69f",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-07-31T13:54:23Z",
+      "side": 1,
+      "message": "The 3 first tests do not pass ? while they pass with the previous UI tests \nchangeINstanceNameInVfTest FAIL \nupdateService FAIL \nonapOnboardVNFflow FAIL\nonapOnboardVSPValidationsSanityFlow PASS\nonboardPNFSoftwareInformationFlow PASS",
+      "revId": "bb79adaf2e64181265723a2257c1e1c5ed9a2ab7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5cf848e9_e9a71014",
         "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/config/Config.java",
         "patchSetId": 3
