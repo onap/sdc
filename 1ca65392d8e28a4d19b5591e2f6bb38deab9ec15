@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "52be0426_623d668b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentNodeFilterServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-08-03T08:19:04Z",
+      "side": 1,
+      "message": "is this import used ? It is odd to see only one import added and nothing in the code",
+      "revId": "1ca65392d8e28a4d19b5591e2f6bb38deab9ec15",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
