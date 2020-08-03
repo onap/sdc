@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f516d25_20f96fa7",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementOperationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-08-03T15:34:41Z",
+      "side": 1,
+      "message": "No underscore in java naming convention",
+      "revId": "c8ef798fb70cdcd0022c6a3349678b43f36b24e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae065c47_abde7350",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementOperationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-08-03T15:34:41Z",
+      "side": 1,
+      "message": "Same here",
+      "revId": "c8ef798fb70cdcd0022c6a3349678b43f36b24e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
