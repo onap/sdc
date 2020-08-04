@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 cd /home/sdc/chef-solo
 chef-solo -c solo.rb  -E ${ENVNAME}
 rc=$?
-if [[ $rc != 0 ]]; then exit $rc; fi
+if [ $rc -ne 0 ]; then exit $rc; fi

@@ -727,6 +727,11 @@
       <version>${commons.collections.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>${jackson.mapper.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.onap.sdc.sdc-be-common</groupId>
       <artifactId>security-util-lib</artifactId>
       <version>${security.util.lib.version}</version>
@@ -749,10 +754,10 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <forkCount>1</forkCount>
-          </configuration>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkCount>1</forkCount>
+        </configuration>
       </plugin>
       <plugin>
         <!-- Download Swagger UI webjar. -->
@@ -870,6 +875,18 @@
         <groupId>com.jcabi</groupId>
         <artifactId>jcabi-maven-plugin</artifactId>
         <version>${jcabi.maven.plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjtools</artifactId>
+            <version>1.9.2</version>
+          </dependency>
+          <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.2</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <goals>

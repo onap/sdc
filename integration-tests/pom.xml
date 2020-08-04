@@ -485,9 +485,7 @@ limitations under the License.
                                     <SDC_PASSWORD>${it.sdc.password}</SDC_PASSWORD>
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
-                                    <JAVA_OPTIONS>-Xdebug
-                                        -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g
-                                    </JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4001 -Xmx1g -Xms1g</JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
@@ -498,7 +496,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>30000</time>
+                                    <time>300000</time>
                                     <tcp>
                                         <host>sdc-onboard-BE</host>
                                         <mode>direct</mode>
@@ -531,10 +529,8 @@ limitations under the License.
                                 <env>
                                     <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}</cassandra_ssl_enabled>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-Xdebug
-                                        -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m
-                                        -Xms1536m
-                                    </JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4000
+                                        -Xmx1536m -Xms1536m</JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
@@ -601,10 +597,8 @@ limitations under the License.
                             <run>
                                 <env>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-Xdebug
-                                        -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m
-                                        -Xms256m
-                                    </JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6000
+                                     -Xmx256m -Xms256m</JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-FE</hostname>
                                 <volumes>
