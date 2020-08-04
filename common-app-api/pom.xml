@@ -263,6 +263,31 @@
   </dependencies>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <excludes>
+          <exclude>**/*.zip</exclude>
+        </excludes>
+        <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources/zip</directory>
+        <includes>
+          <include>**.zip</include>
+        </includes>
+        <filtering>false</filtering>
+        <targetPath>zip</targetPath>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources/zip-slip</directory>
+        <includes>
+          <include>**.zip</include>
+        </includes>
+        <filtering>false</filtering>
+        <targetPath>zip-slip</targetPath>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>com.github.sylvainlaurent.maven</groupId>
