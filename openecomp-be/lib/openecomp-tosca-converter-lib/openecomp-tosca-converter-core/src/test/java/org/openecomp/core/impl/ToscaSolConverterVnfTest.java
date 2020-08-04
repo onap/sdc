@@ -135,7 +135,7 @@ public class ToscaSolConverterVnfTest {
     }
 
     private byte[] getFileResource(final String filePath) {
-        try (final InputStream inputStream = ClassLoader.class.getResourceAsStream(filePath)) {
+        try (final InputStream inputStream = this.getClass().getResourceAsStream(filePath)) {
             return IOUtils.toByteArray(inputStream);
         } catch (final IOException ex) {
             fail(String.format("Could not load file: %s", filePath));

@@ -373,12 +373,9 @@ public class DataModelUtil {
             throw new CoreException(new InvalidRequirementAssignmentErrorBuilder(requirementId).build());
         }
 
-        if (nodeTemplate.getRequirements() == null) {
-            nodeTemplate.setRequirements(new ArrayList<>());
-        }
         Map<String, RequirementAssignment> requirement = new HashMap<>();
         requirement.put(requirementId, requirementAssignment);
-        nodeTemplate.getRequirements().add(requirement);
+        nodeTemplate.addRequirements(requirement);
     }
 
     /**
