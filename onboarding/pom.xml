@@ -38,14 +38,11 @@
   <properties>
 
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.targer>1.8</maven.compiler.targer>
     <jacoco.skip>true</jacoco.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Maven plugin versions -->
     <mvn.assembly.version>2.1</mvn.assembly.version>
-    <mvn.compiler.version>3.7.0</mvn.compiler.version>
     <mvn.clean.version>2.5</mvn.clean.version>
     <mvn.resource.version>3.1.0</mvn.resource.version>
     <mvn.deploy.version>2.4</mvn.deploy.version>
