@@ -1,11 +1,9 @@
 #!/bin/sh
 
-
-
 cd /root/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 rc=$?
-if [[ $rc != 0 ]]; then
+if [ $rc -ne 0 ]; then
     echo "Chef exaction failed."
     exit $rc;
 fi
@@ -21,5 +19,6 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
 
 
 cd /var/lib/jetty
-/docker-entrypoint.sh 
+
+java $JAVA_OPTIONS -jar "$JETTY_HOME/start.jar"
 

@@ -15,18 +15,16 @@ cd /var/lib/jetty/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 
 status=$?
-if [ $status != 0 ]; then
+if [ $status -ne 0 ]; then
     echo "[ERROR] Problem detected while running chef. Aborting !"
     exit 1
 fi
 
 # Execute Jetty
 cd /var/lib/jetty
-/docker-entrypoint.sh &
 
-exec "$@";
+java $JAVA_OPTIONS -jar "$JETTY_HOME/start.jar"
 
-while true; do sleep 2; done
 
 
 

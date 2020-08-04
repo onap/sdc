@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -90,7 +91,7 @@ public enum ToscaType {
 				return true;
 			case TIMESTAMP:
 				try {
-					DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).parse(value);
+					new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US).parse(value);
 					return true;
 				} catch (ParseException e) {
 					return false;
@@ -168,7 +169,7 @@ public enum ToscaType {
 				return Long.valueOf(value);
 			case TIMESTAMP:
 				try {
-					return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).parse(value);
+					return new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US).parse(value);
 				} catch (ParseException e) {
 					throw new IllegalArgumentException("Value must be a valid timestamp", e);
 				}
