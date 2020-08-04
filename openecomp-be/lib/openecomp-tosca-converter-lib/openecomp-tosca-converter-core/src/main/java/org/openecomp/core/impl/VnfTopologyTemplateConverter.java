@@ -207,11 +207,9 @@ public class VnfTopologyTemplateConverter {
     }
 
     private void convertPolicies(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
-        Map<String, Object> policiesAsMap = readerService.getPolicies();
-        for (Map.Entry<String, Object> policy : policiesAsMap.entrySet()) {
-            PolicyDefinition policyDefinition = convertPolicy(policy.getValue());
-            DataModelUtil.addPolicyDefinition(serviceTemplate, policy.getKey(), policyDefinition);
-        }
+        List<Object> policiesList = readerService.getPolicies();
+        policiesList.forEach(policiesListItem -> ((Map<String, Object>) policiesListItem).forEach((key, value) ->
+            DataModelUtil.addPolicyDefinition(serviceTemplate, key, convertPolicy(value))));
     }
 
     private PolicyDefinition convertPolicy(Object policyCandidate) {
