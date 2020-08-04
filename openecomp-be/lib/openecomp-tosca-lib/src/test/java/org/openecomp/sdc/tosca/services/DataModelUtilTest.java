@@ -681,7 +681,7 @@ public class DataModelUtilTest {
         requirementAssignment1.setRelationship("relationshipId");
         DataModelUtil.removeRequirementAssignment(nodeTemplate, REQUIREMENT_KEY, requirementAssignment);
 
-        assertTrue(requirementList.isEmpty());
+        assertTrue(nodeTemplate.getRequirements().isEmpty());
     }
 
     @Test
