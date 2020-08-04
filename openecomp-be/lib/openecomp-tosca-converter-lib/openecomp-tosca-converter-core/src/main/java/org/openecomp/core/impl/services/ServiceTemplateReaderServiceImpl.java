@@ -61,13 +61,13 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
     }
 
     @Override
-    public Map<String, Object> getPolicies() {
-        Map<String, Object> policiesAsMap = new HashMap<>();
-        if (!Objects.isNull(this.getTopologyTemplate()) && !Objects.isNull(
-            ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES))) {
-            policiesAsMap = (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES);
+    public List<Object> getPolicies() {
+        List<Object> policiesList = new ArrayList<>();
+        if (Objects.nonNull(this.getTopologyTemplate()) && Objects.nonNull(
+                ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES))) {
+            policiesList = (List<Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES);
         }
-        return policiesAsMap;
+        return policiesList;
     }
 
     @Override

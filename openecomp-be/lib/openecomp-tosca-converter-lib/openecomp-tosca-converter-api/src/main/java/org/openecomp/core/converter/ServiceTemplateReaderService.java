@@ -45,7 +45,7 @@ public interface ServiceTemplateReaderService {
 
     List<Object> getImports();
 
-    Map<String, Object> getPolicies();
+    List<Object> getPolicies();
 
     Map<String, Object> getDataTypes();
 }
