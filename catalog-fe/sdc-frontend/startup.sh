@@ -14,6 +14,5 @@ cd /var/lib/jetty/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 
 cd /var/lib/jetty
-/docker-entrypoint.sh &
 
-while true; do sleep 2; done
+java $JAVA_OPTIONS -jar "$JETTY_HOME/start.jar"
