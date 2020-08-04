@@ -75,17 +75,17 @@ public class NodeTemplateTest {
 
     @Test
     public void shouldHaveValidGettersAndSetters() {
-        assertThat(NodeTemplate.class, hasValidGettersAndSettersExcluding("normalizeInterfaces"));
+        assertThat(NodeTemplate.class, hasValidGettersAndSettersExcluding("requirements", "normalizeInterfaces"));
     }
 
     @Test
     public void shouldHaveValidEquals() {
-        assertThat(NodeTemplate.class, hasValidBeanEqualsExcluding("normalizeInterfaces"));
+        assertThat(NodeTemplate.class, hasValidBeanEqualsExcluding("requirements", "normalizeInterfaces"));
     }
 
     @Test
     public void shouldHaveValidHashCode() {
-        assertThat(NodeTemplate.class, hasValidBeanHashCodeExcluding("normalizeInterfaces"));
+        assertThat(NodeTemplate.class, hasValidBeanHashCodeExcluding("requirements", "normalizeInterfaces"));
     }
 
     private InterfaceDefinitionTemplate createInterfaceDefinitionTemplate() {

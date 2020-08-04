@@ -22,8 +22,9 @@ package org.openecomp.sdc.be.impl.aaf;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
+import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor;
+import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,15 +37,12 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.FilterDecisionEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-import sun.reflect.annotation.AnnotationParser;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -78,8 +76,9 @@ public class RoleAuthorizationHandlerTest {
     @Test
     public void testAuthorizeRoleOnePermittedRole() {
         String[] permsAllowed = {AafPermission.PermNames.WRITE_VALUE};
-        PermissionAllowed rolesAllowed =
-                (PermissionAllowed) AnnotationParser.annotationForMap(PermissionAllowed.class, Collections.singletonMap("value", permsAllowed));
+        AnnotationDescriptor<PermissionAllowed> permissionDescriptor = new AnnotationDescriptor<PermissionAllowed>(PermissionAllowed.class);
+        permissionDescriptor.setValue("value", permsAllowed);
+        PermissionAllowed rolesAllowed = (PermissionAllowed) AnnotationFactory.create(permissionDescriptor);
         when(httpServletRequest.isUserInRole(AafPermission.getEnumByString(permsAllowed[0]).getFullPermission()))
                 .thenReturn(true);
         roleAuthorizationHandler.authorizeRole(joinPoint, rolesAllowed);
@@ -88,8 +87,9 @@ public class RoleAuthorizationHandlerTest {
     @Test
     public void testAuthorizeRoleTwoPermittedRole() {
         String[] permsAllowed = {AafPermission.PermNames.WRITE_VALUE, AafPermission.PermNames.READ_VALUE};
-        PermissionAllowed rolesAllowed =
-                (PermissionAllowed) AnnotationParser.annotationForMap(PermissionAllowed.class, Collections.singletonMap("value", permsAllowed));
+        AnnotationDescriptor<PermissionAllowed> permissionDescriptor = new AnnotationDescriptor<PermissionAllowed>(PermissionAllowed.class);
+        permissionDescriptor.setValue("value", permsAllowed);
+        PermissionAllowed rolesAllowed = (PermissionAllowed)AnnotationFactory.create(permissionDescriptor);
         when(httpServletRequest.isUserInRole(AafPermission.getEnumByString(permsAllowed[0]).getFullPermission()))
                 .thenReturn(true);
         roleAuthorizationHandler.authorizeRole(joinPoint, rolesAllowed);
@@ -98,8 +98,9 @@ public class RoleAuthorizationHandlerTest {
     @Test
     public void testAuthorizeRoleNonPermittedRole() {
         String[] permsAllowed = {AafPermission.PermNames.WRITE_VALUE, AafPermission.PermNames.READ_VALUE};
-        PermissionAllowed rolesAllowed =
-                (PermissionAllowed) AnnotationParser.annotationForMap(PermissionAllowed.class, Collections.singletonMap("value", permsAllowed));
+        AnnotationDescriptor<PermissionAllowed> permissionDescriptor = new AnnotationDescriptor<PermissionAllowed>(PermissionAllowed.class);
+        permissionDescriptor.setValue("value", permsAllowed);
+        PermissionAllowed rolesAllowed = (PermissionAllowed)AnnotationFactory.create(permissionDescriptor);
         when(httpServletRequest.isUserInRole(AafPermission.getEnumByString(permsAllowed[0]).getFullPermission()))
                 .thenReturn(false);
 
@@ -110,8 +111,9 @@ public class RoleAuthorizationHandlerTest {
     @Test
     public void testAuthorizeRoleEmptyRole() {
         String[] permsAllowed = {};
-        PermissionAllowed rolesAllowed =
-                (PermissionAllowed) AnnotationParser.annotationForMap(PermissionAllowed.class, Collections.singletonMap("value", permsAllowed));
+        AnnotationDescriptor<PermissionAllowed> permissionDescriptor = new AnnotationDescriptor<PermissionAllowed>(PermissionAllowed.class);
+        permissionDescriptor.setValue("value", permsAllowed);
+        PermissionAllowed rolesAllowed = (PermissionAllowed)AnnotationFactory.create(permissionDescriptor);
 
         ComponentException thrown = (ComponentException) catchThrowable(()->roleAuthorizationHandler.authorizeRole(joinPoint, rolesAllowed));
         assertThat(thrown.getActionStatus()).isEqualTo(ActionStatus.AUTH_FAILED);

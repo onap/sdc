@@ -268,8 +268,7 @@ public class ToscaModelTest {
         Map<String, RequirementAssignment> nodeTemplateRequirement2 = new HashMap<>();
         nodeTemplateRequirement1.put(REQ1, reqAssignment1);
         nodeTemplateRequirement2.put(REQ2, reqAssignment2);
-        nodeTemplate.setRequirements(new ArrayList<>());
-        nodeTemplate.getRequirements().add(nodeTemplateRequirement1);
+        nodeTemplate.addRequirements(nodeTemplateRequirement1);
         nodeTemplate.getRequirements().add(nodeTemplateRequirement2);
 
         CapabilityAssignment capAss = new CapabilityAssignment();
