@@ -28,7 +28,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.onap.sdc.security.CipherUtil;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
@@ -64,7 +63,6 @@ public class PortalServletTest extends JerseyTest {
     private final static Configuration configuration = Mockito.mock(Configuration.class);
     private final static HttpServletResponse response = Mockito.spy(HttpServletResponse.class);
     private final static RequestDispatcher rd = Mockito.spy(RequestDispatcher.class);
-	private static CipherUtil cipherUtil = Mockito.mock(CipherUtil.class);
 	final static Configuration.CookieConfig cookieConfiguration = Mockito.mock(Configuration.CookieConfig.class);
 
 	@SuppressWarnings("serial")

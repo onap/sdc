@@ -109,6 +109,24 @@
   <properties>
     <useSystemClassLoader>false</useSystemClassLoader>
   </properties>
-
+  <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <excludes>
+          <exclude>**/*.csar</exclude>
+        </excludes>
+        <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources/mock/analyzerService</directory>
+        <includes>
+          <include>**.csar</include>
+        </includes>
+        <filtering>false</filtering>
+        <targetPath>mock/analyzerService</targetPath>
+      </testResource>
+    </testResources>
+  </build>
 
 </project>
