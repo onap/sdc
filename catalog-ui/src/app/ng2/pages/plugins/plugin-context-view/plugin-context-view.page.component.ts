@@ -36,6 +36,7 @@ export class PluginContextViewPageComponent {
             displayType: "context",
             contextType: this.component.getComponentSubType(),
             uuid: this.component.uuid,
+            componentId: this.component.uniqueId,
             lifecycleState: this.component.lifecycleState,
             isOwner: this.component.lastUpdaterUserId === this.user.userId,
             version: this.component.version,
