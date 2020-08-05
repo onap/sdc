@@ -86,14 +86,13 @@ done
 
 CURRENT_DIR=`pwd`
 BASEDIR=$(dirname $0)
-
 if [ ${BASEDIR:0:1} = "/" ]
 then
         FULL_PATH=$BASEDIR
 else
         FULL_PATH=$CURRENT_DIR/$BASEDIR
 fi
-LOGS_PROP_FILE=file:${FULL_PATH}/conf/log4j2.properties
+LOGS_PROP_FILE=conf/log4j2.properties
 #############################################
 TARGET_DIR=${FULL_PATH}/target
 CONF_FILE=${FULL_PATH}/conf/sdc.yaml
