@@ -21,37 +21,32 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.DataTypeNotProvidedException;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @org.springframework.stereotype.Component("dataTypeBusinessLogic")
-public class DataTypeBusinessLogic extends BaseBusinessLogic {
+public class DataTypeBusinessLogic {
+
+    private final PropertyOperation propertyOperation;
+    private final ToscaOperationFacade toscaOperationFacade;
 
     @Autowired
-    public DataTypeBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public DataTypeBusinessLogic(final PropertyOperation propertyOperation,
+                                 final ToscaOperationFacade toscaOperationFacade) {
+        this.propertyOperation = propertyOperation;
+        this.toscaOperationFacade = toscaOperationFacade;
     }
 
     /**
@@ -155,4 +150,66 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
         // return deleted data type if ok
         return Either.left(dataTypeResult.get());
     }
+
+    /**
+     * Adds data types to the component, resolving data types hierarchy.
+     *
+     * @param component the component to add the given data types
+     * @param dataTypes the data types to add
+     * @throws DataTypeNotProvidedException when a data type does not exist in the database and was not provided
+     */
+    public void addToComponent(final Component component,
+                               final Map<String, DataTypeDefinition> dataTypes) throws DataTypeNotProvidedException {
+        if (MapUtils.isEmpty(dataTypes)) {
+            return;
+        }
+        parseToDataTypeDefinitionList(dataTypes).forEach(component::addToDataTypes);
+    }
+
+    private List<DataTypeDefinition> parseToDataTypeDefinitionList(final Map<String, DataTypeDefinition> dataTypeMap)
+        throws DataTypeNotProvidedException {
+
+        final List<DataTypeDefinition> dataTypeDefinitionList = new ArrayList<>();
+        dataTypeMap.forEach((key, dataTypeDefinition) -> {
+            dataTypeDefinition.setName(key);
+            dataTypeDefinitionList.add(dataTypeDefinition);
+        });
+
+        for (final DataTypeDefinition dataTypeDefinition : dataTypeDefinitionList) {
+            loadParentHierarchy(dataTypeDefinition, dataTypeDefinitionList);
+        }
+
+        return dataTypeDefinitionList;
+    }
+
+    private void loadParentHierarchy(final DataTypeDefinition dataTypeDefinition,
+                                     final List<DataTypeDefinition> componentDataTypeList)
+        throws DataTypeNotProvidedException {
+        if (dataTypeDefinition.getDerivedFrom() != null) {
+            return;
+        }
+        if (dataTypeDefinition.getDerivedFromName() == null) {
+            return;
+        }
+
+        DataTypeDefinition parentDataType =
+            propertyOperation.findDataTypeByName(dataTypeDefinition.getDerivedFromName()).orElse(null);
+        if (parentDataType != null) {
+            dataTypeDefinition.setDerivedFrom(parentDataType);
+            return;
+        }
+
+        parentDataType = componentDataTypeList.stream()
+            .filter(dataTypeDefinition1 ->
+                dataTypeDefinition1.getName().equals(dataTypeDefinition.getDerivedFromName()))
+            .findFirst().orElse(null);
+        if (parentDataType == null) {
+            final String errorMsg =
+                String.format("Data type '%s' was not provided", dataTypeDefinition.getDerivedFromName());
+            throw new DataTypeNotProvidedException(errorMsg);
+        }
+        dataTypeDefinition.setDerivedFrom(parentDataType);
+        loadParentHierarchy(dataTypeDefinition.getDerivedFrom(), componentDataTypeList);
+    }
+
 }

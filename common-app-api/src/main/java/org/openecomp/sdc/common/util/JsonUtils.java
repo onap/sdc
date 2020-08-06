@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.common.util;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -51,8 +52,18 @@ public class JsonUtils {
 		return json.entrySet().isEmpty();
 	}
 
-	public static boolean isEmptyJson(JsonElement json) {
-		return json.isJsonPrimitive() ? false : JsonUtils.isEmptyJson(json.getAsJsonObject());
+	public static boolean isEmptyJson(JsonArray json) {
+		return json.size() == 0;
+	}
+
+	public static boolean isEmptyJson(final JsonElement json) {
+		if (json.isJsonObject()) {
+			return isEmptyJson(json.getAsJsonObject());
+		} else if (json.isJsonArray()) {
+			return isEmptyJson(json.getAsJsonArray());
+		}
+
+		return false;
 	}
 
 	public static boolean isJsonNullOrEmpty(JsonObject json) {

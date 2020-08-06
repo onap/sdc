@@ -55,6 +55,7 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.components.csar,
 		org.openecomp.sdc.be.datamodel.utils,
 		org.openecomp.sdc.be.model.utils,
+		org.openecomp.sdc.be.model.converter,
 		org.openecomp.sdc.be.dao.jsongraph">
 		
    </context:component-scan>

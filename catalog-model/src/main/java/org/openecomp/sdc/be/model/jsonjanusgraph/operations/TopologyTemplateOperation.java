@@ -104,8 +104,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         Either<TopologyTemplate, StorageOperationStatus> result = null;
 
         topologyTemplate.generateUUID();
-
-        topologyTemplate = getResourceMetaDataFromResource(topologyTemplate);
+        setResourceMetaDataFromResource(topologyTemplate);
         String resourceUniqueId = topologyTemplate.getUniqueId();
         if (resourceUniqueId == null) {
             resourceUniqueId = UniqueIdBuilder.buildResourceUniqueId();
@@ -113,7 +112,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }
 
         GraphVertex topologyTemplateVertex = new GraphVertex();
-        topologyTemplateVertex = fillMetadata(topologyTemplateVertex, topologyTemplate, JsonParseFlagEnum.ParseAll);
+        fillMetadata(topologyTemplateVertex, topologyTemplate, JsonParseFlagEnum.ParseAll);
 
         Either<GraphVertex, JanusGraphOperationStatus> createdVertex = janusGraphDao.createVertex(topologyTemplateVertex);
         if (createdVertex.isRight()) {
@@ -597,17 +596,22 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
-    private GraphVertex fillMetadata(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate, JsonParseFlagEnum flag) {
+    private void fillMetadata(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate, JsonParseFlagEnum flag) {
         nodeTypeVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
         fillCommonMetadata(nodeTypeVertex, topologyTemplate);
+        fillDataTypes(nodeTypeVertex, topologyTemplate);
         if (flag == JsonParseFlagEnum.ParseAll || flag == JsonParseFlagEnum.ParseJson) {
             nodeTypeVertex.setJson(topologyTemplate.getCompositions());
         }
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.CSAR_UUID, topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_UUID));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS, topologyTemplate.getMetadataValue(JsonPresentationFields.DISTRIBUTION_STATUS));
+    }
 
-        return nodeTypeVertex;
-
+    private void fillDataTypes(final GraphVertex nodeTypeVertex, final TopologyTemplate topologyTemplate) {
+        if (MapUtils.isEmpty(topologyTemplate.getDataTypes())) {
+            return;
+        }
+        nodeTypeVertex.setJsonMetadataField(JsonPresentationFields.DATA_TYPES, topologyTemplate.getDataTypes());
     }
 
     private StorageOperationStatus assosiateMetadataToCategory(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
