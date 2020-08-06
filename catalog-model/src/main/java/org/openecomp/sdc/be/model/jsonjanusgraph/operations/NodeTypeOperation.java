@@ -68,7 +68,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
         nodeType.generateUUID();
 
-        nodeType = getResourceMetaDataFromResource(nodeType);
+        setResourceMetaDataFromResource(nodeType);
         String resourceUniqueId = nodeType.getUniqueId();
         if (resourceUniqueId == null) {
             resourceUniqueId = UniqueIdBuilder.buildResourceUniqueId();

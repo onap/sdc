@@ -1,2 +1,3 @@
 /sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/Artifact-Generator.properties
+/src/main/resources/import/tosca/**/*.zip
 /sdc-backend-init/scripts/**

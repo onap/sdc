@@ -91,9 +91,8 @@ public class JsonUtilsTest {
 
     @Test
     public void validateIsEmptyJsonReturnsFalseIfInputIsNotEmpty() {
-        boolean result = JsonUtils.isEmptyJson(generateJsonArray().get(0));
-
-        assertFalse(result);
+        assertFalse(JsonUtils.isEmptyJson(generateJsonArray()));
+        assertFalse(JsonUtils.isEmptyJson(generateJsonArray().get(0)));
     }
 
     @Test

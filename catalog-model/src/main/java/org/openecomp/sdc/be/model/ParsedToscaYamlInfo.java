@@ -20,17 +20,21 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString
 @Getter
 @Setter
+@ToString
 public class ParsedToscaYamlInfo {
-    Map<String, InputDefinition> inputs;
-    Map<String, UploadComponentInstanceInfo> instances;
-    Map<String, GroupDefinition> groups;
-    Map<String, PolicyDefinition> policies;
+
+    private Map<String, InputDefinition> inputs;
+    private Map<String, UploadComponentInstanceInfo> instances;
+    private Map<String, GroupDefinition> groups;
+    private Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+    private Map<String, PolicyDefinition> policies;
+
 }

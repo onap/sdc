@@ -59,6 +59,7 @@ public enum JsonPresentationFields {
     DERIVED_FROM_GENERIC_TYPE("derivedFromGenericType", null),
     DERIVED_FROM_GENERIC_VERSION("derivedFromGenericVersion", null),
     SERVICE_FUNCTION("serviceFunction", null),
+    DATA_TYPES("data_types", null),
 
     ////Inputs
     ANNOTATIONS("annotations", null),
@@ -108,6 +109,16 @@ public enum JsonPresentationFields {
     SCHEMA("schema", null),
     VALUE("value", null),
     PARENT_UNIQUE_ID("parentUniqueId", null),
+    LABEL("label", null),
+    IMMUTABLE("immutable", null),
+    HIDDEN("hidden", null),
+    INPUT_PATH("inputPath", null),
+    INPUT_ID("inputId", null),
+    INSTANCE_UNIQUE_ID("instanceUniqueId", null),
+    PROPERTY_CONSTRAINTS("propertyConstraints", null),
+    PROPERTY_ID("propertyId", null),
+    PARENT_PROPERTY_TYPE("parentPropertyType", null),
+    SUB_PROPERTY_INPUT_PATH("subPropertyInputPath", null),
 
     COMPONENT_INSTANCES("componentInstances", null),
     RELATIONS("relations", null),

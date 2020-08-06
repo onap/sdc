@@ -20,11 +20,26 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.openecomp.sdc.be.utils.TypeUtils.setField;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import fj.data.Either;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -41,6 +56,7 @@ import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -48,10 +64,12 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.converter.PropertyDataConverter;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
@@ -59,18 +77,15 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import fj.data.Either;
 
 public abstract class ToscaElementOperation extends BaseOperation {
     private static final String FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR = "failed to fetch {} for tosca element with id {}, error {}";
@@ -87,6 +102,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     @Autowired
     protected CategoryOperation categoryOperation;
+    protected PropertyDataConverter propertyDataConverter;
 
     protected Gson getGson() {
         return gson;
@@ -276,7 +292,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    protected <T extends ToscaElement> T getResourceMetaDataFromResource(T toscaElement) {
+    protected <T extends ToscaElement> void setResourceMetaDataFromResource(T toscaElement) {
         if (toscaElement.getNormalizedName() == null || toscaElement.getNormalizedName().isEmpty()) {
             toscaElement.setNormalizedName(ValidationUtils.normaliseComponentName(toscaElement.getName()));
         }
@@ -284,7 +300,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             toscaElement.setSystemName(ValidationUtils.convertToSystemName(toscaElement.getName()));
         }
 
-        LifecycleStateEnum lifecycleStateEnum = toscaElement.getLifecycleState();
+        final LifecycleStateEnum lifecycleStateEnum = toscaElement.getLifecycleState();
         if (lifecycleStateEnum == null) {
             toscaElement.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         }
@@ -293,8 +309,6 @@ public abstract class ToscaElementOperation extends BaseOperation {
             toscaElement.setCreationDate(currentDate);
         }
         toscaElement.setLastUpdateDate(currentDate);
-
-        return toscaElement;
     }
 
     protected void fillCommonMetadata(GraphVertex nodeTypeVertex, ToscaElement toscaElement) {
@@ -905,34 +919,102 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return Either.left(toscaElement);
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T extends ToscaElement> T convertToComponent(GraphVertex componentV) {
-        ToscaElement toscaElement = null;
-        VertexTypeEnum label = componentV.getLabel();
+    protected <T extends ToscaElement> T convertToComponent(final GraphVertex componentV) {
+        final ToscaElement toscaElement;
+        final VertexTypeEnum label = componentV.getLabel();
         switch (label) {
             case NODE_TYPE:
                 toscaElement = new NodeType();
                 break;
             case TOPOLOGY_TEMPLATE:
-                toscaElement = new TopologyTemplate();
+                toscaElement = handleTopologyTemplate(componentV);
                 break;
             default:
-                log.debug("Not supported tosca type {}", label);
-                break;
+                log.debug("Not supported tosca type '{}'", label);
+                return null;
         }
 
-        if (toscaElement != null) {
-            final Map<String, Object> jsonMetada = componentV.getMetadataJson();
-            toscaElement.setMetadata(jsonMetada);
-            if (jsonMetada != null) {
-                final Object toscaVersion = jsonMetada.get(ToscaTagNamesEnum.TOSCA_VERSION.getElementName());
-                if (toscaVersion != null) {
-                    toscaElement.setToscaVersion((String) toscaVersion);
-                }
+        final Map<String, Object> jsonMetadata = componentV.getMetadataJson();
+        toscaElement.setMetadata(jsonMetadata);
+        if (jsonMetadata != null) {
+            final Object toscaVersion = jsonMetadata.get(ToscaTagNamesEnum.TOSCA_VERSION.getElementName());
+            if (toscaVersion != null) {
+                toscaElement.setToscaVersion((String) toscaVersion);
             }
         }
         return (T) toscaElement;
     }
+
+    private TopologyTemplate handleTopologyTemplate(final GraphVertex componentVertex) {
+        final TopologyTemplate topologyTemplate = new TopologyTemplate();
+        handleDataTypes(topologyTemplate, componentVertex);
+        return topologyTemplate;
+    }
+
+    private void handleDataTypes(final TopologyTemplate topologyTemplate, final GraphVertex componentVertex) {
+        final Object dataTypeEntryObj = componentVertex.getJsonMetadataField(JsonPresentationFields.DATA_TYPES);
+        if (dataTypeEntryObj == null) {
+            return;
+        }
+        if (!(dataTypeEntryObj instanceof Map)) {
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, "ToscaElementOperation",
+                "Invalid '{}' metadata type. Expected {}.",
+                new Object[]{JsonPresentationFields.DATA_TYPES.getPresentation(), Map.class});
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> dataTypeMap = (Map<String, Object>) dataTypeEntryObj;
+        if (MapUtils.isEmpty(dataTypeMap)) {
+            return;
+        }
+
+        final Map<String, DataTypeDataDefinition> dataTypeDefinitionMap = new HashMap<>();
+        for (final Entry<String, Object> dataTypeEntry : dataTypeMap.entrySet()) {
+            final String dataTypeName = dataTypeEntry.getKey();
+            final Object dataTypeObj = dataTypeEntry.getValue();
+            if (dataTypeObj instanceof Map) {
+                final DataTypeDefinition dataTypeDefinition = createDataTypeDefinitionFromJson(dataTypeEntry);
+                dataTypeDefinitionMap.put(dataTypeDefinition.getName(), dataTypeDefinition);
+            } else {
+                final DataTypeDefinition dataType = new DataTypeDefinition();
+                dataType.setName(String.valueOf(dataType));
+                dataTypeDefinitionMap.put(dataTypeName, dataType);
+            }
+        }
+        topologyTemplate.setDataTypes(dataTypeDefinitionMap);
+    }
+
+    private DataTypeDefinition createDataTypeDefinitionFromJson(final Entry<String, Object> dataTypeMap) {
+        final DataTypeDefinition dataType = new DataTypeDefinition();
+        dataType.setName(dataTypeMap.getKey());
+        final Map<String, Object> attributeMap = (Map<String, Object>) dataTypeMap.getValue();
+        setField(attributeMap, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, dataType::setDescription);
+        setField(attributeMap, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM_NAME, dataType::setDerivedFromName);
+        final List<PropertyDataDefinition> propertyDataDefinitionList = handlePropertiesDataFromJson(attributeMap);
+        dataType.setPropertiesData(propertyDataDefinitionList);
+        final Object derivedFrom = attributeMap.get(JsonPresentationFields.DERIVED_FROM.getPresentation());
+        if (derivedFrom instanceof Map){
+            final Map<String, Object> derivedFromMap = (Map<String, Object>) derivedFrom;
+            final DataTypeDefinition parentDataTypeDataDefinition = new DataTypeDefinition();
+            parentDataTypeDataDefinition.setName((String) derivedFromMap.get(JsonPresentationFields.NAME.getPresentation()));
+            parentDataTypeDataDefinition.setUniqueId((String) derivedFromMap.get(JsonPresentationFields.UNIQUE_ID.getPresentation()));
+            parentDataTypeDataDefinition.setCreationTime((Long) derivedFromMap.get(JsonPresentationFields.CREATION_TIME.getPresentation()));
+            parentDataTypeDataDefinition.setModificationTime((Long) derivedFromMap.get(JsonPresentationFields.MODIFICATION_TIME.getPresentation()));
+            dataType.setDerivedFrom(parentDataTypeDataDefinition);
+        }
+        return dataType;
+    }
+
+    protected List<PropertyDataDefinition> handlePropertiesDataFromJson(final Map<String, Object> attributeMap) {
+        final Object propertiesDataObj = attributeMap.get("propertiesData");
+        if (!(propertiesDataObj instanceof List)) {
+            return Collections.emptyList();
+        }
+        @SuppressWarnings("unchecked")
+        final List<Map<String, Object>> propertiesDataList = (List<Map<String, Object>>) propertiesDataObj;
+        return propertyDataConverter.parseProperties(propertiesDataList);
+    }
+
 
     protected JanusGraphOperationStatus setResourceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
         List<CategoryDefinition> categories = new ArrayList<>();
@@ -1453,4 +1535,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
     public abstract <T extends ToscaElement> void fillToscaElementVertexData(GraphVertex elementV, T
             toscaElementToUpdate, JsonParseFlagEnum flag);
 
+    @Autowired
+    public void setPropertyDataConverter(final PropertyDataConverter propertyDataConverter) {
+        this.propertyDataConverter = propertyDataConverter;
+    }
 }
