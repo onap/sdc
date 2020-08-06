@@ -60,6 +60,8 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
+import org.openecomp.sdc.be.model.converter.PropertyDataConverter;
+import org.openecomp.sdc.be.model.converter.SchemaDefinitionConverter;
 import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation;
@@ -255,6 +257,16 @@ public class ArchiveEndpointTest extends JerseyTest {
         @Bean
         ContainerInstanceTypesData containerInstanceTypesData() {
             return new ContainerInstanceTypesData();
+        }
+
+        @Bean
+        PropertyDataConverter propertyDataConverter() {
+            return mock(PropertyDataConverter.class);
+        }
+
+        @Bean
+        SchemaDefinitionConverter schemaDefinitionConverter() {
+            return mock(SchemaDefinitionConverter.class);
         }
 
         private void initGraphForTest() {

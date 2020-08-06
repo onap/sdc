@@ -95,6 +95,7 @@ import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -207,19 +208,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
 
 
-    private IInterfaceLifecycleOperation interfaceTypeOperation;
-    private LifecycleBusinessLogic lifecycleBusinessLogic;
+	private IInterfaceLifecycleOperation interfaceTypeOperation;
+	private LifecycleBusinessLogic lifecycleBusinessLogic;
 
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    private final ResourceImportManager resourceImportManager;
-    private final InputsBusinessLogic inputsBusinessLogic;
-    private final CompositionBusinessLogic compositionBusinessLogic;
-    private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
-    private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
-    private final MergeInstanceUtils mergeInstanceUtils;
-    private final UiComponentDataConverter uiComponentDataConverter;
-    private final CsarBusinessLogic csarBusinessLogic;
-    private final PropertyBusinessLogic propertyBusinessLogic;
+	private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+	private final ResourceImportManager resourceImportManager;
+	private final InputsBusinessLogic inputsBusinessLogic;
+	private final CompositionBusinessLogic compositionBusinessLogic;
+	private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
+	private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
+	private final MergeInstanceUtils mergeInstanceUtils;
+	private final UiComponentDataConverter uiComponentDataConverter;
+	private final CsarBusinessLogic csarBusinessLogic;
+	private final PropertyBusinessLogic propertyBusinessLogic;
+	private final DataTypeBusinessLogic dataTypeBusinessLogic;
 	private final PolicyBusinessLogic policyBusinessLogic;
 
 	@Autowired
@@ -242,7 +244,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 	ComponentValidator componentValidator,
 	 	ComponentIconValidator componentIconValidator,
 	 	ComponentProjectCodeValidator componentProjectCodeValidator,
-	 	ComponentDescriptionValidator componentDescriptionValidator, PolicyBusinessLogic policyBusinessLogic) {
+	 	ComponentDescriptionValidator componentDescriptionValidator, DataTypeBusinessLogic dataTypeBusinessLogic,
+		PolicyBusinessLogic policyBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation,
 				componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
@@ -257,6 +260,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.csarBusinessLogic = csarBusinessLogic;
         this.propertyBusinessLogic = propertyBusinessLogic;
+        this.dataTypeBusinessLogic = dataTypeBusinessLogic;
 		this.policyBusinessLogic = policyBusinessLogic;
     }
 
@@ -1619,21 +1623,22 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		final List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
 
-        if (shouldLock) {
-            final Either<Boolean, ResponseFormat> lockResult = lockComponentByName(resource.getSystemName(), resource,
+		if (shouldLock) {
+			final Either<Boolean, ResponseFormat> lockResult = lockComponentByName(resource.getSystemName(), resource,
                     CREATE_RESOURCE);
-            if (lockResult.isRight()) {
-                rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-                throw new ByResponseFormatComponentException(lockResult.right().value());
-            }
-            log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
-        }
-        try {
-            log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS,resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,"Starting to add inputs from yaml: {}",yamlName);
-            final Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
-            resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
-            log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
+			if (lockResult.isRight()) {
+				rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+				throw new ByResponseFormatComponentException(lockResult.right().value());
+			}
+			log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
+		}
+		try {
+			log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
+			loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS,resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,"Starting to add inputs from yaml: {}",yamlName);
+			final Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
+			dataTypeBusinessLogic.addToComponent(resource, parsedToscaYamlInfo.getDataTypes());
+			resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
+			log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
             log.trace("************* Going to add inputs from yaml {}", yamlName);
             if (resource.shouldGenerateInputs())
                 generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
@@ -1746,7 +1751,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.error("An error has occurred during resource and resource instance creation", e);
             rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw new ByResponseFormatComponentException(e.getResponseFormat());
-        } finally {
+        }  catch (final Exception e) {
+			log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR,
+				ResourceBusinessLogic.class.getName(),
+				"An unexpected error has occurred during resource and resource instance creation",
+				e);
+			rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+			throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+		} finally {
             if (!inTransaction) {
                 janusGraphDao.commit();
 			}
@@ -2605,7 +2617,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
-	private Resource createResourceInstancesRelations(User user, String yamlName, Resource resource, Resource oldResource,
+	private Resource createResourceInstancesRelations(User user, String yamlName, final Resource resource, Resource oldResource,
 													  Map<String, UploadComponentInstanceInfo> uploadResInstancesMap, Map<String, Resource> existingNodeTypesByResourceNames) {
 		log.debug("#createResourceInstancesRelations - Going to create relations ");
 		loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS,resource.getComponentMetadataForSupportLog(),	StatusCode.STARTED,"Start to create relations");
@@ -2631,22 +2643,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
 		log.debug("#createResourceInstancesRelations - Before get all datatypes. ");
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
-		if (allDataTypes.isRight()) {
-			JanusGraphOperationStatus status = allDataTypes.right()
-					.value();
-			BeEcompErrorManager.getInstance()
-					.logInternalFlowError("UpdatePropertyValueOnComponentInstance",
-							"Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-			loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS,resource.getComponentMetadataForSupportLog(),
-					StatusCode.ERROR,"ERROR while update property value on instance. Status is: "+status);
-			throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
-					DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)), yamlName);
-
-		}
-		Resource finalResource = resource;
+        final Map<String, DataTypeDefinition> allDataTypes = loadComponentDataTypes(resource);
 		uploadResInstancesMap.values()
-				.forEach(i -> processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes,
+				.forEach(i -> processComponentInstance(yamlName, resource, componentInstancesList, allDataTypes,
 						instProperties, instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts,
 						instAttributes, existingNodeTypesByResourceNames, instInputs, i));
 		resource.getComponentInstances()
@@ -2677,6 +2676,34 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		return eitherGetResource.left()
 				.value();
+	}
+
+	private Map<String, DataTypeDefinition> loadComponentDataTypes(final Resource resource) {
+		final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> cachedDataTypeEither = dataTypeCache.getAll();
+		cachedDataTypeEither.right().map(errorStatus -> {
+			BeEcompErrorManager.getInstance()
+				.logInternalFlowError("UpdatePropertyValueOnComponentInstance",
+					"Failed to update property value on instance. Status is " + errorStatus, ErrorSeverity.ERROR);
+			loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(),
+				StatusCode.ERROR,"ERROR while update property value on instance. Status is: "+errorStatus);
+			throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
+				DaoStatusConverter.convertJanusGraphStatusToStorageStatus(errorStatus)), "");
+		});
+		Map<String, DataTypeDefinition> dataTypeMap = cachedDataTypeEither.left().value();
+		if (dataTypeMap == null) {
+			dataTypeMap = new HashMap<>();
+		}
+
+		final List<DataTypeDefinition> resourceDataTypeList = resource.getDataTypes();
+		if (CollectionUtils.isEmpty(resourceDataTypeList)) {
+			return dataTypeMap;
+		}
+
+		final Map<String, DataTypeDefinition> resourceDataTypeMap = resourceDataTypeList.stream()
+			.collect(toMap(DataTypeDataDefinition::getName, dataTypeDefinition -> dataTypeDefinition));
+		dataTypeMap.putAll(resourceDataTypeMap);
+
+		return dataTypeMap;
 	}
 
 	private void processUiComponentInstance(Resource oldResource, ComponentInstance instance,
@@ -2884,7 +2911,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	private void processComponentInstance(String yamlName, Resource resource,
 										  List<ComponentInstance> componentInstancesList,
-										  Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+										  final Map<String, DataTypeDefinition> allDataTypeMap,
 										  Map<String, List<ComponentInstanceProperty>> instProperties,
 										  Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties,
 										  Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
@@ -2913,7 +2940,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			instRequirements.put(currentCompInstance, originResource.getRequirements());
 		}
 		if (isNotEmpty(originResource.getCapabilities())) {
-			processComponentInstanceCapabilities(allDataTypes, instCapabilties, uploadComponentInstanceInfo,
+			processComponentInstanceCapabilities(allDataTypeMap, instCapabilties, uploadComponentInstanceInfo,
 					currentCompInstance, originResource);
 		}
 		if (originResource.getDeploymentArtifacts() != null && !originResource.getDeploymentArtifacts()
@@ -2930,15 +2957,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		if (originResource.getResourceType() != ResourceTypeEnum.CVFC) {
 			ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, resource,
-					originResource, currentCompInstance, instProperties, allDataTypes.left()
-							.value());
+					originResource, currentCompInstance, instProperties, allDataTypeMap);
 			if (addPropertiesValueToRiRes.getStatus() != 200) {
 				throw new ByResponseFormatComponentException(addPropertiesValueToRiRes);
 			}
 		} else {
 			addInputsValuesToRi(uploadComponentInstanceInfo, resource, originResource, currentCompInstance, instInputs,
-					allDataTypes.left()
-							.value());
+				allDataTypeMap);
 		}
 	}
 
@@ -2964,7 +2989,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private void processComponentInstanceCapabilities(
-			Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+		    final Map<String, DataTypeDefinition> allDataTypes,
 			Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties,
 			UploadComponentInstanceInfo uploadComponentInstanceInfo, ComponentInstance currentCompInstance,
 			Resource originResource) {
@@ -2985,16 +3010,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private void updateCapabilityPropertiesValues(
-			Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+			final Map<String, DataTypeDefinition> allDataTypes,
 			Map<String, List<CapabilityDefinition>> originCapabilities,
 			Map<String, Map<String, UploadPropInfo>> newPropertiesMap) {
 		originCapabilities.values()
 				.stream()
 				.flatMap(Collection::stream)
 				.filter(c -> newPropertiesMap.containsKey(c.getName()))
-				.forEach(c -> updatePropertyValues(c.getProperties(), newPropertiesMap.get(c.getName()),
-						allDataTypes.left()
-								.value()));
+				.forEach(c -> updatePropertyValues(c.getProperties(), newPropertiesMap.get(c.getName()), allDataTypes));
 	}
 
 	private void addCapabilitiesProperties(Map<String, Map<String, UploadPropInfo>> newPropertiesMap,

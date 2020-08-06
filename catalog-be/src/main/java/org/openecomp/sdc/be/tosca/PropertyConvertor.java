@@ -26,20 +26,24 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import fj.data.Either;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
@@ -47,7 +51,10 @@ import org.openecomp.sdc.be.model.tosca.converters.ToscaValueConverter;
 import org.openecomp.sdc.be.tosca.model.EntrySchema;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraint;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintValidValues;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -105,9 +112,37 @@ public class PropertyConvertor {
         if(propertyType.equals(PropertyType.CAPABILITY)) {
             prop.setStatus(property.getStatus());
         }
+
+        convertPropertyConstraint(property).ifPresent(prop::setConstraints);
+
         return prop;
     }
-    
+
+    private Optional<List<ToscaPropertyConstraint>> convertPropertyConstraint(final PropertyDefinition property) {
+        final List<PropertyConstraint> constraintList = property.getConstraints();
+        if (CollectionUtils.isEmpty(constraintList)) {
+            return Optional.empty();
+        }
+
+        final List<ToscaPropertyConstraint> toscaPropertyConstraintList = new ArrayList<>();
+        for (final PropertyConstraint propertyConstraint : constraintList) {
+            //TODO this is the place to parse the constraints. It needs a bigger refactor and implementation of one
+            // new class for each constraint. Would be good to have a method in each PropertyConstraint to parse to
+            // ToscaPropertyConstraint
+            if (propertyConstraint instanceof ValidValuesConstraint) {
+                final ValidValuesConstraint validValuesConstraint = (ValidValuesConstraint) propertyConstraint;
+                final ToscaPropertyConstraintValidValues toscaPropertyConstraintValidValues =
+                    new ToscaPropertyConstraintValidValues(validValuesConstraint.getValidValues());
+                toscaPropertyConstraintList.add(toscaPropertyConstraintValidValues);
+            }
+        }
+
+        if (toscaPropertyConstraintList.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(toscaPropertyConstraintList);
+    }
+
 
     public Object convertToToscaObject(PropertyDataDefinition property, String value, Map<String, DataTypeDefinition> dataTypes, boolean preserveEmptyValue) {
         String propertyType = property.getType();

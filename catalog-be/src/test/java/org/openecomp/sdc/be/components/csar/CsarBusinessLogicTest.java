@@ -30,7 +30,22 @@
 
 package org.openecomp.sdc.be.components.csar;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -48,22 +63,6 @@ import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 
 public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
 
@@ -73,8 +72,9 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
     private User user = Mockito.mock(User.class);
     private YamlTemplateParsingHandler yamlHandler = Mockito.mock(YamlTemplateParsingHandler.class);
 
-    private CsarBusinessLogic test = new CsarBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-        groupBusinessLogic, interfaceOperation,  interfaceLifecycleTypeOperation, yamlHandler, artifactToscaOperation);
+    private CsarBusinessLogic csarBusinessLogic = new CsarBusinessLogic(elementDao, groupOperation,
+        groupInstanceOperation, groupTypeOperation, interfaceOperation,  interfaceLifecycleTypeOperation, yamlHandler,
+        artifactToscaOperation);
 
     private static final String CSAR_UUID = "csarUUID";
     private static final String CSAR_ENTRY = "Definitions/tosca_mock_vf.yaml";
@@ -90,9 +90,9 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
 
     @Before
     public void setUp() throws Exception {
-        test.setCsarOperation(csarOperation);
-        test.setToscaOperationFacade(toscaOperationFacade);
-        test.setComponentsUtils(componentsUtils);
+        csarBusinessLogic.setCsarOperation(csarOperation);
+        csarBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+        csarBusinessLogic.setComponentsUtils(componentsUtils);
     }
 
     @Test()
@@ -107,7 +107,7 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         when(csarOperation.getCsar(anyString(), any(User.class))).thenReturn(Either.left(csar_data));
 
         // when
-        CsarInfo csarInfo = test.getCsarInfo(resource, null, user, null, CSAR_UUID);
+        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID);
 
         // then
         assertNotNull(csarInfo);
@@ -129,7 +129,7 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         Map<String, byte[]> payload = loadPayload(PAYLOAD_NAME);
 
         // when
-        CsarInfo csarInfo = test.getCsarInfo(resource, null, user, payload, CSAR_UUID);
+        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, payload, CSAR_UUID);
 
         // then
         assertNotNull(csarInfo);
@@ -152,7 +152,7 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         when(csarOperation.getCsar(anyString(), any(User.class))).thenReturn(Either.left(csar_data));
 
         // when
-        test.getCsarInfo(resource, null, user, null, CSAR_UUID);
+        csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         Resource resource = new Resource();
         StorageOperationStatus status = StorageOperationStatus.OK;
         when(toscaOperationFacade.validateCsarUuidUniqueness(CSAR_UUID)).thenReturn(status);
-        test.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, CSAR_UUID);
+        csarBusinessLogic.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, CSAR_UUID);
     }
 
     @Test(expected = ComponentException.class)
@@ -170,7 +170,7 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         StorageOperationStatus status = StorageOperationStatus.ENTITY_ALREADY_EXISTS;
         when(toscaOperationFacade.validateCsarUuidUniqueness(CSAR_UUID)).thenReturn(status);
         when(componentsUtils.getResponseFormat(ActionStatus.VSP_ALREADY_EXISTS, CSAR_UUID)).thenReturn(responseFormat);
-        test.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, "csarUUID");
+        csarBusinessLogic.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, "csarUUID");
     }
 
     @Test(expected = ComponentException.class)
@@ -179,7 +179,7 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         String csarUUID = "csarUUID";
         when(toscaOperationFacade.validateCsarUuidUniqueness(csarUUID)).thenReturn(StorageOperationStatus.EXEUCTION_FAILED);
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.EXEUCTION_FAILED)).thenReturn(ActionStatus.GENERAL_ERROR);
-        test.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, "csarUUID");
+        csarBusinessLogic.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, "csarUUID");
     }
 
     public Map<String, byte[]> loadPayload(String payloadName) throws IOException, URISyntaxException, ZipException {

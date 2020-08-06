@@ -22,13 +22,30 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentLocker;
 import org.openecomp.sdc.be.components.impl.ExternalRefsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -52,6 +69,8 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.converter.PropertyDataConverter;
+import org.openecomp.sdc.be.model.converter.SchemaDefinitionConverter;
 import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation;
@@ -82,43 +101,25 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-
 public class ExternalRefServletTest extends JerseyTest {
 
     private static boolean setupDone = false;
     private static String serviceVertexUuid;
     private static String resourceVertexUuid;
-    private static final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    public static final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    private static final WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
-    private static final ServletUtils servletUtils = Mockito.mock(ServletUtils.class);
-    private static final UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
-    private static final ComponentsUtils componentUtils = Mockito.mock(ComponentsUtils.class);
-    private static final ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
-    private static final ResponseFormat notFoundResponseFormat = Mockito.mock(ResponseFormat.class);
-    private static final ResponseFormat badRequestResponseFormat = Mockito.mock(ResponseFormat.class);
-    private static final ToscaOperationFacade toscaOperationFacadeMock = Mockito.mock(ToscaOperationFacade.class);
-    private static final AccessValidations accessValidationsMock = Mockito.mock(AccessValidations.class);
-    private static final ComponentLocker componentLocker = Mockito.mock(ComponentLocker.class);
-    private static final HealingJanusGraphGenericDao janusGraphGenericDao = Mockito.mock(HealingJanusGraphGenericDao.class);
-    private static final IGraphLockOperation graphLockOperation = Mockito.mock(IGraphLockOperation.class);
+    private static final ServletContext servletContext = mock(ServletContext.class);
+    public static final WebAppContextWrapper webAppContextWrapper = mock(WebAppContextWrapper.class);
+    private static final WebApplicationContext webApplicationContext = mock(WebApplicationContext.class);
+    private static final ServletUtils servletUtils = mock(ServletUtils.class);
+    private static final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
+    private static final ComponentsUtils componentUtils = mock(ComponentsUtils.class);
+    private static final ResponseFormat responseFormat = mock(ResponseFormat.class);
+    private static final ResponseFormat notFoundResponseFormat = mock(ResponseFormat.class);
+    private static final ResponseFormat badRequestResponseFormat = mock(ResponseFormat.class);
+    private static final ToscaOperationFacade toscaOperationFacadeMock = mock(ToscaOperationFacade.class);
+    private static final AccessValidations accessValidationsMock = mock(AccessValidations.class);
+    private static final ComponentLocker componentLocker = mock(ComponentLocker.class);
+    private static final HealingJanusGraphGenericDao janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
+    private static final IGraphLockOperation graphLockOperation = mock(IGraphLockOperation.class);
 
     private static final String COMPONENT_ID = "ci-MyComponentName";
 
@@ -193,7 +194,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         IdMapper idMapper() {
-            IdMapper idMapper = Mockito.mock(IdMapper.class);
+            IdMapper idMapper = mock(IdMapper.class);
             when(idMapper.mapComponentNameToUniqueId(eq(COMPONENT_ID), any(GraphVertex.class))).thenReturn(COMPONENT_ID);
             when(idMapper.mapUniqueIdToComponentNameTo(eq(COMPONENT_ID), any(GraphVertex.class))).thenReturn(COMPONENT_ID);
             when(idMapper.mapComponentNameToUniqueId(eq(FAKE_COMPONENT_ID), any(GraphVertex.class))).thenReturn(null);
@@ -274,6 +275,16 @@ public class ExternalRefServletTest extends JerseyTest {
             return new ContainerInstanceTypesData();
         }
 
+        @Bean
+        PropertyDataConverter propertyDataConverter() {
+            return mock(PropertyDataConverter.class);
+        }
+
+        @Bean
+        SchemaDefinitionConverter schemaDefinitionConverter() {
+            return mock(SchemaDefinitionConverter.class);
+        }
+
         private void initGraphForTest() {
             if (!setupDone) {
 
@@ -301,7 +312,7 @@ public class ExternalRefServletTest extends JerseyTest {
 
     }
 
-    public static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    public static final HttpServletRequest request = mock(HttpServletRequest.class);
 
     /* Users */
     private static User adminUser = new User("admin", "admin", "admin", "admin@email.com", Role.ADMIN.name(), System.currentTimeMillis());
@@ -325,7 +336,7 @@ public class ExternalRefServletTest extends JerseyTest {
         when(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(responseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.UNAUTHORIZED.value());
 
-        ByResponseFormatComponentException ce = Mockito.mock(ByResponseFormatComponentException.class);
+        ByResponseFormatComponentException ce = mock(ByResponseFormatComponentException.class);
         String[] params = {otherDesignerUser.getUserId()};
         when(ce.getResponseFormat()).thenReturn(responseFormat);
         doThrow(ce).when(accessValidationsMock)
@@ -346,7 +357,7 @@ public class ExternalRefServletTest extends JerseyTest {
         when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
-        String appConfigDir = "src/test/resources/config";
+        String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
@@ -362,11 +373,11 @@ public class ExternalRefServletTest extends JerseyTest {
     @Before
     public void before(){
 
-        Component resourceComponentMock = Mockito.mock(Component.class);
+        Component resourceComponentMock = mock(Component.class);
         when(resourceComponentMock.getVersion()).thenReturn(VERSION);
         when(resourceComponentMock.getUniqueId()).thenReturn(resourceVertexUuid);
 
-        Component serviceComponentMock = Mockito.mock(Component.class);
+        Component serviceComponentMock = mock(Component.class);
         when(serviceComponentMock.getVersion()).thenReturn(VERSION);
         when(serviceComponentMock.getUniqueId()).thenReturn(serviceVertexUuid);
 

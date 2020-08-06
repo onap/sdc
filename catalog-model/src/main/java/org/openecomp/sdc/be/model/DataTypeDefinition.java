@@ -20,12 +20,9 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.List;
 import org.openecomp.sdc.be.dao.utils.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class DataTypeDefinition extends DataTypeDataDefinition {
 

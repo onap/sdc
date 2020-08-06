@@ -187,6 +187,7 @@ public class ResourceBusinessLogicTest {
 	InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
 	ArtifactsOperations artifactToscaOperation = Mockito.mock(ArtifactsOperations.class);
 	private PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
+	private DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
 	ArtifactsResolver artifactsResolver = Mockito.mock(ArtifactsResolver.class);
 	InterfaceLifecycleOperation interfaceLifecycleTypeOperation = Mockito.mock(InterfaceLifecycleOperation.class);
 	ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
@@ -319,7 +320,7 @@ public class ResourceBusinessLogicTest {
 				csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
 				artifactToscaOperation, propertyBusinessLogic, componentContactIdValidator, componentNameValidator,
 				componentTagsValidator, componentValidator,	componentIconValidator, componentProjectCodeValidator,
-				componentDescriptionValidator, policyBusinessLogic);
+			componentDescriptionValidator, dataTypeBusinessLogic, policyBusinessLogic);
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
 		bl.setCapabilityTypeOperation(capabilityTypeOperation);
