@@ -33,6 +33,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import java.util.Optional;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
 import org.janusgraph.core.JanusGraphVertexProperty;
@@ -80,6 +81,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -1120,25 +1122,36 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return isValid;
 	}
 
-	public boolean isPropertyTypeValid(IComplexDefaultValue property) {
+	public boolean isPropertyTypeValid(final IComplexDefaultValue property) {
+		return isPropertyTypeValid(property, null);
+	}
 
-		if (property == null) {
+	public boolean isPropertyTypeValid(final IComplexDefaultValue property,
+									   final Collection<DataTypeDefinition> componentDataTypeCollection) {
+		if (property == null || property.getType() == null) {
 			return false;
 		}
 
-		if (ToscaPropertyType.isValidType(property.getType()) == null) {
-
-			Either<Boolean, JanusGraphOperationStatus> definedInDataTypes = isDefinedInDataTypes(property.getType());
-
-			if (definedInDataTypes.isRight()) {
-				return false;
-			} else {
-				Boolean isExist = definedInDataTypes.left().value();
-				return isExist.booleanValue();
-			}
-
+		final ToscaPropertyType toscaPropertyType = ToscaPropertyType.isValidType(property.getType());
+		if (toscaPropertyType != null) {
+			return true;
 		}
-		return true;
+
+		if (CollectionUtils.isNotEmpty(componentDataTypeCollection)) {
+			final boolean matches = componentDataTypeCollection.stream()
+				.anyMatch(dataTypeDefinition -> dataTypeDefinition.getName().equals(property.getType()));
+			if (matches) {
+				return true;
+			}
+		}
+
+		final Either<Boolean, JanusGraphOperationStatus> definedInDataTypes = isDefinedInDataTypes(property.getType());
+
+		if (definedInDataTypes.isLeft()) {
+			return definedInDataTypes.left().value();
+		}
+
+		return false;
 	}
 
 	@Override
@@ -1502,9 +1515,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			return Either.right(operationStatus);
 		}
 
-		DataTypeData resultCTD = createDataTypeResult.left().value();
-		List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
-		Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToDataType = addPropertiesToDataType(resultCTD.getUniqueId(), properties);
+		final DataTypeData createdDataType = createDataTypeResult.left().value();
+		final List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
+		final Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToDataType =
+			addPropertiesToDataType(createdDataType.getUniqueId(), properties);
 		if (addPropertiesToDataType.isRight()) {
 			log.debug("Failed add properties {} to data type {}", properties, dataTypeDefinition.getName());
 			return Either.right(addPropertiesToDataType.right().value());
@@ -1525,7 +1539,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			}
 		}
 
-		return Either.left(createDataTypeResult.left().value());
+		return Either.left(createdDataType);
 
 	}
 
@@ -2012,9 +2026,17 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return result;
 	}
 
-	private Either<DataTypeDefinition, JanusGraphOperationStatus> getDataTypeUsingName(String name) {
-		String uid = UniqueIdBuilder.buildDataTypeUid(name);
-		return getDataTypeByUid(uid);
+	public Optional<DataTypeDefinition> findDataTypeByName(final String name) {
+		final String uid = UniqueIdBuilder.buildDataTypeUid(name);
+		final Either<DataTypeDefinition, JanusGraphOperationStatus> operationResult = getDataTypeByUid(uid);
+		if (operationResult.isRight()) {
+			final JanusGraphOperationStatus janusGraphOperationStatus = operationResult.right().value();
+			if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
+				return Optional.empty();
+			}
+			throw new StorageException(janusGraphOperationStatus);
+		}
+		return Optional.of(operationResult.left().value());
 	}
 
 	public Either<String, JanusGraphOperationStatus> checkInnerType(PropertyDataDefinition propDataDef) {

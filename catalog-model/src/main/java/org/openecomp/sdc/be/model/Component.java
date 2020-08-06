@@ -479,7 +479,7 @@ public abstract class Component implements PropertiesOwner {
             this.properties = new ArrayList<>();
         }
 
-        this.properties.add(propertyDefinition);;
+        this.properties.add(propertyDefinition);
     }
 
     public void addCategory(String category, String subCategory) {
@@ -697,5 +697,18 @@ public abstract class Component implements PropertiesOwner {
         componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION, this.getCsarVersion());
         return componentMetadata;
     }
+
+    /**
+     * Add a data type to the list of data types. Initializes the list if not yet initialized.
+     *
+     * @param dataTypeDefinition the data type definition to add
+     */
+    public void addToDataTypes(final DataTypeDefinition dataTypeDefinition) {
+        if (dataTypes == null) {
+            dataTypes = new ArrayList<>();
+        }
+        dataTypes.add(dataTypeDefinition);
+    }
+
 
 }

@@ -1145,11 +1145,44 @@ public class ModelConverter {
 		convertPolicies(component, topologyTemplate);
 		convertRequirements(component, topologyTemplate);
 		convertRelationsToComposition(component, topologyTemplate);
+        convertDataTypes(component, topologyTemplate);
 
         return topologyTemplate;
     }
 
-	private static void convertTopologyTemplateInterfaces(Resource resource, TopologyTemplate topologyTemplate) {
+    private static void convertDataTypes(final Component component, final TopologyTemplate topologyTemplate) {
+        final List<DataTypeDefinition> dataTypeDefinitionList = component.getDataTypes();
+        if (CollectionUtils.isEmpty(dataTypeDefinitionList)) {
+            return;
+        }
+        final Map<String, DataTypeDataDefinition> dataTypeMap = dataTypeDefinitionList.stream()
+            .collect(
+                Collectors.toMap(DataTypeDataDefinition::getName,
+                    ModelConverter::parseTo,
+                    (dataTypeDataDefinition, dataTypeDataDefinition2) -> dataTypeDataDefinition)
+            );
+        topologyTemplate.setDataTypes(dataTypeMap);
+    }
+
+    private static DataTypeDataDefinition parseTo(final DataTypeDefinition dataTypeDefinition) {
+        final DataTypeDataDefinition dataTypeDataDefinition = new DataTypeDataDefinition(dataTypeDefinition);
+        final List<PropertyDataDefinition> propertyDataList = new ArrayList<>();
+        DataTypeDefinition currentDataType = dataTypeDefinition;
+
+        do {
+            if (CollectionUtils.isNotEmpty(currentDataType.getProperties())) {
+                propertyDataList.addAll(currentDataType.getProperties().stream()
+                    .map(PropertyDataDefinition::new)
+                    .collect(Collectors.toList()));
+            }
+            currentDataType = currentDataType.getDerivedFrom();
+        } while (currentDataType != null);
+
+        dataTypeDataDefinition.setPropertiesData(propertyDataList);
+        return dataTypeDataDefinition;
+    }
+
+    private static void convertTopologyTemplateInterfaces(Resource resource, TopologyTemplate topologyTemplate) {
 		Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
 		if (interfaces != null && !interfaces.isEmpty()) {
 			Map<String, InterfaceDataDefinition> copy = interfaces.entrySet().stream()
