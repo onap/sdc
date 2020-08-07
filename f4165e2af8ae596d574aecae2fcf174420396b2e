@@ -52,6 +52,24 @@
       "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1a7a37e_2e5b33b2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-08-07T16:08:41Z",
+      "side": 0,
+      "message": "No worries at all, I am the one who introduced the bug in the first place, and am really sorry for all the trouble.\n\nHave you checked if it works by branching right before this commit? Also it seems the error is different this time (isn\u0027t it?). Sébastien initially mentioned a file cannot be retrieved but in this case, it seems to be malformed. Could you please confirm these assumptions?\n\nThanks in advance.",
+      "parentUuid": "06eeb60b_88fef8b7",
+      "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
