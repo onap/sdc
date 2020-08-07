@@ -34,6 +34,24 @@
       "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78c2c095_95e63ca2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-08-07T13:33:17Z",
+      "side": 0,
+      "message": "I\u0027m afraid it still fails with `writeIf(!isAtomicComponent(e.component))`\n\n```\norg.onap.sdc.tosca.parser.exceptions.SdcToscaParserException: Error: CSAR file bad format. Check the log for details.\n\tat org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory.throwSdcToscaParserException(SdcToscaParserFactory.java:217)\n\tat org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory.init(SdcToscaParserFactory.java:110)\n\tat org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory.getSdcCsarHelper(SdcToscaParserFactory.java:81)\n\tat org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils.toscaValidation(AtomicOperationUtils.java:394)\n\tat org.openecomp.sdc.ci.tests.sanity.Onboard.runOnboardToDistributionFlow(Onboard.java:124)\n\tat org.openecomp.sdc.ci.tests.sanity.Onboard.onboardPNFFlow(Onboard.java:84)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:124)\n\tat org.testng.internal.Invoker.invokeMethod(Invoker.java:583)\n\tat org.testng.internal.Invoker.invokeTestMethod(Invoker.java:719)\n\tat org.testng.internal.TestMethodWithDataProviderMethodWorker.call(TestMethodWithDataProviderMethodWorker.java:71)\n\tat org.testng.internal.TestMethodWithDataProviderMethodWorker.call(TestMethodWithDataProviderMethodWorker.java:14)\n\tat java.util.concurrent.FutureTask.run(FutureTask.java:266)\n\tat java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\n\tat java.util.concurrent.FutureTask.run(FutureTask.java:266)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\n\tat java.lang.Thread.run(Thread.java:748)\n```\n\n\nIf you want to reproduce you can get the full test with\n\n\n```\nsudo ./docker_run.sh -e AUTO -l\nsudo ./docker_run.sh -e AUTO -l -d sdc-sim -sim\nsudo ./docker_run.sh -e AUTO -l -d sdc-api-tests -tad\nfirefox /data/logs/sdc-api-tests/ExtentReport/SDC_CI_Extent_Report.html\n```\n\nI totally agree with you Francis that the best course of action is to reproduce the issue in a test and fix it. But in the mean time, it makes it even more time consumming to review merge requests\nAnother issue is that those tests aren\u0027t integrated which how it was missed in the first place",
+      "parentUuid": "06eeb60b_88fef8b7",
+      "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
