@@ -70,6 +70,24 @@
       "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "360a6235_78f6ef2b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-08-09T18:40:22Z",
+      "side": 0,
+      "message": "It can happen to anyone, and it was reviewed and merged :)\nYes I tried before the commit, and I didn\u0027t had this issue. \nFor the file that can\u0027t be reviewed, I believe that it\u0027s a misunderstanding, as Seb and I were looking at this issue. For me it\u0027s the same issue that I saw on master\n\nThanks for your time !",
+      "parentUuid": "b1a7a37e_2e5b33b2",
+      "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
