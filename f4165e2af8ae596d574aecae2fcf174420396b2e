@@ -124,6 +124,24 @@
       "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9439ab1_680ce925",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-08-10T18:26:12Z",
+      "side": 0,
+      "message": "Totally agree.\n\nWhat we would like to do is integrate those tests in the toolchain. But they have a lot of technical dept too",
+      "parentUuid": "f3f6cae2_a8cf66c3",
+      "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
