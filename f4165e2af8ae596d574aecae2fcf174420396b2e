@@ -88,6 +88,24 @@
       "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "341f35bc_39d62f06",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-08-10T11:08:51Z",
+      "side": 0,
+      "message": "Hi!\n\nI\u0027m gonna spend the next hour trying to figure out what is going on, and if I don\u0027t find anything, let you guys revert this. Is that alright? Or do you need to do this ASAP?",
+      "parentUuid": "360a6235_78f6ef2b",
+      "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
