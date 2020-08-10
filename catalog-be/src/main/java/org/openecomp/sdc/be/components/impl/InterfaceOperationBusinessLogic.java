@@ -542,6 +542,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setArtifactUUID(artifactUuId);
         artifactDefinition.setUniqueId(artifactUuId);
+        artifactDefinition.setEsId(artifactUuId);
         artifactDefinition.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
         artifactDefinition.setArtifactLabel(operationName + ".workflowArtifact");
