@@ -49,14 +49,14 @@ Modifications copyright (c) 2018-2019 Nokia
     <janusgraph.version>0.3.1</janusgraph.version>
     <spring.version>4.3.18.RELEASE</spring.version>
     <jersey-bom.version>2.27</jersey-bom.version>
-    <netty.version>4.1.36.Final</netty.version>
+    <netty.version>4.1.48.Final</netty.version>
     <servlet-api.version>3.1.0</servlet-api.version>
     <wire-mock.version>2.26.3</wire-mock.version>
     <ecomp.version>2.6.0</ecomp.version>
     <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
     <cadi.version>2.1.8</cadi.version>
     <lombok.version>1.18.12</lombok.version>
-    <commons-beanutils>1.9.3</commons-beanutils>
+    <commons-beanutils>1.9.4</commons-beanutils>
     <commons-configuration>2.3</commons-configuration>
     <apache-poi.version>4.1.0</apache-poi.version>
     <onap.logging.version>1.6.1</onap.logging.version>
@@ -115,7 +115,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <junit.platform.version>1.6.0</junit.platform.version>
     <junitJupiter.version>5.6.0</junitJupiter.version>
     <assertj.version>3.16.0</assertj.version>
-    <testng.version>6.14.3</testng.version>
+    <testng.version>7.2.0</testng.version>
     <cucumber.version>5.6.0</cucumber.version>
     <bean-matchers.version>0.11</bean-matchers.version>
     <hamcrest.version>2.1</hamcrest.version>
@@ -155,7 +155,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!--docker tags-->
     <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
     <!--togglz version-->
-    <togglz.version>2.4.1.Final</togglz.version>
+    <togglz.version>2.6.1.Final</togglz.version>
 
     <joda.time.version>2.9.9</joda.time.version>
 
