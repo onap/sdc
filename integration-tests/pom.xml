@@ -757,6 +757,12 @@ limitations under the License.
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>testng.dtd.http</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
                     <suiteXmlFiles>
                         <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
                         <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
