@@ -278,8 +278,10 @@ public class CsarUtils {
         }
 
         //UID <cassandraId,filename,component>
-        Either<ZipOutputStream, ResponseFormat> responseFormat = getZipOutputStreamResponseFormatEither(zip, dependencies);
-        if (responseFormat != null) return responseFormat;
+        Either<ZipOutputStream, ResponseFormat> zipOutputStreamOrResponseFormat = getZipOutputStreamResponseFormatEither(zip, dependencies);
+        if (zipOutputStreamOrResponseFormat != null && zipOutputStreamOrResponseFormat.isRight()) {
+                return zipOutputStreamOrResponseFormat;
+        }
 
         //retrieve SDC.zip from Cassandra
         Either<byte[], ResponseFormat> latestSchemaFilesFromCassandra = getLatestSchemaFilesFromCassandra();
