@@ -106,6 +106,24 @@
       "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3f6cae2_a8cf66c3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-08-10T12:33:49Z",
+      "side": 0,
+      "message": "I\u0027m not able to run the sanity tests from here despite the instructions in the documentation. I won\u0027t have the time to dig further today unfortunately so  let\u0027s go on with the revert.\n\nIdeally, a test should be created for this case as nothing prevents us from breaking CsarUtils currently. Considering the high level of technical debt this class contains, this is critical.",
+      "parentUuid": "341f35bc_39d62f06",
+      "revId": "f4165e2af8ae596d574aecae2fcf174420396b2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
