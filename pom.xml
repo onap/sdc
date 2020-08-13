@@ -165,9 +165,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <jacoco.version>0.8.5</jacoco.version>
 
     <java.driver.core.version>4.5.1</java.driver.core.version>
-
   </properties>
-
 
   <dependencyManagement>
     <dependencies>
@@ -339,7 +337,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.2.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -354,12 +352,12 @@ Modifications copyright (c) 2018-2019 Nokia
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.0</version>
         </plugin>
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.26.0</version>
+          <version>0.31.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
