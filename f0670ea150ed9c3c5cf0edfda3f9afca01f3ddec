@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03f30ca5_11bb6ba1",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-08-14T19:34:48Z",
+      "side": 1,
+      "message": "Shouldn\u0027t the new module be added to the modules list in the parent pom ?",
+      "revId": "f0670ea150ed9c3c5cf0edfda3f9afca01f3ddec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
