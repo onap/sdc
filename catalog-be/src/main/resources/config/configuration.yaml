@@ -301,6 +301,9 @@ serviceDeploymentArtifacts:
     CONTROLLER_BLUEPRINT_ARCHIVE:
         acceptedTypes:
             - zip
+    HELM:
+        acceptedTypes:
+            - tgz
     YANG_XML:
         acceptedTypes:
             - xml
@@ -498,6 +501,10 @@ resourceDeploymentArtifacts:
         validForResourceTypes:
             - VF
             - PNF
+    HELM:
+        acceptedTypes:
+            - tgz
+        validForResourceTypes: *allResourceTypes
     CONTROLLER_BLUEPRINT_ARCHIVE:
         acceptedTypes:
             - zip

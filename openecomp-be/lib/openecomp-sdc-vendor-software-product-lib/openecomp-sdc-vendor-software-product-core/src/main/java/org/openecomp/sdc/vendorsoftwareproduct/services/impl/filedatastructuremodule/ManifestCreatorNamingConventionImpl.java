@@ -41,6 +41,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
   private static final String[][] CLOUD_SPECIFIC_KEY_WORDS = {{"k8s", "azure", "aws"}, /* cloud specific technology */
                                                               {"charts", "day0", "configtemplate"} /*cloud specific sub type*/};
   private static final String CONTROLLER_BLUEPRINT_ARCHIVE_FIXED_KEY_WORD = "CBA";
+  private static final String HELM_KEY_WORD = "HELM";
 
   @Override
   public Optional<ManifestContent> createManifest(
@@ -155,6 +156,10 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
     return artifact.toUpperCase().contains(CONTROLLER_BLUEPRINT_ARCHIVE_FIXED_KEY_WORD);
   }
 
+  private boolean isHelm(String artifact) {
+    return artifact.toUpperCase().contains(HELM_KEY_WORD);
+  }
+
   private void addArtifactsToManifestFileDataList(
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
     Collection<String> forArtifacts = CollectionUtils
@@ -165,7 +170,10 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
             fileDataList.add(createBaseFileData(FileData.Type.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT, artifact));
         } else if (isControllerBlueprintArchive(artifact)) {
           fileDataList.add(createBaseFileData(FileData.Type.CONTROLLER_BLUEPRINT_ARCHIVE, artifact));
-        } else {
+        } else if (isHelm(artifact)) {
+          fileDataList.add(createBaseFileData(FileData.Type.HELM, artifact));
+        }
+        else {
           fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
         }
       }
