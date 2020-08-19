@@ -178,13 +178,7 @@ public class Config {
 
 		String configFile = System.getProperty("config.resource");
 		if (configFile == null) {
-			if (System.getProperty("os.name").contains("Windows")) {
-				configFile = WINDOWS_CONFIG_FILE;
-			} else if (System.getProperty("os.name").contains("Mac")) {
-				configFile = WINDOWS_CONFIG_FILE;
-			} else {
-				throw new RuntimeException("Please Add Jvm Argument config.resource");
-			}
+			configFile = WINDOWS_CONFIG_FILE;
 		}
 
 		File file = new File(configFile);
