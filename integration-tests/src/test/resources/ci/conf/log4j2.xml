@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR">
+	<Appenders>
+		<File name="fileAppender" fileName="logfile.log" append="false">
+			<PatternLayout pattern="%d %-5p [%c{1}] %m %n"/>
+		</File>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="fileAppender"/>
+		</Root>
+	</Loggers>
+</Configuration>
