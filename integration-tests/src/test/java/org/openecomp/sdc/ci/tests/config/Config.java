@@ -31,7 +31,7 @@ import java.util.List;
 
 public class Config {
 
-	private static String WINDOWS_CONFIG_FILE = "src/main/resources/ci/conf/attsdc.yaml";
+	private static String WINDOWS_CONFIG_FILE = "src/test/resources/ci/conf/attsdc.yaml";
 	private boolean systemUnderDebug;
 	private boolean rerun;
 	private String reportDBhost;
