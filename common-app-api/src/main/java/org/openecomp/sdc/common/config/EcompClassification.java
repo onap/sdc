@@ -20,22 +20,15 @@
 
 package org.openecomp.sdc.common.config;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum EcompClassification {
 
 	INFORMATION("I"), WARNING("W"), ERROR("E"), FATAL("F");
 
-	String classification;
-
-	EcompClassification(String classification) {
-		this.classification = classification;
-	}
-
-	public String getClassification() {
-		return classification;
-	}
-
-	public void setClassification(String classification) {
-		this.classification = classification;
-	}
+	@Getter
+	private final String classification;
 
 }

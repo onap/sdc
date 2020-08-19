@@ -21,7 +21,11 @@
 package org.openecomp.sdc.common.datastructure;
 
 import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
 public enum MonitoringFieldsKeysEnum {
 	MONITORING_TIMESTAMP(Date.class, "TIMESTAMP"), 
 	MONITORING_HOST_IP(String.class, "HOST_IP"), 
@@ -35,23 +39,7 @@ public enum MonitoringFieldsKeysEnum {
 	MONITORING_APP_ID(String.class, "APP_ID"), 
 	MONITORING_APP_STAT(String.class, "APP_STAT");
 
-	private Class<?> clazz;
-	private String displayName;
+	private final Class<?> clazz;
+	private final String displayName;
 
-	MonitoringFieldsKeysEnum(Class<?> clazz, String displayName) {
-		this.clazz = clazz;
-		this.displayName = displayName;
-	}
-
-	public Class<?> getValueClass() {
-		return this.clazz;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
 }
