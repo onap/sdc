@@ -17,8 +17,11 @@ package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-
+@AllArgsConstructor
+@Getter
 public enum GraphPropertyEnum {
 
     // field name ,class type ,unique ,indexed
@@ -61,19 +64,10 @@ public enum GraphPropertyEnum {
     //Healing
     HEALING_VERSION("healVersion", Integer.class, false, true);
 
-
-
-    private String property;
-    private Class clazz;
-    private boolean unique;
-    private boolean indexed;
-
-    GraphPropertyEnum(String property, Class clazz, boolean unique, boolean indexed) {
-        this.property = property;
-        this.clazz = clazz;
-        this.unique = unique;
-        this.indexed = indexed;
-    }
+    private final String property;
+    private final Class<?> clazz;
+    private final boolean unique;
+    private final boolean indexed;
 
     public static GraphPropertyEnum getByProperty(String property) {
         for (GraphPropertyEnum currProperty : GraphPropertyEnum.values()) {
@@ -82,38 +76,6 @@ public enum GraphPropertyEnum {
             }
         }
         return null;
-    }
-
-    public String getProperty() {
-        return property;
-    }
-
-    public void setProperty(String property) {
-        this.property = property;
-    }
-
-    public Class getClazz() {
-        return clazz;
-    }
-
-    public void setClazz(Class clazz) {
-        this.clazz = clazz;
-    }
-
-    public boolean isUnique() {
-        return unique;
-    }
-
-    public void setUnique(boolean unique) {
-        this.unique = unique;
-    }
-
-    public boolean isIndexed() {
-        return indexed;
-    }
-
-    public void setIndexed(boolean indexed) {
-        this.indexed = indexed;
     }
 
     public static List<String> getAllProperties() {

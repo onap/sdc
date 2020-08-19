@@ -22,7 +22,11 @@ package org.openecomp.sdc.be.dao.neo4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
 public enum GraphEdgePropertiesDictionary {
 
 	// field name class type
@@ -36,29 +40,8 @@ public enum GraphEdgePropertiesDictionary {
 	LEFT_OCCURRENCES("leftOccurrences", String.class), 
 	GET_INPUT_INDEX("get_input_index", String.class);
 
-	private String property;
-	private Class clazz;
-
-	GraphEdgePropertiesDictionary(String property, Class clazz) {
-		this.property = property;
-		this.clazz = clazz;
-	}
-
-	public String getProperty() {
-		return property;
-	}
-
-	public void setProperty(String property) {
-		this.property = property;
-	}
-
-	public Class getClazz() {
-		return clazz;
-	}
-
-	public void setClazz(Class clazz) {
-		this.clazz = clazz;
-	}
+	private final String property;
+	private final Class<?> clazz;
 
 	public static List<String> getAllProperties() {
 

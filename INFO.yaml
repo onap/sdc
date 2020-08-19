@@ -1,7 +1,7 @@
 ---
 project: 'sdc'
 project_creation_date: '2017-01-31'
-lifecycle_state: 'Mature'
+lifecycle_state: 'Incubation'
 project_category: ''
 project_lead: &onap_sdc_ptl
   name: 'Christophe Closset'
