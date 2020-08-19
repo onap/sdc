@@ -38,10 +38,6 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
-import org.openecomp.sdc.be.datatypes.elements.*;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
@@ -126,7 +122,7 @@ public class NodeTemplateOperation extends BaseOperation {
     public static final Integer NON_HEAT_TIMEOUT = 0;
 
     private static final Logger log = Logger.getLogger(NodeTemplateOperation.class.getName());
-    public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(NodeTemplateOperation.class.getName());
+    private static final LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(NodeTemplateOperation.class.getName());
     public NodeTemplateOperation() {
         defaultHeatTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout().getDefaultMinutes();
         if ((defaultHeatTimeout == null) || (defaultHeatTimeout < 1)) {

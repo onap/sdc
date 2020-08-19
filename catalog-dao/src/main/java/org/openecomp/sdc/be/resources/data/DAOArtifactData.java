@@ -35,7 +35,7 @@ public class DAOArtifactData {
 	public static final String SERVICE_VERSION_FIELD = "serviceVersion";
 	public static final String ARTIFACT_NAME_FIELD = "artifactName";
 
-	public static String delim = ":";
+	public static final String delim = ":";
 
 	@PartitionKey
 	@Column(name = "id")
