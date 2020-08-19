@@ -21,8 +21,10 @@ package org.openecomp.core.tools.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class TableData {
-    public List<ColumnDefinition> definitions = new ArrayList<>();
-    public List<List<String>> rows = new ArrayList<>();
+    private final List<ColumnDefinition> definitions = new ArrayList<>();
+    private final List<List<String>> rows = new ArrayList<>();
 }

@@ -206,17 +206,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private static final String CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES = "Create Resource - validateCapabilityTypesCreate";
 	private static final String COMPONENT_INSTANCE_WITH_NAME = "component instance with name ";
 	private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
-	public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
+	private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
 
 
-    private IInterfaceLifecycleOperation interfaceTypeOperation;
-    private LifecycleBusinessLogic lifecycleBusinessLogic;
+	private IInterfaceLifecycleOperation interfaceTypeOperation;
+	private LifecycleBusinessLogic lifecycleBusinessLogic;
 
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    private final ResourceImportManager resourceImportManager;
-    private final InputsBusinessLogic inputsBusinessLogic;
-    private final CompositionBusinessLogic compositionBusinessLogic;
-    private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
+	private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+	private final ResourceImportManager resourceImportManager;
+	private final InputsBusinessLogic inputsBusinessLogic;
+	private final CompositionBusinessLogic compositionBusinessLogic;
+	private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
     private final MergeInstanceUtils mergeInstanceUtils;
     private final UiComponentDataConverter uiComponentDataConverter;
