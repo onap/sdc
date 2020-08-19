@@ -31,29 +31,6 @@ public class YamlSuffixEnumTest {
 		return YamlSuffixEnum.YAML;
 	}
 
-	
-	@Test
-	public void testGetSuffix() throws Exception {
-		YamlSuffixEnum testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getSuffix();
-	}
-
-	
-	@Test
-	public void testSetSuufix() throws Exception {
-		YamlSuffixEnum testSubject;
-		String suffix = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setSuufix(suffix);
-	}
-
-	
 	@Test
 	public void testGetSuffixes() throws Exception {
 		List<String> result;

@@ -95,7 +95,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_UPDATE_INPUT = "Going to execute rollback on update input.";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_UPDATE_INPUT = "Going to execute commit on update input.";
-    public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(InputsBusinessLogic.class.getName());
+    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(InputsBusinessLogic.class.getName());
 
     private final PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;

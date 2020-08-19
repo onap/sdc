@@ -21,7 +21,11 @@
 package org.openecomp.sdc.common.datastructure;
 
 import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
 public enum AuditingFieldsKey {
 	// General
 	AUDIT_TIMESTAMP(Date.class, "TIMESTAMP"), 
@@ -92,23 +96,7 @@ public enum AuditingFieldsKey {
 	AUDIT_AUTH_REALM(String.class, "REALM"),
 	AUDIT_ECOMP_USER(String.class, "ECOMP_USER");
 
-	private Class<?> clazz;
-	private String displayName;
+	private final Class<?> clazz;
+	private final String displayName;
 
-	AuditingFieldsKey(Class<?> clazz, String displayName) {
-		this.clazz = clazz;
-		this.displayName = displayName;
-	}
-
-	public Class<?> getValueClass() {
-		return this.clazz;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
 }

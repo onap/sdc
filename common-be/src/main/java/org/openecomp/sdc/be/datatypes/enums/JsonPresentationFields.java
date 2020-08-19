@@ -17,7 +17,13 @@ package org.openecomp.sdc.be.datatypes.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
+@AllArgsConstructor
+@Getter
+@ToString(onlyExplicitlyIncluded = true)
 public enum JsonPresentationFields {
 
     UNIQUE_ID("uniqueId", GraphPropertyEnum.UNIQUE_ID),
@@ -256,30 +262,14 @@ public enum JsonPresentationFields {
 
     TOSCA_DEFINITIONS_VERSION("tosca_definitions_version", null);
 
-
-    private String presentation;
-    private GraphPropertyEnum storedAs;
-
-    JsonPresentationFields(String presentation, GraphPropertyEnum storedAs) {
-        this.presentation = presentation;
-        this.storedAs = storedAs;
-    }
+    @ToString.Include
+    private final String presentation;
+    @ToString.Exclude
+    private final GraphPropertyEnum storedAs;
 
     @JsonValue
     public String getPresentation() {
         return presentation;
-    }
-
-    public void setPresentation(String presentation) {
-        this.presentation = presentation;
-    }
-
-    public GraphPropertyEnum getStoredAs() {
-        return storedAs;
-    }
-
-    public void setStoredAs(GraphPropertyEnum storedAs) {
-        this.storedAs = storedAs;
     }
 
     public static String getPresentationByGraphProperty(GraphPropertyEnum property) {
@@ -289,12 +279,6 @@ public enum JsonPresentationFields {
             }
         }
         return null;
-    }
-
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        return presentation;
     }
 
     @JsonCreator
