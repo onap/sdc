@@ -22,116 +22,116 @@ package org.openecomp.sdc.common.util;
 
 import com.google.common.base.CharMatcher;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
-import org.jsoup.helper.StringUtil;
 import org.jsoup.safety.Whitelist;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class ValidationUtils {
-	public final static Integer COMPONENT_NAME_MAX_LENGTH = 1024;
-	public final static Pattern COMPONENT_NAME_PATTERN = Pattern
-			.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (COMPONENT_NAME_MAX_LENGTH-1) + "}$");
-	public final static Integer ADDITIONAL_INFORMATION_KEY_MAX_LENGTH = 50;
-	public final static Pattern ADDITIONAL_INFORMATION_KEY_PATTERN = Pattern
-			.compile("^[\\w\\s\\.\\-\\_]{1," + COMPONENT_NAME_MAX_LENGTH + "}$");
-	public final static Integer RSI_NAME_MAX_LENGTH = 1024;
-	public final static Pattern RSI_NAME_PATTERN = Pattern
-			.compile("^[\\w \\s\\.\\-\\_\\:\\+]{1," + RSI_NAME_MAX_LENGTH + "}$");
-	public final static Integer COMMENT_MAX_LENGTH = 256;
 
-	public final static Integer ICON_MAX_LENGTH = 25;
-	public final static Pattern ICON_PATTERN = Pattern.compile("^[\\w\\-]{1," + ICON_MAX_LENGTH + "}$");
-	public final static Integer PROJECT_CODE_MAX_LEGTH = 50;
-	public final static Pattern PROJECT_CODE_PATTERN = Pattern.compile("^[\\s\\w_.-]{5,50}$");
+	private ValidationUtils() {
+	}
+
+	public static final Integer COMPONENT_NAME_MAX_LENGTH = 1024;
+	public static final Pattern COMPONENT_NAME_PATTERN = Pattern
+			.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (COMPONENT_NAME_MAX_LENGTH-1) + "}$");
+	public static final Integer ADDITIONAL_INFORMATION_KEY_MAX_LENGTH = 50;
+	public static final Pattern ADDITIONAL_INFORMATION_KEY_PATTERN = Pattern
+			.compile("^[\\w\\s\\.\\-\\_]{1," + COMPONENT_NAME_MAX_LENGTH + "}$");
+	public static final Integer RSI_NAME_MAX_LENGTH = 1024;
+	public static final Pattern RSI_NAME_PATTERN = Pattern
+			.compile("^[\\w \\s\\.\\-\\_\\:\\+]{1," + RSI_NAME_MAX_LENGTH + "}$");
+	public static final Integer COMMENT_MAX_LENGTH = 256;
+
+	public static final Integer ICON_MAX_LENGTH = 25;
+	public static final Pattern ICON_PATTERN = Pattern.compile("^[\\w\\-]{1," + ICON_MAX_LENGTH + "}$");
+	public static final Integer PROJECT_CODE_MAX_LEGTH = 50;
+	public static final Pattern PROJECT_CODE_PATTERN = Pattern.compile("^[\\s\\w_.-]{5,50}$");
 
 	// USER_ID format : aannnX (where a=a-z or A-Z, n=0-9, and X=a-z,A-Z, or 0-9)
-	public final static Integer CONNTACT_ID_MAX_LENGTH = 50;
-	//	public final static Pattern CONTACT_ID_PATTERN = Pattern
-//			.compile("[mM]{1}[0-9]{5}|[a-zA-Z]{2}[0-9]{4}|[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{1}");
-	public final static Pattern CONTACT_ID_PATTERN = Pattern.compile("^[\\s\\w_.-]{1,50}$");
-	public final static Pattern OCTET_PATTERN = Pattern.compile("%[a-fA-F0-9]{2}");
-	public final static Pattern NONE_UTF8_PATTERN = Pattern.compile("[^\\x00-\\x7F]+");
-	public final static Pattern URL_INVALIDE_PATTERN = Pattern.compile("[,#?&@$<>~^`\\\\\\[\\]{}|\")(*!+=;%]+");// ,#?&@$<>~^`\\[]{}|")(*!
+	public static final Integer CONNTACT_ID_MAX_LENGTH = 50;
 
-	public final static Pattern ENGLISH_PATTERN = Pattern.compile("^[\\p{Graph}\\x20]+$");
-	public final static Pattern COMMENT_PATTERN = Pattern.compile("^[\\u0000-\\u00BF]{1,1024}$");
-	public final static Pattern SERVICE_METADATA_PATTERN = Pattern.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]{1,256}");
-	public final static Integer COMPONENT_DESCRIPTION_MAX_LENGTH = 1024;
-	public final static Integer SERVICE_TYPE_MAX_LENGTH = 256;
-	public final static Integer SERVICE_ROLE_MAX_LENGTH = 256;
-	public final static Integer SERVICE_FUNCTION_MAX_LENGTH = 256;
-	public final static Integer SERVICE_NAMING_POLICY_MAX_SIZE = 100;
+	public static final Pattern CONTACT_ID_PATTERN = Pattern.compile("^[\\s\\w_.-]{1,50}$");
+	public static final Pattern OCTET_PATTERN = Pattern.compile("%[a-fA-F0-9]{2}");
+	public static final Pattern NONE_UTF8_PATTERN = Pattern.compile("[^\\x00-\\x7F]+");
+	public static final Pattern URL_INVALIDE_PATTERN = Pattern.compile("[,#?&@$<>~^`\\\\\\[\\]{}|\")(*!+=;%]+");// ,#?&@$<>~^`\\[]{}|")(*!
 
-	public final static Integer TAG_MAX_LENGTH = 1024;
-	public final static Integer TAG_LIST_MAX_LENGTH = 1024;
-	public final static Integer VENDOR_NAME_MAX_LENGTH = 60;
-	public final static Pattern VENDOR_NAME_PATTERN = Pattern
+	public static final Pattern ENGLISH_PATTERN = Pattern.compile("^[\\p{Graph}\\x20]+$");
+	public static final Pattern COMMENT_PATTERN = Pattern.compile("^[\\u0000-\\u00BF]{1,1024}$");
+	public static final Pattern SERVICE_METADATA_PATTERN = Pattern.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]{1,256}");
+	public static final Integer COMPONENT_DESCRIPTION_MAX_LENGTH = 1024;
+	public static final Integer SERVICE_TYPE_MAX_LENGTH = 256;
+	public static final Integer SERVICE_ROLE_MAX_LENGTH = 256;
+	public static final Integer SERVICE_FUNCTION_MAX_LENGTH = 256;
+	public static final Integer SERVICE_NAMING_POLICY_MAX_SIZE = 100;
+
+	public static final Integer TAG_MAX_LENGTH = 1024;
+	public static final Integer TAG_LIST_MAX_LENGTH = 1024;
+	public static final Integer VENDOR_NAME_MAX_LENGTH = 60;
+	public static final Pattern VENDOR_NAME_PATTERN = Pattern
 			.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
-	public final static Integer VENDOR_RELEASE_MAX_LENGTH = 25;
-	public final static Pattern VENDOR_RELEASE_PATTERN = Pattern
+	public static final Integer VENDOR_RELEASE_MAX_LENGTH = 25;
+	public static final Pattern VENDOR_RELEASE_PATTERN = Pattern
 			.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
-	public final static Integer RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH = 65;
+	public static final Integer RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH = 65;
 
-	public final static Pattern CLEAN_FILENAME_PATTERN = Pattern.compile("[\\x00-\\x1f\\x80-\\x9f\\x5c/<?>\\*:|\"/]+");
+	public static final Pattern CLEAN_FILENAME_PATTERN = Pattern.compile("[\\x00-\\x1f\\x80-\\x9f\\x5c/<?>\\*:|\"/]+");
 
-	public final static Pattern DASH_PATTERN = Pattern.compile("[-]+");
-	public final static Pattern UNDERSCORE_PATTERN = Pattern.compile("[_]+");
-	public final static Pattern PLUS_PATTERN = Pattern.compile("[+]+");
-	public final static Pattern SPACE_PATTERN = Pattern.compile("[ ]+");
-	public final static Pattern AMP_PATTERN = Pattern.compile("[&]+");
-	public final static Pattern DOT_PATTERN = Pattern.compile("[\\.]+");
-	public final static Pattern APOST_PATTERN = Pattern.compile("[']+");
-	public final static Pattern HASHTAG_PATTERN = Pattern.compile("[#]+");
-	public final static Pattern EQUAL_PATTERN = Pattern.compile("[=]+");
-	public final static Pattern COLON_PATTERN = Pattern.compile("[:]+");
-	public final static Pattern AT_PATTERN = Pattern.compile("[@]+");
-	public final static Pattern AND_PATTERN = Pattern.compile(" [aA][Nn][Dd] ");
-	public final static Set<String> CATEGORY_CONJUNCTIONS = new HashSet<>(
+	public static final Pattern DASH_PATTERN = Pattern.compile("[-]+");
+	public static final Pattern UNDERSCORE_PATTERN = Pattern.compile("[_]+");
+	public static final Pattern PLUS_PATTERN = Pattern.compile("[+]+");
+	public static final Pattern SPACE_PATTERN = Pattern.compile("[ ]+");
+	public static final Pattern AMP_PATTERN = Pattern.compile("[&]+");
+	public static final Pattern DOT_PATTERN = Pattern.compile("[\\.]+");
+	public static final Pattern APOST_PATTERN = Pattern.compile("[']+");
+	public static final Pattern HASHTAG_PATTERN = Pattern.compile("[#]+");
+	public static final Pattern EQUAL_PATTERN = Pattern.compile("[=]+");
+	public static final Pattern COLON_PATTERN = Pattern.compile("[:]+");
+	public static final Pattern AT_PATTERN = Pattern.compile("[@]+");
+	public static final Pattern AND_PATTERN = Pattern.compile(" [aA][Nn][Dd] ");
+	private static final Set<String> CATEGORY_CONJUNCTIONS = new HashSet<>(
 			Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
 
-	public final static Pattern COST_PATTERN = Pattern.compile("^[0-9]{1,5}\\.[0-9]{1,3}$");
-	public final static Pattern ARTIFACT_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9 \\-+]+$");
-	public final static Integer ARTIFACT_LABEL_LENGTH = 255;
-	public final static Pattern ARTIFACT_DISPLAY_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
-	public final static Pattern CATEGORY_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
-	public final static Integer CATEGORY_LABEL_MIN_LENGTH = 3;
-	public final static Integer CATEGORY_LABEL_MAX_LENGTH = 25;
+	public static final Pattern COST_PATTERN = Pattern.compile("^[0-9]{1,5}\\.[0-9]{1,3}$");
+	public static final Pattern ARTIFACT_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9 \\-+]+$");
+	public static final Integer ARTIFACT_LABEL_LENGTH = 255;
+	public static final Pattern ARTIFACT_DISPLAY_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
+	public static final Pattern CATEGORY_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
+	public static final Integer CATEGORY_LABEL_MIN_LENGTH = 3;
+	public static final Integer CATEGORY_LABEL_MAX_LENGTH = 25;
 
-	public final static Pattern COMPONENT_NAME_DELIMETER_PATTERN = Pattern.compile("[\\.\\-\\_]+");
-	public final static Pattern COMPONENT_INCTANCE_NAME_DELIMETER_PATTERN = Pattern.compile("[\\.\\-]+");
-	public final static Pattern PRODUCT_NAME_DELIMETER_PATTERN = Pattern.compile("[\\.\\-\\_&=#@':\\[\\]\\+]+");
-	public final static Integer CONSUMER_NAME_MAX_LENGTH = 255;
-	// public final static Pattern CONSUMER_NAME_PATTERN =
-	// Pattern.compile("^[\\w]{1}?[\\w\\.\\-]{0," + CONSUMER_NAME_MAX_LENGTH +
-	// "}?$");
-	public final static Pattern CONSUMER_NAME_PATTERN = Pattern.compile("^[\\w]+[\\w\\.\\-]*$");
-	public final static Integer CONSUMER_SALT_LENGTH = 32;
-	public final static Integer CONSUMER_PASSWORD_LENGTH = 64;
-	public final static Pattern CONSUMER_PASS_SALT_PATTERN = Pattern.compile("^[a-z0-9]+$");
-	public final static Pattern FLOAT_PATTERN = Pattern.compile("^[\\d]+[\\.]{1}[\\d]+$");
-	public final static Pattern CERTIFIED_VERSION_PATTERN = Pattern.compile("^[1-9][0-9]*\\.0$");
-	public final static Pattern MINOR_VERSION_PATTERN = Pattern.compile("^0\\.[1-9][0-9]*$");
-	public final static Pattern TAGS_PATTERN = Pattern.compile("<[^><]*>");
-	public final static Pattern TAG_PATTERN = Pattern.compile("^[\\s\\w_.-]{1,1024}$");
+	public static final Pattern COMPONENT_NAME_DELIMETER_PATTERN = Pattern.compile("[\\.\\-\\_]+");
+	public static final Pattern COMPONENT_INCTANCE_NAME_DELIMETER_PATTERN = Pattern.compile("[\\.\\-]+");
+	public static final Pattern PRODUCT_NAME_DELIMETER_PATTERN = Pattern.compile("[\\.\\-\\_&=#@':\\[\\]\\+]+");
+	public static final Integer CONSUMER_NAME_MAX_LENGTH = 255;
 
-	public final static Integer ARTIFACT_NAME_LENGTH = 255;
-	public final static Integer API_URL_LENGTH = 100;
-	public final static Integer ARTIFACT_DESCRIPTION_MAX_LENGTH = 256;
+	public static final Pattern CONSUMER_NAME_PATTERN = Pattern.compile("^[\\w]+[\\w\\.\\-]*$");
+	public static final Integer CONSUMER_SALT_LENGTH = 32;
+	public static final Integer CONSUMER_PASSWORD_LENGTH = 64;
+	public static final Pattern CONSUMER_PASS_SALT_PATTERN = Pattern.compile("^[a-z0-9]+$");
+	public static final Pattern FLOAT_PATTERN = Pattern.compile("^[\\d]+[\\.]{1}[\\d]+$");
+	public static final Pattern CERTIFIED_VERSION_PATTERN = Pattern.compile("^[1-9][0-9]*\\.0$");
+	public static final Pattern MINOR_VERSION_PATTERN = Pattern.compile("^0\\.[1-9][0-9]*$");
+	public static final Pattern TAGS_PATTERN = Pattern.compile("<[^><]*>");
+	public static final Pattern TAG_PATTERN = Pattern.compile("^[\\s\\w_.-]{1,1024}$");
 
-	public final static Integer PRODUCT_FULL_NAME_MIN_LENGTH = 4;
-	public final static Integer PRODUCT_FULL_NAME_MAX_LENGTH = 100;
+	public static final Integer ARTIFACT_NAME_LENGTH = 255;
+	public static final Integer API_URL_LENGTH = 100;
+	public static final Integer ARTIFACT_DESCRIPTION_MAX_LENGTH = 256;
+
+	public static final Integer PRODUCT_FULL_NAME_MIN_LENGTH = 4;
+	public static final Integer PRODUCT_FULL_NAME_MAX_LENGTH = 100;
 	public static final Integer FORWARDING_PATH_NAME_MAX_LENGTH = 100;
-	public final static Pattern FORWARDING_PATH_NAME_PATTERN = Pattern.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (FORWARDING_PATH_NAME_MAX_LENGTH-1) + "}$");
+	public static final Pattern FORWARDING_PATH_NAME_PATTERN = Pattern.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (FORWARDING_PATH_NAME_MAX_LENGTH-1) + "}$");
 
-	public final static Integer POLICY_MAX_LENGTH = 1024;
-	public final static Pattern POLICY_NAME_PATTERN = Pattern
+	public static final Integer POLICY_MAX_LENGTH = 1024;
+	public static final Pattern POLICY_NAME_PATTERN = Pattern
 			.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (POLICY_MAX_LENGTH-1) + "}$");
 
 	public static boolean validateArtifactLabel(String label) {
@@ -456,10 +456,6 @@ public class ValidationUtils {
     }
 
 	public static String normalizeFileName(String filename) {
-		// String[] split = filename.split(Pattern.quote(File.separator));
-		// String name = "";
-		//
-		// name = split[split.length - 1];
 		return cleanFileName(filename);
 
 	}
@@ -497,7 +493,6 @@ public class ValidationUtils {
 		str = PLUS_PATTERN.matcher(str).replaceAll("+");
 		str = normaliseWhitespace(str);
 		str = str.trim();
-		// str = str.replaceAll(" ", "");
 
 		return str;
 	}

@@ -167,7 +167,7 @@ public class GenerateEcompErrorsCsv {
 				ecompErrorRow.setDescription(ecompErrorEnum.getEcompErrorCode().getDescription());
 				ecompErrorRow.setErrorCode(errorCode);
 				ecompErrorRow.setErrorName(ecompErrorEnum.name());
-				ecompErrorRow.setErrorType(ecompErrorEnum.geteType());
+				ecompErrorRow.setErrorType(ecompErrorEnum.getEType());
 				ecompErrorRow.setResolution(ecompErrorEnum.getEcompErrorCode().getResolution());
 
 				errors.add(ecompErrorRow);
