@@ -53,8 +53,8 @@ public class ExportSerializer {
     public void serializeResult(final ResultSet resultSet, final Set<String> filteredItems, final String filteredColumn, Set<String> vlms) {
         try {
             TableData tableData = new TableData();
-            tableData.definitions = resultSet.getColumnDefinitions().asList().stream().map(ColumnDefinition::new).collect(Collectors.toList());
-            String table = tableData.definitions.iterator().next().getTable();
+            tableData.getDefinitions().addAll(resultSet.getColumnDefinitions().asList().stream().map(ColumnDefinition::new).collect(Collectors.toList()));
+            String table = tableData.getDefinitions().iterator().next().getTable();
             boolean isElementTable = table.equals(ELEMENT_TABLE_NAME);
             Iterator<Row> iterator = resultSet.iterator();
             iterator.forEachRemaining(row -> {
@@ -62,14 +62,14 @@ public class ExportSerializer {
                     return;
                 }
                 List<String> rowData = new ArrayList<>();
-                for (int i = 0; i < tableData.definitions.size(); i++) {
-                    ColumnDefinition columnDefinition = tableData.definitions.get(i);
+                for (int i = 0; i < tableData.getDefinitions().size(); i++) {
+                    ColumnDefinition columnDefinition = tableData.getDefinitions().get(i);
                     Name name = dataTypesMap.get(columnDefinition.getType());
                     boolean checkForVLM = isElementTable && columnDefinition.getName().equals(ELEMENT_INFO_COLUMN_NAME);
                     Object data = convertByType(vlms, row, i, name, checkForVLM);
                     rowData.add(data.toString());
                 }
-                tableData.rows.add(rowData);
+                tableData.getRows().add(rowData);
             });
             ObjectMapper objectMapper = new ObjectMapper();
             String fileName = ImportProperties.ROOT_DIRECTORY + File.separator + table + "_" + System.currentTimeMillis() + ".json";

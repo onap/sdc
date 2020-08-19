@@ -61,7 +61,7 @@ public class ImportSingleTable {
             TableData tableData = objectMapper.readValue(file.toFile(), TableData.class);
             Session session = CassandraSessionFactory.getSession();
             PreparedStatement ps = getPrepareStatement(tableData, session);
-            tableData.rows.forEach(row -> executeQuery(session, ps, tableData.definitions, row));
+            tableData.getRows().forEach(row -> executeQuery(session, ps, tableData.getDefinitions(), row));
         } catch (IOException e) {
             Utils.logError(logger, e);
         }
@@ -153,12 +153,12 @@ public class ImportSingleTable {
     }
 
     private String createQuery(TableData tableData) {
-        ColumnDefinition def = tableData.definitions.iterator().next();
+        ColumnDefinition def = tableData.getDefinitions().iterator().next();
         StringBuilder sb = new StringBuilder(1024);
         sb.append(INSERT_INTO).append(def.getKeyspace()).append(".").append(def.getTable());
-        sb.append(tableData.definitions.stream().map(ColumnDefinition::getName)
+        sb.append(tableData.getDefinitions().stream().map(ColumnDefinition::getName)
                 .collect(Collectors.joining(" , ", " ( ", " ) ")));
-        sb.append(VALUES).append(tableData.definitions.stream().map(definition -> "?")
+        sb.append(VALUES).append(tableData.getDefinitions().stream().map(definition -> "?")
                 .collect(Collectors.joining(" , ", " ( ", " ) "))).append(";");
         return sb.toString();
     }
