@@ -27,6 +27,8 @@ import com.datastax.driver.core.schemabuilder.Alter;
 import com.datastax.driver.core.schemabuilder.Create;
 import com.datastax.driver.core.schemabuilder.SchemaBuilder;
 import com.datastax.driver.core.schemabuilder.SchemaStatement;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
@@ -384,20 +386,12 @@ public class SdcSchemaBuilder {
 		return query;
 	}
 
-
-
+	@AllArgsConstructor
 	public enum ReplicationStrategy {
 		NETWORK_TOPOLOGY_STRATEGY("NetworkTopologyStrategy"), SIMPLE_STRATEGY("SimpleStrategy");
 
-		public String strategyName;
-
-		private ReplicationStrategy(String strategyName) {
-			this.strategyName = strategyName;
-		}
-
-		public String getStrategyName() {
-			return strategyName;
-		}
+		@Getter
+		private final String strategyName;
 	}
 
 }
