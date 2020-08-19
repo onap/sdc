@@ -23,33 +23,27 @@ package org.openecomp.sdc.heat.datatypes.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 @Getter
 public enum HeatPseudoParameters {
     OS_STACK_NAME("OS::stack_name"),
     OS_STACK_ID("OS::stack_id"),
     OS_PROJECT_ID("OS::project_id");
 
-    private static List<String> pseudoParameterNames;
-    private String pseudoParameter;
+    private static final List<String> pseudoParameterNames = new ArrayList<>();
+    private final String pseudoParameter;
 
     static {
-        pseudoParameterNames = new ArrayList<>();
-        for (HeatPseudoParameters parameter : HeatPseudoParameters.values()) {
+        for (HeatPseudoParameters parameter : values()) {
             pseudoParameterNames.add(parameter.getPseudoParameter());
         }
-    }
-
-    HeatPseudoParameters(String pseudoParameter) {
-        this.pseudoParameter = pseudoParameter;
     }
 
     public static List<String> getPseudoParameterNames() {
         return pseudoParameterNames;
     }
 
-    public static void setPseudoParameterNames(List<String> pseudoParameterNames) {
-        HeatPseudoParameters.pseudoParameterNames = pseudoParameterNames;
-    }
 }

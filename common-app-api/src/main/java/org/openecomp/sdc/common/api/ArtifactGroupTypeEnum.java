@@ -22,27 +22,19 @@ package org.openecomp.sdc.common.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
 public enum ArtifactGroupTypeEnum {
 
 	INFORMATIONAL("INFORMATIONAL"), DEPLOYMENT("DEPLOYMENT"), LIFE_CYCLE("LIFE_CYCLE"), SERVICE_API("SERVICE_API"), TOSCA("TOSCA"), OTHER("OTHER");
 
-	private String type;
-
-	ArtifactGroupTypeEnum(String type) {
-		this.type = type;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
+	@Getter
+	private final String type;
 
 	public static ArtifactGroupTypeEnum findType(final String type) {
-		for (ArtifactGroupTypeEnum ate : ArtifactGroupTypeEnum.values()) {
+		for (ArtifactGroupTypeEnum ate : values()) {
 			if (ate.getType().equals(type)) {
 				return ate;
 			}
@@ -52,7 +44,7 @@ public enum ArtifactGroupTypeEnum {
 
 	public static List<String> getAllTypes() {
 		List<String> types = new ArrayList<>();
-		for (ArtifactGroupTypeEnum ate : ArtifactGroupTypeEnum.values()) {
+		for (ArtifactGroupTypeEnum ate : values()) {
 			types.add(ate.getType());
 		}
 		return types;

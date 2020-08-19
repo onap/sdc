@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.be.dao.neo4j;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum GraphPropertiesDictionary {
 //						field name					class type    				unique		indexed 
 //													stored in graph 			index	
@@ -151,33 +156,9 @@ public enum GraphPropertiesDictionary {
 	IS_VSP_ARCHIVED		("isVspArchived",		    Boolean.class, 				false,		true),
 	ARCHIVE_TIME		("archiveTime",			    Long.class, 				false,		true);
 
-
 	private final String property;
-	private final Class clazz;
+	private final Class<?> clazz;
 	private final boolean unique;
 	private final boolean indexed;
 	
-	GraphPropertiesDictionary(String property,Class clazz, boolean unique,boolean indexed) {
-		this.property = property;
-		this.clazz = clazz;
-		this.unique = unique;
-		this.indexed = indexed;
-	}
-	
-
-	public String getProperty() {
-		return property;
-	}
-
-	public Class getClazz() {
-		return clazz;
-	}
-
-	public boolean isUnique() {
-		return unique;
-	}
-
-	public boolean isIndexed() {
-		return indexed;
-	}
 }
