@@ -29,13 +29,13 @@ import java.util.Date;
 
 @Table(keyspace = "sdccomponent", name = "componentcache")
 public class ComponentCacheData {
-	public final static String RRESOURCE_ID_FIELD = "resourceId";
+	public static final String RESOURCE_ID_FIELD = "resourceId";
 
-	public final static String SERVICE_NAME_FIELD = "serviceName";
-	public final static String SERVICE_VERSION_FIELD = "serviceVersion";
-	public final static String ARTIFACT_NAME_FIELD = "artifactName";
+	public static final String SERVICE_NAME_FIELD = "serviceName";
+	public static final String SERVICE_VERSION_FIELD = "serviceVersion";
+	public static final String ARTIFACT_NAME_FIELD = "artifactName";
 
-	public static String delim = ":";
+	public static final String delim = ":";
 
 	@PartitionKey
 	@Column(name = "id")

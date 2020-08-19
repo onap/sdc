@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.common.config;
 
+import lombok.Getter;
+
+@Getter
 public enum EcompErrorEnum {
 
 
@@ -410,13 +413,11 @@ public enum EcompErrorEnum {
      * AlarmSeverity.CRITICAL, EcompClassification.FATAL),
      */;
 
-	;
-
-	EcompErrorCode ecompErrorCode;
-	ErrorType eType;
-	AlarmSeverity alarmSeverity;
-	EcompClassification classification;
-	EcompErrorEnum clearCode;
+	private final EcompErrorCode ecompErrorCode;
+    private final ErrorType eType;
+    private final AlarmSeverity alarmSeverity;
+    private final EcompClassification classification;
+    private final EcompErrorEnum clearCode;
 
     EcompErrorEnum(EcompErrorCode ecompErrorCode, ErrorType eType, AlarmSeverity alarmSeverity,
                    EcompClassification classification, EcompErrorEnum clearCode) {
@@ -435,46 +436,7 @@ public enum EcompErrorEnum {
         this.eType = eType;
         this.alarmSeverity = alarmSeverity;
         this.classification = classification;
-    }
-
-    public ErrorType geteType() {
-        return eType;
-    }
-
-    public void seteType(ErrorType eType) {
-        this.eType = eType;
-    }
-
-    public AlarmSeverity getAlarmSeverity() {
-        return alarmSeverity;
-    }
-
-    public void setAlarmSeverity(AlarmSeverity alarmSeverity) {
-        this.alarmSeverity = alarmSeverity;
-    }
-
-    public EcompErrorCode getEcompErrorCode() {
-        return ecompErrorCode;
-    }
-
-    public void setEcompErrorCode(EcompErrorCode ecompErrorCode) {
-        this.ecompErrorCode = ecompErrorCode;
-    }
-
-    public EcompClassification getClassification() {
-        return classification;
-    }
-
-    public void setClassification(EcompClassification classification) {
-        this.classification = classification;
-    }
-
-    public EcompErrorEnum getClearCode() {
-        return clearCode;
-    }
-
-    public void setClearCode(EcompErrorEnum clearCode) {
-        this.clearCode = clearCode;
+        this.clearCode = null;
     }
 
     public enum ErrorType {
@@ -485,7 +447,4 @@ public enum EcompErrorEnum {
         CRITICAL, MAJOR, MINOR, INFORMATIONAL, NONE
     }
 
-    // public String toString() {
-    // return eType + "," + eCode + "," + desc;
-    // }
 }
