@@ -22,30 +22,19 @@ package org.openecomp.sdc.common.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
 public enum YamlSuffixEnum {
 
 	YAML("YAML"),
-
 	yaml("yaml"),
-
 	YML("YML"),
-
 	yml("yml");
 
-	YamlSuffixEnum(String suffix) {
-		this.suffix = suffix;
-	}
-
-	private String suffix;
-
-	public String getSuffix() {
-		return suffix;
-	}
-
-	public void setSuufix(String suffix) {
-		this.suffix = suffix;
-	}
+	@Getter
+	private final String suffix;
 
 	public static List<String> getSuffixes() {
 

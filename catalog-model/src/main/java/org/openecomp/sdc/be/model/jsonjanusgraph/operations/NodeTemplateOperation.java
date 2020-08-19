@@ -115,7 +115,7 @@ public class NodeTemplateOperation extends BaseOperation {
     public static final Integer NON_HEAT_TIMEOUT = 0;
 
     private static final Logger log = Logger.getLogger(NodeTemplateOperation.class.getName());
-    public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(NodeTemplateOperation.class.getName());
+    private static final LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(NodeTemplateOperation.class.getName());
     public NodeTemplateOperation() {
         defaultHeatTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout().getDefaultMinutes();
         if ((defaultHeatTimeout == null) || (defaultHeatTimeout < 1)) {
