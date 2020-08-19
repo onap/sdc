@@ -25,7 +25,7 @@ limitations under the License.
 
     <groupId>org.openecomp.sdc</groupId>
     <artifactId>sdc-integration-tests</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>sdc-integration-tests</name>
 
     <parent>
@@ -50,6 +50,103 @@ limitations under the License.
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-model</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-dao</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>3.0.6</version>
+            <!--to update -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-core</artifactId>
+            <version>${janusgraph.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-collections</artifactId>
+                    <groupId>commons-collections</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>groovy</artifactId>
+                    <groupId>org.codehaus.groovy</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.thrift</groupId>
+                    <artifactId>libthrift</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.clearspring.analytics</groupId>
+            <artifactId>stream</artifactId>
+            <version>${clearspring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${httpcore.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -68,7 +165,7 @@ limitations under the License.
                             <outputDirectory>${it.chef.config}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/test/resources</directory>
+                                    <directory>environments</directory>
                                     <filtering>true</filtering>
                                     <includes>
                                         <include>integration-test.json</include>
@@ -120,7 +217,6 @@ limitations under the License.
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <inherited>false</inherited>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.httpcomponents</groupId>
@@ -376,7 +472,7 @@ limitations under the License.
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
                                         <volume>
-                                            sdc-os-chef/environments/plugins-configuration.yaml:/var/lib/jetty/config/catalog-fe/plugins-configuration.yaml
+                                            environments/plugins-configuration.yaml:/var/lib/jetty/config/catalog-fe/plugins-configuration.yaml
                                         </volume>
                                     </bind>
                                 </volumes>
@@ -404,7 +500,6 @@ limitations under the License.
                         </image>
                     </images>
                 </configuration>
-
                 <executions>
                     <execution>
                         <id>docker-start-for-it</id>
@@ -421,6 +516,23 @@ limitations under the License.
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
