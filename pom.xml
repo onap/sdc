@@ -569,8 +569,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <module>asdctool</module>
         <module>catalog-ui</module>
         <module>catalog-fe</module>
-        <module>test-apis-ci</module>
-        <module>ui-ci</module>
+<!--        <module>test-apis-ci</module>-->
+<!--        <module>ui-ci</module>-->
         <module>sdc-os-chef</module>
         <module>utils/webseal-simulator</module>
         <module>integration-tests</module>
