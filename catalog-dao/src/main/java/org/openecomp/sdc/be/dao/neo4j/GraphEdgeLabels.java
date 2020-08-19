@@ -22,7 +22,10 @@ package org.openecomp.sdc.be.dao.neo4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
 public enum GraphEdgeLabels {
 
 	// field name
@@ -41,19 +44,8 @@ public enum GraphEdgeLabels {
 	GROUP("GROUP"), GROUP_ARTIFACT_REF("GROUP_ARTIFACT_REF"), GROUP_MEMBER("GROUP_MEMBER"), INPUT("EDGE_INPUT"), GET_INPUT("GET_INPUT"), GROUP_INST("GROUP_INST"),
 	GROUP_TYPE_CAPABILITY_TYPE("GROUP_TYPE_CAPABILITY_TYPE"), GROUP_TYPE_CAPABILITY("GROUP_TYPE_CAPABILITY");
 
-	private String property;
-
-	GraphEdgeLabels(String property) {
-		this.property = property;
-	}
-
-	public String getProperty() {
-		return property;
-	}
-
-	public void setProperty(String property) {
-		this.property = property;
-	}
+	@Getter
+	private final String property;
 
 	public static List<String> getAllProperties() {
 

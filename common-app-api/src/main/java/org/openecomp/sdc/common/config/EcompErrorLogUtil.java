@@ -111,9 +111,9 @@ public class EcompErrorLogUtil {
 
 			String eCode = createEcode(ecompErrorEnum);
 
-			MDC.put("alarmSeverity", ecompErrorEnum.alarmSeverity.name());
+			MDC.put("alarmSeverity", ecompErrorEnum.getAlarmSeverity().name());
 			// else it stays ERROR
-			formatter.format(ECOMP_ERROR_TMPL, ecompErrorEnum.geteType(), ecompErrorEnum.name(), eCode,
+			formatter.format(ECOMP_ERROR_TMPL, ecompErrorEnum.getEType(), ecompErrorEnum.name(), eCode,
 					ecompErrorContext, description);
 
             log.error(severity, EcompLoggerErrorCode.getByValue(ecompErrorEnum.getEcompErrorCode().name()),
