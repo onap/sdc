@@ -46,6 +46,7 @@ limitations under the License.
         <it.sdc.user>asdc_user</it.sdc.user>
         <it.sdc.password>Aa1234%^!</it.sdc.password>
         <it.chef.config>${project.build.directory}/chef-config</it.chef.config>
+        <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
         </it.docker.version>
@@ -262,6 +263,25 @@ limitations under the License.
                                     <includes>
                                         <include>integration-test.json</include>
                                         <include>plugins-configuration.yaml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-sdc-be-plugins</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${it.sdc-be.plugins}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../catalog-be-plugins/etsi-nfv-nsd-csar-plugin/target</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>etsi-nfv-nsd-csar-plugin-${version}.jar</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -537,6 +557,7 @@ limitations under the License.
                                     <bind>
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
+                                        <volume>${it.sdc-be.plugins}:/var/lib/jetty/plugins</volume>
                                     </bind>
                                 </volumes>
                                 <wait>
