@@ -1,0 +1,15 @@
+{
+	"payloadName": "NsVirtualLink.yml",
+	"contactId": "jh0003",
+	"name": "NsVirtualLink",
+	"description": "ETSI NsVirtualLink",
+	"resourceIconPath": "network",
+	"resourceType": "VL",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["NsVirtualLink"]
+}

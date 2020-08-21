@@ -1,6 +1,8 @@
 {
   "nfv": [
-    "allottedResource"
+    "allottedResource",
+    "NS",
+    "NsVirtualLink"
   ],
   "onap": [
   ],
