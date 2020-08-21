@@ -123,7 +123,7 @@ export class ServiceDependenciesComponent {
     isDependent: boolean;
     isLoading: boolean;
     parentServiceInputs: InputBEModel[] = [];
-    rulesList: ConstraintObject[] = [];
+    constraintObjects: ConstraintObject[] = [];
     operatorTypes: any[];
 
     @Input() readonly: boolean;
@@ -150,7 +150,7 @@ export class ServiceDependenciesComponent {
         this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((result: ComponentGenericResponse) => {
             this.parentServiceInputs = result.inputs;
         });
-        this.loadRules();
+        this.loadNodeFilter();
         this.translateService.languageChangedObservable.subscribe((lang) => {
             I18nTexts.translateTexts(this.translateService);
         });
@@ -163,18 +163,13 @@ export class ServiceDependenciesComponent {
         }
         if (changes.selectedInstanceConstraints && changes.selectedInstanceConstraints.currentValue !== changes.selectedInstanceConstraints.previousValue) {
             this.selectedInstanceConstraints = changes.selectedInstanceConstraints.currentValue;
-            this.loadRules();
+            this.loadNodeFilter();
         }
     }
 
     private getActualDirectiveValue = (): string => {
         return this.currentServiceInstance.directives.length > 0 ? this.currentServiceInstance.directives[0] : "";
     }
-
-    private isServiceProxy = (): boolean => {
-        return this.currentServiceInstance.isServiceProxy();
-    }
-
     public openRemoveDependencyModal = (): ComponentRef<ModalComponent> => {
         const actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
@@ -191,21 +186,22 @@ export class ServiceDependenciesComponent {
         return this.modalServiceNg2.createCustomModal(modalModel);
     }
 
-    loadRules() {
-        this.rulesList = this.selectedInstanceConstraints && this.selectedInstanceConstraints.map((co: ConstraintObject) => ({
-                servicePropertyName: co.servicePropertyName,
-                constraintOperator: co.constraintOperator,
-                sourceType: co.sourceType,
-                sourceName: co.sourceName !== 'SELF' ? co.sourceName : this.compositeService.name,
-                value: co.value,
-            }));
+    private loadNodeFilter = (): void => {
+        this.topologyTemplateService.getServiceFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((response) => {
+            if (response.nodeFilterforNode) {
+                const nodeFilterResponse: ConstraintObject[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
+                if (nodeFilterResponse) {
+                    this.constraintObjects = nodeFilterResponse;
+                }
+            }
+        });
     }
 
     onUncheckDependency = () => {
         this.modalServiceNg2.closeCurrentModal();
         this.isLoading = true;
         const isDepOrig = this.isDependent;
-        const rulesListOrig = this.rulesList;
+        const rulesListOrig = this.constraintObjects;
         this.currentServiceInstance.unmarkAsDependent(this.getActualDirectiveValue());
         this.updateComponentInstance(isDepOrig, rulesListOrig);
     }
@@ -218,16 +214,16 @@ export class ServiceDependenciesComponent {
     onOptionsSelected(event: any) {
         const newDirectiveValue = event.target.value;
         if (newDirectiveValue.toLowerCase() !== this.getActualDirectiveValue()) {
-            const rulesListOrig = this.rulesList;
+            const rulesListOrig = this.constraintObjects;
             this.setDirectiveValue(newDirectiveValue);
-            this.rulesList = [];
+            this.constraintObjects = [];
             this.updateComponentInstance(this.isDependent, rulesListOrig);
         }
     }
 
     private onRemoveDirective() {
         this.openRemoveDependencyModal().instance.open();
-        this.rulesList = [];
+        this.constraintObjects = [];
     }
 
     private setDirectiveValue(newDirectiveValue: string) {
@@ -257,7 +253,7 @@ export class ServiceDependenciesComponent {
             this.isLoading = false;
         }, (err) => {
             this.isDependent = isDependentOrigVal;
-            this.rulesList = rulesListOrig;
+            this.constraintObjects = rulesListOrig;
             this.isLoading = false;
             console.log('An error has occurred.');
         });
@@ -293,7 +289,7 @@ export class ServiceDependenciesComponent {
             ServiceDependenciesEditorComponent,
             {
                 serviceRuleIndex: index,
-                serviceRules: _.map(this.rulesList, (rule) => new ConstraintObjectUI(rule)),
+                serviceRules: _.map(this.constraintObjects, (rule) => new ConstraintObjectUI(rule)),
                 currentServiceName: this.currentServiceInstance.name,
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,

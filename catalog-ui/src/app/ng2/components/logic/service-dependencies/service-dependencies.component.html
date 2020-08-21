@@ -18,13 +18,13 @@
   <div class="i-sdc-designer-sidebar-section-content-item-rules-section" *ngIf="isDependent">
 
     <div class="i-sdc-designer-sidebar-section-content-item-rule" [ngClass]="{'hand': !readonly}"
-         *ngFor="let rule of rulesList; let i = index">
+         *ngFor="let constraint of constraintObjects; let i = index">
       <div class="rule-details" [ngClass]="{'readonly': readonly}">
         <div class="rule-desc" (click)="!readonly && onSelectRule(i)" tooltips
-             tooltip="{{rule.servicePropertyName + ' ' + getSymbol(rule.constraintOperator) + ' '
-             + (rule.sourceName ? rule.sourceName + ':' : '') + rule.value}}">
-          {{rule.servicePropertyName + ' ' + getSymbol(rule.constraintOperator) + ' '
-        + (rule.sourceName ? rule.sourceName + ':' : '') + rule.value}}
+             tooltip="{{constraint.servicePropertyName + ' ' + getSymbol(constraint.constraintOperator) + ' '
+             + (constraint.sourceName ? constraint.sourceName + ':' : '') + constraint.value}}">
+          {{constraint.servicePropertyName + ' ' + getSymbol(constraint.constraintOperator) + ' '
+        + (constraint.sourceName ? constraint.sourceName + ':' : '') + constraint.value}}
         </div>
         <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
               (click)="openDeleteModal(i)" data-tests-id="delete-input-button"></span>

@@ -61,7 +61,7 @@ export class ServiceDependenciesTabComponent {
 
     public loadConstraints = (): void => {
         this.topologyTemplateService.getServiceFilterConstraints(this.metaData.componentType, this.metaData.uniqueId).subscribe((response) => {
-            this.componentInstancesConstraints = response.nodeFilterData;
+            this.componentInstancesConstraints = response.nodeFilterforNode;
         });
     }
 
