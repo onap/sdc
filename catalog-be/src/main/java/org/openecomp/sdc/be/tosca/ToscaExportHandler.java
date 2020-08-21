@@ -365,6 +365,9 @@ public class ToscaExportHandler {
         }
         substitutionMapping = requirements.left().value();
 
+        final Optional<Map<String, ToscaProperty>> proxyInputProperties = getProxyNodeTypeInputProperties(component, dataTypes);
+        proxyInputProperties.ifPresent(substitutionMapping::setProperties);
+
         topologyTemplate.setSubstitution_mappings(substitutionMapping);
 
         toscaNode.setTopology_template(topologyTemplate);
@@ -1693,6 +1696,16 @@ public class ToscaExportHandler {
 
         return interfaceObject;
 
+    }
+
+    private Optional<Map<String, ToscaProperty>> getProxyNodeTypeInputProperties(final Component proxyComponent,
+                                                                                 final Map<String, DataTypeDefinition> dataTypes) {
+        if (Objects.isNull(proxyComponent)) {
+            return Optional.empty();
+        }
+        final Map<String, ToscaProperty> proxyInputProperties = new HashMap<>();
+        addInputsToProperties(dataTypes, proxyComponent.getInputs(), proxyInputProperties);
+        return MapUtils.isNotEmpty(proxyInputProperties) ? Optional.of(proxyInputProperties) : Optional.empty();
     }
 
     Optional<Map<String, ToscaProperty>> getProxyNodeTypeProperties(Component proxyComponent,

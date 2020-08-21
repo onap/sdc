@@ -38,5 +38,5 @@ public class SubstitutionMapping {
     private Map<String, String[]> capabilities;
     private Map<String, String[]> requirements;
     private NodeFilter substitution_filter;
-
+    private Map<String, ToscaProperty> properties;
 }
