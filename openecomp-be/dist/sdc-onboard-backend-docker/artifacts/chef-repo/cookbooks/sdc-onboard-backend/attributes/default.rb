@@ -10,7 +10,7 @@ default['jetty'][:keymanager_pwd] = "?(kP!Yur![*!Y5!E^f(ZKc31"
 default['jetty'][:truststore_pwd] = "z+KEj;t+,KN^iimSiS89e#p0"
 
 default['VnfRepo']['vnfRepoPort'] = 8702
-default['VnfRepo']['vnfRepoHost'] = "192.168.50.5"
+default['VnfRepo']['vnfRepoHost'] = "refrepo"
 
 #Cassandra
 default['cassandra']['cassandra_port'] = 9042
@@ -21,5 +21,5 @@ default['cassandra']['socket_connect_timeout'] = 20000
 default['cassandra']['janusgraph_connection_timeout'] = 10000
 
 #ExternalTesting
-default['EXTTEST']['ep1_config'] = "vtp,VTP,true,http://192.168.50.5:8702/onapapi/vnfsdk-marketplace,onap.*"
+default['EXTTEST']['ep1_config'] = "vtp,VTP,true,http://refrepo:8702/onapapi/vnfsdk-marketplace,onap.*"
 default['EXTTEST']['ep2_config'] = "repository,Repository,false,,.*"
