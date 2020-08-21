@@ -20,6 +20,9 @@ services:
     Partner_Domain_Service:
       name: "Partner Domain Service"
       icons: ['partner_domain_service']
+    ETSI_Network_Service:
+      name: "ETSI Network Service"
+      icons: ['etsi_network_service']
 resources:
   NetworkLayer23:
     name: "Network L2-3"
