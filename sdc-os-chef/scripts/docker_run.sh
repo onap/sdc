@@ -313,15 +313,28 @@ function sdc-cs-onboard-init {
 #Back-End
 function sdc-BE {
     DOCKER_NAME="sdc-BE"
-    echo "docker run sdc-backend..."
+    IMAGE_NAME="sdc-backend"
+    IMAGE_FULL_NAME="$PREFIX/$IMAGE_NAME:$RELEASE"
+    echo "Running container '$DOCKER_NAME' based on image '$IMAGE_FULL_NAME'..."
     if [ ${LOCAL} = false ]; then
-        docker pull ${PREFIX}/sdc-backend:${RELEASE}
+      docker pull "$IMAGE_FULL_NAME"
     else
-        ADDITIONAL_ARGUMENTS=${BE_DEBUG_PORT}
+      ADDITIONAL_ARGUMENTS=${BE_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:${JETTY_BASE}/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
+
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} \
+    --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" \
+    --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 \
+    --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} \
+    --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs \
+    --volume ${WORKSPACE}/data/environments:${JETTY_BASE}/chef-solo/environments \
+    --volume "${WORKSPACE}/data/sdc-backend/plugins":${JETTY_BASE}/plugins \
+    --publish 8443:8443 --publish 8080:8080 \
+    ${ADDITIONAL_ARGUMENTS} \
+    "$IMAGE_FULL_NAME"
+
     command_exit_status $? ${DOCKER_NAME}
-    echo "please wait while BE is starting..."
+    echo "please wait while $DOCKER_NAME is starting..."
     monitor_docker ${DOCKER_NAME}
 }
 #
