@@ -29,9 +29,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 
+/**
+ * Stores the content of files in a path:byte[] structure
+ */
 public class FileContentHandler {
 
-    private Map<String, byte[]> files = new HashMap<>();
+    private final Map<String, byte[]> files = new HashMap<>();
 
     public FileContentHandler() {
     }
@@ -55,30 +58,70 @@ public class FileContentHandler {
         return new ByteArrayInputStream(content);
     }
 
-    public byte[] getFileContent(final String fileName) {
-        return files.get(fileName);
+    /**
+     * Gets the content of a file.
+     *
+     * @param filePath the file path
+     * @return the content of the file
+     */
+    public byte[] getFileContent(final String filePath) {
+        return files.get(filePath);
     }
 
-    public boolean isFolder(final String fileName) {
-        return files.get(fileName) == null;
+    /**
+     * Checks if the path is a folder.
+     *
+     * @param filePath the file path to verify
+     * @return {@code true} if the path is a folder, {@code false} otherwise
+     */
+    public boolean isFolder(final String filePath) {
+        return files.get(filePath) == null;
     }
 
-    public boolean isFile(final String fileName) {
-        return files.get(fileName) != null;
+    /**
+     * Checks if the path is a file.
+     *
+     * @param filePath the file path to verify
+     * @return {@code true} if the path is a file, {@code false} otherwise
+     */
+    public boolean isFile(final String filePath) {
+        return files.get(filePath) != null;
     }
 
-    public void addFolder(final String folder) {
-        files.put(folder, null);
+    /**
+     * Adds a folder.
+     *
+     * @param folderPath the folder path to add
+     */
+    public void addFolder(final String folderPath) {
+        files.put(folderPath, null);
     }
 
-    public void addFile(final String fileName, final byte[] content) {
-        files.put(fileName, content == null ? new byte[0] : content);
+    /**
+     * Adds a file.
+     *
+     * @param filePath the file path
+     * @param content the file content
+     */
+    public void addFile(final String filePath, final byte[] content) {
+        files.put(filePath, content == null ? new byte[0] : content);
     }
 
-    public void addFile(final String fileName, final InputStream is) {
-        files.put(fileName, FileUtils.toByteArray(is));
+    /**
+     * Adds a file.
+     *
+     * @param filePath the file path
+     * @param fileInputStream the file input stream
+     */
+    public void addFile(final String filePath, final InputStream fileInputStream) {
+        files.put(filePath, FileUtils.toByteArray(fileInputStream));
     }
 
+    /**
+     * Gets only the files, ignoring directories from the structure.
+     *
+     * @return a file path:content map
+     */
     public Map<String, byte[]> getFiles() {
         return files.entrySet().stream().filter(entry -> entry.getValue() != null)
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -88,10 +131,20 @@ public class FileContentHandler {
         addAll(files);
     }
 
+    /**
+     * Gets only the file paths, ignoring directories from the structure.
+     *
+     * @return a set of the file paths
+     */
     public Set<String> getFileList() {
         return files.keySet().stream().filter(this::isFile).collect(Collectors.toSet());
     }
 
+    /**
+     * Gets only the folder paths, ignoring files from the structure.
+     *
+     * @return a set of the folder paths
+     */
     public Set<String> getFolderList() {
         return files.keySet().stream().filter(this::isFolder).collect(Collectors.toSet());
     }
@@ -109,16 +162,33 @@ public class FileContentHandler {
         }
     }
 
+    /**
+     * Checks if the file structure is empty.
+     *
+     * @return {@code true} if the file structure is empty, {@code false} otherwise
+     */
     public boolean isEmpty() {
         return MapUtils.isEmpty(this.files);
     }
 
-    public byte[] remove(final String fileName) {
-        return files.remove(fileName);
+    /**
+     * Removes a file or folder from the file structure.
+     *
+     * @param filePath the file path to remove
+     * @return the removed file content
+     */
+    public byte[] remove(final String filePath) {
+        return files.remove(filePath);
     }
 
-    public boolean containsFile(final String fileName) {
-        return files.containsKey(fileName);
+    /**
+     * Checks if the file structure contains the provided file.
+     *
+     * @param filePath the file path to search
+     * @return {@code true} if the file exists, {@code false} otherwise
+     */
+    public boolean containsFile(final String filePath) {
+        return files.containsKey(filePath);
     }
 
 }

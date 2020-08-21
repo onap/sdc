@@ -567,6 +567,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>catalog-dao</module>
                 <module>catalog-model</module>
                 <module>catalog-be</module>
+                <module>catalog-be-plugins</module>
                 <module>asdctool</module>
                 <module>catalog-ui</module>
                 <module>catalog-fe</module>
@@ -591,6 +592,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>common-app-logging</module>
                 <module>common-app-api</module>
                 <module>common-be</module>
+                <module>catalog-be-plugins</module>
                 <module>catalog-dao</module>
                 <module>catalog-model</module>
                 <module>catalog-be</module>
