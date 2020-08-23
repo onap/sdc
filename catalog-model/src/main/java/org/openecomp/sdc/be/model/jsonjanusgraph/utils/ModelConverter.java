@@ -1410,7 +1410,8 @@ public class ModelConverter {
     }
 
     private static boolean isFromCsar(Resource resource) {
-        return resource.getResourceType() == ResourceTypeEnum.VF || resource.getResourceType() == ResourceTypeEnum.CVFC;
+        return resource.getResourceType() == ResourceTypeEnum.VF || resource.getResourceType() == ResourceTypeEnum.CVFC
+            || resource.getResourceType() == ResourceTypeEnum.PNF;
     }
 
     private static void setComponentInstancesInputsToComponent(TopologyTemplate topologyTemplate, Component component) {

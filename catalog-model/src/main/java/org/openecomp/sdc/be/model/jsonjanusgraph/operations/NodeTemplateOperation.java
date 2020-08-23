@@ -20,8 +20,22 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +43,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -38,10 +53,6 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
-import org.openecomp.sdc.be.datatypes.elements.*;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
@@ -104,13 +115,6 @@ import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("node-template-operation")
 public class NodeTemplateOperation extends BaseOperation {
@@ -2007,16 +2011,11 @@ public class NodeTemplateOperation extends BaseOperation {
         if (!validateInstanceNames(componentInstanceTMap)) {
             throw new StorageException(StorageOperationStatus.INCONSISTENCY);
         }
-        if (!validateInstanceNames(componentInstanceTMap)) {
-            throw new StorageException(StorageOperationStatus.INCONSISTENCY);
-        }
-
         if (!allowDeleted) {
             if (!validateDeletedResources(componentInstanceTMap)) {
                 throw new StorageException(StorageOperationStatus.INCONSISTENCY);
             }
         }
-
         instancesJsonData = convertToComponentInstanceDataDefinition(componentInstanceTMap, containerId, isUpdateCsar);
 
         if (MapUtils.isNotEmpty(instancesJsonData)) {
@@ -2066,11 +2065,14 @@ public class NodeTemplateOperation extends BaseOperation {
         Set<String> names = new HashSet<>();
         for (ComponentInstance instance : resourcesInstancesMap.keySet()) {
             if (StringUtils.isEmpty(instance.getName())) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Component instance {} name is empty. Cannot add component instance. ", instance.getUniqueId());
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                    "Component instance {} name is empty. Cannot add component instance. ", instance.getUniqueId());
                 result = false;
                 break;
             } else if (names.contains(instance.getName())) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Component instance with the name {} already exsists. Cannot add component instance. ", instance.getName());
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                    "Component instance with the name {} already exsists. Cannot add component instance. ",
+                    instance.getName());
                 result = false;
                 break;
             } else {
