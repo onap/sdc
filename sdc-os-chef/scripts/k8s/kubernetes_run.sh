@@ -68,7 +68,7 @@ fi
 ## In order to build the nsenter use the below instructions:
 ##./build_nsenter_exec.sh
 echo "[INFO]   Install - socat"
-sudo apt-get install -y socat jq
+sudo apt-get install -y -qq --no-install-recommends socat jq
 
 ####################
 # helm             #
