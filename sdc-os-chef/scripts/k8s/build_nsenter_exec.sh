@@ -7,7 +7,7 @@ docker run --name nsenter -it ubuntu:14.04 bash
 
 ## in the docker
 apt-get update
-apt-get install git build-essential libncurses5-dev libslang2-dev gettext zlib1g-dev libselinux1-dev debhelper lsb-release pkg-config po-debconf autoconf automake autopoint libtool bison
+apt-get install -y -qq --no-install-recommends git build-essential libncurses5-dev libslang2-dev gettext zlib1g-dev libselinux1-dev debhelper lsb-release pkg-config po-debconf autoconf automake autopoint libtool bison
 
 git clone --depth 1 git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux
 cd util-linux/
