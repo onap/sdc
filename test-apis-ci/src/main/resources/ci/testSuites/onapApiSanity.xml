@@ -5,7 +5,7 @@
 	<parameter name="makeToscaValidation"  value="true"/>
 	<test name="ExternalApis"> 
 		<classes>
-			<class name="org.openecomp.sdc.ci.tests.sanity.Onboard"/>
+			<class name="Onboard"/>
 		</classes>
 	</test>
 </suite>

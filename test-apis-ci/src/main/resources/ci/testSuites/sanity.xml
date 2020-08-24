@@ -4,14 +4,14 @@
 
   <test name="sanityE2Eflows">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.sanity.CrudE2E"/>
+      <class name="CrudE2E"/>
     </classes>
   </test>
 
   <test name="General">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.general.FeProxyTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest">
+      <class name="FeProxyTest"/>
+      <class name="UuidTest">
         <methods>
           <include name="testE2EUuidHeaderReturnedAndPreserved"/>
         </methods>
@@ -27,7 +27,7 @@
   <test name="Artifact">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt">
+        name="DownloadComponentArt">
         <methods>
           <include name="downloadArtifactFromResourceTest"/>
           <include name="downloadArtifactFromServiceTest"/>
@@ -39,7 +39,7 @@
   <test name="Service">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.service.GetComponentAuditApiTest">
+        name="GetComponentAuditApiTest">
         <methods>
           <include name="testServiceAuditCertifiedVersion"/>
         </methods>
@@ -51,20 +51,20 @@
   <test name="Resource">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.resource.GetAllResourceVersions">
+        name="GetAllResourceVersions">
         <methods>
           <include name="getResourceAllVersions_version15"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceApiTest">
+      <class name="ResourceApiTest">
         <methods>
           <include name="updateResourceMetadataSuccess"/>
         </methods>
       </class>
 
       <class
-        name="org.openecomp.sdc.ci.tests.execute.resource.UpdateResourceMetadataTest">
+        name="UpdateResourceMetadataTest">
         <methods>
           <include name="UpdateDerivedFromSuccess"/>
         </methods>
@@ -73,24 +73,24 @@
   </test>
   <test name="Product">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
+      <class name="ProductCheckinTest">
         <methods>
           <include name="checkInProductByCreator"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest">
+      <class name="ProductCheckoutTest">
         <methods>
           <include name="checkOutProductByPmNotInContacts"/>
         </methods>
       </class>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest">
+        name="ProductGetFollowedTest">
         <methods>
           <include name="followedPageTest"/>
         </methods>
       </class>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
+        name="ProductUndoCheckoutTest">
         <methods>
           <include name="undoCheckOutProductByPm"/>
         </methods>
@@ -100,21 +100,21 @@
   </test>
   <test name="Catalog">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest"/>
+      <class name="CatalogDataApiTest"/>
     </classes>
   </test>
 
   <test name="distribution">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.distribution.AuthanticationTests">
+        name="AuthanticationTests">
         <methods>
           <include name="downloadServiceArtifactSuccessWithAutantication"/>
         </methods>
       </class>
 
       <class
-        name="org.openecomp.sdc.ci.tests.execute.distribution.DistributionDownloadArtifactTest">
+        name="DistributionDownloadArtifactTest">
         <methods>
           <include name="downloadResourceArtifactSuccess"/>
         </methods>
@@ -130,7 +130,7 @@
   <test name="Imports">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.imports.ImportGenericResourceCITest">
+        name="ImportGenericResourceCITest">
         <methods>
           <include name="importAllTestResources"/>
           <include name="testImportCheckoutAndUpdateUserResource"/>
@@ -138,7 +138,7 @@
         </methods>
       </class>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.imports.ImportToscaCapabilitiesWithProperties">
+        name="ImportToscaCapabilitiesWithProperties">
         <methods>
           <include name="importNodeTypeWithCapabilityWithPropertiesFromYmlSucceed"/>
           <include
@@ -151,7 +151,7 @@
   <test name="attribute">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.attribute.ComponentInstanceAttributeTest">
+        name="ComponentInstanceAttributeTest">
         <methods>
           <include name="testUpdateAttributeOnResourceInstance"/>
         </methods>
@@ -162,7 +162,7 @@
   <test name="inputs">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.inputs.InputsApiTests">
+        name="InputsApiTests">
         <methods>
           <include name="testInputsMainFunctionality"/>
         </methods>
@@ -173,7 +173,7 @@
   <test name="property">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.property.AdditionalInformationServletTest">
+        name="AdditionalInformationServletTest">
         <methods>
           <include name="createResourceAdditionalInformationTestDuringLifecycle"/>
           <include name="updateResourceAdditionalInformationTest"/>
@@ -181,12 +181,12 @@
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.property.PropertyApisTest">
+      <class name="PropertyApisTest">
         <methods>
           <include name="testPropertyApis"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.property.ComponentInstancePropertyTest">
+      <class name="ComponentInstancePropertyTest">
         <methods>
           <include name="nestedVfResourceProperty3Levels"/>
         </methods>
@@ -203,18 +203,18 @@
 
   <test name="ExternalApis">
     <classes>
-      <class name="org.openecomp.sdc.externalApis.GetAssetServlet">
+      <class name="GetAssetServlet">
         <methods>
           <include name="getResourceAssetSuccess"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+      <class name="GetFilteredAssetServlet">
         <methods>
           <include name="getResourceAssetBySpecifiedCategoryAndSubCategory"/>
           <include name="getServiceAssetBySpecifiedCategoryAndDistributionStatus"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet">
+      <class name="GetSpecificAssetMetadataServlet">
         <methods>
           <include name="getResourceAssetMetadataWithResourceInstancesSuccess"/>
           <include

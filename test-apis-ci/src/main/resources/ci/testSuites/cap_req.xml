@@ -3,8 +3,8 @@
 <suite name="Cap_Req" >
 	<test name="Cap_Req">
 		<classes>
-			<class name="org.openecomp.sdc.ci.tests.requirements.RequirementsTest"/>
-			<class name="org.openecomp.sdc.ci.tests.capability.CapabilitiesTest"/>
+			<class name="RequirementsTest"/>
+			<class name="CapabilitiesTest"/>
 		</classes>
 	</test>
 </suite> <!-- Artifacts -->

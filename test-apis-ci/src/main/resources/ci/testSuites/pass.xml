@@ -7,7 +7,7 @@
 
  <classes>
     <class
-            name="org.openecomp.sdc.ci.tests.sanity.Onboard">
+            name="Onboard">
         <methods>
             <include name="passTest" />
         </methods>

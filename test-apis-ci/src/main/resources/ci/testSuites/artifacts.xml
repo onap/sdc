@@ -3,9 +3,9 @@
 <suite name="Artifacts">
   <test name="Artifacts">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateHeatArtFieldsTypes"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.PlaceHolderValidations"/>
+      <class name="DownloadComponentArt"/>
+      <class name="ValidateHeatArtFieldsTypes"/>
+      <class name="PlaceHolderValidations"/>
     </classes>
   </test>
 </suite> <!-- Artifacts -->

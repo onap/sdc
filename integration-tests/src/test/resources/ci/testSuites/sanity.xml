@@ -4,14 +4,14 @@
 
   <test name="sanityE2Eflows">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.sanity.CrudE2E"/>
+      <class name="org.onap.sdc.backend.ci.tests.sanity.CrudE2E"/>
     </classes>
   </test>
 
   <test name="General">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.general.FeProxyTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest">
+      <class name="org.onap.sdc.backend.ci.tests.execute.general.FeProxyTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.general.UuidTest">
         <methods>
           <include name="testE2EUuidHeaderReturnedAndPreserved"/>
         </methods>
@@ -27,7 +27,7 @@
   <test name="Artifact">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt">
+        name="org.onap.sdc.backend.ci.tests.execute.artifacts.DownloadComponentArt">
         <methods>
           <include name="downloadArtifactFromResourceTest"/>
           <include name="downloadArtifactFromServiceTest"/>
@@ -39,7 +39,7 @@
   <test name="Service">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.service.GetComponentAuditApiTest">
+        name="org.onap.sdc.backend.ci.tests.execute.service.GetComponentAuditApiTest">
         <methods>
           <include name="testServiceAuditCertifiedVersion"/>
         </methods>
@@ -51,20 +51,20 @@
   <test name="Resource">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.resource.GetAllResourceVersions">
+        name="org.onap.sdc.backend.ci.tests.execute.resource.GetAllResourceVersions">
         <methods>
           <include name="getResourceAllVersions_version15"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceApiTest">
+      <class name="org.onap.sdc.backend.ci.tests.execute.resource.ResourceApiTest">
         <methods>
           <include name="updateResourceMetadataSuccess"/>
         </methods>
       </class>
 
       <class
-        name="org.openecomp.sdc.ci.tests.execute.resource.UpdateResourceMetadataTest">
+        name="org.onap.sdc.backend.ci.tests.execute.resource.UpdateResourceMetadataTest">
         <methods>
           <include name="UpdateDerivedFromSuccess"/>
         </methods>
@@ -73,24 +73,24 @@
   </test>
   <test name="Product">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
+      <class name="org.onap.sdc.backend.ci.tests.execute.product.ProductCheckinTest">
         <methods>
           <include name="checkInProductByCreator"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest">
+      <class name="org.onap.sdc.backend.ci.tests.execute.product.ProductCheckoutTest">
         <methods>
           <include name="checkOutProductByPmNotInContacts"/>
         </methods>
       </class>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest">
+        name="org.onap.sdc.backend.ci.tests.execute.product.ProductGetFollowedTest">
         <methods>
           <include name="followedPageTest"/>
         </methods>
       </class>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
+        name="org.onap.sdc.backend.ci.tests.execute.product.ProductUndoCheckoutTest">
         <methods>
           <include name="undoCheckOutProductByPm"/>
         </methods>
@@ -100,21 +100,21 @@
   </test>
   <test name="Catalog">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.category.CatalogDataApiTest"/>
     </classes>
   </test>
 
   <test name="distribution">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.distribution.AuthanticationTests">
+        name="org.onap.sdc.backend.ci.tests.execute.distribution.AuthanticationTests">
         <methods>
           <include name="downloadServiceArtifactSuccessWithAutantication"/>
         </methods>
       </class>
 
       <class
-        name="org.openecomp.sdc.ci.tests.execute.distribution.DistributionDownloadArtifactTest">
+        name="org.onap.sdc.backend.ci.tests.execute.distribution.DistributionDownloadArtifactTest">
         <methods>
           <include name="downloadResourceArtifactSuccess"/>
         </methods>
@@ -130,7 +130,7 @@
   <test name="Imports">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.imports.ImportGenericResourceCITest">
+        name="org.onap.sdc.backend.ci.tests.execute.imports.ImportGenericResourceCITest">
         <methods>
           <include name="importAllTestResources"/>
           <include name="testImportCheckoutAndUpdateUserResource"/>
@@ -138,7 +138,7 @@
         </methods>
       </class>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.imports.ImportToscaCapabilitiesWithProperties">
+        name="org.onap.sdc.backend.ci.tests.execute.imports.ImportToscaCapabilitiesWithProperties">
         <methods>
           <include name="importNodeTypeWithCapabilityWithPropertiesFromYmlSucceed"/>
           <include
@@ -151,7 +151,7 @@
   <test name="attribute">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.attribute.ComponentInstanceAttributeTest">
+        name="org.onap.sdc.backend.ci.tests.execute.attribute.ComponentInstanceAttributeTest">
         <methods>
           <include name="testUpdateAttributeOnResourceInstance"/>
         </methods>
@@ -162,7 +162,7 @@
   <test name="inputs">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.inputs.InputsApiTests">
+        name="org.onap.sdc.backend.ci.tests.execute.inputs.InputsApiTests">
         <methods>
           <include name="testInputsMainFunctionality"/>
         </methods>
@@ -173,7 +173,7 @@
   <test name="property">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.property.AdditionalInformationServletTest">
+        name="org.onap.sdc.backend.ci.tests.execute.property.AdditionalInformationServletTest">
         <methods>
           <include name="createResourceAdditionalInformationTestDuringLifecycle"/>
           <include name="updateResourceAdditionalInformationTest"/>
@@ -181,12 +181,12 @@
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.property.PropertyApisTest">
+      <class name="org.onap.sdc.backend.ci.tests.execute.property.PropertyApisTest">
         <methods>
           <include name="testPropertyApis"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.property.ComponentInstancePropertyTest">
+      <class name="org.onap.sdc.backend.ci.tests.execute.property.ComponentInstancePropertyTest">
         <methods>
           <include name="nestedVfResourceProperty3Levels"/>
         </methods>
@@ -203,18 +203,18 @@
 
   <test name="ExternalApis">
     <classes>
-      <class name="org.openecomp.sdc.externalApis.GetAssetServlet">
+      <class name="org.onap.sdc.backend.externalApis.GetAssetServlet">
         <methods>
           <include name="getResourceAssetSuccess"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+      <class name="org.onap.sdc.backend.externalApis.GetFilteredAssetServlet">
         <methods>
           <include name="getResourceAssetBySpecifiedCategoryAndSubCategory"/>
           <include name="getServiceAssetBySpecifiedCategoryAndDistributionStatus"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet">
+      <class name="org.onap.sdc.backend.externalApis.GetSpecificAssetMetadataServlet">
         <methods>
           <include name="getResourceAssetMetadataWithResourceInstancesSuccess"/>
           <include

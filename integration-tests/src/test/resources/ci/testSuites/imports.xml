@@ -3,7 +3,7 @@
 <suite name="Imports">
   <test name="Imports">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.imports.ImportGenericResourceCITest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.imports.ImportGenericResourceCITest"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Imports -->

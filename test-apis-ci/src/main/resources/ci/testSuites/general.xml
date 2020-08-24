@@ -3,7 +3,7 @@
 <suite name="General">
   <test name="Test">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest"/>
+      <class name="UuidTest"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- General -->

@@ -3,10 +3,10 @@
 <suite name="Product">
   <test name="Test">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductLifecycleTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.product.ProductLifecycleTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.product.ProductUndoCheckoutTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.product.ProductCheckinTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.product.ProductCheckoutTest"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Product -->

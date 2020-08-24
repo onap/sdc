@@ -19,7 +19,7 @@
 <suite name="normatives" >
 	<test name="InterfaceLifecycleTypes">
 		<classes>
-			<class name="org.openecomp.sdc.ci.tests.execute.globaltypes.InterfaceLifecycleTypesTest"/>
+			<class name="InterfaceLifecycleTypesTest"/>
 		</classes>
 	</test>
 </suite> 

@@ -5,30 +5,30 @@
   <test verbose="2" name="Sanity">
     <classes>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest"/>
+      <class name="CatalogDataApiTest"/>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.distribution.AuthanticationTests">
+      <class name="AuthanticationTests">
         <methods>
           <include name="downloadServiceArtifactSuccessWithAutantication"/>
         </methods>
       </class>
 
       <class
-        name="org.openecomp.sdc.ci.tests.execute.distribution.DistributionDownloadArtifactTest">
+        name="DistributionDownloadArtifactTest">
         <methods>
           <include name="downloadResourceArtifactSuccess"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.general.FeProxyTest"/>
+      <class name="FeProxyTest"/>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest">
+      <class name="UuidTest">
         <methods>
           <include name="testE2EUuidHeaderReturnedAndPreserved"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.imports.ImportGenericResourceCITest">
+      <class name="ImportGenericResourceCITest">
         <methods>
           <include name="importAllTestResources"/>
           <include name="testImportCheckoutAndUpdateUserResource"/>
@@ -36,7 +36,7 @@
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.property.AdditionalInformationServletTest">
+      <class name="AdditionalInformationServletTest">
         <methods>
           <include name="createResourceAdditionalInformationTestDuringLifecycle"/>
           <include name="updateResourceAdditionalInformationTest"/>
@@ -44,66 +44,66 @@
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.property.PropertyApisTest">
+      <class name="PropertyApisTest">
         <methods>
           <include name="testPropertyApis"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.GetAllResourceVersions">
+      <class name="GetAllResourceVersions">
         <methods>
           <include name="getResourceAllVersions_version15"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceApiTest">
+      <class name="ResourceApiTest">
         <methods>
           <include name="updateResourceMetadataSuccess"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.UpdateResourceMetadataTest">
+      <class name="UpdateResourceMetadataTest">
         <methods>
           <include name="UpdateDerivedFromSuccess"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.service.GetComponentAuditApiTest">
+      <class name="GetComponentAuditApiTest">
         <methods>
           <include name="testServiceAuditCertifiedVersion"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.user.ActivateDeActivateDeleteUser">
+      <class name="ActivateDeActivateDeleteUser">
         <methods>
           <include name="authorizeDeActivatedUser"/>
         </methods>
       </class>
 
       <!-- Product tests start-->
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
+      <class name="ProductCheckinTest">
         <methods>
           <include name="checkInProductByCreator"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest">
+      <class name="ProductCheckoutTest">
         <methods>
           <include name="checkOutProductByPmNotInContacts"/>
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest">
+      <class name="ProductGetFollowedTest">
         <methods>
           <include name="followedPageTest"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
+      <class name="ProductUndoCheckoutTest">
         <methods>
           <include name="undoCheckOutProductByPm"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.interfaceoperation.InterfaceOperationsTest">
+      <class name="InterfaceOperationsTest">
         <methods>
           <include name="addInterfaceOperationsOfGlobalTypeOnResource"/>
           <include name="addInterfaceOperationsOnResource"/>

@@ -3,8 +3,8 @@
 <suite name="category">
   <test name="Test">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.category.GroupingTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.category.SubCategoriesTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.category.GroupingTest"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.category.SubCategoriesTest"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- category -->

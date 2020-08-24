@@ -4,28 +4,28 @@
 	<test name="ExternalApis"> 
 		<classes>	
 			
-			<class name="org.openecomp.sdc.externalApis.VFCMTExternalAPI"/>
-			<class name="org.openecomp.sdc.externalApis.CRUDExternalAPI"/> 
-			<class name="org.openecomp.sdc.externalApis.DeploymentValiditaion"/>  
- 			<class name="org.openecomp.sdc.externalApis.GetAssetServlet"/>
-			<class name="org.openecomp.sdc.externalApis.GetCSARofVF"/>
-			<class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet"/>
-			<class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet"/>
-			<class name="org.openecomp.sdc.externalApis.SearchFilterCategoryExternalAPI"/>
-			<class name="org.openecomp.sdc.externalApis.AssetLifeCycle"/>
-			<class name="org.openecomp.sdc.externalApis.UserAPIs"/>
+			<class name="VFCMTExternalAPI"/>
+			<class name="CRUDExternalAPI"/>
+			<class name="DeploymentValiditaion"/>
+ 			<class name="GetAssetServlet"/>
+			<class name="GetCSARofVF"/>
+			<class name="GetFilteredAssetServlet"/>
+			<class name="GetSpecificAssetMetadataServlet"/>
+			<class name="SearchFilterCategoryExternalAPI"/>
+			<class name="AssetLifeCycle"/>
+			<class name="UserAPIs"/>
 
-			<class name="org.openecomp.sdc.internalApis.annotations.AnnotationsTest"/>
+			<class name="AnnotationsTest"/>
 
 			
 <!-- 	      <class name="org.openecomp.sdc.ci.tests.execute.product.ChangeServiceInstanceVersionTest"/>
-			      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest"/>
-			      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest"/>
+			      <class name="ProductCheckinTest"/>
+			      <class name="ProductCheckoutTest"/>
 			      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductComponentInstanceCRUDTest"/>
-			      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCreateWithValidationsTest"/>
+			      <class name="ProductCreateWithValidationsTest"/>
 			      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCrudTest"/>
-			      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest"/>
-			      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest"/>    -->
+			      <class name="ProductGetFollowedTest"/>
+			      <class name="ProductUndoCheckoutTest"/>    -->
 			
 			
 		</classes>

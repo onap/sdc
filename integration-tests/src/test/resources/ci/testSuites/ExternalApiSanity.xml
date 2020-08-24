@@ -4,7 +4,7 @@
 
   <test name="Test">
     <classes>
-      <class name="org.openecomp.sdc.externalApis.CRUDExternalAPI">
+      <class name="org.onap.sdc.backend.externalApis.CRUDExternalAPI">
    		<methods>
 			<include name="uploadArtifactOnVfcVlCpViaExternalAPI" invocation-numbers="0" />
 			<include name="uploadArtifactOnVFViaExternalAPI" invocation-numbers="0" />
@@ -24,41 +24,41 @@
 			<include name="deleteArtifactOnAssetWhichNotExist" />			
 		</methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt">
+      <class name="org.onap.sdc.backend.ci.tests.execute.artifacts.DownloadComponentArt">
         <methods>
             <include name="downloadArtifactOfComponentInstanceFromServiceViaExternalAPI"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+      <class name="org.onap.sdc.backend.externalApis.GetFilteredAssetServlet">
         <methods>
             <include name="getResourceAssetBySpecifiedCategory"/>
             <include name="getServiceAssetBySpecifiedCategory"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.SearchFilterCategoryExternalAPI">
+      <class name="org.onap.sdc.backend.externalApis.SearchFilterCategoryExternalAPI">
         <methods>
             <include name="normativeResourceCategory" invocation-numbers="0"/>
         </methods>
       </class>      
-      <class name="org.openecomp.sdc.externalApis.GetCSARofVF">
+      <class name="org.onap.sdc.backend.externalApis.GetCSARofVF">
         <methods>
             <include name="getServiceToscaModelCheckInState"/>
             <include name="getRsourceToscaModelCertifyState"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+      <class name="org.onap.sdc.backend.externalApis.GetFilteredAssetServlet">
         <methods>
             <include name="getResourceAssetBySpecifiedCategory"/>
             <include name="getServiceAssetBySpecifiedCategory"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet">
+      <class name="org.onap.sdc.backend.externalApis.GetSpecificAssetMetadataServlet">
         <methods>
             <include name="getResourceAssetMetadataSuccess"/>
             <include name="getServiceAssetMetadataWithResourceInstancesSuccess"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.AssetLifeCycle">
+      <class name="org.onap.sdc.backend.externalApis.AssetLifeCycle">
         <methods>
             <include name="theFlow"/>
         </methods>
