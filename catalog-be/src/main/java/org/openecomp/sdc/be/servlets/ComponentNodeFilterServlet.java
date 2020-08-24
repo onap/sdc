@@ -53,6 +53,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.User;
@@ -64,7 +65,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("/v1/catalog/{componentType}/{componentId}/resourceInstances/{componentInstanceId}/nodeFilter")
+@Path("/v1/catalog/{componentType}/{componentId}/resourceInstances/{componentInstanceId}/nodeFilter/{constraintType}")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
@@ -104,7 +105,6 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
     @Operation(description = "Add Component Filter Constraint", method = "POST",
         summary = "Add Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
@@ -120,6 +120,10 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             schema = @Schema(allowableValues = {
                 ComponentTypeEnum.RESOURCE_PARAM_NAME,
                 ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
+            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
+        @PathParam("constraintType") final String constraintType,
         @Context final HttpServletRequest request,
         @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -138,9 +142,17 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             final UIConstraint uiConstraint = convertResponse.get();
             final String constraint = new ConstraintConvertor().convert(uiConstraint);
 
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
+                NodeFilterConstraintType.parse(constraintType);
+            if (!nodeFilterConstraintType.isPresent()) {
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
+                    "Invalid value for NodeFilterConstraintType enum %s", constraintType));
+            }
+
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD,
-                    uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum);
+                    uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum,
+                    nodeFilterConstraintType.get());
 
             if (!actionResponse.isPresent()) {
                 LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
@@ -160,7 +172,6 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
     @Operation(description = "Update Component Filter Constraint", method = "PUT",
         summary = "Update Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
@@ -176,6 +187,10 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             schema = @Schema(allowableValues = {
                 ComponentTypeEnum.RESOURCE_PARAM_NAME,
                 ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
+            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
+        @PathParam("constraintType") final String constraintType,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
@@ -230,6 +245,10 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             schema = @Schema(allowableValues = {
                 ComponentTypeEnum.RESOURCE_PARAM_NAME,
                 ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
+            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
+        @PathParam("constraintType") final String constraintType,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());

@@ -32,8 +32,11 @@ import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.User;
@@ -166,15 +169,14 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return Optional.ofNullable(result.left().value());
     }
 
-
-
     public Optional<CINodeFilterDataDefinition> addNodeFilter(final String componentId,
                                                               final String componentInstanceId,
                                                               final NodeFilterConstraintAction action,
                                                               final String propertyName,
                                                               final String constraint,
                                                               final boolean shouldLock,
-                                                              final ComponentTypeEnum componentTypeEnum)
+                                                              final ComponentTypeEnum componentTypeEnum,
+                                                              final NodeFilterConstraintType nodeFilterConstraintType)
         throws BusinessLogicException {
 
         final Component component = getComponent(componentId);
@@ -186,13 +188,13 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
                 lockComponent(component.getUniqueId(), component,"Add Node Filter on Component");
                 wasLocked = true;
             }
-            final RequirementNodeFilterPropertyDataDefinition newProperty =
+            final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition =
                 new RequirementNodeFilterPropertyDataDefinition();
-            newProperty.setName(propertyName);
-            newProperty.setConstraints(Collections.singletonList(constraint));
-            final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = nodeFilterOperation
-                .addNewProperty(componentId, componentInstanceId, nodeFilterDataDefinition, newProperty);
-
+            requirementNodeFilterPropertyDataDefinition.setName(propertyName);
+            requirementNodeFilterPropertyDataDefinition.setConstraints(Collections.singletonList(constraint));
+            final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = addNewNodeFilter(componentId,
+                componentInstanceId, propertyName, nodeFilterConstraintType, nodeFilterDataDefinition,
+                requirementNodeFilterPropertyDataDefinition);
             if (result.isRight()) {
                 janusGraphDao.rollback();
                 throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
@@ -320,6 +322,30 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
             }
         }
         return Optional.ofNullable(nodeFilterDataDefinition);
+    }
+
+    private Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewNodeFilter(
+        final String componentId,
+        final String componentInstanceId,
+        final String propertyName,
+        final NodeFilterConstraintType nodeFilterConstraintType,
+        final CINodeFilterDataDefinition nodeFilterDataDefinition,
+        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition) {
+
+        if (NodeFilterConstraintType.PROPERTIES.equals(nodeFilterConstraintType)) {
+            return nodeFilterOperation.addNewProperty(componentId, componentInstanceId, nodeFilterDataDefinition,
+                requirementNodeFilterPropertyDataDefinition);
+        }
+        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition =
+            new RequirementNodeFilterCapabilityDataDefinition();
+        requirementNodeFilterCapabilityDataDefinition.setName(propertyName);
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>
+            propertyDataDefinitionListDataDefinition = new ListDataDefinition<>();
+        propertyDataDefinitionListDataDefinition.getListToscaDataDefinition().addAll(
+            Collections.singleton(requirementNodeFilterPropertyDataDefinition));
+        requirementNodeFilterCapabilityDataDefinition.setProperties(propertyDataDefinitionListDataDefinition);
+        return nodeFilterOperation.addNewCapabilities(componentId, componentInstanceId, nodeFilterDataDefinition,
+            requirementNodeFilterCapabilityDataDefinition);
     }
 
     private void unlockComponent(final String componentUniqueId,
