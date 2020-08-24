@@ -5,7 +5,7 @@
   <test name="Test">
     <classes>
       <class 
-      name="org.openecomp.sdc.externalApis.CRUDExternalAPI">
+      name="CRUDExternalAPI">
    			   <methods>
 				<!-- 	<include name="uploadArtifactOnVFViaExternalAPI" />
 					<include name="uploadArtifactOnServiceViaExternalAPI" />

@@ -4,7 +4,7 @@
 
   <test name="Test">
     <classes>
-      <class name="org.openecomp.sdc.externalApis.CRUDExternalAPI">
+      <class name="CRUDExternalAPI">
    		<methods>
 			<include name="uploadArtifactOnVfcVlCpViaExternalAPI" invocation-numbers="0" />
 			<include name="uploadArtifactOnVFViaExternalAPI" invocation-numbers="0" />
@@ -24,41 +24,41 @@
 			<include name="deleteArtifactOnAssetWhichNotExist" />			
 		</methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt">
+      <class name="DownloadComponentArt">
         <methods>
             <include name="downloadArtifactOfComponentInstanceFromServiceViaExternalAPI"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+      <class name="GetFilteredAssetServlet">
         <methods>
             <include name="getResourceAssetBySpecifiedCategory"/>
             <include name="getServiceAssetBySpecifiedCategory"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.SearchFilterCategoryExternalAPI">
+      <class name="SearchFilterCategoryExternalAPI">
         <methods>
             <include name="normativeResourceCategory" invocation-numbers="0"/>
         </methods>
       </class>      
-      <class name="org.openecomp.sdc.externalApis.GetCSARofVF">
+      <class name="GetCSARofVF">
         <methods>
             <include name="getServiceToscaModelCheckInState"/>
             <include name="getRsourceToscaModelCertifyState"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+      <class name="GetFilteredAssetServlet">
         <methods>
             <include name="getResourceAssetBySpecifiedCategory"/>
             <include name="getServiceAssetBySpecifiedCategory"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet">
+      <class name="GetSpecificAssetMetadataServlet">
         <methods>
             <include name="getResourceAssetMetadataSuccess"/>
             <include name="getServiceAssetMetadataWithResourceInstancesSuccess"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.externalApis.AssetLifeCycle">
+      <class name="AssetLifeCycle">
         <methods>
             <include name="theFlow"/>
         </methods>

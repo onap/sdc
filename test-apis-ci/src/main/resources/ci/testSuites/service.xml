@@ -4,8 +4,8 @@
   <test name="Service">
     <classes>
       <class name="org.openecomp.sdc.ci.tests.execute.service.ChangeServiceDistributionStatusApiTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.service.GetAllServiceVersions"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.interfaceoperation.InterfaceOperationsTest">
+      <class name="GetAllServiceVersions"/>
+      <class name="InterfaceOperationsTest">
         <methods>
           <include name="addInterfaceOperationsOnService"/>
           <include name="getInterfaceOperationsFromService"/>

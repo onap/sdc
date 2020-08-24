@@ -3,8 +3,8 @@
 <suite name="Service">
   <test name="Service">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.service.GetAllServiceVersions"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.interfaceoperation.InterfaceOperationsTest">
+      <class name="org.onap.sdc.backend.ci.tests.execute.service.GetAllServiceVersions"/>
+      <class name="org.onap.sdc.backend.ci.tests.execute.interfaceoperation.InterfaceOperationsTest">
         <methods>
           <include name="addInterfaceOperationsOnService"/>
           <include name="getInterfaceOperationsFromService"/>

@@ -3,8 +3,8 @@
 <suite name="ciFull" configfailurepolicy="continue" verbose="2">
   <test name="Category">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.category.GroupingTest">
+      <class name="CatalogDataApiTest"/>
+      <class name="GroupingTest">
         <methods>
           <exclude name="createProductGroupForNonExistingCategory"/>
           <exclude name="createProductGroupForNonExistingSunCategory"/>
@@ -12,7 +12,7 @@
         </methods>
       </class>
 
-      <class name="org.openecomp.sdc.ci.tests.execute.category.SubCategoriesTest">
+      <class name="SubCategoriesTest">
         <methods>
           <exclude name="createProductSubCategoryForNonExistingCategory"/>
           <exclude name="createResourceSubCategoryForNonExistingCategory"/>
@@ -24,9 +24,9 @@
   <test name="Distribution">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.distribution.AuthanticationTests"/>
+        name="AuthanticationTests"/>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.distribution.DistributionDownloadArtifactTest">
+        name="DistributionDownloadArtifactTest">
         <methods>
           <exclude name="downloadServiceArtifact_ServiceVersionNotFound"/>
         </methods>
@@ -35,44 +35,44 @@
   </test> <!-- Test -->
   <test name="General">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.general.FeProxyTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest"/>
+      <class name="FeProxyTest"/>
+      <class name="UuidTest"/>
     </classes>
   </test>
   <test name="Resource">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.SimultaneousApiTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.UpdateResourceMetadataTest">
+      <class name="SimultaneousApiTest"/>
+      <class name="UpdateResourceMetadataTest">
         <methods>
           <exclude name="UpdateResourceCategory_negativeFlow"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.VFResourceInstanceNameCRUD"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceApiTest"/>
+      <class name="VFResourceInstanceNameCRUD"/>
+      <class name="ResourceApiTest"/>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.resource.ValidateExtendedVfData"/>
+        name="ValidateExtendedVfData"/>
     </classes>
   </test>
   <test name="Product">
     <classes>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
+        name="ProductUndoCheckoutTest">
         <methods>
           <exclude name="undoCheckOutNotExist"/>
         </methods>
       </class>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest"/>
+        name="ProductGetFollowedTest"/>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductToscaYamlGenerationTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
+        name="ProductToscaYamlGenerationTest"/>
+      <class name="ProductCheckinTest">
         <methods>
           <exclude name="checkInProductNotExist"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest"/>
+      <class name="ProductCheckoutTest"/>
       <class
-        name="org.openecomp.sdc.ci.tests.execute.product.ProductCreateWithValidationsTest">
+        name="ProductCreateWithValidationsTest">
         <methods>
           <exclude name="createProductDescriptionRemoveSpacesFromBeginning"/>
           <exclude name="createProductDescriptionRemoveSpacesFromTheEnd"/>
@@ -104,14 +104,14 @@
           <exclude name="rejectServiceNotFound"/>
         </methods>
       </class>
-      <class name="org.openecomp.sdc.ci.tests.execute.service.GetAllServiceVersions"/>
+      <class name="GetAllServiceVersions"/>
     </classes>
   </test>
   <test name="Artifacts">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateHeatArtFieldsTypes"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.artifacts.PlaceHolderValidations"/>
+      <class name="DownloadComponentArt"/>
+      <class name="ValidateHeatArtFieldsTypes"/>
+      <class name="PlaceHolderValidations"/>
     </classes>
   </test>
 </suite> 
