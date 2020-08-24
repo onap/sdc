@@ -98,7 +98,7 @@ public class AssetRestUtils extends BaseRestUtils {
 		if(fileName.isEmpty()) {
 			myFile = new File("tmpCSAR");			
 		} else {
-			String csarDir = FileHandling.getCreateDirByName("outputCsar");
+			String csarDir = FileHandling.getCreateDirByName("target/outputCsar");
 			myFile = new File(csarDir+ File.separator + "tmpCSAR_" + fileName + ".csar");
 		}
 

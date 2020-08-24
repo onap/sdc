@@ -467,7 +467,7 @@ public class FileHandling {
 
     public static void overWriteExistindDir(String outputCsar) throws IOException {
 		String basePath = getBasePath();
-		String csarDir = FileHandling.getCreateDirByName("outputCsar");
+		String csarDir = FileHandling.getCreateDirByName("target/outputCsar");
 		FileUtils.cleanDirectory(new File(csarDir));
     }
 }
