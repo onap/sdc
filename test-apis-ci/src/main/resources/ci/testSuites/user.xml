@@ -3,7 +3,7 @@
 <suite name="User">
   <test name="Test">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.user.ActivateDeActivateDeleteUser"/>
+      <class name="ActivateDeActivateDeleteUser"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- User -->

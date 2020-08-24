@@ -5,7 +5,7 @@
   <test name="Test">
     <classes>
       <class 
-      name="org.openecomp.sdc.externalApis.SearchFilterCategoryExternalAPI">
+      name="org.onap.sdc.backend.externalApis.SearchFilterCategoryExternalAPI">
    			   <methods>
 
 					<include name="searchWithInvalidFilter" />

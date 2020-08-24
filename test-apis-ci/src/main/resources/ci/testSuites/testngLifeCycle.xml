@@ -3,7 +3,7 @@
 <suite name="lifeCycle">
   <test name="Test">
     <classes>
-      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCSbaseTest"/>
+      <class name="LCSbaseTest"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- lifeCycle -->
