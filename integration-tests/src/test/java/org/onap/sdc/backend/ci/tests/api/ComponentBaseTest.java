@@ -68,7 +68,7 @@ public abstract class ComponentBaseTest {
 
     protected static Logger logger = LogManager.getLogger(ComponentBaseTest.class);
 
-    protected static final String REPORT_FOLDER = "." + File.separator + "ExtentReport" + File.separator;
+    protected static final String REPORT_FOLDER = "target" + File.separator + "ExtentReport" + File.separator;
     private static final String REPORT_FILE_NAME = "SDC_CI_Extent_Report.html";
     public static Config config;
     protected static ITestContext myContext;
