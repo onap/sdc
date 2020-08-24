@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.Component;
@@ -112,6 +113,22 @@ public class NodeFilterOperation extends BaseOperation {
         }
         properties.getListToscaDataDefinition().add(requirementNodeFilterPropertyDataDefinition);
         nodeFilterDataDefinition.setProperties(properties);
+        return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
+    }
+
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewCapabilities(
+        final String componentId, final String componentInstanceId,
+        final CINodeFilterDataDefinition nodeFilterDataDefinition,
+        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition) {
+
+        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities =
+            nodeFilterDataDefinition.getCapabilities();
+        if(capabilities == null) {
+            capabilities = new ListDataDefinition<>();
+            nodeFilterDataDefinition.setCapabilities(capabilities);
+        }
+        capabilities.getListToscaDataDefinition().add(requirementNodeFilterCapabilityDataDefinition);
+        nodeFilterDataDefinition.setCapabilities(capabilities);
         return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
