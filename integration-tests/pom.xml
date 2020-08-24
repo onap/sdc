@@ -203,7 +203,6 @@ limitations under the License.
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
-                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <phase>pre-integration-test</phase>
@@ -222,7 +221,6 @@ limitations under the License.
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>reserve-port-for-tests</id>
