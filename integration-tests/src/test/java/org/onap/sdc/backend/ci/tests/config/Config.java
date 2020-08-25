@@ -32,6 +32,7 @@ import java.util.List;
 public class Config {
 
 	private static String WINDOWS_CONFIG_FILE = "src/test/resources/ci/conf/attsdc.yaml";
+	private String downloadAutomationFolder;
 	private boolean systemUnderDebug;
 	private boolean rerun;
 	private String reportDBhost;
@@ -620,7 +621,15 @@ public class Config {
 	public void setWindowsDownloadDirectory(String windowsDownloadDirectory) {
 		this.windowsDownloadDirectory = windowsDownloadDirectory;
 	}
-	
+
+	public String getDownloadAutomationFolder() {
+		return downloadAutomationFolder;
+	}
+
+	public void setDownloadAutomationFolder(String downloadAutomationFolder) {
+		this.downloadAutomationFolder = downloadAutomationFolder;
+	}
+
 	@Override
 	public String toString() {
 		return "Config [systemUnderDebug=" + systemUnderDebug + ", rerun=" + rerun + ", reportDBhost=" + reportDBhost

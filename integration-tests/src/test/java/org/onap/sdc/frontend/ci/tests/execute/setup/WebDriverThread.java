@@ -1,0 +1,143 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+package org.onap.sdc.frontend.ci.tests.execute.setup;
+
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
+import net.lightbody.bmp.proxy.CaptureType;
+import org.onap.sdc.backend.ci.tests.config.Config;
+import org.onap.sdc.frontend.ci.tests.exception.WebDriverThreadRuntimeException;
+import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.UnexpectedAlertBehaviour;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
+
+public class WebDriverThread {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(SetupCDTest.class);
+
+    private WebDriver webdriver;
+    private FirefoxProfile firefoxProfile;
+    private static final String SELENIUM_NODE_URL = "http://%s:%s/wd/hub";
+
+    WebDriverThread(Config config) {
+        initDriver(config);
+        webdriver.manage().window().maximize();
+    }
+
+    public WebDriver getDriver() {
+        return webdriver;
+    }
+
+    void quitDriver() {
+        if (webdriver != null) {
+            webdriver.quit();
+            webdriver = null;
+        }
+    }
+
+
+    private void initDriver(final Config config) {
+        if (config.isRemoteTesting()) {
+            LOGGER.info("Opening REMOTE browser");
+            final String remoteEnvIP = config.getRemoteTestingMachineIP();
+            final String remoteEnvPort = config.getRemoteTestingMachinePort();
+
+            final DesiredCapabilities cap = DesiredCapabilities.firefox();
+            cap.setPlatform(Platform.ANY);
+            cap.setBrowserName("firefox");
+            cap.setCapability(FirefoxDriver.PROFILE, initFirefoxProfile(config));
+            final String remoteUrlString = String.format(SELENIUM_NODE_URL, remoteEnvIP, remoteEnvPort);
+            final URL remoteUrl;
+            try {
+                remoteUrl = new URL(remoteUrlString);
+            } catch (MalformedURLException e) {
+                throw new WebDriverThreadRuntimeException(String.format("Malformed URL '%s'", remoteUrlString), e);
+            }
+            final RemoteWebDriver remoteWebDriver = new RemoteWebDriver(remoteUrl, cap);
+            remoteWebDriver.setFileDetector(new LocalFileDetector());
+            webdriver = remoteWebDriver;
+        } else {
+            if (config.getUseBrowserMobProxy()) {
+                setWebDriverWithMobProxy(config);
+                return;
+            }
+            LOGGER.info("Opening LOCAL browser");
+            System.setProperty("webdriver.gecko.driver", "target/gecko/geckodriver");
+            FirefoxOptions firefoxOptions = new FirefoxOptions();
+            firefoxOptions.setProfile(initFirefoxProfile(config));
+            firefoxOptions.setHeadless(true);
+            webdriver = new FirefoxDriver(firefoxOptions);
+        }
+    }
+
+    private FirefoxProfile initFirefoxProfile(Config config) {
+        firefoxProfile = new FirefoxProfile();
+        firefoxProfile.setPreference("browser.download.folderList", 2);
+        firefoxProfile.setPreference("browser.download.manager.showWhenStarting", false);
+        firefoxProfile.setPreference("browser.download.dir", config.getDownloadAutomationFolder());
+        firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream, application/xml, text/plain, text/xml, image/jpeg");
+        return firefoxProfile;
+    }
+
+    FirefoxProfile getFirefoxProfile() {
+        return firefoxProfile;
+    }
+
+    private void setWebDriverWithMobProxy(Config config) {
+        WebDriver driver = null;
+        MobProxy.setProxyServer();
+        BrowserMobProxyServer proxyServer = MobProxy.getPoxyServer();
+
+        firefoxProfile = new FirefoxProfile();
+        firefoxProfile.setPreference("browser.download.folderList", 2);
+        firefoxProfile.setPreference("browser.download.manager.showWhenStarting", false);
+        firefoxProfile.setPreference("browser.download.dir", config.getDownloadAutomationFolder());
+        firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream, application/xml, text/plain, text/xml, image/jpeg");
+        firefoxProfile.setAcceptUntrustedCertificates(true);
+        firefoxProfile.setAssumeUntrustedCertificateIssuer(true);
+
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+
+        capabilities.setCapability(FirefoxDriver.PROFILE, firefoxProfile);
+        capabilities.setCapability(CapabilityType.PROXY, ClientUtil.createSeleniumProxy(proxyServer));
+        capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+
+        webdriver = new FirefoxDriver(capabilities);
+        proxyServer.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT, CaptureType.REQUEST_COOKIES, CaptureType.REQUEST_BINARY_CONTENT,
+                CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_COOKIES, CaptureType.RESPONSE_HEADERS, CaptureType.RESPONSE_BINARY_CONTENT);
+    }
+
+}
