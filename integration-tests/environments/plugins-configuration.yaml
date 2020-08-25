@@ -1,0 +1,8 @@
+- pluginId: WORKFLOW
+  pluginDiscoveryUrl: 10.0.2.15
+  pluginSourceUrl: 10.0.2.15
+  pluginStateUrl: "workflowDesigner"
+  pluginDisplayOptions:
+    tab:
+      displayName: "WORKFLOW"
+      displayRoles: ["DESIGNER", "TESTER"]

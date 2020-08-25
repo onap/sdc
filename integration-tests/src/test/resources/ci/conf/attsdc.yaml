@@ -1,3 +1,15 @@
+####  Front Testing
+url: http://localhost:8285/sdc1
+#url: https://www.e-access.att.com/QA-AUTOMATE1/sdc1/portal
+#url: https://www.e-access.att.com/AA-IFT-testing/sdc1/portal
+#url: https://www.e-access.att.com/QA-SCRUM1/sdc1/portal
+remoteTestingMachineIP: 0.0.0.0
+remoteTestingMachinePort: 5566
+remoteTesting: false
+useBrowserMobProxy: false
+captureTraffic: false
+
+#### Backend Testig
 outputFolder: target
 reportName: index.html
 catalogBeHost: 127.0.0.1
