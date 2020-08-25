@@ -176,17 +176,25 @@ limitations under the License.
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
-            <version>2.53.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-util</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>3.141.59</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>3.141.59</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>3.141.59</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.lightbody.bmp</groupId>
@@ -264,15 +272,50 @@ limitations under the License.
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <executions>
+                    <execution>
+                        <id>download-gecko</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>download-single</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com</url>
+                            <fromFile>mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz
+                            </fromFile>
+                            <toDir>${project.build.directory}/gecko</toDir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
                 <executions>
                     <execution>
+                        <id>set-folder-permission</id>
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <target>
                                 <mkdir dir="${it.shared.volume}"/>
                                 <chmod dir="${it.shared.volume}" type="dir" perm="ugo+rwx"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>untar-gecko</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <target>
+                                <untar src="${project.build.directory}/gecko/geckodriver-v0.27.0-linux64.tar.gz"
+                                       compression="gzip" dest="${project.build.directory}/gecko/"/>
+                                <chmod dir="${project.build.directory}/gecko/geckodriver" type="dir" perm="ugo+rwx"/>
                             </target>
                         </configuration>
                         <goals>
@@ -441,13 +484,16 @@ limitations under the License.
                                     <SDC_PASSWORD>${it.sdc.password}</SDC_PASSWORD>
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
-                                    <JAVA_OPTIONS>-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-Xdebug
+                                        -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
                                     <bind>
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
-                                        <volume>${project.basedir}/src/test/resources/cert:/var/lib/jetty/onap/cert</volume>
+                                        <volume>${project.basedir}/src/test/resources/cert:/var/lib/jetty/onap/cert
+                                        </volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -484,7 +530,10 @@ limitations under the License.
                                 <env>
                                     <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}</cassandra_ssl_enabled>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m -Xms1536m</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-Xdebug
+                                        -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m
+                                        -Xms1536m
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
@@ -554,7 +603,10 @@ limitations under the License.
                                 </dependsOn>
                                 <env>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m -Xms256m</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-Xdebug
+                                        -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m
+                                        -Xms256m
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-FE</hostname>
                                 <volumes>
@@ -657,12 +709,14 @@ limitations under the License.
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <suiteXmlFiles>
                         <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
+                        <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
                         <!--<file>src/test/resources/ci/testSuites/artifacts.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/cap_req.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/category.xml</file>-->
@@ -670,24 +724,24 @@ limitations under the License.
                         <!--<file>src/test/resources/ci/testSuites/CRUDArtifacts.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/externalAPIs.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/ExternalApiSanity.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/general.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/imports.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/general.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/imports.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/normatives.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/onapApiSanity.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/pass.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/product.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/product.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/productAPIs.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/property.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/resource.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/property.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/resource.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/sanity.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/SearchExternalAPI.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/service.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/service.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/testngLifeCycle.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/user.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/user.xml</file>-->
                     </suiteXmlFiles>
-<!--                    <includes>-->
-<!--                        <include>**/*Test.java</include>-->
-<!--                    </includes>-->
+                    <!--                    <includes>-->
+                    <!--                        <include>**/*Test.java</include>-->
+                    <!--                    </includes>-->
 
                 </configuration>
             </plugin>
