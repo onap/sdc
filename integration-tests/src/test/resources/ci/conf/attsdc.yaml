@@ -1,3 +1,13 @@
+####  Front Testing
+url: http://localhost:8285/sdc1
+
+remoteTestingMachineIP: 0.0.0.0
+remoteTestingMachinePort: 5566
+remoteTesting: false
+useBrowserMobProxy: false
+captureTraffic: false
+
+#### Backend Testing
 outputFolder: target
 reportName: index.html
 catalogBeHost: 127.0.0.1
