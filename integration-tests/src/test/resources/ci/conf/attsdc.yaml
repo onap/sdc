@@ -1,3 +1,14 @@
+####  Front Testing
+url: http://sdc-sim:8080/sdc1
+
+remoteTestingMachineIP: 127.0.0.1
+remoteTestingMachinePort: 4444
+remoteTesting: true
+useBrowserMobProxy: false
+captureTraffic: false
+downloadAutomationFolder: target/dl/automationDownloadDir
+uiSimulator: true
+#### Backend Testing
 outputFolder: target
 reportName: index.html
 catalogBeHost: 127.0.0.1
@@ -36,7 +47,6 @@ cassandraTruststorePath : /path/path
 cassandraTruststorePassword : 123123
 cassandraAuditKeySpace: sdcaudit
 cassandraArtifactKeySpace: sdcartifact
-url: http://localhost:8285/sdc1
 
 sdcHttpMethod: http
 localDataCenter: DC-Automate01
