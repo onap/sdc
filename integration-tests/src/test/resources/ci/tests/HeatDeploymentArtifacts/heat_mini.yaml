@@ -1,0 +1,13 @@
+heat_template_version: 2013-05-23
+
+parameters:
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+    default: This_is_the_SCP_name
+
+resources:
+  FE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"] 

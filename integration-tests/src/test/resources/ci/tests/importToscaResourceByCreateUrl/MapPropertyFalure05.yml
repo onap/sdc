@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.vl.LinkTest:
+      derived_from: tosca.nodes.Root
+      properties:
+        my_property:
+          type: map
+          description : another description
+          default:
+            - 10000
+            - 3.56
+          entry_schema:
+            description: This is my property
+            type: integer
+      capabilities:
+        link:
+          type: tosca.capabilities.network.Linkable
