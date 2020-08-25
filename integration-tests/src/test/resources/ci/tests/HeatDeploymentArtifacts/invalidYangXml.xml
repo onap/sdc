@@ -1,0 +1,35 @@
+<data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+
+  <sports xmlns="http://example.com/example-sports">
+    <person>
+      <name>Lionel Andr�s Messi</name>
+      <birthday>1987-06-24T00:00:00-00:00</birthday>
+    </person>
+    <person>
+      <name>Cristiano Ronaldo</name>
+      <birthday>1985-02-05T00:00:00-00:00</birthday>
+    </person>
+    <team>
+      <name>FC Barcelona</name>
+      <player>
+        <name>Lionel Andr�s Messi</name>
+        <season>Champions League 2014/2015</season>
+        <number>10</number>
+        <scores>43</scores>
+      </player>
+    </team>
+    <team>
+      <name>Real Madrid</name>
+      <player>
+        <name>Cristiano Ronaldo</name>
+        <season>Champions League 2014/2015</season>
+        <number>7</number>
+        <scores>48</scores>
+      </player>
+    </team>
+  </sports>
+
+
+
+</data>
+</data>

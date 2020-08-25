@@ -1,3 +1,22 @@
+####  Remote Front Testing with Docker container (COMMENT ALL FOR LOCAL)
+url: http://sdc-sim:8080/sdc1
+remoteTestingMachineIP: 127.0.0.1
+remoteTestingMachinePort: 4444
+remoteTesting: true
+useBrowserMobProxy: false
+captureTraffic: false
+downloadAutomationFolder: target/automationDownloadDir
+uiSimulator: true
+
+#### Local Front end testing
+#url: http://localhost:8285/sdc1
+#remoteTesting: false
+#useBrowserMobProxy: false
+#captureTraffic: false
+#downloadAutomationFolder: /home/seb/Downloads
+#uiSimulator: true
+
+#### Backend Testing
 outputFolder: target
 reportName: index.html
 catalogBeHost: 127.0.0.1
@@ -15,18 +34,13 @@ neoHost: neoHost
 neoPort: 7474
 neoDBusername: neo4j	
 neoDBpassword: 123456
-windowsDownloadDirectory: "c:\\apache-ftpserver-1.1.0\\res\\home"
 systemUnderDebug: false
-resourceConfigDir: src/test/resources/CI/tests
-componentsConfigDir: src/test/resources/CI/components
+resourceConfigDir: src/test/resources/ci/tests
 importResourceConfigDir: ../catalog-be/src/main/resources/import/tosca/capability-types
-importResourceTestsConfigDir: src/test/resources/CI/importResourceTests
+importResourceTestsConfigDir: src/test/resources/ci/importResourceTests
 errorConfigurationFile: ../catalog-be/src/main/resources/config/error-configuration.yaml
 configurationFile: ../catalog-be/src/main/resources/config/configuration.yaml
-importTypesConfigDir: src/test/resources/CI/importTypesTest
 
-
-janusGraphPropertiesFile: src/test/resources/ci/conf/janusgraph.properties
 cassandraHost: 127.0.0.1
 cassandraAuthenticate: false
 cassandraUsername: koko
@@ -36,7 +50,6 @@ cassandraTruststorePath : /path/path
 cassandraTruststorePassword : 123123
 cassandraAuditKeySpace: sdcaudit
 cassandraArtifactKeySpace: sdcartifact
-url: http://localhost:8285/sdc1
 
 sdcHttpMethod: http
 localDataCenter: DC-Automate01

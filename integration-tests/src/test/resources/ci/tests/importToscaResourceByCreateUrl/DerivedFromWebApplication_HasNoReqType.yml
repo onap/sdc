@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.MyChildWebApplication:
+    derived_from: tosca.nodes.WebApplication
+    attributes:
+      private_address:
+        type: string
+      public_address:
+        type: string
+      networks:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+      ports:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+    requirements:
+      - diff: 
+          capability: 
+          relationship: tosca.relationships.AttachesTo
+          occurrences: [0, UNBOUNDED]  
+    capabilities:
+      deff: 
+        type: tosca.capabilities.Container
+        valid_source_types: [tosca.nodes.SoftwareComponent] 
+

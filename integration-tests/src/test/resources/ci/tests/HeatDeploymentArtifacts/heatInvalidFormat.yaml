@@ -1,0 +1,9 @@
+heat_template_version: 2013-05-23
+
+parameters:
+
+  FE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"] 
+ 

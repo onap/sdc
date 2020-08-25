@@ -35,6 +35,8 @@ limitations under the License.
     </parent>
 
     <properties>
+        <selenium.version>3.141.59</selenium.version>
+        <gecko.driver.version>0.27.0</gecko.driver.version>
         <!-- SDC Startup parameters -->
         <it.env.name>integration-test</it.env.name>
         <it.cassandra.port>9042</it.cassandra.port>
@@ -47,6 +49,8 @@ limitations under the License.
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
         </it.docker.version>
+        <it.ui.firefox.version>2.53.1</it.ui.firefox.version>
+
     </properties>
 
     <dependencies>
@@ -59,8 +63,8 @@ limitations under the License.
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-            <scope>test</scope>
+            <version>25.0-jre</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -176,18 +180,21 @@ limitations under the License.
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
-            <version>2.53.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-util</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${selenium.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>4.0.0-alpha-2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>${selenium.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>net.lightbody.bmp</groupId>
             <!-- To use the legacy, Jetty-based implementation, change the artifactId
@@ -226,14 +233,6 @@ limitations under the License.
             <version>3.3</version>
             <scope>test</scope>
         </dependency>
-
-        <!--<dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-server</artifactId>
-            <version>2.53.1</version>
-            <scope>test</scope>
-        </dependency>-->
-
     </dependencies>
 
     <build>
@@ -256,9 +255,31 @@ limitations under the License.
                                     <filtering>true</filtering>
                                     <includes>
                                         <include>integration-test.json</include>
+                                        <include>plugins-configuration.yaml</include>
                                     </includes>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <executions>
+                    <execution>
+                        <id>download-gecko</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>download-single</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com</url>
+                            <fromFile>
+                                mozilla/geckodriver/releases/download/v${gecko.driver.version}/geckodriver-v${gecko.driver.version}-linux64.tar.gz
+                            </fromFile>
+                            <toDir>${project.build.directory}/gecko</toDir>
                         </configuration>
                     </execution>
                 </executions>
@@ -268,11 +289,28 @@ limitations under the License.
                 <version>1.8</version>
                 <executions>
                     <execution>
+                        <id>set-folder-permission</id>
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <target>
                                 <mkdir dir="${it.shared.volume}"/>
                                 <chmod dir="${it.shared.volume}" type="dir" perm="ugo+rwx"/>
+                                <mkdir dir="target/automationDownloadDir"/>
+                                <chmod dir="target/automationDownloadDir" type="dir" perm="ugo+rwx"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>untar-gecko</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <target>
+                                <untar src="${project.build.directory}/gecko/geckodriver-v${gecko.driver.version}-linux64.tar.gz"
+                                       compression="gzip" dest="${project.build.directory}/gecko/"/>
+                                <chmod dir="${project.build.directory}/gecko/geckodriver" type="dir" perm="ugo+rwx"/>
                             </target>
                         </configuration>
                         <goals>
@@ -441,13 +479,16 @@ limitations under the License.
                                     <SDC_PASSWORD>${it.sdc.password}</SDC_PASSWORD>
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
-                                    <JAVA_OPTIONS>-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-Xdebug
+                                        -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
                                     <bind>
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
-                                        <volume>${project.basedir}/src/test/resources/cert:/var/lib/jetty/onap/cert</volume>
+                                        <volume>${project.basedir}/src/test/resources/cert:/var/lib/jetty/onap/cert
+                                        </volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -484,7 +525,10 @@ limitations under the License.
                                 <env>
                                     <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}</cassandra_ssl_enabled>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m -Xms1536m</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-Xdebug
+                                        -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m
+                                        -Xms1536m
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
@@ -554,7 +598,10 @@ limitations under the License.
                                 </dependsOn>
                                 <env>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m -Xms256m</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-Xdebug
+                                        -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m
+                                        -Xms256m
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-FE</hostname>
                                 <volumes>
@@ -562,7 +609,7 @@ limitations under the License.
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
                                         <volume>
-                                            environments/plugins-configuration.yaml:/var/lib/jetty/config/catalog-fe/plugins-configuration.yaml
+                                            ${it.chef.config}/plugins-configuration.yaml:/var/lib/jetty/config/catalog-fe/plugins-configuration.yaml
                                         </volume>
                                     </bind>
                                 </volumes>
@@ -620,6 +667,7 @@ limitations under the License.
                                     </tcp>
                                 </wait>
                                 <ports>
+                                    <!-- http://localhost:8285/login to access SDC -->
                                     <port>8285:8080</port>
                                     <port>8286:8443</port>
                                 </ports>
@@ -628,6 +676,53 @@ limitations under the License.
                                     <name>sdc-network</name>
                                     <alias>sdc-sim</alias>
                                 </network>
+                            </run>
+                        </image>
+
+                        <image>
+                            <name>selenium/standalone-firefox:${it.ui.firefox.version}</name>
+                            <alias>firefox-standalone</alias>
+                            <run>
+                                <hostname>firefox-standalone</hostname>
+                                <wait>
+                                    <time>20000</time>
+                                    <tcp>
+                                        <host>firefox-standalone</host>
+                                        <mode>direct</mode>
+                                        <ports>
+                                            <!-- Selenium remote automation port -->
+                                            <port>4444</port>
+                                            <!--<port>5900</port>-->
+                                            <!-- VNC port for viewing the browser result -->
+                                            <!-- password to access is "secret" -->
+
+                                        </ports>
+                                    </tcp>
+                                </wait>
+                                <env>
+                                    <SE_OPTS>-debug</SE_OPTS>
+                                    <JAVA_OPTS>-Xmx512m</JAVA_OPTS>
+                                    <!--<START_XVFB>false</START_XVFB>-->
+                                    <SCREEN_WIDTH>1920</SCREEN_WIDTH>
+                                    <SCREEN_HEIGHT>1440</SCREEN_HEIGHT>
+                                </env>
+                                <ports>
+                                    <port>4444:4444</port>
+                                    <!--<port>5900:5900</port>-->
+                                </ports>
+                                <network>
+                                    <mode>custom</mode>
+                                    <name>sdc-network</name>
+                                    <alias>firefox-standalone</alias>
+                                </network>
+                                <volumes>
+                                    <bind>
+                                        <volume>
+                                            ${project.basedir}/target/automationDownloadDir/:/home/seluser/Desktop
+                                        </volume>
+                                        <volume>/dev/shm:/dev/shm</volume>
+                                    </bind>
+                                </volumes>
                             </run>
                         </image>
                     </images>
@@ -657,12 +752,14 @@ limitations under the License.
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <suiteXmlFiles>
                         <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
+                        <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
                         <!--<file>src/test/resources/ci/testSuites/artifacts.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/cap_req.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/category.xml</file>-->
@@ -670,28 +767,27 @@ limitations under the License.
                         <!--<file>src/test/resources/ci/testSuites/CRUDArtifacts.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/externalAPIs.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/ExternalApiSanity.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/general.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/imports.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/general.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/imports.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/normatives.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/onapApiSanity.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/pass.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/product.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/product.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/productAPIs.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/property.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/resource.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/property.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/resource.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/sanity.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/SearchExternalAPI.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/service.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/service.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/testngLifeCycle.xml</file>-->
-<!--                        <file>src/test/resources/ci/testSuites/user.xml</file>-->
+                        <!--                        <file>src/test/resources/ci/testSuites/user.xml</file>-->
                     </suiteXmlFiles>
-<!--                    <includes>-->
-<!--                        <include>**/*Test.java</include>-->
-<!--                    </includes>-->
+                    <!--                    <includes>-->
+                    <!--                        <include>**/*Test.java</include>-->
+                    <!--                    </includes>-->
 
                 </configuration>
             </plugin>
         </plugins>
     </build>
 </project>
-

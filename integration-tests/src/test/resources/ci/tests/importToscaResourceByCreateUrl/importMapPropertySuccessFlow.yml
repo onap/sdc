@@ -1,0 +1,452 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.vl.LinkTest:
+      derived_from: tosca.nodes.Root
+      properties:
+        string_prop01:
+          type: map
+          description : another description
+          default: {keyA : val1 , keyB : val2}
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop02:
+          type: map
+          description : another description
+          default: {keyA : "val1" , keyB : "val2"}
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop03:
+          type: map
+          description : another description
+          default: {"keyA" : "val1" , keyB : val2}
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop04:
+          type: map
+          description : another description
+          default: {"keyA" : 10 , keyB : <b>true</b> }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop05:
+          type: map
+          description : another description
+          default: {"keyA" :  , keyB : "Big" }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop06:
+          type: map
+          description : another description
+          default: {"keyA" : aaaA  , keyB : null }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop07:
+          type: map
+          description : another description
+          default: {"keyA" : NULL  , keyB : Null }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop08:
+          type: map
+          description : another description
+          default: {"keyA" : ""  , keyB : "abcd" }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop09:
+          type: map
+          description : another description
+          default: {"keyA" : "  "  , keyB : "abcd" }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop10:
+          type: map
+          description : another description
+          default: {"keyA" : "    aaaa"  , keyB : "    bbbb" }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop11:
+          type: map
+          description : another description
+          default: {"keyA" : "aaaa      "  , keyB : "bbbb     " }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop12:
+          type: map
+          description : another description
+          default: {"keyA" : "     aaaa      "  , keyB : "     bbbb    ccccc   " }
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop13:
+          type: map
+          description : another description
+          default:
+            keyA : "aaaa"
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop14:
+          type: map
+          description : another description
+          default:
+            keyA : "      aaaa        "
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop15:
+          type: map
+          description : another description
+          default:
+            keyA : AbcD
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop16:
+          type: map
+          description : another description
+          default:
+            keyA :         AbcD
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop17:
+          type: map
+          description : another description
+          default:
+            keyA :         AbcD      
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop18:
+          type: map
+          description : another description
+          default:
+            keyA : <b>AbcD</b>      
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop19:
+          type: map
+          description : another description
+          default:
+            keyA : <b>AbcD      
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop20:
+          type: map
+          description : another description
+          default:
+            keyA : aaaa
+            keya : aaaa
+            Keya : Aaaa
+            KEYA : nnnn
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop21:
+          type: map
+          description : another description
+          default:
+            keyA : NULL
+            keyB : null
+            keyC : Null
+          entry_schema:
+            description: This is my property
+            type: string
+        string_prop22:
+          type: map
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: string
+        integer_prop01:
+          type: map
+          description : another description
+          default: {keyA : 1 , keyB : 1000}
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop02:
+          type: map
+          description : another description
+          default: {keyA : Null , keyB : NULL ,keyC : null }
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop03:
+          type: map
+          description : another description
+          default: {keyA :  , keyB : -600}
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop03:
+          type: map
+          description : another description
+          default: {keyA :            800  , keyB :          -600}
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop04:
+          type: map
+          description : another description
+          default: {keyA :              , keyB :          -600}
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop05:
+          type: map
+          description : another description
+          default: {keyA : 100              , keyB : 0      }
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop06:
+          type: map
+          description : another description
+          default: {keyA : 100 , keyB : 00}
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop07:
+          type: map
+          description : another description
+          default: {keyA :   100    , keyB :    100        }
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop08:
+          type: map
+          description : another description
+          default:
+            keyA : 100
+            keyB : 200
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop09:
+          type: map
+          description : another description
+          default:
+            keyA :            100
+            keyB : 200           
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop10:
+          type: map
+          description : another description
+          default:
+            keyA : null
+            keyA : Null
+            keyB : 1111
+            keyB : 2222
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop11:
+          type: map
+          description : another description
+          default:
+            keyA : null
+            keyB : Null
+            keyC : NULL
+            keyD : 
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop12:
+          type: map
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_prop13:
+          type: map
+          description : another description
+          default: {keyA : 100 , keyA : 200}
+          entry_schema:
+            description: This is my property
+            type: integer
+        boolean_prop01:
+          type: map
+          description : another description
+          default: {keyA : true , keyB : false , keyC : false }
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop02:
+          type: map
+          description : another description
+          default: {keyA : TRUE , keyB : FALSE , keyC : False }
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop03:
+          type: map
+          description : another description
+          default:
+            keyA : null
+            keyB : Null
+            keyC : NULL
+            keyD : 
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop04:
+          type: map
+          description : another description
+          default: {keyA : Null , keyB : NULL ,keyC : null ,keyD : }
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop05:
+          type: map
+          description : another description
+          default: {keyA :      true , keyB : false     , keyC :     false       }
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop06:
+          type: map
+          description : another description
+          default:
+            keyA :     true
+            keyB : true
+            keyC :       false
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop07:
+          type: map
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop08:
+          type: map
+          description : another description
+          default:
+            keyA : false
+            keyA : true
+            keyB : true
+            keyB : false
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_prop09:
+          type: map
+          description : another description
+          default: {keyA : true,keyA : false,keyB : false,keyB : true}
+          entry_schema:
+            description: This is my property
+            type: boolean
+        float_prop01:
+          type: map
+          description : another description
+          default: {keyA : 1.20 , keyB : 3.56f , keyC : 33}
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop02:
+          type: map
+          description : another description
+          default: {keyA : 0.00, keyB : 0.0 , keyC : 0 }
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop03:
+          type: map
+          description : another description
+          default: {keyA : null, keyB : Null , keyC : NULL , keyD : }
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop04:
+          type: map
+          description : another description
+          default: {keyA :      1.20 , keyB : 3.56f       , keyC :      33        }
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop05:
+          type: map
+          description : another description
+          default:
+            keyA : 33
+            keyB : 1.2000
+            keyC : 3.607f
+            keyD : 0
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop06:
+          type: map
+          description : another description
+          default:
+            keyA :       33
+            keyB : 1.2000      
+            keyC :    3.607f 
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop07:
+          type: map
+          description : another description
+          default:
+            keyA : null
+            keyB : Null
+            keyC : NULL
+            keyD : 
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop08:
+          type: map
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop09:
+          type: map
+          description : another description
+          default:
+            keyA : 3.5
+            keyA : 0.01
+            keyB : 3.6
+            keyB : 
+          entry_schema:
+            description: This is my property
+            type: float
+        float_prop10:
+            type: map
+            description : another description
+            default: {keyA : 0.0002}
+            entry_schema:
+              description: This is my property
+              type: float
+        float_prop11:
+          type: map
+          description : another description
+          default: {keyA : 0.000 , keyA : 003.56f, keyB : 33}
+          entry_schema:
+            description: This is my property
+            type: float
+      capabilities:
+        link:
+          type: tosca.capabilities.network.Linkable
