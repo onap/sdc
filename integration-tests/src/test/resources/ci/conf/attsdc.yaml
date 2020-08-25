@@ -26,7 +26,7 @@ configurationFile: ../catalog-be/src/main/resources/config/configuration.yaml
 importTypesConfigDir: src/test/resources/CI/importTypesTest
 
 
-janusGraphPropertiesFile: src/main/resources/ci/conf/janusgraph.properties
+janusGraphPropertiesFile: src/test/resources/ci/conf/janusgraph.properties
 cassandraHost: 127.0.0.1
 cassandraAuthenticate: false
 cassandraUsername: koko

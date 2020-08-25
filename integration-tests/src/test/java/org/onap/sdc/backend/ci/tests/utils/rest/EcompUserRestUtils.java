@@ -215,33 +215,4 @@ public class EcompUserRestUtils extends BaseRestUtils {
 
 		return sendGetUserRolesRequest;
 	}
-
-	// TODO !!!!!!!!!!!!!!
-	/*
-	 * Ask Eli if implementation of users is needed DELETE ECOMP USER
-	 */
-
-	/*
-	 * public static void main(String[] args) { EcompUser ecompUser = new
-	 * EcompUser(); ecompUser.setFirstName("Test");
-	 * ecompUser.setLastName("Testovich");
-	 * ecompUser.setActive(true);
-	 * 
-	 * EcompRole roleToUpdate = new EcompRole(); roleToUpdate.setId(new
-	 * Long(6)); roleToUpdate.setName("PRODUCT_STRATEGIST"); List<EcompRole>
-	 * listOfRoles = new LinkedList<>(); listOfRoles.add(roleToUpdate);
-	 * 
-	 * try {
-	 * System.out.println("\n-----------------------------\n Testing pushUser");
-	 * System.out.println(pushUser(ecompUser));
-	 * System.out.println("\n-----------------------------\n Testing editUser");
-	 * System.out.println("\n-----------------------------\n Testing getUser");
-	 * // System.out.println(getUser(ecompUser.getLoginId())); System.out.
-	 * println("\n-----------------------------\n Testing getAllUsers"); //
-	 * System.out.println(getAllUsers()); System.out.
-	 * println("\n-----------------------------\n Testing getAllAvailableRoles"
-	 * ); // System.out.println(getAllAvailableRoles().toString()); System.out.
-	 * println("\n-----------------------------\n Testing pushUserRoles");
-	 * TODO Auto-generated catch block e.printStackTrace(); } }
-	 */
 }

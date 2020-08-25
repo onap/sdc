@@ -42,18 +42,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ArtifactFromCsar {
-	
 
-	public static void main(String[] args) throws Exception {
-		String zipFile = "C:\\Users\\rp955r\\Documents\\InTesting\\resource-CivfonboardedFdnt2f792348-csar.csar";
-		
-//		Map<String, Object> combinedMap = combineHeatArtifacstWithFolderArtifacsToMap(zipFile);
-		
-		Map<String, Object> vfcArtifacts = ArtifactFromCsar.getVFCArtifacts(zipFile);
-		
-		System.out.println("1234o");
-	}
-	
 	public static Map<String, Object> combineHeatArtifacstWithFolderArtifacsToMap(String pathToCsar) throws Exception {
 		return combineHeatArtifacstWithFolderArtifacsToMap(pathToCsar, "output");
 	}

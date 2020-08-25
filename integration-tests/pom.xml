@@ -35,7 +35,7 @@ limitations under the License.
     </parent>
 
     <properties>
-        <!-- Integration tests parameters -->
+        <!-- SDC Startup parameters -->
         <it.env.name>integration-test</it.env.name>
         <it.cassandra.port>9042</it.cassandra.port>
         <it.cassandra.password>onap123#@!</it.cassandra.password>
@@ -96,7 +96,6 @@ limitations under the License.
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
             <version>3.0.6</version>
-            <!--to update -->
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -171,6 +170,70 @@ limitations under the License.
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--FOR the Frontend -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <scope>test</scope>
+            <version>2.53.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.lightbody.bmp</groupId>
+            <!-- To use the legacy, Jetty-based implementation, change the artifactId
+              to browsermob-core -->
+            <artifactId>browsermob-core</artifactId>
+            <version>2.1.4</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.paulhammant</groupId>
+            <artifactId>ngwebdriver</artifactId>
+            <version>0.9.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.markusbernhardt</groupId>
+            <artifactId>proxy-vole</artifactId>
+            <version>1.0.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>2.53.1</version>
+            <scope>test</scope>
+        </dependency>-->
+
     </dependencies>
 
     <build>
@@ -599,7 +662,7 @@ limitations under the License.
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <suiteXmlFiles>
-                        <file>src/test/resources/ci/testSuites/onapApiSanity.xml</file>
+                        <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
                         <!--<file>src/test/resources/ci/testSuites/artifacts.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/cap_req.xml</file>-->
                         <!--<file>src/test/resources/ci/testSuites/category.xml</file>-->
