@@ -611,6 +611,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
                 <jacoco.skip>true</jacoco.skip>
+                <docker.keepRunning>true</docker.keepRunning>
             </properties>
             <modules>
                 <module>integration-tests</module>
