@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.MyCompute:
+    derived_from: tosca.nodes.Root
+    attributes:
+      private_address:
+        type: string
+      public_address:
+        type: string
+      networks:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+      ports:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+    requirements:
+      - local_storage100: 
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+    capabilities:
+      host: 
+        type: tosca.capabilities.Container
+        valid_source_types: [tosca.nodes.SoftwareComponent] 
+      endpoint100 :
+        type: tosca.capabilities.Endpoint.Admin 
+        occurrences: [ UNBOUNDED, UNBOUNDED ]  
+      os: 
+        type: tosca.capabilities.OperatingSystem
+      scalable:
+        type: tosca.capabilities.Scalable
+      binding:
+        type: tosca.capabilities.network.Bindable

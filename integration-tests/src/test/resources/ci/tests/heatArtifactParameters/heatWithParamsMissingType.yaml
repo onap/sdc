@@ -1,0 +1,603 @@
+heat_template_version: 2013-05-23
+#################################
+#
+#  Changes in v0.2:
+#  - Unique availability zone for each VM
+#  - LAN8 and SLAN networks removed according to latest Prod/Type I diagram
+#  - 2 DB VMs added
+#  - Images corrected
+#  - VM start-up order: SMP->DB->BE->FE (no error handling yet)
+#  - Provisioning scripts placeholders
+#
+#################################
+
+description: ASC Template
+
+parameters:
+#  availability_zone_smp0:
+#    type: string
+#    default: nova
+#  availability_zone_smp1:
+#    type: string
+#    default: nova
+#  availability_zone_fe0:
+#    type: string
+#    default: nova
+#  availability_zone_fe1:
+#    type: string
+#    default: nova
+#  availability_zone_db0:
+#    type: string
+#    default: nova
+#  availability_zone_db1:
+#    type: string
+#    default: nova
+#  availability_zone_be0:
+#    type: string
+#    default: nova
+#  availability_zone_be1:
+#    type: string
+#    default: nova
+#  availability_zone_be2:
+#    type: string
+#    default: nova
+#  availability_zone_be3:
+#    type: string
+#    default: nova
+#  availability_zone_be4:
+#    type: string
+#    default: nova
+
+  vnf_missing_desc:
+    description: Unique name for this VNF instance
+    default: This_is_the_SCP_name
+    label: be4 port 5 OAM ip address
+    
+resources:
+#  scp_be_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: scp_be_wait_handle }
+#      count: 5
+#      timeout: 300
+#  scp_be_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+#
+#  scp_fe_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: scp_fe_wait_handle }
+#      count: 2
+#      timeout: 300
+#  scp_fe_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+#
+#  smp_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: smp_wait_handle }
+#      count: 2
+#      timeout: 300
+#  smp_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+#
+#  db_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: db_wait_handle }
+#      count: 2
+#      timeout: 300
+#  db_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+
+  FE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"] 
+  BE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+  SMP_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+  DB_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+      
+  FE_Clustering_KA:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_vscp_fe_cluster_net_id }
+
+  FE_Clustering_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: FE_Clustering_KA }
+      cidr: { get_param: int_vscp_fe_cluster_cidr }
+
+  Clustering_Network:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_vscp_cluster_net_id }
+
+  Clustering_Network_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Clustering_Network }
+      cidr: { get_param: int_vscp_cluster_cidr }
+
+  DB_Network:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_vscp_db_network_net_id }
+
+  DB_Network_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: DB_Network }
+      cidr: { get_param: int_vscp_db_network_cidr }
+
+  server_scp_be0:
+    type: OS::Nova::Server
+#    depends on: db_wait_condition
+    properties:
+      name: { get_param: vm_scp_be0_name }
+      image: { get_param: image_scp_be_id }
+#      availability_zone: { get_param: availability_zone_be0 }
+      flavor: { get_param: flavor_scp_be_id }
+      scheduler_hints: { group: { get_resource: BE_Affinity } }
+      networks:
+      - port: { get_resource: be0_port_3 }
+      - port: { get_resource: be0_port_4 }
+      - port: { get_resource: be0_port_5 }
+      - port: { get_resource: be0_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_be0_name}
+#            wc_notify: { get_attr: ['scp_be_wait_handle', 'curl_cli'] }
+
+  be0_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: Clustering_Network }
+
+  be0_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: DB_Network }
+
+  be0_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: Cricket_OCS_protected_net_id }
+      fixed_ips: [{"ip_address": {get_param: be0_Cricket_OCS_protected_ips}}]
+
+  be0_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: be0_OAM_direct_ips}}]
+
+  server_scp_be1:
+    type: OS::Nova::Server
+#    depends on: db_wait_condition
+    properties:
+      name: { get_param: vm_scp_be1_name }
+      image: { get_param: image_scp_be_id }
+#      availability_zone: { get_param: availability_zone_be1 }
+      flavor: { get_param: flavor_scp_be_id }
+      scheduler_hints: { group: { get_resource: BE_Affinity } }
+      networks:
+      - port: { get_resource: be1_port_3 }
+      - port: { get_resource: be1_port_4 }
+      - port: { get_resource: be1_port_5 }
+      - port: { get_resource: be1_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_be1_name}
+#            wc_notify: { get_attr: ['scp_be_wait_handle', 'curl_cli'] }
+
+  be1_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: Clustering_Network }
+
+  be1_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: DB_Network }
+
+  be1_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: Cricket_OCS_protected_net_id }
+      fixed_ips: [{"ip_address": {get_param: be1_Cricket_OCS_protected_ips}}]
+
+  be1_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: be1_OAM_direct_ips}}]
+
+  server_scp_be2:
+    type: OS::Nova::Server
+#    depends on: db_wait_condition
+    properties:
+      name: { get_param: vm_scp_be2_name }
+      image: { get_param: image_scp_be_id }
+#      availability_zone: { get_param: availability_zone_be2 }
+      flavor: { get_param: flavor_scp_be_id }
+      scheduler_hints: { group: { get_resource: BE_Affinity } }
+      networks:
+      - port: { get_resource: be2_port_3 }
+      - port: { get_resource: be2_port_4 }
+      - port: { get_resource: be2_port_5 }
+      - port: { get_resource: be2_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_be2_name}
+#            wc_notify: { get_attr: ['scp_be_wait_handle', 'curl_cli'] }
+
+  be2_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: Clustering_Network }
+
+  be2_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: DB_Network }
+
+  be2_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: Cricket_OCS_protected_net_id }
+      fixed_ips: [{"ip_address": {get_param: be2_Cricket_OCS_protected_ips}}]
+
+  be2_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: be2_OAM_direct_ips}}]
+
+  server_scp_be3:
+    type: OS::Nova::Server
+#    depends on: db_wait_condition
+    properties:
+      name: { get_param: vm_scp_be3_name }
+      image: { get_param: image_scp_be_id }
+#      availability_zone: { get_param: availability_zone_be3 }
+      flavor: { get_param: flavor_scp_be_id }
+      scheduler_hints: { group: { get_resource: BE_Affinity } }
+      networks:
+      - port: { get_resource: be3_port_3 }
+      - port: { get_resource: be3_port_4 }
+      - port: { get_resource: be3_port_5 }
+      - port: { get_resource: be3_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_be3_name}
+#            wc_notify: { get_attr: ['scp_be_wait_handle', 'curl_cli'] }
+
+  be3_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: Clustering_Network }
+
+  be3_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: DB_Network }
+
+  be3_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: Cricket_OCS_protected_net_id }
+      fixed_ips: [{"ip_address": {get_param: be3_Cricket_OCS_protected_ips}}]
+
+  be3_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: be3_OAM_direct_ips}}]
+
+  server_scp_be4:
+    type: OS::Nova::Server
+#    depends on: db_wait_condition
+    properties:
+      name: { get_param: vm_scp_be4_name }
+      image: { get_param: image_scp_be_id }
+#      availability_zone: { get_param: availability_zone_be4 }
+      flavor: { get_param: flavor_scp_be_id }
+      scheduler_hints: { group: { get_resource: BE_Affinity } }
+      networks:
+      - port: { get_resource: be4_port_3 }
+      - port: { get_resource: be4_port_4 }
+      - port: { get_resource: be4_port_5 }
+      - port: { get_resource: be4_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_be4_name}
+#            wc_notify: { get_attr: ['scp_be_wait_handle', 'curl_cli'] }
+
+  be4_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: Clustering_Network }
+
+  be4_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: DB_Network }
+
+  be4_port_5:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: Cricket_OCS_protected_net_id }
+      fixed_ips: [{"ip_address": {get_param: be4_Cricket_OCS_protected_ips}}]
+
+  be4_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: be4_OAM_direct_ips}}]
+
+  server_scp_fe0:
+    type: OS::Nova::Server
+#    depends on: scp_be_wait_condition
+    properties:
+      name: { get_param: vm_scp_fe0_name }
+      image: { get_param: image_scp_fe_id }
+#      availability_zone: { get_param: availability_zone_fe0 }
+      flavor: { get_param: flavor_scp_fe_id }
+      scheduler_hints: { group: { get_resource: FE_Affinity } }
+      networks:
+      - port: { get_resource: fe0_port_0 }
+      - port: { get_resource: fe0_port_2 }
+      - port: { get_resource: fe0_port_3 }
+      - port: { get_resource: fe0_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_fe0_name}
+#            wc_notify: { get_attr: ['scp_fe_wait_handle', 'curl_cli'] }
+
+  fe0_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: SIGNET_vrf_A1_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: fe0_SIGNET_vrf_A1_direct_ips}}]
+
+  fe0_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: FE_Clustering_KA }
+
+  fe0_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: Clustering_Network }
+
+  fe0_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: fe0_OAM_direct_ips}}]
+
+  server_scp_fe1:
+    type: OS::Nova::Server
+#    depends on: scp_be_wait_condition
+    properties:
+      name: { get_param: vm_scp_fe1_name }
+      image: { get_param: image_scp_fe_id }
+#      availability_zone: { get_param: availability_zone_fe1 }
+      flavor: { get_param: flavor_scp_fe_id }
+      scheduler_hints: { group: { get_resource: FE_Affinity } }
+      networks:
+      - port: { get_resource: fe1_port_1 }
+      - port: { get_resource: fe1_port_2 }
+      - port: { get_resource: fe1_port_3 }
+      - port: { get_resource: fe1_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_fe1_name}
+#            wc_notify: { get_attr: ['scp_fe_wait_handle', 'curl_cli'] }
+
+  fe1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: SIGNET_vrf_B1_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: fe1_SIGNET_vrf_B1_direct_ips}}]
+
+  fe1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: FE_Clustering_KA }
+
+  fe1_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: Clustering_Network }
+
+  fe1_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: fe1_OAM_direct_ips}}]
+
+  server_smp0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vm_smp0_name }
+      image: { get_param: image_smp_id }
+#      availability_zone: { get_param: availability_zone_smp0 }
+      flavor: { get_param: flavor_smp_id }
+      scheduler_hints: { group: { get_resource: SMP_Affinity } }
+      networks:
+      - port: { get_resource: smp0_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_smp0_name}
+#            wc_notify: { get_attr: ['smp_wait_handle', 'curl_cli'] }
+
+  smp0_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: smp0_OAM_direct_ips}}]
+
+  server_smp1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vm_smp1_name }
+      image: { get_param: image_smp_id }
+#      availability_zone: { get_param: availability_zone_smp1 }
+      flavor: { get_param: flavor_smp_id }
+      scheduler_hints: { group: { get_resource: SMP_Affinity } }
+      networks:
+      - port: { get_resource: smp1_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_smp1_name}
+#            wc_notify: { get_attr: ['smp_wait_handle', 'curl_cli'] }
+
+  smp1_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: smp1_OAM_direct_ips}}]
+
+  server_db0:
+    type: OS::Nova::Server
+#    depends_on: smp_wait_condition
+    properties:
+      name: { get_param: vm_db0_name }
+      image: { get_param: image_db_id }
+#      availability_zone: { get_param: availability_zone_db0 }
+      flavor: { get_param: flavor_db_id }
+      scheduler_hints: { group: { get_resource: DB_Affinity } }
+      networks:
+      - port: { get_resource: db0_port_4 }
+      - port: { get_resource: db0_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_db0_name}
+#            wc_notify: { get_attr: ['db_wait_handle', 'curl_cli'] }
+
+  db0_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: DB_Network }
+
+  db0_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: db0_OAM_direct_ips}}]
+
+  server_db1:
+    type: OS::Nova::Server
+#    depends_on: smp_wait_condition
+    properties:
+      name: { get_param: vm_db1_name }
+      image: { get_param: image_db_id }
+#      availability_zone: { get_param: availability_zone_db1 }
+      flavor: { get_param: flavor_db_id }
+      scheduler_hints: { group: { get_resource: DB_Affinity } }
+      networks:
+      - port: { get_resource: db1_port_4 }
+      - port: { get_resource: db1_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_db1_name}
+#            wc_notify: { get_attr: ['db_wait_handle', 'curl_cli'] }
+
+  db1_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: DB_Network }
+
+  db1_port_7:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: OAM_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: db1_OAM_direct_ips}}]
