@@ -256,9 +256,16 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         componentNodeFilterBusinessLogic.validateUser(userId);
 
         try {
-            final Optional<CINodeFilterDataDefinition>actionResponse = componentNodeFilterBusinessLogic
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
+                NodeFilterConstraintType.parse(constraintType);
+            if (!nodeFilterConstraintType.isPresent()) {
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
+                    "Invalid value for NodeFilterConstraintType enum %s", constraintType));
+            }
+            final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.DELETE,
-                    null, index, true, ComponentTypeEnum.findByParamName(componentType));
+                    null, index, true, ComponentTypeEnum.findByParamName(componentType),
+                    nodeFilterConstraintType.get());
 
             if (!actionResponse.isPresent()) {
                 LOGGER.debug(FAILED_TO_DELETE_NODE_FILTER);

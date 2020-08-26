@@ -376,7 +376,8 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
             .thenReturn(StorageOperationStatus.OK);
 
         when(nodeFilterOperation
-            .deleteConstraint(componentId, componentInstanceId, ciNodeFilterDataDefinition, 0))
+            .deleteConstraint(componentId, componentInstanceId, ciNodeFilterDataDefinition, 0,
+                NodeFilterConstraintType.PROPERTIES))
             .thenReturn(Either.left(ciNodeFilterDataDefinition));
 
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Resource))
@@ -384,7 +385,7 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
 
         final Optional<CINodeFilterDataDefinition> deleteNodeFilterResult = componentNodeFilterBusinessLogic
             .deleteNodeFilter(componentId, componentInstanceId, NodeFilterConstraintAction.DELETE, constraint,
-                0, true, ComponentTypeEnum.RESOURCE);
+                0, true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES);
 
         assertThat(deleteNodeFilterResult).isPresent();
 
@@ -396,7 +397,8 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
             .validateFilter(resource, componentInstanceId, singletonList(constraint),
                 NodeFilterConstraintAction.DELETE);
         verify(nodeFilterOperation, times(1))
-            .deleteConstraint(componentId, componentInstanceId, ciNodeFilterDataDefinition, 0);
+            .deleteConstraint(componentId, componentInstanceId, ciNodeFilterDataDefinition, 0,
+                NodeFilterConstraintType.PROPERTIES);
         verify(graphLockOperation, times(1)).unlockComponent(componentId, NodeTypeEnum.Resource);
     }
 
@@ -413,7 +415,8 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
             .thenReturn(StorageOperationStatus.OK);
 
         when(nodeFilterOperation
-            .deleteConstraint(componentId, componentInstanceId, ciNodeFilterDataDefinition, 0))
+            .deleteConstraint(componentId, componentInstanceId, ciNodeFilterDataDefinition, 0,
+                NodeFilterConstraintType.PROPERTIES))
             .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
 
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Resource))
@@ -421,7 +424,7 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
 
         assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
             .deleteNodeFilter(componentId, componentInstanceId, NodeFilterConstraintAction.DELETE, constraint,
-                0, true, ComponentTypeEnum.RESOURCE));
+                0, true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(graphLockOperation, times(1)).lockComponent(componentId, NodeTypeEnum.Resource);
@@ -443,7 +446,7 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
 
         assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
             .deleteNodeFilter(componentId, componentInstanceId, NodeFilterConstraintAction.DELETE, constraint,
-                0, true, ComponentTypeEnum.RESOURCE));
+                0, true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(nodeFilterValidator, times(1))

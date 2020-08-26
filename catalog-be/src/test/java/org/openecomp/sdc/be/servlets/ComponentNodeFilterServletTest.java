@@ -437,7 +437,8 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
 
         when(componentNodeFilterBusinessLogic.deleteNodeFilter(componentId, componentInstance,
-            NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.RESOURCE))
+            NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.RESOURCE,
+            NodeFilterConstraintType.PROPERTIES))
             .thenReturn(Optional.of(ciNodeFilterDataDefinition));
 
         final Response response = target()
@@ -449,7 +450,8 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
 
         verify(componentNodeFilterBusinessLogic, times(1))
             .deleteNodeFilter(anyString(), anyString(), ArgumentMatchers.any(NodeFilterConstraintAction.class),
-                nullable(String.class), anyInt(), anyBoolean(), ArgumentMatchers.any(ComponentTypeEnum.class));
+                nullable(String.class), anyInt(), anyBoolean(), ArgumentMatchers.any(ComponentTypeEnum.class),
+                ArgumentMatchers.any(NodeFilterConstraintType.class));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
