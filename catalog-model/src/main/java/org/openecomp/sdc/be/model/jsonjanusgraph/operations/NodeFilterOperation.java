@@ -36,6 +36,7 @@ import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
@@ -92,11 +93,20 @@ public class NodeFilterOperation extends BaseOperation {
     public Either<CINodeFilterDataDefinition, StorageOperationStatus> deleteConstraint(final String serviceId,
                                                                                        final String componentInstanceId,
                                                                                        final CINodeFilterDataDefinition nodeFilterDataDefinition,
-                                                                                       final int propertyIndex) {
-        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
+                                                                                       final int propertyIndex,
+                                                                                       final NodeFilterConstraintType nodeFilterConstraintType) {
+
+        if (NodeFilterConstraintType.PROPERTIES.equals(nodeFilterConstraintType)) {
+            final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
                 nodeFilterDataDefinition.getProperties();
-        properties.getListToscaDataDefinition().remove(propertyIndex);
-        nodeFilterDataDefinition.setProperties(properties);
+            properties.getListToscaDataDefinition().remove(propertyIndex);
+            nodeFilterDataDefinition.setProperties(properties);
+        } else if (NodeFilterConstraintType.CAPABILITIES.equals(nodeFilterConstraintType)) {
+            final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities =
+                nodeFilterDataDefinition.getCapabilities();
+            capabilities.getListToscaDataDefinition().remove(propertyIndex);
+            nodeFilterDataDefinition.setCapabilities(capabilities);
+        }
         return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, nodeFilterDataDefinition);
     }
 

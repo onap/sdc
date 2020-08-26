@@ -225,7 +225,8 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
                                                                  final String constraint,
                                                                  final int position,
                                                                  final boolean shouldLock,
-                                                                 final ComponentTypeEnum componentTypeEnum)
+                                                                 final ComponentTypeEnum componentTypeEnum,
+                                                                 final NodeFilterConstraintType nodeFilterConstraintType)
         throws BusinessLogicException {
 
         final Component component = getComponent(componentId);
@@ -238,7 +239,8 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
                 wasLocked = true;
             }
             final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = nodeFilterOperation
-                .deleteConstraint(componentId, componentInstanceId, nodeFilterDataDefinition, position);
+                .deleteConstraint(componentId, componentInstanceId, nodeFilterDataDefinition, position,
+                    nodeFilterConstraintType);
             if (result.isRight()) {
                 janusGraphDao.rollback();
                 throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
