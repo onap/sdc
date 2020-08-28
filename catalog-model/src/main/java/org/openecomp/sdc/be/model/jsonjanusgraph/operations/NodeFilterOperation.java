@@ -143,16 +143,29 @@ public class NodeFilterOperation extends BaseOperation {
     }
 
     public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateProperties(
-        final String serviceId, final String componentInstanceId,
+        final String componentId, final String componentInstanceId,
         final CINodeFilterDataDefinition nodeFilterDataDefinition,
         final List<RequirementNodeFilterPropertyDataDefinition> requirementNodeFilterPropertyDataDefinition) {
 
-        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
                 nodeFilterDataDefinition.getProperties();
         properties.getListToscaDataDefinition().clear();
         properties.getListToscaDataDefinition().addAll(requirementNodeFilterPropertyDataDefinition);
         nodeFilterDataDefinition.setProperties(properties);
-        return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, nodeFilterDataDefinition);
+        return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
+    }
+
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateCapabilities(
+        final String componentId, final String componentInstanceId,
+        final CINodeFilterDataDefinition nodeFilterDataDefinition,
+        final List<RequirementNodeFilterCapabilityDataDefinition> requirementNodeFilterCapabilityDataDefinitions) {
+
+        final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities =
+            nodeFilterDataDefinition.getCapabilities();
+        capabilities.getListToscaDataDefinition().clear();
+        capabilities.getListToscaDataDefinition().addAll(requirementNodeFilterCapabilityDataDefinitions);
+        nodeFilterDataDefinition.setCapabilities(capabilities);
+        return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
     public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateNodeFilter(final String serviceId,
@@ -201,7 +214,6 @@ public class NodeFilterOperation extends BaseOperation {
                 VertexTypeEnum.NODE_FILTER_TEMPLATE, toscaDataList, JsonPresentationFields.UNIQUE_ID);
         }
     }
-
 }
 
 

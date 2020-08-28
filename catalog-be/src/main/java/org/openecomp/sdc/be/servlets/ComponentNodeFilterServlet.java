@@ -207,9 +207,15 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
                     "Failed to parse constraint data", constraintData));
             }
             final List<String> constraints = new ConstraintConvertor().convertToList(uiConstraints);
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
+                NodeFilterConstraintType.parse(constraintType);
+            if (!nodeFilterConstraintType.isPresent()) {
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
+                    "Invalid value for NodeFilterConstraintType enum %s", constraintType));
+            }
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, constraints,
-                    true, componentTypeEnum);
+                    true, componentTypeEnum, nodeFilterConstraintType.get());
 
             if (!actionResponse.isPresent()) {
                 LOGGER.error(FAILED_TO_UPDATE_NODE_FILTER);

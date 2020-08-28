@@ -31,6 +31,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
@@ -269,7 +270,8 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
                                                                  final String componentInstanceId,
                                                                  final List<String> constraints,
                                                                  final boolean shouldLock,
-                                                                 final ComponentTypeEnum componentTypeEnum)
+                                                                 final ComponentTypeEnum componentTypeEnum,
+                                                                 final NodeFilterConstraintType nodeFilterConstraintType)
         throws BusinessLogicException {
 
         final Component component = getComponent(componentId);
@@ -296,10 +298,9 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
                 lockComponent(component.getUniqueId(), component,"Update Node Filter on Component");
                 wasLocked = true;
             }
-            final List<RequirementNodeFilterPropertyDataDefinition> properties = constraints.stream()
-                .map(this::getRequirementNodeFilterPropertyDataDefinition).collect(Collectors.toList());
-            final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = nodeFilterOperation
-                .updateProperties(componentId, componentInstanceId, nodeFilterDataDefinition, properties);
+            final Either<CINodeFilterDataDefinition, StorageOperationStatus> result =
+                updateNodeFilterConstraint(componentId, componentInstanceId, constraints, nodeFilterConstraintType,
+                    nodeFilterDataDefinition);
 
             if (result.isRight()) {
                 janusGraphDao.rollback();
@@ -326,6 +327,22 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return Optional.ofNullable(nodeFilterDataDefinition);
     }
 
+    private Either<CINodeFilterDataDefinition, StorageOperationStatus> updateNodeFilterConstraint(
+        final String componentId, final String componentInstanceId, final List<String> constraints,
+        final NodeFilterConstraintType nodeFilterConstraintType, final CINodeFilterDataDefinition nodeFilterDataDefinition) {
+
+        if (NodeFilterConstraintType.PROPERTIES.equals(nodeFilterConstraintType)) {
+            final List<RequirementNodeFilterPropertyDataDefinition> properties = constraints.stream()
+                .map(this::getRequirementNodeFilterPropertyDataDefinition).collect(Collectors.toList());
+            return nodeFilterOperation.updateProperties(componentId, componentInstanceId,
+                nodeFilterDataDefinition, properties);
+        }
+        final List<RequirementNodeFilterCapabilityDataDefinition> capabilities = constraints.stream()
+            .map(this::getRequirementNodeFilterCapabilityDataDefinition).collect(Collectors.toList());
+        return nodeFilterOperation.updateCapabilities(componentId, componentInstanceId,
+            nodeFilterDataDefinition, capabilities);
+    }
+
     private Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewNodeFilter(
         final String componentId,
         final String componentInstanceId,
@@ -349,6 +366,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return nodeFilterOperation.addNewCapabilities(componentId, componentInstanceId, nodeFilterDataDefinition,
             requirementNodeFilterCapabilityDataDefinition);
     }
+
 
     private void unlockComponent(final String componentUniqueId,
                                  final ComponentTypeEnum componentType) {
@@ -395,9 +413,25 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
     private RequirementNodeFilterPropertyDataDefinition getRequirementNodeFilterPropertyDataDefinition(
         final String constraint) {
 
-        final RequirementNodeFilterPropertyDataDefinition pdd = new RequirementNodeFilterPropertyDataDefinition();
-        pdd.setConstraints(Arrays.asList(constraint));
-        return pdd;
+        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition =
+            new RequirementNodeFilterPropertyDataDefinition();
+        requirementNodeFilterPropertyDataDefinition.setConstraints(Arrays.asList(constraint));
+        return requirementNodeFilterPropertyDataDefinition;
+    }
+
+    private RequirementNodeFilterCapabilityDataDefinition getRequirementNodeFilterCapabilityDataDefinition(
+        final String constraint) {
+
+        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition =
+            new RequirementNodeFilterCapabilityDataDefinition();
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propertyDataDefinitionList =
+            new ListDataDefinition<>();
+        propertyDataDefinitionList.getListToscaDataDefinition().addAll(
+            Collections.singleton(getRequirementNodeFilterPropertyDataDefinition(constraint)));
+        requirementNodeFilterCapabilityDataDefinition.setName(new ConstraintConvertor().convert(constraint)
+            .getServicePropertyName());
+        requirementNodeFilterCapabilityDataDefinition.setProperties(propertyDataDefinitionList);
+        return requirementNodeFilterCapabilityDataDefinition;
     }
 
     private CINodeFilterDataDefinition validateAndReturnNodeFilterDefinition(final String componentInstanceId,
