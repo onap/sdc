@@ -141,6 +141,7 @@ public enum ArtifactTypeEnum {
             DCAE_POLICY,
             DCAE_TOSCA,
             DG_XML,
+            ETSI_PACKAGE,
             GUIDE,
             HEAT,
             HEAT_ARTIFACT,

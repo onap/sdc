@@ -957,6 +957,17 @@ artifacts:
     acceptedTypes:
       - csar
       - zip
+  - type: ETSI_PACKAGE
+    categories:
+      - DEPLOYMENT
+    componentTypes:
+      - RESOURCE
+    resourceTypes:
+      - VF
+      - PNF
+    acceptedTypes:
+      - csar
+      - zip
   - type: HEAT_ENV
     categories:
       - DEPLOYMENT

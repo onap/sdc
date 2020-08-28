@@ -47,7 +47,7 @@ The supported descriptor included in the package is aligned to `ETSI NFV-SOL 001
 Other Points to note when onboarding this package are:
 
 - During onboarding the ETSI NFV-SOL004 CSAR structure is transformed to the internal ONAP CSAR structure.
-- The original input CSAR is maintained and stored as the SDC artifact *ONBOARDED_PACKAGE* in the xNF internal model.
+- The original input CSAR is maintained and stored as the SDC artifact *ETSI_PACKAGE* in the xNF internal model. For existing legacy xNF, it can be stored as *ONBOARDED_PACKAGE* instead.
 - The non-mano artifacts are mapped to the corresponding SDC Artifact Type in the xNF internal model.
 
 Package Types applicable to Resource Types
