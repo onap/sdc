@@ -1,6 +1,6 @@
 <div class="service-dependencies">
   <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
-  <div *ngIf="!isDependent"  class="checkbox-label-mark-as-dependent">
+  <div *ngIf="!isDependent" class="checkbox-label-mark-as-dependent">
     <select name="singleSelect" id="singleSelect" ng-model="data.singleSelect"
             (change)='onOptionsSelected($event)'>
       <option>Select Directive</option>
@@ -11,34 +11,77 @@
   <div *ngIf="isDependent" class="checkbox-label-mark-as-dependent">
     <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue().toUpperCase()}}</label>
     <span class="sprite-new delete-btn delete-icon"
-         (click)="onRemoveDirective()" data-tests-id="delete-input-button">
+          (click)="onRemoveDirective()" data-tests-id="delete-input-button">
     </span>
   </div>
 
-  <div class="i-sdc-designer-sidebar-section-content-item-rules-section" *ngIf="isDependent">
+  <div *ngIf="isDependent">
+    <div class="w-sdc-designer-sidebar-section">
+      <sdc-accordion [title]="'Node Filter Capabilities'" [arrow-direction]="'right'" [open]="true">
+        <div class="i-sdc-designer-sidebar-section-content-node-filter-section">
 
-    <div class="i-sdc-designer-sidebar-section-content-item-rule" [ngClass]="{'hand': !readonly}"
-         *ngFor="let constraint of constraintObjects; let i = index">
-      <div class="rule-details" [ngClass]="{'readonly': readonly}">
-        <div class="rule-desc" (click)="!readonly && onSelectRule(i)" tooltips
-             tooltip="{{constraint.servicePropertyName + ' ' + getSymbol(constraint.constraintOperator) + ' '
-             + (constraint.sourceName ? constraint.sourceName + ':' : '') + constraint.value}}">
-          {{constraint.servicePropertyName + ' ' + getSymbol(constraint.constraintOperator) + ' '
-        + (constraint.sourceName ? constraint.sourceName + ':' : '') + constraint.value}}
+          <div class="i-sdc-designer-sidebar-section-content-node-filter"
+               [ngClass]="{'hand': !readonly}"
+               *ngFor="let capability of constraintCapabilities; let i = index">
+            <div class="filter-details" [ngClass]="{'readonly': readonly}">
+              <div class="filter-desc" (click)="!readonly && onSelectNodeFilter(capabilities, i)"
+                   tooltips
+                   tooltip="{{capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator) + ' '
+             + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}">
+                {{capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator)
+              + ' '
+              + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}
+              </div>
+              <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
+                    (click)="openDeleteModal(capabilities, i)"
+                    data-tests-id="delete-input-button"></span>
+            </div>
+          </div>
+
+          <div class="w-sdc-designer-sidebar-section-node-filter-footer">
+            <button
+                class="w-sdc-designer-sidebar-section-node-filter-footer-action add-rule-btn tlv-btn blue"
+                data-tests-id="add-rule-button"
+                (click)="onAddNodeFilter(capabilities)"
+                [disabled]="readonly">
+              {{'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate}}
+            </button>
+          </div>
         </div>
-        <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
-              (click)="openDeleteModal(i)" data-tests-id="delete-input-button"></span>
-      </div>
-    </div>
+      </sdc-accordion>
 
-    <div class="w-sdc-designer-sidebar-section-footer">
-      <button
-          class="w-sdc-designer-sidebar-section-footer-action add-rule-btn tlv-btn blue"
-          data-tests-id="add-rule-button"
-          (click)="onAddRule()"
-          [disabled]="readonly">
-        {{'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate}}
-      </button>
+      <sdc-accordion [title]="'Node Filter Properties'" [arrow-direction]="'right'" [open]="true">
+        <div class="i-sdc-designer-sidebar-section-content-node-filter-section">
+
+          <div class="i-sdc-designer-sidebar-section-content-node-filter"
+               [ngClass]="{'hand': !readonly}"
+               *ngFor="let property of constraintProperties; let i = index">
+            <div class="filter-details" [ngClass]="{'readonly': readonly}">
+              <div class="filter-desc" (click)="!readonly && onSelectNodeFilter(properties, i)"
+                   tooltips
+                   tooltip="{{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator) + ' '
+             + (property.sourceName ? property.sourceName + ':' : '') + property.value}}">
+                {{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator)
+              + ' '
+              + (property.sourceName ? property.sourceName + ':' : '') + property.value}}
+              </div>
+              <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
+                    (click)="openDeleteModal(properties, i)"
+                    data-tests-id="delete-input-button"></span>
+            </div>
+          </div>
+
+          <div class="w-sdc-designer-sidebar-section-node-filter-footer">
+            <button
+                class="w-sdc-designer-sidebar-section-node-filter-footer-action add-rule-btn tlv-btn blue"
+                data-tests-id="add-rule-button"
+                (click)="onAddNodeFilter(properties)"
+                [disabled]="readonly">
+              {{'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate}}
+            </button>
+          </div>
+        </div>
+      </sdc-accordion>
     </div>
   </div>
 </div>

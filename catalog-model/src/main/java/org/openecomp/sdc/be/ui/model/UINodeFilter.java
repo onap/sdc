@@ -24,5 +24,5 @@ import lombok.Setter;
 public class UINodeFilter {
 
     private List<UIConstraint> properties;
-
+    private List<UIConstraint> capabilities;
 }

@@ -1,28 +1,21 @@
-
-import { Component, Input } from '@angular/core';
-import { Store } from '@ngxs/store';
+import {Component, Input} from '@angular/core';
+import {Store} from '@ngxs/store';
 import {
-    CapabilitiesGroup,
-    Capability,
     Component as TopologyTemplate,
-    ComponentInstance,
     FullComponentInstance,
-    InputBEModel,
-    InputsGroup,
-    InterfaceModel,
     PropertiesGroup,
     PropertyBEModel,
 } from 'app/models';
-import { DEPENDENCY_EVENTS } from 'app/utils/constants';
-import { ComponentMetadata } from '../../../../../../models/component-metadata';
-import { ServiceInstanceObject } from '../../../../../../models/service-instance-properties-and-interfaces';
-import { EventListenerService } from '../../../../../../services/event-listener-service';
-import { ConstraintObject } from '../../../../../components/logic/service-dependencies/service-dependencies.component';
-import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
-import { ComponentGenericResponse } from '../../../../../services/responses/component-generic-response';
-import { WorkspaceService } from '../../../../workspace/workspace.service';
-import { SelectedComponentType } from '../../../common/store/graph.actions';
-import { CompositionService } from '../../../composition.service';
+import {DEPENDENCY_EVENTS} from 'app/utils/constants';
+import {ComponentMetadata} from '../../../../../../models/component-metadata';
+import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';
+import {EventListenerService} from '../../../../../../services/event-listener-service';
+import {ConstraintObject} from '../../../../../components/logic/service-dependencies/service-dependencies.component';
+import {TopologyTemplateService} from '../../../../../services/component-services/topology-template.service';
+import {ComponentGenericResponse} from '../../../../../services/responses/component-generic-response';
+import {WorkspaceService} from '../../../../workspace/workspace.service';
+import {SelectedComponentType} from '../../../common/store/graph.actions';
+import {CompositionService} from '../../../composition.service';
 
 @Component({
     selector: 'service-dependencies-tab',
@@ -72,6 +65,11 @@ export class ServiceDependenciesTabComponent {
     public updateSelectedInstanceConstraints = (constraintsList:Array<ConstraintObject>):void => {
         this.componentInstancesConstraints[this.component.uniqueId].properties = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].properties;
+    }
+
+    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<ConstraintObject>):void => {
+        this.componentInstancesConstraints[this.component.uniqueId].capabilities = constraintsList;
+        this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].capabilities;
     }
 
     private initInstancesWithProperties = (): void => {

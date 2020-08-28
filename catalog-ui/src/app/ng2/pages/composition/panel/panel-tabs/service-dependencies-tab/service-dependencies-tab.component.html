@@ -10,7 +10,8 @@
                     [selectedInstanceConstraints]="selectedInstanceConstraints"
                     [readonly]="isViewOnly"
                     (dependencyStatus)="notifyDependencyEventsObserver($event)"
-                    (updateRulesListEvent)="updateSelectedInstanceConstraints($event)"
+                    (updateNodeFilterProperties)="updateSelectedInstanceConstraints($event)"
+                    (updateNodeFilterCapabilities)="updateSelectedInstanceCapabilitiesConstraints($event)"
                     (loadRulesListEvent)="loadConstraints()">
                 </service-dependencies>
         </div>
