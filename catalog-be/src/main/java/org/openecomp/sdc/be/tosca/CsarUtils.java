@@ -1141,6 +1141,10 @@ public class CsarUtils {
                 }
                 if (ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType)) {
                     artifactTypeFolder += OperationArtifactUtil.BPMN_ARTIFACT_PATH + File.separator;
+                } else if (ArtifactTypeEnum.ONBOARDED_PACKAGE.getType().equals(artifactType)) {
+                    // renaming legacy folder ONBOARDED_PACKAGE to the new folder ETSI_PACKAGE
+                    artifactTypeFolder = artifactTypeFolder
+                        .replace(ArtifactTypeEnum.ONBOARDED_PACKAGE.getType(), ArtifactTypeEnum.ETSI_PACKAGE.getType());
                 }
 
                 // TODO: We should not do this but in order to keep this refactoring small enough,
