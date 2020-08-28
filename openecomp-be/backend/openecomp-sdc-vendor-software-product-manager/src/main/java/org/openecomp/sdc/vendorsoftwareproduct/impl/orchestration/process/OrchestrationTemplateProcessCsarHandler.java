@@ -33,6 +33,7 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -58,7 +59,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
-  private static final String SDC_ONBOARDED_PACKAGE_DIR = "Deployment/ONBOARDED_PACKAGE/";
+  private static final String SDC_ONBOARDED_PACKAGE_DIR = "Deployment/" + ArtifactTypeEnum.ETSI_PACKAGE.getType() + "/";
   private static final String EXT_SEPARATOR = ".";
   private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
   private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
