@@ -123,8 +123,12 @@ export class ServiceDependenciesComponent {
     isDependent: boolean;
     isLoading: boolean;
     parentServiceInputs: InputBEModel[] = [];
-    constraintObjects: ConstraintObject[] = [];
+    constraintProperties: ConstraintObject[] = [];
+    constraintCapabilities: ConstraintObject[] = [];
     operatorTypes: any[];
+    capabilities: string = 'capabilities';
+    properties: string = 'properties';
+    private componentInstancesConstraints: ConstraintObject[] = [];
 
     @Input() readonly: boolean;
     @Input() compositeService: ComponentMetadata;
@@ -133,7 +137,8 @@ export class ServiceDependenciesComponent {
     @Input() selectedInstanceConstraints: ConstraintObject[] = [];
     @Input() selectedInstanceProperties: PropertyBEModel[] = [];
     @Input() directiveValues: any = DirectiveValue;
-    @Output() updateRulesListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
+    @Output() updateNodeFilterProperties: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
+    @Output() updateNodeFilterCapabilities: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
     @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
     @Output() dependencyStatus = new EventEmitter<boolean>();
 
@@ -175,6 +180,7 @@ export class ServiceDependenciesComponent {
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
         const modalModel: ModalModel = new ModalModel('sm', I18nTexts.removeDirectiveModalTitle,
             I18nTexts.removeDirectiveModalText, [actionButton, cancelButton]);
+        this.loadNodeFilter();
         return this.modalServiceNg2.createCustomModal(modalModel);
     }
 
@@ -188,11 +194,12 @@ export class ServiceDependenciesComponent {
 
     private loadNodeFilter = (): void => {
         this.topologyTemplateService.getServiceFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((response) => {
-            if (response.nodeFilterforNode) {
-                const nodeFilterResponse: ConstraintObject[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
-                if (nodeFilterResponse) {
-                    this.constraintObjects = nodeFilterResponse;
-                }
+            if (response.nodeFilterforNode && response.nodeFilterforNode[this.currentServiceInstance.uniqueId]) {
+                this.componentInstancesConstraints = response.nodeFilterforNode;
+                const nodeFilterPropertiesResponse: ConstraintObject[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
+                this.constraintProperties = nodeFilterPropertiesResponse;
+                const nodeFilterCapabilitiesResponse: ConstraintObject[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
+                this.constraintCapabilities = nodeFilterCapabilitiesResponse;
             }
         });
     }
@@ -201,7 +208,7 @@ export class ServiceDependenciesComponent {
         this.modalServiceNg2.closeCurrentModal();
         this.isLoading = true;
         const isDepOrig = this.isDependent;
-        const rulesListOrig = this.constraintObjects;
+        const rulesListOrig = this.componentInstancesConstraints;
         this.currentServiceInstance.unmarkAsDependent(this.getActualDirectiveValue());
         this.updateComponentInstance(isDepOrig, rulesListOrig);
     }
@@ -214,16 +221,18 @@ export class ServiceDependenciesComponent {
     onOptionsSelected(event: any) {
         const newDirectiveValue = event.target.value;
         if (newDirectiveValue.toLowerCase() !== this.getActualDirectiveValue()) {
-            const rulesListOrig = this.constraintObjects;
+            const rulesListOrig = this.componentInstancesConstraints;
             this.setDirectiveValue(newDirectiveValue);
-            this.constraintObjects = [];
+            this.constraintProperties = [];
+            this.constraintCapabilities = [];
             this.updateComponentInstance(this.isDependent, rulesListOrig);
         }
     }
 
     private onRemoveDirective() {
         this.openRemoveDependencyModal().instance.open();
-        this.constraintObjects = [];
+        this.constraintProperties = [];
+        this.constraintCapabilities = [];
     }
 
     private setDirectiveValue(newDirectiveValue: string) {
@@ -253,15 +262,16 @@ export class ServiceDependenciesComponent {
             this.isLoading = false;
         }, (err) => {
             this.isDependent = isDependentOrigVal;
-            this.constraintObjects = rulesListOrig;
+            this.componentInstancesConstraints = rulesListOrig;
             this.isLoading = false;
             console.log('An error has occurred.');
         });
     }
 
-    onAddRule() {
+    onAddNodeFilter = (constraintType: string) => {
+        console.info("constraintType: ", constraintType);
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
-        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', this.createRule, this.getDisabled);
+        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilter(constraintType), this.getDisabled);
         const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
         this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
         this.modalServiceNg2.addDynamicContentToModal(
@@ -279,9 +289,9 @@ export class ServiceDependenciesComponent {
         this.modalInstance.instance.open();
     }
 
-    onSelectRule(index: number) {
+    onSelectNodeFilter(constraintType: string, index: number) {
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
-        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateRules(), this.getDisabled);
+        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateNodeFilter(constraintType), this.getDisabled);
         const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
         this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
         this.modalServiceNg2.addDynamicContentToModal(
@@ -289,7 +299,8 @@ export class ServiceDependenciesComponent {
             ServiceDependenciesEditorComponent,
             {
                 serviceRuleIndex: index,
-                serviceRules: _.map(this.constraintObjects, (rule) => new ConstraintObjectUI(rule)),
+                serviceRules: _.map(this.properties == constraintType ? this.constraintProperties :
+                    this.constraintCapabilities, (rule) => new ConstraintObjectUI(rule)),
                 currentServiceName: this.currentServiceInstance.name,
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,
@@ -305,16 +316,17 @@ export class ServiceDependenciesComponent {
         return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
     }
 
-    createRule  = (): void => {
+    createNodeFilter = (constraintType: string) => {
         const newRuleToCreate: ConstraintObject = new ConstraintObject(this.modalInstance.instance.dynamicContent.instance.currentRule);
         this.isLoading = true;
         this.topologyTemplateService.createServiceFilterConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
             newRuleToCreate,
-            this.compositeService.componentType
+            this.compositeService.componentType,
+            constraintType
         ).subscribe( (response) => {
-            this.updateRulesListEvent.emit(response.properties);
+            this.emitEventOnChanges(constraintType, response);
             this.isLoading = false;
         }, (err) => {
             this.isLoading = false;
@@ -322,16 +334,17 @@ export class ServiceDependenciesComponent {
         this.modalServiceNg2.closeCurrentModal();
     }
 
-    updateRules = (): void => {
+    updateNodeFilter = (constraintType: string) => {
         const allRulesToUpdate: ConstraintObject[] = this.modalInstance.instance.dynamicContent.instance.serviceRulesList.map((rule) => new ConstraintObject(rule));
         this.isLoading = true;
         this.topologyTemplateService.updateServiceFilterConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
             allRulesToUpdate,
-            this.compositeService.componentType
+            this.compositeService.componentType,
+            constraintType
         ).subscribe((response) => {
-            this.updateRulesListEvent.emit(response.properties);
+            this.emitEventOnChanges(constraintType, response);
             this.isLoading = false;
         }, (err) => {
             this.isLoading = false;
@@ -347,15 +360,16 @@ export class ServiceDependenciesComponent {
         }
     }
 
-    onDeleteRule = (index: number) => {
+    onDeleteNodeFilter = (constraintType: string, index: number) => {
         this.isLoading = true;
         this.topologyTemplateService.deleteServiceFilterConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
             index,
-            this.compositeService.componentType
+            this.compositeService.componentType,
+            constraintType
         ).subscribe( (response) => {
-            this.updateRulesListEvent.emit(response.properties);
+            this.emitEventOnChanges(constraintType, response);
             this.isLoading = false;
         }, (err) => {
             this.isLoading = false;
@@ -363,9 +377,19 @@ export class ServiceDependenciesComponent {
         this.modalServiceNg2.closeCurrentModal();
     }
 
-    openDeleteModal = (index: number) => {
+    private emitEventOnChanges(constraintType: string, response) {
+        if (this.properties === constraintType) {
+            this.updateNodeFilterProperties.emit(response.properties);
+            this.constraintProperties = response.properties;
+        } else {
+            this.updateNodeFilterCapabilities.emit(response.capabilities);
+            this.constraintCapabilities = response.capabilities;
+        }
+    }
+
+    openDeleteModal = (constraintType: string, index: number) => {
         this.modalServiceNg2.createActionModal(I18nTexts.deleteNodeFilterTxt, I18nTexts.deleteNodeFilterMsg,
-            I18nTexts.modalDelete, () => this.onDeleteRule(index), I18nTexts.modalCancel).instance.open();
+            I18nTexts.modalDelete, () => this.onDeleteNodeFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
     }
 
 }

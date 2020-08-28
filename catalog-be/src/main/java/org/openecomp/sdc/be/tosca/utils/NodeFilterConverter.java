@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UINodeFilter;
 
@@ -31,17 +34,31 @@ public class NodeFilterConverter {
         return inMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, o -> convertToUi(o.getValue())));
     }
 
-    public UINodeFilter convertToUi(CINodeFilterDataDefinition inNodeFilter) {
-        UINodeFilter retVal = new UINodeFilter();
+    public UINodeFilter convertToUi(final CINodeFilterDataDefinition inNodeFilter) {
+        final UINodeFilter uiNodeFilter = new UINodeFilter();
         final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
-        if (inNodeFilter.getProperties() == null || inNodeFilter.getProperties().isEmpty()) {
-            return retVal;
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> nodeFilterProperties =
+            inNodeFilter.getProperties();
+        if (nodeFilterProperties != null && !nodeFilterProperties.isEmpty()) {
+            final List<UIConstraint> propertiesConstraint = nodeFilterProperties.getListToscaDataDefinition()
+                .stream()
+                .map(property -> property.getConstraints().iterator().next())
+                .map(constraintConvertor::convert)
+                .collect(Collectors.toList());
+            uiNodeFilter.setProperties(propertiesConstraint);
         }
-        List<UIConstraint> constraints = inNodeFilter.getProperties().getListToscaDataDefinition().stream()
-            .map(property -> property.getConstraints().iterator().next())
-            .map(constraintConvertor::convert)
-            .collect(Collectors.toList());
-        retVal.setProperties(constraints);
-        return retVal;
+        final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> nodeFilterCapabilities =
+            inNodeFilter.getCapabilities();
+        if (nodeFilterCapabilities != null && !nodeFilterCapabilities.isEmpty()) {
+            final List<UIConstraint> capabilitiesConstraint = nodeFilterCapabilities.getListToscaDataDefinition()
+                .stream()
+                .map(capabilities -> capabilities.getProperties().getListToscaDataDefinition().iterator().next())
+                .map(property -> property.getConstraints().iterator().next())
+                .map(constraintConvertor::convert)
+                .collect(Collectors.toList());
+            uiNodeFilter.setCapabilities(capabilitiesConstraint);
+        }
+
+        return uiNodeFilter;
     }
 }
