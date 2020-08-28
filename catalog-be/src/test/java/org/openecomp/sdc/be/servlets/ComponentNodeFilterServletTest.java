@@ -328,7 +328,8 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
 
         when(componentNodeFilterBusinessLogic
             .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
-                true, ComponentTypeEnum.RESOURCE)).thenReturn(Optional.of(ciNodeFilterDataDefinition));
+                true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES))
+            .thenReturn(Optional.of(ciNodeFilterDataDefinition));
         final Response response = target()
             .path(path)
             .request(MediaType.APPLICATION_JSON)
@@ -337,7 +338,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
 
         verify(componentNodeFilterBusinessLogic, times(1))
             .updateNodeFilter(anyString(), anyString(), anyList(), anyBoolean(),
-                ArgumentMatchers.any(ComponentTypeEnum.class));
+                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
@@ -359,7 +360,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
 
         when(componentNodeFilterBusinessLogic
             .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
-                true, ComponentTypeEnum.RESOURCE))
+                true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES))
             .thenReturn(Optional.empty());
         final Response response = target()
             .path(path)
@@ -369,7 +370,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
 
         verify(componentNodeFilterBusinessLogic, times(1))
             .updateNodeFilter(anyString(), anyString(), anyList(), anyBoolean(),
-                ArgumentMatchers.any(ComponentTypeEnum.class));
+                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class));
 
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);

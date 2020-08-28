@@ -470,7 +470,8 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
 
         final List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
         assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
-            .updateNodeFilter(componentId, componentInstanceId, constraints, true, ComponentTypeEnum.RESOURCE));
+            .updateNodeFilter(componentId, componentInstanceId, constraints, true, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.PROPERTIES));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(nodeFilterValidator, times(1)).validateFilter(resource, componentInstanceId,
@@ -485,7 +486,8 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
             constraints, NodeFilterConstraintAction.UPDATE)).thenReturn(Either.left(true));
 
         assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
-            .updateNodeFilter(componentId, componentInstanceId, constraints, true, ComponentTypeEnum.RESOURCE));
+            .updateNodeFilter(componentId, componentInstanceId, constraints, true, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.PROPERTIES));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(nodeFilterValidator, times(1)).validateFilter(resource, componentInstanceId,
