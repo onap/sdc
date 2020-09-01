@@ -70,6 +70,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
@@ -113,7 +114,6 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     private static UserValidations userValidations;
 
     private CINodeFilterDataDefinition ciNodeFilterDataDefinition;
-    private RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition;
     private UIConstraint uiConstraint;
     private String constraint;
     private String inputJson;
@@ -309,7 +309,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void updateNodeFilterSuccessTest() throws BusinessLogicException, JsonProcessingException {
+    public void updateNodeFilterPropertiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
         final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
@@ -329,6 +329,44 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         when(componentNodeFilterBusinessLogic
             .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
                 true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES))
+            .thenReturn(Optional.of(ciNodeFilterDataDefinition));
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header(USER_ID_HEADER, USER_ID)
+            .put(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
+
+        verify(componentNodeFilterBusinessLogic, times(1))
+            .updateNodeFilter(anyString(), anyString(), anyList(), anyBoolean(),
+                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class));
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void updateNodeFilterCapabilitiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
+        initComponentData();
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String path = String.format(pathFormat, componentType, componentId, componentInstance,
+            NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
+
+        when(userValidations.validateUserExists(user)).thenReturn(user);
+        when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
+
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+
+        when(componentsUtils.validateAndParseConstraint(ArgumentMatchers.any(ComponentTypeEnum.class), anyString(), any(User.class)))
+            .thenReturn(Collections.singletonList(uiConstraint));
+
+        when(componentsUtils.convertJsonToObjectUsingObjectMapper(anyString(), any(User.class),
+            ArgumentMatchers.<Class<List>>any(),
+            nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class)))
+            .thenReturn(Either.left(Arrays.asList(new ObjectMapper().convertValue(uiConstraint, Map.class))));
+
+        when(componentNodeFilterBusinessLogic
+            .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
+                true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.CAPABILITIES))
             .thenReturn(Optional.of(ciNodeFilterDataDefinition));
         final Response response = target()
             .path(path)
@@ -514,15 +552,25 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         constraint = new ConstraintConvertor().convert(uiConstraint);
         inputJson = buildConstraintDataJson(uiConstraint);
 
-        requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
+        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition =
+            new RequirementNodeFilterPropertyDataDefinition();
         requirementNodeFilterPropertyDataDefinition.setName(uiConstraint.getServicePropertyName());
         requirementNodeFilterPropertyDataDefinition.setConstraints(new LinkedList<>(Arrays.asList(constraint)));
 
-        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> listDataDefinition =
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propertyDataDefinitionList =
             new ListDataDefinition<>(new LinkedList<>(Arrays.asList(requirementNodeFilterPropertyDataDefinition)));
 
+        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition =
+            new RequirementNodeFilterCapabilityDataDefinition();
+        requirementNodeFilterCapabilityDataDefinition.setName(uiConstraint.getServicePropertyName());
+        requirementNodeFilterCapabilityDataDefinition.setProperties(propertyDataDefinitionList);
+
+        final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilityDataDefinitionList =
+            new ListDataDefinition<>(new LinkedList<>(Arrays.asList(requirementNodeFilterCapabilityDataDefinition)));
+
         ciNodeFilterDataDefinition = new CINodeFilterDataDefinition();
-        ciNodeFilterDataDefinition.setProperties(listDataDefinition);
+        ciNodeFilterDataDefinition.setProperties(propertyDataDefinitionList);
+        ciNodeFilterDataDefinition.setCapabilities(capabilityDataDefinitionList);
         ciNodeFilterDataDefinition.setID("NODE_FILTER_UID");
 
         user = new User();

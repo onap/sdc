@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -454,6 +455,38 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
                 NodeFilterConstraintAction.DELETE);
         verify(nodeFilterValidator, times(1))
             .validateComponentInstanceExist(resource, componentInstanceId);
+    }
+
+    @Test
+    public void updateNodeFilterTest() throws BusinessLogicException {
+        componentInstance.setNodeFilter(ciNodeFilterDataDefinition);
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(resource));
+        when(nodeFilterValidator.validateFilter(resource, componentInstanceId,
+            Collections.singletonList(constraint), NodeFilterConstraintAction.UPDATE)).thenReturn(Either.left(true));
+        when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Resource))
+            .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Resource))
+            .thenReturn(StorageOperationStatus.OK);
+
+        when(nodeFilterOperation.updateCapabilities(anyString(), anyString(),
+            any(CINodeFilterDataDefinition.class), anyList())).thenReturn(Either.left(ciNodeFilterDataDefinition));
+
+        final List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
+        final Optional<CINodeFilterDataDefinition> updateNodeFilterResult = componentNodeFilterBusinessLogic
+            .updateNodeFilter(componentId, componentInstanceId, constraints, true, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.CAPABILITIES);
+
+        assertThat(updateNodeFilterResult).isPresent();
+        assertThat(updateNodeFilterResult.get().getProperties().getListToscaDataDefinition()).hasSize(1);
+
+        verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
+        verify(graphLockOperation, times(1)).lockComponent(componentId, NodeTypeEnum.Resource);
+        verify(nodeFilterValidator, times(1)).validateFilter(resource, componentInstanceId,
+            constraints, NodeFilterConstraintAction.UPDATE);
+        verify(graphLockOperation, times(1)).unlockComponent(componentId, NodeTypeEnum.Resource);
+        verify(nodeFilterOperation, times(1))
+            .updateCapabilities(anyString(), anyString(), any(CINodeFilterDataDefinition.class), anyList());
     }
 
     @Test
