@@ -1,14 +1,14 @@
 ---
 project: 'sdc'
 project_creation_date: '2017-01-31'
-lifecycle_state: 'Incubation'
+lifecycle_state: 'Mature'
 project_category: ''
 project_lead: &onap_sdc_ptl
-  name: 'Ofir Sonsino'
-  email: 'ofir.sonsino@intl.att.com'
+  name: 'Christophe Closset'
+  email: 'christophe.closset@intl.att.com'
   company: 'ATT'
-  id: 'os0695'
-  timezone: 'Asia/Jerusalem'
+  id: 'ChrisC'
+  timezone: 'Europe/Brussels'
 primary_contact: *onap_sdc_ptl
 mailing_list:
   type: 'groups.io'
@@ -136,3 +136,6 @@ tsc:
     - type: 'Removal'
       name: 'Eli Levi'
       link: 'https://wiki.onap.org/pages/viewpage.action?pageId=25435567'
+    - type: 'Removal'
+      name: 'Ofir Sonsino'
+      link: 'https://wiki.onap.org/pages/viewpage.action?pageId=45305945'
