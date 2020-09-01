@@ -156,15 +156,14 @@ Modifications copyright (c) 2018-2019 Nokia
         <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
         <!--togglz version-->
         <togglz.version>2.4.1.Final</togglz.version>
-
         <joda.time.version>2.9.9</joda.time.version>
-
         <!--sdc-security-utils-->
         <security.util.lib.version>1.6.0</security.util.lib.version>
         <!--jacoco-->
         <jacoco.version>0.8.5</jacoco.version>
-
         <java.driver.core.version>4.5.1</java.driver.core.version>
+        <surefire.forkCount>1</surefire.forkCount>
+        <surefire.reuseForks>true</surefire.reuseForks>
     </properties>
 
     <dependencyManagement>
@@ -513,6 +512,8 @@ Modifications copyright (c) 2018-2019 Nokia
                     <systemPropertyVariables>
                         <jacoco-agent.destfile>${project.build.directory}/jacoco.exec</jacoco-agent.destfile>
                     </systemPropertyVariables>
+                    <forkCount>${surefire.forkCount}</forkCount>
+                    <reuseForks>${surefire.reuseForks}</reuseForks>
                 </configuration>
             </plugin>
             <plugin>
