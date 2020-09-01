@@ -309,10 +309,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin.version}</version>
         <configuration>
-          <forkCount>${fork.count}</forkCount>
-          <forkMode>${fork.mode}</forkMode>
           <printSummary>false</printSummary>
           <additionalClasspathElements>
             <additionalClasspathElement>${project.basedir}/src/test/resources
@@ -323,7 +320,6 @@
             </logback.configurationFile>
             <config.location>${project.basedir}/configuration</config.location>
           </systemPropertyVariables>
-          <useSystemClassLoader>${useSystemClassLoader}</useSystemClassLoader>
         </configuration>
       </plugin>
       <plugin>

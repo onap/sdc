@@ -5,7 +5,7 @@ remoteTestingMachinePort: 4444
 remoteTesting: true
 useBrowserMobProxy: false
 captureTraffic: false
-downloadAutomationFolder: target/automationDownloadDir
+downloadAutomationFolder: /tmp/sdc-integration-tests/downloadAutomation
 uiSimulator: true
 
 #### Local Front end testing

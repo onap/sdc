@@ -312,7 +312,7 @@ public class FileHandling {
 	public static void createDirectory(String directoryPath) {
 		File directory = new File(String.valueOf(directoryPath));
 	    if (! directory.exists()){
-	        directory.mkdir();
+	        directory.mkdirs();
 	    }
 	}
 

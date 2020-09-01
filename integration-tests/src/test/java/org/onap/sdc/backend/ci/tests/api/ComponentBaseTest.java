@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,7 +68,7 @@ public abstract class ComponentBaseTest {
 
     protected static Logger logger = LogManager.getLogger(ComponentBaseTest.class);
 
-    protected static final String REPORT_FOLDER = "target" + File.separator + "ExtentReport" + File.separator;
+    protected static final String REPORT_FOLDER = "target" + File.separator + "ExtentReport" + File.separator + "API" + File.separator;
     private static final String REPORT_FILE_NAME = "SDC_CI_Extent_Report.html";
     public static Config config;
     protected static ITestContext myContext;
@@ -108,7 +108,7 @@ public abstract class ComponentBaseTest {
     @BeforeMethod(alwaysRun = true)
     public void setupBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
         if (!"onboardVNFShotFlow".equals(method.getName()) &&
-            !"onboardPNFFlow".equals(method.getName()) ) {
+                !"onboardPNFFlow".equals(method.getName())) {
             logger.info("ExtentReport instance started from BeforeMethod...");
             ExtentTestManager.startTest(method.getName());
             ExtentTestManager.assignCategory(this.getClass());
@@ -186,7 +186,7 @@ public abstract class ComponentBaseTest {
 
 
         List<String> genericCollection = new ArrayList<>();
-        if(resourcesArrayList.get(0) != null) {
+        if (resourcesArrayList.get(0) != null) {
             ComponentTypeEnum componentTypeEnum = resourcesArrayList.get(0).getComponentType();
             resourcesArrayList.stream().filter(Objects::nonNull).
                     filter(s -> s.getName().toLowerCase().startsWith("ci") && !s.getName().toLowerCase().equals("cindervolume")).
