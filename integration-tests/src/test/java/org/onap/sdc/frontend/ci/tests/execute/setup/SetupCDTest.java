@@ -24,11 +24,13 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
+
 import net.lightbody.bmp.core.har.Har;
 import org.json.simple.JSONObject;
 import org.onap.sdc.backend.ci.tests.config.UserCredentialsFromFile;
@@ -75,7 +77,7 @@ public abstract class SetupCDTest extends DriverFactory {
     private static final String CREDENTIALS_FILE = "credentials.yaml";
 
     private static final String REPORT_FILE_NAME = "SDC_UI_Extent_Report.html";
-    private static final String REPORT_FOLDER = "target" + File.separator + "ExtentReport" + File.separator;
+    private static final String REPORT_FOLDER = "target" + File.separator + "ExtentReport" + File.separator + "UI" + File.separator;
     private static final String SCREENSHOT_FOLDER = REPORT_FOLDER + "screenshots" + File.separator;
     private static final String HAR_FILES_FOLDER_NAME = "har_files";
     private static final String HAR_FILES_FOLDER = REPORT_FOLDER + HAR_FILES_FOLDER_NAME + File.separator;
@@ -392,7 +394,7 @@ public abstract class SetupCDTest extends DriverFactory {
     private void loginWithUser(final UserRoleEnum role) {
         try {
             final String msg = String
-                .format("Login as user '%s', role '%s'", role.getUserId(), role.getUserRole());
+                    .format("Login as user '%s', role '%s'", role.getUserId(), role.getUserRole());
             getExtendTest().log(Status.INFO, msg);
             LOGGER.info(msg);
             loginToSystem(role);
@@ -423,7 +425,7 @@ public abstract class SetupCDTest extends DriverFactory {
         LOGGER.info(String.format("Setup before test for role '%s'", role.name()));
         if (!getWindowTest().getPreviousRole().equalsIgnoreCase(role.name())) {
             LOGGER.info(String.format("Logging in with new role '%s'. Previous role was: '%s'.", role.name(),
-                getWindowTest().getPreviousRole()));
+                    getWindowTest().getPreviousRole()));
             navigateAndLogin(role);
         }
     }
