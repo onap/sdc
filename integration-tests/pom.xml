@@ -242,7 +242,7 @@ limitations under the License.
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>copy-chef-resources</id>
                         <phase>pre-integration-test</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -293,10 +293,10 @@ limitations under the License.
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <target>
-                                <mkdir dir="${it.shared.volume}"/>
-                                <chmod dir="${it.shared.volume}" type="dir" perm="ugo+rwx"/>
-                                <mkdir dir="target/automationDownloadDir"/>
-                                <chmod dir="target/automationDownloadDir" type="dir" perm="ugo+rwx"/>
+                                <mkdir dir="/tmp/sdc-integration-tests"/>
+                                <chmod dir="/tmp/sdc-integration-tests" type="dir" perm="ugo+rwx"/>
+                                <mkdir dir="/tmp/sdc-integration-tests/downloadAutomation"/>
+                                <chmod dir="/tmp/sdc-integration-tests/downloadAutomation" type="dir" perm="ugo+rwx"/>
                             </target>
                         </configuration>
                         <goals>
@@ -437,7 +437,7 @@ limitations under the License.
                             <alias>sdc-cassandra-onboard-init</alias>
                             <run>
                                 <dependsOn>
-                                    <container>sdc-cassandra-init</container>
+                                    <container>sdc-cassandra</container>
                                 </dependsOn>
                                 <env>
                                     <RELEASE>${project.version}</RELEASE>
@@ -520,7 +520,7 @@ limitations under the License.
                             <alias>sdc-backend</alias>
                             <run>
                                 <dependsOn>
-                                    <container>sdc-onboard-backend</container>
+                                    <container>sdc-cassandra-init</container>
                                 </dependsOn>
                                 <env>
                                     <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}</cassandra_ssl_enabled>
@@ -593,9 +593,6 @@ limitations under the License.
                             <name>onap/sdc-frontend:${it.docker.version}</name>
                             <alias>sdc-frontend</alias>
                             <run>
-                                <dependsOn>
-                                    <container>sdc-backend-init</container>
-                                </dependsOn>
                                 <env>
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <JAVA_OPTIONS>-Xdebug
@@ -718,7 +715,7 @@ limitations under the License.
                                 <volumes>
                                     <bind>
                                         <volume>
-                                            ${project.basedir}/target/automationDownloadDir/:/home/seluser/Desktop
+                                            /tmp/sdc-integration-tests/downloadAutomation/:/home/seluser/Desktop
                                         </volume>
                                         <volume>/dev/shm:/dev/shm</volume>
                                     </bind>
@@ -757,6 +754,8 @@ limitations under the License.
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
                     <suiteXmlFiles>
                         <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
                         <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
@@ -782,10 +781,6 @@ limitations under the License.
                         <!--<file>src/test/resources/ci/testSuites/testngLifeCycle.xml</file>-->
                         <!--                        <file>src/test/resources/ci/testSuites/user.xml</file>-->
                     </suiteXmlFiles>
-                    <!--                    <includes>-->
-                    <!--                        <include>**/*Test.java</include>-->
-                    <!--                    </includes>-->
-
                 </configuration>
             </plugin>
         </plugins>

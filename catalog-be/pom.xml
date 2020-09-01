@@ -753,6 +753,13 @@
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <forkCount>1</forkCount>
+          </configuration>
+      </plugin>
+      <plugin>
         <!-- Download Swagger UI webjar. -->
         <artifactId>maven-dependency-plugin</artifactId>
         <version>${maven-dependency-plugin.version}</version>
