@@ -92,7 +92,8 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         "tosca_simple_profile_for_nfv_1_0_0",
         TOSCA_SIMPLE_YAML_PREFIX + "1_0",
         TOSCA_SIMPLE_YAML_PREFIX + "1_1",
-        TOSCA_SIMPLE_YAML_PREFIX + "1_2");
+        TOSCA_SIMPLE_YAML_PREFIX + "1_2",
+        TOSCA_SIMPLE_YAML_PREFIX + "1_3");
     private static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar");
 
     protected ServletUtils servletUtils;
