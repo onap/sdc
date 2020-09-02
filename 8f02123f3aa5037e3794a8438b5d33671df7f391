@@ -16,6 +16,24 @@
       "revId": "8f02123f3aa5037e3794a8438b5d33671df7f391",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78f51821_f53cf612",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-02T08:35:42Z",
+      "side": 1,
+      "message": "It\u0027s mandatory to keep it like that, because it\u0027s not configurable, so i don\u0027t want a var for it.\nIt must be like that until we rework the hardcoded paths everywhere in the test code :-(",
+      "parentUuid": "1e00dcfb_821baa71",
+      "revId": "8f02123f3aa5037e3794a8438b5d33671df7f391",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
