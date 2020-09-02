@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e00dcfb_821baa71",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-02T08:32:36Z",
+      "side": 1,
+      "message": "Necessary evil for the time being",
+      "revId": "8f02123f3aa5037e3794a8438b5d33671df7f391",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
