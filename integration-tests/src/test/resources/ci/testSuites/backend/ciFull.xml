@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="ciFull" configfailurepolicy="continue" verbose="2">
+<suite name="ciFull" configfailurepolicy="continue">
   <test name="Category">
     <classes>
       <class name="org.onap.sdc.backend.ci.tests.execute.category.CatalogDataApiTest"/>
