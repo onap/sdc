@@ -1,23 +1,0 @@
-tosca_definitions_version: tosca_simple_yaml_1_0_0
-
-node_types:
-  org.openecomp.resource.cp.WANTedy:    derived_from: org.openecomp.resource.cp.CPTedy
-    properties:
-      type:
-        type: string
-        required: false
-    requirements:
-      - virtualLink_in:
-          capability: tosca.capabilities.network.Linkable          relationship: tosca.relationships.network.LinksTo
-      - virtualLink_out:
-          capability: tosca.capabilities.network.Linkable          relationship: tosca.relationships.network.LinksTo
-      - virtualLink_in1:
-          capability: tosca.capabilities.network.Linkable          relationship: tosca.relationships.network.LinksTo
-      - virtualLink_out1:
-          capability: tosca.capabilities.network.Linkable          relationship: tosca.relationships.network.LinksTo
-      - virtualLink_in2:
-          capability: tosca.capabilities.network.Linkable          relationship: tosca.relationships.network.LinksTo
-      - virtualLink_out2:
-          capability: tosca.capabilities.network.Linkable          relationship: tosca.relationships.network.LinksTo
-      - virtualbinding:
-          capability: tosca.capabilities.network.Bindable          relationship: tosca.relationships.network.BindsTo
