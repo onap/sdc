@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="CRUDArtifacts" configfailurepolicy="continue" verbose="2"  parallel="tests" thread-count="10">
+<suite name="CRUDArtifacts" configfailurepolicy="continue" parallel="tests" thread-count="10">
 
   <test name="Test">
     <classes>
