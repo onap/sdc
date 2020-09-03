@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Sanity" configfailurepolicy="continue">
 
-  <test verbose="2" name="Sanity">
+  <test name="Sanity">
     <classes>
 
       <class name="org.onap.sdc.backend.ci.tests.execute.category.CatalogDataApiTest"/>
