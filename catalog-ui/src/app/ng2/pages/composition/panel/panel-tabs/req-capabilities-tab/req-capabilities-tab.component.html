@@ -10,7 +10,7 @@
         </div>
         <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
             <sdc-accordion [title]="'Requirements'" [arrow-direction]="'right'" [testId]="'Requirements-accordion'">
-                <requirement-list [component]='component' [requirements]="requirements" [isInstanceSelected]="isComponentInstanceSelected"></requirement-list>
+                <requirement-list [component]='component' [requirements]="requirements" [isInstanceSelected]="isComponentInstanceSelected" [isViewOnly]='isViewOnly'></requirement-list>
             </sdc-accordion>
 
         </div>
@@ -28,7 +28,7 @@
 
         <sdc-accordion *ngIf="requirementsInstancesMap" [title]="'Requirements'" [arrow-direction]="'right'" [testId]="'Requirements-accordion'">
                 <sdc-accordion *ngFor="let key of objectKeys(requirementsInstancesMap); let i = index" [title]="key">
-                    <requirement-list [component]='component' [requirements]="requirementsInstancesMap[key]" [isInstanceSelected]="isComponentInstanceSelected"></requirement-list>
+                    <requirement-list [component]='component' [requirements]="requirementsInstancesMap[key]" [isInstanceSelected]="isComponentInstanceSelected" [isViewOnly]='isViewOnly'></requirement-list>
                 </sdc-accordion>
         </sdc-accordion>
 

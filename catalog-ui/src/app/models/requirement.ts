@@ -53,6 +53,7 @@ export class Requirement implements RequirementCapabilityModel{
     leftOccurrences:string;
     minOccurrences:string | number;
     maxOccurrences:string;
+    external:boolean;
     //custom
     filterTerm:string;
 
@@ -70,6 +71,7 @@ export class Requirement implements RequirementCapabilityModel{
             this.leftOccurrences = requirement.leftOccurrences;
             this.minOccurrences = requirement.minOccurrences;
             this.maxOccurrences = requirement.maxOccurrences;
+            this.external = requirement.external;
             this.initFilterTerm();
 
         }
