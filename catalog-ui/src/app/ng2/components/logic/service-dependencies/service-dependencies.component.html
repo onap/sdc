@@ -4,7 +4,7 @@
     <select name="singleSelect" id="singleSelect" ng-model="data.singleSelect"
             (change)='onOptionsSelected($event)'>
       <option>Select Directive</option>
-      <option *ngFor="let item of directiveValues.values()">{{item}}</option>
+      <option class="directives-options" *ngFor="let item of directiveOptions">{{item}}</option>
     </select>
   </div>
 

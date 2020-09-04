@@ -96,6 +96,7 @@ public class Configuration extends BasicConfiguration {
 
     private List<String> licenseTypes;
     private List<String> definedResourceNamespace;
+    private List<String> directives;
 
     private Integer additionalInformationMaxNumberOfKeys;
     private HeatDeploymentArtifactTimeout heatArtifactDeploymentTimeout;
@@ -555,6 +556,14 @@ public class Configuration extends BasicConfiguration {
 
     public void setDefinedResourceNamespace(List<String> definedResourceNamespace) {
         this.definedResourceNamespace = definedResourceNamespace;
+    }
+
+    public List<String> getDirectives() {
+        return directives;
+    }
+
+    public void setDirectives(List<String> directives) {
+        this.directives = directives;
     }
 
     public Integer getAdditionalInformationMaxNumberOfKeys() {
