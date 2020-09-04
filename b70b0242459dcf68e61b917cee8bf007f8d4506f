@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3428f86a_73a6f09a",
+        "filename": "catalog-ui/package.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-09-04T09:45:11Z",
+      "side": 1,
+      "message": "is this change related to this task?",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 29
+      },
+      "revId": "b70b0242459dcf68e61b917cee8bf007f8d4506f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
