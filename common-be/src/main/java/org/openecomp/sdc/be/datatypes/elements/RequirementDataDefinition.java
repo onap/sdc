@@ -21,6 +21,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.google.common.collect.Lists;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
@@ -30,11 +34,17 @@ import java.util.List;
 /**
  * Represents the requirement of the component or component instance
  */
+@EqualsAndHashCode
+@ToString
 public class RequirementDataDefinition extends ToscaDataDefinition {
 
     public static final String MIN_OCCURRENCES = "0";
     public static final String MAX_OCCURRENCES = "UNBOUNDED";
     public static final String MAX_DEFAULT_OCCURRENCES = "1";
+    
+    @Getter
+    @Setter
+    public boolean external = false;
 
     /**
      * The default constructor initializing limits of the occurrences
@@ -69,6 +79,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
             this.setPath(Lists.newArrayList(other.getPath()));
         }
         this.setSource(other.getSource());
+        this.setExternal(other.isExternal());
     }
 
     /**
@@ -216,168 +227,6 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
             path.add(elementInPath);
         }
         setPath(path);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        String name = getName();
-        String uniqueId = getUniqueId();
-        String capability = getCapability();
-        String node = getNode();
-        String relationship = getRelationship();
-        String ownerId = getOwnerId();
-        String ownerName = getOwnerName();
-        String minOccurrences = getMinOccurrences();
-        String maxOccurrences = getMaxOccurrences();
-        String leftOccurrences = getLeftOccurrences();
-
-        List<String> path = this.getPath();
-        String source = getSource();
-
-        result = prime * result + ((capability == null) ? 0 : capability.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((node == null) ? 0 : node.hashCode());
-        result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
-        result = prime * result + ((ownerName == null) ? 0 : ownerName.hashCode());
-        result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
-        result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
-        result = prime * result + ((minOccurrences == null) ? 0 : minOccurrences.hashCode());
-        result = prime * result + ((maxOccurrences == null) ? 0 : maxOccurrences.hashCode());
-        result = prime * result + ((leftOccurrences == null) ? 0 : leftOccurrences.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        RequirementDataDefinition other = (RequirementDataDefinition) obj;
-
-        String name = getName();
-        String uniqueId = getUniqueId();
-        String capability = getCapability();
-        String node = getNode();
-        String relationship = getRelationship();
-        String ownerId = getOwnerId();
-        String ownerName = getOwnerName();
-        String minOccurrences = getMinOccurrences();
-        String maxOccurrences = getMaxOccurrences();
-        String leftOccurrences = getLeftOccurrences();
-        List<String> path = this.getPath();
-        String source = getSource();
-
-        if (capability == null) {
-            if (other.getCapability() != null) {
-                return false;
-            }
-        } else if (!capability.equals(other.getCapability())) {
-            return false;
-        }
-        if (name == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!name.equals(other.getName())) {
-            return false;
-        }
-        if (node == null) {
-            if (other.getNode() != null) {
-                return false;
-            }
-        } else if (!node.equals(other.getNode())) {
-            return false;
-        }
-        if (ownerId == null) {
-            if (other.getOwnerId() != null) {
-                return false;
-            }
-        } else if (!ownerId.equals(other.getOwnerId())) {
-            return false;
-        }
-        if (ownerName == null) {
-            if (other.getOwnerName() != null) {
-                return false;
-            }
-        } else if (!ownerName.equals(other.getOwnerName())) {
-            return false;
-        }
-        if (relationship == null) {
-            if (other.getRelationship() != null) {
-                return false;
-            }
-        } else if (!relationship.equals(other.getRelationship())) {
-            return false;
-        }
-        if (uniqueId == null) {
-            if (other.getUniqueId() != null) {
-                return false;
-            }
-        } else if (!uniqueId.equals(other.getUniqueId())) {
-            return false;
-        }
-        if (minOccurrences == null) {
-            if (other.getMinOccurrences() != null) {
-                return false;
-            }
-        } else if (!minOccurrences.equals(other.getMinOccurrences())) {
-            return false;
-        }
-        if (maxOccurrences == null) {
-            if (other.getMaxOccurrences() != null) {
-                return false;
-            }
-        } else if (!maxOccurrences.equals(other.getMaxOccurrences())) {
-            return false;
-        }
-        if (leftOccurrences == null) {
-            if (other.getLeftOccurrences() != null) {
-                return false;
-            }
-        } else if (!leftOccurrences.equals(other.getLeftOccurrences())) {
-            return false;
-        }
-        if (path == null) {
-            if (other.getPath() != null) {
-                return false;
-            }
-        } else if (!path.equals(other.getPath())) {
-            return false;
-        }
-        if (source == null) {
-            return other.getSource() == null;
-        } else {
-            return source.equals(other.getSource());
-        }
-    }
-
-    @Override
-    public String toString() {
-        String name = getName();
-        String uniqueId = getUniqueId();
-        String capability = getCapability();
-        String node = getNode();
-        String relationship = getRelationship();
-        String ownerId = getOwnerId();
-        String ownerName = getOwnerName();
-        String minOccurrences = getMinOccurrences();
-        String maxOccurrences = getMaxOccurrences();
-        String leftOccurrences = getLeftOccurrences();
-        List<String> path = this.getPath();
-        String source = getSource();
-
-        return "RequirementDefinition [uniqueId=" + uniqueId + ", name=" + name + ", capability=" + capability + ", node=" + node + ", relationship=" + relationship + ", ownerId=" + ownerId + ", ownerName=" + ownerName + ", minOccurrences="
-                + minOccurrences + ", maxOccurrences=" + maxOccurrences + ",leftOccurrences=" + leftOccurrences + ", path=" + path + ", source=" + source + "]";
     }
 
 }

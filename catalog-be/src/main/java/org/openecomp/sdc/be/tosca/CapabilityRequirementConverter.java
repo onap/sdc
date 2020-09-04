@@ -307,7 +307,7 @@ public class CapabilityRequirementConverter {
         Either<Map<String, String[]>, ToscaError> result = null;
         for (Map.Entry<String, List<RequirementDefinition>> entry : requirements.entrySet()) {
             Optional<RequirementDefinition> failedToAddRequirement = entry.getValue()
-                    .stream()
+                    .stream().filter(RequirementDefinition::isExternal)
                     .filter(r->!addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getName(), r.getParentName(), ""), r.getPreviousName(), r.getOwnerId(), r.getPath()))
                     .findAny();
             if(failedToAddRequirement.isPresent()){
