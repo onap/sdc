@@ -88,9 +88,11 @@ import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -1094,6 +1096,67 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             log.debug(GET_GROUP_ARTIFACT_BY_ID_UNEXPECTED_EXCEPTION, e);
             throw e;
         }
+    }
+    
+    @PUT
+    @Path("/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/requirement/{capabilityType}/requirementName/{requirementName}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Update Instance Requirement", method = "PUT",
+            summary = "Returns updated requirement", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Resource instance requirement updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Component/Component Instance/Requirement - not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response updateInstanceRequirement(
+            @PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("containerComponentId") final String containerComponentId,
+            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
+            @PathParam("capabilityType") final String capabilityType,
+            @PathParam("requirementName") final String requirementName,
+            @Parameter(description = "Instance capabilty requirement to update", required = true) String data,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_INSTANCE_REQUIREMENT, StatusCode.STARTED,"Starting to update requirement {} in component instance {} by {}", requirementName, componentInstanceUniqueId, userId );
+        try {
+
+            log.debug(START_HANDLE_REQUEST_OF, url);
+
+            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+            if (componentInstanceBusinessLogic == null) {
+                log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+            }
+            
+            Either<RequirementDefinition, ResponseFormat>  mappedRequirementDataEither = getMappedRequirementData(data, new User(userId), componentTypeEnum);
+            if(mappedRequirementDataEither.isRight()) {
+                log.debug("Failed to update requirements");
+                return buildErrorResponse(mappedRequirementDataEither.right().value());
+            }
+            RequirementDefinition requirementDef = mappedRequirementDataEither.left().value();
+            
+            Either<RequirementDefinition, ResponseFormat> response = componentInstanceBusinessLogic.updateInstanceRequirement(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, requirementName, requirementDef, userId);
+            
+            if (response.isRight()) {
+                return buildErrorResponse(response.right().value());
+            }
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), response.left().value());
+            
+        } catch (ComponentException e) {
+            throw e;
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update component instance requirement");
+            log.debug("Update component instance requirement with exception", e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+    
+    private Either<RequirementDefinition, ResponseFormat>  getMappedRequirementData(String inputJson, User user,
+            ComponentTypeEnum componentTypeEnum){
+        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(inputJson, user, RequirementDefinition.class, AuditingActionEnum.GET_TOSCA_MODEL, componentTypeEnum);
     }
 
     @POST

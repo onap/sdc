@@ -1143,6 +1143,36 @@ class ComponentInstanceBusinessLogicTest {
             componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
         assertNotNull(result);
     }
+    
+    @Test
+    void testUpdateInstanceRequirement() {
+        ComponentInstanceBusinessLogic testSubject;
+        ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
+        createComponents();
+        String userId = "userId";
+        resource.setLastUpdaterUserId(userId);
+        String containerComponentId = resource.getUniqueId();
+        String componentInstanceUniqueId = TO_INSTANCE_ID;
+        String capabilityType = "";
+        String capabilityName = "";
+        RequirementDefinition requirementDef = new RequirementDefinition();
+        
+        Either<RequirementDefinition, ResponseFormat> result;
+
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(resource));
+        testSubject = createTestSubject();
+        when(toscaOperationFacade.updateComponentInstanceRequirement(containerComponentId, TO_INSTANCE_ID, requirementDef)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(resource)).thenReturn(Either.left(resource));
+        when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
+            .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
+            .thenReturn(StorageOperationStatus.OK);
+        
+        result = testSubject.updateInstanceRequirement(componentTypeEnum, containerComponentId,
+            componentInstanceUniqueId, capabilityType, capabilityName, requirementDef, userId);
+        assertEquals(requirementDef, result.left().value());
+
+    }
 
     @Test
     void testCopyComponentInstanceWrongUserId() {

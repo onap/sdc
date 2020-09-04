@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { Component as TopologyTemplate, RelationshipModel, Relationship, Requirement } from "app/models";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
 import { ResourceNamePipe } from "app/ng2/pipes/resource-name.pipe";
+import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
+import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 
 @Component({
     selector: 'requirement-list',
@@ -11,10 +13,12 @@ export class RequirementListComponent  {
     @Input() component: TopologyTemplate;
     @Input() requirements: Array<Requirement>;
     @Input() isInstanceSelected:boolean;
+    @Input() isViewOnly: boolean;
+    readonly:boolean;
     
-    
-    constructor(private compositionService: CompositionService) { }
-
+    constructor(private compositionService: CompositionService,
+                private workspaceService: WorkspaceService,
+                private componentInstanceServiceNg2: ComponentInstanceServiceNg2) {}
 
     public getRelation = (requirement:any):any => {
         if (this.isInstanceSelected && this.component.componentInstancesRelations) {
@@ -35,6 +39,17 @@ export class RequirementListComponent  {
         }
         return null;
     };
+
+    onMarkAsExternal(requirement:Requirement) {
+       if (requirement.external){
+	        requirement.external = false;
+       } else {
+	        requirement.external = true;
+       }
+       this.componentInstanceServiceNg2.updateInstanceRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, this.component.uniqueId, requirement).subscribe((response:any) => {
+        }, (error) => { console.log("An error has occured setting external: ", error);  });;
+
+    }
 
 };
 

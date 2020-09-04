@@ -122,10 +122,12 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
 
         this.requirementsInstancesMap = new InstanceRequirementsMap();
         _.forEach(this.requirements, (requirement:Requirement) => {
-            if (this.requirementsInstancesMap[requirement.ownerName]) {
-                this.requirementsInstancesMap[requirement.ownerName] = this.requirementsInstancesMap[requirement.ownerName].concat(requirement);
-            } else {
-                this.requirementsInstancesMap[requirement.ownerName] = new Array<Requirement>(requirement);
+	        if(this.isComponentInstanceSelected || requirement.external){
+	            if (this.requirementsInstancesMap[requirement.ownerName]) {
+	                this.requirementsInstancesMap[requirement.ownerName] = this.requirementsInstancesMap[requirement.ownerName].concat(requirement);
+	            } else {
+	                this.requirementsInstancesMap[requirement.ownerName] = new Array<Requirement>(requirement);
+	            }
             }
         });
     }
