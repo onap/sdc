@@ -29,7 +29,6 @@ import { TranslateService } from 'app/ng2/shared/translator/translate.service';
 import { ComponentMetadata } from '../../../../models/component-metadata';
 import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
-import {DirectivesEnum, DirectiveValue} from "./directive-option";
 
 export class ConstraintObject {
     servicePropertyName: string;
@@ -129,6 +128,7 @@ export class ServiceDependenciesComponent {
     capabilities: string = 'capabilities';
     properties: string = 'properties';
     private componentInstancesConstraints: ConstraintObject[] = [];
+    directiveOptions: string[];
 
     @Input() readonly: boolean;
     @Input() compositeService: ComponentMetadata;
@@ -136,7 +136,7 @@ export class ServiceDependenciesComponent {
     @Input() selectedInstanceSiblings: ServiceInstanceObject[];
     @Input() selectedInstanceConstraints: ConstraintObject[] = [];
     @Input() selectedInstanceProperties: PropertyBEModel[] = [];
-    @Input() directiveValues: any = DirectiveValue;
+    @Output() updateRulesListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
     @Output() updateNodeFilterProperties: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
     @Output() updateNodeFilterCapabilities: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
     @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
@@ -146,6 +146,7 @@ export class ServiceDependenciesComponent {
     }
 
     ngOnInit() {
+        this.loadDirectives();
         this.isLoading = false;
         this.operatorTypes = [
             {label: '>', value: OPERATOR_TYPES.GREATER_THAN},
@@ -159,6 +160,12 @@ export class ServiceDependenciesComponent {
         this.translateService.languageChangedObservable.subscribe((lang) => {
             I18nTexts.translateTexts(this.translateService);
         });
+    }
+
+    loadDirectives() {
+        this.topologyTemplateService.getDirectiveList().subscribe((data: string[]) => {
+            this.directiveOptions = data;
+        })
     }
 
     ngOnChanges(changes) {
@@ -239,12 +246,7 @@ export class ServiceDependenciesComponent {
         if (this.isDependent) {
             this.openUpdateDependencyModal().instance.open();
         }
-        if (DirectivesEnum.SELECT == newDirectiveValue.toLowerCase() ||
-            DirectivesEnum.SELECTABLE == newDirectiveValue.toLowerCase()) {
-            this.currentServiceInstance.markAsSelect();
-        } else {
-            this.currentServiceInstance.markAsSubstitute();
-        }
+        this.currentServiceInstance.setDirectiveValue(newDirectiveValue);
     }
 
     updateComponentInstance(isDependentOrigVal: boolean, rulesListOrig: ConstraintObject[]) {

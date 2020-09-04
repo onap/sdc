@@ -554,6 +554,13 @@ cadiFilterParams:
 definedResourceNamespace:
   - org.openecomp.resource.
 
+# This configuration entry lists all Directives values that shall be allowed on SDC.
+directives:
+  - select
+  - selectable
+  - substitute
+  - substitutable
+
 artifacts:
   - type: CONTROLLER_BLUEPRINT_ARCHIVE
     categories:

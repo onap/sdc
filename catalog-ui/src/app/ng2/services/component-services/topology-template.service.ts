@@ -63,6 +63,7 @@ import { ConstraintObject } from "../../components/logic/service-dependencies/se
 import { ComponentMetadata } from "../../../models/component-metadata";
 import { PolicyInstance } from "../../../models/graph/zones/policy-instance";
 import { PropertyBEModel } from "../../../models/properties-inputs/property-be-model";
+import {map} from "rxjs/operators";
 
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
@@ -529,4 +530,10 @@ export class TopologyTemplateService {
     deleteRequirement(component: Component, reqId: string): Observable<Requirement> {
         return this.http.delete<Requirement>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/requirements/' + reqId);
     }
+
+    getDirectiveList(): Observable<string[]> {
+        return this.http.get<ListDirectiveResponse>(this.baseUrl + "directives")
+        .pipe(map(response => response.directives));
+    }
+
 }
