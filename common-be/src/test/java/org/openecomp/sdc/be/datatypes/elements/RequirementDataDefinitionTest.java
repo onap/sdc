@@ -22,7 +22,8 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import org.junit.Assert;
 import org.junit.Test;
-
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 
@@ -338,43 +339,4 @@ public class RequirementDataDefinitionTest {
 		testSubject.addToPath(elementInPath);
 	}
 
-	
-	@Test
-	public void testHashCode() throws Exception {
-		RequirementDataDefinition testSubject;
-		int result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.hashCode();
-	}
-
-	
-	@Test
-	public void testEquals() throws Exception {
-		RequirementDataDefinition testSubject;
-		Object obj = null;
-		boolean result;
-
-		// test 1
-		testSubject = createTestSubject();
-		obj = null;
-		result = testSubject.equals(obj);
-		Assert.assertEquals(false, result);
-		result = testSubject.equals(testSubject);
-		Assert.assertEquals(true, result);
-		result = testSubject.equals(createTestSubject());
-		Assert.assertEquals(true, result);
-	}
-
-	
-	@Test
-	public void testToString() throws Exception {
-		RequirementDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
-	}
 }

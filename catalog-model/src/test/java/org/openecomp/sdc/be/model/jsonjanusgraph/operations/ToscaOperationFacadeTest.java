@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.ArgumentMatchers;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -70,7 +71,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
-
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
@@ -716,6 +717,19 @@ public class ToscaOperationFacadeTest {
         assertEquals(COMPONENT_ID, result.left().value().getRight());
         verify(nodeTemplateOperationMock, times(1))
             .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(user));
+    }
+
+    @Test
+    public void testUpdateComponentInstanceRequirement() {
+        String containerComponentId = "containerComponentId";
+        String componentInstanceUniqueId= "componentInstanceUniqueId";
+        RequirementDataDefinition requirementDataDefinition= Mockito.mock(RequirementDataDefinition.class);
+
+        when(nodeTemplateOperationMock.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition)).thenReturn(StorageOperationStatus.OK);
+        StorageOperationStatus result = testInstance.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify(nodeTemplateOperationMock, times(1)).updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
+
     }
 
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
