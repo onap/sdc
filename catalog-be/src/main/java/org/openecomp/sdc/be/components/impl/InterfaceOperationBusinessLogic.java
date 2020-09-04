@@ -526,26 +526,27 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
     private void addOperationToInterface(InterfaceDefinition interfaceDefinition, Operation interfaceOperation) {
         interfaceOperation.setUniqueId(UUID.randomUUID().toString());
-        interfaceOperation.setImplementation(createArtifactDefinition(UUID.randomUUID().toString(), interfaceOperation.getName()));
+        interfaceOperation.setImplementation(createArtifactDefinition(UUID.randomUUID().toString(), interfaceOperation));
         interfaceDefinition.getOperations()
                 .put(interfaceOperation.getUniqueId(), new OperationDataDefinition(interfaceOperation));
     }
 
     private void updateOperationOnInterface(InterfaceDefinition interfaceDefinition, Operation interfaceOperation,
             String artifactUuId) {
-        interfaceOperation.setImplementation(createArtifactDefinition(artifactUuId, interfaceOperation.getName()));
+        interfaceOperation.setImplementation(createArtifactDefinition(artifactUuId, interfaceOperation));
         interfaceDefinition.getOperations()
                 .put(interfaceOperation.getUniqueId(), new OperationDataDefinition(interfaceOperation));
     }
 
-    private ArtifactDefinition createArtifactDefinition(String artifactUuId, String operationName) {
+    private ArtifactDefinition createArtifactDefinition(String artifactUuId, Operation operation) {
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setArtifactUUID(artifactUuId);
         artifactDefinition.setUniqueId(artifactUuId);
         artifactDefinition.setEsId(artifactUuId);
         artifactDefinition.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-        artifactDefinition.setArtifactLabel(operationName + ".workflowArtifact");
+        artifactDefinition.setArtifactLabel(operation.getName() + ".workflowArtifact");
+        artifactDefinition.setArtifactName(operation.getWorkflowName() + "_" + operation.getWorkflowVersion());
         return artifactDefinition;
     }
 

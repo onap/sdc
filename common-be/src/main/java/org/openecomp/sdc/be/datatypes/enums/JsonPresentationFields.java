@@ -232,6 +232,8 @@ public enum JsonPresentationFields {
 	IO_MANDATORY("mandatory", null),
 	IO_TYPE("type", null),
 	IO_PROPERTY("property", null),
+	IO_WORKFLOW_NAME("workflowName", null),
+	IO_WORKFLOW_VERSION("workflowVersion", null),
 	IO_WORKFLOW_ID("workflowId", null),
 	IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
     IO_WORKFLOW_ASSOCIATION_TYPE("workflowAssociationType", null),

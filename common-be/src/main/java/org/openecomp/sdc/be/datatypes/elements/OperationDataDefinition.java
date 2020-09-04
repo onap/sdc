@@ -28,6 +28,8 @@ import java.io.Serializable;
 
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ASSOCIATION_TYPE;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ID;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_NAME;
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION_ID;
 
 public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
@@ -53,6 +55,8 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
         setWorkflowId(p.getWorkflowId());
         setWorkflowVersionId(p.getWorkflowVersionId());
         setWorkflowAssociationType(p.getWorkflowAssociationType());
+        setWorkflowName(p.getWorkflowName());
+        setWorkflowVersion(p.getWorkflowVersion());
     }
 
     public String getDescription() {
@@ -109,12 +113,28 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
         setToscaPresentationValue(IO_WORKFLOW_ID, workflowId);
     }
 
+    public String getWorkflowName() {
+        return (String) getToscaPresentationValue(IO_WORKFLOW_NAME);
+    }
+
+    public void setWorkflowName(String workflowName) {
+        setToscaPresentationValue(IO_WORKFLOW_NAME, workflowName);
+    }
+
     public String getWorkflowVersionId() {
         return (String) getToscaPresentationValue(IO_WORKFLOW_VERSION_ID);
     }
 
     public void setWorkflowVersionId(String workflowVersionId) {
         setToscaPresentationValue(IO_WORKFLOW_VERSION_ID, workflowVersionId);
+    }
+
+    public String getWorkflowVersion() {
+        return (String) getToscaPresentationValue(IO_WORKFLOW_VERSION);
+    }
+
+    public void setWorkflowVersion(String workflowVersion) {
+        setToscaPresentationValue(IO_WORKFLOW_VERSION, workflowVersion);
     }
 
     public String getWorkflowAssociationType() {

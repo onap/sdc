@@ -42,6 +42,8 @@ export class BEOperationModel {
     workflowAssociationType: string;
     workflowId: string;
     workflowVersionId: string;
+    workflowName: string;
+    workflowVersion: string;
 
     implementation?: {
         artifactName: string;
@@ -60,6 +62,8 @@ export class BEOperationModel {
             this.workflowAssociationType = operation.workflowAssociationType;
             this.workflowId = operation.workflowId;
             this.workflowVersionId = operation.workflowVersionId;
+            this.workflowName = operation.workflowName;
+            this.workflowVersion = operation.workflowVersion;
             this.implementation = operation.implementation || {};
         }
     }
@@ -94,6 +98,8 @@ export class OperationModel extends BEOperationModel{
 
     workflowId: string;
     workflowVersionId: string;
+    workflowName: string;
+    workflowVersion: string;
 
     protected OperationTypeEnum: Array<String> = [
         'Create',
@@ -117,6 +123,8 @@ export class OperationModel extends BEOperationModel{
             this.workflowVersionId = operation.workflowVersionId;
             this.artifactFileName = operation.artifactFileName;
             this.artifactData = operation.artifactData;
+            this.workflowName = operation.workflowName;
+            this.workflowVersion = operation.workflowVersion;
         }
     }
 

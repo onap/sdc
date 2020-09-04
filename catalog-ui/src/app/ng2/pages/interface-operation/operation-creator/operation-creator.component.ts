@@ -339,6 +339,11 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             this.assignInputParameters[this.operation.workflowId] = {};
             this.assignOutputParameters[this.operation.workflowId] = {};
         }
+        this.operation.workflowName = workflowId.label;
+        if (!this.assignInputParameters[this.operation.workflowName]) {
+            this.assignInputParameters[this.operation.workflowName] = {};
+            this.assignOutputParameters[this.operation.workflowName] = {};
+        }
 
         this.isLoading = true;
         this.validityChanged();
@@ -366,6 +371,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             );
             if (!selectedVersionId && this.workflowVersions.length) {
                 this.operation.workflowVersionId = _.last(this.workflowVersions).value;
+                this.operation.workflowVersion = _.last(this.workflowVersions).label;
             }
 
             this.changeWorkflowVersion(new DropDownOption(this.operation.workflowVersionId));
