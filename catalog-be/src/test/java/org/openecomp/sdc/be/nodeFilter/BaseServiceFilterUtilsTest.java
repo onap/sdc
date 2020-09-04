@@ -16,17 +16,18 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Before;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesEnum;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
-
-import java.util.Arrays;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 public class BaseServiceFilterUtilsTest {
 
@@ -41,12 +42,15 @@ public class BaseServiceFilterUtilsTest {
     @Before
     public void initService() {
         try {
+            new ConfigurationManager(new FSConfigurationSource(
+                ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
             service = new Service();
             ComponentInstance componentInstance = new ComponentInstance();
             componentInstance.setUniqueId(CI_NAME);
             componentInstance.setName(CI_NAME);
             service.setComponentInstances(Arrays.asList(componentInstance));
-            componentInstance.setDirectives(Arrays.asList(DirectivesEnum.SELECTABLE.getValue()));
+            componentInstance.setDirectives(ConfigurationManager.getConfigurationManager().getConfiguration()
+                .getDirectives());
             CINodeFilterDataDefinition serviceFilter = new CINodeFilterDataDefinition();
             componentInstance.setNodeFilter(serviceFilter);
             requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();

@@ -49,7 +49,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesEnum;
+import org.openecomp.sdc.be.components.impl.utils.DirectivesUtil;
 import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
@@ -991,14 +991,15 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ", oldComponentInstance.getName(), newInstanceName);
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, containerComponentType.getValue(), componentInstance.getName());
         }
-        if(!DirectivesEnum.isValid(componentInstance.getDirectives())) {
+        if(!DirectivesUtil.isValid(componentInstance.getDirectives())) {
             final String directivesStr =
                     componentInstance.getDirectives().stream().collect(Collectors.joining(" , ", " [ ", " ] "));
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                     "Failed to update the directives of the component instance {} to {}. Directives data {} is invalid. ",
                     oldComponentInstance.getName(), newInstanceName ,
                     directivesStr);
-            throw new ByActionStatusComponentException(ActionStatus.DIRECTIVES_INVALID_VALUE, containerComponentType.getValue(), componentInstance.getName());        }
+            throw new ByActionStatusComponentException(ActionStatus.DIRECTIVES_INVALID_VALUE, containerComponentType.getValue(), componentInstance.getName());
+        }
         updateRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent, origComponent, updateComponentInstanceMetadata(oldComponentInstance, componentInstance));
         if (updateRes.isRight()) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update metadata of component instance {} belonging to container component {}. Status is {}. ", componentInstance.getName(), containerComponent.getName(),

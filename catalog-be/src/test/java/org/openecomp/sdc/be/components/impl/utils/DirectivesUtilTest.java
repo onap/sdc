@@ -26,36 +26,37 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-public class DirectivesEnumTest {
-
-    private List<String> directives;
+public class DirectivesUtilTest {
 
     @Before
     public void setup() {
-        directives = new ArrayList<>();
+        new ConfigurationManager(new FSConfigurationSource(
+            ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 
     @Test
     public void testGivenValidDirectives_returnsTrue() {
-        directives.add(DirectivesEnum.SELECT.getValue());
-        directives.add(DirectivesEnum.SELECTABLE.getValue());
-        directives.add(DirectivesEnum.SUBSTITUTE.getValue());
-        directives.add(DirectivesEnum.SUBSTITUTABLE.getValue());
-        assertTrue(DirectivesEnum.isValid(directives));
+        assertTrue(DirectivesUtil.isValid(ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getDirectives()));
     }
 
     @Test
     public void testGivenEmptyDirectives_returnsTrue() {
-        assertTrue(DirectivesEnum.isValid(directives));
+        assertTrue(DirectivesUtil.isValid(Collections.emptyList()));
     }
 
     @Test
     public void testGivenInvalidDirectives_returnsFalse() {
-        directives.add("Invalid");
-        assertFalse(DirectivesEnum.isValid(directives));
+        final List<String> directives = new ArrayList<>();
+        directives.add("invalidValue");
+        assertFalse(DirectivesUtil.isValid(directives));
     }
 }

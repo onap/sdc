@@ -49,10 +49,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesEnum;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.UserValidations;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -552,7 +552,8 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
             componentInstance = new ComponentInstance();
             componentInstance.setUniqueId(componentInstanceId);
             componentInstance.setName("myComponentInstance");
-            componentInstance.setDirectives(new LinkedList<>(Arrays.asList(DirectivesEnum.SELECT.getValue())));
+            componentInstance.setDirectives(ConfigurationManager.getConfigurationManager().getConfiguration()
+                .getDirectives());
 
             final UIConstraint uiConstraint =
                 new UIConstraint(servicePropertyName, constraintOperator, sourceType, sourceName, propertyValue);
