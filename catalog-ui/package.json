@@ -108,7 +108,7 @@
     "@types/jquery": "^2.0.52",
     "@types/js-md5": "^0.4.0",
     "@types/lodash": "4.14.85",
-    "@types/node": "^7.0.5",
+    "@types/node": "7.0.7",
     "@types/q": "0.0.32",
     "angular": "^1.6.2",
     "angular-base64": "^2.0.5",
