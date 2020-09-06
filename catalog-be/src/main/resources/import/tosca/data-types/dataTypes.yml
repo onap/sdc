@@ -1098,43 +1098,43 @@ org.openecomp.datatypes.CSProperties:
   derived_from: org.openecomp.datatypes.Root
   properties:
     sNSSAI:
-      type: string?
+      type: string
       required: true
       description: sNSSAI
     maxNumberofUEs:
-      type: integer?
+      type: integer
       required: true
       default: 1000
       description: maxNumberofUEs
     latency:
-      type: integer?
+      type: integer
       required: true
       default: 30
       description: latency
     expDataRateDL:
-      type: integer?
+      type: integer
       required: false
       description: expDataRateDL
     expDataRateUL:
-      type: integer?
+      type: integer
       required: false
       description: expDataRateUL
     coverageAreaList:
-      type: string?
+      type: string
       required: true
       description: coverageAreaList
     uEMobilityLevel:
-      type: string?
+      type: string
       constraints:
         - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
       required: false
       description: uEMobilityLevel
     useInterval:
-      type: string?
+      type: string
       required: true
       description: useInterval
     resourceSharingLevel:
-      type: string?
+      type: string
       required: true
       default: "Shared"
       constraints:
@@ -1145,85 +1145,85 @@ org.openecomp.datatypes.NSCapabilities:
   derived_from: org.openecomp.datatypes.Root
   properties:
     pLMNIdList:
-      type: string?
+      type: string
       required: true
       description: pLMNIdList
     maxNumberofUEs:
-      type: integer?
+      type: integer
       required: true
       default: 1000
       description: maxNumberofUEs
     latency:
-      type: integer?
+      type: integer
       required: true
       default: 30
       description: latency
     uEMobilityLevel:
-      type: string?
+      type: string
       constraints:
         - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
       required: false
       description: uEMobilityLevel
     resourceSharingLevel:
-      type: string?
+      type: string
       required: true
       default: "Shared"
       constraints:
         - valid_values: ["Shared", "Non-shared"]
       description: resourceSharingLevel
     sST:
-      type: string?
+      type: string
       required: true
       default: "eMBB"
       constraints:
         - valid_values: ["eMBB", "uRLLC", "mIot"]
       description: sST
     availability:
-      type: float?
+      type: float
       required: false
       description: availability
     dLThptPerUE:
-      type: integer?
+      type: integer
       required: false
       description: dLThptPerUE
     uLThptPerUE:
-      type: integer?
+      type: integer
       required: false
       description: uLThptPerUE
     maxPktSize:
-      type: integer?
+      type: integer
       required: false
       description: maxPktSize
     termDensity:
-      type: integer?
+      type: integer
       required: false
       description: termDensity
     activityFactor:
-      type: integer?
+      type: integer
       required: false
       description: activityFactor
     jitter:
-      type: integer?
+      type: integer
       required: false
       description: jitter
     survivalTime:
-      type: string?
+      type: string
       required: false
       description: survivalTime
     reliability:
-      type: string?
+      type: string
       required: false
       description: reliability
     dLThptPerSlice:
-      type: integer?
+      type: integer
       required: false
       description: dLThptPerSlice
     uLThptPerSlice:
-      type: integer?
+      type: integer
       required: false
       description: uLThptPerSlice
     maxNumberofConns:
-      type: integer?
+      type: integer
       required: false
       description: maxNumberofConns
 
@@ -1231,89 +1231,89 @@ org.openecomp.datatypes.NSSCapabilities:
   derived_from: org.openecomp.datatypes.Root
   properties:
     pLMNIdList:
-      type: string?
+      type: string
       required: true
       description: pLMNIdList
     maxNumberofUEs:
-      type: integer?
+      type: integer
       required: true
       default: 10000
       description: maxNumberofUEs
     latency:
-      type: integer?
+      type: integer
       required: true
       default: 30
       description: latency
     uEMobilityLevel:
-      type: string?
+      type: string
       constraints:
         - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
       required: false
       description: uEMobilityLevel
     resourceSharingLevel:
-      type: string?
+      type: string
       required: true
       default: "Shared"
       constraints:
         - valid_values: ["Shared", "Non-shared"]
       description: resourceSharingLevel
     sST:
-      type: string?
+      type: string
       required: true
       default: "eMBB"
       constraints:
         - valid_values: ["eMBB", "uRLLC", "mIot"]
       description: sST
     expDataRateDL:
-      type: integer?
+      type: integer
       required: false
       description: expDataRateDL
     expDataRateUL:
-      type: integer?
+      type: integer
       required: false
       description: expDataRateUL
     areaTrafficCapDL:
-      type: integer?
+      type: integer
       required: false
       description: areaTrafficCapDL
     areaTrafficCapUL:
-      type: integer?
+      type: integer
       required: false
       description: areaTrafficCapUL
     overallUserDensity:
-      type: integer?
+      type: integer
       required: false
       description: overallUserDensity
     activityFactor:
-      type: integer?
+      type: integer
       required: false
       description: activityFactor
     cSAvailabilityTarget:
-      type: float?
+      type: float
       required: false
       description: cSAvailabilityTarget
     cSReliabilityMeanTime:
-      type: string?
+      type: string
       required: false
       description: cSReliabilityMeanTime
     expDataRate:
-      type: integer?
+      type: integer
       required: false
       description: expDataRate
     msgSizeByte:
-      type: string?
+      type: string
       required: false
       description: msgSizeByte
     transferIntervalTarget:
-      type: string?
+      type: string
       required: false
       description: transferIntervalTarget
     survivalTime:
-      type: string?
+      type: string
       required: false
       description: survivalTime
     maxNumberofPDUSession:
-      type: integer?
+      type: integer
       required: false
       description: maxNumberofPDUSession
 
@@ -1321,96 +1321,96 @@ org.openecomp.datatypes.ServiceProfile:
   derived_from: org.openecomp.datatypes.Root
   properties:
     sNSSAI:
-      type: string?
+      type: string
       required: true
       description: sNSSAI
     pLMNIdList:
-      type: string?
+      type: string
       required: true
       description: pLMNIdList
     maxNumberofUEs:
-      type: integer?
+      type: integer
       required: true
       default: 1000
       description: maxNumberofUEs
     latency:
-      type: integer?
+      type: integer
       required: true
       default: 30
       description: latency
     activityFactor:
-      type: integer?
+      type: integer
       constraints:
         - in_range: [0,100]
       required: false
       default: 20
       description: activityFactor
     coverageAreaTAList:
-      type: string?
+      type: string
       required: false
       description: coverageAreaTAList
     uEMobilityLevel:
-      type: string?
+      type: string
       constraints:
         - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
       required: false
       description: uEMobilityLevel
     resourceSharingLevel:
-      type: string?
+      type: string
       required: true
       default: "Shared"
       constraints:
         - valid_values: ["Shared", "Non-shared"]
       description: resourceSharingLevel
     sST:
-      type: string?
+      type: string
       required: true
       default: "eMBB"
       constraints:
         - valid_values: ["eMBB", "uRLLC", "mIot"]
       description: sST
     availability:
-      type: float?
+      type: float
       required: false
       description: availability
     reliability:
-      type: string?
+      type: string
       required: false
       description: reliability
     dLThptPerUE:
-      type: integer?
+      type: integer
       required: false
       description: dLThptPerUE
     uLThptPerUE:
-      type: integer?
+      type: integer
       required: false
       description: uLThptPerUE
     maxPktSize:
-      type: integer?
+      type: integer
       required: false
       description: maxPktSize
     termDensity:
-      type: integer?
+      type: integer
       required: false
       description: termDensity
     jitter:
-      type: integer?
+      type: integer
       required: false
       description: jitter
     survivalTime:
-      type: string?
+      type: string
       required: false
       description: survivalTime
     dLThptPerSlice:
-      type: integer?
+      type: integer
       required: false
       description: dLThptPerSlice
     uLThptPerSlice:
-      type: integer?
+      type: integer
       required: false
       description: uLThptPerSlice
     maxNumberofConns:
-      type: integer?
+      type: integer
       required: false
       description: maxNumberofConns
 
@@ -1418,97 +1418,97 @@ org.openecomp.datatypes.SliceProfile:
   derived_from: org.openecomp.datatypes.Root
   properties:
     sNSSAI:
-      type: string?
+      type: string
       required: true
       description: sNSSAI
     pLMNIdList:
-      type: string?
+      type: string
       required: true
       description: pLMNIdList
     maxNumberofUEs:
-      type: integer?
+      type: integer
       required: true
       default: 1000
       description: maxNumberofUEs
     latency:
-      type: integer?
+      type: integer
       required: true
       default: 30
       description: latency
     expDataRateDL:
-      type: integer?
+      type: integer
       required: false
       description: expDataRateDL
     expDataRateUL:
-      type: integer?
+      type: integer
       required: false
       description: expDataRateUL
     areaTrafficCapDL:
-      type: integer?
+      type: integer
       required: false
       description: areaTrafficCapDL
     areaTrafficCapUL:
-      type: integer?
+      type: integer
       required: false
       description: areaTrafficCapUL
     overallUserDensity:
-      type: integer?
+      type: integer
       required: false
       description: overallUserDensity
     activityFactor:
-      type: integer?
+      type: integer
       required: false
       description: activityFactor
     coverageAreaTAList:
-      type: string?
+      type: string
       required: false
       description: coverageAreaTAList
     uEMobilityLevel:
-      type: string?
+      type: string
       constraints:
         - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
       required: false
       description: uEMobilityLevel
     resourceSharingLevel:
-      type: string?
+      type: string
       required: true
       default: "Shared"
       constraints:
         - valid_values: ["Shared", "Non-shared"]
       description: resourceSharingLevel
     sST:
-      type: string?
+      type: string
       required: true
       default: "eMBB"
       constraints:
         - valid_values: ["eMBB", "uRLLC", "mIot"]
       description: sST
     cSAvailabilityTarget:
-      type: float?
+      type: float
       required: false
       description: cSAvailabilityTarget
     cSReliabilityMeanTime:
-      type: string?
+      type: string
       required: false
       description: cSReliabilityMeanTime
     expDataRate:
-      type: integer?
+      type: integer
       required: false
       description: expDataRate
     msgSizeByte:
-      type: string?
+      type: string
       required: false
       description: msgSizeByte
     transferIntervalTarget:
-      type: string?
+      type: string
       required: false
       description: transferIntervalTarget
     survivalTime:
-      type: string?
+      type: string
       required: false
       description: survivalTime
     maxNumberofPDUSession:
-      type: integer?
+      type: integer
       required: false
       description: maxNumberofPDUSession
 
