@@ -990,6 +990,424 @@ org.openecomp.datatypes.network.MacAssignments:
       required: true
       description: identifies the number of MAC addresses to assign to the CP from the plan
 
+org.openecomp.datatypes.CSProperties:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    sNSSAI:
+      type: string
+      required: true
+      description: sNSSAI
+    maxNumberofUEs:
+      type: integer
+      required: true
+      default: 1000
+      description: maxNumberofUEs
+    latency:
+      type: integer
+      required: true
+      default: 30
+      description: latency
+    expDataRateDL:
+      type: integer
+      required: false
+      description: expDataRateDL
+    expDataRateUL:
+      type: integer
+      required: false
+      description: expDataRateUL
+    coverageAreaList:
+      type: string
+      required: true
+      description: coverageAreaList
+    uEMobilityLevel:
+      type: string
+      constraints:
+        - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
+      required: false
+      description: uEMobilityLevel
+    useInterval:
+      type: string
+      required: true
+      description: useInterval
+    resourceSharingLevel:
+      type: string
+      required: true
+      default: "Shared"
+      constraints:
+        - valid_values: ["Shared", "Non-shared"]
+      description: resourceSharingLevel
+
+org.openecomp.datatypes.NSCapabilities:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    pLMNIdList:
+      type: string
+      required: true
+      description: pLMNIdList
+    maxNumberofUEs:
+      type: integer
+      required: true
+      default: 1000
+      description: maxNumberofUEs
+    latency:
+      type: integer
+      required: true
+      default: 30
+      description: latency
+    uEMobilityLevel:
+      type: string
+      constraints:
+        - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
+      required: false
+      description: uEMobilityLevel
+    resourceSharingLevel:
+      type: string
+      required: true
+      default: "Shared"
+      constraints:
+        - valid_values: ["Shared", "Non-shared"]
+      description: resourceSharingLevel
+    sST:
+      type: string
+      required: true
+      default: "eMBB"
+      constraints:
+        - valid_values: ["eMBB", "uRLLC", "mIot"]
+      description: sST
+    availability:
+      type: float
+      required: false
+      description: availability
+    dLThptPerUE:
+      type: integer
+      required: false
+      description: dLThptPerUE
+    uLThptPerUE:
+      type: integer
+      required: false
+      description: uLThptPerUE
+    maxPktSize:
+      type: integer
+      required: false
+      description: maxPktSize
+    termDensity:
+      type: integer
+      required: false
+      description: termDensity
+    activityFactor:
+      type: integer
+      required: false
+      description: activityFactor
+    jitter:
+      type: integer
+      required: false
+      description: jitter
+    survivalTime:
+      type: string
+      required: false
+      description: survivalTime
+    reliability:
+      type: string
+      required: false
+      description: reliability
+    dLThptPerSlice:
+      type: integer
+      required: false
+      description: dLThptPerSlice
+    uLThptPerSlice:
+      type: integer
+      required: false
+      description: uLThptPerSlice
+    maxNumberofConns:
+      type: integer
+      required: false
+      description: maxNumberofConns
+
+org.openecomp.datatypes.NSSCapabilities:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    pLMNIdList:
+      type: string
+      required: true
+      description: pLMNIdList
+    maxNumberofUEs:
+      type: integer
+      required: true
+      default: 10000
+      description: maxNumberofUEs
+    latency:
+      type: integer
+      required: true
+      default: 30
+      description: latency
+    uEMobilityLevel:
+      type: string
+      constraints:
+        - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
+      required: false
+      description: uEMobilityLevel
+    resourceSharingLevel:
+      type: string
+      required: true
+      default: "Shared"
+      constraints:
+        - valid_values: ["Shared", "Non-shared"]
+      description: resourceSharingLevel
+    sST:
+      type: string
+      required: true
+      default: "eMBB"
+      constraints:
+        - valid_values: ["eMBB", "uRLLC", "mIot"]
+      description: sST
+    expDataRateDL:
+      type: integer
+      required: false
+      description: expDataRateDL
+    expDataRateUL:
+      type: integer
+      required: false
+      description: expDataRateUL
+    areaTrafficCapDL:
+      type: integer
+      required: false
+      description: areaTrafficCapDL
+    areaTrafficCapUL:
+      type: integer
+      required: false
+      description: areaTrafficCapUL
+    overallUserDensity:
+      type: integer
+      required: false
+      description: overallUserDensity
+    activityFactor:
+      type: integer
+      required: false
+      description: activityFactor
+    cSAvailabilityTarget:
+      type: float
+      required: false
+      description: cSAvailabilityTarget
+    cSReliabilityMeanTime:
+      type: string
+      required: false
+      description: cSReliabilityMeanTime
+    expDataRate:
+      type: integer
+      required: false
+      description: expDataRate
+    msgSizeByte:
+      type: string
+      required: false
+      description: msgSizeByte
+    transferIntervalTarget:
+      type: string
+      required: false
+      description: transferIntervalTarget
+    survivalTime:
+      type: string
+      required: false
+      description: survivalTime
+    maxNumberofPDUSession:
+      type: integer
+      required: false
+      description: maxNumberofPDUSession
+
+org.openecomp.datatypes.ServiceProfile:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    sNSSAI:
+      type: string
+      required: true
+      description: sNSSAI
+    pLMNIdList:
+      type: string
+      required: true
+      description: pLMNIdList
+    maxNumberofUEs:
+      type: integer
+      required: true
+      default: 1000
+      description: maxNumberofUEs
+    latency:
+      type: integer
+      required: true
+      default: 30
+      description: latency
+    activityFactor:
+      type: integer
+      constraints:
+        - in_range: [0,100]
+      required: false
+      default: 20
+      description: activityFactor
+    coverageAreaTAList:
+      type: string
+      required: false
+      description: coverageAreaTAList
+    uEMobilityLevel:
+      type: string
+      constraints:
+        - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
+      required: false
+      description: uEMobilityLevel
+    resourceSharingLevel:
+      type: string
+      required: true
+      default: "Shared"
+      constraints:
+        - valid_values: ["Shared", "Non-shared"]
+      description: resourceSharingLevel
+    sST:
+      type: string
+      required: true
+      default: "eMBB"
+      constraints:
+        - valid_values: ["eMBB", "uRLLC", "mIot"]
+      description: sST
+    availability:
+      type: float
+      required: false
+      description: availability
+    reliability:
+      type: string
+      required: false
+      description: reliability
+    dLThptPerUE:
+      type: integer
+      required: false
+      description: dLThptPerUE
+    uLThptPerUE:
+      type: integer
+      required: false
+      description: uLThptPerUE
+    maxPktSize:
+      type: integer
+      required: false
+      description: maxPktSize
+    termDensity:
+      type: integer
+      required: false
+      description: termDensity
+    jitter:
+      type: integer
+      required: false
+      description: jitter
+    survivalTime:
+      type: string
+      required: false
+      description: survivalTime
+    dLThptPerSlice:
+      type: integer
+      required: false
+      description: dLThptPerSlice
+    uLThptPerSlice:
+      type: integer
+      required: false
+      description: uLThptPerSlice
+    maxNumberofConns:
+      type: integer
+      required: false
+      description: maxNumberofConns
+
+org.openecomp.datatypes.SliceProfile:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    sNSSAI:
+      type: string
+      required: true
+      description: sNSSAI
+    pLMNIdList:
+      type: string
+      required: true
+      description: pLMNIdList
+    maxNumberofUEs:
+      type: integer
+      required: true
+      default: 1000
+      description: maxNumberofUEs
+    latency:
+      type: integer
+      required: true
+      default: 30
+      description: latency
+    expDataRateDL:
+      type: integer
+      required: false
+      description: expDataRateDL
+    expDataRateUL:
+      type: integer
+      required: false
+      description: expDataRateUL
+    areaTrafficCapDL:
+      type: integer
+      required: false
+      description: areaTrafficCapDL
+    areaTrafficCapUL:
+      type: integer
+      required: false
+      description: areaTrafficCapUL
+    overallUserDensity:
+      type: integer
+      required: false
+      description: overallUserDensity
+    activityFactor:
+      type: integer
+      required: false
+      description: activityFactor
+    coverageAreaTAList:
+      type: string
+      required: false
+      description: coverageAreaTAList
+    uEMobilityLevel:
+      type: string
+      constraints:
+        - valid_values: ["stationary", "nomadic","restricted mobility","fully mobility"]
+      required: false
+      description: uEMobilityLevel
+    resourceSharingLevel:
+      type: string
+      required: true
+      default: "Shared"
+      constraints:
+        - valid_values: ["Shared", "Non-shared"]
+      description: resourceSharingLevel
+    sST:
+      type: string
+      required: true
+      default: "eMBB"
+      constraints:
+        - valid_values: ["eMBB", "uRLLC", "mIot"]
+      description: sST
+    cSAvailabilityTarget:
+      type: float
+      required: false
+      description: cSAvailabilityTarget
+    cSReliabilityMeanTime:
+      type: string
+      required: false
+      description: cSReliabilityMeanTime
+    expDataRate:
+      type: integer
+      required: false
+      description: expDataRate
+    msgSizeByte:
+      type: string
+      required: false
+      description: msgSizeByte
+    transferIntervalTarget:
+      type: string
+      required: false
+      description: transferIntervalTarget
+    survivalTime:
+      type: string
+      required: false
+      description: survivalTime
+    maxNumberofPDUSession:
+      type: integer
+      required: false
+      description: maxNumberofPDUSession
+
 org.openecomp.datatypes.EcompHoming:
   derived_from: org.openecomp.datatypes.Root
   properties:
