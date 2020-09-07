@@ -1,0 +1,5 @@
+In case we are uploading a zip file which has a non heat type base (temporary fix by creating a dummy heat):
+
+Copy the base_template.yaml and base_template.env from this folder to the onboard-be pod , where its running in the environment.
+
+The onboard-be pod is run in the path, /var/lib/jetty. Copy the env and yaml to this path.
