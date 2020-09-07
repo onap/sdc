@@ -16,6 +16,24 @@
       "revId": "2fab3bd886b117cfd4027dd7c9f5bdec2d6d5e85",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4f9fcb2_0d2ddcd2",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/OperationDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2020-09-07T10:24:50Z",
+      "side": 1,
+      "message": "I think lombok can only generate straight forward setter or getter, but this class has special logic in setter/getter methods, so I guess we can not use lombok annotation for this one.",
+      "parentUuid": "416e2743_200b7c99",
+      "revId": "2fab3bd886b117cfd4027dd7c9f5bdec2d6d5e85",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
