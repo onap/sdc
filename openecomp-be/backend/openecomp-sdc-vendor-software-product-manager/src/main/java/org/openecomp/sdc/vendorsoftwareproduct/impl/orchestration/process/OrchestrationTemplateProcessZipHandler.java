@@ -27,6 +27,8 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -42,7 +44,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStru
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.ByteArrayInputStream;
+import java.io.*;
 import java.util.*;
 
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
@@ -67,6 +69,25 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
 
     Map<String, List<ErrorMessage>> uploadErrors = uploadFileResponse.getErrors();
     FileContentHandler fileContentMap = fileContent.get();
+    try(InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+      ManifestContent manifestContent =
+              JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+      for (FileData fileData : manifestContent.getData()) {
+        if (Objects.nonNull(fileData.getType()) &&
+                fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
+          String filePath = new File("").getAbsolutePath();
+          File envfilepath = new File(filePath + "/base_template.env");
+          File basefilepath = new File(filePath + "/base_template.yaml");
+          InputStream envStream = new FileInputStream(envfilepath);
+          InputStream baseStream = new FileInputStream(basefilepath);
+          fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
+          fileContentMap.addFile("base_template_dummy_ignore.yaml", baseStream);
+        }
+      }
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
     FilesDataStructure structure =
         JsonUtil.json2Object(candidateData.getFilesDataStructure(), FilesDataStructure.class);
 

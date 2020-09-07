@@ -20,13 +20,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProdu
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.invalidProcessedCandidate;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -62,8 +56,11 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -669,6 +666,26 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         FileContentHandler fileContentMap = CommonUtil.validateAndUploadFileContent(
                 OnboardingTypesEnum.getOnboardingTypesEnum(orchestrationTemplate.getFileSuffix()),
                 orchestrationTemplate.getContentData().array());
+
+        // temporary fix for dummy heat base
+        try(InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            ManifestContent manifestContent =
+                    JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+            for (FileData fileData : manifestContent.getData()) {
+                if ((fileData.getFile()).contains("dummy_ignore.yaml")) {
+                    String filePath = new File("").getAbsolutePath();
+                    File envfilepath = new File(filePath + "/base_template.env");
+                    File basefilepath = new File(filePath + "/base_template.yaml");
+                    InputStream envStream = new FileInputStream(envfilepath);
+                    InputStream baseStream = new FileInputStream(basefilepath);
+                    // adding base dummy heat to the content handler
+                    fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
+                }
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (CommonUtil.isFileOriginFromZip(orchestrationTemplate.getFileSuffix())) {
             ValidationManager validationManager = ValidationManagerUtil.initValidationManager(fileContentMap);
