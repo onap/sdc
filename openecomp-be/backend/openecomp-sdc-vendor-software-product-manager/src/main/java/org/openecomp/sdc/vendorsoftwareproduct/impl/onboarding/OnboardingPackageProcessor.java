@@ -28,20 +28,24 @@ import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_INTERNAL_
 import static org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager.ALLOWED_CERTIFICATE_EXTENSIONS;
 import static org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager.ALLOWED_SIGNATURE_EXTENSIONS;
 
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
@@ -55,6 +59,7 @@ public class OnboardingPackageProcessor {
 
     private final String packageFileName;
     private final byte[] packageFileContent;
+    private static  boolean helmBase = false;
     private FileContentHandler onboardPackageContentHandler;
     private Set<ErrorMessage> errorMessageSet = new HashSet<>();
     private OnboardPackageInfo onboardPackageInfo;
@@ -96,6 +101,51 @@ public class OnboardingPackageProcessor {
                     ByteBuffer.wrap(packageFileContent), new OnboardingPackageContentHandler(onboardPackageContentHandler));
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.CSAR);
             } else if (packageExtension.equalsIgnoreCase(ZIP_EXTENSION)) {
+                List<FileData> newfiledata = new ArrayList<>();
+                // temporary fix for adding dummy base
+                try(InputStream zipFileManifest = onboardPackageContentHandler.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+
+                        ManifestContent manifestContent =
+                                JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+                        for (FileData fileData : manifestContent.getData()) {
+                            if (Objects.nonNull(fileData.getType()) &&
+                                    fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
+                                helmBase = true;
+                                fileData.setBase(false);
+                                FileData dummyHeat = new FileData();
+                                dummyHeat.setBase(true);
+                                dummyHeat.setFile("base_template_dummy_ignore.yaml");
+                                dummyHeat.setType(FileData.Type.HEAT);
+                                FileData dummyenv = new FileData();
+                                dummyenv.setBase(false);
+                                dummyenv.setFile("base_template_dummy_ignore.env");
+                                dummyenv.setType(FileData.Type.HEAT_ENV);
+                                List<FileData> dataenv = new ArrayList<>();
+                                dataenv.add(dummyenv);
+                                dummyHeat.setData(dataenv);
+                                newfiledata.add(dummyHeat);
+                                String filePath = new File("").getAbsolutePath();
+                                File envfilepath = new File(filePath + "/base_template.env");
+                                File basefilepath = new File(filePath + "/base_template.yaml");
+                                InputStream envStream = new FileInputStream(envfilepath);
+                                InputStream baseStream = new FileInputStream(basefilepath);
+                                onboardPackageContentHandler.addFile("base_template_dummy_ignore.env", envStream);
+                                onboardPackageContentHandler.addFile("base_template_dummy_ignore.yaml", baseStream);
+                            }
+                        }
+
+                        if (helmBase) {
+                            manifestContent.getData().addAll(newfiledata);
+                            ;
+                            InputStream manifestContentStream1 = new ByteArrayInputStream((JsonUtil.object2Json(manifestContent)).getBytes(StandardCharsets.UTF_8));
+                            onboardPackageContentHandler.remove(SdcCommon.MANIFEST_NAME);
+                            onboardPackageContentHandler.addFile(SdcCommon.MANIFEST_NAME, manifestContentStream1);
+                        }
+
+                } catch (Exception e) {
+                    final String message = PACKAGE_INVALID_ERROR.formatMessage(packageFileName);
+                    LOGGER.error(message, e);
+                }
                 final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
                     ByteBuffer.wrap(packageFileContent), onboardPackageContentHandler);
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
