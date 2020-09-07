@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "416e2743_200b7c99",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/OperationDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-07T09:21:12Z",
+      "side": 1,
+      "message": "Small thing, might be an occasion to put in lombok annotations as in the other classes ?",
+      "revId": "2fab3bd886b117cfd4027dd7c9f5bdec2d6d5e85",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
