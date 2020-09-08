@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc1caba5_ff5f3ed4",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "I think that it\u0027s a copy paste :D",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c797cb0_6b3958b4",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "We generally put a space between keywords and parenthesis in sdc :) \nAnd after the try, there is 2 levels of indentation not one",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7fa30764_4c40f18f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "We use camel case in sdc, just like you did with filePath actually :)",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e588e50a_14f590b5",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "Are those streams closed ?",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7dfc3ed5_2d6c7cfe",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "Small thing but this ; is a bit lonely here :)",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f07f11fe_52ffd42f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "Where is it used ?",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f694cfe_c08aea8c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "Where is it used ?",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8deff100_10a9daa3",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "Same here, are those streams closed ? :)",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3013993_28339979",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-08T06:48:20Z",
+      "side": 1,
+      "message": "As for elses, we put \u0027catch\u0027 on the same line :)",
+      "revId": "202f2679ecc442d9a8592262ee610c1529667b3d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
