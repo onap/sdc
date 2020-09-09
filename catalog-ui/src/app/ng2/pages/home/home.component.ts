@@ -138,6 +138,24 @@ export class HomeComponent implements OnInit {
         }
     }
 
+    public onImportService(file: any): void {
+        if (file && file.filename) {
+            // Check that the file has valid extension.
+            const fileExtension: string = file.filename.split(".").pop();
+            if (this.sdcConfig.csarFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
+                this.$state.go('workspace.general', {
+                    type: ComponentType.SERVICE.toLowerCase(),
+                    importedFile: file,
+                    serviceType: 'Service'
+                });
+            } else {
+                const title: string = this.translateService.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS_TITLE');
+                const message: string = this.translateService.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS', {extensions: this.sdcConfig.csarFileExtension});
+                this.modalService.openWarningModal(title, message, 'error-invalid-csar-ext');
+            }
+        }
+    };
+
     public openCreateModal(componentType: string, importedFile: any): void {
         if (importedFile) {
             this.initEntities(true); // Return from import

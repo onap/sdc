@@ -1415,6 +1415,8 @@ public class ToscaExportHandler {
                 requirement.getName(), reqAndRelationshipPair.getRequirement());
             return false;
         }
+        log.debug("exit equals and get requirement name:{},get reqAndRelationshipPair Requirement:{}",
+                requirement.getName(), reqAndRelationshipPair.getRequirement());
         return ModelConverter.isAtomicComponent(originComponent) ||
             isRequirementBelongToOwner(reqAndRelationshipPair, requirement, fromInstanceId, originComponent);
     }

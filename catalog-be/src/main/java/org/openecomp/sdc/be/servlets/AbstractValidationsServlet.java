@@ -28,6 +28,7 @@ import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -52,6 +53,7 @@ import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ServiceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -62,12 +64,17 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.UploadServiceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
+import org.openecomp.sdc.be.servlets.ServiceUploadServlet.ServiceAuthorityTypeEnum;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -80,6 +87,7 @@ import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.Yaml;
 
 public abstract class AbstractValidationsServlet extends BeGenericServlet {
@@ -94,12 +102,14 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         TOSCA_SIMPLE_YAML_PREFIX + "1_1",
         TOSCA_SIMPLE_YAML_PREFIX + "1_2",
         TOSCA_SIMPLE_YAML_PREFIX + "1_3");
-    private static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar");
+    private static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar", ".meta");
 
     protected ServletUtils servletUtils;
     protected ResourceImportManager resourceImportManager;
     protected final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
+    protected ServiceImportManager serviceImportManager;
+	protected ComponentsUtils componentsUtils;
 
     public AbstractValidationsServlet(UserBusinessLogic userBusinessLogic,
         ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
@@ -111,6 +121,17 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void init() {
+        initSpringFromContext();
+    }
+
+    private synchronized void initSpringFromContext() {
+        if (serviceImportManager == null) {
+            ServletContext context = servletRequest.getSession().getServletContext();
+            WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+                    .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+            WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+            serviceImportManager = webApplicationContext.getBean(ServiceImportManager.class);
+        }
     }
 
     protected void validateResourceDoesNotExist(Wrapper<Response> responseWrapper, User user, String resourceName) {
@@ -483,19 +504,23 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     private void validateToscaTemplatePayloadName(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user) {
         String toscaTemplatePayloadName = uploadResourceInfo.getPayloadName();
-        boolean isValidSuffix = false;
-        if (toscaTemplatePayloadName != null && !toscaTemplatePayloadName.isEmpty()) {
-            for (String validSuffix : TOSCA_YML_CSAR_VALID_SUFFIX) {
-                isValidSuffix = isValidSuffix || toscaTemplatePayloadName.toLowerCase().endsWith(validSuffix);
-            }
-        }
+        boolean isValidSuffix = isToscaTemplatePayloadNameValid(responseWrapper, toscaTemplatePayloadName);
         if (!isValidSuffix) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_TOSCA_FILE_EXTENSION);
             Response errorResponse = buildErrorResponse(responseFormat);
             getComponentsUtils().auditResource(responseFormat, user, uploadResourceInfo.getName(), AuditingActionEnum.IMPORT_RESOURCE);
             responseWrapper.setInnerElement(errorResponse);
         }
+    }
 
+    private boolean isToscaTemplatePayloadNameValid(Wrapper<Response> responseWrapper, String toscaTemplatePayloadName) {
+        boolean isValidSuffix = false;
+        if (toscaTemplatePayloadName != null && !toscaTemplatePayloadName.isEmpty()) {
+            for (String validSuffix : TOSCA_YML_CSAR_VALID_SUFFIX) {
+                isValidSuffix = isValidSuffix || toscaTemplatePayloadName.toLowerCase().endsWith(validSuffix);
+            }
+        }
+        return isValidSuffix;
     }
 
     private void validateMD5(Wrapper<Response> responseWrapper, User user, UploadResourceInfo resourceInfo, HttpServletRequest request, String resourceInfoJsonString) {
@@ -698,6 +723,9 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             response = buildOkResponse(getComponentsUtils().getResponseFormat(importedResourceStatus.right), representation);
         }
         responseWrapper.setInnerElement(response);
+        if (responseWrapper.isEmpty()) {
+            log.debug("enter handleImport success");
+        }
     }
 
     private ImmutablePair<Resource, ActionStatus> importResourceFromUICsar(UploadResourceInfo resourceInfoObject, User user, String resourceUniqueId) {
@@ -708,10 +736,12 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         String payloadName = resourceInfoObject.getPayloadName();
         fillResourceFromResourceInfoObject(resource, resourceInfoObject);
 
+        log.debug("enter importResourceFromUICsar,get resource derived:{}",resource.getDerivedFrom());
         Map<String, byte[]> csarUIPayload = getCsarFromPayload(resourceInfoObject);
         getAndValidateCsarYaml(csarUIPayload, resource, user, payloadName);
 
         if (resourceUniqueId == null || resourceUniqueId.isEmpty()) {
+            log.debug("enter importResourceFromUICsar,resourceUniqueId is null");
             newResource = resourceImportManager.getResourceBusinessLogic().createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, csarUIPayload, payloadName);
             actionStatus = ActionStatus.CREATED;
         } else {
@@ -721,19 +751,29 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         return new ImmutablePair<>(newResource, actionStatus);
     }
 
-    private Resource throwComponentException(ResponseFormat responseFormat) {
+    protected Resource throwComponentException(ResponseFormat responseFormat) {
         throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private void getAndValidateCsarYaml(Map<String, byte[]> csarUIPayload, Resource resource, User user, String csarUUID) {
+        getAndValidateComponentCsarYaml(csarUIPayload, resource, user, csarUUID);
+    }
+
+    private void getAndValidateComponentCsarYaml(Map<String, byte[]> csarUIPayload, Component component, User user, String csarUUID) {
 
         Either<ImmutablePair<String, String>, ResponseFormat> getToscaYamlRes = CsarValidationUtils.getToscaYaml(csarUIPayload, csarUUID, getComponentsUtils());
 
         if (getToscaYamlRes.isRight()) {
             ResponseFormat responseFormat = getToscaYamlRes.right().value();
             log.debug("Error when try to get csar toscayamlFile with csar ID {}, error: {}", csarUUID, responseFormat);
-            BeEcompErrorManager.getInstance().logBeDaoSystemError("Creating resource from CSAR: fetching CSAR with id " + csarUUID + " failed");
-            getComponentsUtils().auditResource(responseFormat, user, resource, AuditingActionEnum.CREATE_RESOURCE);
+            if (component instanceof Resource) {
+                BeEcompErrorManager.getInstance()
+                    .logBeDaoSystemError("Creating resource from CSAR: fetching CSAR with id " + csarUUID + " failed");
+                getComponentsUtils().auditResource(responseFormat, user, (Resource)component, AuditingActionEnum.CREATE_RESOURCE);
+            }else {
+                BeEcompErrorManager.getInstance()
+                    .logBeDaoSystemError("Creating service from CSAR: fetching CSAR with id " + csarUUID + " failed");
+            }
             throwComponentException(responseFormat);
         }
         String toscaYaml = getToscaYamlRes.left().value().getValue();
@@ -743,7 +783,9 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         boolean isValid = yamlConvertor.isValidYaml(toscaYaml.getBytes());
         if (!isValid) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_YAML_FILE);
-            getComponentsUtils().auditResource(responseFormat, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+            if (component instanceof Resource) {
+                getComponentsUtils().auditResource(responseFormat, user, (Resource)component, AuditingActionEnum.IMPORT_RESOURCE);
+            }
             throwComponentException(responseFormat);
         }
 
@@ -764,7 +806,10 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
         if (!isValid) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
-            getComponentsUtils().auditResource(responseFormat, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+            if (component instanceof Resource) {
+                log.debug("enter getAndValidateComponentCsarYaml,component instanceof Resource");
+                getComponentsUtils().auditResource(responseFormat, user, (Resource)component, AuditingActionEnum.IMPORT_RESOURCE);
+            }
             throwComponentException(responseFormat);
         }
     }
@@ -780,23 +825,32 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             List<UploadArtifactInfo> artifactList = resourceInfoObject.getArtifactList();
             if (artifactList != null) {
                 Map<String, ArtifactDefinition> artifactsHM = new HashMap<>();
-                for (UploadArtifactInfo artifact : artifactList) {
-                    ArtifactDefinition artifactDef = new ArtifactDefinition();
-                    artifactDef.setArtifactName(artifact.getArtifactName());
-                    artifactDef.setArtifactType(artifact.getArtifactType().getType());
-                    artifactDef.setDescription(artifact.getArtifactDescription());
-                    artifactDef.setPayloadData(artifact.getArtifactData());
-                    artifactDef.setArtifactRef(artifact.getArtifactPath());
-                    artifactsHM.put(artifactDef.getArtifactName(), artifactDef);
-                }
+                buildArtifactsHM(artifactList, artifactsHM);
                 resource.setArtifacts(artifactsHM);
             }
+        }
+    }
+
+    private void buildArtifactsHM(List<UploadArtifactInfo> artifactList, Map<String, ArtifactDefinition> artifactsHM){
+        for (UploadArtifactInfo artifact : artifactList) {
+            ArtifactDefinition artifactDef = new ArtifactDefinition();
+            artifactDef.setArtifactName(artifact.getArtifactName());
+            artifactDef.setArtifactType(artifact.getArtifactType().getType());
+            artifactDef.setDescription(artifact.getArtifactDescription());
+            artifactDef.setPayloadData(artifact.getArtifactData());
+            artifactDef.setArtifactRef(artifact.getArtifactPath());
+            artifactsHM.put(artifactDef.getArtifactName(), artifactDef);
         }
     }
 
     private Map<String, byte[]> getCsarFromPayload(UploadResourceInfo innerElement) {
         String csarUUID = innerElement.getPayloadName();
         String payloadData = innerElement.getPayloadData();
+
+        return getComponentCsarFromPayload(csarUUID, payloadData);
+    }
+
+    private Map<String, byte[]> getComponentCsarFromPayload(String csarUUID, String payloadData){
         if (payloadData == null) {
             log.info("Failed to decode received csar {}", csarUUID);
             throw new ByActionStatusComponentException(ActionStatus.CSAR_NOT_FOUND, csarUUID);
@@ -911,4 +965,373 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             throw new ByActionStatusComponentException(ActionStatus.MISSING_BODY);
         }
     }
+
+    protected void commonServiceGeneralValidations(
+        Wrapper<Response> responseWrapper, Wrapper<User> userWrapper,
+        Wrapper<UploadServiceInfo> uploadServiceInfoWrapper, ServiceAuthorityTypeEnum serviceAuthorityEnum,
+        String userUserId,
+        String serviceInfoJsonString) {
+
+        if (responseWrapper.isEmpty()) {
+            validateUserExist(responseWrapper, userWrapper, userUserId);
+        }
+
+        if (responseWrapper.isEmpty()) {
+            validateUserRole(responseWrapper, userWrapper.getInnerElement(), serviceAuthorityEnum);
+        }
+
+        if (responseWrapper.isEmpty()) {
+            validateAndFillServiceJson(responseWrapper, uploadServiceInfoWrapper, userWrapper.getInnerElement(),
+                serviceAuthorityEnum, serviceInfoJsonString);
+        }
+
+        if (responseWrapper.isEmpty()) {
+            validateToscaTemplatePayloadName(responseWrapper, uploadServiceInfoWrapper.getInnerElement(),
+                userWrapper.getInnerElement());
+        }
+
+    }
+
+    protected void validateUserRole(Wrapper<Response> errorResponseWrapper, User user,
+        ServiceAuthorityTypeEnum serviceAuthority) {
+        log.debug("validate user role");
+        if (serviceAuthority == ServiceAuthorityTypeEnum.NORMATIVE_TYPE_BE) {
+            if (!user.getRole().equals(Role.ADMIN.name())) {
+                log.info("user is not in appropriate role to perform action");
+                ResponseFormat responseFormat =
+                    getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
+                log.debug("audit before sending response");
+                Response response = buildErrorResponse(responseFormat);
+                errorResponseWrapper.setInnerElement(response);
+            }
+        } else {
+            validateUserRole(errorResponseWrapper, user);
+        }
+
+    }
+
+    protected void validateAndFillServiceJson(Wrapper<Response> responseWrapper,
+        Wrapper<UploadServiceInfo> uploadServiceInfoWrapper, User user,
+        ServiceAuthorityTypeEnum serviceAuthorityEnum, String serviceInfo) {
+        boolean isValid;
+        try {
+            log.debug("The received json is {}", serviceInfo);
+            UploadServiceInfo serviceInfoObject = gson.fromJson(serviceInfo, UploadServiceInfo.class);
+            if (serviceInfoObject == null) {
+                isValid = false;
+            } else {
+                if (!serviceAuthorityEnum.isBackEndImport()) {
+                    isValid =
+                        serviceInfoObject.getPayloadName() != null && !serviceInfoObject.getPayloadName().isEmpty();
+                    //only service name is checked
+                } else {
+                    isValid = true;
+                }
+                uploadServiceInfoWrapper.setInnerElement(serviceInfoObject);
+                log.debug("get isValid:{},serviceInfoObject get name:{},get tags:{},getContactId:{}," +
+                                " getPayloadName:{}",isValid,
+                        uploadServiceInfoWrapper.getInnerElement().getName(),
+                        uploadServiceInfoWrapper.getInnerElement().getTags(),
+                        uploadServiceInfoWrapper.getInnerElement().getContactId(),
+                        uploadServiceInfoWrapper.getInnerElement().getPayloadName());
+            }
+
+        } catch (JsonSyntaxException e) {
+            log.debug("enter validateAndFillServiceJson,Invalid json was received. {}", e.getMessage(), e);
+            isValid = false;
+
+        }
+        if (!isValid) {
+            log.info("Invalid json was received.");
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+            Response errorResp = buildErrorResponse(responseFormat);
+            responseWrapper.setInnerElement(errorResp);
+        }
+    }
+
+    protected void validateToscaTemplatePayloadName(Wrapper<Response> responseWrapper,
+        UploadServiceInfo uploadServiceInfo, User user) {
+        String toscaTemplatePayloadName = uploadServiceInfo.getPayloadName();
+        boolean isValidSuffix = isToscaTemplatePayloadNameValid(responseWrapper, toscaTemplatePayloadName);
+        if (!isValidSuffix) {
+            ResponseFormat responseFormat =
+                getComponentsUtils().getResponseFormat(ActionStatus.INVALID_TOSCA_FILE_EXTENSION);
+            Response errorResponse = buildErrorResponse(responseFormat);
+            responseWrapper.setInnerElement(errorResponse);
+        }
+
+    }
+
+
+    protected void specificServiceAuthorityValidations(Wrapper<Response> responseWrapper,
+        Wrapper<UploadServiceInfo> uploadServiceInfoWrapper, Wrapper<String> yamlStringWrapper, User user,
+        HttpServletRequest request, String serviceInfoJsonString, ServiceAuthorityTypeEnum serviceAuthorityEnum)
+        throws FileNotFoundException {
+
+        if (responseWrapper.isEmpty()) {
+            // UI Only Validation
+            if (!serviceAuthorityEnum.isBackEndImport()) {
+                importUIValidations(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), user, request,
+                    serviceInfoJsonString);
+            }
+
+            // User Defined Type Services
+            if (serviceAuthorityEnum.isUserTypeService() && !CsarValidationUtils.isCsarPayloadName(
+                uploadServiceInfoWrapper.getInnerElement().getPayloadName())) {
+                if (responseWrapper.isEmpty()) {
+                    validatePayloadNameSpace(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), user,
+                        yamlStringWrapper.getInnerElement());
+                }
+
+            }
+        }
+    }
+
+    protected void importUIValidations(Wrapper<Response> responseWrapper, UploadServiceInfo serviceInfo, User user,
+        HttpServletRequest request, String serviceInfoJsonString) {
+        if (responseWrapper.isEmpty()) {
+            validateMD5(responseWrapper, user, serviceInfo, request, serviceInfoJsonString);
+        }
+        if (responseWrapper.isEmpty() && request != null && request.getMethod() != null && request.getMethod()
+            .equals("POST")) {
+            validateServiceDoesNotExist(responseWrapper, user, serviceInfo.getName());
+        }
+    }
+
+    protected void validatePayloadNameSpace(Wrapper<Response> responseWrapper, UploadServiceInfo serviceInfo, User user,
+        String toscaPayload) {
+        boolean isValid;
+        String nameSpace = "";
+        Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
+        Either<Map<String, Object>, ResultStatusEnum> toscaElement =
+            ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+        if (toscaElement.isRight() || toscaElement.left().value().size() != 1) {
+            isValid = false;
+        } else {
+            nameSpace = toscaElement.left().value().keySet().iterator().next();
+            isValid = nameSpace.startsWith(Constants.USER_DEFINED_SERVICE_NAMESPACE_PREFIX);
+            log.debug("enter validatePayloadNameSpace,get nameSpace:{},get Valid is:{}",nameSpace,isValid);
+        }
+        if (!isValid) {
+            ResponseFormat responseFormat =
+                getComponentsUtils().getResponseFormat(ActionStatus.INVALID_SERVICE_NAMESPACE);
+            Response errorResponse = buildErrorResponse(responseFormat);
+            responseWrapper.setInnerElement(errorResponse);
+        } else {
+            String str1 = nameSpace.substring(Constants.USER_DEFINED_SERVICE_NAMESPACE_PREFIX.length());
+            String[] findTypes = str1.split("\\.");
+            if (ResourceTypeEnum.containsName(findTypes[0].toUpperCase())) {
+                String type = findTypes[0].toUpperCase();
+                serviceInfo.setServiceType(type);
+            } else {
+                serviceInfo.setServiceType(ResourceTypeEnum.SERVICE.name());
+            }
+        }
+
+    }
+
+    protected void validateMD5(Wrapper<Response> responseWrapper, User user, UploadServiceInfo serviceInfo,
+        HttpServletRequest request, String serviceInfoJsonString) {
+        boolean isValid;
+        String recievedMD5 = request.getHeader(Constants.MD5_HEADER);
+        if (recievedMD5 == null) {
+            isValid = false;
+        } else {
+            String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(serviceInfoJsonString);
+            isValid = calculateMD5.equals(recievedMD5);
+        }
+        if (!isValid) {
+            ResponseFormat responseFormat =
+                getComponentsUtils().getResponseFormat(ActionStatus.INVALID_SERVICE_CHECKSUM);
+            Response errorResponse = buildErrorResponse(responseFormat);
+            responseWrapper.setInnerElement(errorResponse);
+        }
+    }
+
+
+    protected void validateServiceDoesNotExist(Wrapper<Response> responseWrapper, User user, String serviceName) {
+        if (serviceImportManager.isServiceExist(serviceName)) {
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.SERVICE_ALREADY_EXISTS);
+            Response errorResponse = buildErrorResponse(responseFormat);
+            responseWrapper.setInnerElement(errorResponse);
+        }
+    }
+
+    protected void handleImportService(Wrapper<Response> responseWrapper, User user,
+        UploadServiceInfo serviceInfoObject, String yamlAsString, ServiceAuthorityTypeEnum authority,
+        boolean createNewVersion, String serviceUniqueId) throws ZipException {
+
+        Response response = null;
+        Object representation = null;
+        ImmutablePair<Service, ActionStatus> importedServiceStatus = null;
+        if (CsarValidationUtils.isCsarPayloadName(serviceInfoObject.getPayloadName())) {
+            log.debug("import service from csar");
+            importedServiceStatus = importServiceFromUICsar(serviceInfoObject, user, serviceUniqueId);
+        }
+
+        if (importedServiceStatus != null) {
+            try {
+                representation = RepresentationUtils.toRepresentation(importedServiceStatus.left);
+            } catch (IOException e) {
+                log.debug("Error while building service representation : {}", e.getMessage(), e);
+            }
+            response = buildOkResponse(getComponentsUtils().getResponseFormat(importedServiceStatus.right),
+                representation);
+        }
+        responseWrapper.setInnerElement(response);
+    }
+
+    private ImmutablePair<Service, ActionStatus> importServiceFromUICsar(UploadServiceInfo serviceInfoObject, User user,
+        String serviceUniqueId) throws ZipException {
+
+        Service newService;
+        ImmutablePair<Service, ActionStatus> result = null;
+        ActionStatus actionStatus;
+        Service service = new Service();
+        String payloadName = serviceInfoObject.getPayloadName();
+        fillServiceFromServiceInfoObject(service, serviceInfoObject);
+
+        Map<String, byte[]> csarUIPayloadRes = getCsarFromPayload(serviceInfoObject);
+
+        getAndValidateCsarYaml(csarUIPayloadRes, service, user, payloadName);
+
+        newService = serviceImportManager.getServiceImportBusinessLogic()
+            .createService(service, AuditingActionEnum.CREATE_SERVICE, user, csarUIPayloadRes,
+                payloadName);
+        actionStatus = ActionStatus.CREATED;
+
+        return new ImmutablePair<>(newService, actionStatus);
+    }
+
+
+    private void fillServiceFromServiceInfoObject(Service service, UploadServiceInfo serviceInfoObject) {
+        serviceImportManager.populateServiceMetadata(serviceInfoObject, service);
+        fillArtifacts(service, serviceInfoObject);
+
+    }
+
+    private Map<String, byte[]> getCsarFromPayload(UploadServiceInfo innerElement)
+        throws ZipException {
+        String csarUUID = innerElement.getPayloadName();
+        String payloadData = innerElement.getPayloadData();
+        return getComponentCsarFromPayload(csarUUID, payloadData);
+    }
+
+    private void getAndValidateCsarYaml(Map<String, byte[]> csarUIPayload, Service service, User user,
+        String csarUUID) {
+        getAndValidateComponentCsarYaml(csarUIPayload, service, user, csarUUID);
+    }
+
+    private void fillArtifacts(Service service, UploadServiceInfo serviceInfoObject) {
+        if (service != null && serviceInfoObject != null) {
+            List<UploadArtifactInfo> artifactList = serviceInfoObject.getArtifactList();
+            if (artifactList != null) {
+                Map<String, ArtifactDefinition> artifactsHM = new HashMap<>();
+                buildArtifactsHM(artifactList, artifactsHM);
+                service.setArtifacts(artifactsHM);
+            }
+        }
+    }
+    /**
+     * import service payload to postman
+     * @param responseWrapper
+     * @param uploadServiceInfoWrapper
+     * @param yamlStringWrapper
+     * @param user
+     * @param serviceInfoJsonString
+     * @param serviceAuthorityEnum
+     * @param file
+     * @throws ZipException
+     */
+    protected void fillServicePayload(Wrapper<Response> responseWrapper, Wrapper<UploadServiceInfo> uploadServiceInfoWrapper, Wrapper<String> yamlStringWrapper, User user, String serviceInfoJsonString, ServiceAuthorityTypeEnum serviceAuthorityEnum,
+                                      File file) throws ZipException {
+        log.debug("enter fillServicePayload");
+        if (responseWrapper.isEmpty()) {
+            log.debug("enter fillServicePayload,get responseWrapper is empty");
+            if (serviceAuthorityEnum.isBackEndImport()) {
+                // PrePayload Validations
+                if (responseWrapper.isEmpty()) {
+                    validateDataNotNull(responseWrapper, file, serviceInfoJsonString);
+                }
+                if (responseWrapper.isEmpty()){
+                    log.debug("enter fillServicePayload,responseWrapper is empty");
+                }
+                if(!serviceAuthorityEnum.equals(ServiceAuthorityTypeEnum.CSAR_TYPE_BE)){
+                    if (responseWrapper.isEmpty()) {
+                        validateZip(responseWrapper, file, uploadServiceInfoWrapper.getInnerElement().getPayloadName());
+                    }
+
+                    // Fill PayLoad From File
+                    if (responseWrapper.isEmpty()) {
+                        fillToscaTemplateFromZip(yamlStringWrapper, uploadServiceInfoWrapper.getInnerElement().getPayloadName(), file);
+                    }
+                }else{
+
+                    log.debug("enter fillServicePayload,ServiceAuthorityTypeEnum is CSAR_TYPE_BE");
+                    if (responseWrapper.isEmpty()) {
+                        validateCsar(responseWrapper, file, uploadServiceInfoWrapper.getInnerElement().getPayloadName());
+                    }
+                    if (!responseWrapper.isEmpty()) {
+                        log.debug("enter fillServicePayload,get responseWrapper:{}", responseWrapper);
+                    }
+                    // Fill PayLoad From File
+                    if (responseWrapper.isEmpty()) {
+                        fillServicePayloadDataFromFile(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), file);
+                    }
+
+                }
+
+            } else {
+                // Fill PayLoad From JSON
+                if (responseWrapper.isEmpty()) {
+                    fillServiceToscaTemplateFromJson(responseWrapper, yamlStringWrapper, user, uploadServiceInfoWrapper.getInnerElement());
+                }
+            }
+
+        }
+
+    }
+
+    protected void fillServicePayloadDataFromFile(Wrapper<Response> responseWrapper, UploadServiceInfo uploadServiceInfoWrapper, File file)  {
+        try(InputStream fileInputStream = new FileInputStream(file)){
+
+            log.debug("enter fillServicePayloadDataFromFile");
+            byte [] data = new byte[(int)file.length()];
+            if( fileInputStream.read(data) == -1){
+                log.info("Invalid json was received.");
+                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+
+                Response errorResp = buildErrorResponse(responseFormat);
+                responseWrapper.setInnerElement(errorResp);
+            }
+            String payloadData =  Base64.encodeBase64String(data);
+            uploadServiceInfoWrapper.setPayloadData(payloadData);
+            log.debug("enter fillServicePayloadDataFromFile,get payloadData:{}",
+                    uploadServiceInfoWrapper.getPayloadData());
+
+            log.debug("enter fillServicePayloadDataFromFile,get uploadService:{}",uploadServiceInfoWrapper);
+
+        } catch (IOException e) {
+            log.info("Invalid json was received or Error while closing input Stream.");
+            log.debug("Invalid json was received or Error while closing input Stream. {}", e.getMessage(), e);
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+
+            Response errorResp = buildErrorResponse(responseFormat);
+            responseWrapper.setInnerElement(errorResp);
+        }
+    }
+
+    private void fillServiceToscaTemplateFromJson(Wrapper<Response> responseWrapper, Wrapper<String> yamlStringWrapper, User user, UploadServiceInfo serviceInfo) {
+        if (serviceInfo.getPayloadData() == null || serviceInfo.getPayloadData().isEmpty()) {
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_RESOURCE_PAYLOAD);
+            Response errorResponse = buildErrorResponse(responseFormat);
+            getComponentsUtils().auditResource(responseFormat, user, serviceInfo.getName(), AuditingActionEnum.IMPORT_RESOURCE);
+            responseWrapper.setInnerElement(errorResponse);
+        } else {
+            String toscaPayload = serviceInfo.getPayloadData();
+            String decodedPayload = new String(Base64.decodeBase64(toscaPayload));
+            yamlStringWrapper.setInnerElement(decodedPayload);
+        }
+    }
+
 }

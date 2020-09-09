@@ -35,8 +35,13 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.File;
+import java.io.FileNotFoundException;
 import org.apache.http.HttpStatus;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
@@ -46,15 +51,21 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponent
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
+import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.UploadServiceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.servlets.ServiceUploadServlet.ServiceAuthorityTypeEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -62,6 +73,7 @@ import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
@@ -93,6 +105,7 @@ import java.util.Map;
 @Controller
 public class ServiceServlet extends AbstractValidationsServlet {
 
+    private final ElementBusinessLogic elementBusinessLogic;
     private static final Logger log = Logger.getLogger(ServiceServlet.class);
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ServiceServlet.class.getName());
 
@@ -107,9 +120,10 @@ public class ServiceServlet extends AbstractValidationsServlet {
         ComponentsUtils componentsUtils, ServletUtils servletUtils,
         ResourceImportManager resourceImportManager,
         ServiceBusinessLogic serviceBusinessLogic,
-        ResourceBusinessLogic resourceBusinessLogic) {
+        ResourceBusinessLogic resourceBusinessLogic, ElementBusinessLogic elementBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.serviceBusinessLogic = serviceBusinessLogic;
+        this.elementBusinessLogic = elementBusinessLogic;
     }
 
     @POST
@@ -721,6 +735,183 @@ public class ServiceServlet extends AbstractValidationsServlet {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Service");
             log.debug("get service relations data failed with exception", e);
             throw e;
+        }
+    }
+
+    @POST
+    @Path("/services/importService")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Import Service", method = "POST", summary = "Returns imported service", responses = {
+    @ApiResponse(responseCode = "201", description = "Service created"), @ApiResponse(responseCode = "403", description = "Restricted operation"), @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"), @ApiResponse(responseCode = "409", description = "Service already exist")})
+    public Response importNsService(@Parameter(description = "Service object to be imported", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+        userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
+        init();
+
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}" , url);
+
+        // get modifier id
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("modifier id is {}", userId);
+
+        Response response;
+        try {
+
+            Wrapper<Response> responseWrapper = new Wrapper<>();
+            performUIImport(responseWrapper, data, request, userId, null);
+            return responseWrapper.getInnerElement();
+        } catch (IOException | ZipException e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Import Service");
+            log.debug("import service failed with exception", e);
+            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
+        }
+    }
+
+    private void performUIImport(Wrapper<Response> responseWrapper, String data, final HttpServletRequest request, String userId, String ServiceUniqueId)
+        throws FileNotFoundException, ZipException {
+
+        Wrapper<User> userWrapper = new Wrapper<>();
+        Wrapper<UploadServiceInfo> uploadServiceInfoWrapper = new Wrapper<>();
+        Wrapper<String> yamlStringWrapper = new Wrapper<>();
+
+        ServiceAuthorityTypeEnum ServiceAuthorityEnum = ServiceAuthorityTypeEnum.USER_TYPE_UI;
+
+        commonServiceGeneralValidations(responseWrapper, userWrapper, uploadServiceInfoWrapper, ServiceAuthorityEnum, userId, data);
+
+        specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, data, ServiceAuthorityEnum);
+
+        if (responseWrapper.isEmpty()) {
+            handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), yamlStringWrapper.getInnerElement(), ServiceAuthorityEnum, true, ServiceUniqueId);
+        }
+    }
+
+    /**import ReplaceService 
+     *
+     * @param userId
+     * @param requestId
+     * @param instanceIdHeader
+     * @param accept
+     * @param authorization
+     * @param request
+     * @param file
+     * @param contentDispositionHeader
+     * @param serviceInfoJsonString
+     * @param uuid
+     * @return
+     */
+    @POST
+    @Path("/services/serviceUUID/{uuid}/importReplaceService")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Import Service", method = "POST", summary = "Returns imported service", responses = {
+            @ApiResponse(responseCode = "201", description = "Service created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Service already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response importReplaceService(
+            @Parameter(description = "The user id",
+                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "X-ECOMP-RequestID header",
+                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
+                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+            @Parameter(description = "Determines the format of the body of the response",
+                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "The username and password",
+                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Context final HttpServletRequest request,
+            @Parameter(description = "FileInputStream")
+            @FormDataParam("serviceZip") File file,
+            @Parameter(description = "ContentDisposition")
+            @FormDataParam("serviceZip") FormDataContentDisposition contentDispositionHeader,
+            @Parameter(description = "serviceMetadata")
+            @FormDataParam("serviceZipMetadata") String serviceInfoJsonString,
+            @Parameter(description = "The requested asset uuid",
+                    required = true) @PathParam("uuid") final String uuid) {
+
+        init();
+
+        String requestURI = request.getRequestURI();
+        String url = request.getMethod() + " " + requestURI;
+        log.debug("importReplaceService,Start handle request of {}", url);
+
+        // get modifier id
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("importReplaceService,modifier id is {}", userId);
+
+        log.debug("importReplaceService,get file:{},fileName:{}",file,file.getName());
+
+        Response response;
+        ResponseFormat responseFormat =null;
+        AuditingActionEnum auditingActionEnum = AuditingActionEnum.Import_Replace_Service;
+        String assetType = "services";
+
+        Either<List<? extends Component>, ResponseFormat> assetTypeData = elementBusinessLogic.getCatalogComponentsByUuidAndAssetType(assetType, uuid);
+
+        if (assetTypeData.isRight() || assetTypeData.left().value().size() != 1) {
+            log.debug("getServiceAbstractStatus: Service Fetching Failed");
+            throw new ByResponseFormatComponentException(assetTypeData.right().value());
+        }
+
+        log.debug("getServiceAbstractStatus: Service Fetching Success");
+
+        Service oldService = (Service) assetTypeData.left().value().get(0);
+
+        ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentType.getValue());
+        DistributionData distributionData = new DistributionData(instanceIdHeader, requestURI);
+        // Mandatory
+        if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
+            log.debug("importReplaceService: Missing X-ECOMP-InstanceID header");
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, null);
+            return buildErrorResponse(responseFormat);
+        }
+
+        try {
+            Wrapper<Response> responseWrapper = new Wrapper<>();
+            // file import
+            Wrapper<User> userWrapper = new Wrapper<>();
+            Wrapper<UploadServiceInfo> uploadServiceInfoWrapper = new Wrapper<>();
+            Wrapper<String> yamlStringWrapper = new Wrapper<>();
+
+            ServiceUploadServlet.ServiceAuthorityTypeEnum serviceAuthorityEnum = ServiceUploadServlet.ServiceAuthorityTypeEnum.CSAR_TYPE_BE;
+
+            // PayLoad Validations
+            commonServiceGeneralValidations(responseWrapper, userWrapper, uploadServiceInfoWrapper, serviceAuthorityEnum, userId, serviceInfoJsonString);
+
+            fillServicePayload(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, modifier, serviceInfoJsonString, serviceAuthorityEnum, file);
+
+            specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, serviceInfoJsonString, serviceAuthorityEnum);
+
+            log.debug("importReplaceService:get payload:{}", uploadServiceInfoWrapper.getInnerElement().getPayloadData());
+
+            ServiceMetadataDataDefinition serviceMetadataDataDefinition = (ServiceMetadataDataDefinition)oldService.getComponentMetadataDefinition().getMetadataDataDefinition();
+
+            uploadServiceInfoWrapper.getInnerElement().setServiceVendorModelNumber(serviceMetadataDataDefinition.getServiceVendorModelNumber());
+            uploadServiceInfoWrapper.getInnerElement().setDescription(oldService.getDescription());
+            uploadServiceInfoWrapper.getInnerElement().setCategories(oldService.getCategories());
+            uploadServiceInfoWrapper.getInnerElement().setIcon(oldService.getIcon());
+            uploadServiceInfoWrapper.getInnerElement().setProjectCode(oldService.getProjectCode());
+
+
+            if (responseWrapper.isEmpty()) {
+                log.debug("importReplaceService:start handleImportService");
+                handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), yamlStringWrapper.getInnerElement(), serviceAuthorityEnum, true, null);
+            }
+
+            return responseWrapper.getInnerElement();
+        } catch (IOException | ZipException e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Import Service");
+            log.debug("import service failed with exception", e);
+            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
         }
     }
 }

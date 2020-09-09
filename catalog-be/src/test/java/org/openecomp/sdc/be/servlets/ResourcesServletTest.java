@@ -24,6 +24,7 @@ import com.google.common.base.Equivalence.Wrapper;
 import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -50,9 +51,10 @@ public class ResourcesServletTest {
 		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
 		ServletUtils servletUtils = mock(ServletUtils.class);
 		ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
+		ElementBusinessLogic elementBusinessLogic = mock(ElementBusinessLogic.class);
 
 		return new ResourcesServlet(userBusinessLogic, componentInstanceBL, resourceBusinessLogic, componentsUtils, servletUtils,
-			resourceImportManager);
+			resourceImportManager, elementBusinessLogic);
 	}
 
 	
