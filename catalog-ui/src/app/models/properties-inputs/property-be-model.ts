@@ -22,6 +22,7 @@ import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
 import { SchemaProperty, SchemaPropertyGroupModel } from '../aschema-property';
 import { ToscaPresentationData } from '../tosca-presentation';
 import { PropertyInputDetail } from './property-input-detail';
+import {PropertyOutputDetail} from "./property-output-detail";
 
 export enum DerivedPropertyType {
     SIMPLE,
@@ -48,6 +49,7 @@ export class PropertyBEModel {
     description: string;
     fromDerived: boolean;
     getInputValues: PropertyInputDetail[];
+    getOutputValues: PropertyOutputDetail[];
     getPolicyValues: PropertyPolicyDetail[];
     name: string;
     origName: string;
@@ -61,7 +63,9 @@ export class PropertyBEModel {
     value: string;
     parentPropertyType: string;
     subPropertyInputPath: string;
+    subPropertyOutputPath: string;
     inputPath: string;
+    outputPath: string;
     toscaPresentation: ToscaPresentationData;
 
     constructor(property?: PropertyBEModel) {
@@ -82,11 +86,14 @@ export class PropertyBEModel {
             this.value = property.value;
             this.definition = property.definition;
             this.getInputValues = property.getInputValues;
+            this.getOutputValues = property.getOutputValues;
             this.parentPropertyType = property.parentPropertyType;
             this.subPropertyInputPath = property.subPropertyInputPath;
+            this.subPropertyOutputPath = property.subPropertyOutputPath;
             this.toscaPresentation = property.toscaPresentation;
             this.getPolicyValues = property.getPolicyValues;
             this.inputPath = property.inputPath;
+            this.outputPath = property.outputPath;
         }
 
         if (!this.schema || !this.schema.property) {

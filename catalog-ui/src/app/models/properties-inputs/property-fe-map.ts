@@ -32,6 +32,7 @@ export class InstanceFePropertiesMap {
 export class InstancePropertiesAPIMap {
     componentInstanceProperties: InstanceBePropertiesMap;
     componentInstanceInputsMap: InstanceBePropertiesMap;
+    componentInstanceOutputsMap: InstanceBePropertiesMap;
     groupProperties: InstanceBePropertiesMap;
     policyProperties: InstanceBePropertiesMap;
 

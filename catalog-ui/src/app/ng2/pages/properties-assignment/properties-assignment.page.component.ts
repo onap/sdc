@@ -26,7 +26,7 @@ import { ResourceType } from "app/utils";
 import { ComponentServiceNg2 } from "../../services/component-services/component.service";
 import { TopologyTemplateService } from "../../services/component-services/topology-template.service";
 import { ComponentInstanceServiceNg2 } from "../../services/component-instance-services/component-instance.service"
-import { InputBEModel, InputFEModel, ComponentInstance, GroupInstance, PolicyInstance, PropertyBEModel, DerivedFEProperty, SimpleFlatProperty } from "app/models";
+import { InputBEModel, OutputBEModel, InputFEModel, OutputFeModel, ComponentInstance, GroupInstance, PolicyInstance, PropertyBEModel, DerivedFEProperty, SimpleFlatProperty } from "app/models";
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 import { WorkspaceMode, EVENTS, PROPERTY_TYPES } from "../../../utils/constants";
 import { EventListenerService } from "app/services/event-listener-service"
@@ -47,14 +47,17 @@ import { DeclareListComponent } from "./declare-list/declare-list.component";
 import { CapabilitiesGroup, Capability } from "../../../models/capability";
 import { ToscaPresentationData } from "../../../models/tosca-presentation";
 import { Observable } from "rxjs";
+import {OutputsUtils} from "./services/outputs.utils";
+import {TranslateService} from "../../shared/translator/translate.service";
 
 const SERVICE_SELF_TITLE = "SELF";
+
 @Component({
     templateUrl: './properties-assignment.page.component.html',
     styleUrls: ['./properties-assignment.page.component.less']
 })
 export class PropertiesAssignmentComponent {
-    title = "Properties & Inputs";
+    title = "Properties, Inputs & Outputs";
 
     component: ComponentData;
     componentInstanceNamesMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();//instanceUniqueId, {name, iconClass}
@@ -64,6 +67,7 @@ export class PropertiesAssignmentComponent {
 
     instanceFePropertiesMap:InstanceFePropertiesMap;
     inputs: Array<InputFEModel> = [];
+    outputs: Array<OutputFeModel> = [];
     policies: Array<PolicyInstance> = [];
     instances: Array<ComponentInstance|GroupInstance|PolicyInstance> = [];
     searchQuery: string;
@@ -80,15 +84,17 @@ export class PropertiesAssignmentComponent {
     searchPropertyName:string;
     currentMainTab:Tab;
     isInputsTabSelected:boolean;
+    isOutputsTabSelected:boolean;
     isPropertiesTabSelected:boolean;
     isPoliciesTabSelected:boolean;
     isReadonly:boolean;
     resourceIsReadonly:boolean;
     loadingInstances:boolean = false;
     loadingInputs:boolean = false;
+    loadingOutputs:boolean = false;
     loadingPolicies:boolean = false;
     loadingProperties:boolean = false;
-    changedData:Array<PropertyFEModel|InputFEModel>;
+    changedData:Array<PropertyFEModel|InputFEModel|OutputFeModel>;
     hasChangedData:boolean;
     isValidChangedData:boolean;
     savingChangedData:boolean;
@@ -96,6 +102,13 @@ export class PropertiesAssignmentComponent {
     serviceBePropertiesMap: InstanceBePropertiesMap;
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
     selectedInstance_FlattenCapabilitiesList: Capability[];
+    input = "input";
+    output = "output";
+
+    alertMsgTitle: string;
+    alertMsgBodyTxt: string;
+    modalDeleteBtn: string;
+    modalCancelBtn: string;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -105,6 +118,7 @@ export class PropertiesAssignmentComponent {
                 private hierarchyNavService: HierarchyNavService,
                 private propertiesUtils:PropertiesUtils,
                 private inputsUtils:InputsUtils,
+                private outputsUtils:OutputsUtils,
                 private componentServiceNg2:ComponentServiceNg2,
                 private componentInstanceServiceNg2:ComponentInstanceServiceNg2,
                 @Inject("$stateParams") _stateParams,
@@ -116,7 +130,8 @@ export class PropertiesAssignmentComponent {
                 private ModalServiceSdcUI: SdcUiServices.ModalService,
                 private ModalService: ModalService,
                 private keysPipe:KeysPipe,
-                private topologyTemplateService: TopologyTemplateService) {
+                private topologyTemplateService: TopologyTemplateService,
+                private translateService: TranslateService) {
 
         this.instanceFePropertiesMap = new InstanceFePropertiesMap();
         /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
@@ -132,7 +147,9 @@ export class PropertiesAssignmentComponent {
 
     ngOnInit() {
         console.log("==>" + this.constructor.name + ": ngOnInit");
+        this.initTranslateService()
         this.loadingInputs = true;
+        this.loadingOutputs = true;
         this.loadingPolicies = true;
         this.loadingInstances = true;
         this.loadingProperties = true;
@@ -147,6 +164,17 @@ export class PropertiesAssignmentComponent {
                 this.loadingInputs = false;
 
             }, error => {}); //ignore error
+        this.topologyTemplateService
+        .getComponentOutputs(this.component.componentType, this.component.uniqueId)
+        .subscribe(response => {
+            _.forEach(response.outputs, (output: OutputBEModel) => {
+                const newOutput: OutputFeModel = new OutputFeModel(output);
+                this.outputsUtils.resetOutputDefaultValue(newOutput, output.defaultValue);
+                this.outputs.push(newOutput);
+            });
+            this.loadingOutputs = false;
+
+        }, error => {}); //ignore error
         this.componentServiceNg2
             .getComponentResourcePropertiesData(this.component)
             .subscribe(response => {
@@ -189,6 +217,14 @@ export class PropertiesAssignmentComponent {
             }
         });
     };
+
+    private initTranslateService() {
+        this.translateService.languageChangedObservable.subscribe((lang) => {
+            this.alertMsgTitle = this.translateService.translate('PROPERTY_ALREADY_DECLARED');
+            this.modalDeleteBtn = this.translateService.translate('MODAL_DELETE');
+            this.modalCancelBtn = this.translateService.translate('MODAL_CANCEL');
+        });
+    }
 
     ngOnDestroy() {
         this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
@@ -344,12 +380,16 @@ export class PropertiesAssignmentComponent {
     };
 
     /*** VALUE CHANGE EVENTS ***/
-    dataChanged = (item:PropertyFEModel|InputFEModel) => {
+    dataChanged = (item:PropertyFEModel|InputFEModel|OutputFeModel) => {
         let itemHasChanged;
         if (this.isPropertiesTabSelected && item instanceof PropertyFEModel) {
             itemHasChanged = item.hasValueObjChanged();
         } else if (this.isInputsTabSelected && item instanceof InputFEModel) {
             itemHasChanged = item.hasChanged();
+        } else if (this.isOutputsTabSelected && item instanceof OutputFeModel) {
+            // TODO - 'save' button disabled until FE/BE support implemented
+            itemHasChanged = false;
+            // itemHasChanged = item.hasChanged();
         } else if (this.isPoliciesTabSelected && item instanceof InputFEModel) {
             itemHasChanged = item.hasDefaultValueChanged();
         }
@@ -369,6 +409,8 @@ export class PropertiesAssignmentComponent {
             this.isValidChangedData = this.changedData.every((changedItem) => (<PropertyFEModel>changedItem).valueObjIsValid);
         } else if (this.isInputsTabSelected || this.isPoliciesTabSelected) {
             this.isValidChangedData = this.changedData.every((changedItem) => (<InputFEModel>changedItem).defaultValueObjIsValid);
+        } else if (this.isOutputsTabSelected) {
+            this.isValidChangedData = this.changedData.every((changedItem) => (<OutputFeModel>changedItem).defaultValueObjIsValid);
         }
         this.updateHasChangedData();
     };
@@ -441,15 +483,14 @@ export class PropertiesAssignmentComponent {
         this.currentMainTab = this.propertyInputTabs.tabs.find((tab) => tab.title === event.title);
         this.isPropertiesTabSelected = this.currentMainTab.title === "Properties";
         this.isInputsTabSelected = this.currentMainTab.title === "Inputs";
+        this.isOutputsTabSelected = this.currentMainTab.title === "Outputs";
         this.isPoliciesTabSelected = this.currentMainTab.title === "Policies";
         this.propertyStructureHeader = null;
         this.searchQuery = '';
     };
 
-
-
-    /*** DECLARE PROPERTIES/INPUTS ***/
-    declareProperties = (): void => {
+    /*** DECLARE PROPERTIES/INPUTS/OUTPUTS ***/
+    declareProperties = (propertyType: string): void => {
         console.log("==>" + this.constructor.name + ": declareProperties");
 
         let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
@@ -474,27 +515,27 @@ export class PropertiesAssignmentComponent {
             }
         });
 
-        let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
+        let propertiesToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
 
 	//move changed capabilities properties from componentInstanceInputsMap obj to componentInstanceProperties
-        inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] =
-            (inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] || []).concat(
+        propertiesToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] =
+            (propertiesToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] || []).concat(
                 _.filter(
-                    inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId],
+                    propertiesToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId],
                     (prop: PropertyBEModel) => this.isCapabilityProperty(prop)
                 )
             );
-        inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId] = _.filter(
-            inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId],
+        propertiesToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId] = _.filter(
+            propertiesToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId],
             prop => !this.isCapabilityProperty(prop)
         );
-        if (inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId].length === 0) {
-            delete inputsToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId];
+        if (propertiesToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId].length === 0) {
+            delete propertiesToCreate.componentInstanceInputsMap[this.selectedInstanceData.uniqueId];
         }
 
         let isCapabilityPropertyChanged = false;
         _.forEach(
-            inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId],
+            propertiesToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId],
             (prop: PropertyBEModel) => {
                 prop.name = prop.origName || prop.name;
                 if (this.isCapabilityProperty(prop)) {
@@ -502,23 +543,54 @@ export class PropertiesAssignmentComponent {
                 }
             }
         );
-        this.topologyTemplateService
-            .createInput(this.component, inputsToCreate, this.isSelf())
-            .subscribe((response) => {
-                this.setInputTabIndication(response.length);
-                this.checkedPropertiesCount = 0;
-                this.checkedChildPropertiesCount = 0;
-                _.forEach(response, (input: InputBEModel) => {
-                    const newInput: InputFEModel = new InputFEModel(input);
-                    this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
-                    this.inputs.push(newInput);
-                    this.updatePropertyValueAfterDeclare(newInput);
-                });
-                if (isCapabilityPropertyChanged) {
-                    this.reloadInstanceCapabilities();
-                }
-            }, error => {}); //ignore error
+        if (propertyType == this.input) {
+            this.createInput(propertiesToCreate, isCapabilityPropertyChanged);
+        } else {
+            if (this.validateOutputPropertyDeclaration(propertiesToCreate)) {
+                this.createOutput(propertiesToCreate, isCapabilityPropertyChanged);
+            }
+        }
     };
+
+    private createInput(inputsToCreate: InstancePropertiesAPIMap, isCapabilityPropertyChanged: boolean) {
+        this.topologyTemplateService
+        .createInput(this.component, inputsToCreate, this.isSelf())
+        .subscribe((response) => {
+            this.setInputTabIndication(response.length);
+            this.checkedPropertiesCount = 0;
+            this.checkedChildPropertiesCount = 0;
+            _.forEach(response, (input: InputBEModel) => {
+                const newInput: InputFEModel = new InputFEModel(input);
+                this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
+                this.inputs.push(newInput);
+                this.updatePropertyValueAfterDeclare(newInput);
+            });
+            if (isCapabilityPropertyChanged) {
+                this.reloadInstanceCapabilities();
+            }
+        }, error => {
+        }); //ignore error
+    }
+
+    private createOutput(outputsToCreate: InstancePropertiesAPIMap, isCapabilityPropertyChanged: boolean) {
+        this.topologyTemplateService
+        .createOutput(this.component, outputsToCreate, this.isSelf())
+        .subscribe((response) => {
+            this.setOutputTabIndication(response.length);
+            this.checkedPropertiesCount = 0;
+            this.checkedChildPropertiesCount = 0;
+            _.forEach(response, (output: OutputBEModel) => {
+                const newOutput: OutputFeModel = new OutputFeModel(output);
+                this.outputsUtils.resetOutputDefaultValue(newOutput, output.defaultValue);
+                this.outputs.push(newOutput);
+            });
+            if (isCapabilityPropertyChanged) {
+                this.reloadInstanceCapabilities();
+            }
+        }, error => {
+            console.error("Failed to declare output with error:", error);
+        });
+    }
 
     declareListProperties = (): void => {
         console.log('declareListProperties() - enter');
@@ -528,6 +600,7 @@ export class PropertiesAssignmentComponent {
         let selectedGroupInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let selectedPolicyInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let selectedComponentInstancesInputs: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let selectedComponentInstancesOutputs: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let instancesIds = new KeysPipe().transform(this.instanceFePropertiesMap, []);
         let propertyNameList: Array<string> = [];
         let insId :string;
@@ -796,6 +869,25 @@ export class PropertiesAssignmentComponent {
                     });
                     console.log("updated the component inputs and got this response: ", response);
                 }
+            } else if (this.isOutputsTabSelected) {
+                const changedOutputs: OutputBEModel[] = this.changedData.map((changedOutput) => {
+                    changedOutput = <OutputFeModel>changedOutput;
+                    const outputBE = new OutputBEModel(changedOutput);
+                    outputBE.defaultValue = changedOutput.getJSONDefaultValue();
+                    return outputBE;
+                });
+                request = this.componentServiceNg2
+                .updateComponentOutputs(this.component, changedOutputs);
+                handleSuccess = (response) => {
+                    // reset each changed property with new value and remove it from changed properties list
+                    response.forEach((resOutput) => {
+                        const changedOutput = <OutputFeModel>this.changedData.shift();
+                        this.outputsUtils.resetOutputDefaultValue(changedOutput, resOutput.defaultValue);
+                        changedOutput.required = resOutput.required;
+                        changedOutput.requiredOrig = resOutput.required;
+                    });
+                    console.log("updated the component outputs and got this response: ", response);
+                }
             }
 
             this.savingChangedData = true;
@@ -945,6 +1037,10 @@ export class PropertiesAssignmentComponent {
         this.propertyInputTabs.setTabIndication('Inputs', numInputs);
     };
 
+    setOutputTabIndication = (numOutputs: number): void => {
+        this.propertyInputTabs.setTabIndication('Outputs', numOutputs);
+    };
+
     setPolicyTabIndication = (numPolicies: number): void => {
         this.propertyInputTabs.setTabIndication('Policies', numPolicies);
     }
@@ -952,6 +1048,12 @@ export class PropertiesAssignmentComponent {
     resetUnsavedChangesForInput = (input:InputFEModel) => {
         this.inputsUtils.resetInputDefaultValue(input, input.defaultValue);
         this.changedData = this.changedData.filter((changedItem) => changedItem.uniqueId !== input.uniqueId);
+        this.updateHasChangedData();
+    }
+
+    resetUnsavedChangesForOutput = (output: OutputFeModel) => {
+        this.outputsUtils.resetOutputDefaultValue(output, output.defaultValue);
+        this.changedData = this.changedData.filter((changedItem) => changedItem.uniqueId !== output.uniqueId);
         this.updateHasChangedData();
     }
 
@@ -984,6 +1086,17 @@ export class PropertiesAssignmentComponent {
                 //     }
                 // }
             }, error => {}); //ignore error
+    };
+
+    deleteOutput = (output: OutputFeModel) => {
+        this.resetUnsavedChangesForOutput(output);
+        console.log("==>" + this.constructor.name + ": deleteOutput");
+        let outputToDelete = new OutputBEModel(output);
+        this.componentServiceNg2.deleteOutput(this.component, outputToDelete)
+        .subscribe(response => {
+            this.outputs = this.outputs.filter(output => output.uniqueId !== response.uniqueId);
+            this.changeSelectedInstance(this.selectedInstanceData);
+        }, error => {});
     };
 
     deletePolicy = (policy: PolicyInstance) => {
@@ -1083,6 +1196,32 @@ export class PropertiesAssignmentComponent {
     private isInput = (instanceType:string):boolean =>{
         return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
-    
 
+    openOutputsValidationModal = (outputProperties: string[]) => {
+        this.translateService.languageChangedObservable.subscribe((lang) => {
+            this.alertMsgBodyTxt = this.translateService
+            .translate('OUTPUT_DECLARED',{outputProperties: outputProperties});
+            this.ModalService.openAlertModal(this.alertMsgTitle, this.alertMsgBodyTxt);
+        });
+    }
+
+    private validateOutputPropertyDeclaration = (propertiesToCreate: InstancePropertiesAPIMap):boolean =>{
+        let outputProperties: string[] = new Array();
+        if (this.outputs) {
+            this.outputs.forEach(output => {
+                _.forEach(
+                    propertiesToCreate.componentInstanceProperties[output.instanceUniqueId],
+                    (prop: PropertyBEModel) => {
+                        if (output.propertyId == prop.uniqueId) {
+                            outputProperties.push(prop.name);
+                        }
+                    });
+            });
+        }
+        if (outputProperties.length > 0) {
+            this.openOutputsValidationModal(outputProperties);
+            return false;
+        }
+        return true;
+    }
 }
