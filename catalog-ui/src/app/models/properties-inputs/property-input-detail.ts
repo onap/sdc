@@ -18,9 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-export class PropertyInputDetail {
-    inputId: string;
-    inputName: string;
-    inputPath: string;
-    list: boolean;
+import {PropertyDetail} from "./property-detail";
+
+export class PropertyInputDetail extends PropertyDetail {
 }

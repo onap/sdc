@@ -120,6 +120,11 @@ export class TopologyTemplateService {
             [COMPONENT_FIELDS.COMPONENT_INPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
     }
 
+    getComponentOutputs(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId,
+            [COMPONENT_FIELDS.COMPONENT_OUTPUTS]);
+    }
+
     getComponentDeploymentArtifacts(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_DEPLOYMENT_ARTIFACTS]);
     }
@@ -156,6 +161,11 @@ export class TopologyTemplateService {
     createInput(component: Component, inputsToCreate: InstancePropertiesAPIMap, isSelf: boolean): Observable<any> {
         const inputs = isSelf ? { serviceProperties: inputsToCreate.componentInstanceProperties } : inputsToCreate;
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/inputs', inputs);
+    }
+
+    createOutput(component: Component, outputsToCreate: InstancePropertiesAPIMap, isSelf: boolean): Observable<any> {
+        const outputs = isSelf ? { serviceProperties: outputsToCreate.componentInstanceProperties } : outputsToCreate;
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/outputs', outputs);
     }
 
     restoreComponent(componentType: string, componentId: string) {

@@ -21,7 +21,7 @@
 import * as _ from "lodash";
 import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel, OperationModel} from "../models";
 import {ComponentInstanceFactory} from "./component-instance-factory";
-import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
+import {InputBEModel, OutputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../models/graph/zones/group-instance";
 import { InterfaceModel } from "../models/operation";
@@ -92,6 +92,17 @@ export class CommonUtils {
         }
 
         return inputs;
+    }
+
+    static initOutputs(outputsObj: Array<OutputBEModel>): Array<OutputBEModel> {
+
+        let outputs = new Array<OutputBEModel>();
+        if (outputsObj) {
+            _.forEach(outputsObj, (output: OutputBEModel): void => {
+                outputs.push(new OutputBEModel(output));
+            })
+        }
+        return outputs;
     }
 
     static initBeProperties(propertiesObj: Array<PropertyBEModel>): Array<PropertyBEModel> {

@@ -380,6 +380,7 @@ export class COMPONENT_FIELDS {
     static COMPONENT_INSTANCES = "componentInstances";
     static COMPONENT_INSTANCES_RELATION = "componentInstancesRelations";
     static COMPONENT_INPUTS = "inputs";
+    static COMPONENT_OUTPUTS = "outputs";
     static COMPONENT_METADATA = "metadata";
     static COMPONENT_DEPLOYMENT_ARTIFACTS = "deploymentArtifacts";
     static COMPONENT_INFORMATIONAL_ARTIFACTS = "artifacts";
