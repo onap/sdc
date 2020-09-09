@@ -26,10 +26,6 @@ public enum EntitlementPoolType {
     One_Time;
 
     public static EntitlementPoolType permissiveValueOf(String name) {
-        if (name == null){
-            return null;
-        } else {
-            return EntitlementPoolType.valueOf(name);
-        }
+        return name == null ? Universal : EntitlementPoolType.valueOf(name);
     }
 }

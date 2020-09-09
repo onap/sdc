@@ -107,16 +107,11 @@ public class VendorLicenseModelRestUtils {
         assertEquals("did not succeed to create vendor license agreement", 200, vendorLicenseAgreement.getErrorCode().intValue());
         String vendorLicenseAgreementId = ResponseParser.getValueFromJsonResponse(vendorLicenseAgreement.getResponse(), "value");
 
-//		RestResponse checkinVendorLicense = OnboardingUtils.checkinVendorLicense(vendorId, user, versionId);
-//		assertEquals("did not succeed to checkin vendor license", 200, checkinVendorLicense.getErrorCode().intValue());
-
         vendorLicenseModel = new VendorLicenseModel(vendorId, vendorLicenseName, vendorLicenseAgreementId, featureGroupId);
         vendorLicenseModel.setVersion(versionId); // Once object created and submitted, his initial version is 1.0
 
         RestResponse submitVendorLicense = submitVendorLicense(vendorLicenseModel, user);
         assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
-
-//		ComponentBaseTest.getExtendTest().log(Status.INFO, "Succeeded in creating the vendor license");
 
         return vendorLicenseModel;
     }
@@ -218,7 +213,6 @@ public class VendorLicenseModelRestUtils {
         jObject.put("name", "xyz");
         jObject.put("description", "new vendor license feature groups");
         jObject.put("partNumber", "123abc456");
-//      jObject.put("manufacturerReferenceNumber", "5");
         jObject.put("addedLicenseKeyGroupsIds", Arrays.asList(licenseKeyGroupId).toArray());
         jObject.put("addedEntitlementPoolsIds", Arrays.asList(entitlementPoolId).toArray());
 
