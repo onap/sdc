@@ -60,11 +60,8 @@ public interface EntitlementPools {
     @Path("/")
     @Operation(description = "Create vendor entitlement pool")
     Response createEntitlementPool(@Valid EntitlementPoolRequestDto request,
-                                   @Parameter(description = "Vendor license model Id") @PathParam("vlmId")
-                                           String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam
-                                           ("versionId")
-                                           String versionId,
+                                   @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+                                   @Parameter(description = "Vendor license model version Id") @PathParam ("versionId") String versionId,
                                    @NotNull(message = USER_MISSING_ERROR_MSG)
                                    @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
