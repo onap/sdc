@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.info;
 
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,11 +30,65 @@ public class ServiceVersionInfo {
     private String version;
     private String url;
 
+    @VisibleForTesting
+    ServiceVersionInfo() {}
+
     public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
         super();
         this.version = serviceVersion;
         StringBuilder sb = new StringBuilder(context);
         sb.append("services/").append(serviceName).append("/").append(serviceVersion);
         url = sb.toString();
+    }
+
+
+    private String artifactUuid;
+    private String state;
+    private String distributionStatus;
+
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public String getArtifactUuid() {
+        return artifactUuid;
+    }
+    public String getState() {
+        return state;
+    }
+    public String getDistributionStatus() { return distributionStatus; }
+
+
+    public static class Builder {
+        private final ServiceVersionInfo instance;
+
+        private Builder() {
+            instance = new ServiceVersionInfo();
+        }
+
+        public Builder artifactUuid(String artifactUuid) {
+            instance.artifactUuid = artifactUuid;
+            return this;
+        }
+
+        public Builder state(String state) {
+            instance.state = state;
+            return this;
+        }
+
+        public Builder version(String version) {
+            instance.version = version;
+            return this;
+        }
+
+        public Builder distributionStatus(String distributionStatus) {
+            instance.distributionStatus = distributionStatus;
+            return this;
+        }
+
+        public ServiceVersionInfo build() {
+            return instance;
+        }
     }
 }

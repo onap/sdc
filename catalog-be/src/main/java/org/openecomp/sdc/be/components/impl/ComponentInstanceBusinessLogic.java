@@ -412,13 +412,144 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
             return createComponentInstanceOnGraph(containerComponent, origComponent, resourceInstance, user);
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             failed = true;
             throw e;
-        }finally {
+        } finally {
             if (needLock)
                 unlockComponent(failed, containerComponent);
         }
+    }
+
+    /**
+     * Try using either to make a judgment
+     * @param containerComponentParam
+     * @param containerComponentId
+     * @param userId
+     * @param resourceInstance
+     * @return
+     */
+
+    public Either<ComponentInstance, ResponseFormat> createRealComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
+        log.debug("enter createRealComponentInstance");
+        return createRealComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, false, true);
+    }
+    /**
+     * Try using either to make a judgment
+     *
+     * @param inTransaction
+     * @param needLock
+     * @param containerComponentParam
+     * @param containerComponentId
+     * @param userId
+     * @param resourceInstance
+     * @return
+     */
+    public Either<ComponentInstance, ResponseFormat> createRealComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance, boolean inTransaction, boolean needLock) {
+
+        log.debug("enter createRealComponentInstance");
+        Component origComponent = null;
+        User user;
+        org.openecomp.sdc.be.model.Component containerComponent = null;
+        ComponentTypeEnum containerComponentType;
+        try {
+            user = validateUserExists(userId);
+            validateUserNotEmpty(user, "Create component instance");
+            validateJsonBody(resourceInstance, ComponentInstance.class);
+            containerComponentType = validateComponentType(containerComponentParam);
+            containerComponent = validateComponentExists(containerComponentId, containerComponentType, null);
+
+            log.debug("enter createRealComponentInstance,validate user json success");
+            if (ModelConverter.isAtomicComponent(containerComponent)) {
+                log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
+                throw new ByActionStatusComponentException(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType());
+            }
+
+            validateCanWorkOnComponent(containerComponent, userId);
+            log.debug("enter createRealComponentInstance,validateCanWorkOnComponent success");
+
+            if (resourceInstance != null && containerComponentType != null) {
+                log.debug("enter createRealComponentInstance,start create ComponentInstance");
+                OriginTypeEnum originType = resourceInstance.getOriginType();
+                validateInstanceName(resourceInstance);
+                if (originType == OriginTypeEnum.ServiceProxy) {
+
+                    log.debug("enter createRealComponentInstance,originType equals ServiceProxy");
+                    Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
+                    if (isServiceProxyOrigin(serviceProxyOrigin)) {
+                        throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
+                    }
+                    origComponent = serviceProxyOrigin.left().value();
+
+                    StorageOperationStatus fillProxyRes = fillInstanceData(resourceInstance, origComponent);
+                    if (isFillProxyRes(fillProxyRes)) {
+                        throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(fillProxyRes));
+                    }
+                } else {
+                    log.debug("enter createRealComponentInstance,originType is not ServiceProxy");
+                    origComponent = getAndValidateOriginComponentOfComponentInstance(containerComponent, resourceInstance);
+                }
+                validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
+                validateResourceInstanceState(containerComponent, origComponent);
+                overrideFields(origComponent, resourceInstance);
+                compositionBusinessLogic.validateAndSetDefaultCoordinates(resourceInstance);
+                log.debug("enter createRealComponentInstance,final validate success");
+            }
+            return createRealComponent(needLock, containerComponent, origComponent, resourceInstance, user);
+
+        } catch (ComponentException e) {
+            throw e;
+        }
+    }
+
+    private Either<ComponentInstance, ResponseFormat> createRealComponent(boolean needLock, Component containerComponent, Component origComponent, ComponentInstance resourceInstance, User user) {
+
+        log.debug("enter createRealComponent");
+        boolean failed = false;
+        try {
+
+            ComponentInstance lockComponent = isNeedLock(needLock, containerComponent);
+            if (lockComponent != null) {
+                return Either.left(lockComponent);
+            }
+            log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
+            return createRealComponentInstanceOnGraph(containerComponent, origComponent, resourceInstance, user);
+        } catch (ComponentException e) {
+            failed = true;
+            throw e;
+        } finally {
+            if (needLock)
+                unlockComponent(failed, containerComponent);
+        }
+    }
+
+    private Either<ComponentInstance, ResponseFormat> createRealComponentInstanceOnGraph(org.openecomp.sdc.be.model.Component containerComponent, Component originComponent, ComponentInstance componentInstance, User user) {
+        Either<ComponentInstance, ResponseFormat> resultOp;
+        log.debug("enter createRealComponentInstanceOnGraph");
+
+        Either<ImmutablePair<Component, String>, StorageOperationStatus> result = toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, originComponent, componentInstance, false, user);
+
+        if (result.isRight()) {
+            log.debug("enter createRealComponentInstanceOnGraph,result is right");
+            ActionStatus status = componentsUtils.convertFromStorageResponse(result.right().value());
+            log.debug(FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE, componentInstance.getName());
+            return Either.right(componentsUtils.getResponseFormat(status));
+        }
+
+        log.debug(ENTITY_ON_GRAPH_IS_CREATED);
+        log.debug("enter createRealComponentInstanceOnGraph,Entity on graph is created.");
+        Component updatedComponent = result.left().value().getLeft();
+        Map<String, String> existingEnvVersions = new HashMap<>();
+        // TODO existingEnvVersions ??
+        addComponentInstanceArtifacts(updatedComponent, componentInstance, originComponent, user, existingEnvVersions);
+
+        Optional<ComponentInstance> updatedInstanceOptional = updatedComponent.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(result.left().value().getRight())).findFirst();
+        if (!updatedInstanceOptional.isPresent()) {
+            log.debug("Failed to fetch new added component instance {} from component {}", componentInstance.getName(), containerComponent.getName());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstance.getName());
+        }
+        log.debug("enter createRealComponentInstanceOnGraph,and final success");
+        return Either.left(updatedInstanceOptional.get());
     }
 
     private void overrideFields(Component origComponent, ComponentInstance resourceInstance) {
@@ -1157,6 +1288,67 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             unlockComponent(failed, containerComponent);
         }
         return componentInstance;
+    }
+	
+	 /**
+     * Try to modify the delete and return two cases
+     *
+     * @param containerComponentParam
+     * @param containerComponentId
+     * @param componentInstanceId
+     * @param userId
+     * @return
+     */
+    public Either<ComponentInstance, ResponseFormat> deleteAbstractComponentInstance(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId) {
+        log.debug("enter deleteAbstractComponentInstance");
+        validateUserExists(userId);
+
+        final ComponentTypeEnum containerComponentType = validateComponentType(containerComponentParam);
+
+        org.openecomp.sdc.be.model.Component containerComponent = validateComponentExists(containerComponentId, containerComponentType, null);
+        validateCanWorkOnComponent(containerComponent, userId);
+
+        boolean failed = false;
+        ComponentInstance deletedRelatedInst;
+        try {
+            if (containerComponent instanceof Service) {
+                ComponentInstance componentInstance = containerComponent.getComponentInstanceById(componentInstanceId).get();
+                Either<String, StorageOperationStatus> deleteServiceFilterEither =
+                    nodeFilterOperation.deleteNodeFilter((Service) containerComponent, componentInstanceId);
+                if (deleteServiceFilterEither.isRight()) {
+                    log.debug("enter deleteAbstractComponentInstance:deleteServiceFilterEither is right, filed");
+                    ActionStatus status = componentsUtils.convertFromStorageResponse(deleteServiceFilterEither.right().value(),
+                            containerComponentType);
+                    janusGraphDao.rollback();
+                   return Either.right(componentsUtils.getResponseFormat(status, componentInstance.getName()));
+                }
+                Either<ComponentInstance, ResponseFormat> resultOp = deleteNodeFiltersFromComponentInstance((Service) containerComponent,
+                        componentInstance, ComponentTypeEnum.SERVICE, userId);
+                if (resultOp.isRight()) {
+                    log.debug("enter deleteAbstractComponentInstance:resultOp is right, filed");
+                    janusGraphDao.rollback();
+                    return resultOp;
+                }
+            }
+            log.debug("enter deleteAbstractComponentInstance:");
+            lockComponent(containerComponent, "deleteComponentInstance");
+            ComponentInstance deletedCompInstance = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
+
+            deletedRelatedInst = deleteForwardingPathsRelatedTobeDeletedComponentInstance(containerComponentId,
+                    containerComponentType, deletedCompInstance);
+            ActionStatus onDeleteOperationsStatus = onChangeInstanceOperationOrchestrator.doOnDeleteInstanceOperations(containerComponent, componentInstanceId);
+            log.debug("enter deleteAbstractComponentInstance,get onDeleteOperationsStatus:{}",onDeleteOperationsStatus);
+            if (ActionStatus.OK != onDeleteOperationsStatus) {
+                throw new ByActionStatusComponentException(onDeleteOperationsStatus);
+            }
+        } catch (ComponentException e) {
+            failed = true;
+            throw e;
+        } finally {
+            unlockComponent(failed, containerComponent);
+        }
+        log.debug("enter deleteAbstractComponentInstance,deleted RelatedInst success");
+        return Either.left(deletedRelatedInst);
     }
 
     public Either<ComponentInstance, ResponseFormat> deleteNodeFiltersFromComponentInstance(

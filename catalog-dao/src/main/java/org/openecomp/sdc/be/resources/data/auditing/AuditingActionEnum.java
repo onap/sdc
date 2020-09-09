@@ -35,6 +35,7 @@ public enum AuditingActionEnum {
     // Resource/service administration
     CREATE_RESOURCE("Create", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     IMPORT_RESOURCE("ResourceImport", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
+    IMPORT_SERVICE("ServiceImport", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     CHECKOUT_RESOURCE("Checkout", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     UNDO_CHECKOUT_RESOURCE("UndoCheckout", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     CHECKIN_RESOURCE("Checkin", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
@@ -109,7 +110,14 @@ public enum AuditingActionEnum {
     GET_ASSET_LIST("GetAssetList", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     GET_FILTERED_ASSET_LIST("GetFilteredAssetList", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     GET_ASSET_METADATA("GetAssetMetadata", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
-    GET_TOSCA_MODEL("GetToscaModel", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE);
+    GET_TOSCA_MODEL("GetToscaModel", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+
+    // Abstract Template
+    GET_TEMPLATE_ABSTRACT_STATUS("GetTemplateAbstractStatus", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+    COPY_EXIST_SERVICE("CopyExistService", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+    Import_Replace_Service("ImportReplaceService", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+    Replace_VNF("ReplaceVNF", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+    Import_Replace_Resource("ReplaceVNF", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE);
 
 	private final String name;
 	private final String auditingEsType;

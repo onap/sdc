@@ -27,6 +27,7 @@ import {
     IUserProperties,
     IAppMenu,
     Resource,
+    Service, 
     Component,
     Plugin,
     PluginsConfiguration,
@@ -431,8 +432,14 @@ export class WorkspaceViewModel {
                     components: this.components
                 }, {inherit: false});
             };
+	    
+            console.log(this.$scope.component, "this.$scope.component")
+            if ((<Service>this.$scope.component).serviceType == "Service") {
+                this.ComponentFactory.importComponentOnServer(this.$scope.component).then(onSuccessCreate, onFailed);
+            } else {
+                this.ComponentFactory.createComponentOnServer(this.$scope.component).then(onSuccessCreate, onFailed);
+            }
 
-            this.ComponentFactory.createComponentOnServer(this.$scope.component).then(onSuccessCreate, onFailed);
 
 
         };

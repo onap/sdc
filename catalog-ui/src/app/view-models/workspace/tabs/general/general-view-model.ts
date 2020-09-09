@@ -219,7 +219,7 @@ export class GeneralViewModel {
 
         this.$scope.importCsarProgressKey = "importCsarProgressKey";
 
-        this.$scope.browseFileLabel = this.$scope.component.isResource() && (<Resource>this.$scope.component).resourceType === ResourceType.VF ? 'Upload File:' : 'Upload VFC:';
+        this.$scope.browseFileLabel = (this.$scope.component.isResource() && ((<Resource>this.$scope.component).resourceType === ResourceType.VF || (<Resource>this.$scope.component).resourceType === 'SRVC')) ||  this.$scope.component.isService() ? 'Upload File:' : 'Upload VFC:';
         this.$scope.progressService = this.progressService;
         this.$scope.componentCategories = new componentCategories();
         this.$scope.componentCategories.selectedCategory = this.$scope.component.selectedCategory;
@@ -245,6 +245,15 @@ export class GeneralViewModel {
                 this.$scope.isShowFileBrowse = true;
             }
         } else if(this.$scope.component.isService()){
+            let service: Service = <Service>this.$scope.component;
+            console.log(service.name + ": " + service.csarUUID);
+            if (service.importedFile) { // Component has imported file.
+                this.$scope.isShowFileBrowse = true;
+                (<Service>this.$scope.component).serviceType = 'Service';
+            }
+            if (this.$scope.isEditMode() && service.serviceType == 'Service' && !service.csarUUID) {
+                this.$scope.isShowFileBrowse = true;
+            }
             // Init Instantiation types
             this.$scope.initInstantiationTypes();
         }
@@ -497,7 +506,11 @@ export class GeneralViewModel {
 
                 return;
             }
-            const subtype:string = ComponentType.RESOURCE == this.$scope.componentType ? this.$scope.component.getComponentSubType() : undefined;
+	    
+            let subtype:string = ComponentType.RESOURCE == this.$scope.componentType ? this.$scope.component.getComponentSubType() : undefined;
+            if (subtype == "SRVC") {
+                subtype = "VF"
+            }
 
             const onFailed = (response) => {
                 // console.info('onFaild', response);

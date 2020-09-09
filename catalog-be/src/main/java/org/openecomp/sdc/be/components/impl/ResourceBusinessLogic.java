@@ -206,17 +206,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private static final String CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES = "Create Resource - validateCapabilityTypesCreate";
 	private static final String COMPONENT_INSTANCE_WITH_NAME = "component instance with name ";
 	private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
-	private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
+	public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
 
 
-	private IInterfaceLifecycleOperation interfaceTypeOperation;
-	private LifecycleBusinessLogic lifecycleBusinessLogic;
+    private IInterfaceLifecycleOperation interfaceTypeOperation;
+    private LifecycleBusinessLogic lifecycleBusinessLogic;
 
-	private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-	private final ResourceImportManager resourceImportManager;
-	private final InputsBusinessLogic inputsBusinessLogic;
-	private final CompositionBusinessLogic compositionBusinessLogic;
-	private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ResourceImportManager resourceImportManager;
+    private final InputsBusinessLogic inputsBusinessLogic;
+    private final CompositionBusinessLogic compositionBusinessLogic;
+    private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
     private final MergeInstanceUtils mergeInstanceUtils;
     private final UiComponentDataConverter uiComponentDataConverter;
@@ -407,6 +407,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		validateResourceBeforeCreate(resource, user, false);
 		String csarUUID = payloadName == null ? resource.getCsarUUID() : payloadName;
 		loggerSupportability.log(LoggerSupportabilityActions.CREATE_RESOURCE,resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,"Starting to create resource from CSAR by user {} ", user.getUserId());
+		log.debug("enter createResource,get csarUUID:{}",csarUUID);
 		if (StringUtils.isNotEmpty(csarUUID)) {
 			csarBusinessLogic.validateCsarBeforeCreate(resource, auditingAction, user, csarUUID);
 			log.debug("CsarUUID is {} - going to create resource from CSAR", csarUUID);
@@ -603,7 +604,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		ParsedToscaYamlInfo uploadComponentInstanceInfoMap;
 		try {
 			uploadComponentInstanceInfoMap = csarBusinessLogic.getParsedToscaYamlInfo(yamlFileContent, yamlFileName,
-					nodeTypesInfo, csarInfo, nodeName);
+					nodeTypesInfo, csarInfo, nodeName, oldResource);
 			Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.getInstances();
             if (MapUtils.isEmpty(instances) && newResource.getResourceType() != ResourceTypeEnum.PNF) {
                 throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlFileName);
@@ -1179,6 +1180,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		if (ModelConverter.isAtomicComponent(resource)) {
 			validateDerivedFromNotEmpty(user, resource, AuditingActionEnum.CREATE_RESOURCE);
 		}
+		log.debug("enter validateResourceBeforeCreate,resourceType is not resource ");
 		return validateResourceBeforeCreate(resource, user, AuditingActionEnum.CREATE_RESOURCE, inTransaction, null);
 
 	}
@@ -1193,7 +1195,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
 		Resource createdResource;
 		try {
-            ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName);
+            ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName, resource);
             if (MapUtils.isEmpty(parsedToscaYamlInfo.getInstances()) && resource.getResourceType() != ResourceTypeEnum.PNF) {
                 throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
             }
@@ -2317,9 +2319,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic.createResourceArtifactsFromCsar(
 							csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts);
 				} else {
-					createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic.updateResourceArtifactsFromCsar(
+					Either<Component, ResponseFormat> result  = csarArtifactsAndGroupsBusinessLogic.updateResourceArtifactsFromCsar(
 							csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock,
 							inTransaction);
+					if ((result.left().value() instanceof Resource) && result.isLeft()) {
+						Resource service1 = (Resource) result.left().value();
+						createArtifactsFromCsar = Either.left(service1);
+					} else {
+						createArtifactsFromCsar = Either.right(result.right().value());
+					}
 				}
 
 				if (createArtifactsFromCsar.isRight()) {
@@ -2920,6 +2928,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		ComponentInstance currentCompInstance = currentCompInstanceOpt.get();
 		String resourceInstanceId = currentCompInstance.getUniqueId();
 		Resource originResource = getOriginResource(originCompMap, currentCompInstance);
+		log.debug("enter ResourceBusinessLogic processComponentInstance,get originResource:{}",originResource);
 		if (isNotEmpty(originResource.getRequirements())) {
 			instRequirements.put(currentCompInstance, originResource.getRequirements());
 		}
@@ -4189,6 +4198,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	public Resource validateResourceBeforeCreate(Resource resource, User user, AuditingActionEnum actionEnum,
 												 boolean inTransaction, CsarInfo csarInfo) {
 
+		log.debug("enter validateResourceBeforeCreate");
 		validateResourceFieldsBeforeCreate(user, resource, actionEnum, inTransaction);
 		validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), resource, actionEnum, inTransaction);
 		validateLifecycleTypesCreate(user, resource, actionEnum);
@@ -4214,6 +4224,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		String invariantUUID = UniqueIdBuilder.buildInvariantUUID();
 		resource.setInvariantUUID(invariantUUID);
 
+		log.debug("enter validateResourceBeforeCreate,get invariantUUID:{}",resource.getInvariantUUID());
 		return resource;
 	}
 
