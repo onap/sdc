@@ -23,6 +23,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.Vector;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -126,7 +127,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(GroupBusinessLogic.class);
 
-    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(GroupBusinessLogic.class.getName());
+    public LoggerSupportability loggerSupportability= LoggerSupportability.getLogger(GroupBusinessLogic.class.getName());
 
     private final AccessValidations accessValidations;
     private final PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
