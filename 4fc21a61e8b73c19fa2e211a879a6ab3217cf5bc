@@ -22,6 +22,30 @@
       "revId": "4fc21a61e8b73c19fa2e211a879a6ab3217cf5bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83b4a402_634f5269",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-10T14:38:36Z",
+      "side": 1,
+      "message": "Then it would be the same as the fast build :-)",
+      "parentUuid": "1dc0d61b_99a7c428",
+      "range": {
+        "startLine": 618,
+        "startChar": 16,
+        "endLine": 621,
+        "endChar": 27
+      },
+      "revId": "4fc21a61e8b73c19fa2e211a879a6ab3217cf5bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
