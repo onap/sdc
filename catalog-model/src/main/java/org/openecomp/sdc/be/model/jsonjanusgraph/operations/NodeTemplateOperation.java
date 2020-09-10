@@ -776,8 +776,14 @@ public class NodeTemplateOperation extends BaseOperation {
             listCapabilities.forEach(cap -> {
                 cap.setSource(componentInstance.getComponentUid());
                 cap.addToPath(componentInstance.getUniqueId());
+                log.debug("enter populateCapability,get Capability OwnerId:{},get componentInstance UniqueId:{}",
+                        cap.getOwnerId(), componentInstance.getUniqueId());
                 cap.setOwnerId(componentInstance.getUniqueId());
-                cap.setOwnerName(componentInstance.getName());
+                log.debug("enter populateCapability,get Capability OwnerName:{},get componentInstance Name:{}",
+                        cap.getOwnerName(), componentInstance.getName());
+                if (cap.getOwnerName() == null || cap.getOwnerName().isEmpty()) {
+                    cap.setOwnerName(componentInstance.getName());
+                }
                 cap.setLeftOccurrences(cap.getMaxOccurrences());
                 allCalculatedCap.add(key, cap);
             });
@@ -803,8 +809,15 @@ public class NodeTemplateOperation extends BaseOperation {
             listRequirements.forEach(req -> {
                 req.setSource(componentInstance.getComponentUid());
                 req.addToPath(componentInstance.getUniqueId());
-                req.setOwnerId(componentInstance.getUniqueId());
-                req.setOwnerName(componentInstance.getName());
+                log.debug("enter populateRequirement,get init Requirements OwnerId:{},get componentInstance UniqueId:{}",
+                        req.getOwnerId(), componentInstance.getUniqueId());
+                if (req.getOwnerId() == null || req.getOwnerId().isEmpty()) {
+                    req.setOwnerId(componentInstance.getUniqueId());
+                }
+                log.debug("enter populateRequirement,get init Requirements OwnerName:{}", req.getOwnerName());
+                if (req.getOwnerName() == null || req.getOwnerName().isEmpty()) {
+                    req.setOwnerName(componentInstance.getName());
+                }
                 req.setLeftOccurrences(req.getMaxOccurrences());
                 allCalculatedReq.add(key, req);
             });
