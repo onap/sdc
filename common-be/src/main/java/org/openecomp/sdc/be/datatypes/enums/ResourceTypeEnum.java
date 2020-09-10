@@ -35,7 +35,8 @@ public enum ResourceTypeEnum {
     Configuration("Configuration", true),
     ServiceProxy("ServiceProxy", true),
     //Generic VFC/VF/PNF/Service Type
-    ABSTRACT("Abstract", true);
+    ABSTRACT("Abstract", true),
+	SERVICE("Service"/*(Network Service)"*/,false);
 
     private final String value;
     private final boolean isAtomicType;
