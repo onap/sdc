@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd28f0c2_3edc375e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-10T07:28:41Z",
+      "side": 1,
+      "message": "Could you please add testing on the new code ? Thanks for your time !",
+      "revId": "84d7c00f0d420183c55e62b1295649e3765f05a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

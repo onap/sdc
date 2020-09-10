@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46521f74_705a743a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-10T07:28:41Z",
+      "side": 1,
+      "message": "I am not sure why this line is here ?",
+      "revId": "db66ede6f62f70f2a63c014630381a66d2ea7970",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7290025d_937b120c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-10T07:28:41Z",
+      "side": 1,
+      "message": "We generally try to use lombok to reduce boiler plate",
+      "revId": "db66ede6f62f70f2a63c014630381a66d2ea7970",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "369364f9_51bddf25",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-10T07:28:41Z",
+      "side": 1,
+      "message": "Could you add testing on it ? Thanks for your time :)",
+      "revId": "db66ede6f62f70f2a63c014630381a66d2ea7970",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
