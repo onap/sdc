@@ -46,6 +46,7 @@ public class Service extends Component {
 
     private Map<String, ArtifactDefinition> serviceApiArtifacts;
     private Map<String, ForwardingPathDataDefinition> forwardingPaths;
+    private String toscaServiceName;
 
     public Service() {
         super(new ServiceMetadataDefinition());
@@ -177,5 +178,25 @@ public class Service extends Component {
     @Override
     public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
         setServiceApiArtifacts(specificComponentTypeArtifacts);
+    }
+
+
+    public void setServiceVendorModelNumber(String serviceVendorModelNumber) {
+        getServiceMetadataDefinition().setServiceVendorModelNumber(serviceVendorModelNumber);
+    }
+
+    public void setAbstract(Boolean isAbstract) {
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setIsAbstract(isAbstract);
+    }
+
+    public void setVendorName(String vendorName) {
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorName(vendorName);
+    }
+
+    public void setVendorRelease(String vendorRelease) {
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorRelease(vendorRelease);
     }
 }

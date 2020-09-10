@@ -405,6 +405,52 @@ public class ToscaOperationFacade {
                 }
             );
     }
+	
+	public Either<Resource, StorageOperationStatus> getLatestResourceByToscaResourceName(String toscaResourceName) {
+    	if (toscaResourceName != null && toscaResourceName.contains("org.openecomp.resource.vf"))
+    		return getLatestResourceByToscaResourceName(toscaResourceName, VertexTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseMetadata);
+    	else
+    		return getLatestResourceByToscaResourceName(toscaResourceName, VertexTypeEnum.NODE_TYPE, JsonParseFlagEnum.ParseMetadata);
+    }
+
+    public Either<Resource, StorageOperationStatus> getLatestResourceByToscaResourceName(String toscaResourceName, VertexTypeEnum vertexType, JsonParseFlagEnum parseFlag) {
+
+        Either<Resource, StorageOperationStatus> result = null;
+        Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+        props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
+        props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        if (!toscaResourceName.contains("org.openecomp.resource.vf")) {
+            props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+        }
+
+        Either<List<GraphVertex>, JanusGraphOperationStatus> getLatestRes = janusGraphDao.getByCriteria(vertexType, props, parseFlag);
+
+        if (getLatestRes.isRight()) {
+            JanusGraphOperationStatus status = getLatestRes.right().value();
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch {} with name {}. status={} ", vertexType, toscaResourceName, status);
+            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+        }
+        if (result == null) {
+            List<GraphVertex> resources = getLatestRes.left().value();
+            double version = 0.0;
+            GraphVertex highestResource = null;
+            for (GraphVertex resource : resources) {
+                double resourceVersion = Double.parseDouble((String) resource.getJsonMetadataField(JsonPresentationFields.VERSION));
+                if (resourceVersion > version) {
+                    version = resourceVersion;
+                    highestResource = resource;
+                }
+            }
+
+            if (highestResource != null) {
+                result = getToscaFullElement(highestResource.getUniqueId());
+            } else {
+                log.debug("The vertex with the highest version could not be found for {}", toscaResourceName);
+                result = Either.right(StorageOperationStatus.GENERAL_ERROR);
+            }
+        }
+        return result;
+    }
 
     public Either<Boolean, StorageOperationStatus> validateToscaResourceNameExists(String templateName) {
         Either<Boolean, StorageOperationStatus> validateUniquenessRes = validateToscaResourceNameUniqueness(templateName);
@@ -1429,6 +1475,53 @@ public class ToscaOperationFacade {
         return Optional.empty();
     }
 
+    public StorageOperationStatus associateCapabilitiesToService(Map<String,ListCapabilityDataDefinition> capabilities, String componentId) {
+
+        Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            log.debug(COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVertexEither.right().value());
+
+        }
+
+        GraphVertex vertex = getVertexEither.left().value();
+        if(MapUtils.isNotEmpty(capabilities)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = topologyTemplateOperation.
+                    associateElementToData(vertex, VertexTypeEnum.CAPABILITIES,
+                            EdgeLabelEnum.CAPABILITIES, capabilities);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
+            }
+        }
+
+
+        return StorageOperationStatus.OK;
+
+    }
+
+    public StorageOperationStatus associateRequirementsToService(Map<String, ListRequirementDataDefinition> requirements, String componentId) {
+
+        Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            log.debug(COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVertexEither.right().value());
+
+        }
+
+        GraphVertex vertex = getVertexEither.left().value();
+        if(MapUtils.isNotEmpty(requirements)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = topologyTemplateOperation.
+                    associateElementToData(vertex, VertexTypeEnum.REQUIREMENTS,
+                            EdgeLabelEnum.REQUIREMENTS, requirements);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
+            }
+        }
+
+        return StorageOperationStatus.OK;
+
+    }
+	
     public StorageOperationStatus associateDeploymentArtifactsToInstances(Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, Component component, User user) {
 
         Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(component.getUniqueId(), JsonParseFlagEnum.NoParse);
@@ -2885,5 +2978,10 @@ public class ToscaOperationFacade {
     public void updateCapReqPropertiesOwnerId(String componentId) {
         topologyTemplateOperation
                 .updateCapReqPropertiesOwnerId(componentId, getTopologyTemplate(componentId));
+    }
+
+    public <T extends Component> Either<T, StorageOperationStatus> getLatestByServiceName(String serviceName) {
+        return getLatestByName(GraphPropertyEnum.NAME, serviceName);
+
     }
 }
