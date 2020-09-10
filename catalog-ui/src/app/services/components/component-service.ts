@@ -32,6 +32,8 @@ export interface IComponentService {
     changeLifecycleState(component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> ;
     validateName(newName:string, subtype?:string):ng.IPromise<IValidate>;
     createComponent(component:Component):ng.IPromise<Component>;
+    //importComponent
+    importComponent(component: Component): ng.IPromise<Component>;
     addOrUpdateArtifact(componentId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
     deleteArtifact(componentId:string, artifact:string, artifactLabel):ng.IPromise<ArtifactModel>;
     addProperty(componentId:string, property:PropertyModel):ng.IPromise<PropertyModel>;
@@ -48,7 +50,7 @@ export interface IComponentService {
     createComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
     updateComponentInstance(componentId:string, componentInstance:ComponentInstance):ng.IPromise<ComponentInstance>;
     updateMultipleComponentInstances(componentId:string, instances:Array<ComponentInstance>):ng.IPromise< Array<ComponentInstance>>;
-    downloadArtifact(componentId:string, artifactId:string):ng.IPromise<IFileDownload>;
+    downloadArtifact(componentId: string, artifactId: string, vendorName?: string): ng.IPromise<IFileDownload>;
     uploadInstanceEnvFile(componentId:string, instanceId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
     downloadInstanceArtifact(componentId:string, instanceId:string, artifactId:string):ng.IPromise<IFileDownload>;
     deleteComponentInstance(componentId:string, componentInstanceId:string):ng.IPromise<ComponentInstance>;
@@ -206,6 +208,20 @@ export class ComponentService implements IComponentService {
         });
         return deferred.promise;
     };
+    
+    public importComponent = (component: Component): ng.IPromise<Component> => {
+        component.vendorName = "xfr";
+        component.vendorRelease = "xfr";
+        let deferred = this.$q.defer<Component>();
+        let headerObj = this.getHeaderMd5(component);
+        this.restangular.customPOST(JSON.stringify(component), 'importService', {}, headerObj).then((response: Component) => {
+            let component: Component = this.createComponentObject(response);
+            deferred.resolve(component);
+        }, (err) => {
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    };
 
     public validateName = (newName:string, subtype?:string):ng.IPromise<IValidate> => {
         let deferred = this.$q.defer<IValidate>();
@@ -244,13 +260,21 @@ export class ComponentService implements IComponentService {
         return deferred.promise;
     };
 
-    public downloadArtifact = (componentId:string, artifactId:string):ng.IPromise<IFileDownload> => {
+    public downloadArtifact = (componentId: string, artifactId: string, vendorName?: string): ng.IPromise<IFileDownload> => {
         let deferred = this.$q.defer<IFileDownload>();
-        this.restangular.one(componentId).one("artifacts").one(artifactId).get().then((response:any) => {
-            deferred.resolve(response.plain());
-        }, (err)=> {
-            deferred.reject(err);
-        });
+        if(vendorName === 'IsService'){
+            this.restangular.one('importService').one(componentId).one("artifacts").one(artifactId).get().then((response: any) => {
+                deferred.resolve(response.plain());
+            }, (err) => {
+                deferred.reject(err);
+            });
+        }else{
+            this.restangular.one(componentId).one("artifacts").one(artifactId).get().then((response: any) => {
+                deferred.resolve(response.plain());
+            }, (err) => {
+                deferred.reject(err);
+            });
+        }
         return deferred.promise;
     };
 

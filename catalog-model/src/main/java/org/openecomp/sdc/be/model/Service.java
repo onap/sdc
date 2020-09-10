@@ -178,4 +178,34 @@ public class Service extends Component {
     public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
         setServiceApiArtifacts(specificComponentTypeArtifacts);
     }
+	
+    private String toscaServiceName;
+
+    public String getToscaServiceName() {
+        return toscaServiceName;
+    }
+
+    public void setToscaServiceName(String toscaServiceName) {
+        this.toscaServiceName = toscaServiceName;
+    }
+
+
+    public void setServiceVendorModelNumber(String serviceVendorModelNumber) {
+        getServiceMetadataDefinition().setServiceVendorModelNumber(serviceVendorModelNumber);
+    }
+
+    public void setAbstract(Boolean isAbstract) {
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setIsAbstract(isAbstract);
+    }
+
+    public void setVendorName(String vendorName) {
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorName(vendorName);
+    }
+
+    public void setVendorRelease(String vendorRelease) {
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorRelease(vendorRelease);
+    }
 }
