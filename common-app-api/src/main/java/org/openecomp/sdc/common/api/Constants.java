@@ -88,6 +88,7 @@ public final class Constants {
 	public static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
 	public static final String TOSCA_META_ENTRY_DEFINITIONS = "Entry-Definitions";
 	public static final String USER_DEFINED_RESOURCE_NAMESPACE_PREFIX = "org.openecomp.resource.";
+	public static final String USER_DEFINED_SERVICE_NAMESPACE_PREFIX = "org.openecomp.service.";
 
 	public static final String IS_BASE = "isBase";
 	public static final String HEAT_FILE_PROPS = "heat_file";

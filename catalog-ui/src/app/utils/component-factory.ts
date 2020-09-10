@@ -185,6 +185,12 @@ export class ComponentFactory {
 
     };
 
+    public importComponentOnServer = (componentObject: Component): ng.IPromise<Component> => {
+        let component: Component = this.createComponent(componentObject);
+        return component.importComponentOnServer();
+
+    };
+    
     public getComponentWithMetadataFromServer = (componentType:string, componentId:string):ng.IPromise<Component> => {
         let deferred = this.$q.defer<Component>();
         let component = this.createEmptyComponent(componentType);
