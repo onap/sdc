@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.common.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -182,4 +183,20 @@ public enum ArtifactTypeEnum {
         return new HashSet<>(artifactTypeEnums);
     }
 
+    public static String findType(final String type) {
+        for (final ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
+            if (ate.getType().equalsIgnoreCase(type)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    public static List<String> getAllTypes() {
+        final List<String> types = new ArrayList<>();
+        for (final ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
+            types.add(ate.getType());
+        }
+        return types;
+    }
 }
