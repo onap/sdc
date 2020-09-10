@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d4a31f3_e1a7e242",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-10T11:35:19Z",
+      "side": 1,
+      "message": "Thanks a lot for your contribution.\nIs there something that can be done for this class ? In my opinion 6000 lines will be hard to review and even harder to maintain",
+      "revId": "da41fb2397ae03385d53c2bf958a6293f3ec918b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
