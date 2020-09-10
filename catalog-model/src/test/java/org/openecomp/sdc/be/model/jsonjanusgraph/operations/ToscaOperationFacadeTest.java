@@ -30,6 +30,7 @@
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,8 @@ import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -437,6 +440,37 @@ public class ToscaOperationFacadeTest {
         assertTrue(result.isLeft());
     }
 
+
+    @Test
+    public void testGetLatestResourceByToscaResourceName() {
+        Either<Resource, StorageOperationStatus> result;
+        String toscaResourceName = "org.openecomp.resource.vf";
+        ToscaElement toscaElement = getToscaElementForTest();
+
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
+        propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        if (!toscaResourceName.contains("org.openecomp.resource.vf")) {
+            propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+        }
+
+        List<GraphVertex> graphVertexList = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setUniqueId(toscaResourceName);
+        Map<JsonPresentationFields, Object> props = new HashMap<>();
+        props.put(JsonPresentationFields.VERSION, "1.0");
+        graphVertex.setJsonMetadataField(JsonPresentationFields.VERSION,  props.get(JsonPresentationFields.VERSION));
+        graphVertexList.add(graphVertex);
+
+        when(janusGraphDaoMock.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(graphVertexList));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+
+        when(janusGraphDaoMock.getVertexById(toscaResourceName, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+
+        result = testInstance.getLatestResourceByToscaResourceName(toscaResourceName);
+        assertTrue(result.isLeft());
+    }
+
     @Test
     public void testGetFollowed() {
         Either<Set<Component>, StorageOperationStatus> result;
@@ -730,6 +764,72 @@ public class ToscaOperationFacadeTest {
         assertEquals(StorageOperationStatus.OK, result);
         verify(nodeTemplateOperationMock, times(1)).updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
 
+    }
+
+    @Test
+    public void associateCapabilitiesToServiceFailureTest(){
+        StorageOperationStatus result = associateCapabilitiesToServiceWithStatus(StorageOperationStatus.BAD_REQUEST);
+        assertTrue(result == StorageOperationStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void associateCapabilitiesToServiceSuccessTest(){
+        StorageOperationStatus result = associateCapabilitiesToServiceWithStatus(StorageOperationStatus.OK);
+        assertTrue(result == StorageOperationStatus.OK);
+    }
+
+    private StorageOperationStatus associateCapabilitiesToServiceWithStatus(StorageOperationStatus status) {
+        Map<String, ListCapabilityDataDefinition> capabilitiesMap = new HashedMap();
+        String componentId = "componentid";
+
+        ListCapabilityDataDefinition listCapabilityDataDefinition1 = new ListCapabilityDataDefinition();
+        capabilitiesMap.put("capabilities1", listCapabilityDataDefinition1);
+
+        GraphVertex vertex;
+        if(status == StorageOperationStatus.OK){
+            vertex = getTopologyTemplateVertex();
+        } else {
+            vertex = getNodeTypeVertex();
+        }
+
+        Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = Either.left(vertex);
+        when(janusGraphDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(getVertexEither);
+        when(topologyTemplateOperationMock.associateElementToData(eq(vertex),
+            eq(VertexTypeEnum.CAPABILITIES), eq(EdgeLabelEnum.CAPABILITIES), anyMap())).thenReturn(Either.right(status));
+        return testInstance.associateCapabilitiesToService(capabilitiesMap, componentId);
+    }
+
+    @Test
+    public void associateRequirementsToServiceFailureTest(){
+        StorageOperationStatus result = associateRequirementsToServiceWithStatus(StorageOperationStatus.BAD_REQUEST);
+        assertTrue(result == StorageOperationStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void associateRequirementsToServiceSuccessTest(){
+        StorageOperationStatus result = associateRequirementsToServiceWithStatus(StorageOperationStatus.OK);
+        assertTrue(result == StorageOperationStatus.OK);
+    }
+
+    private StorageOperationStatus associateRequirementsToServiceWithStatus(StorageOperationStatus status) {
+        Map<String, ListRequirementDataDefinition> requirementsMap = new HashedMap();
+        String componentId = "componentid";
+
+        ListRequirementDataDefinition listRequirementDataDefinition1 = new ListRequirementDataDefinition();
+        requirementsMap.put("requirements1", listRequirementDataDefinition1);
+
+        GraphVertex vertex;
+        if(status == StorageOperationStatus.OK){
+            vertex = getTopologyTemplateVertex();
+        } else {
+            vertex = getNodeTypeVertex();
+        }
+
+        Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = Either.left(vertex);
+        when(janusGraphDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(getVertexEither);
+        when(topologyTemplateOperationMock.associateElementToData(eq(vertex),
+            eq(VertexTypeEnum.REQUIREMENTS), eq(EdgeLabelEnum.REQUIREMENTS), anyMap())).thenReturn(Either.right(status));
+        return testInstance.associateRequirementsToService(requirementsMap, componentId);
     }
 
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {

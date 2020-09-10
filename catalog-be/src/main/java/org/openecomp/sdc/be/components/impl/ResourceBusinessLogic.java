@@ -603,7 +603,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		ParsedToscaYamlInfo uploadComponentInstanceInfoMap;
 		try {
 			uploadComponentInstanceInfoMap = csarBusinessLogic.getParsedToscaYamlInfo(yamlFileContent, yamlFileName,
-					nodeTypesInfo, csarInfo, nodeName);
+					nodeTypesInfo, csarInfo, nodeName, oldResource);
 			Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.getInstances();
             if (MapUtils.isEmpty(instances) && newResource.getResourceType() != ResourceTypeEnum.PNF) {
                 throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlFileName);
@@ -1193,7 +1193,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
 		Resource createdResource;
 		try {
-            ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName);
+            ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName, resource);
             if (MapUtils.isEmpty(parsedToscaYamlInfo.getInstances()) && resource.getResourceType() != ResourceTypeEnum.PNF) {
                 throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
             }
@@ -2317,9 +2317,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic.createResourceArtifactsFromCsar(
 							csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts);
 				} else {
-					createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic.updateResourceArtifactsFromCsar(
+					Either<Component, ResponseFormat> result  = csarArtifactsAndGroupsBusinessLogic.updateResourceArtifactsFromCsar(
 							csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock,
 							inTransaction);
+					if ((result.left().value() instanceof Resource) && result.isLeft()) {
+						Resource service1 = (Resource) result.left().value();
+						createArtifactsFromCsar = Either.left(service1);
+					} else {
+						createArtifactsFromCsar = Either.right(result.right().value());
+					}
 				}
 
 				if (createArtifactsFromCsar.isRight()) {

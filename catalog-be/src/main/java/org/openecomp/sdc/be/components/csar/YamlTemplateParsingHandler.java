@@ -54,6 +54,7 @@ import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
@@ -129,7 +130,7 @@ public class YamlTemplateParsingHandler {
     }
 
     public ParsedToscaYamlInfo parseResourceInfoFromYAML(String fileName, String resourceYml, Map<String, String> createdNodesToscaResourceNames,
-                                                         Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
+                                                         Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName, org.openecomp.sdc.be.model.Component component) {
         log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
         Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
         ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
@@ -140,7 +141,9 @@ public class YamlTemplateParsingHandler {
         parsedToscaYamlInfo.setInputs(getInputs(mappedToscaTemplate));
         parsedToscaYamlInfo.setInstances(getInstances(fileName, mappedToscaTemplate, createdNodesToscaResourceNames));
         parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate));
-        parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate));
+        if(component instanceof Resource){
+            parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate));
+        }
         log.debug("#parseResourceInfoFromYAML - The yaml {} has been parsed ", fileName);
         return parsedToscaYamlInfo;
     }
