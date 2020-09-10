@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "8afd0609_0ba7cb9c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Service.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-09-10T07:42:03Z",
+      "side": 1,
+      "message": "remove redundant code, already covered by LOMBOK",
+      "range": {
+        "startLine": 184,
+        "startChar": 4,
+        "endLine": 192,
+        "endChar": 0
+      },
+      "revId": "db66ede6f62f70f2a63c014630381a66d2ea7970",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "46521f74_705a743a",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
         "patchSetId": 1
