@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1dc0d61b_99a7c428",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-09-10T13:28:00Z",
+      "side": 1,
+      "message": "I\u0027d also add \n-DskipTests -DskipUICleanup\u003dtrue -Djacoco.skip\u003dtrue -DskipPMD -Dmaven.test.skip\u003dtrue -Dcheckstyle.skip -DskipITs\u003dtrue",
+      "range": {
+        "startLine": 618,
+        "startChar": 16,
+        "endLine": 621,
+        "endChar": 27
+      },
+      "revId": "4fc21a61e8b73c19fa2e211a879a6ab3217cf5bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
