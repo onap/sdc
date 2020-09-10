@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.text.StrSubstitutor;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
@@ -1033,6 +1034,7 @@ public class ResourceServletTest extends JerseyTest {
                     bind(resourceImportManager).to(ResourceImportManager.class);
                 }
             })
+            .register(MultiPartFeature.class)
             .property("contextConfig", context);
     }
 }

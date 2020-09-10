@@ -72,6 +72,12 @@ public class ServiceDistributionValidation {
         }
     }
 
+    public void validateAbstractServiceRequest(String serviceUUID, User modifier) {
+        validateUserExists(modifier.getUserId());
+        Service abstractService = validateServiceExists(serviceUUID);
+        validateDistributionServiceLifeCycleState(abstractService);
+    }
+	
     private Service validateServiceExists(String serviceUUID) {
         if (StringUtils.isEmpty(serviceUUID.trim())) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.BAD_REQUEST_MISSING_RESOURCE);

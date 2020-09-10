@@ -128,6 +128,16 @@ public class ResourceImportManager {
 
     private AuditingManager auditingManager;
     private ResourceBusinessLogic resourceBusinessLogic;
+    public ServiceBusinessLogic getServiceBusinessLogic() {
+        return serviceBusinessLogic;
+    }
+
+    public void setServiceBusinessLogic(ServiceBusinessLogic serviceBusinessLogic) {
+        this.serviceBusinessLogic = serviceBusinessLogic;
+    }
+
+    @Autowired
+    private ServiceBusinessLogic serviceBusinessLogic;
     private InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
 
     private IGraphLockOperation graphLockOperation;

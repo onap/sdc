@@ -226,7 +226,7 @@ public class ComponentsUtils {
      * @param resource
      * @return
      */
-    public ResponseFormat getResponseFormatByResource(ActionStatus actionStatus, Resource resource) {
+    public ResponseFormat getResponseFormatByResource(ActionStatus actionStatus, Component resource) {
         if (resource == null) {
             return getResponseFormat(actionStatus);
         }

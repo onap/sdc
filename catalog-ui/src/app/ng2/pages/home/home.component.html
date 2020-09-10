@@ -48,6 +48,16 @@
                                 (fileUpload)="onImportVf($event)"
                                 [convertToBase64]="true"
                             ></sdc-button-file-opener>
+                            <sdc-button-file-opener
+                                *ngIf="roles[user.role].dashboard.showCreateNew"
+                                size="medium"
+                                type="secondary"
+                                text="Import Service Csar"
+                                testId="importServicebutton"
+                                [extensions]="sdcConfig.csarFileExtension"
+                                (fileUpload)="onImportService($event)"
+                                [convertToBase64]="true"
+                            ></sdc-button-file-opener>
                         </div>
                     </div>
                 </div>
