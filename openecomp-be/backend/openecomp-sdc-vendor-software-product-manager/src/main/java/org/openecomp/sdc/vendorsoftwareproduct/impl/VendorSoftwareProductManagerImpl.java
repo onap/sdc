@@ -132,9 +132,11 @@ import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductManager.class);
     private VspMergeDao vspMergeDao;
     private OrchestrationTemplateDao orchestrationTemplateDao;
     private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
@@ -669,6 +671,42 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         FileContentHandler fileContentMap = CommonUtil.validateAndUploadFileContent(
                 OnboardingTypesEnum.getOnboardingTypesEnum(orchestrationTemplate.getFileSuffix()),
                 orchestrationTemplate.getContentData().array());
+        // temporary fix for dummy heat base
+        InputStream envStream = null;
+        InputStream baseStream = null;
+        try (InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            ManifestContent manifestContent =
+                    JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+            for (FileData fileData : manifestContent.getData()) {
+                if ((fileData.getFile()).contains("dummy_ignore.yaml")) {
+                    String filePath = new File("").getAbsolutePath();
+                    File envFilePath = new File(filePath + "/base_template.env");
+                    File baseFilePath = new File(filePath + "/base_template.yaml");
+                    envStream = new FileInputStream(envFilePath);
+                    baseStream = new FileInputStream(baseFilePath);
+                    // adding base dummy heat to the content handler
+                    fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
+                    fileContentMap.addFile("base_template_dummy_ignore.yaml", baseStream);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Invalid package content", e);
+        } finally {
+            if (envStream != null) {
+                try {
+                    envStream.close();
+                } catch (IOException e) {
+                    LOGGER.info("close InputStream failed - {}", e);
+                }
+            }
+            if (baseStream != null) {
+                try {
+                    baseStream.close();
+                } catch (IOException e) {
+                    LOGGER.info("close InputStream failed - {}", e);
+                }
+            }
+        }
 
         if (CommonUtil.isFileOriginFromZip(orchestrationTemplate.getFileSuffix())) {
             ValidationManager validationManager = ValidationManagerUtil.initValidationManager(fileContentMap);
