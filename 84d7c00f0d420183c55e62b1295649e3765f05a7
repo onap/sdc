@@ -16,6 +16,24 @@
       "revId": "84d7c00f0d420183c55e62b1295649e3765f05a7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f47c476_2fa472b9",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-10T17:03:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd28f0c2_3edc375e",
+      "revId": "84d7c00f0d420183c55e62b1295649e3765f05a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
