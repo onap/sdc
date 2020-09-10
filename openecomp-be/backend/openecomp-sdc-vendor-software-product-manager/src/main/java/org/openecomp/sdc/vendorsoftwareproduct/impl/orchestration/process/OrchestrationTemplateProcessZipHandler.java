@@ -41,11 +41,18 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
+//dummy heat imports
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
+import java.io.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
+  private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
 
   private final CandidateService candidateService =
       CandidateServiceFactory.getInstance().createInterface();
@@ -58,8 +65,8 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent = OrchestrationUtil
-        .getFileContentMap(OnboardingTypesEnum.ZIP, uploadFileResponse,
-            candidateData.getContentData().array());
+            .getFileContentMap(OnboardingTypesEnum.ZIP, uploadFileResponse,
+                    candidateData.getContentData().array());
     if (!fileContent.isPresent()) {
       response.addStructureErrors(uploadFileResponse.getErrors());
       return response;
@@ -67,6 +74,42 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
 
     Map<String, List<ErrorMessage>> uploadErrors = uploadFileResponse.getErrors();
     FileContentHandler fileContentMap = fileContent.get();
+    // temp fix for dummy base heat adding
+    InputStream envStream = null;
+    InputStream baseStream = null;
+    try (InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+      ManifestContent manifestContent =
+              JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+      for (FileData fileData : manifestContent.getData()) {
+        if (Objects.nonNull(fileData.getType()) &&
+                fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
+          String filePath = new File("").getAbsolutePath();
+          File envFilePath = new File(filePath + "/base_template.env");
+          File baseFilePath = new File(filePath + "/base_template.yaml");
+          envStream = new FileInputStream(envFilePath);
+          baseStream = new FileInputStream(baseFilePath);
+          fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
+          fileContentMap.addFile("base_template_dummy_ignore.yaml", baseStream);
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Invalid package content", e);
+    } finally {
+      if (envStream != null) {
+        try {
+          envStream.close();
+        } catch (IOException e) {
+          LOGGER.info("close InputStream failed - {}", e);
+        }
+      }
+      if (baseStream != null) {
+        try {
+          baseStream.close();
+        } catch (IOException e) {
+          LOGGER.info("close InputStream failed - {}", e);
+        }
+      }
+    }
     FilesDataStructure structure =
         JsonUtil.json2Object(candidateData.getFilesDataStructure(), FilesDataStructure.class);
 
