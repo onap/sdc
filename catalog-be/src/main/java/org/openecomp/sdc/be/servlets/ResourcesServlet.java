@@ -32,11 +32,15 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.File;
 import org.apache.http.HttpStatus;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -53,6 +57,8 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -592,6 +598,99 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         } catch (IOException e) {
             log.debug("get resource by csar failed with exception", e);
             throw e;
+        }
+    }
+
+    @POST
+    @Path("/resources/importReplaceResource")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Import Resource", method = "POST", summary = "Returns imported resource", responses = {
+            @ApiResponse(responseCode = "201", description = "Resource created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response importReplaceResource(
+            @Parameter(description = "The user id",
+                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "X-ECOMP-RequestID header",
+                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
+                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+            @Parameter(description = "Determines the format of the body of the response",
+                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "The username and password",
+                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Context final HttpServletRequest request,
+            @Parameter(description = "FileInputStream")
+            @FormDataParam("resourceZip") File file,
+            @Parameter(description = "ContentDisposition")
+            @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
+            @Parameter(description = "resourceMetadata")
+            @FormDataParam("resourceZipMetadata") String resourceInfoJsonString) {
+
+        init();
+
+        String requestURI = request.getRequestURI();
+        String url = request.getMethod() + " " + requestURI;
+        log.debug("importReplaceResource,Start handle request of {}", url);
+
+        // get modifier id
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("importReplaceResource,modifier id is {}", userId);
+
+        log.debug("importReplaceResource,get file:{},fileName:{}", file, file.getName());
+
+        Response response;
+        ResponseFormat responseFormat = null;
+        AuditingActionEnum auditingActionEnum = AuditingActionEnum.Import_Replace_Resource;
+        String assetType = "resources";
+
+        ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+        ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentType.getValue());
+        DistributionData distributionData = new DistributionData(instanceIdHeader, requestURI);
+        // Mandatory
+        if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
+            log.debug("importReplaceResource: Missing X-ECOMP-InstanceID header");
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, null);
+            return buildErrorResponse(responseFormat);
+        }
+
+        try {
+            Wrapper<Response> responseWrapper = new Wrapper<>();
+            // file import
+            Wrapper<User> userWrapper = new Wrapper<>();
+            Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();
+            Wrapper<String> yamlStringWrapper = new Wrapper<>();
+
+            ResourceAuthorityTypeEnum serviceAuthorityEnum = ResourceAuthorityTypeEnum.CSAR_TYPE_BE;
+
+            // PayLoad Validations
+            commonGeneralValidations(responseWrapper, userWrapper, uploadResourceInfoWrapper, serviceAuthorityEnum, userId, resourceInfoJsonString);
+
+            fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, modifier, resourceInfoJsonString, serviceAuthorityEnum, file);
+
+            specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, resourceInfoJsonString, serviceAuthorityEnum);
+
+            log.debug("importReplaceResource:get payload:{}", uploadResourceInfoWrapper.getInnerElement().getPayloadData());
+
+            log.debug("importReplaceResource:get ResourceType:{}",
+                    uploadResourceInfoWrapper.getInnerElement().getResourceType());
+
+            if (responseWrapper.isEmpty()) {
+                log.debug("importReplaceService:start handleImport");
+                handleImport(responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(), yamlStringWrapper.getInnerElement(), serviceAuthorityEnum, true, null);
+            }
+
+            return responseWrapper.getInnerElement();
+        } catch (ZipException e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Import Resource");
+            log.debug("import resource failed with exception", e);
+            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return response;
         }
     }
 }

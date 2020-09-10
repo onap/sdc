@@ -233,6 +233,11 @@ export abstract class Component implements IComponent {
         this.handleTags();
         return this.componentService.createComponent(this);
     };
+    
+    public importComponentOnServer = (): ng.IPromise<Component> => {
+        this.handleTags();
+        return this.componentService.importComponent(this);
+    };
 
     public updateComponent = ():ng.IPromise<Component> => {
         this.handleTags();
@@ -243,8 +248,12 @@ export abstract class Component implements IComponent {
         return this.componentService.validateName(newName, subtype);
     };
 
-    public downloadArtifact = (artifactId:string):ng.IPromise<IFileDownload> => {
-        return this.componentService.downloadArtifact(this.uniqueId, artifactId);
+    public downloadArtifact = (artifactId: string): ng.IPromise<IFileDownload> => {
+        if(this.vendorName === 'IsService'){
+            return this.componentService.downloadArtifact(this.uniqueId, artifactId, this.vendorName);
+        }else{
+            return this.componentService.downloadArtifact(this.uniqueId, artifactId);
+        }
     };
 
     public addOrUpdateArtifact = (artifact:ArtifactModel):ng.IPromise<ArtifactModel> => {

@@ -27,6 +27,7 @@ import {IServiceService} from "../../services/components/service-service";
 import {Component, PropertyModel, DisplayModule, InputsAndProperties, InputModel, InstancesInputsOrPropertiesMapData, InstancesInputsPropertiesMap,
     Distribution, DistributionComponent, ArtifactGroupModel} from "../../models";
 import {ArtifactGroupType} from "../../utils/constants";
+import {FileUploadModel} from "../../directives/file-upload/file-upload";
 import {ComponentMetadata} from "../component-metadata";
 import {ForwardingPath} from "app/models/forwarding-path";
 
@@ -42,6 +43,15 @@ export class Service extends Component {
     public environmentContext:string;
     public instantiationType:string;
     public forwardingPaths:{ [key:string]:ForwardingPath } = {};
+    public payloadData: string;
+    public payloadName: string;
+    public importedFile: FileUploadModel;
+
+    // Onboarding parameters
+    public csarUUID: string;
+    public csarVersion: string;
+    public csarPackageType: string;
+    public packageId: string;
 
     constructor(componentService:IServiceService, $q:ng.IQService, component?:Service) {
         super(componentService, $q, component);
@@ -56,14 +66,39 @@ export class Service extends Component {
             this.serviceFunction = component.serviceFunction;
             this.instantiationType = component.instantiationType;
             this.environmentContext = component.environmentContext;
+            this.payloadData = component.payloadData ? component.payloadData : undefined;
+            this.payloadName = component.payloadName ? component.payloadName : undefined;
+            this.csarUUID = component.csarUUID;
+            this.csarVersion = component.csarVersion;
             if (component.categories && component.categories[0]) {
                 this.mainCategory = component.categories[0].name;
                 this.selectedCategory = this.mainCategory;
+                this.importedFile = component.importedFile;
             }
         }
         this.componentService = componentService;
         this.iconSprite = "sprite-services-icons";
     }
+
+    public importComponentOnServer = (): ng.IPromise<Component> => {
+        let deferred = this.$q.defer<Component>();
+        let onSuccess = (component: Service): void => {
+            this.payloadData = undefined;
+            this.payloadName = undefined;
+            deferred.resolve(component);
+        };
+        let onError = (error: any): void => {
+            deferred.reject(error);
+        };
+
+        this.handleTags();
+        if (this.importedFile) {
+            this.payloadData = this.importedFile.base64;
+            this.payloadName = this.importedFile.filename;
+        }
+        this.componentService.importComponent(this).then(onSuccess, onError);
+        return deferred.promise;
+    };
 
     public getDistributionsList = ():ng.IPromise<Array<Distribution>> => {
         return this.componentService.getDistributionsList(this.uuid);

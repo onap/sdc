@@ -23,6 +23,8 @@ package org.openecomp.sdc.be.datatypes.components;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+
 
 @Data
 @NoArgsConstructor
@@ -53,11 +55,19 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
     private String environmentContext;
 
+    private String serviceVendorModelNumber;
+    public Boolean isAbstract;
+    private ResourceTypeEnum importServiceType = ResourceTypeEnum.SERVICE;
+    private String toscaServiceName;
+    private String vendorName;
+    private String vendorRelease;
 
     public ServiceMetadataDataDefinition(ServiceMetadataDataDefinition other) {
         super(other);
         serviceType = other.getServiceType();
         serviceRole = other.getServiceRole();
+        this.importServiceType = other.getImportServiceType();
+        this.toscaServiceName = other.getToscaServiceName();
         serviceFunction = other.getServiceFunction();
     }
 
