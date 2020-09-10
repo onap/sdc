@@ -181,15 +181,6 @@ public class Service extends Component {
 	
     private String toscaServiceName;
 
-    public String getToscaServiceName() {
-        return toscaServiceName;
-    }
-
-    public void setToscaServiceName(String toscaServiceName) {
-        this.toscaServiceName = toscaServiceName;
-    }
-
-
     public void setServiceVendorModelNumber(String serviceVendorModelNumber) {
         getServiceMetadataDefinition().setServiceVendorModelNumber(serviceVendorModelNumber);
     }

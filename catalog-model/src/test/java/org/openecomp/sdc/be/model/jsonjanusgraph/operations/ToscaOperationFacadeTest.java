@@ -437,6 +437,37 @@ public class ToscaOperationFacadeTest {
         assertTrue(result.isLeft());
     }
 
+
+    @Test
+    public void testGetLatestResourceByToscaResourceName() {
+        Either<Resource, StorageOperationStatus> result;
+        String toscaResourceName = "org.openecomp.resource.vf";
+        ToscaElement toscaElement = getToscaElementForTest();
+
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
+        propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        if (!toscaResourceName.contains("org.openecomp.resource.vf")) {
+            propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+        }
+
+        List<GraphVertex> graphVertexList = new ArrayList<>();
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setUniqueId(toscaResourceName);
+        Map<JsonPresentationFields, Object> props = new HashMap<>();
+        props.put(JsonPresentationFields.VERSION, "1.0");
+        graphVertex.setJsonMetadataField(JsonPresentationFields.VERSION,  props.get(JsonPresentationFields.VERSION));
+        graphVertexList.add(graphVertex);
+
+        when(janusGraphDaoMock.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(graphVertexList));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+
+        when(janusGraphDaoMock.getVertexById(toscaResourceName, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+
+        result = testInstance.getLatestResourceByToscaResourceName(toscaResourceName);
+        assertTrue(result.isLeft());
+    }
+
     @Test
     public void testGetFollowed() {
         Either<Set<Component>, StorageOperationStatus> result;

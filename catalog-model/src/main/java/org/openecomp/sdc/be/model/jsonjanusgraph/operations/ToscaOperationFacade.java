@@ -441,7 +441,13 @@ public class ToscaOperationFacade {
                     highestResource = resource;
                 }
             }
-            result = getToscaFullElement(highestResource.getUniqueId());
+
+            if (highestResource != null) {
+                result = getToscaFullElement(highestResource.getUniqueId());
+            } else {
+                log.debug("The vertex with the highest version could not be found for {}", toscaResourceName);
+                result = Either.right(StorageOperationStatus.GENERAL_ERROR);
+            }
         }
         return result;
     }
