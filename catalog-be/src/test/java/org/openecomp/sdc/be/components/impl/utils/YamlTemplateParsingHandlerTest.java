@@ -46,6 +46,7 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.User;
@@ -145,8 +146,9 @@ public class YamlTemplateParsingHandlerTest {
         CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
                 MAIN_TEMPLATE_NAME, main_template_content, true);
 
+        Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                csarInfo.extractNodeTypesInfo(), NODE_NAME);
+                csarInfo.extractNodeTypesInfo(), NODE_NAME, resource);
 
         validateParsedYaml(parsedYaml, NESTED_GROUP_NAME,
                 Lists.newArrayList("heat_file", "description"));
@@ -155,8 +157,9 @@ public class YamlTemplateParsingHandlerTest {
     @Test
     public void parseResourceInfoFromYAMLTest() {
 
+        Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "");
+                new HashMap<>(), "", resource);
         validateParsedYamlWithCapability(parsedYaml);
     }
 
@@ -228,8 +231,9 @@ public class YamlTemplateParsingHandlerTest {
 
     @Test
     public void parseResourceWithPoliciesDefined() {
+        Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "");
+                new HashMap<>(), "", resource);
         validateParsedYamlWithPolicies(parsedYaml);
     }
 
