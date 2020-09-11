@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1dc80acc_150fa647",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Service.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-09-11T07:52:03Z",
+      "side": 1,
+      "message": "remove redundant code, covered by LOMBOK",
+      "range": {
+        "startLine": 184,
+        "startChar": 3,
+        "endLine": 190,
+        "endChar": 5
+      },
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38c7d87b_9094f982",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-09-11T07:52:03Z",
+      "side": 1,
+      "message": "remove redundant code, covered by LOMBOK",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 151,
+        "endChar": 3
+      },
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2206c09_5f9abfeb",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/UploadServiceInfoTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-09-11T07:52:03Z",
+      "side": 1,
+      "message": "remove useless tests for LOMBOK,\nadd asserts",
+      "range": {
+        "startLine": 1,
+        "startChar": 2,
+        "endLine": 1,
+        "endChar": 3
+      },
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
