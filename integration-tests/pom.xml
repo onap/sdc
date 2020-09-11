@@ -57,6 +57,35 @@ limitations under the License.
     </properties>
 
     <dependencies>
+        <!-- For the JAcoco report, we import the sdc classes -->
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>catalog-be</artifactId>
+            <version>${project.version}</version>
+            <classifier>classes</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>common-app-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>common-be</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-dao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- For the BE tests-->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -339,10 +368,13 @@ limitations under the License.
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <target>
+                                <!--The volume must be created before we provide them to docker otherwise they can't be deleted -->
                                 <mkdir dir="/tmp/sdc-integration-tests"/>
                                 <chmod dir="/tmp/sdc-integration-tests" type="dir" perm="ugo+rwx"/>
                                 <mkdir dir="/tmp/sdc-integration-tests/downloadAutomation"/>
                                 <chmod dir="/tmp/sdc-integration-tests/downloadAutomation" type="dir" perm="ugo+rwx"/>
+                                <mkdir dir="/tmp/sdc-integration-tests/code-coverage"/>
+                                <chmod dir="/tmp/sdc-integration-tests/code-coverage" type="dir" perm="ugo+rwx"/>
                             </target>
                         </configuration>
                         <goals>
@@ -366,6 +398,33 @@ limitations under the License.
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>org.jacoco.agent</artifactId>
+                            <version>${jacoco.version}</version>
+                            <classifier>runtime</classifier>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>/tmp/sdc-integration-tests/code-coverage</outputDirectory>
+                            <destFileName>org.jacoco.agent-runtime.jar</destFileName>
+                        </artifactItem>
+                    </artifactItems>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -381,6 +440,57 @@ limitations under the License.
                             </portNames>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test-dump</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>dump</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
+                            <port>6300</port>
+                            <dump>true</dump>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report-xml</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <configuration>
+
+                        </configuration>
+                    </execution>
+<!--                    <execution>-->
+<!--                        <id>report-xml</id>-->
+<!--                        <goals>-->
+<!--                            <goal>report</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            &lt;!&ndash; Setting explicit path, so that we remember where it picks them up from &ndash;&gt;-->
+<!--                            <dataFile>/tmp/sdc-integration-tests/coverage-reports/jacoco-it.exec</dataFile>-->
+<!--                            <outputDirectory>/tmp/sdc-integration-tests/coverage-reports/jacoco-html-xml-reports</outputDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                 </executions>
             </plugin>
             <plugin>
@@ -525,7 +635,9 @@ limitations under the License.
                                     <SDC_PASSWORD>${it.sdc.password}</SDC_PASSWORD>
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
-                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4001 -Xmx1g -Xms1g</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4001
+                                        -Xmx1g -Xms1g
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
@@ -570,14 +682,18 @@ limitations under the License.
                                 <env>
                                     <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}</cassandra_ssl_enabled>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4000
-                                        -Xmx1536m -Xms1536m</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>
+                                        -javaagent:/code-coverage/org.jacoco.agent-runtime.jar=output=tcpserver,append=true,includes=org/openecomp/**:org/onap/**,excludes=**/gen/**:**/generated-sources/**:**/yang-gen/**:**/pax/**,address=*
+                                        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4000
+                                        -Xmx1536m -Xms1536m
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
                                     <bind>
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
+                                        <volume>/tmp/sdc-integration-tests/code-coverage:/code-coverage</volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -589,6 +705,7 @@ limitations under the License.
                                             <port>8443</port>
                                             <port>8080</port>
                                             <port>4000</port>
+                                            <port>6300</port>
                                         </ports>
                                     </tcp>
                                 </wait>
@@ -596,6 +713,7 @@ limitations under the License.
                                     <port>8443:8443</port>
                                     <port>8080:8080</port>
                                     <port>4000:4000</port>
+                                    <port>6300:6300</port>
                                 </ports>
                                 <network>
                                     <mode>custom</mode>
@@ -639,7 +757,8 @@ limitations under the License.
                                 <env>
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6000
-                                     -Xmx256m -Xms256m</JAVA_OPTIONS>
+                                        -Xmx256m -Xms256m
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-FE</hostname>
                                 <volumes>
