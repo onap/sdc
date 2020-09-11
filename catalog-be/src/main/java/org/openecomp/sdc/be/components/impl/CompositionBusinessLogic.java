@@ -29,6 +29,7 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -83,6 +84,20 @@ public class CompositionBusinessLogic {
                     userId, resource.getComponentInstances(), false);
         }
     }
+	
+    protected void setPositionsForComponentInstances(Service service, String userId) {
+        boolean isNotAllPositionsCalculated = service.getComponentInstances() == null
+                                                      || service.getComponentInstances().stream().anyMatch(p -> (p.getPosX() == null || p.getPosX().isEmpty()) || (p.getPosY() == null || p.getPosY().isEmpty()));
+        if (isNotAllPositionsCalculated &&  service.getComponentInstances() != null) {
+            // Arrange Icons In Spiral Pattern
+            Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstanceLocations = buildSpiralPatternPositioningForComponentInstances(service);
+            // Set Relative Locations According to Canvas Size
+            componentInstanceLocations.entrySet().forEach(this::setRelativePosition);
+            // Update in DB
+            componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, service, service.getUniqueId(),
+                    userId, service.getComponentInstances(), false);
+        }
+    }
 
     private void setRelativePosition(Entry<ImmutablePair<Double, Double>, ComponentInstance> entry) {
         int xCenter = CANVAS_WIDTH / 2;
@@ -120,13 +135,23 @@ public class CompositionBusinessLogic {
         return String.valueOf(offsetedCanvasPosition);
     }
 
-    protected Map<ImmutablePair<Double, Double>, ComponentInstance> buildSpiralPatternPositioningForComponentInstances(Resource resource) {
+    protected Map<ImmutablePair<Double, Double>, ComponentInstance> buildSpiralPatternPositioningForComponentInstances(
+            org.openecomp.sdc.be.model.Component component) {
 
         Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstanceLocations = new HashMap<>();
 
         List<ComponentInstance> componentInstances = new ArrayList<>();
-        componentInstances.addAll(resource.getComponentInstances());
-        Map<ComponentInstance, List<ComponentInstance>> connectededCps = getCpsConnectedToVFC(componentInstances, resource);
+        if (component instanceof Resource){
+            Resource resource = (Resource) component;
+            List<ComponentInstance> componentInstanceList = resource.getComponentInstances();
+            componentInstances.addAll(componentInstanceList);
+        }else if (component instanceof Service){
+            Service service = (Service) component;
+            List<ComponentInstance> componentInstanceList = service.getComponentInstances();
+            componentInstances.addAll(componentInstanceList);
+        }
+
+        Map<ComponentInstance, List<ComponentInstance>> connectededCps = getCpsConnectedToVFC(componentInstances, component);
         // Remove all cp that are connected from the list
         componentInstances.removeAll(connectededCps.values().stream().flatMap(Collection::stream).collect(Collectors.toList()));
 
@@ -186,9 +211,17 @@ public class CompositionBusinessLogic {
         }
     }
 
-    protected Map<ComponentInstance, List<ComponentInstance>> getCpsConnectedToVFC(List<ComponentInstance> allComponentInstances, Resource vf) {
+    protected Map<ComponentInstance, List<ComponentInstance>> getCpsConnectedToVFC(List<ComponentInstance> allComponentInstances, org.openecomp.sdc.be.model.Component component) {
         Map<ComponentInstance, List<ComponentInstance>> vfcWithItsCps = new HashMap<>();
-        List<RequirementCapabilityRelDef> allRelations = vf.getComponentInstancesRelations();
+        List<RequirementCapabilityRelDef> allRelations = new ArrayList<>();
+        if (component instanceof Resource){
+            Resource vf = (Resource) component;
+            allRelations = vf.getComponentInstancesRelations();
+        }else if (component instanceof Service){
+            Service sv = (Service) component;
+            allRelations = sv.getComponentInstancesRelations();
+        }
+
         for (ComponentInstance curr : allComponentInstances) {
             // Filters Only CPs
             if (curr.getOriginType() == OriginTypeEnum.CP) {
