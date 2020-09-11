@@ -25,6 +25,7 @@ import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteI
 
 import fj.F;
 import fj.data.Either;
+import java.text.SimpleDateFormat;
 import io.vavr.Tuple2;
 import io.vavr.control.Try;
 import io.vavr.control.Option;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -150,6 +153,8 @@ public class CsarUtils {
     private static final String TOSCA_META_PATH_FILE_NAME = "TOSCA-Metadata/TOSCA.meta";
     private static final String TOSCA_META_VERSION = "1.0";
     private static final String CSAR_VERSION = "1.1";
+    // add manifest
+	private static final String Service_Manifest = "NS.mf";
     public static final String ARTIFACTS = "Artifacts";
     private static final String DEFINITION = "Definitions";
     private static final String DEL_PATTERN = "([/\\\\]+)";
@@ -270,6 +275,9 @@ public class CsarUtils {
         String fileName = artifactDef.getArtifactName();
         zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + fileName));
         zip.write(mainYaml);
+		
+        LifecycleStateEnum lifecycleState = component.getLifecycleState();
+        addServiceMf(component, zip, lifecycleState, isInCertificationRequest, fileName, mainYaml);
 
         //US798487 - Abstraction of complex types
         if (!ModelConverter.isAtomicComponent(component)){
@@ -315,6 +323,41 @@ public class CsarUtils {
         }
 
         return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
+    }
+
+    private void addServiceMf(Component component, ZipOutputStream zip, LifecycleStateEnum lifecycleState, boolean isInCertificationRequest, String fileName, byte[] mainYaml) throws IOException{
+        // add mf
+        if((component.getComponentType() == ComponentTypeEnum.SERVICE) && (lifecycleState != LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)){
+            String serviceName = component.getName();
+            String createdBy = component.getCreatorUserId();
+            String serviceVersion;
+            if(isInCertificationRequest){
+                int tmp = Integer.valueOf(component.getVersion().split("\\.")[0]) + 1;
+                serviceVersion = String.valueOf(tmp) + ".0";
+            }
+            else{
+                serviceVersion = component.getVersion();
+            }
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            //String createDate = format.format(new Date(component.getCreationDate()));
+            Date date = new Date();
+            String releaseTime = format.format(date);
+
+            if (component.getCategories() == null || component.getCategories().get(0) == null){
+                return;
+            }
+
+            String serviceType = component.getCategories().get(0).getName();
+            String description = component.getDescription();
+            String serviceTemplate = DEFINITIONS_PATH + fileName;
+            String hash = GeneralUtility.calculateMD5Base64EncodedByByteArray(mainYaml);
+            String nsMfBlock0 = createNsMfBlock0(serviceName, createdBy, serviceVersion, releaseTime, serviceType, description, serviceTemplate, hash);
+            byte[] nsMfBlock0Byte = nsMfBlock0.getBytes();
+            zip.putNextEntry(new ZipEntry(Service_Manifest));
+            zip.write(nsMfBlock0Byte);
+        }
     }
 
     private Either<ToscaRepresentation, ResponseFormat> fetchToscaRepresentation(
@@ -747,6 +790,24 @@ public class CsarUtils {
     private String createToscaBlock0(String metaFileVersion, String csarVersion, String createdBy, String entryDef) {
         final String block0template = "TOSCA-Meta-File-Version: %s\nCSAR-Version: %s\nCreated-By: %s\nEntry-Definitions: Definitions/%s\n\nName: csar.meta\nContent-Type: text/plain\n";
         return String.format(block0template, metaFileVersion, csarVersion, createdBy, entryDef);
+    }
+	
+    private String createNsMfBlock0(String serviceName, String createdBy, String serviceVersion, String releaseTime,
+        String serviceType, String description, String serviceTemplate, String hash) {
+        final String block0template = "metadata??\n" +
+            "ns_product_name: %s\n" +
+            "ns_provider_id: %s\n" +
+            "ns_package_version: %s\n" +
+            //"ns_create_date_time: %s\n" +
+            "ns_release_data_time: %s\n" +
+            "ns_type: %s\n" +
+            "ns_package_description: %s\n\n" +
+            "Source: %s\n" +
+            "Algorithm: MD5\n" +
+            "Hash: %s\n\n";
+        return String
+            .format(block0template, serviceName, createdBy, serviceVersion, releaseTime, serviceType, description,
+                serviceTemplate, hash);
     }
 
     /**
