@@ -93,10 +93,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
-          <parallel>classes</parallel>
-          <threadCount>1</threadCount>
-          <forkCount>${fork.count}</forkCount>
-          <forkMode>${fork.mode}</forkMode>
           <printSummary>false</printSummary>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <rerunFailingTestsCount>1</rerunFailingTestsCount>

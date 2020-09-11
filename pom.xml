@@ -136,9 +136,7 @@ Modifications copyright (c) 2018-2019 Nokia
         </sonar.surefire.reportsPath>
         <sonar.javascript.lcov.reportPaths>${project.build.directory}/code-coverage/lcov.info
         </sonar.javascript.lcov.reportPaths>
-        <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/code-coverage/jacoco-html-xml-reports/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
         <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
         <sonar.coverage.exclusions>pom.xml,src/test</sonar.coverage.exclusions>
@@ -161,7 +159,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <!--sdc-security-utils-->
         <security.util.lib.version>1.6.0</security.util.lib.version>
         <!--jacoco-->
-        <jacoco.version>0.8.5</jacoco.version>
+        <jacoco.version>0.8.6</jacoco.version>
 
         <java.driver.core.version>4.5.1</java.driver.core.version>
 
@@ -247,14 +245,6 @@ Modifications copyright (c) 2018-2019 Nokia
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <!-- must be on the classpath -->
-            <groupId>org.jacoco</groupId>
-            <artifactId>org.jacoco.agent</artifactId>
-            <classifier>runtime</classifier>
-            <version>${jacoco.version}</version>
-            <scope>test</scope>
-        </dependency>
         <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -432,32 +422,39 @@ Modifications copyright (c) 2018-2019 Nokia
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
+                <configuration>
+                    <dumpOnExit>true</dumpOnExit>
+                    <append>true</append>
+                    <includes>
+                        <include>org/openecomp/**</include>
+                        <include>org/onap/**</include>
+                    </includes>
+                </configuration>
+                 <executions>
                     <execution>
-                        <id>default-instrument</id>
-                        <goals>
-                            <goal>instrument</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-restore-instrumented-classes</id>
-                        <goals>
-                            <goal>restore-instrumented-classes</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
+                        <id>report-xml</id>
                         <goals>
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                            <!-- Setting explicit path, so that we remember where it picks them up from -->
+                            <dataFile>${project.build.directory}/code-coverage/jacoco.exec</dataFile>
+                            <outputDirectory>${project.build.directory}/code-coverage/jacoco-html-xml-reports</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/code-coverage/jacoco.exec</destFile>
+                            <propertyName>surefireArgLine</propertyName>
+                            <!-- <append>true</append> -->
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -516,14 +513,10 @@ Modifications copyright (c) 2018-2019 Nokia
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <printSummary>false</printSummary>
-                    <systemPropertyVariables>
-                        <jacoco-agent.destfile>${project.build.directory}/jacoco.exec</jacoco-agent.destfile>
-                    </systemPropertyVariables>
                     <forkCount>${surefire.forkCount}</forkCount>
                     <reuseForks>${surefire.reuseForks}</reuseForks>
                     <parallel>methods</parallel>
-                    <skip>${surefire.skip.tests}</skip>
+                    <argLine>${surefireArgLine}</argLine>
                 </configuration>
             </plugin>
             <plugin>
