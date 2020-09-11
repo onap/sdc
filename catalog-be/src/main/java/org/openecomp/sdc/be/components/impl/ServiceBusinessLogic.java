@@ -179,6 +179,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private static final String STATUS_SUCCESS_200 = "200";
     private static final String STATUS_DEPLOYED = "DEPLOYED";
     static final String IS_VALID = "isValid";
+    private static final String PLACE_HOLDER_RESOURCE_TYPES = "validForResourceTypes";
 
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
@@ -2271,12 +2272,55 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     @Override
     public void setDeploymentArtifactsPlaceHolder(Component component, User user) {
-        Service service = (Service) component;
-        Map<String, ArtifactDefinition> artifactMap = service.getDeploymentArtifacts();
-        if (artifactMap == null) {
-            artifactMap = new HashMap<>();
+        if(component instanceof Service){
+            Service service = (Service) component;
+            Map<String, ArtifactDefinition> artifactMap = service.getDeploymentArtifacts();
+            if (artifactMap == null) {
+                artifactMap = new HashMap<>();
+            }
+            service.setDeploymentArtifacts(artifactMap);
+        }else if(component instanceof Resource){
+            Resource resource = (Resource) component;
+            Map<String, ArtifactDefinition> artifactMap = resource.getDeploymentArtifacts();
+            if (artifactMap == null) {
+                artifactMap = new HashMap<>();
+            }
+            Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager()
+                                                                      .getConfiguration().getDeploymentResourceArtifacts();
+            if (deploymentResourceArtifacts != null) {
+                Map<String, ArtifactDefinition> finalArtifactMap = artifactMap;
+                deploymentResourceArtifacts.forEach((k, v)->processDeploymentResourceArtifacts(user, resource, finalArtifactMap, k,v));
+            }
+            resource.setDeploymentArtifacts(artifactMap);
         }
-        service.setDeploymentArtifacts(artifactMap);
+
+    }
+
+    private void processDeploymentResourceArtifacts(User user, Resource resource, Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
+        boolean shouldCreateArtifact = true;
+        Map<String, Object> artifactDetails = (Map<String, Object>) v;
+        Object object = artifactDetails.get(PLACE_HOLDER_RESOURCE_TYPES);
+        if (object != null) {
+            List<String> artifactTypes = (List<String>) object;
+            if (!artifactTypes.contains(resource.getResourceType().name())) {
+                shouldCreateArtifact = false;
+                return;
+            }
+        } else {
+            log.info("resource types for artifact placeholder {} were not defined. default is all resources",
+                    k);
+        }
+        if (shouldCreateArtifact) {
+            if (artifactsBusinessLogic != null) {
+                ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(
+                        resource.getUniqueId(), k, (Map<String, Object>) v,
+                        user, ArtifactGroupTypeEnum.DEPLOYMENT);
+                if (artifactDefinition != null
+                            && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
+                    artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
+                }
+            }
+        }
     }
 
     @Override
@@ -2519,5 +2563,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     @Autowired(required = false)
     public void setServiceCreationPluginList(List<ServiceCreationPlugin> serviceCreationPluginList) {
         this.serviceCreationPluginList = serviceCreationPluginList;
+    }
+
+    public boolean isServiceExist(String serviceName) {
+        Either<Service, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByServiceName(serviceName);
+        return latestByName.isLeft();
     }
 }

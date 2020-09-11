@@ -4491,7 +4491,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return uploadedArtifacts;
     }
 
-    public Either<ArtifactDefinition, Operation> handleLoadedArtifact(Resource component, User user, ArtifactOperationInfo operation, boolean shouldLock, boolean inTransaction,
+    public Either<ArtifactDefinition, Operation> handleLoadedArtifact(Component component, User user, ArtifactOperationInfo operation, boolean shouldLock, boolean inTransaction,
                                                                       ComponentTypeEnum componentType, ArtifactDefinition artifactDefinition) {
         AuditingActionEnum auditingAction = detectAuditingType(operation, "");
         String componentId = component.getUniqueId();

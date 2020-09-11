@@ -71,6 +71,7 @@ import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -79,6 +80,7 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ReplaceVNFInfo;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
@@ -1621,6 +1623,102 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         }
 
         return Either.left(Arrays.asList(convertStatus.left().value()));
+    }
+
+    @POST
+    @Path("/services/replaceVNF")
+    @Operation(description = "Replace new VNF based on the existing VNF", method = "POST",
+            summary = "Return whether the replace VNF is successful", responses = {
+            @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ReplaceVNFInfo.class)))),
+            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+            @ApiResponse(responseCode = "401",
+                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+            @ApiResponse(responseCode = "404",
+                    description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+            @ApiResponse(responseCode = "405",
+                    description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500",
+                    description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+            @ApiResponse(responseCode = "409", description = "Service already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response replaceVNF(
+            @Parameter(description = "The user id",
+                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "X-ECOMP-RequestID header",
+                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+            @Parameter(description = "X-ECOMP-InstanceID header", required = true)
+            @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+            @Parameter(description = "Determines the format of the body of the response",
+                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+            @Parameter(description = "The username and password",
+                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+            @Context final HttpServletRequest request,
+            @Parameter(description = "Resource object to be created", required = true) String data) {
+
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("replaceVNF: Start handle request of {}", url);
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug("replaceVNF:modifier id is {}", userId);
+        validateNotEmptyBody(data);
+
+        Either<ReplaceVNFInfo, ResponseFormat> convertResponse = parseToReplaceVNFInfo(data, modifier);
+        if (convertResponse.isRight()) {
+            throw new ByResponseFormatComponentException(convertResponse.right().value());
+        }
+
+        log.debug("replaceVNF:get ReplaceVNFInfo success");
+
+        String containerComponentType = "services";
+        ReplaceVNFInfo replaceVNFInfo = convertResponse.left().value();
+        String serviceUniqueId = replaceVNFInfo.getServiceUniqueId();
+        String abstractResourceUniqueId = replaceVNFInfo.getAbstractResourceUniqueId();
+        
+        ComponentInstance componentInstance = replaceVNFInfo.getRealVNFComponentInstance();
+        log.debug("replaceVNF:get ReplaceVNFInfo,serviceUniqueId:{},abstractResourceUniqueId:{}",
+                serviceUniqueId,abstractResourceUniqueId);
+        try {
+            /**
+             * delete vnf
+             */
+            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+            if (componentInstanceBusinessLogic == null) {
+                log.debug("replaceVNF:Unsupported component type {}", containerComponentType);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+            }
+            Either<ComponentInstance, ResponseFormat> componentInstanceEither = componentInstanceBusinessLogic.deleteAbstractComponentInstance(containerComponentType, serviceUniqueId, abstractResourceUniqueId, userId);
+            if (componentInstanceEither.isRight()) {
+                log.debug("replaceVNF:delete Abstract ComponentInstance field");
+                return buildErrorResponse(componentInstanceEither.right().value());
+            }
+            /**
+             * add vnf
+             */
+            log.debug("replaceVNF,start add vnf");
+            componentInstance.setInvariantName(null);
+            componentInstance.setCreatedFrom(CreatedFrom.UI);
+
+            Either<ComponentInstance, ResponseFormat> realComponentInstance = componentInstanceBusinessLogic.createRealComponentInstance(containerComponentType, serviceUniqueId, userId, componentInstance);
+            if (realComponentInstance.isRight()) {
+                log.debug("replaceVNF:filed to add vnf");
+                return buildErrorResponse(realComponentInstance.right().value());
+            }
+            ComponentInstance newComponentInstance = realComponentInstance.left().value();
+            log.debug("replaceVNF:success to add vnf");
+            
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), newComponentInstance);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("replaceVNF");
+            log.debug("replaceVNF with exception", e);
+            throw e;
+        }
+    }
+
+    private Either<ReplaceVNFInfo, ResponseFormat> parseToReplaceVNFInfo(String serviceJson, User user) {
+        log.debug("enter parseToReplaceVNFInfo,get serviceJson:{}",serviceJson);
+        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(serviceJson, user, ReplaceVNFInfo.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
     }
 
 }

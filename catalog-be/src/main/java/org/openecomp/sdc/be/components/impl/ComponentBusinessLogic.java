@@ -296,6 +296,39 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.left(result);
     }
 
+    protected void validateIcon(User user, Component component, AuditingActionEnum actionEnum) {
+        log.debug("validate Icon");
+        ComponentTypeEnum type = component.getComponentType();
+        String icon = component.getIcon();
+        if (!ValidationUtils.validateStringNotEmpty(icon)) {
+            log.info("icon is missing.");
+            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
+            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
+            throw new ComponentException(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
+        }
+        try {
+            validateIcon(icon, type);
+        } catch(ComponentException e){
+            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
+                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
+            throw e;
+        }
+    }
+
+    private void validateIcon(String icon, ComponentTypeEnum type) {
+        if (icon != null) {
+            if (!ValidationUtils.validateIconLength(icon)) {
+                log.debug("icon exceeds max length");
+                throw new ComponentException(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
+            }
+
+            if (!ValidationUtils.validateIcon(icon)) {
+                log.info("icon is invalid.");
+                throw new ComponentException(ActionStatus.COMPONENT_INVALID_ICON, type.getValue());
+            }
+        }
+    }
 
     protected void checkComponentFieldsForOverrideAttempt(Component component) {
         if (component.getLifecycleState() != null) {
@@ -331,6 +364,24 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
     }
 
+protected void validateComponentFieldsBeforeCreate(User user, Component component, AuditingActionEnum actionEnum) {
+        // validate component name uniqueness
+        log.debug("validate component name ");
+        componentNameValidator.validateAndCorrectField(user, component, actionEnum);
+        // validate description
+        log.debug("validate description");
+        componentDescriptionValidator.validateAndCorrectField(user, component, actionEnum);
+        // validate tags
+        log.debug("validate tags");
+        componentTagsValidator.validateAndCorrectField(user, component, actionEnum);
+        // validate contact info
+        log.debug("validate contact info");
+        componentContactIdValidator.validateAndCorrectField(user, component, actionEnum);
+        // validate icon
+        log.debug("validate icon");
+        validateIcon(user, component, actionEnum);
+    }
+	
     public CapReqDef getRequirementsAndCapabilities(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
 
         validateUserExists(userId);
