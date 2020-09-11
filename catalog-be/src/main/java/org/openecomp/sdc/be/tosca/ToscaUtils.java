@@ -38,7 +38,7 @@ public class ToscaUtils {
     public static boolean isNotComplexVfc(Component component) {
         if (ComponentTypeEnum.RESOURCE == component.getComponentType()) {
             ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
-            if (ResourceTypeEnum.CVFC == resourceType) {
+            if (ResourceTypeEnum.CVFC == resourceType || (component.getComponentMetadataDefinition().getMetadataDataDefinition().getDescription().equalsIgnoreCase("Nested VF in service"))) {
                 return false;
             }
         }
