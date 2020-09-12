@@ -46,6 +46,7 @@ public class Service extends Component {
 
     private Map<String, ArtifactDefinition> serviceApiArtifacts;
     private Map<String, ForwardingPathDataDefinition> forwardingPaths;
+    private String toscaServiceName;
 
     public Service() {
         super(new ServiceMetadataDefinition());
@@ -178,8 +179,7 @@ public class Service extends Component {
     public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
         setServiceApiArtifacts(specificComponentTypeArtifacts);
     }
-	
-    private String toscaServiceName;
+
 
     public void setServiceVendorModelNumber(String serviceVendorModelNumber) {
         getServiceMetadataDefinition().setServiceVendorModelNumber(serviceVendorModelNumber);

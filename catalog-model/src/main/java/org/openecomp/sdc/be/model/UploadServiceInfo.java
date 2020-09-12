@@ -141,12 +141,4 @@ public class UploadServiceInfo {
       }
     }
   }
-
-  public String getProjectCode() {
-    return projectCode;
-  }
-
-  public void setProjectCode(String projectCode) {
-    this.projectCode = projectCode;
-  }
 }
