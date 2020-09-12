@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f992b216_36edf233",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Service.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1dc80acc_150fa647",
+      "range": {
+        "startLine": 184,
+        "startChar": 3,
+        "endLine": 190,
+        "endChar": 5
+      },
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "38c7d87b_9094f982",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "776f14a8_f889e14e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "38c7d87b_9094f982",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 151,
+        "endChar": 3
+      },
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c49da4d0_3e45582d",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 4
@@ -59,6 +107,24 @@
       "writtenOn": "2020-09-11T11:38:03Z",
       "side": 1,
       "message": "I will fully admit that I lack visibility on that, so just asking.. What is the reason for using double for a version ?",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0a1f586_a708bcc0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Here, version is defined as double, which is just a temporary variable used to compare the version numbers of two versions.",
+      "parentUuid": "c49da4d0_3e45582d",
       "revId": "5222d02afbd74e45382e158ddea54562e169d499",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -82,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "18f48c08_d6a60a32",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Thank you for your comments. I see that we have dealt with the situation where result is null, so we should not return the case of result being null. In line 433, when the result is null, it will enter the following code branch. In line 446 and line 449, the result is assigned for normal and abnormal conditions, respectively. So it looks like this code will not return null. Or did I not understand what you mean? Please explain in detail, thank you very much!",
+      "parentUuid": "45fe02e3_36e3093d",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3128adb3_f32297ae",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 4
@@ -96,6 +180,24 @@
       "revId": "5222d02afbd74e45382e158ddea54562e169d499",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb428c4d_d58dc371",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1496,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3128adb3_f32297ae",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -122,6 +224,30 @@
     },
     {
       "key": {
+        "uuid": "5a2bf30a_773b2b85",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/UploadServiceInfoTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2206c09_5f9abfeb",
+      "range": {
+        "startLine": 1,
+        "startChar": 2,
+        "endLine": 1,
+        "endChar": 3
+      },
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b67035e_5ba9c1eb",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/UploadServiceInfoTest.java",
         "patchSetId": 4
@@ -139,6 +265,24 @@
     },
     {
       "key": {
+        "uuid": "d1da4473_55307674",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/UploadServiceInfoTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b67035e_5ba9c1eb",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "03dbf774_44c8b5fe",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/ArtifactTypeEnum.java",
         "patchSetId": 4
@@ -153,6 +297,24 @@
       "revId": "5222d02afbd74e45382e158ddea54562e169d499",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce580414_3efb9cc4",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/ArtifactTypeEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-12T14:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03dbf774_44c8b5fe",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
