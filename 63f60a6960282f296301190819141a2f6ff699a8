@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9256f2f2_5074b114",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/UploadServiceInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-09-13T09:56:51Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 22
+      },
+      "revId": "63f60a6960282f296301190819141a2f6ff699a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
