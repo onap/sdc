@@ -442,6 +442,8 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 lastCertifiedV.setVertex((JanusGraphVertex) lastCertifiedVertex);
                 lastCertifiedV.setUniqueId((String) janusGraphDao
                     .getProperty((JanusGraphVertex) lastCertifiedVertex, GraphPropertyEnum.UNIQUE_ID.getProperty()));
+                lastCertifiedV.addMetadataProperty(GraphPropertyEnum.IS_ABSTRACT,
+                    (Boolean) janusGraphDao.getProperty((JanusGraphVertex) lastCertifiedVertex, GraphPropertyEnum.IS_ABSTRACT.getProperty()));
                 StorageOperationStatus res = updateEdgeToCatalogRoot(null, lastCertifiedV);
                 if (res != StorageOperationStatus.OK) {
                     return res;
@@ -1264,7 +1266,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
             Boolean isAbstract = (Boolean) newVersionV.getMetadataProperty(GraphPropertyEnum.IS_ABSTRACT);
 			
 			if ( isAbstract == null || !isAbstract ) {
-                // no new vertex, only delete previous
+                // create new vertex
                 JanusGraphOperationStatus
                     result = janusGraphDao
                     .createEdge(catalogV, newVersionV, EdgeLabelEnum.CATALOG_ELEMENT, null);
