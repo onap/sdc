@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "56b03c1b_48641f79",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Service.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T08:17:01Z",
+      "side": 1,
+      "message": "It\u0027s still present :) Probably forgot to push ?",
+      "parentUuid": "f992b216_36edf233",
+      "range": {
+        "startLine": 184,
+        "startChar": 3,
+        "endLine": 190,
+        "endChar": 5
+      },
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "38c7d87b_9094f982",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
         "patchSetId": 4
@@ -93,6 +117,23 @@
       "revId": "5222d02afbd74e45382e158ddea54562e169d499",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "945781cf_ad6c21c0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T08:17:01Z",
+      "side": 1,
+      "message": "Small thing but we put a space between if and (\nand we use spaces not tabs :)",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
@@ -166,6 +207,24 @@
     },
     {
       "key": {
+        "uuid": "3bb3772f_16976ee1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T08:17:01Z",
+      "side": 1,
+      "message": "Yes there is indeed a lot of legacy code, but if we never get a result that is null, we might as well get rid of result entirely and return when it\u0027s done",
+      "parentUuid": "18f48c08_d6a60a32",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3128adb3_f32297ae",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 4
@@ -195,6 +254,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "3128adb3_f32297ae",
+      "revId": "5222d02afbd74e45382e158ddea54562e169d499",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10c5ea18_b52e4995",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1496,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T08:17:01Z",
+      "side": 1,
+      "message": "I am sorry, you probably didn\u0027t pushed the change :)",
+      "parentUuid": "bb428c4d_d58dc371",
       "revId": "5222d02afbd74e45382e158ddea54562e169d499",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
