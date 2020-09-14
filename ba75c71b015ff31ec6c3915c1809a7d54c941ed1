@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "098cfaaa_14ac968e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "Small thing but our convention is to add 1 level of indentation after a {\n\nOn line 162 it\u0027s inlined in fact.. :)",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a547ff2_dcb661d8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "Might be inlined ?",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92bbad51_47af612c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "shouldLock is unused, inTransaction as well",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd405847_515b32f0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "small thing, rf -\u003e rf would do the trick :)",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b60eda6_d398027f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "Another small thing that is present in a lot of places so that will be a general comment, our convention is put a space after a if",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "500d95c1_59fe2797",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1793,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "Sonar will complain about the cognitive complexity of this method",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edfcf4a0_0d3e7897",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1798,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "Could it even be null ?",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12e54363_94c35911",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarArtifactsAndGroupsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1837,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T05:16:55Z",
+      "side": 1,
+      "message": "if return c else return c ??",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
