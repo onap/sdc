@@ -116,56 +116,6 @@ org.openecomp.policies.External:
       description: The name of the policy, that related to specific type, same as it is defined in the source.
       required: false
 
-### Policy types for closed loop ###
-onap.policies.Monitoring:
-  derived_from: tosca.policies.Root
-  description: A base policy type for all policies that governs monitoring provisioning
-onap.policies.monitoring.cdap.tca.hi.lo.app:
-  derived_from: onap.policies.Monitoring
-  version: 1.0.0
-  properties:
-    tca_policy:
-      type: map
-      description: TCA Policy JSON
-      entry_schema:
-        type: onap.datatypes.monitoring.tca_policy
-
-## PM Mapper policies for closed loop ##
-
-onap.policies.monitoring.dcae-pm-mapper:
-  derived_from: onap.policies.Monitoring
-  version : 1.0.0
-  properties:
-    pm-mapper-filter:
-      type: map
-      description: PM mapper filter on measInfo, measInfoId, measType, instanceId
-      entry_schema:
-        type: onap.datatypes.monitoring.pm-mapper-filter
-
-## PM Subscription Handler policy for closed loop ##
-
-onap.policies.monitoring.dcae-pm-subscription-handler:
-  derived_from: onap.policies.Monitoring
-  version : 1.0.0
-  properties:
-    subscription:
-      type: map
-      description: PM Subscription Handler Subscription
-      entry_schema:
-        type: onap.datatypes.monitoring.subscription
-
-## Restconf collector policy for closed loop ##
-
-onap.policies.monitoring.dcae-restconfcollector:
-  derived_from: onap.policies.Monitoring
-  version: 1.0.0
-  properties:
-    rcc_policy:
-      type: list
-      description: RCC Policy JSON
-      entry_schema:
-        type: onap.datatypes.monitoring.rcc_policy
-
 ## NFV policies ##
 tosca.policies.nfv.InstantiationLevels:
   derived_from: tosca.policies.Root

@@ -47,26 +47,6 @@
     "displayName": "External",
     "icon": "policy-external"
   },
-  "onap.policies.Monitoring": {
-    "displayName": "Monitoring",
-    "icon": "policy-monitoring"
-  },
-  "onap.policies.monitoring.cdap.tca.hi.lo.app": {
-    "displayName": "TCA",
-    "icon": "policy-tca"
-  },
-  "onap.policies.monitoring.dcae-pm-mapper": {
-    "displayName": "PM Mapper",
-    "icon": "policy-dcae-pm-mapper"
-  },
-  "onap.policies.monitoring.dcae-pm-subscription-handler": {
-    "displayName": "PM Subscription Handler",
-    "icon": "policy-dcae-pm-subscription-handler"
-  },
-  "onap.policies.monitoring.dcae-restconfcollector": {
-    "displayName": "Restconf Collector",
-    "icon": "policy-dcae-restconfcollector"
-  },
   "tosca.policies.nfv.InstantiationLevels": {
     "displayName": "NFV InstantiationLevels",
     "icon": "policy-nfv-instantiationlevels"
