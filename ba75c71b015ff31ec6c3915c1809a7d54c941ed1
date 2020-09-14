@@ -135,6 +135,227 @@
       "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c021718b_35786dcc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "there are unused parameters :)",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cd7f247_5cedc15d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "there is a unused parameter",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ea365e7_c935249d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "Why do we do this ?",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c6cc43e_d5d46674",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/AbstractTemplateBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "Sonar will complain about this cognitive complexity (it\u0027s 26 here)",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ad9d269_1ca4a2e2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/AbstractTemplateBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "Is there a specific reason to not use a primitive boolean ?",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a79b14c8_11f0e4a9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "It should be indented :)",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bac02fc_2e38af5d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "We might want to at least log it before rethrowing so that we have a trace of what happened if the caller doesn\u0027t do its job",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e98367bf_d59404b3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2306,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "There is no point to changing the value of this local variable if we do a return just after that :)",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd83a63b_b7c2f7c0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2313,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "If fact, as we do a return, this variable doesn\u0027t have any purpose",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2afdeb0c_1db64276",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "General note: Sonar will complain about the size of this class, the size of the methods, the number of parameters",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5fb57631_7397a574",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "Seems safer to me to log it before throwing it",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b75de3b5_65afa7cf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "Sonar will complain about 13 parameters, and one of them is unused",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30a2b89e_aa47ce21",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-14T07:35:29Z",
+      "side": 1,
+      "message": "Sonar will complain about the cognitive complexity being 41 😊",
+      "revId": "ba75c71b015ff31ec6c3915c1809a7d54c941ed1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
