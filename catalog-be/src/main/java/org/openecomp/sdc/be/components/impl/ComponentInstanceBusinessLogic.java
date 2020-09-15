@@ -498,6 +498,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             return createRealComponent(needLock, containerComponent, origComponent, resourceInstance, user);
 
         } catch (ComponentException e) {
+            log.debug("create Real Component Instance failed");
             throw e;
         }
     }

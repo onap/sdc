@@ -18,6 +18,8 @@ package org.openecomp.sdc.be.components.impl;
 
 
 import fj.data.Either;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -69,6 +71,8 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.*;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
+@Getter
+@Setter
 @org.springframework.stereotype.Component
 public class ServiceImportParseLogic {
 
@@ -241,7 +245,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void findAddNodeTypeArtifactsToHandle(CsarInfo csarInfo, Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
+    protected void findAddNodeTypeArtifactsToHandle(CsarInfo csarInfo, Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
                                                   Service resource, Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts, String namespace, ImmutablePair<String, String> vfcToscaNames){
 
         EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
@@ -256,16 +260,23 @@ public class ServiceImportParseLogic {
         } else if (curNodeType != null) {
             // delete all artifacts if have not received artifacts from
             // csar
-            curNodeTypeArtifactsToHandle = new EnumMap<>(ArtifactsBusinessLogic.ArtifactOperationEnum.class);
-            List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
-            // delete all informational artifacts
-            artifactsToDelete.addAll(curNodeType.getArtifacts().values().stream()
+            try {
+                curNodeTypeArtifactsToHandle = new EnumMap<>(ArtifactsBusinessLogic.ArtifactOperationEnum.class);
+                List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
+                // delete all informational artifacts
+                artifactsToDelete.addAll(curNodeType.getArtifacts().values().stream()
                     .filter(a -> a.getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
                     .collect(toList()));
-            // delete all deployment artifacts
-            artifactsToDelete.addAll(curNodeType.getDeploymentArtifacts().values());
-            if (!artifactsToDelete.isEmpty()) {
-                curNodeTypeArtifactsToHandle.put(ArtifactsBusinessLogic.ArtifactOperationEnum.DELETE, artifactsToDelete);
+                // delete all deployment artifacts
+                artifactsToDelete.addAll(curNodeType.getDeploymentArtifacts().values());
+                if (!artifactsToDelete.isEmpty()) {
+                    curNodeTypeArtifactsToHandle
+                        .put(ArtifactsBusinessLogic.ArtifactOperationEnum.DELETE, artifactsToDelete);
+                }
+            } catch (Exception e) {
+                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
+                log.debug("Exception occured when findAddNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
+                throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, vfcToscaNames.getLeft());
             }
         }
         if (MapUtils.isNotEmpty(curNodeTypeArtifactsToHandle)) {
@@ -273,7 +284,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void handleAndAddExtractedVfcsArtifacts(List<ArtifactDefinition> vfcArtifacts,
+    protected void handleAndAddExtractedVfcsArtifacts(List<ArtifactDefinition> vfcArtifacts,
                                                     List<ArtifactDefinition> artifactsToAdd) {
         List<String> vfcArtifactNames = vfcArtifacts.stream().map(ArtifactDataDefinition::getArtifactName)
                 .collect(toList());
@@ -286,7 +297,7 @@ public class ServiceImportParseLogic {
         });
     }
 
-    private Resource findVfcResource(CsarInfo csarInfo, Service resource, String currVfcToscaName, String previousVfcToscaName, StorageOperationStatus status) {
+    protected Resource findVfcResource(CsarInfo csarInfo, Service resource, String currVfcToscaName, String previousVfcToscaName, StorageOperationStatus status) {
         if (status != null && status != StorageOperationStatus.NOT_FOUND) {
             log.debug("Error occured during fetching node type with tosca name {}, error: {}", currVfcToscaName, status);
             throw new ComponentException(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
@@ -298,7 +309,7 @@ public class ServiceImportParseLogic {
         return null;
     }
 
-    private EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> findNodeTypeArtifactsToHandle(
+    protected EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> findNodeTypeArtifactsToHandle(
             Resource curNodeType, List<ArtifactDefinition> extractedArtifacts) {
 
         EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
@@ -316,7 +327,7 @@ public class ServiceImportParseLogic {
         return nodeTypeArtifactsToHandle;
     }
 
-    private Map<String, ArtifactDefinition> collectExistingArtifacts(Resource curNodeType) {
+    protected Map<String, ArtifactDefinition> collectExistingArtifacts(Resource curNodeType) {
         Map<String, ArtifactDefinition> existingArtifacts = new HashMap<>();
         if (curNodeType == null) {
             return existingArtifacts;
@@ -334,7 +345,7 @@ public class ServiceImportParseLogic {
         return existingArtifacts;
     }
 
-    private EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> putFoundArtifacts(List<ArtifactDefinition> artifactsToUpload, List<ArtifactDefinition> artifactsToUpdate, List<ArtifactDefinition> artifactsToDelete) {
+    protected EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> putFoundArtifacts(List<ArtifactDefinition> artifactsToUpload, List<ArtifactDefinition> artifactsToUpdate, List<ArtifactDefinition> artifactsToDelete) {
         EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
         if (!artifactsToUpload.isEmpty() || !artifactsToUpdate.isEmpty() || !artifactsToDelete.isEmpty()) {
             nodeTypeArtifactsToHandle = new EnumMap<>(ArtifactsBusinessLogic.ArtifactOperationEnum.class);
@@ -351,16 +362,23 @@ public class ServiceImportParseLogic {
         return nodeTypeArtifactsToHandle;
     }
 
-    private void processExistingNodeTypeArtifacts(List<ArtifactDefinition> extractedArtifacts, List<ArtifactDefinition> artifactsToUpload,
-                                                  List<ArtifactDefinition> artifactsToUpdate, List<ArtifactDefinition> artifactsToDelete,
-                                                  Map<String, ArtifactDefinition> existingArtifacts) {
-        if (!existingArtifacts.isEmpty()) {
-            extractedArtifacts.stream().forEach(a -> processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, a));
-            artifactsToDelete.addAll(existingArtifacts.values());
+    protected void processExistingNodeTypeArtifacts(List<ArtifactDefinition> extractedArtifacts, List<ArtifactDefinition> artifactsToUpload,
+        List<ArtifactDefinition> artifactsToUpdate, List<ArtifactDefinition> artifactsToDelete,
+        Map<String, ArtifactDefinition> existingArtifacts) {
+        try {
+            if (!existingArtifacts.isEmpty()) {
+                extractedArtifacts.stream()
+                    .forEach(a -> processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, a));
+                artifactsToDelete.addAll(existingArtifacts.values());
+            }
+        } catch (Exception e) {
+            log.debug("Exception occured when processExistingNodeTypeArtifacts, error is:{}", e.getMessage(), e);
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
+
     }
 
-    private void processNodeTypeArtifact(List<ArtifactDefinition> artifactsToUpload, List<ArtifactDefinition> artifactsToUpdate, Map<String, ArtifactDefinition> existingArtifacts, ArtifactDefinition currNewArtifact) {
+    protected void processNodeTypeArtifact(List<ArtifactDefinition> artifactsToUpload, List<ArtifactDefinition> artifactsToUpdate, Map<String, ArtifactDefinition> existingArtifacts, ArtifactDefinition currNewArtifact) {
         Optional<ArtifactDefinition> foundArtifact = existingArtifacts.values()
                 .stream()
                 .filter(a -> a.getArtifactName().equals(currNewArtifact.getArtifactName()))
@@ -379,7 +397,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void updateFoundArtifact(List<ArtifactDefinition> artifactsToUpdate, ArtifactDefinition currNewArtifact, ArtifactDefinition foundArtifact) {
+    protected void updateFoundArtifact(List<ArtifactDefinition> artifactsToUpdate, ArtifactDefinition currNewArtifact, ArtifactDefinition foundArtifact) {
         if (!foundArtifact.getArtifactChecksum().equals(currNewArtifact.getArtifactChecksum())) {
             foundArtifact.setPayload(currNewArtifact.getPayloadData());
             foundArtifact.setPayloadData(
@@ -389,8 +407,6 @@ public class ServiceImportParseLogic {
             artifactsToUpdate.add(foundArtifact);
         }
     }
-
-
 
     public void addNonMetaCreatedArtifactsToSupportRollback(ArtifactOperationInfo operation,
                                                              List<ArtifactDefinition> createdArtifacts,
@@ -423,7 +439,7 @@ public class ServiceImportParseLogic {
         return componentTypeForResponse;
     }
 
-    private boolean isfillGroupMemebersRecursivlyStopCondition(String groupName, Map<String, GroupDefinition> allGroups,
+    protected boolean isfillGroupMemebersRecursivlyStopCondition(String groupName, Map<String, GroupDefinition> allGroups,
                                                                Set<String> allGroupMembers) {
 
         boolean stop = false;
@@ -489,7 +505,7 @@ public class ServiceImportParseLogic {
         return resource;
     }
 
-    private Either<Boolean, ResponseFormat> validateResourceType(User user, Resource resource,
+    protected Either<Boolean, ResponseFormat> validateResourceType(User user, Resource resource,
                                                                  AuditingActionEnum actionEnum) {
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         if (resource.getResourceType() == null) {
@@ -501,7 +517,7 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    private Either<Boolean, ResponseFormat> validateLifecycleTypesCreate(User user, Resource resource,
+    protected Either<Boolean, ResponseFormat> validateLifecycleTypesCreate(User user, Resource resource,
                                                                          AuditingActionEnum actionEnum) {
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         if (resource.getInterfaces() != null && resource.getInterfaces().size() > 0) {
@@ -563,7 +579,7 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    private Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user,
+    protected Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user,
                                                                          ICapabilityTypeOperation capabilityTypeOperation, Resource resource, AuditingActionEnum actionEnum,
                                                                          Either<Boolean, ResponseFormat> eitherResult, Map.Entry<String, List<CapabilityDefinition>> typeEntry,
                                                                          boolean inTransaction) {
@@ -616,37 +632,43 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    private Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user,
+    protected Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user,
                                                                          ICapabilityTypeOperation capabilityTypeOperation, Resource resource, List<?> validationObjects,
                                                                          AuditingActionEnum actionEnum, Either<Boolean, ResponseFormat> eitherResult, String type,
                                                                          boolean inTransaction) {
-        Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation
+        try {
+            Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation
                 .getCapabilityType(type, inTransaction);
-        if (eitherCapTypeFound.isRight()) {
-            if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
-                BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(
+            if (eitherCapTypeFound.isRight()) {
+                if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
+                    BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(
                         CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", type);
-                log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB", type,
+                    log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB", type,
                         resource.getName());
-                BeEcompErrorManager.getInstance()
+                    BeEcompErrorManager.getInstance()
                         .logBeDaoSystemError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES);
-            }
-            log.debug("Trying to get capability type {} failed with error: {}", type,
+                }
+                log.debug("Trying to get capability type {} failed with error: {}", type,
                     eitherCapTypeFound.right().value().name());
-            ResponseFormat errorResponse = null;
-            if (type != null) {
-                errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, type);
-            } else {
-                errorResponse = componentsUtils.getResponseFormatByElement(ActionStatus.MISSING_CAPABILITY_TYPE,
+                ResponseFormat errorResponse = null;
+                if (type != null) {
+                    errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, type);
+                } else {
+                    errorResponse = componentsUtils.getResponseFormatByElement(ActionStatus.MISSING_CAPABILITY_TYPE,
                         validationObjects);
+                }
+                eitherResult = Either.right(errorResponse);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
             }
-            eitherResult = Either.right(errorResponse);
-            componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+
+        } catch (Exception e) {
+            log.debug("Exception occured when validateCapabilityTypeExists, error is:{}", e.getMessage(), e);
+            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, resource.getName());
         }
         return eitherResult;
     }
 
-    private Either<Boolean, ResponseFormat> validateResourceFieldsBeforeCreate(User user, Resource resource,
+    protected Either<Boolean, ResponseFormat> validateResourceFieldsBeforeCreate(User user, Resource resource,
                                                                                AuditingActionEnum actionEnum, boolean inTransaction) {
         serviceBusinessLogic.validateComponentFieldsBeforeCreate(user, resource, actionEnum);
         // validate category
@@ -695,7 +717,7 @@ public class ServiceImportParseLogic {
         return Either.left(true);
     }
 
-    private void validateDerivedFromExist(User user, Resource resource,  AuditingActionEnum actionEnum) {
+    protected void validateDerivedFromExist(User user, Resource resource,  AuditingActionEnum actionEnum) {
         if (resource.getDerivedFrom() == null || resource.getDerivedFrom().isEmpty()) {
             return;
         }
@@ -719,7 +741,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void validateLicenseType(User user, Resource resource,
+    protected void validateLicenseType(User user, Resource resource,
                                      AuditingActionEnum actionEnum) {
         log.debug("validate licenseType");
         String licenseType = resource.getLicenseType();
@@ -738,7 +760,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void validateCost(Resource resource) {
+    protected void validateCost(Resource resource) {
         String cost = resource.getCost();
         if (cost != null) {
             if (!ValidationUtils.validateCost(cost)) {
@@ -748,7 +770,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void validateResourceVendorModelNumber(User user, Resource resource, AuditingActionEnum actionEnum) {
+    protected void validateResourceVendorModelNumber(User user, Resource resource, AuditingActionEnum actionEnum) {
         String resourceVendorModelNumber = resource.getResourceVendorModelNumber();
         if (org.apache.commons.lang.StringUtils.isNotEmpty(resourceVendorModelNumber)) {
             if (!ValidationUtils.validateResourceVendorModelNumberLength(resourceVendorModelNumber)) {
@@ -804,7 +826,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void validateCategory(User user, Resource resource,
+    protected void validateCategory(User user, Resource resource,
                                   AuditingActionEnum actionEnum, boolean inTransaction) {
 
         List<CategoryDefinition> categories = resource.getCategories();
@@ -852,42 +874,49 @@ public class ServiceImportParseLogic {
         validateCategoryListed(category, subcategory, user, resource, actionEnum, inTransaction);
     }
 
-    private void validateCategoryListed(CategoryDefinition category, SubCategoryDefinition subcategory,
+    protected void validateCategoryListed(CategoryDefinition category, SubCategoryDefinition subcategory,
                                         User user, Resource resource, AuditingActionEnum actionEnum, boolean inTransaction) {
         ResponseFormat responseFormat;
         if (category != null && subcategory != null) {
-            log.debug("validating resource category {} against valid categories list", category);
-            Either<List<CategoryDefinition>, ActionStatus> categories = serviceBusinessLogic.elementDao
+            try {
+                log.debug("validating resource category {} against valid categories list", category);
+                Either<List<CategoryDefinition>, ActionStatus> categories = serviceBusinessLogic.elementDao
                     .getAllCategories(NodeTypeEnum.ResourceNewCategory, inTransaction);
-            if (categories.isRight()) {
-                log.debug("failed to retrieve resource categories from Titan");
-                responseFormat = componentsUtils.getResponseFormat(categories.right().value());
-                componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-                throw new ComponentException(categories.right().value());
-            }
-            List<CategoryDefinition> categoryList = categories.left().value();
-            Optional<CategoryDefinition> foundCategory = categoryList.stream()
+                if (categories.isRight()) {
+                    log.debug("failed to retrieve resource categories from Titan");
+                    responseFormat = componentsUtils.getResponseFormat(categories.right().value());
+                    componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
+                    throw new ComponentException(categories.right().value());
+                }
+                List<CategoryDefinition> categoryList = categories.left().value();
+                Optional<CategoryDefinition> foundCategory = categoryList.stream()
                     .filter(cat -> cat.getName().equals(category.getName()))
                     .findFirst();
-            if(!foundCategory.isPresent()){
-                log.debug("Category {} is not part of resource category group. Resource category valid values are {}",
+                if (!foundCategory.isPresent()) {
+                    log.debug(
+                        "Category {} is not part of resource category group. Resource category valid values are {}",
                         category, categoryList);
-                failOnInvalidCategory(user, resource, actionEnum);
-            }
-            Optional<SubCategoryDefinition> foundSubcategory = foundCategory.get()
+                    failOnInvalidCategory(user, resource, actionEnum);
+                }
+                Optional<SubCategoryDefinition> foundSubcategory = foundCategory.get()
                     .getSubcategories()
                     .stream()
                     .filter(subcat -> subcat.getName().equals(subcategory.getName()))
                     .findFirst();
-            if(!foundSubcategory.isPresent()){
-                log.debug("SubCategory {} is not part of resource category group. Resource subcategory valid values are {}",
+                if (!foundSubcategory.isPresent()) {
+                    log.debug(
+                        "SubCategory {} is not part of resource category group. Resource subcategory valid values are {}",
                         subcategory, foundCategory.get().getSubcategories());
-                failOnInvalidCategory(user, resource, actionEnum);
+                    failOnInvalidCategory(user, resource, actionEnum);
+                }
+            }catch(Exception e){
+                log.debug("Exception occured when validateCategoryListed, error is:{}", e.getMessage(), e);
+                throw new ComponentException(ActionStatus.GENERAL_ERROR);
             }
         }
     }
 
-    private void failOnInvalidCategory(User user, Resource resource, AuditingActionEnum actionEnum) {
+    protected void failOnInvalidCategory(User user, Resource resource, AuditingActionEnum actionEnum) {
         ResponseFormat responseFormat;
         responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY,
                 ComponentTypeEnum.RESOURCE.getValue());
@@ -896,7 +925,7 @@ public class ServiceImportParseLogic {
                 ComponentTypeEnum.RESOURCE.getValue());
     }
 
-    private void validateVendorName(User user, Resource resource,
+    protected void validateVendorName(User user, Resource resource,
                                     AuditingActionEnum actionEnum) {
         String vendorName = resource.getVendorName();
         if (!ValidationUtils.validateStringNotEmpty(vendorName)) {
@@ -908,7 +937,7 @@ public class ServiceImportParseLogic {
         validateVendorName(vendorName, user, resource, actionEnum);
     }
 
-    private void validateVendorName(String vendorName, User user, Resource resource,
+    protected void validateVendorName(String vendorName, User user, Resource resource,
                                     AuditingActionEnum actionEnum) {
         if (vendorName != null) {
             if (!ValidationUtils.validateVendorNameLength(vendorName)) {
@@ -1045,7 +1074,7 @@ public class ServiceImportParseLogic {
         return resourceMetaData;
     }
 
-    private String getNodeTypeActualName(String fullName) {
+    protected String getNodeTypeActualName(String fullName) {
         String nameWithouNamespacePrefix = fullName
                 .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
         String[] findTypes = nameWithouNamespacePrefix.split("\\.");
@@ -1141,7 +1170,7 @@ public class ServiceImportParseLogic {
         return findAvailableCapability(validReq, currentCapCompInstance, uploadReqInfo);
     }
 
-    private CapabilityDefinition findAvailableCapability(RequirementDefinition validReq, ComponentInstance instance) {
+    protected CapabilityDefinition findAvailableCapability(RequirementDefinition validReq, ComponentInstance instance) {
         Map<String, List<CapabilityDefinition>> capMap = instance.getCapabilities();
         if (capMap.containsKey(validReq.getCapability())) {
             List<CapabilityDefinition> capList = capMap.get(validReq.getCapability());
@@ -1164,7 +1193,7 @@ public class ServiceImportParseLogic {
         return null;
     }
 
-    private CapabilityDefinition findAvailableCapability(RequirementDefinition validReq,
+    protected CapabilityDefinition findAvailableCapability(RequirementDefinition validReq,
                                                          ComponentInstance currentCapCompInstance, UploadReqInfo uploadReqInfo) {
         CapabilityDefinition cap = null;
         Map<String, List<CapabilityDefinition>> capMap = currentCapCompInstance.getCapabilities();
@@ -1217,7 +1246,7 @@ public class ServiceImportParseLogic {
         return parametersView;
     }
 
-    private void addValidComponentInstanceCapabilities(String key, List<UploadCapInfo> capabilities, String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities, Map<String, List<CapabilityDefinition>> validCapabilitiesMap){
+    protected void addValidComponentInstanceCapabilities(String key, List<UploadCapInfo> capabilities, String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities, Map<String, List<CapabilityDefinition>> validCapabilitiesMap){
         String capabilityType = capabilities.get(0).getType();
         if (defaultCapabilities.containsKey(capabilityType)) {
             CapabilityDefinition defaultCapability = getCapability(resourceId, defaultCapabilities, capabilityType);
@@ -1230,7 +1259,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private CapabilityDefinition getCapability(String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities, String capabilityType) {
+    protected CapabilityDefinition getCapability(String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities, String capabilityType) {
         CapabilityDefinition defaultCapability;
         if (isNotEmpty(defaultCapabilities.get(capabilityType).get(0).getProperties())) {
             defaultCapability = defaultCapabilities.get(capabilityType).get(0);
@@ -1248,7 +1277,7 @@ public class ServiceImportParseLogic {
         return defaultCapability;
     }
 
-    private void validateCapabilityProperties(List<UploadCapInfo> capabilities, String resourceId, CapabilityDefinition defaultCapability) {
+    protected void validateCapabilityProperties(List<UploadCapInfo> capabilities, String resourceId, CapabilityDefinition defaultCapability) {
         if (CollectionUtils.isEmpty(defaultCapability.getProperties())
                 && isNotEmpty(capabilities.get(0).getProperties())) {
             log.debug("Failed to validate capability {} of component {}. Property list is empty. ",
@@ -1262,7 +1291,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void validateUniquenessUpdateUploadedComponentInstanceCapability(
+    protected void validateUniquenessUpdateUploadedComponentInstanceCapability(
             CapabilityDefinition defaultCapability, UploadCapInfo uploadedCapability) {
         List<ComponentInstanceProperty> validProperties = new ArrayList<>();
         Map<String, PropertyDefinition> defaultProperties = defaultCapability.getProperties().stream()
@@ -1318,7 +1347,7 @@ public class ServiceImportParseLogic {
 
     }
 
-    private void processDeploymentResourceArtifacts(User user, Resource resource, Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
+    protected void processDeploymentResourceArtifacts(User user, Resource resource, Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
         boolean shouldCreateArtifact = true;
         Map<String, Object> artifactDetails = (Map<String, Object>) v;
         Object object = artifactDetails.get(PLACE_HOLDER_RESOURCE_TYPES);
@@ -1364,7 +1393,7 @@ public class ServiceImportParseLogic {
 
     }
 
-    private Resource buildComplexVfcMetadata(CsarInfo csarInfo, String nodeName,
+    protected Resource buildComplexVfcMetadata(CsarInfo csarInfo, String nodeName,
                                              Map<String, NodeTypeInfo> nodesInfo) {
         Resource cvfc = new Resource();
         NodeTypeInfo nodeTypeInfo = nodesInfo.get(nodeName);
@@ -1487,14 +1516,14 @@ public class ServiceImportParseLogic {
     }
 
 
-    private void createArtifactsPlaceHolderData(Service service, User user) {
+    protected void createArtifactsPlaceHolderData(Service service, User user) {
         setInformationalArtifactsPlaceHolder(service, user);
         serviceBusinessLogic.setDeploymentArtifactsPlaceHolder(service, user);
         serviceBusinessLogic.setToscaArtifactsPlaceHolders(service, user);
     }
 
     @SuppressWarnings("unchecked")
-    private void setInformationalArtifactsPlaceHolder(Service service, User user) {
+    protected void setInformationalArtifactsPlaceHolder(Service service, User user) {
         Map<String, ArtifactDefinition> artifactMap = service.getArtifacts();
         if (artifactMap == null) {
             artifactMap = new HashMap<>();
@@ -1589,7 +1618,7 @@ public class ServiceImportParseLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateDerivedFromExtending(User user, Resource currentResource,
+    protected Either<Boolean, ResponseFormat> validateDerivedFromExtending(User user, Resource currentResource,
                                                                          Resource updateInfoResource, AuditingActionEnum actionEnum) {
         String currentTemplateName = currentResource.getDerivedFrom().get(0);
         String updatedTemplateName = updateInfoResource.getDerivedFrom().get(0);
@@ -1645,7 +1674,7 @@ public class ServiceImportParseLogic {
     }
 
 
-    private void validateResourceName(Resource currentResource, Resource updateInfoResource,
+    protected void validateResourceName(Resource currentResource, Resource updateInfoResource,
                                       boolean hasBeenCertified, boolean isNested) {
         String resourceNameUpdated = updateInfoResource.getName();
         if (!isResourceNameEquals(currentResource, updateInfoResource)) {
@@ -1663,7 +1692,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private boolean isResourceNameEquals(Resource currentResource, Resource updateInfoResource) {
+    protected boolean isResourceNameEquals(Resource currentResource, Resource updateInfoResource) {
         String resourceNameUpdated = updateInfoResource.getName();
         String resourceNameCurrent = currentResource.getName();
         if (resourceNameCurrent.equals(resourceNameUpdated)) {
@@ -1687,7 +1716,7 @@ public class ServiceImportParseLogic {
         return oldResource;
     }
 
-    private Resource failOnChangeState(ResponseFormat response, User user, Resource oldResource, Resource newResource) {
+    protected Resource failOnChangeState(ResponseFormat response, User user, Resource oldResource, Resource newResource) {
         log.info("resource {} cannot be updated. reason={}", oldResource.getUniqueId(),
                 response.getFormattedMessage());
         componentsUtils.auditResource(response, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
@@ -1727,7 +1756,7 @@ public class ServiceImportParseLogic {
         return updatedResource.left().value();
     }
 
-    private void updateOrCreateGroups(Resource resource, Map<String, GroupDefinition> groups) {
+    protected void updateOrCreateGroups(Resource resource, Map<String, GroupDefinition> groups) {
         List<GroupDefinition> groupsFromResource = resource.getGroups();
         List<GroupDefinition> groupsAsList = updateGroupsMembersUsingResource(groups, new Service());
         List<GroupDefinition> groupsToUpdate = new ArrayList<>();
@@ -1765,7 +1794,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void addGroupsToCreateOrUpdate(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList, List<GroupDefinition> groupsToUpdate, List<GroupDefinition> groupsToCreate) {
+    protected void addGroupsToCreateOrUpdate(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList, List<GroupDefinition> groupsToUpdate, List<GroupDefinition> groupsToCreate) {
         for (GroupDefinition group : groupsAsList) {
             Optional<GroupDefinition> op = groupsFromResource.stream()
                     .filter(p -> p.getInvariantName().equalsIgnoreCase(group.getInvariantName())).findAny();
@@ -1781,7 +1810,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void addGroupsToDelete(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList, List<GroupDefinition> groupsToDelete) {
+    protected void addGroupsToDelete(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList, List<GroupDefinition> groupsToDelete) {
         for (GroupDefinition group : groupsFromResource) {
             Optional<GroupDefinition> op = groupsAsList.stream()
                     .filter(p -> p.getName().equalsIgnoreCase(group.getName())).findAny();
@@ -1791,7 +1820,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private List<GroupDefinition> updateGroupsMembersUsingResource(Map<String, GroupDefinition> groups, Service component) {
+    protected List<GroupDefinition> updateGroupsMembersUsingResource(Map<String, GroupDefinition> groups, Service component) {
 
         List<GroupDefinition> result = new ArrayList<>();
         List<ComponentInstance> componentInstances = component.getComponentInstances();
@@ -1879,7 +1908,7 @@ public class ServiceImportParseLogic {
         return result;
     }
 
-    private void fillAllGroupMemebersRecursivly(String groupName, Map<String, GroupDefinition> allGroups,
+    protected void fillAllGroupMemebersRecursivly(String groupName, Map<String, GroupDefinition> allGroups,
                                                 Set<String> allGroupMembers) {
 
         // Found Cyclic dependency
@@ -1938,7 +1967,7 @@ public class ServiceImportParseLogic {
                 nodeNameValue.getKey(), isNested);
     }
 
-    private UploadResourceInfo fillResourceMetadata(String yamlName, Service resourceVf,
+    protected UploadResourceInfo fillResourceMetadata(String yamlName, Service resourceVf,
                                                     String nodeName, User user) {
         UploadResourceInfo resourceMetaData = new UploadResourceInfo();
 
@@ -2054,7 +2083,7 @@ public class ServiceImportParseLogic {
         return updatedResource.left().value();
     }
 
-    private void setInformationalArtifactsPlaceHolder(Resource resource, User user) {
+    protected void setInformationalArtifactsPlaceHolder(Resource resource, User user) {
         Map<String, ArtifactDefinition> artifactMap = resource.getArtifacts();
         if (artifactMap == null) {
             artifactMap = new HashMap<>();
@@ -2129,7 +2158,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private void handleGetInputs(PropertyDataDefinition property, List<InputDefinition> inputs) {
+    protected void handleGetInputs(PropertyDataDefinition property, List<InputDefinition> inputs) {
         if (isNotEmpty(property.getGetInputValues())) {
             if (inputs == null || inputs.isEmpty()) {
                 log.debug("Failed to add property {} to group. Inputs list is empty ", property);
@@ -2465,7 +2494,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private ResponseFormat addRelationToRI(String yamlName, Resource resource,
+    protected ResponseFormat addRelationToRI(String yamlName, Resource resource,
                                            UploadComponentInstanceInfo nodesInfoValue, List<RequirementCapabilityRelDef> relations) {
         List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
         ComponentInstance currentCompInstance = null;
