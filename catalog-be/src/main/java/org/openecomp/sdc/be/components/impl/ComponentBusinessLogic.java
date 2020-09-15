@@ -364,7 +364,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-protected void validateComponentFieldsBeforeCreate(User user, Component component, AuditingActionEnum actionEnum) {
+    protected void validateComponentFieldsBeforeCreate(User user, Component component, AuditingActionEnum actionEnum) {
         // validate component name uniqueness
         log.debug("validate component name ");
         componentNameValidator.validateAndCorrectField(user, component, actionEnum);

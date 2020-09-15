@@ -19,54 +19,63 @@ package org.openecomp.sdc.be.components.impl;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServiceImportParseLogicTest {
+public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
 
-    private final static String USER_ID = "jh0003";
-    private final static String csar_UUID = "csarUUID";
-    private final static String VF_RESOURCE_NAME = "vfResourceName";
-    private final static String ORIGIN_COMPONENT_VERSION = "1.0";
-    private final static String MAIN_TEMPLATE_NAME = "mainTemplateName";
-    private final static String MAIN_TEMPLATE_CONTENT = "mainTemplateContent";
-    private final static String COMPONENT_INSTANCE_ID = "componentInstanceId";
-    private final static String COMPONENT_INSTANCE_NAME = "componentInstanceName";
-    private final static String FROM_INSTANCE_ID = "fromInstanceId";
-    private final static String RELATION_ID = "relationId";
-    private final static String CAPABILITY_OWNER_ID = "capabilityOwnerId";
-    private final static String CAPABILITY_UID = "capabilityUid";
-    private final static String CAPABILITY_NAME = "capabilityName";
-    private final static String REQUIREMENT_OWNER_ID = "requirementOwnerId";
-    private final static String REQUIREMENT_UID = "requirementUid";
-    private final static String REQUIREMENT_NAME = "requirementName";
-    private final static String RELATIONSHIP_TYPE = "relationshipType";
-    private final static String ARTIFACT_1 = "cloudtech_k8s_charts.zip";
-    private final static String ARTIFACT_2 = "cloudtech_azure_day0.zip";
-    private final static String ARTIFACT_3 = "cloudtech_aws_configtemplate.zip";
-    private final static String ARTIFACT_4 = "k8s_charts.zip";
-    private final static String ARTIFACT_5 = "cloudtech_openstack_configtemplate.zip";
-    private final static String PROP_NAME = "propName";
-    private final static String NON_EXIST_NAME = "nonExistName";
-    private final static String INPUT_ID = "inputId";
-    private final static String ICON_NAME = "icon";
 
     @InjectMocks
     private ServiceImportParseLogic serviceImportParseLogic;
 
-    @Test
-    public void testBuildNodeTypeYaml(){
-
-        Map<String, Object> mapToConvert = new HashMap<>();
-        String nodeResourceType = "VFC";
+    private ServiceImportParseLogic createTestSubject() {
+        return new ServiceImportParseLogic();
     }
 
-    private CsarInfo createCsarInfo(){
+    @Test
+    public void testGetServiceBusinessLogic() {
+        ServiceImportParseLogic testSubject;
+        ServiceBusinessLogic result;
+
+        testSubject = createTestSubject();
+        result = testSubject.getServiceBusinessLogic();
+    }
+
+    @Test
+    public void testSetServiceBusinessLogic() {
+        ServiceImportParseLogic testSubject;
+        ServiceBusinessLogic serviceBusinessLogic = null;
+
+        testSubject = createTestSubject();
+        testSubject.setServiceBusinessLogic(serviceBusinessLogic);
+    }
+
+    @Test
+    public void testGetCapabilityTypeOperation() {
+        ServiceImportParseLogic testSubject;
+        ICapabilityTypeOperation result;
+
+        testSubject = createTestSubject();
+        result = testSubject.getCapabilityTypeOperation();
+    }
+
+    @Test
+    public void testSetCapabilityTypeOperation() {
+        ServiceImportParseLogic testSubject;
+        ICapabilityTypeOperation iCapabilityTypeOperation = null;
+
+        testSubject = createTestSubject();
+        testSubject.setCapabilityTypeOperation(iCapabilityTypeOperation);
+    }
+
+    private CsarInfo createCsarInfo() {
         Map<String, byte[]> csar = new HashMap<>();
         User user = new User();
-        CsarInfo csarInfo = new CsarInfo(user,"csar_UUID",csar,"vfResourceName","mainTemplateName","mainTemplateContent",true);
+        CsarInfo csarInfo = new CsarInfo(user, "csar_UUID", csar, "vfResourceName", "mainTemplateName", "mainTemplateContent", true);
         csarInfo.setVfResourceName("vfResourceName");
         csarInfo.setCsar(csar);
         csarInfo.setCsarUUID("csarUUID");
