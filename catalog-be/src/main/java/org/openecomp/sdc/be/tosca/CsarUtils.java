@@ -22,13 +22,14 @@ package org.openecomp.sdc.be.tosca;
 
 
 import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
+import static org.openecomp.sdc.be.tosca.FJToVavrHelper.Try0.fromEither;
 
 import fj.F;
 import fj.data.Either;
 import java.text.SimpleDateFormat;
 import io.vavr.Tuple2;
-import io.vavr.control.Try;
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -68,7 +69,6 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
-import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
@@ -96,7 +96,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
-import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -112,8 +111,6 @@ import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
-
-import static org.openecomp.sdc.be.tosca.FJToVavrHelper.Try0.fromEither;
 
 /**
  * @author tg851x
@@ -139,8 +136,6 @@ public class CsarUtils {
     @Autowired(required = false)
     private List<CsarEntryGenerator> generators;
 
-    private static final List<String> globalCsarImports = ConfigurationManager.getConfigurationManager()
-        .getConfiguration().getGlobalCsarImports();
     private static final String CONFORMANCE_LEVEL = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
     private static final String SDC_VERSION = ExternalConfiguration.getAppVersion();
     public static final String ARTIFACTS_PATH = "Artifacts/";
@@ -618,7 +613,8 @@ public class CsarUtils {
      * @return true if the zip entry should be handled
      */
     private boolean shouldZipEntryBeHandled(final String entryName) {
-        return globalCsarImports.stream()
+        return ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getGlobalCsarImports().stream()
             .anyMatch(entry -> entry.contains(entryName));
     }
 

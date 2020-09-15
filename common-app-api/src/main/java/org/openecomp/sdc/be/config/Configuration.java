@@ -23,10 +23,12 @@ package org.openecomp.sdc.be.config;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 
@@ -1598,6 +1600,9 @@ public class Configuration extends BasicConfiguration {
     }
 
     public List<String> getGlobalCsarImports() {
+        if (CollectionUtils.isEmpty(globalCsarImports)) {
+            return Collections.emptyList();
+        }
         return globalCsarImports;
     }
 
