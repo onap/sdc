@@ -47,6 +47,7 @@ USER jetty
 COPY --chown=jetty:jetty chef-solo ${JETTY_BASE}/chef-solo/
 COPY --chown=jetty:jetty chef-repo/cookbooks/. ${JETTY_BASE}/chef-solo/cookbooks/
 ADD --chown=jetty:jetty catalog-be-*.war       ${JETTY_BASE}/webappwar/
+COPY --chown=jetty:jetty etsi-nfv-nsd-csar-plugin-*.jar ${JETTY_BASE}/plugins/
 ADD --chown=jetty:jetty context.xml       ${JETTY_BASE}/webapps/
 COPY --chown=jetty:jetty startup.sh ${JETTY_BASE}/
 

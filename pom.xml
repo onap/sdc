@@ -27,6 +27,9 @@ Modifications copyright (c) 2018-2019 Nokia
   <groupId>org.openecomp.sdc</groupId>
   <artifactId>sdc-main</artifactId>
   <version>1.7.1-SNAPSHOT</version>
+  <modules>
+    <module>catalog-be-docker</module>
+  </modules>
   <packaging>pom</packaging>
   <name>sdc</name>
 
