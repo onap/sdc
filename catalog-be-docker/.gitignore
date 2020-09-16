@@ -1,0 +1,6 @@
+/sdc-backend/context.xml
+/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/Artifact-Generator.properties
+/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-error-configuration.yaml
+/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
+/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
+/sdc-backend-init/scripts/

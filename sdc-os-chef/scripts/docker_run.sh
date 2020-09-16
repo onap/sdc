@@ -328,7 +328,6 @@ function sdc-BE {
     --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} \
     --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs \
     --volume ${WORKSPACE}/data/environments:${JETTY_BASE}/chef-solo/environments \
-    --volume "${WORKSPACE}/data/sdc-backend/plugins":${JETTY_BASE}/plugins \
     --publish 8443:8443 --publish 8080:8080 \
     ${ADDITIONAL_ARGUMENTS} \
     "$IMAGE_FULL_NAME"
