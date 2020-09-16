@@ -577,6 +577,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>catalog-model</module>
                 <module>catalog-be</module>
                 <module>catalog-be-plugins</module>
+                <module>catalog-be-docker</module>
                 <module>asdctool</module>
                 <module>catalog-ui</module>
                 <module>catalog-fe</module>
@@ -605,6 +606,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>catalog-model</module>
                 <module>catalog-be</module>
                 <module>catalog-be-plugins</module>
+                <module>catalog-be-docker</module>
                 <module>asdctool</module>
                 <module>catalog-ui</module>
                 <module>catalog-fe</module>
@@ -632,6 +634,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>catalog-model</module>
                 <module>catalog-be</module>
                 <module>catalog-be-plugins</module>
+                <module>catalog-be-docker</module>
                 <module>asdctool</module>
                 <module>catalog-ui</module>
                 <module>catalog-fe</module>
@@ -659,6 +662,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>catalog-model</module>
                 <module>catalog-be</module>
                 <module>catalog-be-plugins</module>
+                <module>catalog-be-docker</module>
                 <module>asdctool</module>
                 <module>catalog-ui</module>
                 <module>catalog-fe</module>

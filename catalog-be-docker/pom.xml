@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ ============LICENSE_START=======================================================
+  ~  Copyright (C) 2020 Nordix Foundation
+  ~  ================================================================================
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  ~  SPDX-License-Identifier: Apache-2.0
+  ~  ============LICENSE_END=========================================================
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>sdc-main</artifactId>
+    <groupId>org.openecomp.sdc</groupId>
+    <version>1.7.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>catalog-be-docker</artifactId>
+  <packaging>pom</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>clean.sdc.backend.folder</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <filesets>
+                <!-- static configuration files -->
+                <fileset>
+                  <directory>
+                    sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default
+                  </directory>
+                  <followSymlinks>false</followSymlinks>
+                  <includes>
+                    <include>Artifact-Generator.properties</include>
+                    <include>error-configuration.yaml</include>
+                    <include>ecomp-error-configuration.yaml</include>
+                    <include>logback.xml</include>
+                  </includes>
+                </fileset>
+                <!-- BE WAR's -->
+                <fileset>
+                  <directory>sdc-backend</directory>
+                  <followSymlinks>false</followSymlinks>
+                  <includes>
+                    <include>*.war</include>
+                    <include>*.jar</include>
+                    <include>context.xml</include>
+                  </includes>
+                </fileset>
+                <fileset>
+                  <directory>sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default</directory>
+                  <followSymlinks>false</followSymlinks>
+                  <includes>
+                    <include>normatives.tar.gz</include>
+                  </includes>
+                </fileset>
+                <fileset>
+                  <directory>sdc-backend-init</directory>
+                  <followSymlinks>false</followSymlinks>
+                  <includes>
+                    <include>scripts/**</include>
+                  </includes>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>docker-staging</id>
+      <properties>
+        <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
+        <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>docker</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+              <execution>
+                <id>copy-context-file</id>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <copy file="sdc-backend/context.xml.template" tofile="sdc-backend/context.xml"
+                      overwrite="true"/>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>set-version-in-context-file</id>
+                <phase>generate-resources</phase>
+                <configuration>
+                  <target>
+                    <replace file="sdc-backend/context.xml">
+                      <replacetoken>projectversion</replacetoken>
+                      <replacevalue>${project.version}</replacevalue>
+                    </replace>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-static-configuration-files</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>
+                    sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default
+                  </outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.parent.basedir}/catalog-be/src/main/resources/config
+                      </directory>
+                      <includes>
+                        <include>Artifact-Generator.properties</include>
+                        <include>error-configuration.yaml</include>
+                        <include>ecomp-error-configuration.yaml</include>
+                        <include>logback.xml</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-resources-be</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>sdc-backend</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.parent.basedir}/catalog-be/target</directory>
+                      <includes>
+                        <include>catalog-be-${project.version}.war</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-normatives</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>
+                    sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
+                  </outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.parent.basedir}/catalog-be/target</directory>
+                      <includes>
+                        <include>normatives.tar.gz</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-sdc-be-py</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>
+                    sdc-backend-init/
+                  </outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.parent.basedir}/catalog-be/src/main/resources/</directory>
+                      <includes>
+                        <include>scripts/sdcBePy/**</include>
+                        <inculde>scripts/setup.py</inculde>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-catalog-be-plugins</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>sdc-backend</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.parent.basedir}/catalog-be-plugins/etsi-nfv-nsd-csar-plugin/target</directory>
+                      <includes>
+                        <include>etsi-nfv-nsd-csar-plugin-${project.version}.jar</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <apiVersion>1.23</apiVersion>
+              <registry>nexus3.onap.org:10001</registry>
+              <authConfig>
+                <pull>
+                  <username>docker</username>
+                  <password>docker</password>
+                </pull>
+              </authConfig>
+              <images>
+
+                <!-- Build backend image -->
+                <image>
+                  <name>onap/sdc-backend</name>
+                  <alias>sdc-backend</alias>
+                  <build>
+                    <cleanup>try</cleanup>
+                    <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
+                    <tags>
+                      <tag>${docker.tag}</tag>
+                      <tag>
+                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                      </tag>
+                    </tags>
+                  </build>
+                </image>
+                <!-- Build backend-init image -->
+                <image>
+                  <name>onap/sdc-backend-init</name>
+                  <alias>sdc-backend-init</alias>
+                  <build>
+                    <cleanup>try</cleanup>
+                    <dockerFileDir>${project.basedir}/sdc-backend-init</dockerFileDir>
+                    <tags>
+                      <tag>${docker.tag}</tag>
+                      <tag>
+                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                      </tag>
+                    </tags>
+                  </build>
+                </image>
+              </images>
+            </configuration>
+            <executions>
+              <execution>
+                <id>clean-images</id>
+                <phase>pre-clean</phase>
+                <goals>
+                  <goal>remove</goal>
+                </goals>
+                <configuration>
+                  <removeAll>true</removeAll>
+                  <image>onap/sdc-backend,onap/sdc-backend-init</image>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>generate-images</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+              </execution>
+
+              <execution>
+                <id>push-images</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>push</goal>
+                </goals>
+                <configuration>
+                  <image>onap/sdc-backend,onap/sdc-backend-init</image>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
