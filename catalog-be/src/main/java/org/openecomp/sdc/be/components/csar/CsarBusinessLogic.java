@@ -101,12 +101,12 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public void validateCsarBeforeCreate(Service resource, AuditingActionEnum auditingAction, User user, String csarUUID) {
+    public void validateCsarBeforeCreate(Service resource, String csarUUID) {
         // check if VF with the same Csar UUID or with he same name already
         // exists
         StorageOperationStatus status = toscaOperationFacade.validateCsarUuidUniqueness(csarUUID);
-        log.debug("enter validateCsarBeforeCreate,get status:{}",status);
-        if(status == StorageOperationStatus.ENTITY_ALREADY_EXISTS){
+        log.debug("enter validateCsarBeforeCreate,get status:{}", status);
+        if (status == StorageOperationStatus.ENTITY_ALREADY_EXISTS) {
             log.debug("Failed to create resource {}, csarUUID {} already exist for a different VF ",
                     resource.getSystemName(), csarUUID);
         } else if (status != StorageOperationStatus.OK) {
@@ -236,7 +236,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         throw new ByResponseFormatComponentException(errorResponse, params);
     }
 
-    private Map<String, byte[]> getCsar(Service service, User user, Map<String, byte[]> payload, String csarUUID) {
+    private Map<String, byte[]> getCsar(User user, Map<String, byte[]> payload, String csarUUID) {
         if (payload != null) {
             return payload;
         }
@@ -244,11 +244,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         if (csar.isRight()) {
             StorageOperationStatus value = csar.right().value();
             log.debug("#getCsar - failed to fetch csar with ID {}, error: {}", csarUUID, value);
-            BeEcompErrorManager.getInstance()
-                .logBeDaoSystemError(CREATING_RESOURCE_FROM_CSAR_FETCHING_CSAR_WITH_ID + csarUUID + FAILED);
-            ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(value), csarUUID);
-            throw new StorageException(csar.right().value());
+            throw new StorageException(value);
         }
         return csar.left().value();
     }
