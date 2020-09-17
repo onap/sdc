@@ -28,11 +28,11 @@ import {
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
 import {ModalService} from 'app/ng2/services/modal.service';
-import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ComponentMetadata} from '../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../models/service-instance-properties-and-interfaces';
 import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
+import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
 
 export class ConstraintObject {
   servicePropertyName: string;
@@ -114,7 +114,8 @@ export class SubstitutionFilterComponent {
   isLoading: boolean;
   parentServiceInputs: InputBEModel[] = [];
   operatorTypes: any[];
-  constraintObjects: ConstraintObject[] = [];
+  constraintProperties: ConstraintObject[] = [];
+  PROPERTIES: string = ToscaFilterConstraintType.PROPERTIES;
 
   @Input() readonly: boolean;
   @Input() compositeService: ComponentMetadata;
@@ -122,6 +123,7 @@ export class SubstitutionFilterComponent {
   @Input() selectedInstanceSiblings: ServiceInstanceObject[];
   @Input() selectedInstanceConstraints: ConstraintObject[] = [];
   @Input() selectedInstanceProperties: PropertyBEModel[] = [];
+  @Output() updateSubstitutionFilterProperties: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
   @Output() updateConstraintListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
   @Output() loadConstraintListEvent: EventEmitter<any> = new EventEmitter();
   @Output() hasSubstitutionFilter = new EventEmitter<boolean>();
@@ -136,34 +138,35 @@ export class SubstitutionFilterComponent {
       {label: '<', value: OPERATOR_TYPES.LESS_THAN},
       {label: '=', value: OPERATOR_TYPES.EQUAL}
     ];
-    this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((result: ComponentGenericResponse) => {
-      this.parentServiceInputs = result.inputs;
-    });
-    this.loadAllInstances();
+    this.loadSubstitutionFilter();
     this.translateService.languageChangedObservable.subscribe((lang) => {
       I18nTexts.translateTexts(this.translateService);
     });
   }
 
   ngOnChanges(changes) {
-    if (changes.currentServiceInstance) {
-      this.currentServiceInstance = changes.currentServiceInstance.currentValue;
+    if (changes.compositeService) {
+      this.compositeService = changes.compositeService.currentValue;
     }
     if (changes.selectedInstanceConstraints && changes.selectedInstanceConstraints.currentValue !== changes.selectedInstanceConstraints.previousValue) {
       this.selectedInstanceConstraints = changes.selectedInstanceConstraints.currentValue;
-      this.loadAllInstances();
+      this.loadSubstitutionFilter();
     }
   }
 
-  public loadAllInstances = (): void => {
-    this.topologyTemplateService.getComponentCompositionData(this.compositeService.uniqueId, this.compositeService.componentType).subscribe((response) => {
-      response.componentInstances.forEach(componentInstance => this.getSubstitutionFilter(componentInstance))
-    })
+  private loadSubstitutionFilter = (): void => {
+    this.topologyTemplateService.getSubstitutionFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId)
+    .subscribe((response) => {
+      if (response.substitutionFilterForTopologyTemplate && response.substitutionFilterForTopologyTemplate[this.compositeService.uniqueId]) {
+             this.constraintProperties = response.
+                 substitutionFilterForTopologyTemplate[this.compositeService.uniqueId].properties;
+      }
+    });
   }
 
-  onAddSubstitutionFilter() {
+  onAddSubstitutionFilter = (constraintType: string) => {
     const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
-    const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', this.createSubstitutionFilter, this.getDisabled);
+    const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createSubstitutionFilter(constraintType), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.addSubstitutionFilterTxt, '', [saveButton, cancelButton], 'standard');
     this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
     this.modalServiceNg2.addDynamicContentToModal(
@@ -181,27 +184,27 @@ export class SubstitutionFilterComponent {
     this.modalInstance.instance.open();
   }
 
-  createSubstitutionFilter = (): void => {
+  createSubstitutionFilter = (constraintType: string) => {
     const newSubstitutionFilter: ConstraintObject = new ConstraintObject(this.modalInstance.instance.dynamicContent.instance.currentRule);
     this.isLoading = true;
     this.topologyTemplateService.createSubstitutionFilterConstraints(
         this.compositeService.uniqueId,
-        this.currentServiceInstance.uniqueId,
         newSubstitutionFilter,
-        this.compositeService.componentType
+        this.compositeService.componentType,
+        constraintType
     ).subscribe((response) => {
-      this.updateConstraintListEvent.emit(response.properties);
+      this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
-    }, () => {
+    }, (err) => {
       console.error("Failed to Create Substitution Filter on the component with id: ", this.compositeService.uniqueId);
       this.isLoading = false;
     });
     this.modalServiceNg2.closeCurrentModal();
   }
 
-  onSelectFilter(index: number) {
+  onSelectSubstitutionFilter(constraintType: string, index: number) {
     const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
-    const updateButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateSubstitutionFilter(), this.getDisabled);
+    const updateButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateSubstitutionFilter(constraintType), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateSubstitutionFilterTxt, '', [updateButton, cancelButton], 'standard');
     this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
     this.modalServiceNg2.addDynamicContentToModal(
@@ -209,7 +212,7 @@ export class SubstitutionFilterComponent {
         ServiceDependenciesEditorComponent,
         {
           serviceRuleIndex: index,
-          serviceRules: _.map(this.constraintObjects, (constraint) => new ConstraintObjectUI(constraint)),
+          serviceRules: _.map(this.constraintProperties, (constraint) => new ConstraintObjectUI(constraint)),
           currentServiceName: this.currentServiceInstance.name,
           operatorTypes: this.operatorTypes,
           compositeServiceName: this.compositeService.name,
@@ -221,17 +224,16 @@ export class SubstitutionFilterComponent {
     this.modalInstance.instance.open();
   }
 
-  updateSubstitutionFilter = (): void => {
-    const constraintToUpdate: ConstraintObject = this.modalInstance.instance.dynamicContent.instance.serviceRulesList.map((rule) => new ConstraintObject(rule));
+  updateSubstitutionFilter = (constraintType: string): void => {
+    const constraintToUpdate: ConstraintObject[] = this.modalInstance.instance.dynamicContent.instance.serviceRulesList.map((rule) => new ConstraintObject(rule));
     this.isLoading = true;
     this.topologyTemplateService.updateSubstitutionFilterConstraints(
         this.compositeService.uniqueId,
-        this.currentServiceInstance.uniqueId,
         constraintToUpdate,
-        this.compositeService.componentType
+        this.compositeService.componentType,
+        constraintType
     ).subscribe((response) => {
-      this.hasSubstitutionFilter.emit(this.isSubstitutionFilterSet());
-      this.updateConstraintListEvent.emit(response.properties);
+      this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
     }, () => {
       console.error("Failed to Update Substitution Filter on the component with id: ", this.compositeService.uniqueId);
@@ -240,22 +242,21 @@ export class SubstitutionFilterComponent {
     this.modalServiceNg2.closeCurrentModal();
   }
 
-  onDeleteSubstitutionFilter = (index: number) => {
+  onDeleteSubstitutionFilter = (constraintType: string, index: number) => {
     this.isLoading = true;
     this.topologyTemplateService.deleteSubstitutionFilterConstraints(
         this.compositeService.uniqueId,
-        this.currentServiceInstance.uniqueId,
         index,
-        this.compositeService.componentType
+        this.compositeService.componentType,
+        constraintType
     ).subscribe((response) => {
-      console.log("on Delete - Response Properties: ", response.properties);
-      this.updateConstraintListEvent.emit(response.properties);
+      this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
-    }, () => {
-      console.error("Failed to Delete Substitution Filter on the component with id: ", this.compositeService.uniqueId);
+    }, (error) => {
+      console.error("Failed to Delete Substitution Filter on the component with id: ",
+          this.compositeService.uniqueId, error);
       this.isLoading = false;
     });
-    this.constraintObjects = [];
     this.modalServiceNg2.closeCurrentModal();
   }
 
@@ -274,23 +275,15 @@ export class SubstitutionFilterComponent {
     }
   }
 
-  openDeleteModal = (index: number) => {
+  openDeleteModal = (constraintType: string, index: number) => {
     this.modalServiceNg2.createActionModal(I18nTexts.deleteSubstitutionFilterTxt, I18nTexts.deleteSubstitutionFilterMsg,
-        I18nTexts.modalDelete, () => this.onDeleteSubstitutionFilter(index), I18nTexts.modalCancel).instance.open();
+        I18nTexts.modalDelete, () => this.onDeleteSubstitutionFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
   }
 
-  private getSubstitutionFilter = (componentInstance: ComponentInstance): void => {
-    this.topologyTemplateService.getSubstitutionFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((response) => {
-      const substitutionFilter: ConstraintObject[] = response.substitutionFilterForTopologyTemplate[componentInstance.uniqueId].properties;
-      if (substitutionFilter) {
-        this.currentServiceInstance = componentInstance;
-        this.constraintObjects = substitutionFilter;
+  private emitEventOnChanges(constraintType: string, response) {
+      if (ToscaFilterConstraintType.PROPERTIES === constraintType) {
+              this.updateSubstitutionFilterProperties.emit(response.properties);
+              this.constraintProperties = response.properties;
       }
-    });
   }
-
-  private isSubstitutionFilterSet = (): boolean => {
-    return Array.isArray(this.constraintObjects) && this.constraintObjects.length > 0;
-  }
-
 }

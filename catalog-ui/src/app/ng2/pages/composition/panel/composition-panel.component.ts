@@ -142,11 +142,11 @@ export class CompositionPanelComponent {
 
         if (component.isService() && !this.selectedComponentIsServiceProxyInstance() && !this.selectedComponentIsServiceSubstitutionInstance()) {
             this.tabs.push(tabs.apiArtifacts);
+            this.tabs.push(tabs.substitutionFilter);
         }
         if (component.isService() && (this.selectedComponentIsServiceProxyInstance() || this.selectedComponentIsServiceSubstitutionInstance())) {
             this.tabs.push(tabs.consumption);
             this.tabs.push(tabs.dependencies);
-            this.tabs.push(tabs.substitutionFilter)
         } else if (component.isResource() && this.selectedComponentIsVfcInstance()) {
             this.tabs.push(tabs.dependencies);
         }

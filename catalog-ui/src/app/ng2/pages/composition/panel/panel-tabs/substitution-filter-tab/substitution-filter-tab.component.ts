@@ -20,14 +20,8 @@
 import { Component, Input } from '@angular/core';
 import { Store } from '@ngxs/store';
 import {
-    CapabilitiesGroup,
-    Capability,
     Component as TopologyTemplate,
-    ComponentInstance,
     FullComponentInstance,
-    InputBEModel,
-    InputsGroup,
-    InterfaceModel,
     PropertiesGroup,
     PropertyBEModel,
 } from 'app/models';
@@ -73,8 +67,6 @@ export class SubstitutionFilterTabComponent {
         this.metaData = this.workspaceService.metadata;
         this.isComponentInstanceSelected = this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
         this.initInstancesWithProperties();
-        this.loadConstraints();
-        this.initInstancesWithProperties();
     }
 
     public loadConstraints = (): void => {
@@ -93,12 +85,11 @@ export class SubstitutionFilterTabComponent {
     }
 
     private initInstancesWithProperties = (): void => {
-        this.topologyTemplateService.getComponentInstanceProperties(this.metaData.componentType, this.metaData.uniqueId).subscribe((genericResponse: ComponentGenericResponse) => {
-            this.componentInstanceProperties = genericResponse.componentInstancesProperties;
+        this.topologyTemplateService.getComponentPropertiesSubstitutionFilter(this.metaData.componentType, this.metaData.uniqueId).subscribe((genericResponse: ComponentGenericResponse) => {
+            this.selectedInstanceProperties = genericResponse.properties;
             this.updateInstanceAttributes();
         });
     }
-
 
     private updateInstanceAttributes = (): void => {
         if (this.isComponentInstanceSelected && this.componentInstanceProperties) {

@@ -36,7 +36,6 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterProp
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -69,7 +68,8 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
                                                     final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                                     final ArtifactsOperations artifactToscaOperation,
                                                     final SubstitutionFilterOperation substitutionFilterOperation,
-                                                    final NodeFilterValidator nodeFilterValidator) {
+                                                    NodeFilterValidator nodeFilterValidator)
+                                                     {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactToscaOperation);
         this.substitutionFilterOperation = substitutionFilterOperation;
@@ -77,21 +77,14 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
     }
 
     public Optional<SubstitutionFilterDataDefinition> createSubstitutionFilterIfNotExist(final String componentId,
-                                                                                         final String componentInstanceId,
                                                                                          final boolean shouldLock,
                                                                                          final ComponentTypeEnum componentTypeEnum)
-        throws BusinessLogicException {
+            throws BusinessLogicException {
 
         final Component component = getComponent(componentId);
-        final Optional<ComponentInstance> componentInstanceOptional =
-            getComponentInstance(componentInstanceId, component);
-
-        Optional<SubstitutionFilterDataDefinition> substitutionFilterDataDefinition;
-        if (componentInstanceOptional.isPresent()) {
-            substitutionFilterDataDefinition = getSubstitutionFilterDataDefinition(componentInstanceOptional.get());
-            if (substitutionFilterDataDefinition.isPresent()) {
-                return substitutionFilterDataDefinition;
-            }
+        Optional<SubstitutionFilterDataDefinition> substitutionFilterDataDefinition = Optional.ofNullable(component.getSubstitutionFilter());
+        if (substitutionFilterDataDefinition.isPresent()) {
+            return substitutionFilterDataDefinition;
         }
         boolean wasLocked = false;
         try {
@@ -100,24 +93,22 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
                 wasLocked = true;
             }
             final Either<SubstitutionFilterDataDefinition, StorageOperationStatus> result = substitutionFilterOperation
-                .createSubstitutionFilter(componentId, componentInstanceId);
+                    .createSubstitutionFilter(componentId);
             if (result.isRight()) {
                 janusGraphDao.rollback();
                 LOGGER.error(BUSINESS_PROCESS_ERROR,
-                    "Failed to Create Substitution filter on component with id {}", componentId);
+                        "Failed to Create Substitution filter on component with id {}", componentId);
                 throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
-                    .convertFromStorageResponse(result.right().value()), component.getSystemName()));
+                        .convertFromStorageResponse(result.right().value()), component.getSystemName()));
             }
             substitutionFilterDataDefinition = Optional.ofNullable(result.left().value());
-            if (componentInstanceOptional.isPresent() && substitutionFilterDataDefinition.isPresent()) {
-                componentInstanceOptional.get().setSubstitutionFilter(substitutionFilterDataDefinition.get());
-            }
+            component.setSubstitutionFilter(substitutionFilterDataDefinition.get());
             janusGraphDao.commit();
             LOGGER.debug("Substitution filter successfully created in component {} . ", component.getSystemName());
         } catch (final Exception e) {
             janusGraphDao.rollback();
             LOGGER.error(BUSINESS_PROCESS_ERROR,
-                "Exception occurred during add Component Substitution filter property values: {}", e.getMessage(), e);
+                    "Exception occurred during add Component Substitution filter property values: {}", e.getMessage(), e);
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 
         } finally {
@@ -130,8 +121,6 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
     }
 
     public Optional<SubstitutionFilterDataDefinition> addSubstitutionFilter(final String componentId,
-                                                                            final String componentInstanceId,
-                                                                            final NodeFilterConstraintAction action,
                                                                             final String propertyName,
                                                                             final String constraint,
                                                                             final boolean shouldLock,
@@ -139,9 +128,14 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
         throws BusinessLogicException {
 
         final Component component = getComponent(componentId);
-        SubstitutionFilterDataDefinition substitutionFilterDataDefinition = validateAndReturnSubstitutionFilterDefinition(
-            componentInstanceId,
-            action, constraint, component);
+
+        final Either<Boolean, ResponseFormat> response = nodeFilterValidator
+                .validateComponentFilter(component, Collections.singletonList(constraint), NodeFilterConstraintAction.ADD);
+        if (response.isRight()) {
+            throw new BusinessLogicException(componentsUtils
+                    .getResponseFormat(ActionStatus.SUBSTITUTION_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
+        }
+
         boolean wasLocked = false;
         try {
             if (shouldLock) {
@@ -152,19 +146,19 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
                 new RequirementSubstitutionFilterPropertyDataDefinition();
             newProperty.setName(propertyName);
             newProperty.setConstraints(Collections.singletonList(constraint));
-            final Either<SubstitutionFilterDataDefinition, StorageOperationStatus> result = substitutionFilterOperation
-                .addNewProperty(componentId, componentInstanceId, substitutionFilterDataDefinition, newProperty);
+            final Either<SubstitutionFilterDataDefinition, StorageOperationStatus> resultEither =
+                substitutionFilterOperation
+                    .addPropertyFilter(componentId, component.getSubstitutionFilter(), newProperty);
 
-            if (result.isRight()) {
+            if (resultEither.isRight()) {
                 janusGraphDao.rollback();
                 throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
-                    .convertFromStorageResponse(result.right().value()), component.getSystemName()));
-            } else {
-                substitutionFilterDataDefinition = result.left().value();
+                    .convertFromStorageResponse(resultEither.right().value()), component.getSystemName()));
             }
+
             janusGraphDao.commit();
             LOGGER.debug("Substitution filter successfully created in component {} . ", component.getSystemName());
-
+            return Optional.ofNullable(resultEither.left().value());
         } catch (final Exception e) {
             janusGraphDao.rollback();
             LOGGER.error(BUSINESS_PROCESS_ERROR,
@@ -176,11 +170,10 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
                 unlockComponent(component.getUniqueId(), componentTypeEnum);
             }
         }
-        return Optional.ofNullable(substitutionFilterDataDefinition);
+
     }
 
     public Optional<SubstitutionFilterDataDefinition> updateSubstitutionFilter(final String componentId,
-                                                                               final String componentInstanceId,
                                                                                final List<String> constraints,
                                                                                final boolean shouldLock,
                                                                                final ComponentTypeEnum componentTypeEnum)
@@ -189,19 +182,13 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
         final Component component = getComponent(componentId);
 
         final Either<Boolean, ResponseFormat> response = nodeFilterValidator
-            .validateFilter(component, componentInstanceId, constraints, NodeFilterConstraintAction.UPDATE);
+                .validateComponentFilter(component, constraints, NodeFilterConstraintAction.UPDATE);
         if (response.isRight()) {
             throw new BusinessLogicException(componentsUtils
-                .getResponseFormat(SUBSTITUTION_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
+                    .getResponseFormat(ActionStatus.SUBSTITUTION_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
         }
-        final Optional<ComponentInstance> componentInstance = getComponentInstance(componentInstanceId,
-            component);
-        if (!componentInstance.isPresent()) {
-            throw new BusinessLogicException(ResponseFormatManager.getInstance()
-                .getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-        SubstitutionFilterDataDefinition substitutionFilterDataDefinition = componentInstance.get()
-            .getSubstitutionFilter();
+
+        SubstitutionFilterDataDefinition substitutionFilterDataDefinition = component.getSubstitutionFilter();
         if (substitutionFilterDataDefinition == null) {
             throw new BusinessLogicException(componentsUtils.getResponseFormat(SUBSTITUTION_FILTER_NOT_FOUND));
         }
@@ -212,9 +199,9 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
                 wasLocked = true;
             }
             final List<RequirementSubstitutionFilterPropertyDataDefinition> properties = constraints.stream()
-                .map(this::getRequirementSubstitutionFilterPropertyDataDefinition).collect(Collectors.toList());
+                    .map(this::getRequirementSubstitutionFilterPropertyDataDefinition).collect(Collectors.toList());
             final Either<SubstitutionFilterDataDefinition, StorageOperationStatus> result = substitutionFilterOperation
-                .updateSubstitutionFilter(componentId, componentInstanceId, substitutionFilterDataDefinition, properties);
+                    .updateProperties(componentId, substitutionFilterDataDefinition, properties);
 
             if (result.isRight()) {
                 janusGraphDao.rollback();
@@ -241,17 +228,13 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
     }
 
     public Optional<SubstitutionFilterDataDefinition> deleteSubstitutionFilter(final String componentId,
-                                                                               final String componentInstanceId,
-                                                                               final NodeFilterConstraintAction action,
-                                                                               final String constraint,
                                                                                final int position,
                                                                                final boolean shouldLock,
                                                                                final ComponentTypeEnum componentTypeEnum)
         throws BusinessLogicException {
 
         final Component component = getComponent(componentId);
-        SubstitutionFilterDataDefinition substitutionFilterDataDefinition =
-            validateAndReturnSubstitutionFilterDefinition(componentInstanceId, action, constraint, component);
+        SubstitutionFilterDataDefinition substitutionFilterDataDefinition = component.getSubstitutionFilter();
         boolean wasLocked = false;
         try {
             if (shouldLock) {
@@ -259,7 +242,7 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
                 wasLocked = true;
             }
             final Either<SubstitutionFilterDataDefinition, StorageOperationStatus> result = substitutionFilterOperation
-                .deleteConstraint(componentId, componentInstanceId, substitutionFilterDataDefinition, position);
+                .deleteConstraint(componentId, substitutionFilterDataDefinition, position);
             if (result.isRight()) {
                 janusGraphDao.rollback();
                 throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
@@ -285,17 +268,6 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
         return Optional.ofNullable(substitutionFilterDataDefinition);
     }
 
-    private Optional<SubstitutionFilterDataDefinition> getSubstitutionFilterDataDefinition(
-        final ComponentInstance componentInstance) {
-
-        final SubstitutionFilterDataDefinition substitutionFilterDataDefinition =
-            componentInstance.getSubstitutionFilter();
-        if (componentInstance.getSubstitutionFilter() != null) {
-            return Optional.ofNullable(substitutionFilterDataDefinition);
-        }
-        return Optional.empty();
-    }
-
     private void unlockComponent(final String componentUniqueId,
                                  final ComponentTypeEnum componentType) {
         graphLockOperation.unlockComponent(componentUniqueId, componentType.getNodeType());
@@ -305,47 +277,6 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
         final User user = userValidations.validateUserExists(userId);
         userValidations.validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
         return user;
-    }
-
-    private Optional<ComponentInstance> getComponentInstance(final String componentInstanceId,
-                                                             final Component component) {
-        return component.getComponentInstanceById(componentInstanceId);
-    }
-
-    private Optional<SubstitutionFilterDataDefinition> getComponentInstanceSubstitutionFilterDataDefinition(
-        final String componentInstanceId, final Component component)
-        throws BusinessLogicException {
-
-        if (nodeFilterValidator.validateComponentInstanceExist(component, componentInstanceId).isRight()) {
-            throw new BusinessLogicException(componentsUtils
-                .getResponseFormat(SUBSTITUTION_FILTER_NOT_FOUND));
-        }
-        return getComponentInstance(componentInstanceId, component).map(ComponentInstance::getSubstitutionFilter);
-    }
-
-    private SubstitutionFilterDataDefinition validateAndReturnSubstitutionFilterDefinition(
-        final String componentInstanceId, final NodeFilterConstraintAction action, final String constraint,
-        final Component component) throws BusinessLogicException {
-
-        validateSubstitutionFilter(component, componentInstanceId, action, constraint);
-        final Optional<SubstitutionFilterDataDefinition> substitutionFilterDataDefinition =
-            getComponentInstanceSubstitutionFilterDataDefinition(componentInstanceId, component);
-        if (!substitutionFilterDataDefinition.isPresent()) {
-            throw new BusinessLogicException(componentsUtils.getResponseFormat(SUBSTITUTION_FILTER_NOT_FOUND));
-        }
-        return substitutionFilterDataDefinition.get();
-    }
-
-    private void validateSubstitutionFilter(final Component component,
-                                            final String componentInstanceId,
-                                            final NodeFilterConstraintAction action,
-                                            final String constraint) throws BusinessLogicException {
-        final Either<Boolean, ResponseFormat> response = nodeFilterValidator
-            .validateFilter(component, componentInstanceId, Collections.singletonList(constraint), action);
-        if (response.isRight()) {
-            throw new BusinessLogicException(componentsUtils
-                .getResponseFormat(SUBSTITUTION_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
-        }
     }
 
     private RequirementSubstitutionFilterPropertyDataDefinition getRequirementSubstitutionFilterPropertyDataDefinition(

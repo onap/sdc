@@ -87,6 +87,7 @@ public abstract class Component implements PropertiesOwner {
     private Map<String, SubstitutionFilterDataDefinition> substitutionFilterComponents;
     private Map<String, InterfaceDefinition> interfaces;
     private List<DataTypeDefinition> dataTypes;
+    private SubstitutionFilterDataDefinition substitutionFilter;
 
     public Component(ComponentMetadataDefinition componentMetadataDefinition) {
         this.componentMetadataDefinition = componentMetadataDefinition;

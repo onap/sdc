@@ -22,6 +22,7 @@ import { NgModule } from '@angular/core';
 import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
 import { TranslateModule } from 'app/ng2/shared/translator/translate.module';
 import { SubstitutionFilterComponent } from "./substitution-filter.component";
+import {AccordionModule} from "onap-ui-angular/dist/accordion/accordion.module";
 
 @NgModule({
     declarations: [
@@ -30,7 +31,8 @@ import { SubstitutionFilterComponent } from "./substitution-filter.component";
     imports: [
         CommonModule,
         UiElementsModule,
-        TranslateModule
+        TranslateModule,
+        AccordionModule
     ],
     exports: [
         SubstitutionFilterComponent
