@@ -21,15 +21,13 @@
 package org.openecomp.sdc.be.model;
 
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 
 public class UploadServiceInfoTest {
@@ -57,8 +55,7 @@ public class UploadServiceInfoTest {
         subCategory = null;
         testSubject.addSubCategory(category, subCategory);
         List<CategoryDefinition> categories = testSubject.getCategories();
-        assertNull(categories);
-
+        Assert.assertNull(categories);
 
         // test 2
         testSubject = createTestSubject();
@@ -67,7 +64,7 @@ public class UploadServiceInfoTest {
         testSubject.addSubCategory(category, subCategory);
         List<CategoryDefinition> categories2 = testSubject.getCategories();
         for (CategoryDefinition categoryDefinition : categories2) {
-            assertNotNull(categoryDefinition.getName());
+            Assert.assertEquals("", categoryDefinition.getName());
         }
 
         // test 3
@@ -79,7 +76,7 @@ public class UploadServiceInfoTest {
         for (CategoryDefinition categoryDefinition : categories3) {
             List<SubCategoryDefinition> subcategories = categoryDefinition.getSubcategories();
             for (SubCategoryDefinition subcategory : subcategories) {
-                assertNotNull(subcategory.getName());
+                Assert.assertEquals("", subcategory.getName());
             }
         }
 
@@ -90,7 +87,7 @@ public class UploadServiceInfoTest {
         testSubject.addSubCategory(category, subCategory);
         List<CategoryDefinition> categories4 = testSubject.getCategories();
         for (CategoryDefinition categoryDefinition : categories4) {
-            assertNotNull(categoryDefinition.getName());
+            Assert.assertEquals("mock", categoryDefinition.getName());
         }
     }
 }

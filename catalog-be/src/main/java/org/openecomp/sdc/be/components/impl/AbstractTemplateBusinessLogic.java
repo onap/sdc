@@ -16,41 +16,27 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
-import org.openecomp.sdc.be.components.validation.ValidationException;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractResourceInfo;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractTemplateInfo;
-import org.openecomp.sdc.be.externalapi.servlet.representation.CopyServiceInfo;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.*;
+import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @org.springframework.stereotype.Component("abstractTemplateBusinessLogic")
@@ -124,49 +110,12 @@ public class AbstractTemplateBusinessLogic extends BaseBusinessLogic {
                             invariantUUID);
                     uuidDuplicatesMap.put(componentUid, uuidInvariantUUIDPair);
 
-                    Boolean isAbstract = getIsAbstract(resource.getCategories());
-                    log.debug("before if isAbstract,get resource:{}", resource);
-                    if (!isAbstract) {
-                        log.debug(
-                                "getEveryServiceAbstractStatus: resource {} ,with id {} isAbstract{} is missing the isAbstract parameter",
-                                resource.getName(), resource.getUUID(),false);
+                    Either<List<AbstractResourceInfo>, ResponseFormat> abstractResourceEither = getAbstractResourceInfoList(resource, componentInstancesRelations, serviceUniqueId);
+                    if (abstractResourceEither.isRight()) {
+                        return Either.right(abstractResourceEither.right().value());
                     }
-                    if (isAbstract) {
-                        log.debug("getEveryServiceAbstractStatus: resource {} with id {} ,NormalizedName:{},isAbstract{} is abstract resource",
-                                resource.getName(), resource.getUUID(), resource.getNormalizedName(), true);
-                        isContainAbstractResource = true;
-                        AbstractResourceInfo abstractResourceInfo = new AbstractResourceInfo();
-                        abstractResourceInfo.setAbstractResourceUUid(resource.getUUID());
-                        abstractResourceInfo.setAbstractResourceName(resource.getName());
-                        abstractResourceInfo.setAbstractResourceUniqueId(resource.getUniqueId());
-                        String uniqueId = serviceUniqueId + "." +
-                                resource.getUniqueId() + "." +
-                                resource.getNormalizedName();
-
-                        List<RequirementCapabilityRelDef> resourceComponentInstancesRelations = new ArrayList<>();
-                        log.debug("get is Abstract,resource:{}", resource);
-                        log.debug("get serviceUniqueId:{},get UniqueId:{},get NormalizedName:{}",
-                                serviceUniqueId,resource.getUniqueId(),resource.getNormalizedName());
-                        log.debug("get is Abstract,componentInstancesRelations:{}", componentInstancesRelations);
-                        for (RequirementCapabilityRelDef componentInstancesRelation : componentInstancesRelations) {
-                            log.debug("for componentInstancesRelation,get componentInstancesRelation:{}", componentInstancesRelation);
-                            String fromNode = componentInstancesRelation.getFromNode();
-                            log.debug("for componentInstancesRelation,get fromNode:{}", fromNode);
-                            log.debug("for componentInstancesRelation,get uniqueId:{}", uniqueId);
-                            if (fromNode.toUpperCase().contains(uniqueId.toUpperCase())) {
-                                RequirementCapabilityRelDef resourceComponentInstancesRelation = new RequirementCapabilityRelDef();
-                                log.debug("fromNode contains name,get componentInstancesRelation:{}", componentInstancesRelation);
-                                resourceComponentInstancesRelation.setFromNode(componentInstancesRelation.getFromNode());
-                                resourceComponentInstancesRelation.setOriginUI(componentInstancesRelation.isOriginUI());
-                                resourceComponentInstancesRelation.setRelationships(componentInstancesRelation.getRelationships());
-                                resourceComponentInstancesRelation.setToNode(componentInstancesRelation.getToNode());
-                                resourceComponentInstancesRelation.setUid(componentInstancesRelation.getUid());
-                                resourceComponentInstancesRelations.add(resourceComponentInstancesRelation);
-                            }
-                        }
-                        abstractResourceInfo.setComponentInstancesRelations(resourceComponentInstancesRelations);
-                        abstractResourceInfoList.add(abstractResourceInfo);
-                    }
+                    abstractResourceInfoList = abstractResourceEither.left().value();
+                    isContainAbstractResource = true;
                 }
             }
         }
@@ -175,8 +124,54 @@ public class AbstractTemplateBusinessLogic extends BaseBusinessLogic {
         return Either.left(isContainAbstractResource);
     }
 
-    private Boolean getIsAbstract(List<CategoryDefinition> categories) {
-        Boolean anAbstract = false;
+    private Either<List<AbstractResourceInfo>, ResponseFormat> getAbstractResourceInfoList(Resource resource, List<RequirementCapabilityRelDef> componentInstancesRelations, String serviceUniqueId) {
+        List<AbstractResourceInfo> abstractResourceInfoList = new ArrayList<>();
+        boolean isAbstract = getIsAbstract(resource.getCategories());
+        log.debug("before if isAbstract,get resource:{}", resource);
+        if (!isAbstract) {
+            log.debug("getAbstractResourceInfoList:Resource is not Abstract");
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.NOT_FOUND));
+            return Either.right(responseFormat);
+        }
+        log.debug("getAbstractResourceInfoList:Resource is Abstract");
+
+        AbstractResourceInfo abstractResourceInfo = getAbstractResourceInfo(resource, componentInstancesRelations, serviceUniqueId);
+        abstractResourceInfoList.add(abstractResourceInfo);
+        return Either.left(abstractResourceInfoList);
+    }
+
+    private AbstractResourceInfo getAbstractResourceInfo(Resource resource,List<RequirementCapabilityRelDef> componentInstancesRelations,String serviceUniqueId){
+        AbstractResourceInfo abstractResourceInfo = new AbstractResourceInfo();
+        abstractResourceInfo.setAbstractResourceUUid(resource.getUUID());
+        abstractResourceInfo.setAbstractResourceName(resource.getName());
+        abstractResourceInfo.setAbstractResourceUniqueId(resource.getUniqueId());
+        String uniqueId = serviceUniqueId + "." + resource.getUniqueId() + "." + resource.getNormalizedName();
+
+        List<RequirementCapabilityRelDef> resourceComponentInstancesRelations = new ArrayList<>();
+        log.debug("get serviceUniqueId:{},get UniqueId:{},get NormalizedName:{}",
+                serviceUniqueId, resource.getUniqueId(), resource.getNormalizedName());
+        log.debug("get is Abstract,componentInstancesRelations:{}", componentInstancesRelations);
+        for (RequirementCapabilityRelDef componentInstancesRelation : componentInstancesRelations) {
+            log.debug("for componentInstancesRelation,get componentInstancesRelation:{}", componentInstancesRelation);
+            String fromNode = componentInstancesRelation.getFromNode();
+            log.debug("for componentInstancesRelation,get fromNode:{},uniqueId:{}", fromNode,uniqueId);
+            if (fromNode.toUpperCase().contains(uniqueId.toUpperCase())) {
+                RequirementCapabilityRelDef resourceComponentInstancesRelation = new RequirementCapabilityRelDef();
+                log.debug("fromNode contains name,get componentInstancesRelation:{}", componentInstancesRelation);
+                resourceComponentInstancesRelation.setFromNode(componentInstancesRelation.getFromNode());
+                resourceComponentInstancesRelation.setOriginUI(componentInstancesRelation.isOriginUI());
+                resourceComponentInstancesRelation.setRelationships(componentInstancesRelation.getRelationships());
+                resourceComponentInstancesRelation.setToNode(componentInstancesRelation.getToNode());
+                resourceComponentInstancesRelation.setUid(componentInstancesRelation.getUid());
+                resourceComponentInstancesRelations.add(resourceComponentInstancesRelation);
+            }
+        }
+        abstractResourceInfo.setComponentInstancesRelations(resourceComponentInstancesRelations);
+        return abstractResourceInfo;
+    }
+
+    private boolean getIsAbstract(List<CategoryDefinition> categories) {
+        boolean anAbstract = false;
         if (categories != null && !categories.isEmpty()) {
             CategoryDefinition categoryDef = categories.get(0);
             if (categoryDef != null && categoryDef.getName() != null && categoryDef.getName()

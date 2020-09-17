@@ -139,31 +139,33 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 .right()
                 .map(rf -> { componentsUtils.auditResource(rf, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE); return rf;})
                 .left()
-                .bind(c->{
-                Either<? extends Component, ResponseFormat> checkoutRes = getResourcetFromGraph(c);
-                Resource resource1 = (Resource) checkoutRes.left().value();
-                Either<Resource, ResponseFormat> checkoutRes1 = Either.left(resource1);
-                return checkoutRes1;
-                });
+                .bind(c -> checkoutRes(c));
+    }
+
+    private Either<Resource, ResponseFormat> checkoutRes(Component component) {
+        Either<? extends Component, ResponseFormat> checkoutRes = getResourcetFromGraph(component);
+        Resource resource1 = (Resource) checkoutRes.left().value();
+        Either<Resource, ResponseFormat> checkoutRes1 = Either.left(resource1);
+        return checkoutRes1;
     }
 
     public Either<Service, ResponseFormat> createResourceArtifactsFromCsar(CsarInfo csarInfo, Service resource,
-            String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts,
-            boolean shouldLock, boolean inTransaction) {
+            String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts
+    ) {
 
         log.debug("parseResourceArtifactsInfoFromFile start");
-        return  parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName)
-                        .left()
-                        .bind( p-> createResourceArtifacts(csarInfo, resource, p, createdArtifacts))
-                        .right()
-                        .map(rf -> {return rf;})
-                        .left()
-                        .bind(c->{
-                            Either<? extends Component, ResponseFormat> checkoutRes = getResourcetFromGraph(c);
-                            Service resource1 = (Service) checkoutRes.left().value();
-                            Either<Service, ResponseFormat> checkoutRes1 = Either.left(resource1);
-                            return checkoutRes1;
-                        });
+        return parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName)
+                .left()
+                .bind(p -> createResourceArtifacts(csarInfo, resource, p, createdArtifacts))
+                .right()
+                .map(rf -> rf)
+                .left()
+                .bind(c -> {
+                    Either<? extends Component, ResponseFormat> checkoutRes = getResourcetFromGraph(c);
+                    Service resource1 = (Service) checkoutRes.left().value();
+                    Either<Service, ResponseFormat> checkoutRes1 = Either.left(resource1);
+                    return checkoutRes1;
+                });
     }
 	
     public Either<Component, ResponseFormat> updateResourceArtifactsFromCsar(CsarInfo csarInfo, Component resource,
@@ -176,8 +178,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 updatedResource, artifactsMetaFile, artifactsMetaFileName);
         if (parseResourceInfoFromYamlEither.isRight()) {
             ResponseFormat responseFormat = parseResourceInfoFromYamlEither.right().value();
-            if(resource instanceof Resource){
-                componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), (Resource)resource, AuditingActionEnum.IMPORT_RESOURCE);
+            if (resource instanceof Resource) {
+                componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), (Resource) resource, AuditingActionEnum.IMPORT_RESOURCE);
             }
             return Either.right(responseFormat);
         }
@@ -210,8 +212,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Collection<List<ArtifactTemplateInfo>> parsedArifactsCollection = parsedArtifactsMap.values();
 
         Either<Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>>, ResponseFormat> parsedArtifactsPerGroupEither = createArtifactsTemplateCollection(csarInfo, updatedResource, createdNewArtifacts,
-                                                                                                                                                       createdDeploymentArtifactsAfterDelete, labelCounter, parsedArifactsCollection);
-        if(parsedArtifactsPerGroupEither.isRight()){
+                createdDeploymentArtifactsAfterDelete, labelCounter, parsedArifactsCollection);
+        if (parsedArtifactsPerGroupEither.isRight()) {
             log.error("Failed to parse artifacts. Status is {} ", parsedArtifactsPerGroupEither.right().value());
             return Either.right(parsedArtifactsPerGroupEither.right().value());
         }
@@ -1793,52 +1795,54 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     public Either<Service, ResponseFormat> deleteVFModules(Service resource, CsarInfo csarInfo, boolean shouldLock, boolean inTransaction) {
         Service updatedResource = resource;
         List<GroupDefinition> groupsToDelete = updatedResource.getGroups();
-        if(groupsToDelete != null && !groupsToDelete.isEmpty()){
+        if (groupsToDelete != null && !groupsToDelete.isEmpty()) {
             List<GroupDefinition> vfGroupsToDelete = groupsToDelete.stream().filter(g -> g.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)).collect(Collectors.toList());
-            if(vfGroupsToDelete != null && !vfGroupsToDelete.isEmpty()){
-                for(GroupDefinition gr : vfGroupsToDelete){
-                    List<String> artifacts = gr.getArtifacts();
-                    for (String artifactId : artifacts) {
-                        Either<ArtifactDefinition, ResponseFormat> handleDelete = artifactsBusinessLogic.handleDelete(updatedResource.getUniqueId(), artifactId, csarInfo.getModifier(),
-                                updatedResource, shouldLock, inTransaction);
-                        if (handleDelete.isRight()) {
-                            log.debug("Couldn't delete  artifact {}", artifactId);
-                            return Either.right(handleDelete.right().value());
-                        }
-                    }
-
-                }
-                groupBusinessLogic.deleteGroups(updatedResource, vfGroupsToDelete);
-
-                Either<Service, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(updatedResource.getUniqueId());
-                if (eitherGetResource.isRight()) {
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), updatedResource, resource.getComponentType());
-
-                    return Either.right(responseFormat);
-
-                }
-                updatedResource = eitherGetResource.left().value();
+            Either<Service, ResponseFormat> eitherGetResource = deleteVfGroups(vfGroupsToDelete, updatedResource, csarInfo, shouldLock, inTransaction);
+            if (eitherGetResource.isRight()) {
+                return Either.right(eitherGetResource.right().value());
             }
+            updatedResource = eitherGetResource.left().value();
         }
         return Either.left(updatedResource);
     }
 
-    private Either<? extends Component, ResponseFormat>  getResourcetFromGraph(Component component){
+    private Either<Service, ResponseFormat> deleteVfGroups(List<GroupDefinition> vfGroupsToDelete, Service resource, CsarInfo csarInfo, boolean shouldLock, boolean inTransaction) {
+        ResponseFormat responseFormat;
+        if (vfGroupsToDelete != null && !vfGroupsToDelete.isEmpty()) {
+            for (GroupDefinition gr : vfGroupsToDelete) {
+                List<String> artifacts = gr.getArtifacts();
+                for (String artifactId : artifacts) {
+                    Either<ArtifactDefinition, ResponseFormat> handleDelete = artifactsBusinessLogic.handleDelete(resource.getUniqueId(), artifactId, csarInfo.getModifier(),
+                            resource, shouldLock, inTransaction);
+                    if (handleDelete.isRight()) {
+                        log.debug("Couldn't delete  artifact {}", artifactId);
+                        return Either.right(handleDelete.right().value());
+                    }
+                }
+            }
+            groupBusinessLogic.deleteGroups(resource, vfGroupsToDelete);
+
+            Either<Service, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
+            if (eitherGetResource.isRight()) {
+                responseFormat = componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource, resource.getComponentType());
+
+                return Either.right(responseFormat);
+            }
+            resource = eitherGetResource.left().value();
+            return Either.left(resource);
+        }
+        responseFormat = componentsUtils.getResponseFormatByComponent(ActionStatus.INVALID_CONTENT, resource, resource.getComponentType());
+        return Either.right(responseFormat);
+    }
+
+
+    private Either<? extends Component, ResponseFormat> getResourcetFromGraph(Component component) {
         log.debug("getResource start");
         return toscaOperationFacade.getToscaElement(component.getUniqueId())
                 .right()
-                .map(rf ->  componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(rf), component, component.getComponentType()))
+                .map(rf -> componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(rf), component, component.getComponentType()))
                 .left()
-                .map (c ->{
-                    if (component instanceof Resource){
-                        return c;
-                    }
-                    else {
-                        return c;
-                    }
-                });
-        
-
+                .map(c -> c);
     }
 
 }

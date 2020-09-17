@@ -407,7 +407,7 @@ public class ToscaOperationFacade {
     }
 	
 	public Either<Resource, StorageOperationStatus> getLatestResourceByToscaResourceName(String toscaResourceName) {
-    	if(toscaResourceName != null && toscaResourceName.contains("org.openecomp.resource.vf"))
+    	if (toscaResourceName != null && toscaResourceName.contains("org.openecomp.resource.vf"))
     		return getLatestResourceByToscaResourceName(toscaResourceName, VertexTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseMetadata);
     	else
     		return getLatestResourceByToscaResourceName(toscaResourceName, VertexTypeEnum.NODE_TYPE, JsonParseFlagEnum.ParseMetadata);
