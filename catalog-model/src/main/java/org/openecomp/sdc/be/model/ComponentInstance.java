@@ -47,7 +47,6 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     private Map<String, Object> interfaces;
     private List<PropertyDefinition> properties;
     private CINodeFilterDataDefinition nodeFilter;
-    private SubstitutionFilterDataDefinition substitutionFilter;
     private List<InputDefinition> inputs;
 
     public ComponentInstance() {

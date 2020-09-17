@@ -401,16 +401,20 @@ export class TopologyTemplateService {
         return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter/' + constraintType + "/" + constraintIndex)
     }
 
-    createSubstitutionFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string): Observable<any> {
-        return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/substitutionFilter', constraint);
+    getComponentPropertiesSubstitutionFilter(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
     }
 
-    updateSubstitutionFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string): Observable<any> {
-        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/substitutionFilter', constraint);
+    createSubstitutionFilterConstraints(componentMetaDataId: string, constraint: ConstraintObject, componentType: string, constraintType: string): Observable<any> {
+        return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/substitutionFilter/' + constraintType, constraint);
     }
 
-    deleteSubstitutionFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number, componentType: string): Observable<any>{
-        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/substitutionFilter/' + constraintIndex)
+    updateSubstitutionFilterConstraints(componentMetaDataId: string, constraint: ConstraintObject[], componentType: string, constraintType: string): Observable<any>{
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/substitutionFilter/' + constraintType, constraint);
+    }
+
+    deleteSubstitutionFilterConstraints(componentMetaDataId: string, constraintIndex: number, componentType: string, constraintType: string): Observable<any>{
+        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/substitutionFilter/' + constraintType + "/" + constraintIndex)
     }
 
     deletePolicy(component: Component, policy: PolicyInstance): Observable<PolicyInstance> {

@@ -50,7 +50,6 @@ public class ComponentParametersView {
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
     private boolean ignoreNodeFilterRequirements = false;
-    private boolean ignoreSubstitutionFilterRequirements = false;
     private boolean ignoreNodeFilter = false;
     private boolean ignoreSubstitutionFilter = false;
     private boolean ignoreDataType = false;
@@ -157,7 +156,6 @@ public class ComponentParametersView {
                     this.setIgnoreNodeFilter(false);
                     break;
                 case SUBSTITUTION_FILTER:
-                    this.setIgnoreSubstitutionFilterRequirements(false);
                     this.setIgnoreSubstitutionFilter(false);
                     break;
                 case COMPONENT_INSTANCES_INTERFACES:
@@ -223,9 +221,6 @@ public class ComponentParametersView {
         if (ignoreNodeFilterRequirements){
           component.setNodeFilterComponents(null);
         }
-        if (ignoreSubstitutionFilterRequirements){
-            component.setSubstitutionFilterComponents(null);
-        }
         if (ignoreInterfaces && ignoreInterfaceInstances &&
             componentType == ComponentTypeEnum.RESOURCE) {
             component.setInterfaces(null);
@@ -268,14 +263,6 @@ public class ComponentParametersView {
         this.ignoreNodeFilterRequirements = ignoreNodeFilter;
     }
 
-    public boolean isIgnoreSubstitutionFilterRequirements() {
-        return ignoreSubstitutionFilterRequirements;
-    }
-
-    public void setIgnoreSubstitutionFilterRequirements(boolean ignoreSubstitutionFilterRequirements) {
-        this.ignoreSubstitutionFilterRequirements = ignoreSubstitutionFilterRequirements;
-    }
-
     public void disableAll() {
         ignoreUsers = true;
         ignoreGroups = true;
@@ -299,7 +286,6 @@ public class ComponentParametersView {
         ignoreCapabiltyProperties = true;
         ignoreServicePath = true;
         ignoreNodeFilterRequirements = true;
-        ignoreSubstitutionFilterRequirements = true;
         ignoreNodeFilter = true;
         ignoreSubstitutionFilter = true;
         ignoreDataType = true;

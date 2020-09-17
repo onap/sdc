@@ -20,19 +20,15 @@
 
 <ng2-expand-collapse state="0">
     <header sdc-tooltip tooltip-text="{{input.title}}">{{input.title}}</header>
-    <content>
-        <div *ngIf="isComponentInstanceSelected">
-                <substitution-filter
-                    [compositeService]="metaData"
-                    [currentServiceInstance]="component"
-                    [selectedInstanceProperties]="selectedInstanceProperties"
-                    [selectedInstanceSiblings]="selectedInstanceSiblings"
-                    [selectedInstanceConstraints]="selectedInstanceConstraints"
-                    [readonly]="isViewOnly"
-                    (hasSubstitutionFilter)="notifyDependencyEventsObserver($event)"
-                    (updateConstraintListEvent)="updateSelectedInstanceConstraints($event)"
-                    (loadConstraintListEvent)="loadConstraints()">
-                </substitution-filter>
-        </div>
-    </content>
+    <substitution-filter
+            [compositeService]="metaData"
+            [currentServiceInstance]="component"
+            [selectedInstanceProperties]="selectedInstanceProperties"
+            [selectedInstanceSiblings]="selectedInstanceSiblings"
+            [selectedInstanceConstraints]="selectedInstanceConstraints"
+            [readonly]="isViewOnly"
+            (hasSubstitutionFilter)="notifyDependencyEventsObserver($event)"
+            (updateConstraintListEvent)="updateSelectedInstanceConstraints($event)"
+            (loadConstraintListEvent)="loadConstraints()">
+    </substitution-filter>
 </ng2-expand-collapse>

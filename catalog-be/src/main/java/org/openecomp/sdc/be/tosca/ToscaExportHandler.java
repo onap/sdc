@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
@@ -314,7 +315,6 @@ public class ToscaExportHandler {
             component.getComponentInstancesProperties();
         Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces =
             component.getComponentInstancesInterfaces();
-        SubstitutionMapping substitutionMapping = new SubstitutionMapping();
         if (CollectionUtils.isNotEmpty(componentInstances)) {
             final Either<Map<String, ToscaNodeTemplate>, ToscaError> nodeTemplates =
                 convertNodeTemplates(component, componentInstances,
@@ -325,9 +325,10 @@ public class ToscaExportHandler {
             }
             log.debug("node templates converted");
             topologyTemplate.setNode_templates(nodeTemplates.left().value());
-
-            convertSubstitutionMappingFilter(componentInstances, substitutionMapping);
         }
+
+        SubstitutionMapping substitutionMapping = new SubstitutionMapping();
+        convertSubstitutionMappingFilter(component, substitutionMapping);
 
         addGroupsToTopologyTemplate(component, topologyTemplate);
 
@@ -377,19 +378,13 @@ public class ToscaExportHandler {
         return Either.left(toscaNode);
     }
 
-    private void convertSubstitutionMappingFilter(final List<ComponentInstance> componentInstances,
+    private void convertSubstitutionMappingFilter(final Component component,
                                                   final SubstitutionMapping substitutionMapping) {
-        componentInstances.stream()
-            .filter(componentInstance -> hasSubstitutionFilterDataDefinition(componentInstance.getSubstitutionFilter()))
-            .forEach(componentInstance -> substitutionMapping
-                .setSubstitution_filter(convertToSubstitutionFilterComponent(componentInstance.getSubstitutionFilter())));
-    }
-
-    private boolean hasSubstitutionFilterDataDefinition(
-        final SubstitutionFilterDataDefinition substitutionFilterDataDefinition) {
-
-        return substitutionFilterDataDefinition != null && substitutionFilterDataDefinition.getProperties() != null
-            && CollectionUtils.isNotEmpty(substitutionFilterDataDefinition.getProperties().getListToscaDataDefinition());
+        if(component.getSubstitutionFilter() != null
+                && (component.getSubstitutionFilter().getProperties()).getListToscaDataDefinition() != null) {
+            substitutionMapping
+                    .setSubstitution_filter(convertToSubstitutionFilterComponent(component.getSubstitutionFilter()));
+        }
     }
 
     private void addGroupsToTopologyTemplate(Component component, ToscaTopolgyTemplate topologyTemplate) {
@@ -1521,18 +1516,23 @@ public class ToscaExportHandler {
     private NodeFilter convertToSubstitutionFilterComponent(
         final SubstitutionFilterDataDefinition substitutionFilterDataDefinition) {
 
+        if (substitutionFilterDataDefinition == null) {
+            return null;
+        }
         NodeFilter nodeFilter = new NodeFilter();
 
-        final List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
-        copySubstitutionFilterProperties(substitutionFilterDataDefinition.getProperties(), propertiesCopy);
+        ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> origProperties =
+                substitutionFilterDataDefinition.getProperties();
+        List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
+
+        copySubstitutionFilterProperties(origProperties, propertiesCopy);
 
         if (CollectionUtils.isNotEmpty(propertiesCopy)) {
             nodeFilter.setProperties(propertiesCopy);
         }
         nodeFilter.setTosca_id(cloneToscaId(substitutionFilterDataDefinition.getTosca_id()));
-        nodeFilter = (NodeFilter) cloneObjectFromYml(nodeFilter, NodeFilter.class);
 
-        return nodeFilter;
+        return (NodeFilter) cloneObjectFromYml(nodeFilter, NodeFilter.class);
     }
 
     private Object cloneToscaId(Object toscaId) {

@@ -22,9 +22,11 @@ package org.openecomp.sdc.be.servlets;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -44,6 +46,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -58,7 +61,6 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentSubstitutionFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
-import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -89,7 +91,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     private static final String sourceName = sourceType;
     private static final String propertyValue = "constraintValue";
     private static final String componentId = "dac65869-dfb4-40d2-aa20-084324659ec1";
-    private static final String componentInstance = "dac65869-dfb4-40d2-aa20-084324659ec1.service0";
+    private static final String constraintType = "properties";
     private static final String componentType = "services";
 
     private static HttpServletRequest request;
@@ -141,9 +143,9 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void addSubstitutionFilterTest() throws BusinessLogicException {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+    public void addSubstitutionFilterTest() throws Exception {
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -164,15 +166,8 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         assertNotNull(substitutionFilterDataDefinition);
         assertThat(substitutionFilterDataDefinition.getProperties().getListToscaDataDefinition()).hasSize(1);
         assertThat("controller_actor: {equal: constraintValue}\n").isEqualToIgnoringCase(constraint);
-
-        when(componentSubstitutionFilterBusinessLogic.createSubstitutionFilterIfNotExist(componentId,
-            componentInstance, true, ComponentTypeEnum.SERVICE))
-            .thenReturn(Optional.ofNullable(substitutionFilterDataDefinition));
-
-        when(componentSubstitutionFilterBusinessLogic
-            .addSubstitutionFilter(componentId, componentInstance, NodeFilterConstraintAction.ADD,
-                uiConstraint.getServicePropertyName(), constraint, true, ComponentTypeEnum.SERVICE))
-            .thenReturn(Optional.ofNullable(substitutionFilterDataDefinition));
+        when(componentSubstitutionFilterBusinessLogic.addSubstitutionFilter(componentId, uiConstraint.getServicePropertyName(), constraint,
+                true, ComponentTypeEnum.SERVICE)).thenReturn(Optional.of(substitutionFilterDataDefinition));
 
         final Response response = target()
             .path(path)
@@ -183,17 +178,14 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
 
         verify(componentSubstitutionFilterBusinessLogic, times(1))
-            .createSubstitutionFilterIfNotExist(componentId, componentInstance, true, ComponentTypeEnum.SERVICE);
-
-        verify(componentSubstitutionFilterBusinessLogic, times(1))
-            .addSubstitutionFilter(anyString(), anyString(), any(NodeFilterConstraintAction.class), anyString(),
-                anyString(), anyBoolean(), any(ComponentTypeEnum.class));
+                .addSubstitutionFilter(componentId, uiConstraint.getServicePropertyName(), constraint,
+                        true, ComponentTypeEnum.SERVICE);
     }
 
     @Test
     public void addSubstitutionFilterFailConstraintParseTest() {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -212,9 +204,9 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void addSubstitutionFilterFailTest() throws BusinessLogicException {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+    public void addSubstitutionFilterFailTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -223,10 +215,6 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         when(componentsUtils.parseToConstraint(anyString(), any(User.class), any(ComponentTypeEnum.class)))
             .thenReturn(Optional.of(uiConstraint));
 
-        when(componentSubstitutionFilterBusinessLogic.createSubstitutionFilterIfNotExist(componentId,
-            componentInstance, true, ComponentTypeEnum.SERVICE))
-            .thenReturn(Optional.empty());
-
         final Response response = target()
             .path(path)
             .request(MediaType.APPLICATION_JSON)
@@ -234,15 +222,12 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
             .post(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
-
-        verify(componentSubstitutionFilterBusinessLogic, times(1))
-            .createSubstitutionFilterIfNotExist(componentId, componentInstance, true, ComponentTypeEnum.SERVICE);
     }
 
     @Test
     public void updateSubstitutionFilterTest() throws BusinessLogicException {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -253,7 +238,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
             any(User.class))).thenReturn(Collections.singletonList(uiConstraint));
 
         when(componentSubstitutionFilterBusinessLogic.updateSubstitutionFilter(componentId.toLowerCase(),
-            componentInstance, Collections.singletonList(constraint), true, ComponentTypeEnum.SERVICE))
+            Collections.singletonList(constraint), true, ComponentTypeEnum.SERVICE))
             .thenReturn(Optional.ofNullable(substitutionFilterDataDefinition));
 
         final Response response = target()
@@ -265,14 +250,13 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
 
         verify(componentSubstitutionFilterBusinessLogic, times(1))
-            .updateSubstitutionFilter(componentId.toLowerCase(), componentInstance,
-                Collections.singletonList(constraint), true, ComponentTypeEnum.SERVICE);
+                .updateSubstitutionFilter(anyString(), anyList(), anyBoolean(), any(ComponentTypeEnum.class));
     }
 
     @Test
     public void updateSubstitutionFilterFailConstraintParseTest() {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -291,9 +275,9 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void updateSubstitutionFilterFailTest() throws BusinessLogicException {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+    public void updateSubstitutionFilterFailTest()  {
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -302,10 +286,6 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         when(componentsUtils.validateAndParseConstraint(ArgumentMatchers.any(ComponentTypeEnum.class), anyString(),
             any(User.class))).thenReturn(Collections.singletonList(uiConstraint));
 
-        when(componentSubstitutionFilterBusinessLogic.updateSubstitutionFilter(componentId.toLowerCase(),
-            componentInstance, Collections.singletonList(constraint), true, ComponentTypeEnum.SERVICE))
-            .thenReturn(Optional.empty());
-
         final Response response = target()
             .path(path)
             .request(MediaType.APPLICATION_JSON)
@@ -313,24 +293,20 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
             .put(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
-
-        verify(componentSubstitutionFilterBusinessLogic, times(1))
-            .updateSubstitutionFilter(componentId.toLowerCase(), componentInstance,
-                Collections.singletonList(constraint), true, ComponentTypeEnum.SERVICE);
     }
 
     @Test
     public void deleteSubstitutionFilterConstraintTest() throws BusinessLogicException {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter/0";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s/0";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
 
-        when(componentSubstitutionFilterBusinessLogic.deleteSubstitutionFilter(componentId, componentInstance,
-            NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.SERVICE))
+        when(componentSubstitutionFilterBusinessLogic.deleteSubstitutionFilter(componentId, 0,
+                true, ComponentTypeEnum.SERVICE))
             .thenReturn(Optional.ofNullable(substitutionFilterDataDefinition));
 
         final Response response = target()
@@ -342,22 +318,17 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
 
         verify(componentSubstitutionFilterBusinessLogic, times(1))
-            .deleteSubstitutionFilter(componentId, componentInstance,
-                NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.SERVICE);
+                .deleteSubstitutionFilter(anyString(), anyInt(), anyBoolean(), any(ComponentTypeEnum.class));
     }
 
     @Test
-    public void deleteSubstitutionFilterConstraintFailTest() throws BusinessLogicException {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/substitutionFilter/0";
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance);
+    public void deleteSubstitutionFilterConstraintFailTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s/0";
+        final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentSubstitutionFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
-
-        when(componentSubstitutionFilterBusinessLogic.deleteSubstitutionFilter(componentId, componentInstance,
-            NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.SERVICE))
-            .thenReturn(Optional.empty());
 
         final Response response = target()
             .path(path)
@@ -366,11 +337,6 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
             .delete(Response.class);
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
-
-        verify(componentSubstitutionFilterBusinessLogic, times(1))
-            .deleteSubstitutionFilter(componentId, componentInstance,
-                NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.SERVICE);
-
     }
 
     private static void createMocks() {
