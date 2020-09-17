@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb040d98_39ea6d1c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "bad import, only used classes should be imported",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0df8ac6a_889d349e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Rationalize, create a new method to handle that code",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2a2974c_d3d28a78",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 702,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Do not close stream by hand, use autoclose java feature",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f41df11_c8c366f6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Do not import all classes, this is not checkstyle approved\nImport only specific classes.\n\nAlso could you rework the import, and sort them by alphabetic order.",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19e1a29f_363e77ec",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Put that code outside of the existing method, create a new one to support that case",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "436a42bf_6e2d89d1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "no need to create this var just put it in the for directly",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bfd5eb5_a84d693e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Use autoclose feature, it\u0027s available for FileINputStream",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ec433e3_340790c0",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Same comment for the baseStream, don\u0027t close that manually",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50049ff6_8e263ef0",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Bad import, just import specific classes",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0df27aa_f138ddfe",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Please rationalize this code and create a new method to handle it.",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "360359a3_9fc215c2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-17T15:02:43Z",
+      "side": 1,
+      "message": "Again do not close by hand those streams, use java autoclose features",
+      "revId": "cb8a321f4dbd0fcd7bf4b2e7fdf34fad3f96428e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
