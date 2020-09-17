@@ -19,19 +19,19 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>sdc-main</artifactId>
-    <groupId>org.openecomp.sdc</groupId>
-    <version>1.7.1-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>catalog-be-plugins</artifactId>
-  <packaging>pom</packaging>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sdc-main</artifactId>
+        <groupId>org.openecomp.sdc</groupId>
+        <version>1.7.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>catalog-be-plugins</artifactId>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>etsi-nfv-nsd-csar-plugin</module>
-  </modules>
-
+    <modules>
+        <module>etsi-nfv-nsd-csar-plugin</module>
+        <module>backend-all-plugins</module>
+    </modules>
 </project>

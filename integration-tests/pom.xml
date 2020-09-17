@@ -540,7 +540,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-backend:${it.docker.version}</name>
+                            <name>onap/sdc-backend-all-plugins:${it.docker.version}</name>
                             <alias>sdc-backend</alias>
                             <run>
                                 <dependsOn>
@@ -557,7 +557,6 @@ limitations under the License.
                                     <bind>
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
-                                        <volume>${it.sdc-be.plugins}:/var/lib/jetty/plugins</volume>
                                     </bind>
                                 </volumes>
                                 <wait>

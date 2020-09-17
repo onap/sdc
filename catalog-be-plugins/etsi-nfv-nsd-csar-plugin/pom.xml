@@ -19,118 +19,46 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>catalog-be-plugins</artifactId>
-    <groupId>org.openecomp.sdc</groupId>
-    <version>1.7.1-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>catalog-be-plugins</artifactId>
+        <groupId>org.openecomp.sdc</groupId>
+        <version>1.7.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>etsi-nfv-nsd-csar-plugin</artifactId>
+    <artifactId>etsi-nfv-nsd-csar-plugin</artifactId>
 
-  <properties>
-    <hamcrest.version>2.2</hamcrest.version>
-  </properties>
+    <properties>
+        <hamcrest.version>2.2</hamcrest.version>
+    </properties>
 
-  <dependencies>
-    <!--catalog-be dependencies-->
-    <dependency>
-      <groupId>org.openecomp.sdc</groupId>
-      <artifactId>catalog-be</artifactId>
-      <version>${project.version}</version>
-      <classifier>classes</classifier>
-    </dependency>
+    <dependencies>
+        <!--catalog-be dependencies-->
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>catalog-be</artifactId>
+            <version>${project.version}</version>
+            <classifier>classes</classifier>
+        </dependency>
 
-    <!--test dependencies-->
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>${hamcrest.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
-      <version>${hamcrest.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <!--test dependencies-->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <profiles>
-    <profile>
-      <id>docker-staging</id>
-      <properties>
-        <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
-      </properties>
-    </profile>
-    <profile>
-      <id>docker</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-            <configuration>
-              <apiVersion>1.23</apiVersion>
-              <registry>nexus3.onap.org:10001</registry>
-              <authConfig>
-                <pull>
-                  <username>docker</username>
-                  <password>docker</password>
-                </pull>
-              </authConfig>
-              <images>
-                <image>
-                  <name>onap/sdc-catalog-be-plugin/etsi-nfv-nsd-csar</name>
-                  <alias>catalog-be-plugin-etsi-nfv-nsd-csar</alias>
-                  <build>
-                    <cleanup>try</cleanup>
-                    <from>alpine:3.8</from>
-                    <assembly>
-                      <descriptorRef>artifact</descriptorRef>
-                      <targetDir>/plugins</targetDir>
-                    </assembly>
-                    <tags>
-                      <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
-                      <tag>${project.version}-${maven.build.timestamp}</tag>
-                    </tags>
-                  </build>
-                </image>
-              </images>
-            </configuration>
-            <executions>
-              <execution>
-                <id>clean-images</id>
-                <phase>pre-clean</phase>
-                <goals>
-                  <goal>remove</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>generate-images</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>build</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>push-images</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>push</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
+    <build>
+        <finalName>etsi-nfv-nsd-csar-plugin</finalName>
+    </build>
 </project>
