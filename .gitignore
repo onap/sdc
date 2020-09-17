@@ -197,10 +197,6 @@ utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/de
 vagrant-asdc-all-in-one/
 
 
-
-ExtentReport/
-automationDownloadDir*/
-
 /asdctool/*.xls
 
 /sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools/build/scripts/*

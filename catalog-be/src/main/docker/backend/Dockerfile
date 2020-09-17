@@ -45,9 +45,9 @@ RUN chown -R jetty:jetty ${JETTY_BASE}/webapps /var/lib/jetty
 USER jetty
 
 COPY --chown=jetty:jetty chef-solo ${JETTY_BASE}/chef-solo/
-COPY --chown=jetty:jetty chef-repo/cookbooks/. ${JETTY_BASE}/chef-solo/cookbooks/
-ADD --chown=jetty:jetty catalog-be-*.war       ${JETTY_BASE}/webappwar/
-ADD --chown=jetty:jetty context.xml       ${JETTY_BASE}/webapps/
+COPY --chown=jetty:jetty chef-repo/cookbooks ${JETTY_BASE}/chef-solo/cookbooks/
+COPY --chown=jetty:jetty onap-sdc-backend/catalog-be.war       ${JETTY_BASE}/webappwar/
+COPY --chown=jetty:jetty context.xml       ${JETTY_BASE}/webapps/
 COPY --chown=jetty:jetty startup.sh ${JETTY_BASE}/
 
 RUN chmod 770 ${JETTY_BASE}/startup.sh
