@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22e30cd4_1ec88bd1",
+        "filename": "catalog-be-plugins/backend-all-plugins/src/main/docker/backend-all-plugins/backend-all-plugins-files.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-18T07:08:26Z",
+      "side": 1,
+      "message": "Insert back to the future theme",
+      "revId": "5c572296e4d11f9dbe01a52512cdcb49678ca8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f21946f4_ab3e022c",
+        "filename": "catalog-be/src/main/docker/backend/backend-files.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-18T07:08:26Z",
+      "side": 1,
+      "message": "2017",
+      "revId": "5c572296e4d11f9dbe01a52512cdcb49678ca8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4e9abd0_189a1a09",
+        "filename": "sdc-os-chef/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-18T07:08:26Z",
+      "side": 1,
+      "message": "extract it to a common variable maybe ?",
+      "revId": "5c572296e4d11f9dbe01a52512cdcb49678ca8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
