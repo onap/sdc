@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "99988b27_116ce511",
+        "filename": "catalog-be-plugins/backend-all-plugins/src/main/docker/backend-all-plugins/backend-all-plugins-files.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-18T07:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22e30cd4_1ec88bd1",
+      "revId": "5c572296e4d11f9dbe01a52512cdcb49678ca8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f21946f4_ab3e022c",
         "filename": "catalog-be/src/main/docker/backend/backend-files.xml",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "4d684b0a_2f78d21e",
+        "filename": "catalog-be/src/main/docker/backend/backend-files.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-18T07:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f21946f4_ab3e022c",
+      "revId": "5c572296e4d11f9dbe01a52512cdcb49678ca8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d4e9abd0_189a1a09",
         "filename": "sdc-os-chef/pom.xml",
         "patchSetId": 1
@@ -50,6 +86,24 @@
       "revId": "5c572296e4d11f9dbe01a52512cdcb49678ca8fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "145f94bb_c387c501",
+        "filename": "sdc-os-chef/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-09-18T07:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d4e9abd0_189a1a09",
+      "revId": "5c572296e4d11f9dbe01a52512cdcb49678ca8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
