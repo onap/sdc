@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7cf9a067_fcb0d166",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-18T09:01:32Z",
+      "side": 1,
+      "message": "If it has to be commented it should be removed",
+      "revId": "ad0f2d26a385c6199d85722a7c147a96b9783a4a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13f740e3_f477c8e7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-09-18T09:01:32Z",
+      "side": 1,
+      "message": "Defining it in a file would probably be easier to maintain",
+      "revId": "ad0f2d26a385c6199d85722a7c147a96b9783a4a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
