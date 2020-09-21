@@ -21,11 +21,7 @@ if node['basic_auth']
   end
 end
 
-bash "executing-check_backend_health" do
-   code <<-EOH
-     sdccheckbackend -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{https_flag}
-     rc=$?
-     if [[ $rc != 0 ]]; then exit $rc; fi
-   EOH
-   returns [0]
+execute "executing-check_backend_health" do
+  command "sdccheckbackend -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{https_flag}"
+  action :run
 end
