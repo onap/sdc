@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y python-pip && \
     echo  '[cql]' > ~/.cassandra/cqlshrc  && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc  && \
     set -ex && \
-    pip install cqlsh && \
     apt-get install -y \
     make \
     gcc \
@@ -25,14 +24,12 @@ RUN apt-get update && apt-get install -y python-pip && \
     libffi-dev \
     libxml2-dev && \
     gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
-    apt-get update -y && \
+    apt-get update -y && apt-get remove bash -y --allow-remove-essential && \
     apt-get install -y binutils && apt-get clean && gem cleanup
+
 USER sdc
-
 COPY --chown=sdc:sdc chef-solo /home/sdc/chef-solo/
-
 COPY --chown=sdc:sdc chef-repo/cookbooks /home/sdc/chef-solo/cookbooks/
-
 COPY --chown=sdc:sdc startup.sh /home/sdc/
 
 RUN chmod 770 /home/sdc/startup.sh

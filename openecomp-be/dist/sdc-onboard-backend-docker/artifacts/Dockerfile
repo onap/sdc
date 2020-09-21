@@ -1,20 +1,18 @@
-FROM jetty:9.4.31-jre11-slim
+FROM onap/integration-java11:8.0.0
 
 USER root
+ARG JETTY_FOLDER=/app/jetty
 
 # Install Chef
 RUN set -ex && \
-    apt-get update -y && \
-    apt-get install -y \
-        jq \
-        curl \
-        vim \
-        make \
-        gcc \
+    apk update && \
+    apk add --no-cache \
+        build-base \
         ruby \
         ruby-dev \
         libffi-dev \
-        libxml2-dev && \
+        libxml2-dev \
+        libressl-dev && \
     gem install \
         chef:13.8.5 \
         berkshelf:6.3.1 \
@@ -22,33 +20,30 @@ RUN set -ex && \
         etc webrick \
         --no-document && \
     gem cleanup && \
-    apt-get update -y && \
-    apt-get install -y binutils jq && \
-    apt-get clean
+    apk update
 
-# Replace Jetty user ID
-ENV USER_JETTY="jetty"
-ENV GROUP_JETTY="jetty"
-ENV UID_JETTY="352070"
-ENV GID_JETTY="35953"
+ENV JETTY_HOME=$JETTY_FOLDER
+ENV JETTY_BASE=$JETTY_FOLDER
+ENV JETTY_USER=onap
+ENV JETTY_GROUP=onap
 
-# Remove user:
-RUN deluser ${USER_JETTY}
-#RUN delgroup ${GROUP_JETTY}
-RUN echo "${USER_JETTY}:x:${UID_JETTY}:${GID_JETTY}::/home/${USER_JETTY}:Linux User,,,:/home/jetty:/bin/false" >> /etc/passwd
-RUN echo "${GROUP_JETTY}:x:${GID_JETTY}:${USER_JETTY}" >> /etc/group
-RUN echo "${USER_JETTY}:!:17501:0:99999:7:::" >> /etc/shadow
-RUN mkdir /home/${USER_JETTY} && chown ${USER_JETTY}:${GROUP_JETTY} /home/${USER_JETTY}
-RUN chown -R jetty:jetty ${JETTY_BASE}/webapps /var/lib/jetty
+RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 
-USER jetty
+USER onap
 
-COPY --chown=jetty:jetty chef-solo ${JETTY_BASE}/chef-solo/
-COPY --chown=jetty:jetty chef-repo/cookbooks ${JETTY_BASE}/chef-solo/cookbooks/
-ADD --chown=jetty:jetty onboarding-be-*.war    ${JETTY_BASE}/webapps/
-ADD --chown=jetty:jetty api-docs.war           ${JETTY_BASE}/webapps/
-COPY --chown=jetty:jetty startup.sh ${JETTY_BASE}/
+#Download jetty
+RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.31.v20200723/jetty-distribution-9.4.31.v20200723.tar.gz -O $JETTY_FOLDER/jetty.tar.gz && \
+        tar xvz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
+        rm -rf $JETTY_FOLDER/jetty.tar.gz
+RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 
-RUN chmod 770 ${JETTY_BASE}/startup.sh
 
-ENTRYPOINT [ "sh", "-c", "${JETTY_BASE}/startup.sh"]
+COPY --chown=onap:onap chef-solo $JETTY_FOLDER/chef-solo/
+COPY --chown=onap:onap chef-repo/cookbooks $JETTY_FOLDER/chef-solo/cookbooks/
+ADD --chown=onap:onap onboarding-be-*.war    $JETTY_FOLDER/webapps/
+ADD --chown=onap:onap api-docs.war           $JETTY_FOLDER/webapps/
+COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
+
+RUN chmod 770 $JETTY_FOLDER/startup.sh
+
+ENTRYPOINT [ "sh", "-c", "${JETTY_HOME}/startup.sh"]
