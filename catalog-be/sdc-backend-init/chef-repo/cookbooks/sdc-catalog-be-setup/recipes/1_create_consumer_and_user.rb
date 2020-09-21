@@ -28,20 +28,11 @@ if node['basic_auth']
   end
 end
 
-bash "executing-create_users" do
-  code <<-EOH
-    sdcuserinit -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{user_conf_dir} #{https_flag}
-    rc=$?
-    if [[ $rc != 0 ]]; then exit $rc; fi
-  EOH
-  returns [0]
+execute "executing-create_users" do
+  command "sdcuserinit -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{user_conf_dir} #{https_flag}"
+  action :run
 end
-
-bash "executing-create_consumers" do
-  code <<-EOH
-    sdcconsumerinit -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{https_flag}
-    rc=$?
-    if [[ $rc != 0 ]]; then exit $rc; fi
-  EOH
-  returns [0]
+execute "executing-create_consumers" do
+  command "sdcconsumerinit -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{https_flag}"
+  action :run
 end

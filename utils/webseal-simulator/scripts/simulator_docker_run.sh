@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 export PREFIX=${NEXUS_DOCKER_REPO}'/onap'
 PREFIX='onap'
