@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ##################################
 # export all users from JanusGraph

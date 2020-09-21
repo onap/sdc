@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ##############################
 # Data Migration: Adding new properties to vfModules

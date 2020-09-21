@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ##############################
 # Data Migration: fix relations after migration 1707

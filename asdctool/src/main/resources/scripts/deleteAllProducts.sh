@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #####################################
 # delete all products from JanusGraph

@@ -1,8 +1,8 @@
 template "catalog-fe-config" do
    path "#{ENV['JETTY_BASE']}/config/catalog-fe/configuration.yaml"
    source "FE-configuration.yaml.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
       :fe_host_ip   => node['FE_VIP'],
@@ -17,8 +17,8 @@ end
 cookbook_file "#{ENV['JETTY_BASE']}/config/catalog-fe/workspace-configuration.yaml" do
   source "FE-workspace-configuration.yaml"
   mode 0755
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
 end
 
 
@@ -26,7 +26,7 @@ end
 template "onboarding-fe-config" do
     path "#{ENV['JETTY_BASE']}/config/onboarding-fe/onboarding_configuration.yaml"
     source "FE-onboarding-configuration.yaml.erb"
-    owner "jetty"
-    group "jetty"
+    owner "#{ENV['JETTY_USER']}"
+    group "#{ENV['JETTY_GROUP']}"
     mode "0755"
 end

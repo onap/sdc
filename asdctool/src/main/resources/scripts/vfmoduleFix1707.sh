@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ##############################
 # Distribution Status Update 1707
