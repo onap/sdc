@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cd /home/sdc
 
@@ -21,7 +21,7 @@ cqlsh -u $SDC_USER -p $SDC_PASSWORD -f init_keyspaces.cql $CS_HOST $CS_PORT
 rc=$?
 date;
 
-if [[ $rc != 0 ]]; then
+if [ $rc != 0 ]; then
 	echo "[Error] Failed to initialize onboard keyspaces";
 	exit $rc;
 fi
@@ -32,7 +32,7 @@ cqlsh -u $SDC_USER -p $SDC_PASSWORD -f init_schemas.cql $CS_HOST $CS_PORT
 rc=$?
 date;
 
-if [[ $rc != 0 ]]; then
+if [ $rc != 0 ]; then
 	echo "[Error] Failed to initialize onboard schemas";
 	exit $rc;
 fi
