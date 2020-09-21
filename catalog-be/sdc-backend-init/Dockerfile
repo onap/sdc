@@ -1,22 +1,59 @@
-FROM onap/base_sdc-python:1.7.0
+FROM onap/integration-python:8.0.0
+
+USER root
+
+# Needed for pycurl
+ENV PYCURL_SSL_LIBRARY=openssl
+
+# Install packages only needed for building
+RUN apk update && \
+    apk add binutils jq libpng && \
+    apk add --no-cache \
+        libcurl \
+        ruby=2.7.2-r1 && \
+    apk add --no-cache --virtual .build-dependencies \
+        libressl-dev \
+        ruby-dev \
+        libffi-dev \
+        libxml2-dev \
+        build-base \
+        curl-dev && \
+    # needed libcurl to install correctly
+    pip install 'pycurl==7.43.0.1' &&  \
+        set -ex && \
+    gem install \
+        chef:13.8.5 \
+        berkshelf:6.3.1 \
+        io-console:0.4.6 \
+        etc webrick \
+        --no-document && \
+    apk del .build-dependencies
+
+ENV ONAP_LOG=/home/onap/logs
+RUN mkdir $ONAP_LOG && chown onap:onap $ONAP_LOG
+
+# user/group are the same as in integration/docker/onap-python base image
+ENV user=onap group=onap
+
+USER onap
 
 # user/group args are inherited from base_sdc-python base image
-COPY --chown=$user:$group scripts /home/$user/scripts
+COPY --chown=onap:onap scripts /home/onap/scripts
 
-RUN chmod 770 -R /home/$user/scripts && \
-    cd /home/$user/scripts && \
+RUN chmod 770 -R /home/onap/scripts && \
+    cd /home/onap/scripts && \
     python setup.py install --user
 
-ENV PATH=$PATH:/home/$user/.local/bin
+ENV PATH=$PATH:/home/onap/.local/bin
 
-COPY --chown=$user:$group chef-solo /home/$user/chef-solo/
+COPY --chown=onap:onap chef-solo /home/onap/chef-solo/
 
-COPY --chown=$user:$group chef-repo/cookbooks /home/$user/chef-solo/cookbooks/
+COPY --chown=onap:onap chef-repo/cookbooks /home/onap/chef-solo/cookbooks/
 
-COPY --chown=$user:$group startup.sh /home/$user/
+COPY --chown=onap:onap startup.sh /home/onap/
 
-RUN chmod 770 /home/$user/startup.sh
+RUN chmod 770 /home/onap/startup.sh
 
-WORKDIR /home/$user/
+WORKDIR /home/onap/
 
 ENTRYPOINT /home/${user}/startup.sh

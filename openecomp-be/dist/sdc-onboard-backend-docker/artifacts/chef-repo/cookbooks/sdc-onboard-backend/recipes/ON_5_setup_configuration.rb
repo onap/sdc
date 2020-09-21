@@ -1,8 +1,8 @@
 template "onboard-be-config" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/onboarding_configuration.yaml"
    source "configuration.yaml.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
       :onboard_ip                      => node['ONBOARDING_BE_VIP'],
@@ -29,8 +29,8 @@ end
 template "VnfrepoConfiguration" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/config-vnfrepo.yaml"
    source "vnfrepo-configuration.yaml.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
       :VNFREPO_IP   => node['VnfRepo']['vnfRepoHost'],
@@ -43,8 +43,8 @@ end
 template "ExternalTestingConfiguration" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/externaltesting-configuration.yaml"
    source "externaltesting-configuration.yaml.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
       :EP1_CONFIG => node['EXTTEST']['ep1_config'],

@@ -28,7 +28,7 @@ cassandraConfig:
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
     ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath: /var/lib/jetty/etc/truststore
+    truststorePath: <%= node['jetty']['truststore_path'] %>
     truststorePassword: <%= @cassandra_truststore_password %>
 
 # access restriction

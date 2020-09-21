@@ -13,8 +13,9 @@ default['disableHttp'] = true
 #+----------------------------------+
 
 default['jetty']['dmaap_truststore_pwd'] = "dmaap_truststore_pwd"
-default['jetty'][:keystore_pwd] = "?(kP!Yur![*!Y5!E^f(ZKc31"
-default['jetty'][:keymanager_pwd] = "?(kP!Yur![*!Y5!E^f(ZKc31"
+default['jetty']['keystore_pwd'] = "?(kP!Yur![*!Y5!E^f(ZKc31"
+default['jetty']['keymanager_pwd'] = "?(kP!Yur![*!Y5!E^f(ZKc31"
+default['jetty']['truststore_path'] = "#{ENV['JETTY_BASE']}/etc/truststore"
 # TO CHANGE THE TRUSTSTORE CERT THE JVM CONFIGURATION
 # MUST BE ALSO CHANGE IN THE startup.sh FILE
 default['jetty'][:truststore_pwd] = "z+KEj;t+,KN^iimSiS89e#p0"
@@ -32,6 +33,7 @@ default['cassandra']['socket_read_timeout'] = 20000
 default['cassandra']['socket_connect_timeout'] = 20000
 default['cassandra']['janusgraph_connection_timeout'] = 10000
 default['cassandra'][:truststore_password] = "Aa123456"
+default['cassandra']['janusgraph_config_file'] = "#{ENV['JETTY_BASE']}/config/catalog-be/janusgraph.properties"
 
 
 #Onboard
@@ -85,10 +87,10 @@ default['DMAAP']['replicationcount'] = "3"
 #+----------------------------------+
 
 # Cadi
-default['access_restriction']['cadi_root_dir'] = "/var/lib/jetty/etc"
-default['access_restriction']['cadi_keyfile'] = "/var/lib/jetty/etc/org.onap.sdc.p12"
+default['access_restriction']['cadi_root_dir'] = "#{ENV['JETTY_BASE']}/etc"
+default['access_restriction']['cadi_keyfile'] = "#{ENV['JETTY_BASE']}/etc/org.onap.sdc.p12"
 default['access_restriction']['cadi_loglevel'] = "DEBUG"
-default['access_restriction']['cadi_truststore'] = "/var/lib/jetty/etc/org.onap.sdc.trust.jks"
+default['access_restriction']['cadi_truststore'] = "#{ENV['JETTY_BASE']}/etc/org.onap.sdc.trust.jks"
 default['access_restriction']['cadi_truststore_password'] = "changeit"
 default['access_restriction']['cadiX509Issuers'] = "CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US"
 default['access_restriction']['encrypted_password'] = "enc:AccessRestrictionEncryptedPassword"

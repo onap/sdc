@@ -17,8 +17,8 @@ end
 template "janusgraph.properties" do
   path "#{ENV['JETTY_BASE']}/config/catalog-be/janusgraph.properties"
   source "BE-janusgraph.properties.erb"
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
   mode "0644"
   action :create_if_missing
   variables({
@@ -38,8 +38,8 @@ end
 template "catalog-be-config" do
   path "#{ENV['JETTY_BASE']}/config/catalog-be/configuration.yaml"
   source "BE-configuration.yaml.erb"
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
   mode "0644"
   action :create_if_missing
   variables({
@@ -51,7 +51,7 @@ template "catalog-be-config" do
                 :rep_factor => replication_factor,
                 :DC_NAME => node['cassandra']['datacenter_name'],
                 :REP_STRING => conf_dcname_with_rep,
-                :janusgraph_Path => "/var/lib/jetty/config/catalog-be/",
+                :janusgraph_Path => "#{ENV['JETTY_BASE']}/config/catalog-be/",
                 :socket_connect_timeout => node['cassandra']['socket_connect_timeout'],
                 :socket_read_timeout => node['cassandra']['socket_read_timeout'],
                 :cassandra_pwd => node['cassandra'][:cassandra_password],
@@ -66,8 +66,8 @@ end
 template "distribution-engine-configuration" do
   path "#{ENV['JETTY_BASE']}/config/catalog-be/distribution-engine-configuration.yaml"
   source "BE-distribution-engine-configuration.yaml.erb"
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
   mode "0644"
   action :create_if_missing
 end

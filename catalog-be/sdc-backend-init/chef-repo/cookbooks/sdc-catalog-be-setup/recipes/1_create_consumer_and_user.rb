@@ -15,20 +15,12 @@ else
   user_conf_dir = ""
 end
 
-bash "executing-create_users" do
-  code <<-EOH
-    sdcuserinit -i #{node['Nodes']['BE']} -p #{be_port} #{user_conf_dir} #{https_flag}
-    rc=$?
-    if [[ $rc != 0 ]]; then exit $rc; fi
-  EOH
-  returns [0]
+execute "executing-create_users" do
+  command "sdcuserinit -i #{node['Nodes']['BE']} -p #{be_port} #{user_conf_dir} #{https_flag}"
+  action :run
 end
 
-bash "executing-create_consumers" do
-  code <<-EOH
-    sdcconsumerinit -i #{node['Nodes']['BE']} -p #{be_port} #{https_flag}
-    rc=$?
-    if [[ $rc != 0 ]]; then exit $rc; fi
-  EOH
-  returns [0]
+execute "executing-create_consumers" do
+  command "sdcconsumerinit -i #{node['Nodes']['BE']} -p #{be_port} #{https_flag}"
+  action :run
 end

@@ -531,6 +531,7 @@
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
             <configuration>
+              <verbose>true</verbose>
               <apiVersion>${docker.api.version}</apiVersion>
               <registry>nexus3.onap.org:10001</registry>
               <authConfig>
