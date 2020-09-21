@@ -10,8 +10,8 @@ end
 template "webseal.conf" do
    path "#{ENV['JETTY_BASE']}/config/sdc-simulator/webseal.conf"
    source "SDC-Simulator-webseal.conf.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
       :fe_url  =>"#{fe_url}"

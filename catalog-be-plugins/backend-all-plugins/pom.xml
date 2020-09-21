@@ -58,9 +58,10 @@ limitations under the License.
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <configuration>
+                    <verbose>${verbose}</verbose>
                     <apiVersion>${docker.api.version}</apiVersion>
                     <registry>nexus3.onap.org:10001</registry>
-                    <verbose>true</verbose>
+                    <verbose>${verbose}</verbose>
                     <authConfig>
                         <pull>
                             <username>docker</username>

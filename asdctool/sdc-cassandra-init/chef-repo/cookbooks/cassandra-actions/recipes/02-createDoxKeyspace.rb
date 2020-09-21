@@ -19,21 +19,16 @@ remote_directory '/tmp/tools' do
     action :create
 end
 
-
-bash "onboard-db-schema-creation" do
+execute "onboard-db-schema-creation" do
     ignore_failure true
-    code <<-EOH
-     cd /tmp/tools/build/scripts
-     chmod +x onboard-db-schema-creation.sh
-     bash /tmp/tools/build/scripts/onboard-db-schema-creation.sh
-    EOH
+  command "chmod +x onboard-db-schema-creation.sh && sh -x /tmp/tools/build/scripts/onboard-db-schema-creation.sh"
+  cwd "/tmp/tools/build/scripts"
+  action :run
 end
-    
-bash "create-DOX-schema" do
+
+execute "create-DOX-schema" do
     ignore_failure true
-    code <<-EOH
-     cd /tmp 
-     chmod +x /tmp/create_dox_keyspace.sh
-     /tmp/create_dox_keyspace.sh
-    EOH
+  command "chmod +x /tmp/create_dox_keyspace.sh && /tmp/create_dox_keyspace.sh"
+  cwd "/tmp"
+  action :run
 end
