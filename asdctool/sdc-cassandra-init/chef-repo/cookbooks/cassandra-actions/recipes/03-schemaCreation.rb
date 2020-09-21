@@ -3,14 +3,11 @@ cookbook_file "/tmp/sdctool.tar" do
   mode 0755
 end
 
-## extract sdctool.tar
-bash "install tar" do
+execute "install tar" do
+  command "/bin/tar xf /tmp/sdctool.tar -C /tmp"
   cwd "/tmp"
-  code <<-EOH
-     /bin/tar xf /tmp/sdctool.tar -C /tmp
-  EOH
+  action :run
 end
-
 
 template "janusgraph.properties" do
   sensitive true
@@ -49,19 +46,13 @@ template "/tmp/sdctool/config/configuration.yaml" do
   })
 end
 
-
-
-bash "executing-schema-creation" do
-   code <<-EOH
-     cd /tmp
-     chmod +x /tmp/sdctool/scripts/schemaCreation.sh
-     /tmp/sdctool/scripts/schemaCreation.sh /tmp/sdctool/config
-   EOH
+execute "executing-schema-creation" do
+  command "chmod +x /tmp/sdctool/scripts/schemaCreation.sh && /tmp/sdctool/scripts/schemaCreation.sh /tmp/sdctool/config"
+  cwd "/tmp"
+  action :run
 end
 
-bash "executing-janusGraphSchemaCreation.sh" do
-  code <<-EOH
-     chmod +x /tmp/sdctool/scripts/janusGraphSchemaCreation.sh
-     /tmp/sdctool/scripts/janusGraphSchemaCreation.sh /tmp/sdctool/config
-   EOH
+execute "executing-janusGraphSchemaCreation.sh" do
+  command "chmod +x /tmp/sdctool/scripts/janusGraphSchemaCreation.sh && /tmp/sdctool/scripts/janusGraphSchemaCreation.sh /tmp/sdctool/config"
+  action :run
 end
