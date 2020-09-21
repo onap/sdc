@@ -549,13 +549,10 @@ limitations under the License.
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>
-                                            ${it.chef.config}:/var/lib/jetty/chef-solo/environments
+                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
+                                        <volume>${project.basedir}/src/test/resources/cert:/app/jetty/onap/cert
                                         </volume>
-                                        <volume>
-                                            ${project.basedir}/src/test/resources/cert/onboarding-be:/var/lib/jetty/onap/cert
-                                        </volume>
-                                        <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
+                                        <volume>${it.shared.volume}:/app/jetty/logs</volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -603,10 +600,8 @@ limitations under the License.
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>
-                                            ${it.chef.config}:/var/lib/jetty/chef-solo/environments
-                                        </volume>
-                                        <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
+                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
+                                        <volume>${it.shared.volume}:/app/jetty/logs</volume>
                                         <volume>
                                             ${project.basedir}/src/test/resources/cert/catalog-be:/var/lib/jetty/onap/cert
                                         </volume>
@@ -652,7 +647,7 @@ limitations under the License.
                                         <volume>
                                             ${it.chef.config}:/home/onap/chef-solo/environments
                                         </volume>
-                                        <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
+                                        <volume>${it.shared.volume}:/home/onap/logs</volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -680,13 +675,12 @@ limitations under the License.
                                 <hostname>sdc-FE</hostname>
                                 <volumes>
                                     <bind>
+                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
+                                        <volume>${it.shared.volume}:/app/jetty/logs</volume>
                                         <volume>
-                                            ${it.chef.config}:/var/lib/jetty/chef-solo/environments
+                                            ${it.chef.config}/plugins-configuration.yaml:/app/jetty/config/catalog-fe/plugins-configuration.yaml
                                         </volume>
-                                        <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
-                                        <volume>
-                                            ${it.chef.config}/plugins-configuration.yaml:/var/lib/jetty/config/catalog-fe/plugins-configuration.yaml
-                                        </volume>
+
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -728,8 +722,8 @@ limitations under the License.
                                 <hostname>sdc-sim</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/root/chef-solo/environments
-                                        </volume>
+                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
+                                        <volume>${it.shared.volume}:/app/jetty/logs</volume>
                                     </bind>
                                 </volumes>
                                 <wait>
