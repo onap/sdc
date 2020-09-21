@@ -24,8 +24,10 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
@@ -62,8 +64,13 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -134,7 +141,7 @@ import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductManager.class);
     private VspMergeDao vspMergeDao;
     private OrchestrationTemplateDao orchestrationTemplateDao;
     private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
@@ -670,6 +677,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
                 OnboardingTypesEnum.getOnboardingTypesEnum(orchestrationTemplate.getFileSuffix()),
                 orchestrationTemplate.getContentData().array());
 
+        try (InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            addDummyHeatBase(zipFileManifest, fileContentMap);
+        } catch (Exception e) {
+            LOGGER.error("Invalid package content", e);
+        }
+
         if (CommonUtil.isFileOriginFromZip(orchestrationTemplate.getFileSuffix())) {
             ValidationManager validationManager = ValidationManagerUtil.initValidationManager(fileContentMap);
             validationErrors.putAll(validationManager.validate());
@@ -679,6 +692,26 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
                        : validationErrors;
     }
 
+    private FileContentHandler addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
+        ManifestContent manifestContent =
+                JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+        for (FileData fileData : manifestContent.getData()) {
+            if ((fileData.getFile()).contains("dummy_ignore.yaml")) {
+                String filePath = new File("").getAbsolutePath();
+                File envFilePath = new File(filePath + "/base_template.env");
+                File baseFilePath = new File(filePath + "/base_template.yaml");
+                try (
+                        InputStream envStream = new FileInputStream(envFilePath);
+                        InputStream baseStream = new FileInputStream(baseFilePath);) {
+                    fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
+                    fileContentMap.addFile("base_template_dummy_ignore.yaml", baseStream);
+                } catch (Exception e) {
+                    LOGGER.error("File not found error {}", e);
+                }
+            }
+        }
+        return fileContentMap;
+    }
     private QuestionnaireValidationResult validateQuestionnaire(String vspId, Version version,
             String onboardingMethod) {
         // The apis of CompositionEntityDataManager used here are stateful!
