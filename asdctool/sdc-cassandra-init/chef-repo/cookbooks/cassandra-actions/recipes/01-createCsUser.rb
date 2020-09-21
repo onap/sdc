@@ -11,9 +11,8 @@ template "/tmp/create_cassandra_user.sh" do
   })
 end
 
-
-bash "create-sdc-user" do
-   code <<-EOH
-     cd /tmp ; /tmp/create_cassandra_user.sh
-   EOH
+execute "create-sdc-user" do
+  command "/tmp/create_cassandra_user.sh"
+  cwd "/tmp/"
+  action :run
 end

@@ -28,7 +28,7 @@ released: 2012-11-30
 toscaConformanceLevel: 11.0
 minToscaConformanceLevel: 3.0
 
-janusGraphCfgFile: /var/lib/jetty/config/catalog-be/janusgraph.properties
+janusGraphCfgFile: <%= node['cassandra']['janusgraph_config_file'] %>
 janusGraphInMemoryGraph: false
 janusGraphLockTimeout: 1800
 # The interval to try and reconnect to JanusGraph DB when it is down during ASDC startup:
@@ -108,7 +108,7 @@ cassandraConfig:
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
     ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath : /var/lib/jetty/etc/truststore
+    truststorePath : <%= node['jetty']['truststore_path'] %>
     truststorePassword : <%= @cassandra_truststore_password %>
     keySpaces:
         - { name: dox,           replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
@@ -1127,7 +1127,7 @@ dmaapConsumerConfiguration:
         username: user
         password:
     aftDme2SslEnable: true
-    aftDme2ClientKeystore: /var/lib/jetty/etc/truststore
+    aftDme2ClientKeystore: <%= node['jetty']['truststore_path'] %>
     aftDme2ClientKeystorePassword: ""
     aftDme2ClientSslCertAlias: certman
 
@@ -1160,7 +1160,7 @@ dmaapProducerConfiguration:
         username: <%= node['DMAAP']['producer']['username'] %>
         password: <%= node['DMAAP']['producer']['password'] %>
     aftDme2SslEnable: true
-    aftDme2ClientKeystore: /var/lib/jetty/etc/truststore
+    aftDme2ClientKeystore: <%= node['jetty']['truststore_path'] %>
     aftDme2ClientKeystorePassword: <%= node['jetty']['dmaap_truststore_pwd'] %>
     aftDme2ClientSslCertAlias: certman
 
