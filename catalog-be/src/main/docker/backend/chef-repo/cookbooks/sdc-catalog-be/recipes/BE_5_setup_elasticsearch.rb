@@ -11,8 +11,8 @@ end
 template "elasticsearch.yml-config" do
   path "#{ENV['JETTY_BASE']}/config/elasticsearch.yml"
   source "BE-elasticsearch.yml.erb"
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
   mode "0755"
   variables ({
     :cluster_name => "#{clusterName}",
