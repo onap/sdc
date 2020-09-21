@@ -6,22 +6,17 @@ else
   http_option = "--module=http"
 end
 
-
-bash "create-jetty-modules" do
-cwd "#{ENV['JETTY_BASE']}"
-code <<-EOH
-   cd "#{ENV['JETTY_BASE']}"
-   java -jar "#{ENV['JETTY_HOME']}"/start.jar --add-to-start=deploy
-   java -jar "#{ENV['JETTY_HOME']}"/start.jar --create-startd --add-to-start=http,https,console-capture,setuid
-EOH
+execute "create-jetty-modules" do
+  command "java -jar #{ENV['JETTY_HOME']}/start.jar --add-to-start=deploy && java -jar #{ENV['JETTY_HOME']}/start.jar --create-startd --add-to-start=http,https,console-capture,setuid"
+  cwd "#{ENV['JETTY_BASE']}"
+  action :run
 end
-
 
 template "http-ini" do
    path "#{ENV['JETTY_BASE']}/start.d/http.ini"
    source "http-ini.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
      :http_option => http_option ,
@@ -33,8 +28,8 @@ end
 template "https-ini" do
    path "#{ENV['JETTY_BASE']}/start.d/https.ini"
    source "https-ini.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables :https_port => "#{node['FE'][:https_port]}"
 end
@@ -43,8 +38,8 @@ end
 template "ssl-ini" do
    path "#{ENV['JETTY_BASE']}/start.d/ssl.ini"
    source "ssl-ini.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
      :https_port => "#{node['FE'][:https_port]}" ,

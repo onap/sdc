@@ -8,16 +8,16 @@ pass_changed=99
 retry_num=1
 is_up=0
 while [ $is_up -eq 0 -a $retry_num -le 100 ]; do
-   echo "exit" | cqlsh -u cassandra -p cassandra $CASSANDRA_IP $CASSANDRA_PORT > /dev/null 2>&1
+   echo "exit" | cqlsh -u cassandra -p cassandra $CASSANDRA_IP $CASSANDRA_PORT
    res1=$?
-   echo "exit" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT > /dev/null 2>&1
+   echo "exit" | cqlsh -u cassandra -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT
    res2=$?
 
    if [ $res1 -eq 0 -o $res2 -eq 0 ]; then
-      echo "`date` --- cqlsh is enabled to connect."
+      echo "`date` --- cqlsh is able to connect."
       is_up=1
    else
-      echo "`date` --- cqlsh is NOT enabled to connect yet. sleep 5"
+      echo "`date` --- cqlsh is NOT able to connect yet. sleep 5"
       sleep 5
    fi
    let "retry_num++"

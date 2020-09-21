@@ -8,6 +8,7 @@ default['cassandra'][:truststore_password] = "Aa123456"
 default['jetty'][:keystore_pwd] = "?(kP!Yur![*!Y5!E^f(ZKc31"
 default['jetty'][:keymanager_pwd] = "?(kP!Yur![*!Y5!E^f(ZKc31"
 default['jetty'][:truststore_pwd] = "z+KEj;t+,KN^iimSiS89e#p0"
+default['jetty']['truststore_path'] = "#{ENV['JETTY_BASE']}/etc/truststore"
 
 default['VnfRepo']['vnfRepoPort'] = 8702
 default['VnfRepo']['vnfRepoHost'] = "refrepo"
