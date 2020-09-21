@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /var/lib/jetty/chef-solo
+cd ${JETTY_BASE}/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 rc=$?
 if [ $rc -ne 0 ]; then
@@ -16,6 +16,6 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
             -Dconfiguration.yaml=${JETTY_BASE}/config/onboarding-be/onboarding_configuration.yaml \
             -Dconfig.location=${JETTY_BASE}/config/onboarding-be/."
 
-cd /var/lib/jetty
+cd ${JETTY_BASE}
 
-java $JAVA_OPTIONS -jar "$JETTY_HOME/start.jar"
+java $JAVA_OPTIONS -jar "$JETTY_BASE/start.jar"

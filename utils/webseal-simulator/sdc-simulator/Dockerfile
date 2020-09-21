@@ -1,17 +1,12 @@
-FROM jetty:9.4.31-jre11-slim
+FROM onap/integration-java11:7.1.0
 
 USER root
 
 # Install Chef
 RUN set -ex && \
-    apt-get update -y && \
-    apt-get install -y \
-        jq \
-        curl \
-        curl \
-        vim \
-        make \
-        gcc \
+    apk update && \
+    apk add --no-cache \
+        build-base \
         ruby \
         ruby-dev \
         libffi-dev \
@@ -23,39 +18,22 @@ RUN set -ex && \
         etc webrick \
         --no-document && \
     gem cleanup && \
-    apt-get update -y && \
-    apt-get install -y binutils jq && \
-    apt-get clean
+    apk update
 
-# Replace Jetty user ID
-ENV USER_JETTY="jetty"
-ENV GROUP_JETTY="jetty"
-ENV UID_JETTY="352070"
-ENV GID_JETTY="35953"
+RUN cd /app
+#Download jetty
+RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.31.v20200723/jetty-distribution-9.4.31.v20200723.tar.gz && \
+        tar xvfz jetty-distribution-9.4.31.v20200723.tar.gz && \
+        mv jetty-distribution-9.4.31.v20200723 jetty && \
+        rm -rf jetty-distribution-9.4.31.v20200723.tar.gz
 
-# Remove user:
-RUN deluser ${USER_JETTY}
-#RUN delgroup ${GROUP_JETTY}
-RUN echo "${USER_JETTY}:x:${UID_JETTY}:${GID_JETTY}::/home/${USER_JETTY}:Linux User,,,:/home/jetty:/bin/false" >> /etc/passwd
-RUN echo "${GROUP_JETTY}:x:${GID_JETTY}:${USER_JETTY}" >> /etc/group
-RUN echo "${USER_JETTY}:!:17501:0:99999:7:::" >> /etc/shadow
-RUN mkdir /home/${USER_JETTY} && chown ${USER_JETTY}:${GROUP_JETTY} /home/${USER_JETTY}
-RUN chown -R jetty:jetty ${JETTY_BASE}/webapps /var/lib/jetty
-
-USER jetty
+ENV JETTY_BASE=/app/jetty
 
 COPY chef-solo /root/chef-solo/
-
 COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
-
 ADD WSSimulator*.war                    	${JETTY_BASE}/webapps/
-
-USER root
-
-RUN chown -R jetty:jetty               		${JETTY_BASE}/webapps
-
+RUN chown -R onap:onap               		${JETTY_BASE}/webapps
 COPY startup.sh ${JETTY_BASE}/
-
 RUN chmod 777 ${JETTY_BASE}/startup.sh
 
 ENTRYPOINT [ "sh", "-c", "${JETTY_BASE}/startup.sh"]
