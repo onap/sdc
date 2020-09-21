@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
@@ -62,8 +63,11 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -108,6 +112,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageInvalidErrorBuilder
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process.OrchestrationTemplateProcessZipHandler;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
@@ -134,7 +139,7 @@ import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductManager.class);
     private VspMergeDao vspMergeDao;
     private OrchestrationTemplateDao orchestrationTemplateDao;
     private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
@@ -669,6 +674,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         FileContentHandler fileContentMap = CommonUtil.validateAndUploadFileContent(
                 OnboardingTypesEnum.getOnboardingTypesEnum(orchestrationTemplate.getFileSuffix()),
                 orchestrationTemplate.getContentData().array());
+
+        try (InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            OrchestrationTemplateProcessZipHandler.addDummyHeatBase(zipFileManifest, fileContentMap);
+        } catch (Exception e) {
+            LOGGER.error("Invalid package content", e);
+        }
 
         if (CommonUtil.isFileOriginFromZip(orchestrationTemplate.getFileSuffix())) {
             ValidationManager validationManager = ValidationManagerUtil.initValidationManager(fileContentMap);

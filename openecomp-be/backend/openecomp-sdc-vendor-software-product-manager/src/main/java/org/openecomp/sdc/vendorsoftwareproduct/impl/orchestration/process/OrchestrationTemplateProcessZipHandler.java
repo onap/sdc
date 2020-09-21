@@ -41,11 +41,18 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
+  private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
 
   private final CandidateService candidateService =
       CandidateServiceFactory.getInstance().createInterface();
@@ -67,6 +74,11 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
 
     Map<String, List<ErrorMessage>> uploadErrors = uploadFileResponse.getErrors();
     FileContentHandler fileContentMap = fileContent.get();
+    try (InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+      addDummyHeatBase(zipFileManifest ,fileContentMap);
+    } catch (Exception e) {
+      LOGGER.error("Invalid package content", e);
+    }
     FilesDataStructure structure =
         JsonUtil.json2Object(candidateData.getFilesDataStructure(), FilesDataStructure.class);
 
@@ -129,6 +141,29 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     uploadFileResponse.addStructureErrors(uploadErrors);
     candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
     return response;
+  }
+
+  public static FileContentHandler addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap)
+  {
+    ManifestContent manifestContent =
+            JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+    for (FileData fileData : manifestContent.getData()) {
+      if (Objects.nonNull(fileData.getType()) &&
+              fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
+        String filePath = new File("").getAbsolutePath();
+        File envFilePath = new File(filePath + "/base_template.env");
+        File baseFilePath = new File(filePath + "/base_template.yaml");
+        try {
+          InputStream envStream = new FileInputStream(envFilePath);
+          InputStream baseStream = new FileInputStream(baseFilePath);
+          fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
+          fileContentMap.addFile("base_template_dummy_ignore.yaml", baseStream);
+        } catch (Exception e) {
+          LOGGER.error("File not found error {}", e);
+        }
+      }
+    }
+    return fileContentMap;
   }
 
   private Map<String, List<ErrorMessage>> getErrors(OrchestrationTemplateActionResponse
