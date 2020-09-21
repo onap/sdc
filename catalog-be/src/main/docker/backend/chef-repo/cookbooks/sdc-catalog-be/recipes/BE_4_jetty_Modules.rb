@@ -19,8 +19,8 @@ end
 template "http-ini" do
   path "#{ENV['JETTY_BASE']}/start.d/http.ini"
   source "http-ini.erb"
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
   mode "0755"
   variables ({
     :http_option => http_option ,
@@ -33,8 +33,8 @@ end
 template "https-ini" do
   path "#{ENV['JETTY_BASE']}/start.d/https.ini"
   source "https-ini.erb"
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
   mode "0755"
   variables :https_port => "#{node['BE'][:https_port]}"
 end
@@ -43,8 +43,8 @@ end
 template "ssl-ini" do
   path "#{ENV['JETTY_BASE']}/start.d/ssl.ini"
   source "ssl-ini.erb"
-  owner "jetty"
-  group "jetty"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
   mode "0755"
   variables ({
     :https_port => "#{node['BE'][:https_port]}" ,
