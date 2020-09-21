@@ -1,16 +1,12 @@
-FROM jetty:9.4.31-jre11-slim
+FROM onap/integration-java11:7.1.0
 
 USER root
 
 # Install Chef
 RUN set -ex && \
-    apt-get update -y && \
-    apt-get install -y \
-        jq \
-        curl \
-        vim \
-        make \
-        gcc \
+    apk update && \
+    apk add --no-cache \
+        build-base \
         ruby \
         ruby-dev \
         libffi-dev \
@@ -22,32 +18,22 @@ RUN set -ex && \
         etc webrick \
         --no-document && \
     gem cleanup && \
-    apt-get update -y && \
-    apt-get install -y binutils jq && \
-    apt-get clean
+    apk update
 
-# Replace Jetty user ID
-ENV USER_JETTY="jetty"
-ENV GROUP_JETTY="jetty"
-ENV UID_JETTY="352070"
-ENV GID_JETTY="35953"
+RUN cd /app
+#Download jetty
+RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.31.v20200723/jetty-distribution-9.4.31.v20200723.tar.gz && \
+        tar xvfz jetty-distribution-9.4.31.v20200723.tar.gz && \
+        mv jetty-distribution-9.4.31.v20200723 jetty && \
+        rm -rf jetty-distribution-9.4.31.v20200723.tar.gz
 
-# Remove user:
-RUN deluser ${USER_JETTY}
-#RUN delgroup ${GROUP_JETTY}
-RUN echo "${USER_JETTY}:x:${UID_JETTY}:${GID_JETTY}::/home/${USER_JETTY}:Linux User,,,:/home/jetty:/bin/false" >> /etc/passwd
-RUN echo "${GROUP_JETTY}:x:${GID_JETTY}:${USER_JETTY}" >> /etc/group
-RUN echo "${USER_JETTY}:!:17501:0:99999:7:::" >> /etc/shadow
-RUN mkdir /home/${USER_JETTY} && chown ${USER_JETTY}:${GROUP_JETTY} /home/${USER_JETTY}
-RUN chown -R jetty:jetty ${JETTY_BASE}/webapps /var/lib/jetty
+ENV JETTY_BASE=/app/jetty
 
-USER jetty
-
-COPY --chown=jetty:jetty chef-solo ${JETTY_BASE}/chef-solo/
-COPY --chown=jetty:jetty chef-repo/cookbooks ${JETTY_BASE}/chef-solo/cookbooks/
-ADD --chown=jetty:jetty onboarding-be-*.war    ${JETTY_BASE}/webapps/
-ADD --chown=jetty:jetty api-docs.war           ${JETTY_BASE}/webapps/
-COPY --chown=jetty:jetty startup.sh ${JETTY_BASE}/
+COPY --chown=onap:onap chef-solo ${JETTY_BASE}/chef-solo/
+COPY --chown=onap:onap chef-repo/cookbooks ${JETTY_BASE}/chef-solo/cookbooks/
+ADD --chown=onap:onap onboarding-be-*.war    ${JETTY_BASE}/webapps/
+ADD --chown=onap:onap api-docs.war           ${JETTY_BASE}/webapps/
+COPY --chown=onap:onap startup.sh ${JETTY_BASE}/
 
 RUN chmod 770 ${JETTY_BASE}/startup.sh
 
