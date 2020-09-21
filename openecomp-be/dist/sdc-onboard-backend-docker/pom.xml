@@ -108,7 +108,8 @@
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <configuration>
-                    <apiVersion>1.23</apiVersion>
+                    <verbose>true</verbose>
+                    <apiVersion>${docker.api.version}</apiVersion>
                     <registry>${docker.registry}</registry>
                     <authConfig>
                         <pull>
