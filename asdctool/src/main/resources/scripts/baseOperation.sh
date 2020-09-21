@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 CURRENT_DIR=`pwd`
 BASEDIR=$(dirname $0)
 
-if [ ${BASEDIR:0:1} = "/" ]
+if [ `echo ${BASEDIR} | cut -c1-1` = "/" ]
 then
                 FULL_PATH=$BASEDIR
 else
