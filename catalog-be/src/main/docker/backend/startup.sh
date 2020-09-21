@@ -11,7 +11,7 @@ export JAVA_OPTIONS=" -Dconfig.home=${JETTY_BASE}/config \
        -Djetty.console-capture.dir=${JETTY_BASE}/logs \
        ${JAVA_OPTIONS} "
 
-cd /var/lib/jetty/chef-solo
+cd ${JETTY_BASE}/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 
 status=$?
@@ -21,7 +21,7 @@ if [ $status -ne 0 ]; then
 fi
 
 # Execute Jetty
-cd /var/lib/jetty
+cd ${JETTY_BASE}
 
 java $JAVA_OPTIONS -jar "$JETTY_HOME/start.jar"
 
