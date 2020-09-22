@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7699b9c_a172be74",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-22T02:44:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7cf9a067_fcb0d166",
+      "revId": "ad0f2d26a385c6199d85722a7c147a96b9783a4a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "13f740e3_f477c8e7",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
         "patchSetId": 7
@@ -33,6 +51,24 @@
       "revId": "ad0f2d26a385c6199d85722a7c147a96b9783a4a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c40e9d29_cc707d2f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 6927
+      },
+      "writtenOn": "2020-09-22T02:44:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13f740e3_f477c8e7",
+      "revId": "ad0f2d26a385c6199d85722a7c147a96b9783a4a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
