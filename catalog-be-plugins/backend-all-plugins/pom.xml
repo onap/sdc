@@ -39,6 +39,7 @@ limitations under the License.
         <docker.skip.build>true</docker.skip.build>
         <docker.skip.push>true</docker.skip.push>
         <docker.skip.tag>true</docker.skip.tag>
+        <docker.skip>true</docker.skip>
     </properties>
 
     <profiles>
