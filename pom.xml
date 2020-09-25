@@ -39,9 +39,9 @@ Modifications copyright (c) 2018-2019 Nokia
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
 
         <tosca.datatype.version>${project.version}</tosca.datatype.version>
-
         <!-- 3rd parties versions -->
         <bean-matcher.version>0.11</bean-matcher.version>
         <lang3.version>3.10</lang3.version>
@@ -152,10 +152,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <nexus.proxy>https://nexus.onap.org</nexus.proxy>
         <sitePath>/content/sites/site/org/openecomp/sdc/${project.version}</sitePath>
         <staging.profile.id>176c31dfe190a</staging.profile.id>
-        <!--maven-->
-        <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
-        <!--docker tags-->
-        <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
         <!--togglz version-->
         <togglz.version>2.6.1.Final</togglz.version>
 

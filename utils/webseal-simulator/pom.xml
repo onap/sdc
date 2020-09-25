@@ -18,8 +18,6 @@
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
     <nexus.proxy>https://nexus.onap.org</nexus.proxy>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-    <docker.latest.tag>${project.version}-latest</docker.latest.tag>
     <sonar.skip>true</sonar.skip>
   </properties>
 
@@ -224,10 +222,11 @@
                     <cleanup>try</cleanup>
                     <dockerFileDir>${basedir}${file.separator}sdc-simulator</dockerFileDir>
                     <tags>
-                      <tag>${docker.tag}</tag>
+                      <tag>latest</tag>
                       <tag>
                         ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                       </tag>
+                      <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
                     </tags>
                   </build>
                 </image>

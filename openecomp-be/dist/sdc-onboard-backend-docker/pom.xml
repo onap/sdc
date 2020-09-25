@@ -126,8 +126,11 @@
                                 <cleanup>try</cleanup>
                                 <dockerFileDir>${project.basedir}/artifacts</dockerFileDir>
                                 <tags>
-                                    <tag>${docker.tag}</tag>
-                                    <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                    <tag>latest</tag>
+                                    <tag>
+                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                    </tag>
+                                    <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
                                 </tags>
                             </build>
                         </image>
