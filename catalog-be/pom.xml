@@ -18,8 +18,6 @@
         <swagger-ui.version>3.25.0</swagger-ui.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
-        <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
     </properties>
 
     <dependencies>
@@ -1063,10 +1061,11 @@
                                         <cleanup>try</cleanup>
                                         <dockerFileDir>backend</dockerFileDir>
                                         <tags>
-                                            <tag>${docker.tag}</tag>
+                                            <tag>latest</tag>
                                             <tag>
                                                 ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                                             </tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
                                         </tags>
                                         <assembly>
                                             <descriptor>backend/backend-files.xml</descriptor>
@@ -1082,10 +1081,11 @@
                                         <cleanup>try</cleanup>
                                         <dockerFileDir>${project.basedir}/sdc-backend-init</dockerFileDir>
                                         <tags>
-                                            <tag>${docker.tag}</tag>
+                                            <tag>latest</tag>
                                             <tag>
                                                 ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                                             </tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
                                         </tags>
                                     </build>
                                 </image>
