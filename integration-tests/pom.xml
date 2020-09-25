@@ -49,8 +49,7 @@ limitations under the License.
         <it.chef.config>${project.build.directory}/chef-config</it.chef.config>
         <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
-        <it.docker.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
-        </it.docker.version>
+        <it.docker.version>latest</it.docker.version>
         <it.ui.firefox.version>2.53.1</it.ui.firefox.version>
 
     </properties>

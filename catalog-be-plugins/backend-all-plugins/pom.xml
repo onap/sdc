@@ -34,8 +34,6 @@ limitations under the License.
     <artifactId>backend-all-plugins</artifactId>
 
     <properties>
-        <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
         <docker.skip.build>true</docker.skip.build>
         <docker.skip.push>true</docker.skip.push>
         <docker.skip.tag>true</docker.skip.tag>
@@ -79,10 +77,11 @@ limitations under the License.
                                 <cleanup>try</cleanup>
                                 <dockerFile>backend-all-plugins/Dockerfile</dockerFile>
                                 <tags>
-                                    <tag>${docker.tag}</tag>
+                                    <tag>latest</tag>
                                     <tag>
                                         ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                                     </tag>
+                                    <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
                                 </tags>
                                 <assembly>
                                     <descriptor>backend-all-plugins/backend-all-plugins-files.xml</descriptor>

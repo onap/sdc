@@ -472,14 +472,6 @@
       </build>
     </profile>
     <profile>
-      <id>docker-staging</id>
-      <properties>
-        <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
-      </properties>
-    </profile>
-
-    <profile>
       <id>docker</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -543,10 +535,11 @@
                     <cleanup>try</cleanup>
                     <dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
                     <tags>
-                      <tag>${docker.tag}</tag>
+                      <tag>latest</tag>
                       <tag>
                         ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                       </tag>
+                      <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
                     </tags>
                   </build>
                 </image>
