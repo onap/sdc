@@ -352,6 +352,136 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         return genericService;
     }
 
+
+    protected Map<String, GroupDefinition> getGroups() {
+        Map<String, GroupDefinition> groups = new HashMap<>();
+        GroupDefinition groupDefinition = new GroupDefinition();
+        groupDefinition.setName("groupDefinitionName");
+        groups.put("groupsMap",groupDefinition);
+        return groups;
+    }
+
+    protected UploadComponentInstanceInfo getuploadComponentInstanceInfo(){
+        UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
+        uploadComponentInstanceInfo.setType("resources");
+        Collection<String> directives = new Collection<String>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return false;
+            }
+
+            @Override
+            public Iterator<String> iterator() {
+                return null;
+            }
+
+            @Override
+            public Object[] toArray() {
+                return new Object[0];
+            }
+
+            @Override
+            public <T> T[] toArray(T[] ts) {
+                return null;
+            }
+
+            @Override
+            public boolean add(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                return false;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> collection) {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends String> collection) {
+                return false;
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> collection) {
+                return false;
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> collection) {
+                return false;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+        };
+        uploadComponentInstanceInfo.setDirectives(directives);
+        UploadNodeFilterInfo uploadNodeFilterInfo = new UploadNodeFilterInfo();
+        Map<String, List<UploadReqInfo>> requirements = new HashMap<>();
+        List<UploadReqInfo> uploadReqInfoList = new ArrayList<>();
+        UploadReqInfo uploadReqInfo = new UploadReqInfo();
+        uploadReqInfo.setName("uploadReqInfo");
+        uploadReqInfo.setCapabilityName("tosca.capabilities.Node");
+        uploadReqInfoList.add(uploadReqInfo);
+        requirements.put("requirements",uploadReqInfoList);
+        uploadNodeFilterInfo.setName("mme_ipu_vdu.virtualbinding");
+        uploadComponentInstanceInfo.setCapabilities(getCapabilities());
+        uploadComponentInstanceInfo.setRequirements(requirements);
+        uploadComponentInstanceInfo.setName("zxjTestImportServiceAb");
+        return uploadComponentInstanceInfo;
+    }
+
+    protected Map<String, List<UploadCapInfo>> getCapabilities(){
+        List<UploadCapInfo> uploadCapInfoList = new ArrayList<>();
+        UploadCapInfo uploadCapInfo = new UploadCapInfo();
+        uploadCapInfo.setNode("tosca.nodes.Root");
+        uploadCapInfo.setName("mme_ipu_vdu.dependency");
+        uploadCapInfoList.add(uploadCapInfo);
+        Map<String, List<UploadCapInfo>> uploadCapInfoMap = new HashMap<>();
+        uploadCapInfoMap.put("tosca.capabilities.Node",uploadCapInfoList);
+        return uploadCapInfoMap;
+    }
+
+    protected List<ComponentInstance> creatComponentInstances(){
+        List<ComponentInstance> componentInstances = new ArrayList<>();
+        ComponentInstance componentInstance = new ComponentInstance();
+        Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
+        List<CapabilityDefinition> capabilityDefinitionList = new ArrayList<>();
+        CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setName("mme_ipu_vdu.feature");
+        capabilityDefinitionList.add(capabilityDefinition);
+        capabilities.put("tosca.capabilities.Node",capabilityDefinitionList);
+
+        Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
+        List<RequirementDefinition> requirementDefinitionList = new ArrayList<>();
+        RequirementDefinition requirementDefinition = new RequirementDefinition();
+        requirementDefinition.setName("zxjtestimportserviceab0.mme_ipu_vdu.dependency.test");
+        requirementDefinitionList.add(requirementDefinition);
+        requirements.put("tosca.capabilities.Node",requirementDefinitionList);
+        componentInstance.setRequirements(requirements);
+        componentInstance.setCapabilities(capabilities);
+        componentInstance.setUniqueId("uniqueId");
+        componentInstance.setComponentUid("componentUid");
+        componentInstance.setName("zxjTestImportServiceAb");
+        componentInstances.add(componentInstance);
+        return componentInstances;
+    }
+
     protected UploadComponentInstanceInfo createUploadComponentInstanceInfo(){
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
         uploadComponentInstanceInfo.setName("UploadComponentInstanceInfo");

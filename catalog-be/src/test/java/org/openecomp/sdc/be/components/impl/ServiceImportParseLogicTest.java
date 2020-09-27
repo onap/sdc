@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -97,6 +98,8 @@ import org.openecomp.sdc.be.model.User;
 
 import java.util.HashMap;
 import java.util.Map;
+
+
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -115,6 +118,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     IElementOperation elementDao = Mockito.mock(IElementOperation.class);
     IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
     InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
+    LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
 
     private static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
@@ -160,7 +164,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         bl.setCapabilityTypeOperation(capabilityTypeOperation);
         bl.setInterfaceTypeOperation(interfaceTypeOperation);
         bl.setInputsBusinessLogic(inputsBusinessLogic);
-
+        bl.setLifecycleBusinessLogic(lifecycleBusinessLogic);
     }
 
     @Test
@@ -276,10 +280,42 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     }
 
     @Test
-    public void testHandleAndAddExtractedVfcsArtifacts() {
+    public void testFindAddNodeTypeArtifactsToHandleNotNull() {
 
+        Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = new HashMap<>();
+        Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
+        String namespace = "namespace";
         List<ArtifactDefinition> vfcArtifacts = new ArrayList<>();
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        artifactDefinition.setArtifactName("artifactDefinitionName");
+        vfcArtifacts.add(artifactDefinition);
+        extractedVfcsArtifacts.put(namespace,vfcArtifacts);
+        ImmutablePair p1 = ImmutablePair.<String, String>of("s", "sd");
+        Map<String, NodeTypeInfo> nodeTypesInfo = new HashedMap();
+        final Service service = createServiceObject(false);
+        Resource resource = new Resource();
+        Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(resource);
+        when(toscaOperationFacade.getLatestByToscaResourceName(anyString()))
+                .thenReturn(getCompLatestResult);
+        try {
+            bl.findAddNodeTypeArtifactsToHandle(getCsarInfo(), nodeTypesArtifactsToHandle, service,
+                    extractedVfcsArtifacts, namespace, p1);
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.INVALID_TOSCA_TEMPLATE,
+                    ComponentTypeEnum.RESOURCE.getValue());
+        }
+    }
+
+    @Test
+    public void testHandleAndAddExtractedVfcsArtifacts() {
+        List<ArtifactDefinition> vfcArtifacts = new ArrayList<>();
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        artifactDefinition.setArtifactName("artifactDefinitionName");
+        vfcArtifacts.add(artifactDefinition);
         List<ArtifactDefinition> artifactsToAdd = new ArrayList<>();
+        ArtifactDefinition artifactDefinitionToAdd = new ArtifactDefinition();
+        artifactDefinitionToAdd.setArtifactName("artifactDefinitionToAddName");
+        artifactsToAdd.add(artifactDefinitionToAdd);
         bl.handleAndAddExtractedVfcsArtifacts(vfcArtifacts, artifactsToAdd);
     }
 
@@ -338,7 +374,15 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         List<ArtifactDefinition> artifactsToUpload = new ArrayList<>();
         List<ArtifactDefinition> artifactsToUpdate = new ArrayList<>();
         Map<String, ArtifactDefinition> existingArtifacts = new HashMap<>();
+        ArtifactDefinition existingArtifact = new ArtifactDefinition();
+        existingArtifact.setArtifactName("ArtifactName");
+        existingArtifact.setArtifactType("ArtifactType");
+        existingArtifact.setArtifactChecksum("ArtifactChecksum");
+        existingArtifacts.put("existingArtifactMap",existingArtifact);
         ArtifactDefinition currNewArtifact = new ArtifactDefinition();
+        currNewArtifact.setArtifactName("ArtifactName");
+        currNewArtifact.setArtifactType("ArtifactType");
+        currNewArtifact.setPayload("Payload".getBytes());
         bl.processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, currNewArtifact);
     }
 
@@ -364,6 +408,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     @Test
     public void testFillGroupsFinalFields() {
         List<GroupDefinition> groupsAsList = new ArrayList<>();
+        GroupDefinition groupDefinition = new GroupDefinition();
+        groupDefinition.setName("groupDefinitionName");
+        groupsAsList.add(groupDefinition);
         bl.fillGroupsFinalFields(groupsAsList);
     }
 
@@ -1237,14 +1284,17 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     @Test
     public void testProcessDeploymentResourceArtifacts() {
         Resource resource = createParseResourceObject(true);
+        resource.setResourceType(ResourceTypeEnum.VF);
         Map<String, ArtifactDefinition> artifactMap = new HashMap<>();
         String k = "key";
         Object v = new Object();
-        try {
-            bl.processDeploymentResourceArtifacts(user, resource, artifactMap, k, v);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Map<String,List<String>> artifactDetails = new HashMap<>();
+        List<String> artifactTypes = new ArrayList<>();
+        artifactTypes.add(ResourceTypeEnum.VF.name());
+        artifactDetails.put("validForResourceTypes",artifactTypes);
+        v = artifactDetails;
+
+        bl.processDeploymentResourceArtifacts(user, resource, artifactMap, k, v);
     }
 
     @Test
@@ -1325,7 +1375,14 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     @Test
     public void testCreateInputsOnService() {
         Service service = createServiceObject(true);
+        List<InputDefinition> resourceProperties = new ArrayList<>();
+        InputDefinition inputDefinition = new InputDefinition();
+        inputDefinition.setName("inputDefinitionName");
+        service.setInputs(resourceProperties);
         Map<String, InputDefinition> inputs = new HashMap<>();
+        InputDefinition inputDefinitionMap = new InputDefinition();
+        inputDefinition.setName("inputDefinitionName");
+        inputs.put("inputsMap",inputDefinitionMap);
 
         try {
             bl.createInputsOnService(service, inputs);
@@ -1496,46 +1553,43 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
     @Test
     public void testAddGroupsToCreateOrUpdate() {
-        Resource resource = createParseResourceObject(true);
-        Map<String, GroupDefinition> groups = new HashMap<>();
-
         List<GroupDefinition> groupsFromResource = new ArrayList<>();
+        GroupDefinition groupDefinition = new GroupDefinition();
+        groupDefinition.setInvariantName("groupDefinitionName");
+        groupsFromResource.add(groupDefinition);
         List<GroupDefinition> groupsAsList = new ArrayList<>();
+        GroupDefinition groupNewDefinition =getGroupDefinition();
+        groupsAsList.add(groupNewDefinition);
         List<GroupDefinition> groupsToUpdate = new ArrayList<>();
         List<GroupDefinition> groupsToCreate = new ArrayList<>();
 
-        try {
-            bl.addGroupsToCreateOrUpdate(groupsFromResource, groupsAsList, groupsToUpdate, groupsToCreate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bl.addGroupsToCreateOrUpdate(groupsFromResource, groupsAsList, groupsToUpdate, groupsToCreate);
     }
 
     @Test
     public void testAddGroupsToDelete() {
-        Map<String, GroupDefinition> groups = new HashMap<>();
-
         List<GroupDefinition> groupsFromResource = new ArrayList<>();
+        GroupDefinition groupDefinition = new GroupDefinition();
+        groupDefinition.setName("groupDefinitionName");
+        groupsFromResource.add(groupDefinition);
         List<GroupDefinition> groupsAsList = new ArrayList<>();
+        GroupDefinition groupNewDefinition = new GroupDefinition();
+        groupNewDefinition.setName("groupNewDefinitionName");
+        groupsAsList.add(groupNewDefinition);
         List<GroupDefinition> groupsToDelete = new ArrayList<>();
 
-        try {
-            bl.addGroupsToDelete(groupsFromResource, groupsAsList, groupsToDelete);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bl.addGroupsToDelete(groupsFromResource, groupsAsList, groupsToDelete);
     }
 
     @Test
     public void testUpdateGroupsMembersUsingResource() {
         Service component = createServiceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
+        GroupDefinition groupDefinition = getGroupDefinition();
+        groupDefinition.setMembers(null);
+        groups.put("groupsMap",groupDefinition);
 
-        try {
-            bl.updateGroupsMembersUsingResource(groups, component);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bl.updateGroupsMembersUsingResource(groups, component);
     }
 
     @Test
@@ -1546,6 +1600,28 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         List<ComponentInstance> componentInstances = new ArrayList<>();
         String groupName = "groupName";
         Map<String, String> members = new HashMap<>();
+
+        try {
+            bl.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members);
+        } catch (ComponentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testupdateGroupMembersNotNull() {
+        Service component = createServiceObject(true);
+        Map<String, GroupDefinition> groups = getGroups();
+        GroupDefinition updatedGroupDefinition = new GroupDefinition();
+        List<ComponentInstance> componentInstances = new ArrayList<>();
+        ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setName("componentInstanceName");
+        componentInstance.setUniqueId("componentInstanceUniqueId");
+        componentInstances.add(componentInstance);
+        String groupName = "groupName";
+        Map<String, String> members = new HashMap<>();
+        members.put("members", "members");
+        members.put("componentInstanceName", "members");
 
         try {
             bl.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members);
@@ -1576,15 +1652,27 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Set<String> allGroupMembers = new HashSet<>();
         String groupName = "groupName";
 
-        try {
-            bl.fillAllGroupMemebersRecursivly(groupName, allGroups, allGroupMembers);
-        } catch (Exception e) {
-
-        }
+        bl.fillAllGroupMemebersRecursivly(groupName, allGroups, allGroupMembers);
     }
 
     @Test
-    public void testFillResourceMetadataForService() {
+    public void testFillAllGroupMemebersRecursivlyAllGroups() {
+        String groupName = "groupName";
+        Map<String, GroupDefinition> allGroups = new HashMap<>();
+        GroupDefinition groupDefinition = new GroupDefinition();
+        Map<String, String> members = new HashMap<>();
+        members.put("members", "members");
+        groupDefinition.setMembers(members);
+        allGroups.put(groupName, groupDefinition);
+        allGroups.put("members", groupDefinition);
+        Set<String> allGroupMembers = new HashSet<>();
+        allGroupMembers.add("allGroupMembers");
+
+        bl.fillAllGroupMemebersRecursivly(groupName, allGroups, allGroupMembers);
+    }
+
+    @Test
+    public void testFillResourceMetadataForServiceFailure() {
         String yamlName = "yamlName";
         Service resourceVf = createServiceObject(true);
         String nodeName = "nodeName";
@@ -1592,7 +1680,34 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Test
+    public void testFillResourceMetadataForServiceWrongType() {
+        String yamlName = "yamlName";
+        Service resourceVf = createServiceObject(true);
+        String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX+"nodeName";
+
+        try {
+            bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user);
+        } catch (ComponentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testFillResourceMetadataForServiceSuccess() {
+        String yamlName = "yamlName";
+        Service resourceVf = createServiceObject(true);
+        String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX+"VFC";
+
+        try {
+            bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user);
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.INVALID_NODE_TEMPLATE,
+                ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1605,32 +1720,52 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.propagateStateToCertified(user, resource, lifecycleChangeInfo, true, true, true);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Test
+    public void testpropagateStateToCertifiedIsTrue() {
+        String yamlName = "yamlName";
+        Resource resource = createParseResourceObject(true);
+        LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
+        resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
+        try {
+            bl.propagateStateToCertified(user, resource, lifecycleChangeInfo, true, true, true);
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
     @Test
     public void testBuildValidComplexVfc2() {
-        String nodeName = "nodeName";
-        Resource resource = createParseResourceObject(true);
+        String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
         Map<String, NodeTypeInfo> nodesInfo = new HashMap<>();
+        NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
+        List<String> derivedFrom = new ArrayList<>();
+        derivedFrom.add("derivedFrom");
+        nodeTypeInfo.setDerivedFrom(derivedFrom);
+        nodesInfo.put(nodeName, nodeTypeInfo);
 
         try {
             bl.buildValidComplexVfc(getCsarInfo(), nodeName, nodesInfo);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
     @Test
-    public void testUpdateGroupsOnResource() {
+    public void testUpdateGroupsOnResourceEmptyGroups() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
 
         try {
             bl.updateGroupsOnResource(resource, groups);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1641,8 +1776,36 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.setInformationalArtifactsPlaceHolder(resource, user);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testRollback() {
+        Resource resource = createParseResourceObject(true);
+        List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
+        List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
+
+        try {
+            bl.rollback(false,resource, createdArtifacts,nodeTypesNewCreatedArtifacts);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testRollback_NotNull() {
+        Resource resource = createParseResourceObject(true);
+        List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        artifactDefinition.setArtifactName("artifactName");
+        createdArtifacts.add(artifactDefinition);
+        List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
+        ArtifactDefinition artifactDefinition2 = new ArtifactDefinition();
+        artifactDefinition2.setArtifactChecksum("artifactChecksum");
+        nodeTypesNewCreatedArtifacts.add(artifactDefinition2);
+
+        bl.rollback(true, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
     }
 
     @Test
@@ -1652,52 +1815,77 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.createArtifactsPlaceHolderData(resource, user);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
     @Test
     public void testHandleGroupsProperties() {
         Service service = createServiceObject(true);
-        Map<String, GroupDefinition> groups = new HashMap<>();
-        try {
-            bl.handleGroupsProperties(service, groups);
-        } catch (Exception e) {
+        Map<String, GroupDefinition> groups = getGroups();
 
-        }
+        bl.handleGroupsProperties(service, groups);
     }
 
      @Test
     public void testHandleGroupsProperties2() {
         Resource resource = createParseResourceObject(true);
-        Map<String, GroupDefinition> groups = new HashMap<>();
-        try {
-            bl.handleGroupsProperties(resource, groups);
-        } catch (Exception e) {
+        Map<String, GroupDefinition> groups = getGroups();
 
-        }
+         bl.handleGroupsProperties(resource, groups);
     }
 
     @Test
     public void testHandleGetInputs() {
         PropertyDataDefinition property = new PropertyDataDefinition();
+        List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
+        GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
+        GetInputValueDataDefinition getInput = new GetInputValueDataDefinition();
+        getInput.setInputId("inputId");
+        getInput.setInputName("inputName");
+        getInputValueDataDefinition.setInputName("inputName");
+        getInputValueDataDefinition.setPropName("getInputValueDataDefinitionName");
+        getInputValueDataDefinition.setGetInputIndex(getInputValueDataDefinition);
+        getInputValues.add(getInputValueDataDefinition);
+        property.setGetInputValues(getInputValues);
+        List<InputDefinition> inputs = new ArrayList<>();
+        InputDefinition inputDefinition = new InputDefinition();
+        inputDefinition.setName("inputName");
+        inputDefinition.setUniqueId("abc12345");
+        inputs.add(inputDefinition);
+
+        bl.handleGetInputs(property, inputs);
+    }
+
+    @Test
+    public void testHandleGetInputs_null() {
+        PropertyDataDefinition property = new PropertyDataDefinition();
+        List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
+        GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
+        getInputValueDataDefinition.setInputName("inputName");
+        getInputValueDataDefinition.setPropName("getInputValueDataDefinitionName");
+        getInputValues.add(getInputValueDataDefinition);
+        property.setGetInputValues(getInputValues);
         List<InputDefinition> inputs = new ArrayList<>();
         try {
             bl.handleGetInputs(property, inputs);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
     @Test
     public void testFindInputByName() {
         GetInputValueDataDefinition getInput = new GetInputValueDataDefinition();
+        getInput.setInputId("inputId");
+        getInput.setInputName("inputName");
         List<InputDefinition> inputs = new ArrayList<>();
-        try {
-            bl.findInputByName(inputs, getInput);
-        } catch (Exception e) {
+        InputDefinition inputDefinition = new InputDefinition();
+        inputDefinition.setName("inputName");
+        inputDefinition.setUniqueId("abc12345");
+        inputs.add(inputDefinition);
 
-        }
+        bl.findInputByName(inputs, getInput);
     }
 
     @Test
@@ -1705,11 +1893,11 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
-        List<InputDefinition> inputs = new ArrayList<>();
         try {
             bl.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1718,12 +1906,12 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
+        List<ComponentInstanceInput> componentInstanceInputList = new ArrayList<>();
+        ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
+        componentInstanceInput.setName("componentInstanceInputName");
+        componentInstanceInputList.add(componentInstanceInput);
 
-        try {
-            bl.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
-        } catch (Exception e) {
-
-        }
+        bl.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
     }
 
     @Test
@@ -1734,8 +1922,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
         try {
             bl.associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1747,8 +1936,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
         try {
             bl.associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1760,8 +1950,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
         try {
             bl.associateArtifactsToInstances(yamlName, resource, instDeploymentArtifacts);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1773,8 +1964,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         try {
             bl.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1785,8 +1977,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
         try {
             bl.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1796,34 +1989,39 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Resource resource = createParseResourceObject(true);
         try {
             bl.throwComponentExceptionByResource(status, resource);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.OK,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
     @Test
     public void testGetResourceAfterCreateRelations() {
-
         Resource resource = createParseResourceObject(true);
 
         try {
             bl.getResourceAfterCreateRelations(resource);
-        } catch (Exception e) {
-
+        }  catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Test
     public void testSetCapabilityNamesTypes() {
-
         Map<String, List<CapabilityDefinition>> originCapabilities = new HashMap<>();
+        List<CapabilityDefinition> capabilityDefinitionList = new ArrayList<>();
+        CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setName("Capability");
+        capabilityDefinition.setType("Resource");
+        capabilityDefinitionList.add(capabilityDefinition);
+        originCapabilities.put("Capability",capabilityDefinitionList);
         Map<String, List<UploadCapInfo>> uploadedCapabilities = new HashMap<>();
+        List<UploadCapInfo> uploadCapInfoList = new ArrayList<>();
+        UploadCapInfo uploadCapInfo = new UploadCapInfo();
+        uploadCapInfoList.add(uploadCapInfo);
+        uploadedCapabilities.put("Capability",uploadCapInfoList);
 
-        try {
-            bl.setCapabilityNamesTypes(originCapabilities, uploadedCapabilities);
-        } catch (Exception e) {
-
-        }
+        bl.setCapabilityNamesTypes(originCapabilities, uploadedCapabilities);
     }
 
     @Test
@@ -1834,8 +2032,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
         try {
             bl.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.OK,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1848,7 +2047,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.associateComponentInstancePropertiesToComponent(yamlName, service, instInputs);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -1860,8 +2059,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
         try {
             bl.associateDeploymentArtifactsToInstances(user, yamlName, service, instDeploymentArtifacts);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1873,8 +2073,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
         try {
             bl.associateArtifactsToInstances(yamlName, service, instArtifacts);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
     @Test
@@ -1885,8 +2086,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         try {
             bl.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1897,8 +2099,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
         try {
             bl.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1909,8 +2112,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Map<String, ListRequirementDataDefinition> requirements = new HashMap<>();
         try {
             bl.associateRequirementsToService(yamlName, resource, requirements);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1921,8 +2125,9 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Map<String, ListCapabilityDataDefinition> capabilities = new HashMap<>();
         try {
             bl.associateCapabilitiesToService(yamlName, resource, capabilities);
-        } catch (Exception e) {
-
+        } catch (ComponentException e) {
+            assertComponentException(e, ActionStatus.GENERAL_ERROR,
+                    ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -1934,7 +2139,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.associateResourceInstances(yamlName, resource, relations);
         } catch (Exception e) {
-
+           e.printStackTrace();
         }
     }
 
@@ -1943,22 +2148,24 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Map<String, List<CapabilityDefinition>> originCapabilities = new HashMap<>();
         String type = "type";
         List<CapabilityDefinition> capabilities = new ArrayList<>();
-           try {
-            bl.addCapabilities(originCapabilities, type, capabilities);
-        } catch (Exception e) {
 
-        }
+        bl.addCapabilities(originCapabilities, type, capabilities);
     }
 
     @Test
     public void testAddCapabilitiesProperties() {
         Map<String, Map<String, UploadPropInfo>> newPropertiesMap = new HashMap<>();
         List<UploadCapInfo> capabilities = new ArrayList<>();
-        try {
-            bl.addCapabilitiesProperties(newPropertiesMap, capabilities);
-        } catch (Exception e) {
+        UploadCapInfo capability = new UploadCapInfo();
+        List<UploadPropInfo> properties = new ArrayList<>();
+        UploadPropInfo uploadPropInfo = new UploadPropInfo();
+        uploadPropInfo.setName("uploadPropInfoName");
+        properties.add(uploadPropInfo);
+        capability.setProperties(properties);
+        capability.setName("capabilityName");
+        capabilities.add(capability);
 
-        }
+        bl.addCapabilitiesProperties(newPropertiesMap, capabilities);
     }
 
     @Test
@@ -1967,7 +2174,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.getServiceWithGroups(resourceId);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -1977,7 +2184,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.getResourceWithGroups(resourceId);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -1989,7 +2196,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.associateResourceInstances(yamlName, resource, relations);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -1998,26 +2205,56 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, UploadComponentInstanceInfo> uploadResInstancesMap = new HashMap<>();
-        List<ComponentInstance> componentInstancesList = new ArrayList<>();
+        UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
+        uploadResInstancesMap.put("uploadComponentInstanceInfo", nodesInfoValue);
+        List<ComponentInstance> componentInstancesList = creatComponentInstances();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         try {
             bl.addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList, relations);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
     @Test
-    public void testAddRelationsToRI2() {
+    public void testAddRelationsToRI_null(){
+        String yamlName = "group.yml";
+        Resource resource = createParseResourceObject(true);
+        Map<String, UploadComponentInstanceInfo> uploadResInstancesMap = new HashMap<>();
+        UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
+        uploadResInstancesMap.put("uploadComponentInstanceInfo", nodesInfoValue);
+        List<ComponentInstance> componentInstancesList = new ArrayList<>();
+        List<RequirementCapabilityRelDef> relations = new ArrayList<>();
+
+        try {
+            bl.addRelationsToRI(yamlName,resource,uploadResInstancesMap,componentInstancesList,
+                    relations);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testAddRelationToRI() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
-        UploadComponentInstanceInfo nodesInfoValue = new UploadComponentInstanceInfo();
+        resource.setComponentInstances(creatComponentInstances());
+        UploadComponentInstanceInfo nodesInfoValue =getuploadComponentInstanceInfo();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
-        try {
-            bl.addRelationToRI(yamlName, resource, nodesInfoValue, relations);
-        } catch (Exception e) {
 
-        }
+        bl.addRelationToRI(yamlName, resource, nodesInfoValue, relations);
+    }
+
+    @Test
+    public void testAddRelationToRI_null(){
+        String yamlName = "yamlName.yml";
+        Resource resource = createParseResourceObject(false);
+        List<ComponentInstance> componentInstancesList = new ArrayList<>();
+        resource.setComponentInstances(componentInstancesList);
+        UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
+        List<RequirementCapabilityRelDef> relations = new ArrayList<>();
+
+        bl.addRelationToRI(yamlName, resource, nodesInfoValue, relations);
     }
 
     @Test
@@ -2034,6 +2271,19 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
             assertComponentException(e, ActionStatus.OK,
                 ComponentTypeEnum.RESOURCE.getValue());
         }
+    }
+
+    protected GroupDefinition getGroupDefinition(){
+        GroupDefinition groupDefinition = new GroupDefinition();
+        Map<String, String> members = new HashMap<>();
+        members.put("members", "members");
+        Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
+        List<PropertyDataDefinition> properties = new ArrayList<>();
+        groupDefinition.setInvariantName("groupDefinitionName");
+        groupDefinition.setMembers(members);
+        groupDefinition.setProperties(properties);
+        groupDefinition.setCapabilities(capabilities);
+        return groupDefinition;
     }
 
     protected Resource createParseResourceObject(boolean afterCreate) {
