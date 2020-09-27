@@ -522,8 +522,7 @@ public class ServiceImportBusinessLogic{
                 return Either.right(createArtifactsFromCsar.right().value());
             }
             return Either.left(createArtifactsFromCsar.left().value());
-        }catch(Exception e)
-        {
+        }catch(Exception e) {
             log.debug("Exception occured in getResourceResponseFormatEither, message:{}", e.getMessage(), e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
@@ -3026,39 +3025,7 @@ public class ServiceImportBusinessLogic{
             serviceImportParseLogic.validateResourceFieldsBeforeUpdate(oldResource, newResource, inTransaction, isNested);
             serviceImportParseLogic
                     .validateCapabilityTypesCreate(user, serviceImportParseLogic.getCapabilityTypeOperation(), newResource, AuditingActionEnum.IMPORT_RESOURCE, inTransaction);
-            newResource.setContactId(newResource.getContactId().toLowerCase());
-            newResource.setCreatorUserId(user.getUserId());
-            newResource.setCreatorFullName(user.getFullName());
-            newResource.setLastUpdaterUserId(user.getUserId());
-            newResource.setLastUpdaterFullName(user.getFullName());
-            newResource.setUniqueId(oldResource.getUniqueId());
-            newResource.setVersion(oldResource.getVersion());
-            newResource.setInvariantUUID(oldResource.getInvariantUUID());
-            newResource.setLifecycleState(oldResource.getLifecycleState());
-            newResource.setUUID(oldResource.getUUID());
-            newResource.setNormalizedName(oldResource.getNormalizedName());
-            newResource.setSystemName(oldResource.getSystemName());
-            if (oldResource.getCsarUUID() != null) {
-                newResource.setCsarUUID(oldResource.getCsarUUID());
-            }
-            if (oldResource.getImportedToscaChecksum() != null) {
-                newResource.setImportedToscaChecksum(oldResource.getImportedToscaChecksum());
-            }
-            if (newResource.getDerivedFromGenericType() == null || newResource.getDerivedFromGenericType().isEmpty()) {
-                newResource.setDerivedFromGenericType(oldResource.getDerivedFromGenericType());
-            }
-            if (newResource.getDerivedFromGenericVersion() == null || newResource.getDerivedFromGenericVersion().isEmpty()) {
-                newResource.setDerivedFromGenericVersion(oldResource.getDerivedFromGenericVersion());
-            }
-            if (newResource.getToscaArtifacts() == null || newResource.getToscaArtifacts().isEmpty()) {
-                serviceBusinessLogic.setToscaArtifactsPlaceHolders(newResource, user);
-            }
-            if (newResource.getInterfaces() == null || newResource.getInterfaces().isEmpty()) {
-                newResource.setInterfaces(oldResource.getInterfaces());
-            }
-            if (CollectionUtils.isEmpty(newResource.getProperties())) {
-                newResource.setProperties(oldResource.getProperties());
-            }
+            createNewResourceToOldResource(newResource, oldResource, user);
 
             Either<Resource, StorageOperationStatus> overrideResource = toscaOperationFacade
                     .overrideComponent(newResource, oldResource);
@@ -3081,6 +3048,42 @@ public class ServiceImportBusinessLogic{
                 log.debug("unlock resource {}", lockedResourceId);
                 serviceBusinessLogic.graphLockOperation.unlockComponent(lockedResourceId, NodeTypeEnum.Resource);
             }
+        }
+    }
+
+    protected void createNewResourceToOldResource(Resource newResource, Resource oldResource, User user) {
+        newResource.setContactId(newResource.getContactId().toLowerCase());
+        newResource.setCreatorUserId(user.getUserId());
+        newResource.setCreatorFullName(user.getFullName());
+        newResource.setLastUpdaterUserId(user.getUserId());
+        newResource.setLastUpdaterFullName(user.getFullName());
+        newResource.setUniqueId(oldResource.getUniqueId());
+        newResource.setVersion(oldResource.getVersion());
+        newResource.setInvariantUUID(oldResource.getInvariantUUID());
+        newResource.setLifecycleState(oldResource.getLifecycleState());
+        newResource.setUUID(oldResource.getUUID());
+        newResource.setNormalizedName(oldResource.getNormalizedName());
+        newResource.setSystemName(oldResource.getSystemName());
+        if (oldResource.getCsarUUID() != null) {
+            newResource.setCsarUUID(oldResource.getCsarUUID());
+        }
+        if (oldResource.getImportedToscaChecksum() != null) {
+            newResource.setImportedToscaChecksum(oldResource.getImportedToscaChecksum());
+        }
+        if (newResource.getDerivedFromGenericType() == null || newResource.getDerivedFromGenericType().isEmpty()) {
+            newResource.setDerivedFromGenericType(oldResource.getDerivedFromGenericType());
+        }
+        if (newResource.getDerivedFromGenericVersion() == null || newResource.getDerivedFromGenericVersion().isEmpty()) {
+            newResource.setDerivedFromGenericVersion(oldResource.getDerivedFromGenericVersion());
+        }
+        if (newResource.getToscaArtifacts() == null || newResource.getToscaArtifacts().isEmpty()) {
+            serviceBusinessLogic.setToscaArtifactsPlaceHolders(newResource, user);
+        }
+        if (newResource.getInterfaces() == null || newResource.getInterfaces().isEmpty()) {
+            newResource.setInterfaces(oldResource.getInterfaces());
+        }
+        if (CollectionUtils.isEmpty(newResource.getProperties())) {
+            newResource.setProperties(oldResource.getProperties());
         }
     }
 

@@ -2198,13 +2198,18 @@ public class ServiceImportParseLogic {
     }
 
     public void associateComponentInstancePropertiesToComponent(String yamlName, Resource resource, Map<String, List<ComponentInstanceProperty>> instProperties) {
-        Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addPropToInst = toscaOperationFacade
-                .associateComponentInstancePropertiesToComponent(instProperties, resource.getUniqueId());
-        if (addPropToInst.isRight()) {
-            log.debug("failed to associate properties of resource {} status is {}", resource.getUniqueId(),
-                    addPropToInst.right().value());
-            throw new ComponentException(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
+        try {
+            Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addPropToInst = toscaOperationFacade
+                    .associateComponentInstancePropertiesToComponent(instProperties, resource.getUniqueId());
+            if (addPropToInst.isRight()) {
+                log.debug("failed to associate properties of resource {} status is {}", resource.getUniqueId(),
+                        addPropToInst.right().value());
+                throw new ComponentException(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
+            }
+        } catch (Exception e) {
+            log.debug("Exception occured when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
     }
 
