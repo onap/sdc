@@ -28,6 +28,7 @@ import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.addInterf
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -367,9 +368,10 @@ public class ToscaExportHandler {
             return Either.right(requirements.right().value());
         }
         substitutionMapping = requirements.left().value();
-
-        final Optional<Map<String, ToscaProperty>> proxyInputProperties = getProxyNodeTypeInputProperties(component, dataTypes);
-        proxyInputProperties.ifPresent(substitutionMapping::setProperties);
+        final Map<String, String[]> propertyMappingMap = buildSubstitutionMappingPropertyMapping(component);
+        if (!propertyMappingMap.isEmpty()) {
+            substitutionMapping.setProperties(propertyMappingMap);
+        }
 
         topologyTemplate.setSubstitution_mappings(substitutionMapping);
 
@@ -1735,14 +1737,18 @@ public class ToscaExportHandler {
 
     }
 
-    private Optional<Map<String, ToscaProperty>> getProxyNodeTypeInputProperties(final Component proxyComponent,
-                                                                                 final Map<String, DataTypeDefinition> dataTypes) {
-        if (Objects.isNull(proxyComponent)) {
-            return Optional.empty();
+    private Map<String, String[]> buildSubstitutionMappingPropertyMapping(final Component component) {
+        if (component == null || CollectionUtils.isEmpty(component.getInputs())) {
+            return Collections.emptyMap();
         }
-        final Map<String, ToscaProperty> proxyInputProperties = new HashMap<>();
-        addInputsToProperties(dataTypes, proxyComponent.getInputs(), proxyInputProperties);
-        return MapUtils.isNotEmpty(proxyInputProperties) ? Optional.of(proxyInputProperties) : Optional.empty();
+        return component.getInputs().stream()
+            .map(PropertyDataDefinition::getName)
+            .collect(
+                Collectors.toMap(
+                    inputName -> inputName,
+                    inputName -> new String[]{inputName},
+                    (inputName1, inputName2) -> inputName1)
+            );
     }
 
     Optional<Map<String, ToscaProperty>> getProxyNodeTypeProperties(Component proxyComponent,
