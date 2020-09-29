@@ -23,6 +23,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 
 @Getter
 @Setter
@@ -35,5 +36,6 @@ public class Module {
     private String env;
     private String vol;
     private String volEnv;
+    private FileData.Type type;
 
 }
