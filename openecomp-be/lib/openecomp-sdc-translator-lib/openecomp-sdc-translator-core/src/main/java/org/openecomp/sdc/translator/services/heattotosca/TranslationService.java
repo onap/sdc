@@ -70,6 +70,12 @@ public class TranslationService {
         return types;
     }
 
+    public static Set<FileData.Type> getTypesToProcessByHelmTranslator() {
+        Set<FileData.Type> types = new HashSet<>();
+        types.add(FileData.Type.HELM);
+        return types;
+    }
+
     /**
      * Translate heat files translator output.
      *
@@ -81,6 +87,8 @@ public class TranslationService {
         List<FileData> fileDataList = translationContext.getManifest().getContent().getData();
         FileDataCollection fileDataCollection = HeatToToscaUtil.getFileCollectionsByFilter(fileDataList,
                 TranslationService.getTypesToProcessByTranslator(), translationContext);
+        FileDataCollection fileDataCollectionHelm = HeatToToscaUtil.getFileCollectionsByHelmFilter(fileDataList,
+                TranslationService.getTypesToProcessByHelmTranslator());
 
         if (fileDataCollection.getBaseFile() != null) {
             for (FileData fileData : fileDataCollection.getBaseFile()) {
@@ -90,6 +98,13 @@ public class TranslationService {
         if (fileDataCollection.getAddOnFiles() != null) {
             for (FileData fileData : fileDataCollection.getAddOnFiles()) {
                 translateHeatFile(mainServiceTemplate, fileData, translationContext);
+            }
+        }
+
+        if (fileDataCollectionHelm.getHelmFile() !=null) {
+            for (FileData fileData : fileDataCollectionHelm.getHelmFile()) {
+                translateHelmFile(mainServiceTemplate, fileData, translationContext);
+
             }
         }
 
@@ -143,6 +158,26 @@ public class TranslationService {
             heatFileData.getData().stream().filter(data -> FileData.Type.canBeAssociated(data.getType()))
                     .forEach(data -> translateHeatFile(serviceTemplate, data, context));
         }
+    }
+
+
+    public void translateHelmFile(ServiceTemplate serviceTemplate, FileData heatFileData,
+                                  TranslationContext context) {
+        String heatFileName = heatFileData.getFile();
+        Map<String, ParameterDefinition> inputs = serviceTemplate.getTopology_template().getInputs();
+        if (!Objects.isNull(inputs)) {
+
+            inputs.entrySet().forEach(
+                    stringParameterDefinitionEntry -> {
+                        List inputParamVFModuleList = getVFModulesList(
+                                inputs.get(stringParameterDefinitionEntry.getKey()));
+                        if (!inputParamVFModuleList.contains(FileUtils.getFileWithoutExtention(heatFileName)) ){
+                            inputParamVFModuleList.add(FileUtils.getFileWithoutExtention(heatFileName));
+                        }
+                    }
+            );
+        }
+        inputs.putAll(inputs);
     }
 
     private void handleHeatPseudoParam(String heatFileName, ServiceTemplate serviceTemplate,

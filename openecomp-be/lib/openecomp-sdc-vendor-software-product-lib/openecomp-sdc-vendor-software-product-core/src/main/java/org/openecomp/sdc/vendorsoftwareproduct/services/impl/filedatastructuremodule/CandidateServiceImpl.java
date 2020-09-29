@@ -262,11 +262,20 @@ public class CandidateServiceImpl implements CandidateService {
       if (Objects.nonNull(fileData.getType()) &&
           fileData.getType().equals(FileData.Type.HEAT)) {
         Module module = new Module();
+        module.setType(FileData.Type.HEAT);
         module.setYaml(fileData.getFile());
         module.setIsBase(fileData.getBase());
         addHeatDependenciesToModule(module, fileData.getData());
         structure.getModules().add(module);
-      } else if (HeatFileAnalyzer.isYamlOrEnvFile(fileData.getFile()) &&
+      }else if (Objects.nonNull(fileData.getType()) &&
+              fileData.getType().equals(FileData.Type.HELM)) {
+        Module module = new Module();
+        module.setType(FileData.Type.HELM);
+        module.setYaml(fileData.getFile());
+        module.setIsBase(fileData.getBase());
+        structure.getModules().add(module);
+      }
+      else if (HeatFileAnalyzer.isYamlOrEnvFile(fileData.getFile()) &&
           !FileData.Type.isArtifact(fileData.getType())) {
         structure.getUnassigned().add(fileData.getFile());
       } else {
