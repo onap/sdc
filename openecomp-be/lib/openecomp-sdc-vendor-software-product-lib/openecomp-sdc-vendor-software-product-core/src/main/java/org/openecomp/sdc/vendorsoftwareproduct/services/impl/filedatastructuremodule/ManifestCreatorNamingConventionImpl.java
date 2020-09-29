@@ -184,7 +184,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
     if (CollectionUtils.isNotEmpty(filesDataStructure.getModules())) {
       for (Module module : filesDataStructure.getModules()) {
-        FileData fileData = createBaseFileData(FileData.Type.HEAT, module.getYaml());
+        FileData fileData = createBaseFileData(module.getType(), module.getYaml());
         fileData.setBase(module.getIsBase());
         addEnv(module, fileData);
         addVolume(module, fileData);

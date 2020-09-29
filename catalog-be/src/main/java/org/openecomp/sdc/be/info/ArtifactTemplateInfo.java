@@ -59,6 +59,7 @@ public class ArtifactTemplateInfo {
     private static final String ARTIFACT_TEMPLATE_ENV = "env";
     private static final String IS_BASE = "isBase";
     private static final String CSAR_HEAT = "HEAT";
+    private static final String CSAR_HELM = "HELM";
     private static final String CSAR_NETWORK = "network";
     private static final String CSAR_VOLUME = "volume";
     private static final String CSAR_NESTED = "nested";
@@ -139,6 +140,9 @@ public class ArtifactTemplateInfo {
         }
         else if (type.equalsIgnoreCase(CSAR_HEAT)) {
             correctType = ArtifactTypeEnum.HEAT.getType();
+        }
+        else if (type.equalsIgnoreCase(CSAR_HELM)) {
+            correctType = ArtifactTypeEnum.HELM.getType();
         }
         else {
             correctType = ArtifactTypeEnum.OTHER.getType();
