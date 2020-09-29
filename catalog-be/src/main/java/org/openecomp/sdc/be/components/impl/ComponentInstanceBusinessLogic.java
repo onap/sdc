@@ -859,7 +859,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (!type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType())) {
                     finalDeploymentArtifacts.put(artifact.getArtifactLabel(), artifact);
                 }
-                if (type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT.getType())) {
+                if (type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HELM.getType())|| type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT.getType())) {
                     artifact.setTimeout(defaultHeatTimeout);
                 } else {
                     continue;

@@ -50,6 +50,7 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
     private Set<HeatStructureTree> nested;
     private Set<HeatStructureTree> other;
     private Set<Artifact> artifacts;
+    private Set<HeatStructureTree> helm;
 
     public HeatStructureTree() {
     }
@@ -163,6 +164,14 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         }
 
         this.other.add(other);
+    }
+
+    public void addToHelmList(HeatStructureTree helm){
+        if (this.helm == null) {
+            this.helm = new TreeSet<>();
+        }
+
+        this.helm.add(helm);
     }
 
     /**

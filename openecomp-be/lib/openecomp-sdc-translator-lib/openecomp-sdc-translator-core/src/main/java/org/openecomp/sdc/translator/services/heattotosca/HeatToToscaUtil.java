@@ -220,6 +220,19 @@ public class HeatToToscaUtil {
         return null;
     }
 
+    static FileDataCollection getFileCollectionsByHelmFilter(List<FileData> fileDataList, Set<FileData.Type> typeFilter) {
+        FileDataCollection fileDataCollection = new FileDataCollection();
+        Map<String, FileData> filteredFiles = filterFileDataListByType(fileDataList, typeFilter);
+        for (FileData fileData : filteredFiles.values()) {
+            String fileName = fileData.getFile();
+            if((fileData.getType().equals(FileData.Type.HELM)))
+            {
+                fileDataCollection.addHelmFiles(fileData);
+            }
+        }
+        return fileDataCollection;
+    }
+
     static FileDataCollection getFileCollectionsByFilter(List<FileData> fileDataList, Set<FileData.Type> typeFilter,
                                                                 TranslationContext translationContext) {
         FileDataCollection fileDataCollection = new FileDataCollection();
