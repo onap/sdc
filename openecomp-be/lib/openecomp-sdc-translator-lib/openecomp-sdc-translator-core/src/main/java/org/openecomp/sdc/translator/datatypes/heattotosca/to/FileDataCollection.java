@@ -32,9 +32,14 @@ public class FileDataCollection {
   Collection<FileData> addOnFiles;
   Collection<FileData> nestedFiles;
   Collection<FileData> artifactFiles;
+  Collection<FileData> HelmFiles;
 
   public Collection<FileData> getBaseFile() {
     return baseFiles;
+  }
+
+  public Collection<FileData> getHelmFile() {
+    return HelmFiles;
   }
 
   public void setBaseFile(Collection<FileData> baseFiles) {
@@ -107,6 +112,13 @@ public class FileDataCollection {
       this.baseFiles = new ArrayList<>();
     }
     this.baseFiles.add(baseFile);
+  }
+
+  public void addHelmFiles(FileData helmFile) {
+    if (this.HelmFiles == null) {
+      this.HelmFiles = new ArrayList<>();
+    }
+    this.HelmFiles.add(helmFile);
   }
 
   /**

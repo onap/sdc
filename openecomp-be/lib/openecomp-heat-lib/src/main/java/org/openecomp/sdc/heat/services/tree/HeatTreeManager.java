@@ -251,7 +251,10 @@ public class HeatTreeManager {
                         }
                         parentHeatStructureTree.getOther().add(childHeatStructureTree);
                     }
-                } else {
+                } else if (FileData.Type.HELM.equals(type)) {
+                    parentHeatStructureTree.addToHelmList(childHeatStructureTree);
+                    }
+                else {
                     artifact = new Artifact(fileName, type);
                     if (!artifactRef.keySet().contains(fileName)) {
                         artifactRef.put(fileName, artifact);
