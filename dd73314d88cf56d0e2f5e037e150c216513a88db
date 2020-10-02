@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87ab84a4_dfa24127",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-10-02T12:18:37Z",
+      "side": 1,
+      "message": "The changes done in this PR have broken this line of code when we onboard the vLB.zip\ntree.getHeat() is null, so the onboard backend crashes",
+      "revId": "dd73314d88cf56d0e2f5e037e150c216513a88db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
