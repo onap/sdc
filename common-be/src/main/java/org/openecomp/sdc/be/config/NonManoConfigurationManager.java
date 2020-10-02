@@ -19,13 +19,13 @@
 
 package org.openecomp.sdc.be.config;
 
-import org.apache.commons.io.IOUtils;
-import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
-import org.openecomp.sdc.be.config.exception.LoadConfigurationException;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.IOUtils;
+import org.openecomp.sdc.be.config.exception.LoadConfigurationException;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * Singleton that loads and stores the Non Mano configuration
@@ -52,7 +52,7 @@ public class NonManoConfigurationManager {
         } catch (final IOException e) {
             throw new LoadConfigurationException("Could not parse non-mano configuration file 'config/nonManoConfig.yaml' to string", e);
         }
-        nonManoConfiguration = new YamlToObjectConverter().convertFromString(data, NonManoConfiguration.class);
+        nonManoConfiguration = convertFromString(data, NonManoConfiguration.class);
     }
 
     public static NonManoConfigurationManager getInstance() {
@@ -65,5 +65,18 @@ public class NonManoConfigurationManager {
 
     public NonManoConfiguration getNonManoConfiguration() {
         return nonManoConfiguration;
+    }
+
+    private <T> T convertFromString(String yamlContents, Class<T> className) {
+        T config = null;
+
+        try {
+            config = (new ObjectMapper()).convertValue((new Yaml()).load(yamlContents), className);
+        } catch (Exception e) {
+            throw new
+                LoadConfigurationException(String.format("Failed to convert YAML %s to object.", yamlContents), e);
+        }
+
+        return config;
     }
 }

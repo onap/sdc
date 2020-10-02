@@ -24,7 +24,6 @@ limitations under the License.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.openecomp.sdc</groupId>
     <artifactId>sdc-integration-tests</artifactId>
     <packaging>jar</packaging>
     <name>sdc-integration-tests</name>
@@ -52,6 +51,8 @@ limitations under the License.
         <it.docker.version>latest</it.docker.version>
         <it.ui.firefox.version>2.53.1</it.ui.firefox.version>
 
+        <!-- parser-->
+        <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
     </properties>
 
     <dependencies>
@@ -180,6 +181,12 @@ limitations under the License.
                     <artifactId>jackson-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.onap.sdc.sdc-tosca</groupId>
+            <artifactId>sdc-tosca</artifactId>
+            <version>${sdc-tosca-parser.version}</version>
         </dependency>
 
         <!--FOR the Frontend -->
