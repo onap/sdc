@@ -18,5 +18,6 @@
  */
 
 export enum ToscaFilterConstraintType {
-  PROPERTIES = 'properties'
+  PROPERTIES = 'properties',
+  CAPABILITIES = 'capabilities'
 }

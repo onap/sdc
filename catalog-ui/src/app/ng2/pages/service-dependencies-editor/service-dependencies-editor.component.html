@@ -1,13 +1,6 @@
 <div class="service-dependencies-editor">
     <form class="w-sdc-form">
 
-        <div class="sdc-modal-top-bar">
-            <div class="sdc-modal-top-bar-buttons" *ngIf="currentIndex >= 0">
-                <span (click)="onChangePage(currentIndex - 1)" [ngClass]="{'disabled' : currentIndex === 0}" class="sprite-new left-arrow" data-tests-id="get-prev-rule" tooltip="Previous"></span>
-                <span (click)="onChangePage(currentIndex + 1)" [ngClass]="{'disabled' : currentIndex === input.serviceRules.length - 1}" class="sprite-new right-arrow" data-tests-id="get-next-rule" tooltip="Next"></span>
-            </div>
-        </div>
-
         <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
         <div class="i-sdc-form-content">

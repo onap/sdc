@@ -35,7 +35,7 @@ import {
     PropertyModel,
     IFileDownload,
     AttributeModel,
-    IAttributeModel, Capability, Requirement
+    Capability, Requirement
 } from "app/models";
 import {ArtifactGroupType, COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
@@ -64,6 +64,7 @@ import { ComponentMetadata } from "../../../models/component-metadata";
 import { PolicyInstance } from "../../../models/graph/zones/policy-instance";
 import { PropertyBEModel } from "../../../models/properties-inputs/property-be-model";
 import {map} from "rxjs/operators";
+import {CapabilitiesConstraintObject} from "../../components/logic/capabilities-constraint/capabilities-constraint.component";
 
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
@@ -389,16 +390,29 @@ export class TopologyTemplateService {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES]);
     }
 
-    createServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string, constraintType: string): Observable<any> {
-        return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter/' + constraintType, constraint);
+    getComponentInstanceCapabilityProperties(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId,
+            [COMPONENT_FIELDS.COMPONENT_CAPABILITIES, COMPONENT_FIELDS.COMPONENT_CAPABILITIES_PROPERTIES]);
     }
 
-    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraints: ConstraintObject[], componentType: string, constraintType: string):Observable<any>{
-        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter/' + constraintType, constraints)
+    createServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string, constraintType: string): Observable<any> {
+        return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/' + constraintType + '/nodeFilter', constraint);
+    }
+
+    createServiceFilterCapabilitiesConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: CapabilitiesConstraintObject, componentType: string, constraintType: string): Observable<any> {
+        return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/' + constraintType + '/nodeFilter', constraint);
+    }
+
+    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraints: ConstraintObject, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraints)
+    }
+
+    updateServiceFilterCapabilitiesConstraint(componentMetaDataId: string, componentInstanceId: string, constraints: CapabilitiesConstraintObject, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraints)
     }
 
     deleteServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number, componentType: string, constraintType: string): Observable<any>{
-        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter/' + constraintType + "/" + constraintIndex)
+        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter')
     }
 
     getComponentPropertiesSubstitutionFilter(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
