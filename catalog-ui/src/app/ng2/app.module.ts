@@ -95,6 +95,7 @@ import { PropertyCreatorModule } from './pages/properties-assignment/property-cr
 import { DeclareListModule } from './pages/properties-assignment/declare-list/declare-list.module';
 import { WorkflowServiceNg2 } from './services/workflow.service';
 import { ToscaTypesServiceNg2 } from "./services/tosca-types.service";
+import {CapabilitiesFilterPropertiesEditorComponentModule} from "./pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.module";
 
 
 declare const __ENV__: string;
@@ -154,6 +155,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
         ServiceConsumptionCreatorModule,
         ServiceDependenciesModule,
         ServiceDependenciesEditorModule,
+        CapabilitiesFilterPropertiesEditorComponentModule,
         WorkspaceModule,
         ModalsModule,
         CatalogModule,
