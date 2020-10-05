@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
@@ -98,6 +97,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     private static final String componentId = "dac65869-dfb4-40d2-aa20-084324659ec1";
     private static final String componentInstance = "dac65869-dfb4-40d2-aa20-084324659ec1.resource0";
     private static final String componentType = "resources";
+    private static final String capabilityName = "MyCapabilityName";
 
     private static HttpServletRequest request;
     private static HttpSession session;
@@ -146,7 +146,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void addNodeFilterPropertiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
             NodeFilterConstraintType.PROPERTIES_PARAM_NAME);
 
@@ -172,7 +172,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         when(componentNodeFilterBusinessLogic
             .addNodeFilter(componentId, componentInstance, NodeFilterConstraintAction.ADD,
                 uiConstraint.getServicePropertyName(), constraint, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.PROPERTIES))
+                NodeFilterConstraintType.PROPERTIES, ""))
             .thenReturn(Optional.of(ciNodeFilterDataDefinition));
 
         final Response response = target()
@@ -184,7 +184,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         verify(componentNodeFilterBusinessLogic, times(1))
             .addNodeFilter(anyString(), anyString(), ArgumentMatchers.any(NodeFilterConstraintAction.class), anyString(),
                 anyString(), anyBoolean(), ArgumentMatchers.any(ComponentTypeEnum.class),
-                ArgumentMatchers.any(NodeFilterConstraintType.class));
+                ArgumentMatchers.any(NodeFilterConstraintType.class), anyString());
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
@@ -192,10 +192,11 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void addNodeFilterCapabilitiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
             NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
 
+        final UIConstraint uiConstraint1 = uiConstraint;
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
@@ -203,11 +204,12 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         when(componentsUtils.parseToConstraint(anyString(), any(User.class),ArgumentMatchers.any(ComponentTypeEnum.class)))
             .thenReturn(Optional.of(uiConstraint));
 
+        uiConstraint1.setCapabilityName(capabilityName);
         assertThat(ciNodeFilterDataDefinition.getProperties().getListToscaDataDefinition()).hasSize(1);
         when(componentNodeFilterBusinessLogic
             .addNodeFilter(componentId, componentInstance, NodeFilterConstraintAction.ADD,
-                uiConstraint.getServicePropertyName(), constraint, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.CAPABILITIES))
+                uiConstraint1.getServicePropertyName(), constraint, true, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.CAPABILITIES, capabilityName))
             .thenReturn(Optional.of(ciNodeFilterDataDefinition));
 
         final Response response = target()
@@ -219,7 +221,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         verify(componentNodeFilterBusinessLogic, times(1))
             .addNodeFilter(anyString(), anyString(), ArgumentMatchers.any(NodeFilterConstraintAction.class), anyString(),
                 anyString(), anyBoolean(), ArgumentMatchers.any(ComponentTypeEnum.class),
-                ArgumentMatchers.any(NodeFilterConstraintType.class));
+                ArgumentMatchers.any(NodeFilterConstraintType.class), anyString());
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
@@ -227,7 +229,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void addNodeFilterFailTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
             NodeFilterConstraintType.PROPERTIES_PARAM_NAME);
 
@@ -243,7 +245,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         when(componentNodeFilterBusinessLogic
             .addNodeFilter(componentId, componentInstance, NodeFilterConstraintAction.ADD,
                 uiConstraint.getServicePropertyName(), constraint, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.PROPERTIES))
+                NodeFilterConstraintType.PROPERTIES, ""))
             .thenReturn(Optional.empty());
 
         final Response response = target()
@@ -258,7 +260,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void addNodeFilterFailConstraintParseTest() throws JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance, NodeFilterConstraintType.PROPERTIES_PARAM_NAME);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
@@ -282,9 +284,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void addNodeFilterFailConvertTest() throws JsonProcessingException, BusinessLogicException {
+    public void addNodeFilterFailConvertTest() throws JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
             NodeFilterConstraintType.PROPERTIES.getType());
 
@@ -311,9 +313,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void updateNodeFilterPropertiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
-            NodeFilterConstraintType.PROPERTIES_PARAM_NAME);
+            NodeFilterConstraintType.PROPERTIES_PARAM_NAME, 0);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -327,9 +329,8 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
             .thenReturn(Either.left(Arrays.asList(new ObjectMapper().convertValue(uiConstraint, Map.class))));
 
         when(componentNodeFilterBusinessLogic
-            .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
-                true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES))
-            .thenReturn(Optional.of(ciNodeFilterDataDefinition));
+            .updateNodeFilter(componentId, componentInstance, uiConstraint, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.PROPERTIES, 0)).thenReturn(Optional.of(ciNodeFilterDataDefinition));
         final Response response = target()
             .path(path)
             .request(MediaType.APPLICATION_JSON)
@@ -337,8 +338,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
             .put(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
 
         verify(componentNodeFilterBusinessLogic, times(1))
-            .updateNodeFilter(anyString(), anyString(), anyList(), anyBoolean(),
-                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class));
+            .updateNodeFilter(anyString(), anyString(), ArgumentMatchers.any(UIConstraint.class),
+                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class),
+                anyInt());
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
@@ -346,12 +348,15 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void updateNodeFilterCapabilitiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
-            NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
+            NodeFilterConstraintType.CAPABILITIES_PARAM_NAME, 0);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
+
+        when(componentsUtils.parseToConstraint(anyString(), any(User.class), ArgumentMatchers.any(ComponentTypeEnum.class)))
+            .thenReturn(Optional.of(uiConstraint));
 
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
@@ -364,10 +369,22 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
             nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class)))
             .thenReturn(Either.left(Arrays.asList(new ObjectMapper().convertValue(uiConstraint, Map.class))));
 
-        when(componentNodeFilterBusinessLogic
-            .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
-                true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.CAPABILITIES))
+        when(componentNodeFilterBusinessLogic.deleteNodeFilter(componentId, componentInstance,
+            NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.RESOURCE,
+            NodeFilterConstraintType.PROPERTIES))
             .thenReturn(Optional.of(ciNodeFilterDataDefinition));
+
+        when(componentNodeFilterBusinessLogic
+            .addNodeFilter(componentId, componentInstance, NodeFilterConstraintAction.ADD,
+                uiConstraint.getServicePropertyName(), constraint, true, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.PROPERTIES, ""))
+            .thenReturn(Optional.of(ciNodeFilterDataDefinition));
+
+        when(componentNodeFilterBusinessLogic
+            .updateNodeFilter(componentId, componentInstance, uiConstraint,
+                ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.CAPABILITIES, 0))
+            .thenReturn(Optional.of(ciNodeFilterDataDefinition));
+
         final Response response = target()
             .path(path)
             .request(MediaType.APPLICATION_JSON)
@@ -375,8 +392,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
             .put(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
 
         verify(componentNodeFilterBusinessLogic, times(1))
-            .updateNodeFilter(anyString(), anyString(), anyList(), anyBoolean(),
-                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class));
+            .updateNodeFilter(anyString(), anyString(), ArgumentMatchers.any(UIConstraint.class),
+                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class),
+                anyInt());
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
@@ -384,9 +402,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void updateNodeFilterFailTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
-            NodeFilterConstraintType.PROPERTIES_PARAM_NAME);
+            NodeFilterConstraintType.PROPERTIES_PARAM_NAME, 0);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -397,8 +415,8 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
             .thenReturn(Collections.singletonList(uiConstraint));
 
         when(componentNodeFilterBusinessLogic
-            .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
-                true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES))
+            .updateNodeFilter(componentId, componentInstance, uiConstraint,
+                ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES, 0))
             .thenReturn(Optional.empty());
         final Response response = target()
             .path(path)
@@ -407,9 +425,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
             .put(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
 
         verify(componentNodeFilterBusinessLogic, times(1))
-            .updateNodeFilter(anyString(), anyString(), anyList(), anyBoolean(),
-                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class));
-
+            .updateNodeFilter(anyString(), anyString(), ArgumentMatchers.any(UIConstraint.class),
+                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class),
+                anyInt());
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
     }
@@ -417,9 +435,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void updateNodeFilterFailConstraintParseTest() throws JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
-            NodeFilterConstraintType.PROPERTIES_PARAM_NAME);
+            NodeFilterConstraintType.PROPERTIES_PARAM_NAME, 0);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -440,9 +458,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void updateNodeFilterFailConvertTest() throws JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
-            NodeFilterConstraintType.PROPERTIES_PARAM_NAME);
+            NodeFilterConstraintType.PROPERTIES_PARAM_NAME, 0);
 
         when(userValidations.validateUserExists(user)).thenReturn(user);
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
@@ -465,7 +483,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     public void deleteNodeFilterSuccessTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
             NodeFilterConstraintType.PROPERTIES_PARAM_NAME, 0);
 
@@ -497,9 +515,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
 
     @Test
     public void deleteNodeFilterFailTest() {
-        final String pathFormat = "/v1/catalog/%s/%s/resourceInstances/%s/nodeFilter/%s/%s";
+        final String pathFormat = "/v1/catalog/%s/%s/componentInstance/%s/%s/%s/nodeFilter";
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
-            NodeFilterConstraintType.PROPERTIES_PARAM_NAME, 1);
+            NodeFilterConstraintType.PROPERTIES_PARAM_NAME, 0);
         final Response response = target()
             .path(path)
             .request(MediaType.APPLICATION_JSON)

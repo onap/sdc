@@ -22,19 +22,18 @@ package org.openecomp.sdc.be.datamodel.utils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
-import org.openecomp.sdc.be.ui.model.UIConstraint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.ui.model.UIConstraint;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
 public class ConstraintConvertor {
 
@@ -52,7 +51,6 @@ public class ConstraintConvertor {
 
     private static Set<String> SUPPORTED_FUNCTIONS =
             ImmutableSet.of(ToscaFunctions.GET_INPUT.getFunctionName(), ToscaFunctions.GET_PROPERTY.getFunctionName());
-
 
     public UIConstraint convert(String inConstraint) {
         Yaml yamlSource = new Yaml();
@@ -146,12 +144,48 @@ public class ConstraintConvertor {
                 map2.put(uiConstraint.getConstraintOperator(), map3);
             }
 
-
             Yaml yamlSource = new Yaml();
             return yamlSource.dump(map1);
         } catch (NullPointerException ex) {
             logger.error(ex.getMessage(), ex);
         }
         return null;
+    }
+
+    public UIConstraint getUiConstraint(final String inConstraint, final UIConstraint uiConstraint) {
+        final Object constraintObject = new Yaml().load(inConstraint);
+        if (!(constraintObject instanceof Map)) {
+            return null;
+        }
+        final Map constraintMap = (Map) constraintObject;
+        final Object capabilityName = constraintMap.keySet().iterator().next();
+        uiConstraint.setServicePropertyName(capabilityName.toString());
+        Object capabilityProperties = constraintMap.get(capabilityName);
+        if (!(capabilityProperties instanceof Map)) {
+            return null;
+        }
+        final Map capabilityPropertiesMap = (Map) capabilityProperties;
+        final Object constraintOperator = capabilityPropertiesMap.keySet().iterator().next();
+        final String operator = constraintOperator.toString();
+        if (SUPPORTED_CONSTRAINT_LIST.contains(operator)) {
+            uiConstraint.setConstraintOperator(operator);
+        }
+        final Object constraintValue = capabilityPropertiesMap.get(constraintOperator);
+        if (constraintValue instanceof String || constraintValue instanceof Number || constraintValue instanceof Boolean) {
+            uiConstraint.setValue(constraintValue);
+            uiConstraint.setSourceType(STATIC_CONSTRAINT);
+            uiConstraint.setSourceName(STATIC_CONSTRAINT);
+            return uiConstraint;
+        } else if (constraintValue instanceof List) {
+            final List constraintValueList = (List) constraintValue;
+            uiConstraint.setSourceType(STATIC_CONSTRAINT);
+            uiConstraint.setSourceName(STATIC_CONSTRAINT);
+            uiConstraint.setValue(constraintValueList);
+            return uiConstraint;
+        } else if (constraintValue instanceof Map) {
+            return handleMap(uiConstraint, constraintValue);
+        }
+        return null;
+
     }
 }

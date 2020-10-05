@@ -24,13 +24,13 @@
                [ngClass]="{'hand': !readonly}"
                *ngFor="let capability of constraintCapabilities; let i = index">
             <div class="filter-details" [ngClass]="{'readonly': readonly}">
-              <div class="filter-desc" (click)="!readonly && onSelectNodeFilter(capabilities, i)"
+              <div class="filter-desc" (click)="!readonly && onSelectNodeFilterCapability(capabilities, i)"
                    tooltips
-                   tooltip="{{capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator) + ' '
-             + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}">
-                {{capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator)
-              + ' '
-              + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}
+                   tooltip="{{capability.capabilityName + ' : ' +
+                   capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator) + ' '
+                   + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}">
+                {{capability.capabilityName + ' : ' + capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator)
+              + ' ' + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}
               </div>
               <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                     (click)="openDeleteModal(capabilities, i)"
@@ -42,7 +42,7 @@
             <button
                 class="w-sdc-designer-sidebar-section-node-filter-footer-action add-rule-btn tlv-btn blue"
                 data-tests-id="add-rule-button"
-                (click)="onAddNodeFilter(capabilities)"
+                (click)="onAddNodeFilterCapabilities()"
                 [disabled]="readonly">
               {{'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate}}
             </button>
@@ -75,7 +75,7 @@
             <button
                 class="w-sdc-designer-sidebar-section-node-filter-footer-action add-rule-btn tlv-btn blue"
                 data-tests-id="add-rule-button"
-                (click)="onAddNodeFilter(properties)"
+                (click)="onAddNodeFilter()"
                 [disabled]="readonly">
               {{'DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER' | translate}}
             </button>
