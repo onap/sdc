@@ -16,8 +16,6 @@
 
 package org.openecomp.sdc.be.ui.model;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,6 +28,7 @@ import lombok.ToString;
 @ToString
 public class UIConstraint implements Serializable {
 
+    private String capabilityName;
     private String servicePropertyName;
     private String constraintOperator;
     private String sourceType;

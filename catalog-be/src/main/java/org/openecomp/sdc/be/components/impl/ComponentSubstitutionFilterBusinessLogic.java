@@ -68,8 +68,7 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
                                                     final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                                     final ArtifactsOperations artifactToscaOperation,
                                                     final SubstitutionFilterOperation substitutionFilterOperation,
-                                                    NodeFilterValidator nodeFilterValidator)
-                                                     {
+                                                    final NodeFilterValidator nodeFilterValidator) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactToscaOperation);
         this.substitutionFilterOperation = substitutionFilterOperation;

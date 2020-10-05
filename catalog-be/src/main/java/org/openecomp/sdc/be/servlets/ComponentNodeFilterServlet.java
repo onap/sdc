@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,7 +40,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -59,20 +58,19 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
-import org.openecomp.sdc.be.ui.model.UINodeFilter;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("/v1/catalog/{componentType}/{componentId}/resourceInstances/{componentInstanceId}/nodeFilter/{constraintType}")
+@Path("/v1/catalog/{componentType}/{componentId}/resourceInstances/{componentInstanceId}/{constraintType}")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
 public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentNodeFilterServlet.class);
-    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    private static final String START_HANDLE_REQUEST_OF = "Start handle {} request of {}";
     private static final String MODIFIER_ID_IS = "modifier id is {}";
 
     private static final String FAILED_TO_PARSE_COMPONENT = "failed to parse component";
@@ -88,6 +86,8 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     private static final String FAILED_TO_DELETE_NODE_FILTER = "failed to delete node filter";
     private static final String NODE_FILTER_DELETE = "Node Filter Delete";
     private static final String DELETE_NODE_FILTER_WITH_AN_ERROR = "delete node filter with an error";
+
+    private static  final String INVALID_NODE_FILTER_CONSTRAINT_TYPE = "Invalid value for NodeFilterConstraintType enum {}";
 
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
@@ -105,6 +105,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/nodeFilter")
     @Operation(description = "Add Component Filter Constraint", method = "POST",
         summary = "Add Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
@@ -135,32 +136,31 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         try {
             final Optional<UIConstraint> convertResponse = componentsUtils
                 .parseToConstraint(constraintData, userModifier, componentTypeEnum);
-            if (!convertResponse.isPresent()) {
+            if (convertResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_PARSE_COMPONENT);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            final UIConstraint uiConstraint = convertResponse.get();
-            final String constraint = new ConstraintConvertor().convert(uiConstraint);
-
             final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
                 NodeFilterConstraintType.parse(constraintType);
-            if (!nodeFilterConstraintType.isPresent()) {
+            if (nodeFilterConstraintType.isEmpty()) {
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                    "Invalid value for NodeFilterConstraintType enum %s", constraintType));
+                    INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
-
+            final UIConstraint uiConstraint = convertResponse.get();
+            final String constraint = new ConstraintConvertor().convert(uiConstraint);
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD,
                     uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum,
-                    nodeFilterConstraintType.get());
+                    nodeFilterConstraintType.get(),
+                    StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
 
-            if (!actionResponse.isPresent()) {
+            if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            final UINodeFilter nodeFilter = new NodeFilterConverter().convertToUi(actionResponse.get());
 
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), nodeFilter);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                new NodeFilterConverter().convertToUi(actionResponse.get()));
 
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_CREATION);
@@ -172,6 +172,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{constraintIndex}/nodeFilter")
     @Operation(description = "Update Component Filter Constraint", method = "PUT",
         summary = "Update Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
@@ -191,6 +192,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
                 NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
         @PathParam("constraintType") final String constraintType,
+        @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
@@ -198,26 +200,26 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         final User userModifier = componentNodeFilterBusinessLogic.validateUser(userId);
 
         try {
-            final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            final List<UIConstraint>  uiConstraints = componentsUtils
-                .validateAndParseConstraint(componentTypeEnum, constraintData, userModifier);
-            if (CollectionUtils.isEmpty(uiConstraints)) {
-                LOGGER.error("Failed to Parse Constraint data {} when executing {} ", constraintData, NODE_FILTER_UPDATE);
-                return buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR,
-                    "Failed to parse constraint data", constraintData));
-            }
-            final List<String> constraints = new ConstraintConvertor().convertToList(uiConstraints);
-            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintTypeOptional =
                 NodeFilterConstraintType.parse(constraintType);
-            if (!nodeFilterConstraintType.isPresent()) {
+            if (nodeFilterConstraintTypeOptional.isEmpty()) {
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                    "Invalid value for NodeFilterConstraintType enum %s", constraintType));
+                    INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
-            final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, constraints,
-                    true, componentTypeEnum, nodeFilterConstraintType.get());
 
-            if (!actionResponse.isPresent()) {
+            final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
+            final Optional<UIConstraint> convertResponse = componentsUtils
+                .parseToConstraint(constraintData, userModifier, componentTypeEnum);
+            if (convertResponse.isEmpty()) {
+                LOGGER.error(FAILED_TO_PARSE_COMPONENT);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            }
+            final NodeFilterConstraintType nodeFilterConstraintType = nodeFilterConstraintTypeOptional.get();
+            final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
+                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, convertResponse.get(),
+                    componentTypeEnum, nodeFilterConstraintType, index);
+
+            if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_UPDATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
@@ -235,7 +237,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{constraintIndex}")
+    @Path("{constraintIndex}/nodeFilter")
     @Operation(description = "Delete Component Filter Constraint", method = "Delete",
         summary = "Delete Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
@@ -264,16 +266,16 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         try {
             final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
                 NodeFilterConstraintType.parse(constraintType);
-            if (!nodeFilterConstraintType.isPresent()) {
+            if (nodeFilterConstraintType.isEmpty()) {
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                    "Invalid value for NodeFilterConstraintType enum %s", constraintType));
+                    INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.DELETE,
                     null, index, true, ComponentTypeEnum.findByParamName(componentType),
                     nodeFilterConstraintType.get());
 
-            if (!actionResponse.isPresent()) {
+            if (actionResponse.isEmpty()) {
                 LOGGER.debug(FAILED_TO_DELETE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
@@ -285,7 +287,6 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_DELETE);
             LOGGER.debug(DELETE_NODE_FILTER_WITH_AN_ERROR, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         }
     }
 

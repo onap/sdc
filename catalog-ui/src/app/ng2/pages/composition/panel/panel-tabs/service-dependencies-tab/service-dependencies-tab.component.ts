@@ -1,10 +1,11 @@
 import {Component, Input} from '@angular/core';
 import {Store} from '@ngxs/store';
 import {
+    CapabilitiesGroup, Capability,
     Component as TopologyTemplate,
     FullComponentInstance,
     PropertiesGroup,
-    PropertyBEModel,
+    PropertyBEModel, PropertyModel,
 } from 'app/models';
 import {DEPENDENCY_EVENTS} from 'app/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
@@ -16,6 +17,7 @@ import {ComponentGenericResponse} from '../../../../../services/responses/compon
 import {WorkspaceService} from '../../../../workspace/workspace.service';
 import {SelectedComponentType} from '../../../common/store/graph.actions';
 import {CompositionService} from '../../../composition.service';
+import {CapabilitiesConstraintObject} from "../../../../../components/logic/capabilities-constraint/capabilities-constraint.component";
 
 @Component({
     selector: 'service-dependencies-tab',
@@ -30,7 +32,10 @@ export class ServiceDependenciesTabComponent {
     selectedInstanceConstraints: ConstraintObject[];
     selectedInstanceProperties: PropertyBEModel[];
     componentInstanceProperties: PropertiesGroup;
+    componentInstanceCapabilityProperties: CapabilitiesGroup;
     metaData: ComponentMetadata;
+    componentInstanceCapabilitiesMap : Map<string, PropertyModel[]> = new Map();
+    componentInstanceCapabilitiesNames: string[];
 
     @Input() isViewOnly: boolean;
     @Input() componentType: SelectedComponentType;
@@ -50,6 +55,7 @@ export class ServiceDependenciesTabComponent {
         this.initInstancesWithProperties();
         this.loadConstraints();
         this.initInstancesWithProperties();
+        this.initInstancesWithCapabilityProperties()
     }
 
     public loadConstraints = (): void => {
@@ -67,7 +73,7 @@ export class ServiceDependenciesTabComponent {
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].properties;
     }
 
-    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<ConstraintObject>):void => {
+    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<CapabilitiesConstraintObject>):void => {
         this.componentInstancesConstraints[this.component.uniqueId].capabilities = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].capabilities;
     }
@@ -90,4 +96,20 @@ export class ServiceDependenciesTabComponent {
             this.selectedInstanceSiblings = instancesMappedList.filter((coInstance) => coInstance.id !== this.component.uniqueId);
         }
     }
+
+    private initInstancesWithCapabilityProperties = (): void => {
+        this.componentInstanceCapabilityProperties = this.component.capabilities;
+        this.updateComponentInstanceCapabilities();
+    }
+
+    private updateComponentInstanceCapabilities = (): void => {
+        if (this.isComponentInstanceSelected && this.componentInstanceCapabilityProperties) {
+            _.forEach(_.flatten(_.values(this.componentInstanceCapabilityProperties)), (capability: Capability) => {
+                if (capability.properties) {
+                    this.componentInstanceCapabilitiesMap.set(capability.name, capability.properties);
+                }
+            });
+        }
+    }
+
 }

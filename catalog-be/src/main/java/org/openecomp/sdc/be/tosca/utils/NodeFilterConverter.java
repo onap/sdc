@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,15 +51,26 @@ public class NodeFilterConverter {
         final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> nodeFilterCapabilities =
             inNodeFilter.getCapabilities();
         if (nodeFilterCapabilities != null && !nodeFilterCapabilities.isEmpty()) {
-            final List<UIConstraint> capabilitiesConstraint = nodeFilterCapabilities.getListToscaDataDefinition()
-                .stream()
-                .map(capabilities -> capabilities.getProperties().getListToscaDataDefinition().iterator().next())
-                .map(property -> property.getConstraints().iterator().next())
-                .map(constraintConvertor::convert)
-                .collect(Collectors.toList());
+            final List<UIConstraint> capabilitiesConstraint = new ArrayList<>();
+            nodeFilterCapabilities.getListToscaDataDefinition()
+                .forEach(requirementNodeFilterCapabilityDataDefinition ->
+                    convertCapabilityConstraint(requirementNodeFilterCapabilityDataDefinition, capabilitiesConstraint ));
+
             uiNodeFilter.setCapabilities(capabilitiesConstraint);
         }
 
         return uiNodeFilter;
+    }
+
+    private void convertCapabilityConstraint(
+        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition,
+        final List<UIConstraint> capabilitiesConstraint) {
+
+        final UIConstraint uiConstraint = new UIConstraint();
+        final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
+        uiConstraint.setCapabilityName(requirementNodeFilterCapabilityDataDefinition.getName());
+        requirementNodeFilterCapabilityDataDefinition.getProperties().getListToscaDataDefinition()
+            .forEach(property -> capabilitiesConstraint.add(constraintConvertor
+                .getUiConstraint(property.getConstraints().iterator().next(), uiConstraint)));
     }
 }
