@@ -17,27 +17,21 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
-import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
-
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.inject.Named;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -60,6 +54,10 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFile
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
+import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
+
 /**
  * Enables integration API interface with VNF Repository (VNFSDK).
  * <ol>
@@ -76,7 +74,26 @@ import org.springframework.stereotype.Service;
 public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VnfPackageRepositoryImpl.class);
+    private static final Client CLIENT = ignoreSSLClient();
 
+    private static Client ignoreSSLClient() {
+        try {
+            SSLContext sslcontext = SSLContext.getInstance("TLS");
+            sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
+                public void checkClientTrusted(X509Certificate[] c, String s) {}
+                public void checkServerTrusted(X509Certificate[] c, String s) {}
+                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+            }}, new java.security.SecureRandom());
+
+            return ClientBuilder.newBuilder()
+                    .sslContext(sslcontext)
+                    .hostnameVerifier((a, b) -> true)
+                    .build();
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            LOGGER.error("Failed to initialize SSL unsecure context", e);
+        }
+        return ClientBuilder.newClient();
+    }
     private final Configuration config;
 
     public VnfPackageRepositoryImpl(Configuration config) {
@@ -89,51 +106,29 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
     @Override
     public Response getVnfPackages(String vspId, String versionId, String user) {
-
         LOGGER.debug("Get VNF Packages from Repository: {}", vspId);
-
-        Client client = new SharedClient();
-
         final String getVnfPackageUri = config.getGetUri();
-
-        try {
-
-            Response remoteResponse = client.target(getVnfPackageUri).request().get();
-            if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
-                return handleUnexpectedStatus("querying VNF package metadata", getVnfPackageUri, remoteResponse);
-            }
-
-            LOGGER.debug("Response from VNF Repository: {}", remoteResponse);
-            return Response.ok(remoteResponse.readEntity(String.class)).build();
-
-        } finally {
-            client.close();
+        Response remoteResponse = CLIENT.target(getVnfPackageUri).request().get();
+        if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+            return handleUnexpectedStatus("querying VNF package metadata", getVnfPackageUri, remoteResponse);
         }
+        LOGGER.debug("Response from VNF Repository: {}", remoteResponse);
+        return Response.ok(remoteResponse.readEntity(String.class)).build();
     }
 
     @Override
     public Response importVnfPackage(String vspId, String versionId, String csarId, String user) {
-
         LOGGER.debug("Import VNF Packages from Repository: {}", csarId);
-
         final String downloadPackageUri = String.format(config.getDownloadUri(), csarId);
 
-        Client client = new SharedClient();
-
-        try {
-
-            Response remoteResponse = client.target(downloadPackageUri).request().get();
-            if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
-                return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
-            }
-
-            LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
-            byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
-            return uploadVnfPackage(vspId, versionId, csarId, payload);
-
-        } finally {
-            client.close();
+        Response remoteResponse = CLIENT.target(downloadPackageUri).request().get();
+        if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+            return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
         }
+
+        LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
+        byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
+        return uploadVnfPackage(vspId, versionId, csarId, payload);
     }
 
     private Response uploadVnfPackage(final String vspId, final String versionId,
@@ -163,30 +158,20 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
     @Override
     public Response downloadVnfPackage(String vspId, String versionId, String csarId, String user) {
-
         LOGGER.debug("Download VNF package from repository: csarId={}", csarId);
-
         final String downloadPackageUri = String.format(config.getDownloadUri(), csarId);
 
-        Client client = new SharedClient();
-
-        try {
-
-            Response remoteResponse = client.target(downloadPackageUri).request().get();
-            if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
-                return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
-            }
-
-            byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
-            Response.ResponseBuilder response = Response.ok(payload);
-            response.header(CONTENT_DISPOSITION, "attachment; filename=" + formatFilename(csarId));
-
-            LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
-            return response.build();
-
-        } finally {
-            client.close();
+        Response remoteResponse = CLIENT.target(downloadPackageUri).request().get();
+        if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+            return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
         }
+
+        byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
+        Response.ResponseBuilder response = Response.ok(payload);
+        response.header(CONTENT_DISPOSITION, "attachment; filename=" + formatFilename(csarId));
+
+        LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
+        return response.build();
     }
 
     private Version getVersion(String vspId, String versionId) {
@@ -221,105 +206,8 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     }
 
     interface Configuration {
-
         String getGetUri();
-
         String getDownloadUri();
-    }
-
-    private static class SharedClient implements Client {
-
-        private static final Client CLIENT = ClientBuilder.newClient();
-
-        @Override
-        public void close() {
-            // do not close the shared client
-        }
-
-        @Override
-        public WebTarget target(String uri) {
-            return CLIENT.target(uri);
-        }
-
-        @Override
-        public WebTarget target(URI uri) {
-            return CLIENT.target(uri);
-        }
-
-        @Override
-        public WebTarget target(UriBuilder uriBuilder) {
-            return CLIENT.target(uriBuilder);
-        }
-
-        @Override
-        public WebTarget target(Link link) {
-            return CLIENT.target(link);
-        }
-
-        @Override
-        public Invocation.Builder invocation(Link link) {
-            return CLIENT.invocation(link);
-        }
-
-        @Override
-        public SSLContext getSslContext() {
-            return CLIENT.getSslContext();
-        }
-
-        @Override
-        public HostnameVerifier getHostnameVerifier() {
-            return CLIENT.getHostnameVerifier();
-        }
-
-        @Override
-        public javax.ws.rs.core.Configuration getConfiguration() {
-            return CLIENT.getConfiguration();
-        }
-
-        @Override
-        public Client property(String name, Object value) {
-            return CLIENT.property(name, value);
-        }
-
-        @Override
-        public Client register(Class<?> componentClass) {
-            return CLIENT.register(componentClass);
-        }
-
-        @Override
-        public Client register(Class<?> componentClass, int priority) {
-            return CLIENT.register(componentClass, priority);
-        }
-
-        @Override
-        public Client register(Class<?> componentClass, Class<?>... contracts) {
-            return CLIENT.register(componentClass, contracts);
-        }
-
-        @Override
-        public Client register(Class<?> componentClass, Map<Class<?>, Integer> contracts) {
-            return CLIENT.register(componentClass, contracts);
-        }
-
-        @Override
-        public Client register(Object component) {
-            return CLIENT.register(component);
-        }
-
-        @Override
-        public Client register(Object component, int priority) {
-            return CLIENT.register(component, priority);
-        }
-
-        @Override
-        public Client register(Object component, Class<?>... contracts) {
-            return CLIENT.register(component, contracts);
-        }
-
-        @Override
-        public Client register(Object component, Map<Class<?>, Integer> contracts) {
-            return CLIENT.register(component, contracts);
-        }
     }
 
     static class FileConfiguration implements Configuration {
@@ -361,20 +249,18 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
             }
 
             private String readConfig(org.onap.config.api.Configuration config, String key, String defaultValue) {
-
                 try {
                     String value = config.getAsString(CONFIG_NAMESPACE, key);
                     return (value == null) ? defaultValue : value;
                 } catch (Exception e) {
-                    LOGGER.error(
-                            "Failed to read VNF repository configuration key '{}', default value '{}' will be used",
+                    LOGGER.error("Failed to read VNF repository configuration key '{}', default value '{}' will be used",
                             key, defaultValue, e);
                     return defaultValue;
                 }
             }
 
             private static String formatUri(String host, String port, String path) {
-                return "http://" + host + ":" + port + (path.startsWith("/") ? path : "/" + path);
+                return "https://" + host + ":" + port + (path.startsWith("/") ? path : "/" + path);
             }
 
             public String getGetUri() {
