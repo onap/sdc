@@ -537,6 +537,12 @@
             <artifactId>sigar</artifactId>
             <version>${sigar.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
