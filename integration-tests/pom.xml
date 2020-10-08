@@ -513,6 +513,7 @@ limitations under the License.
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
                                         <volume>${project.basedir}/src/test/resources/cert:/var/lib/jetty/onap/cert
                                         </volume>
+                                        <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
                                     </bind>
                                 </volumes>
                                 <wait>
