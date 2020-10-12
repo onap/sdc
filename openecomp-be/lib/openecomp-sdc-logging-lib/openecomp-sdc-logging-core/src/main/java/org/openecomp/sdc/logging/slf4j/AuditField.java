@@ -32,7 +32,8 @@ enum AuditField implements MDCField {
     STATUS_CODE(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE),
     RESPONSE_CODE(ONAPLogConstants.MDCs.RESPONSE_CODE),
     RESPONSE_DESCRIPTION(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION),
-    CLIENT_IP_ADDRESS(ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS);
+    CLIENT_IP_ADDRESS(ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS),
+    INVOCATION_ID(ONAPLogConstants.MDCs.INVOCATION_ID);
 
     private final String key;
 
@@ -40,6 +41,7 @@ enum AuditField implements MDCField {
         this.key = key;
     }
 
+    @Override
     public String asKey() {
         return key;
     }

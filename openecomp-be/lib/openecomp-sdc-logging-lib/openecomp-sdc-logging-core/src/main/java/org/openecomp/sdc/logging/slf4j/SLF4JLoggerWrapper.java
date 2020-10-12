@@ -17,10 +17,10 @@
 package org.openecomp.sdc.logging.slf4j;
 
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.MetricsData;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
@@ -157,6 +157,7 @@ class SLF4JLoggerWrapper implements Logger {
         safePutOnMdc(AuditField.RESPONSE_CODE, audit.getResponseCode());
         safePutOnMdc(AuditField.RESPONSE_DESCRIPTION, audit.getResponseDescription());
         safePutOnMdc(AuditField.CLIENT_IP_ADDRESS, audit.getClientIpAddress());
+        unsafePutOnMdc(AuditField.INVOCATION_ID, UUID.randomUUID().toString());
 
         if (audit.getStatusCode() != null) {
             unsafePutOnMdc(AuditField.STATUS_CODE, audit.getStatusCode().name());

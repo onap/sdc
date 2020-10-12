@@ -20,18 +20,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
+import org.apache.tools.ant.types.Commandline.Marker;
 import org.junit.Test;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.MetricsData;
-import org.slf4j.Logger;
 import org.slf4j.MDC;
-import org.slf4j.Marker;
 
 /**
  * Unit-test of SLF4J implementation of Logger.
@@ -218,6 +216,13 @@ public class SLF4JLoggerWrapperTest {
         SpyLogger spy = createSpy();
         new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().build());
         assertNull(spy.mdc().get(MetricsField.CLIENT_IP_ADDRESS.asKey()));
+    }
+
+    @Test
+    public void auditInvocationIdAvailable() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).auditEntry(AuditData.builder().build());
+        assertNotNull(spy.mdc().get(AuditField.INVOCATION_ID.asKey()));
     }
 
     @Test
