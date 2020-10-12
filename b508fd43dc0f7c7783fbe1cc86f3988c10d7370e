@@ -22,6 +22,30 @@
       "revId": "b508fd43dc0f7c7783fbe1cc86f3988c10d7370e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44112f9d_ac86065b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2020-10-12T11:40:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48eb5c27_757363c0",
+      "range": {
+        "startLine": 2211,
+        "startChar": 86,
+        "endLine": 2211,
+        "endChar": 106
+      },
+      "revId": "b508fd43dc0f7c7783fbe1cc86f3988c10d7370e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
