@@ -221,6 +221,13 @@ public class SLF4JLoggerWrapperTest {
     }
 
     @Test
+    public void auditInvocationIdAvailable() {
+        SpyLogger spy = createSpy();
+        new SLF4JLoggerWrapper(spy).auditEntry(AuditData.builder().build());
+        assertNotNull(spy.mdc().get(AuditField.INVOCATION_ID.asKey()));
+    }
+
+    @Test
     public void metricsTargetEntityAvailableWhenPassed() {
         final String targetEntity = "MetricsTargetEntity";
         SpyLogger spy = createSpy();
