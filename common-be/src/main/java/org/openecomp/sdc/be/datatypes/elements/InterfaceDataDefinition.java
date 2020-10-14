@@ -36,7 +36,6 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
         this();
         setType(type);
         setDescription(description);
-
     }
 
     @JsonCreator
@@ -45,12 +44,13 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
         setOperations(new HashMap<>());
     }
 
-    public InterfaceDataDefinition(InterfaceDataDefinition p) {
-        setUniqueId(p.getUniqueId());
-        setType(p.getType());
-        setDescription(p.getDescription());
-        setToscaResourceName(p.getToscaResourceName());
-        setOperations(p.getOperations());
+    public InterfaceDataDefinition(final InterfaceDataDefinition interfaceDataDefinition) {
+        setUniqueId(interfaceDataDefinition.getUniqueId());
+        setType(interfaceDataDefinition.getType());
+        setDescription(interfaceDataDefinition.getDescription());
+        setToscaResourceName(interfaceDataDefinition.getToscaResourceName());
+        setOperations(interfaceDataDefinition.getOperations());
+        setInputs(interfaceDataDefinition.getInputs());
     }
 
     public String getUniqueId() {
@@ -59,10 +59,6 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
 
     public void setUniqueId(String uniqueId) {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
-    }
-
-    public String getType() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
     public void setType(String type) {
@@ -119,5 +115,13 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
 
     public void setLastUpdateDate(Long lastUpdateDate) {
         setToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE, lastUpdateDate);
+    }
+
+    public Map<String, InputDataDefinition> getInputs() {
+        return (Map<String, InputDataDefinition>) getToscaPresentationValue(JsonPresentationFields.INTERFACE_INPUT);
+    }
+
+    public void setInputs(final Map<String, InputDataDefinition> inputs) {
+        setToscaPresentationValue(JsonPresentationFields.INTERFACE_INPUT, inputs);
     }
 }

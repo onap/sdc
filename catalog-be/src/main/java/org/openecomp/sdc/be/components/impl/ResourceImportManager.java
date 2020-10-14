@@ -22,7 +22,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataType;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataTypeDefinitionWithName;
 import static org.openecomp.sdc.be.utils.TypeUtils.setField;
@@ -34,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,11 +60,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -94,7 +88,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
-import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -112,13 +105,7 @@ public class ResourceImportManager {
     private static final Logger log = Logger.getLogger(ResourceImportManager.class);
 
     static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("[\\w\\-\\_\\d\\:]+");
-    private static final String IMPLEMENTATION = "implementation";
-    private static final String INPUTS = "inputs";
-    private static final String TYPE = "type";
-    private static final String DESCRIPTION = "description";
-    private static final String REQUIRED = "required";
-    private static final String DEFAULT = "default";
-    private static final String STATUS = "status";
+    private final InterfaceDefinitionHandler interfaceDefinitionHandler;
 
     private ServletContext servletContext;
 
@@ -134,7 +121,6 @@ public class ResourceImportManager {
 
     @Autowired
     private ServiceBusinessLogic serviceBusinessLogic;
-    private InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
 
     private IGraphLockOperation graphLockOperation;
     private ToscaOperationFacade toscaOperationFacade;
@@ -145,9 +131,11 @@ public class ResourceImportManager {
     private ResponseFormatManager responseFormatManager;
 
     @Autowired
-    public ResourceImportManager(ComponentsUtils componentsUtils, CapabilityTypeOperation capabilityTypeOperation) {
+    public ResourceImportManager(ComponentsUtils componentsUtils, CapabilityTypeOperation capabilityTypeOperation,
+                                 final InterfaceDefinitionHandler interfaceDefinitionHandler) {
         this.componentsUtils = componentsUtils;
         this.capabilityTypeOperation = capabilityTypeOperation;
+        this.interfaceDefinitionHandler = interfaceDefinitionHandler;
     }
 
     @Autowired
@@ -380,11 +368,9 @@ public class ResourceImportManager {
         if (toscaInterfaces.isLeft()) {
             Map<String, Object> jsonInterfaces = toscaInterfaces.left().value();
             Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
-            Iterator<Entry<String, Object>> interfacesNameValue = jsonInterfaces.entrySet().iterator();
-            while (interfacesNameValue.hasNext()) {
-                Entry<String, Object> interfaceNameValue = interfacesNameValue.next();
-                Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue
-                    .getValue(), resource);
+            for (final Entry<String, Object> interfaceNameValue : jsonInterfaces.entrySet()) {
+                final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface =
+                    createModuleInterface(interfaceNameValue.getValue());
                 if (eitherInterface.isRight()) {
                     log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(),
                         resource.getName());
@@ -393,165 +379,32 @@ public class ResourceImportManager {
                 }
 
             }
-            if (moduleInterfaces.size() > 0) {
+            if (!moduleInterfaces.isEmpty()) {
                 resource.setInterfaces(moduleInterfaces);
             }
         }
     }
 
-    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(Object interfaceJson,
-                                                                                Resource resource) {
-        final InterfaceDefinition interf = new InterfaceDefinition();
-        Either<InterfaceDefinition, ResultStatusEnum> result = Either.left(interf);
-
+    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(final Object interfaceJson) {
         try {
             if (interfaceJson instanceof String) {
-                final String requirementJsonString = (String) interfaceJson;
-                interf.setType(requirementJsonString);
-            } else if (interfaceJson instanceof Map && ResourceTypeEnum.VFC.equals(resource.getResourceType())) {
-                final Map<String, Object> requirementJsonMap = (Map<String, Object>) interfaceJson;
-                final Map<String, OperationDataDefinition> operations = new HashMap<>();
-
-                for (final Entry<String, Object> entry : requirementJsonMap.entrySet()) {
-                    if (entryIsInterfaceType(entry)) {
-                        final String type = (String) requirementJsonMap
-                            .get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
-                        interf.setType(type);
-                        interf.setUniqueId(type.toLowerCase());
-                    } else if (entryContainsImplementationForAKnownOperation(entry, interf.getType())) {
-
-                        final OperationDataDefinition operation = new OperationDataDefinition();
-                        operation.setName(entry.getKey());
-
-                        final Map<?, ?> entryValue = (Map<?, ?>) entry.getValue();
-                        if (entryValue.containsKey(IMPLEMENTATION)) {
-                            operation.setImplementation(handleOperationImplementation(entry));
-                        }
-                        if (entryValue.containsKey(INPUTS)) {
-                            final Map<String, Object> interfaceInputs = (Map<String, Object>) entryValue
-                                .get(ToscaTagNamesEnum.INPUTS.getElementName());
-                            operation.setInputs(handleInterfaceInput(interfaceInputs));
-                        }
-                        operations.put(entry.getKey(), operation);
-                    }
-                }
-                if (!operations.isEmpty()) {
-                    interf.setOperations(operations);
-                }
-            } else {
-                result = Either.right(ResultStatusEnum.GENERAL_ERROR);
+                final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+                interfaceDefinition.setType((String) interfaceJson);
+                return Either.left(interfaceDefinition);
             }
 
-        } catch (Exception e) {
+            if (interfaceJson instanceof Map) {
+                final Map<String, Object> interfaceJsonMap = (Map<String, Object>) interfaceJson;
+                final InterfaceDefinition interfaceDefinition = interfaceDefinitionHandler.create(interfaceJsonMap);
+                return Either.left(interfaceDefinition);
+            }
+
+            return Either.right(ResultStatusEnum.GENERAL_ERROR);
+        } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeSystemError("Import Resource- create interface");
             log.debug("error when creating interface, message:{}", e.getMessage(), e);
-            result = Either.right(ResultStatusEnum.GENERAL_ERROR);
+            return Either.right(ResultStatusEnum.GENERAL_ERROR);
         }
-
-        return result;
-    }
-
-    private ArtifactDataDefinition handleOperationImplementation(final Entry<String, Object> entry) {
-        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-        final String artifactName = ((Map<String, String>) entry.getValue()).get(IMPLEMENTATION);
-        if (OperationArtifactUtil.artifactNameIsALiteralValue(artifactName)) {
-            implementation.setArtifactName(artifactName);
-        } else {
-            implementation.setArtifactName(QUOTE + artifactName + QUOTE);
-        }
-        return implementation;
-    }
-
-    private ListDataDefinition<OperationInputDefinition> handleInterfaceInput(
-        final Map<String, Object> interfaceInputs) {
-        final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
-        for (final Entry<String, Object> interfaceInput : interfaceInputs.entrySet()) {
-            final OperationInputDefinition operationInput = new OperationInputDefinition();
-            operationInput.setName(interfaceInput.getKey());
-            if (interfaceInput.getValue() instanceof Map) {
-                final LinkedHashMap<String, Object> inputPropertyValue =
-                    (LinkedHashMap<String, Object>) interfaceInput.getValue();
-                log.info("createModuleInterface: i interfaceInput.getKey() {}, {} , {}  ",
-                    interfaceInput.getKey(), inputPropertyValue.keySet(),
-                    inputPropertyValue.values());
-                if (inputPropertyValue.get(TYPE) != null) {
-                    operationInput.setType(inputPropertyValue.get(TYPE).toString());
-                }
-                if (inputPropertyValue.get(DESCRIPTION) != null) {
-                    operationInput.setDescription(inputPropertyValue.get(DESCRIPTION).toString());
-                }
-                if (inputPropertyValue.get(REQUIRED) != null) {
-                    operationInput.setRequired(
-                        Boolean.getBoolean(inputPropertyValue.get(REQUIRED).toString()));
-                }
-                if (inputPropertyValue.get(DEFAULT) != null) {
-                    operationInput.setToscaDefaultValue(inputPropertyValue.get(DEFAULT).toString());
-                }
-                if (inputPropertyValue.get(STATUS) != null) {
-                    operationInput.setStatus(inputPropertyValue.get(STATUS).toString());
-                }
-
-            } else if (interfaceInput.getValue() instanceof String) {
-                final String value = (String) interfaceInput.getValue();
-                operationInput.setDefaultValue(value);
-                operationInput.setToscaDefaultValue(value);
-                operationInput.setValue(value);
-            }
-            inputs.getListToscaDataDefinition().add(operationInput);
-            inputs.add(operationInput);
-        }
-        return inputs;
-    }
-
-    private boolean entryIsInterfaceType(final Entry<String, Object> entry) {
-        if(entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
-            if (entry.getValue() instanceof String) {
-                return true;
-            }
-            throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML);
-        }
-        return false;
-    }
-
-    private boolean entryContainsImplementationForAKnownOperation(final Entry<String, Object> entry,
-                                                                  final String interfaceType) {
-        if (entry.getValue() instanceof Map && ((Map<?, ?>)entry.getValue()).containsKey(IMPLEMENTATION)) {
-            if (isAKnownOperation(interfaceType, entry.getKey())){
-                return true;
-            }
-            throw new ByActionStatusComponentException(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
-        }
-        return false;
-    }
-
-    private boolean isAKnownOperation(String interfaceType, String operation) {
-        Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes = interfaceOperationBusinessLogic
-            .getAllInterfaceLifecycleTypes();
-        if (interfaceLifecycleTypes.isRight() || interfaceLifecycleTypes.left().value() == null) {
-            return false;
-        }
-
-        for (Entry<String, InterfaceDefinition> interfaceLifecycleType : interfaceLifecycleTypes.left().value()
-            .entrySet()) {
-            if (interfaceTypeAndOperationMatches(interfaceLifecycleType, interfaceType, operation)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean interfaceTypeAndOperationMatches(Entry<String, InterfaceDefinition> interfaceLifecycleType,
-                                                     String interfaceType, String operation) {
-        if (interfaceLifecycleType.getKey().equalsIgnoreCase(interfaceType)
-            && interfaceLifecycleType.getValue().getOperations() != null) {
-            for (String interfaceLifecycleTypeOperation : interfaceLifecycleType.getValue().getOperations().keySet()) {
-                if (interfaceLifecycleTypeOperation != null && interfaceLifecycleTypeOperation
-                    .equalsIgnoreCase(operation)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private void setRequirements(Map<String, Object> toscaJson, Resource resource,
@@ -1163,11 +1016,6 @@ public class ResourceImportManager {
     @Autowired
     public void setResourceBusinessLogic(ResourceBusinessLogic resourceBusinessLogic) {
         this.resourceBusinessLogic = resourceBusinessLogic;
-    }
-
-    @Autowired
-    public void setInterfaceOperationBusinessLogic(InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
-        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
     }
 
     public IGraphLockOperation getGraphLockOperation() {

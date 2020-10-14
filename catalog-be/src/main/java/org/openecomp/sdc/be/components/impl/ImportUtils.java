@@ -47,6 +47,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -348,24 +349,24 @@ public final class ImportUtils {
         }
     }
 
-    private static List<PropertyConstraint> getPropertyConstraints(Map<String, Object> propertyValue,
-                                                                   String propertyType) {
-        List<Object> propertyFieldConstraints = findCurrentLevelConstraintsElement(propertyValue);
-        if (CollectionUtils.isNotEmpty(propertyFieldConstraints)) {
-            List<PropertyConstraint> constraintList = new ArrayList<>();
-            Type constraintType = new TypeToken<PropertyConstraint>() {
-            }.getType();
-            Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser())
-                .create();
-
-            for (Object constraintJson : propertyFieldConstraints) {
-                PropertyConstraint propertyConstraint = validateAndGetPropertyConstraint(propertyType, constraintType,
-                    gson, constraintJson);
-                constraintList.add(propertyConstraint);
-            }
-            return constraintList;
+    private static List<PropertyConstraint> getPropertyConstraints(final Map<String, Object> propertyValue,
+                                                                   final String propertyType) {
+        final List<Object> propertyFieldConstraints = findCurrentLevelConstraintsElement(propertyValue);
+        if (CollectionUtils.isEmpty(propertyFieldConstraints)) {
+            return Collections.emptyList();
         }
-        return null;
+        final List<PropertyConstraint> constraintList = new ArrayList<>();
+        final Type constraintType = new TypeToken<PropertyConstraint>() {
+        }.getType();
+        final Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser())
+            .create();
+
+        for (final Object constraintJson : propertyFieldConstraints) {
+            final PropertyConstraint propertyConstraint = validateAndGetPropertyConstraint(propertyType, constraintType,
+                gson, constraintJson);
+            constraintList.add(propertyConstraint);
+        }
+        return constraintList;
     }
 
     private static List<Object> findCurrentLevelConstraintsElement(Map<String, Object> toscaJson) {
@@ -485,10 +486,13 @@ public final class ImportUtils {
         return result;
     }
 
-    public static InputDefinition createModuleInput(Map<String, Object> inputValue,
-                                                    AnnotationTypeOperations annotationTypeOperations) {
+    public static InputDefinition createModuleInput(final Map<String, Object> inputValue,
+                                                    final AnnotationTypeOperations annotationTypeOperations) {
+        return parseAnnotationsAndAddItToInput(createModuleInput(inputValue), inputValue, annotationTypeOperations);
+    }
 
-        InputDefinition inputDef = new InputDefinition();
+    public static InputDefinition createModuleInput(final Map<String, Object> inputValue) {
+        final InputDefinition inputDef = new InputDefinition();
         setField(inputValue, TypeUtils.ToscaTagNamesEnum.TYPE, inputDef::setType);
         setFieldBoolean(inputValue, ToscaTagNamesEnum.REQUIRED, req -> inputDef.setRequired(Boolean.parseBoolean(req)));
         setField(inputValue, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, inputDef::setDescription);
@@ -504,9 +508,7 @@ public final class ImportUtils {
 
         setScheme(inputValue, inputDef);
         setPropertyConstraints(inputValue, inputDef);
-
-        return parseAnnotationsAndAddItToInput(inputDef, inputValue, annotationTypeOperations);
-
+        return inputDef;
     }
 
     public static InputDefinition parseAnnotationsAndAddItToInput(InputDefinition inputDef,
@@ -606,6 +608,11 @@ public final class ImportUtils {
 
         return getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS, elementGenByName, func);
 
+    }
+
+    public static Either<Map<String, InputDefinition>, ResultStatusEnum> getInputs(final Map<String, Object> toscaJson) {
+        return getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS, ImportUtils::createInputs,
+            ImportUtils::createModuleInput);
     }
 
     public static <T> Either<Map<String, T>, ResultStatusEnum> getElements(Map<String, Object> toscaJson,

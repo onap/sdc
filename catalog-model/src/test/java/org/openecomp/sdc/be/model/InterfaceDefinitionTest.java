@@ -20,64 +20,53 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 
 
-public class InterfaceDefinitionTest {
-
-	private InterfaceDefinition createTestSubject() {
-		return new InterfaceDefinition();
-	}
+class InterfaceDefinitionTest {
 
 	@Test
-	public void testCtor() throws Exception {
+	void testCtor() throws Exception {
 		new InterfaceDefinition(new InterfaceDataDefinition());
 		new InterfaceDefinition("mock", "mock", new HashMap<>());
 	}
 	
 	@Test
-	public void testIsDefinition() throws Exception {
-		InterfaceDefinition testSubject;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.isDefinition();
+	void testIsDefinition() {
+		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+		assertFalse(interfaceDefinition.isDefinition());
 	}
 
 	@Test
-	public void testSetDefinition() throws Exception {
-		InterfaceDefinition testSubject;
-		boolean definition = false;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDefinition(definition);
+	void testGetOperationsMap() {
+		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+		assertNotNull(interfaceDefinition.getOperationsMap());
+		assertTrue(interfaceDefinition.getOperationsMap().isEmpty());
 	}
 
 	@Test
-	public void testGetOperationsMap() throws Exception {
-		InterfaceDefinition testSubject;
-		Map<String, Operation> result;
+	void testHasOperation() {
+		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+		final Map<String, Operation> operationMap = new HashMap<>();
+		final Set<String> operationSet = new HashSet<>();
+		operationSet.add("operation1");
+		operationSet.add("operation2");
+		operationSet.add("operation3");
+		operationSet.forEach(operation -> operationMap.put(operation, new Operation()));
+		interfaceDefinition.setOperationsMap(operationMap);
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getOperationsMap();
-	}
-
-
-
-	@Test
-	public void testToString() throws Exception {
-		InterfaceDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
+		operationSet.forEach(operation -> assertThat(String.format("Should contain operation: %s", operation),
+			interfaceDefinition.hasOperation(operation), is(true)));
 	}
 }

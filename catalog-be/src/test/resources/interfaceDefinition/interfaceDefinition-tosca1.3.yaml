@@ -1,0 +1,25 @@
+inputs:
+  stringInput:
+    type: string
+    description: stringInput description
+    required: true
+    default: defaultValue
+    status: aStatus
+  actionInput:
+    type: org.openecomp.resource.datatypes.Action
+type: tosca.interfaces.node.lifecycle.Standard
+operations:
+  create:
+    implementation: "camunda/serviceSelect"
+  start:
+    implementation: "camunda/executeAction"
+    inputs:
+      action:
+        type: org.openecomp.resource.datatypes.Action
+  stop:
+    implementation: "camunda/executeAction"
+    inputs:
+      action:
+        type: org.openecomp.resource.datatypes.Action
+  delete:
+    implementation: "camunda/serviceDeselect"

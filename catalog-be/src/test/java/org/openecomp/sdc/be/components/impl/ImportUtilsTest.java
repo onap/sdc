@@ -324,7 +324,7 @@ public class ImportUtilsTest {
         PropertyDefinition property = properties.get("service_type");
         assertTrue(property.getConstraints()!= null && property.getConstraints().size() == 1);
         assertTrue(property.getConstraints().get(0) instanceof ValidValuesConstraint);
-        assertTrue(((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues() != null);
+        assertNotNull(((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues());
         List<String> validValues = ((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues();
         assertTrue(validValues.containsAll(Lists.newArrayList("firewall", "analyzer", "source-nat", "loadbalancer")));
 
@@ -334,7 +334,7 @@ public class ImportUtilsTest {
         PropertyDefinition innerProperty = new PropertyDefinition(property.getSchema().getProperty());
         List<PropertyConstraint> innerConstraints = innerProperty.getConstraints();
         assertTrue(innerConstraints.get(0) instanceof ValidValuesConstraint);
-        assertTrue(((ValidValuesConstraint) innerConstraints.get(0)).getValidValues() != null);
+        assertNotNull(((ValidValuesConstraint) innerConstraints.get(0)).getValidValues());
         validValues = ((ValidValuesConstraint) innerConstraints.get(0)).getValidValues();
         assertTrue(validValues.containsAll(Lists.newArrayList("management", "left", "right", "other")));
     }
@@ -352,6 +352,10 @@ public class ImportUtilsTest {
         Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS);
         compareProperties(expectedProperties, actualInputs.left().value());
 
+        actualInputs = ImportUtils.getInputs(toscaJson);
+        assertTrue(actualInputs.isLeft());
+        expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS);
+        compareProperties(expectedProperties, actualInputs.left().value());
     }
 
     private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, AttributeDataDefinition> actual) {
