@@ -143,7 +143,7 @@ public class OnboardingPackageProcessor {
                     dataEnvList.add(dummyEnv);
                     dummyHeat.setData(dataEnvList);
                     newfiledata.add(dummyHeat);
-                    String filePath = new File("").getAbsolutePath();
+                    String filePath = new File("").getAbsolutePath() + "/resources";
                     File envFilePath = new File(filePath + "/base_template.env");
                     File baseFilePath = new File(filePath + "/base_template.yaml");
                     try (

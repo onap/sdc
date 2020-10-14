@@ -15,7 +15,8 @@
     "recipe[sdc-onboard-backend::ON_3_logback]",
     "recipe[sdc-onboard-backend::ON_4_setup_jetty_modules]",
     "recipe[sdc-onboard-backend::ON_5_setup_configuration]",
-    "recipe[sdc-onboard-backend::ON_6_prepareProbeFile]"
+    "recipe[sdc-onboard-backend::ON_6_prepareProbeFile]",
+    "recipe[sdc-onboard-backend::ON_7_setup_base_template]"
   ],
   "env_run_lists": {
   }
