@@ -16,10 +16,21 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -27,20 +38,19 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
+import org.openecomp.sdc.be.tosca.model.ToscaInput;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class InterfacesOperationsConverter {
@@ -48,9 +58,7 @@ public class InterfacesOperationsConverter {
 
     private static final String DERIVED_FROM_STANDARD_INTERFACE = "tosca.interfaces.node.lifecycle.Standard";
     private static final String DERIVED_FROM_BASE_DEFAULT = "org.openecomp.interfaces.node.lifecycle.";
-    private static final String OPERATIONS_KEY = "operations";
 
-    private static final String DEFAULT = "default";
     private static final String DEFAULT_HAS_UNDERSCORE = "_default";
     private static final String DOT = ".";
     private static final String DEFAULTP = "defaultp";
@@ -58,10 +66,10 @@ public class InterfacesOperationsConverter {
     public static final String SELF = "SELF";
     private static final String LOCAL_INTERFACE_TYPE = "Local";
 
-    private PropertyConvertor propertyConvertor;
+    private final PropertyConvertor propertyConvertor;
 
     @Autowired
-    public InterfacesOperationsConverter(PropertyConvertor propertyConvertor) {
+    public InterfacesOperationsConverter(final PropertyConvertor propertyConvertor) {
         this.propertyConvertor = propertyConvertor;
     }
 
@@ -96,7 +104,7 @@ public class InterfacesOperationsConverter {
                 }
                 toscaInterfaceType.setOperations(toscaOperations);
                 Map<String, Object> interfacesAsMap = getObjectAsMap(toscaInterfaceType);
-                Map<String, Object> operationsMap = (Map<String, Object>) interfacesAsMap.remove(OPERATIONS_KEY);
+                Map<String, Object> operationsMap = (Map<String, Object>) interfacesAsMap.remove(OPERATIONS.getElementName());
                 interfacesAsMap.putAll(operationsMap);
 
                 toscaInterfaceTypes.put(getInterfaceType(component, LOCAL_INTERFACE_TYPE), interfacesAsMap);
@@ -134,12 +142,12 @@ public class InterfacesOperationsConverter {
         return getInterfacesMap(component, null, component.getInterfaces(), dataTypes, isAssociatedComponent, false);
     }
 
-    public Map<String, Object> getInterfacesMap(Component component,
-                                                       ComponentInstance componentInstance,
-                                                       Map<String, InterfaceDefinition> interfaces,
-                                                       Map<String, DataTypeDefinition> dataTypes,
-                                                       boolean isAssociatedComponent,
-                                                       boolean isServiceProxyInterface) {
+    public Map<String, Object> getInterfacesMap(final Component component,
+                                                final ComponentInstance componentInstance,
+                                                final Map<String, InterfaceDefinition> interfaces,
+                                                final Map<String, DataTypeDefinition> dataTypes,
+                                                final boolean isAssociatedComponent,
+                                                final boolean isServiceProxyInterface) {
         if(MapUtils.isEmpty(interfaces)) {
             return null;
         }
@@ -155,7 +163,7 @@ public class InterfacesOperationsConverter {
             }
             toscaInterfaceDefinition.setType(interfaceType);
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
-            Map<String, Object> toscaOperations = new HashMap<>();
+            Map<String, Object> toscaOperationMap = new HashMap<>();
 
             String operationArtifactPath;
             for (Map.Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
@@ -169,12 +177,20 @@ public class InterfacesOperationsConverter {
                 toscaOperation.setDescription(operationEntry.getValue().getDescription());
                 fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaOperation, isServiceProxyInterface);
 
-                toscaOperations.put(operationEntry.getValue().getName(), toscaOperation);
+                toscaOperationMap.put(operationEntry.getValue().getName(), toscaOperation);
+            }
+            toscaInterfaceDefinition.setOperations(toscaOperationMap);
+
+            final Map<String, Object> interfaceInputMap = createInterfaceInputMap(interfaceDefinition, dataTypes);
+            if (!interfaceInputMap.isEmpty()) {
+                toscaInterfaceDefinition.setInputs(interfaceInputMap);
             }
 
-            toscaInterfaceDefinition.setOperations(toscaOperations);
             Map<String, Object> interfaceDefAsMap = getObjectAsMap(toscaInterfaceDefinition);
-            Map<String, Object> operationsMap = (Map<String, Object>) interfaceDefAsMap.remove(OPERATIONS_KEY);
+            if (interfaceDefAsMap.containsKey(INPUTS.getElementName())) {
+                handleDefaults((Map<String, Object>) interfaceDefAsMap.get(INPUTS.getElementName()));
+            }
+            Map<String, Object> operationsMap = (Map<String, Object>) interfaceDefAsMap.remove(OPERATIONS.getElementName());
             if (isServiceProxyInterface) {
                 //Remove input type and copy default value directly into the proxy node template from the node type
                 handleServiceProxyOperationInputValue(operationsMap, interfaceType);
@@ -186,6 +202,22 @@ public class InterfacesOperationsConverter {
         }
 
         return toscaInterfaceDefinitions;
+    }
+
+    private Map<String, Object> createInterfaceInputMap(final InterfaceDefinition interfaceDefinition,
+                                                        final Map<String, DataTypeDefinition> allDataTypeMap) {
+        final Map<String, InputDataDefinition> inputMap = interfaceDefinition.getInputs();
+        if (MapUtils.isEmpty(inputMap)) {
+            return Collections.emptyMap();
+        }
+        final Map<String, Object> toscaInterfaceInputMap = new HashMap<>();
+        for (final Entry<String, InputDataDefinition> inputEntry : inputMap.entrySet()) {
+            final InputDataDefinition inputDataDefinition = inputEntry.getValue();
+            final ToscaProperty toscaProperty = propertyConvertor
+                .convertProperty(allDataTypeMap, new PropertyDefinition(inputDataDefinition), PropertyType.INPUT);
+            toscaInterfaceInputMap.put(inputEntry.getKey(), new ToscaInput(toscaProperty));
+        }
+        return toscaInterfaceInputMap;
     }
 
     private static void handleServiceProxyOperationInputValue(Map<String, Object> operationsMap, String parentKey) {
@@ -223,7 +255,7 @@ public class InterfacesOperationsConverter {
      * ToscaExportHandler so, any string Map key named "defaultp" will have its named changed to "default"
      * @param operationsMap the map to update
      */
-    private static void handleDefaults(Map<String, Object> operationsMap) {
+    private void handleDefaults(Map<String, Object> operationsMap) {
         for (Map.Entry<String, Object> operationEntry : operationsMap.entrySet()) {
             final Object value = operationEntry.getValue();
             if (value instanceof Map) {
@@ -232,7 +264,7 @@ public class InterfacesOperationsConverter {
             final String key = operationEntry.getKey();
             if (key.equals(DEFAULTP)) {
                 Object removed = operationsMap.remove(key);
-                operationsMap.put(DEFAULT, removed);
+                operationsMap.put(ToscaTagNamesEnum.DEFAULT.getElementName(), removed);
             }
         }
     }
@@ -314,10 +346,9 @@ public class InterfacesOperationsConverter {
         Map<String, Object> objectAsMap =
                 obj instanceof Map ? (Map<String, Object>) obj : objectMapper.convertValue(obj, Map.class);
 
-        if (objectAsMap.containsKey(DEFAULT)) {
-            Object defaultValue = objectAsMap.get(DEFAULT);
-            objectAsMap.remove(DEFAULT);
-            objectAsMap.put(DEFAULT_HAS_UNDERSCORE, defaultValue);
+        final String defaultEntry = DEFAULT.getElementName();
+        if (objectAsMap.containsKey(defaultEntry)) {
+            objectAsMap.put(DEFAULT_HAS_UNDERSCORE, objectAsMap.remove(defaultEntry));
         }
         return objectAsMap;
     }

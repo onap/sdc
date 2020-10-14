@@ -22,7 +22,20 @@
 
 package org.openecomp.sdc.be.components;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -32,6 +45,7 @@ import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtilsTest;
+import org.openecomp.sdc.be.components.impl.InterfaceDefinitionHandler;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -63,27 +77,15 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
 public class ResourceImportManagerTest {
 
-    private static ConfigurationManager configurationManager;
     static ResourceImportManager importManager;
     static AuditingManager auditingManager = Mockito.mock(AuditingManager.class);
     static ResponseFormatManager responseFormatManager = Mockito.mock(ResponseFormatManager.class);
     static ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
     static InterfaceOperationBusinessLogic interfaceOperationBusinessLogic = Mockito.mock(InterfaceOperationBusinessLogic.class);
+    static InterfaceDefinitionHandler interfaceDefinitionHandler =
+        new InterfaceDefinitionHandler(interfaceOperationBusinessLogic);
 
     static UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
     static ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
@@ -93,17 +95,16 @@ public class ResourceImportManagerTest {
 
     @BeforeClass
     public static void beforeClass() {
-        importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation);
+        importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation, interfaceDefinitionHandler);
         importManager.setAuditingManager(auditingManager);
         when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString())).thenReturn(Either.left(null));
         importManager.setResponseFormatManager(responseFormatManager);
         importManager.setResourceBusinessLogic(resourceBusinessLogic);
-        importManager.setInterfaceOperationBusinessLogic(interfaceOperationBusinessLogic);
         importManager.setToscaOperationFacade(toscaOperationFacade);
 
         String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-        configurationManager = new ConfigurationManager(configurationSource);
+        final ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         Configuration configuration = new Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
@@ -223,8 +224,9 @@ public class ResourceImportManagerTest {
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
 		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
 
-        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
-        testSetInterfaceImplementation(createResource.left);
+        final ImmutablePair<Resource, ActionStatus> createResource = importManager
+            .importNormativeResource(jsonContent, resourceMD, user, true, true);
+        assertSetInterfaceImplementation(createResource.left);
     }
     
     @Test
@@ -342,12 +344,12 @@ public class ResourceImportManagerTest {
         assertTrue(properties.containsKey("volume_id"));
         propertyDefinition = properties.get("volume_id");
         assertEquals("string", propertyDefinition.getType());
-        assertTrue(!propertyDefinition.isRequired());
+        assertFalse(propertyDefinition.isRequired());
 
         assertTrue(properties.containsKey("snapshot_id"));
         propertyDefinition = properties.get("snapshot_id");
         assertEquals("string", propertyDefinition.getType());
-        assertTrue(!propertyDefinition.isRequired());
+        assertFalse(propertyDefinition.isRequired());
 
     }
 
@@ -398,20 +400,19 @@ public class ResourceImportManagerTest {
 
     }
     
-    private void testSetInterfaceImplementation(Resource resource) {
-    	Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
+    private void assertSetInterfaceImplementation(final Resource resource) {
+        final Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
         assertEquals(1, interfaces.size());
         assertTrue(interfaces.containsKey("Standard"));
-        
-        InterfaceDefinition interfaceDefinition = interfaces.get("Standard");
+
+        final InterfaceDefinition interfaceDefinition = interfaces.get("Standard");
         assertEquals("tosca.interfaces.node.lifecycle.Standard", interfaceDefinition.getType());
         assertEquals("tosca.interfaces.node.lifecycle.standard", interfaceDefinition.getUniqueId());
-        Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
+        final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
         assertEquals(1, operations.size());
 
-        OperationDataDefinition operation = operations.get("configure");
+        final OperationDataDefinition operation = operations.get("configure");
         assertEquals("'camunda/vnfConfigure'", operation.getImplementation().getArtifactName());
-
     }
 
     private void testSetDerivedFrom(Resource resource) {
@@ -421,19 +422,12 @@ public class ResourceImportManagerTest {
     }
 
     private void testSetMetaDataFromJson(Resource resource, UploadResourceInfo resourceMD) {
-
-        // assertTrue( resource.getCategory().equals(resourceMD.getCategory())
-        // );
         assertEquals(resource.getDescription(), resourceMD.getDescription());
         assertEquals(resource.getIcon(), resourceMD.getResourceIconPath());
         assertEquals(resource.getName(), resourceMD.getName());
         assertEquals(resource.getResourceVendorModelNumber(), resourceMD.getResourceVendorModelNumber());
         assertEquals(resource.getContactId(), resourceMD.getContactId());
         assertEquals(resource.getCreatorUserId(), resourceMD.getContactId());
-
-        // assertTrue( resource.isAbstract() ==
-        // Constants.ABSTRACT_CATEGORY.equals(resourceMD.getCategory()));
-
         assertEquals(resourceMD.getTags().size(), resource.getTags().size());
         for (String tag : resource.getTags()) {
             assertTrue(resourceMD.getTags().contains(tag));

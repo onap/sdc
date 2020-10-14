@@ -2060,6 +2060,18 @@ errors:
       message: "Error: Failed to delete interface operation.",
       messageId: "SVC4702"
     }
+    #SVC4732
+    INTERFACE_UNKNOWN: {
+        code: 400,
+        message: "Error: The interface '%1' does not exists in the database.",
+        messageId: "SVC4732"
+    }
+    #SVC4733
+    INTERFACE_OPERATION_NOT_DEFINED: {
+        code: 400,
+        message: "Error: The operation '%1' does not exists in the interface '%2'.",
+        messageId: "SVC4733"
+    }
     #-----------SVC4692---------------------------
     RESOURCE_LIFECYCLE_STATE_NOT_VALID: {
         code: 400,

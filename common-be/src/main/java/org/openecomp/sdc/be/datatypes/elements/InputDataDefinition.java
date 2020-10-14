@@ -24,10 +24,6 @@ import java.util.Map;
 
 public class InputDataDefinition extends PropertyDataDefinition {
 
-    private String label;
-    private Boolean hidden;
-    private Boolean immutable;
-
     InputDataDefinition() {
         super();
     }
@@ -43,31 +39,7 @@ public class InputDataDefinition extends PropertyDataDefinition {
         this.setImmutable(p.isImmutable());
     }
 
-    InputDataDefinition(PropertyDataDefinition p) {
+    public InputDataDefinition(PropertyDataDefinition p) {
         super(p);
-    }
-
-    public Boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(Boolean hidden) {
-        this.hidden = hidden;
-    }
-
-    public Boolean isImmutable() {
-        return immutable;
-    }
-
-    public void setImmutable(Boolean immutable) {
-        this.immutable = immutable;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 }

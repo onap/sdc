@@ -16,35 +16,20 @@
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author KATYR
  * @since March 26, 2018
  */
-
+@Setter
+@Getter
 public class ToscaInterfaceDefinition {
 
     private String type;
-    private Map<String, Object> operations; // ToscaLifecycleOperationDefinition <-> Object
+    private Map<String, Object> operations;
+    private Map<String, Object> inputs;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Map<String, Object> getOperations() {
-        return operations;
-    }
-
-//    public void setOperations(Map<String, Object> operations) {
-//        this.operations = operations;
-//    }
-
-    public void setOperations(Map<String,Object> toscaOperations) {
-        this.operations = toscaOperations;
-    }
 }
 

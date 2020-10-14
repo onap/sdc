@@ -21,12 +21,11 @@
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Definition of the operations that can be performed on (instances of) a Node
@@ -35,8 +34,6 @@ import java.util.stream.Collectors;
  * @author esofer
  */
 public class InterfaceDefinition extends InterfaceDataDefinition implements IOperationParameter {
-
-    private boolean definition;
 
     public InterfaceDefinition() {
         super();
@@ -54,10 +51,6 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
     @Override
     public boolean isDefinition() {
         return false;
-    }
-
-    public void setDefinition(boolean definition) {
-        this.definition = definition;
     }
 
     @JsonIgnore
@@ -79,9 +72,18 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
         setOperations(convertedOperation);
     }
 
-    @Override
-    public String toString() {
-        return "InterfaceDefinition [definition=" + definition + "]";
+    /**
+     * Checks if the interface has the given operation
+     * @param operation the operation to check
+     * @return {@code true} if the operation exists, {@code false} otherwise
+     */
+    public boolean hasOperation(final String operation) {
+        final Map<String, OperationDataDefinition> operationMap = getOperations();
+        if (MapUtils.isEmpty(operationMap)) {
+            return false;
+        }
+        return operationMap.keySet().stream()
+            .anyMatch(operation1 -> operation1.equalsIgnoreCase(operation));
     }
 
 }
