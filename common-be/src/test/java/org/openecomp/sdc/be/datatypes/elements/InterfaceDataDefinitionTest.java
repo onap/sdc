@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.junit.Test;
-
+import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 
-public class InterfaceDataDefinitionTest {
+class InterfaceDataDefinitionTest {
 
 	private InterfaceDataDefinition createTestSubject() {
 		return new InterfaceDataDefinition();
@@ -173,5 +175,15 @@ public class InterfaceDataDefinitionTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setOperations(operations);
+	}
+
+	@Test
+	void testInputs() {
+		final InterfaceDataDefinition interfaceDataDefinition = new InterfaceDataDefinition();
+		final HashMap<String, InputDataDefinition> anInputMap = new HashMap<>();
+		anInputMap.put("anyEntry", new InputDataDefinition());
+		interfaceDataDefinition.setInputs(anInputMap);
+		Assertions.assertEquals(interfaceDataDefinition.getInputs(),
+			interfaceDataDefinition.getToscaPresentationValue(JsonPresentationFields.INTERFACE_INPUT));
 	}
 }

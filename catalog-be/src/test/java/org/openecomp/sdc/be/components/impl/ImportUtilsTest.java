@@ -20,26 +20,13 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.Lists;
 import fj.data.Either;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
-import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
-import org.openecomp.sdc.be.utils.TypeUtils;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -49,11 +36,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
+import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.yaml.snakeyaml.Yaml;
 
 public class ImportUtilsTest {
 
@@ -336,7 +335,7 @@ public class ImportUtilsTest {
         PropertyDefinition property = properties.get("service_type");
         assertTrue(property.getConstraints()!= null && property.getConstraints().size() == 1);
         assertTrue(property.getConstraints().get(0) instanceof ValidValuesConstraint);
-        assertTrue(((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues() != null);
+        assertNotNull(((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues());
         List<String> validValues = ((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues();
         assertTrue(validValues.containsAll(Lists.newArrayList("firewall", "analyzer", "source-nat", "loadbalancer")));
 
@@ -346,7 +345,7 @@ public class ImportUtilsTest {
         PropertyDefinition innerProperty = new PropertyDefinition(property.getSchema().getProperty());
         List<PropertyConstraint> innerConstraints = innerProperty.getConstraints();
         assertTrue(innerConstraints.get(0) instanceof ValidValuesConstraint);
-        assertTrue(((ValidValuesConstraint) innerConstraints.get(0)).getValidValues() != null);
+        assertNotNull(((ValidValuesConstraint) innerConstraints.get(0)).getValidValues());
         validValues = ((ValidValuesConstraint) innerConstraints.get(0)).getValidValues();
         assertTrue(validValues.containsAll(Lists.newArrayList("management", "left", "right", "other")));
     }
@@ -364,6 +363,10 @@ public class ImportUtilsTest {
         Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS);
         compareProperties(expectedProperties, actualInputs.left().value());
 
+        actualInputs = ImportUtils.getInputs(toscaJson);
+        assertTrue(actualInputs.isLeft());
+        expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS);
+        compareProperties(expectedProperties, actualInputs.left().value());
     }
 
     private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, AttributeDataDefinition> actual) {

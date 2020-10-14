@@ -46,6 +46,7 @@ public class TypeUtils {
         DERIVED_FROM("derived_from"), IS_PASSWORD("is_password"),
         // Properties
         PROPERTIES("properties"), TYPE("type"), STATUS("status"), ENTRY_SCHEMA("entry_schema"), REQUIRED("required"), DESCRIPTION("description"), DEFAULT_VALUE("default"), VALUE("value"), CONSTRAINTS("constraints"),
+        DEFAULT("default"),
         // Group Types
         MEMBERS("members"), METADATA("metadata"),
         // Policy Types
@@ -69,6 +70,8 @@ public class TypeUtils {
         GET_INPUT("get_input"),
         // Definitions
         DATA_TYPES("data_types"), NODE_TYPES("node_types"), IMPORTS("imports"),
+        //Operations
+        IMPLEMENTATION("implementation"),
 
         DERIVED_FROM_NAME("derivedFromName");
 
