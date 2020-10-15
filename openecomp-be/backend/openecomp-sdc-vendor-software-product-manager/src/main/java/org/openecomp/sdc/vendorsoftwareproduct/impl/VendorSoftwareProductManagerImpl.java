@@ -697,7 +697,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
                 JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
         for (FileData fileData : manifestContent.getData()) {
             if ((fileData.getFile()).contains("dummy_ignore.yaml")) {
-                String filePath = new File("").getAbsolutePath();
+                String filePath = new File("").getAbsolutePath() + "/resources";
                 File envFilePath = new File(filePath + "/base_template.env");
                 File baseFilePath = new File(filePath + "/base_template.yaml");
                 try (
