@@ -150,7 +150,7 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     for (FileData fileData : manifestContent.getData()) {
       if (Objects.nonNull(fileData.getType()) &&
               fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
-        String filePath = new File("").getAbsolutePath();
+        String filePath = new File("").getAbsolutePath() + "/resources";
         File envFilePath = new File(filePath + "/base_template.env");
         File baseFilePath = new File(filePath + "/base_template.yaml");
         try (
