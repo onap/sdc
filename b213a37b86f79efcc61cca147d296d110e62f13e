@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8cf97c37_6ead3169",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/recipes/ON_7_setup_base_template.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-10-15T16:04:49Z",
+      "side": 1,
+      "message": "for non-executable file should be 644",
+      "range": {
+        "startLine": 3,
+        "startChar": 7,
+        "endLine": 3,
+        "endChar": 11
+      },
+      "revId": "b213a37b86f79efcc61cca147d296d110e62f13e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9478d52_084eba92",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/recipes/ON_7_setup_base_template.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-10-15T16:04:49Z",
+      "side": 1,
+      "message": "for non-executable file should be 644",
+      "range": {
+        "startLine": 10,
+        "startChar": 7,
+        "endLine": 10,
+        "endChar": 11
+      },
+      "revId": "b213a37b86f79efcc61cca147d296d110e62f13e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
