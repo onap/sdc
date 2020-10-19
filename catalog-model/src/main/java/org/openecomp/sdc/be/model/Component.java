@@ -72,12 +72,14 @@ public abstract class Component implements PropertiesOwner {
     private List<ComponentInstance> componentInstances;
     private List<RequirementCapabilityRelDef> componentInstancesRelations;
     private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
+    private Map<String, List<ComponentInstanceOutput>> componentInstancesOutputs;
     private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
     private Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes;
     private Map<String, List<CapabilityDefinition>> capabilities;
     private Map<String, List<RequirementDefinition>> requirements;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
     private List<InputDefinition> inputs;
+    private List<OutputDefinition> outputs;
     private List<GroupDefinition> groups;
     private Map<String, PolicyDefinition> policies;
     private String derivedFromGenericType;
@@ -243,6 +245,11 @@ public abstract class Component implements PropertiesOwner {
         return inputs == null ? new ArrayList<>() : inputs;
     }
 
+    public List<OutputDefinition> safeGetOutputs() {
+        return outputs == null ? new ArrayList<>() : outputs;
+    }
+
+
     public String getUUID() {
         return componentMetadataDefinition.getMetadataDataDefinition().getUUID();
     }
@@ -359,6 +366,10 @@ public abstract class Component implements PropertiesOwner {
                 .map(ComponentInstance::getUniqueId).collect(Collectors.toList());
         return componentInstancesInputs.entrySet().stream().filter(e -> instancesFromUi.contains(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public Map<String, List<ComponentInstanceOutput>> safeGetComponentInstancesOutputs() {
+        return componentInstancesOutputs == null ? emptyMap() : componentInstancesOutputs;
     }
 
     public List<ComponentInstanceProperty> safeGetComponentInstanceProperties(String cmptInstacneId) {
@@ -479,7 +490,7 @@ public abstract class Component implements PropertiesOwner {
             this.properties = new ArrayList<>();
         }
 
-        this.properties.add(propertyDefinition);;
+        this.properties.add(propertyDefinition);
     }
 
     public void addCategory(String category, String subCategory) {
@@ -611,6 +622,11 @@ public abstract class Component implements PropertiesOwner {
     }
 
     public boolean shouldGenerateInputs() {
+        // Implement where needed
+        return true;
+    }
+
+    public boolean shouldGenerateOutputs() {
         // Implement where needed
         return true;
     }

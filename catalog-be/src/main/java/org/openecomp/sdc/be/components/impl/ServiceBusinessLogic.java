@@ -2552,6 +2552,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 					.forEach(input -> input.setConstraints(setInputConstraint(input)));
 		}
 
+        if (dataParamsToReturn.contains(ComponentFieldsEnum.OUTPUTS.getValue())) {
+            ListUtils.emptyIfNull(service.getOutputs())
+                .forEach(output -> output.setConstraints(setOutputConstraint(output)));
+        }
+
         UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
         return Either.left(dataTransfer);
     }
