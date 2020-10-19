@@ -90,11 +90,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onap.sdc.sdc-tosca</groupId>
-      <artifactId>sdc-tosca</artifactId>
-      <version>${sdc-tosca-parser.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>

@@ -31,9 +31,11 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -48,12 +50,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
-import org.openecomp.sdc.be.config.NonManoConfiguration;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.be.config.NonManoConfiguration;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.yaml.snakeyaml.Yaml;
 
 public class ETSIServiceImplTest {
 
@@ -73,9 +75,8 @@ public class ETSIServiceImplTest {
 
     @Before
     public void setUp() throws IOException {
-        YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
-        NonManoConfiguration configuration = yamlToObjectConverter.convert("src/test/resources",
-                NonManoConfiguration.class, "nonManoConfig.yaml");
+        final String fullFileName = Paths.get("src", "test", "resources", "nonManoConfig.yaml").toString();
+        final NonManoConfiguration configuration = convert(fullFileName, NonManoConfiguration.class);
         etsiService = Mockito.spy(new ETSIServiceImpl(configuration));
     }
 
@@ -288,6 +289,16 @@ public class ETSIServiceImplTest {
             containsString(file1Path.toString()));
         assertThat("Descriptor should contain reference to file", serviceTemplatesAsYaml,
             containsString(file2Path.toString()));
+    }
+
+    private <T> T convert(final String fullFileName, final Class<T> className) throws IOException {
+        assertTrue((new File(fullFileName)).exists());
+
+        try (final InputStream in = Files.newInputStream(Paths.get(fullFileName));) {
+            return (new Yaml()).loadAs(in, className);
+        } catch (final IOException e) {
+            throw new IOException(e);
+        }
     }
 
 }
