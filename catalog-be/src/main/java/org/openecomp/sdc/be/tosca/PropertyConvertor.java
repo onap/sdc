@@ -57,6 +57,7 @@ public class PropertyConvertor {
     public  enum PropertyType  {
         CAPABILITY,
         INPUT,
+        OUTPUT,
         PROPERTY
     }
 
@@ -92,7 +93,7 @@ public class PropertyConvertor {
             prop.setEntry_schema(eschema);
         }
         String defaultValue = property.getDefaultValue();
-        if(Objects.isNull(defaultValue)) {
+        if(Objects.isNull(defaultValue) || propertyType.equals(PropertyType.OUTPUT)) {
             defaultValue = property.getValue();
         }
         Object convertedObj = convertToToscaObject(property, defaultValue, dataTypes, false);
@@ -170,9 +171,10 @@ public class PropertyConvertor {
             if (jsonElement.isJsonObject()) {
                 JsonObject jsonObj = jsonElement.getAsJsonObject();
                 // check if value is a get_input function
-                if (jsonObj.entrySet().size() == 1 && jsonObj.has(ToscaFunctions.GET_INPUT.getFunctionName())) {
+                if (jsonObj.entrySet().size() == 1 && jsonObj.has(ToscaFunctions.GET_INPUT.getFunctionName()) ||
+                    jsonObj.has(ToscaFunctions.GET_ATTRIBUTE.getFunctionName())) {
                     Object obj = mapConverterInst.handleComplexJsonValue(jsonElement);
-                    log.debug("It's get_input function. obj={}", obj);
+                    log.debug("It's get_input/get_attribute function. obj={}", obj);
                     return obj;
                 }
             }

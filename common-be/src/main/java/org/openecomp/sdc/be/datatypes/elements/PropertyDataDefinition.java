@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,8 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -64,12 +63,15 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private Boolean immutable = Boolean.FALSE;
 
     private String inputPath;
+    private String outputPath;
     private String status;
     private String inputId;
+    private String outputId;
     private String instanceUniqueId;
     private String propertyId;
     private String parentPropertyType;
     private String subPropertyInputPath;
+    private String subPropertyOutputPath;
 
     private List<Annotation> annotations;
     /**
@@ -78,8 +80,10 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String parentUniqueId;
 
     private List<GetInputValueDataDefinition> getInputValues;
+    private List<GetAttributeValueDataDefinition> getAttributeValues;
 
     private Boolean isDeclaredListInput = Boolean.FALSE;
+    private Boolean isDeclaredListOutput = Boolean.FALSE;
 
     private List<GetPolicyValueDataDefinition> getPolicyValues;
 
@@ -112,10 +116,13 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setParentUniqueId(propertyDataDefinition.getParentUniqueId());
         this.setOwnerId(propertyDataDefinition.getOwnerId());
         this.setGetInputValues(propertyDataDefinition.getGetInputValues());
+        this.setGetAttributeValues(propertyDataDefinition.getGetAttributeValues());
         this.setGetPolicyValues(propertyDataDefinition.getGetPolicyValues());
         this.setInputPath(propertyDataDefinition.getInputPath());
+        this.setOutputPath(propertyDataDefinition.getOutputPath());
         this.setStatus(propertyDataDefinition.getStatus());
         this.setInputId(propertyDataDefinition.getInputId());
+        this.setOutputId(propertyDataDefinition.getOutputId());
         this.setInstanceUniqueId(propertyDataDefinition.getInstanceUniqueId());
         this.setPropertyId(propertyDataDefinition.getPropertyId());
         this.parentPropertyType = propertyDataDefinition.getParentPropertyType();

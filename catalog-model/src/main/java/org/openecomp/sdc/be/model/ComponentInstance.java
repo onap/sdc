@@ -49,6 +49,7 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     private CINodeFilterDataDefinition nodeFilter;
     private SubstitutionFilterDataDefinition substitutionFilter;
     private List<InputDefinition> inputs;
+    private List<OutputDefinition> outputs;
 
     public ComponentInstance() {
         super();

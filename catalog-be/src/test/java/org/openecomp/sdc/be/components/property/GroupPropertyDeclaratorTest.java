@@ -7,28 +7,30 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2020, Nordix Foundation
+ * ================================================================================
  */
-
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
@@ -53,9 +55,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
-
 
     private static final String GROUP_ID = "groupId";
     @InjectMocks
@@ -70,7 +71,7 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
     private InputDefinition input;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         resource = createResourceWithGroup();
@@ -212,29 +213,29 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     private Resource createResourceWithGroups(String ... groups) {
         List<GroupDefinition> groupsDef = Stream.of(groups)
-                .map(this::buildGroup)
-                .collect(Collectors.toList());
+            .map(this::buildGroup)
+            .collect(Collectors.toList());
 
         return new ResourceBuilder()
-                .setUniqueId(RESOURCE_ID)
-                .setGroups(groupsDef)
-                .build();
+            .setUniqueId(RESOURCE_ID)
+            .setGroups(groupsDef)
+            .build();
     }
 
     private GroupDefinition buildGroup(String groupId) {
         return GroupDefinitionBuilder.create()
-                .setUniqueId(groupId)
-                .setName(groupId)
-                .build();
+            .setUniqueId(groupId)
+            .setName(groupId)
+            .build();
     }
 
     private PropertyDataDefinition buildGetInputProperty(String inputId) {
         return new PropertyDataDefinitionBuilder()
-                .addGetInputValue(inputId)
-                .setUniqueId(GROUP_ID + "_" + inputId)
-                .setDefaultValue("defaultValue")
-                .setValue(generateGetInputValue(inputId))
-                .build();
+            .addGetInputValue(inputId)
+            .setUniqueId(GROUP_ID + "_" + inputId)
+            .setDefaultValue("defaultValue")
+            .setValue(generateGetInputValue(inputId))
+            .build();
     }
 
 }

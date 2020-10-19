@@ -45,7 +45,9 @@ public class ComponentParametersView {
     private boolean ignoreAttributesFrom = false;
     private boolean ignoreComponentInstancesAttributesFrom = false;
     private boolean ignoreInputs = false;
+    private boolean ignoreOutputs = false;
     private boolean ignoreComponentInstancesInputs = false;
+    private boolean ignoreComponentInstancesOutputs = false;
     private boolean ignoreCapabiltyProperties = false;
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
@@ -75,6 +77,9 @@ public class ComponentParametersView {
                     break;
                 case INPUTS:
                     this.setIgnoreInputs(false);
+                    break;
+                case OUTPUTS:
+                    this.setIgnoreOutputs(false);
                     break;
                 case USERS:
                     this.setIgnoreUsers(false);
@@ -141,6 +146,10 @@ public class ComponentParametersView {
                 case COMPONENT_INSTANCE_INPUTS:
                     this.setIgnoreComponentInstances(false);
                     this.setIgnoreComponentInstancesInputs(false);
+                    break;
+                case COMPONENT_INSTANCE_OUTPUTS:
+                    this.setIgnoreComponentInstances(false);
+                    this.setIgnoreComponentInstancesOutputs(false);
                     break;
                 case INSTANCE_CAPABILTY_PROPERTIES:
                     this.setIgnoreCapabiltyProperties(false);
@@ -242,8 +251,14 @@ public class ComponentParametersView {
         if (ignoreInputs) {
             component.setInputs(null);
         }
+        if (ignoreOutputs) {
+            component.setOutputs(null);
+        }
         if (ignoreComponentInstancesInputs) {
             component.setComponentInstancesInputs(null);
+        }
+        if (ignoreComponentInstancesOutputs) {
+            component.setComponentInstancesOutputs(null);
         }
         if (ignoreServicePath && componentType == ComponentTypeEnum.SERVICE) {
             ((Service) component).setForwardingPaths(null);
@@ -294,8 +309,10 @@ public class ComponentParametersView {
         ignoreDerivedFrom = true;
         ignoreAttributesFrom = true;
         ignoreInputs = true;
+        ignoreOutputs = true;
         ignoreComponentInstancesAttributesFrom = true;
         ignoreComponentInstancesInputs = true;
+        ignoreComponentInstancesOutputs = true;
         ignoreCapabiltyProperties = true;
         ignoreServicePath = true;
         ignoreNodeFilterRequirements = true;
@@ -397,6 +414,14 @@ public class ComponentParametersView {
         this.ignoreComponentInstancesInputs = ignoreComponentInstancesInputs;
     }
 
+    public boolean isIgnoreComponentInstancesOutputs() {
+        return ignoreComponentInstancesOutputs;
+    }
+
+    public void setIgnoreComponentInstancesOutputs(boolean ignoreComponentInstancesOutputs) {
+        this.ignoreComponentInstancesOutputs = ignoreComponentInstancesOutputs;
+    }
+
     public boolean isIgnoreInterfaces() {
         return ignoreInterfaces;
     }
@@ -451,6 +476,14 @@ public class ComponentParametersView {
 
     public void setIgnoreInputs(boolean ignoreInputs) {
         this.ignoreInputs = ignoreInputs;
+    }
+
+    public boolean isIgnoreOutputs() {
+        return ignoreOutputs;
+    }
+
+    public void setIgnoreOutputs(boolean ignoreOutputs) {
+        this.ignoreOutputs = ignoreOutputs;
     }
 
     public boolean isIgnoreCapabiltyProperties() {
