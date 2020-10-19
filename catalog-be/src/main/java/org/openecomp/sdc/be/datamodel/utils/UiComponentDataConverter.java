@@ -83,6 +83,9 @@ public class UiComponentDataConverter {
             case INPUTS:
                 setInputs(dataTransfer, component);
                 break;
+            case OUTPUTS:
+                setOutputs(dataTransfer, component);
+                break;
             case COMPONENT_INSTANCE_RELATION:
                 setComponentInstanceRelation(dataTransfer, component);
                 break;
@@ -124,6 +127,9 @@ public class UiComponentDataConverter {
                 break;
             case COMPONENT_INSTANCE_INPUTS:
                 setComponentInstanceInputs(dataTransfer, component);
+                break;
+            case COMPONENT_INSTANCE_OUTPUTS:
+                setComponentInstanceOutputs(dataTransfer, component);
                 break;
             case NODE_FILTER:
                 setNodeFilter(dataTransfer, component);
@@ -213,6 +219,22 @@ public class UiComponentDataConverter {
             dataTransfer.setComponentInstancesInputs(new HashMap<>());
         } else {
             dataTransfer.setComponentInstancesInputs(component.getComponentInstancesInputs());
+        }
+    }
+
+    private void setOutputs(final UiComponentDataTransfer dataTransfer, final Component component) {
+        if (component.getOutputs() == null) {
+            dataTransfer.setOutputs(new ArrayList<>());
+        } else {
+            dataTransfer.setOutputs(component.getOutputs());
+        }
+    }
+
+    private void setComponentInstanceOutputs(final UiComponentDataTransfer dataTransfer, final Component component) {
+        if (component.getComponentInstancesOutputs() == null) {
+            dataTransfer.setComponentInstancesOutputs(new HashMap<>());
+        } else {
+            dataTransfer.setComponentInstancesOutputs(component.getComponentInstancesOutputs());
         }
     }
 
