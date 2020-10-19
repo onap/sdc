@@ -20,47 +20,20 @@
 
 package org.openecomp.sdc.be.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
- * Represents a pair of a list of properties to be declared and a "list input" to be created.
- * This class is used for passing parameters on creating a list input.
+ * Represents a pair of a list of properties to be declared and a "list input" to be created. This class is used for
+ * passing parameters on creating a list input.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class ComponentInstListInput {
+
     private ComponentInstInputsMap componentInstInputsMap;
     private InputDefinition listInput;
 
-    /**
-     * Gets componentInstInputsMap which includes properties to be declared.
-     *
-     * @return componentInstInputsMap
-     */
-    public ComponentInstInputsMap getComponentInstInputsMap() {
-        return componentInstInputsMap;
-    }
-
-    /**
-     * Sets componentInstInputsMap.
-     *
-     * @param componentInstInputsMap
-     */
-    public void setComponentInstInputsMap(ComponentInstInputsMap componentInstInputsMap) {
-        this.componentInstInputsMap = componentInstInputsMap;
-    }
-
-    /**
-     * Gets the input to be created.
-     *
-     * @return the list input
-     */
-    public InputDefinition getListInput() {
-        return listInput;
-    }
-
-    /**
-     * Sets the input to be created.
-     *
-     * @param listInput
-     */
-    public void setListInput(InputDefinition listInput) {
-        this.listInput = listInput;
-    }
 }
