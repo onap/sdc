@@ -125,9 +125,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
 
-        <!-- parser-->
-        <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
-
         <!-- sonar -->
         <sonar.projectVersion>${project.version}</sonar.projectVersion>
         <sonar.nodejs.executable>${project.basedir}/node/node</sonar.nodejs.executable>
