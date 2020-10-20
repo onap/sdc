@@ -223,11 +223,13 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
 
     private void handleSubstitutionMappings(final ToscaTemplate componentToscaTemplate, final String nsNodeTypeName) {
         final SubstitutionMapping substitutionMapping = new SubstitutionMapping();
-        substitutionMapping.setNode_type(nsNodeTypeName);        
+        substitutionMapping.setNode_type(nsNodeTypeName);
         final SubstitutionMapping onapSubstitutionMapping = componentToscaTemplate.getTopology_template().getSubstitution_mappings();
         if (onapSubstitutionMapping != null) {
-        	substitutionMapping.setRequirements(onapSubstitutionMapping.getRequirements());
-        	substitutionMapping.setCapabilities(onapSubstitutionMapping.getCapabilities());
+            substitutionMapping.setRequirements(onapSubstitutionMapping.getRequirements());
+            substitutionMapping.setCapabilities(onapSubstitutionMapping.getCapabilities());
+            substitutionMapping.setProperties(onapSubstitutionMapping.getProperties());
+            substitutionMapping.setAttributes(onapSubstitutionMapping.getAttributes());
         }
         componentToscaTemplate.getTopology_template().setSubstitution_mappings(substitutionMapping);
     }

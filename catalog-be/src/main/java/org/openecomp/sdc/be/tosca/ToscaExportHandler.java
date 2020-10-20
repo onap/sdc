@@ -373,6 +373,11 @@ public class ToscaExportHandler {
             substitutionMapping.setProperties(propertyMappingMap);
         }
 
+        final Map<String, String[]> attributesMappingMap = buildSubstitutionMappingAttributesMapping(component);
+        if (!attributesMappingMap.isEmpty()) {
+            substitutionMapping.setAttributes(attributesMappingMap);
+        }
+
         topologyTemplate.setSubstitution_mappings(substitutionMapping);
 
         toscaNode.setTopology_template(topologyTemplate);
@@ -1748,6 +1753,20 @@ public class ToscaExportHandler {
                     inputName -> inputName,
                     inputName -> new String[]{inputName},
                     (inputName1, inputName2) -> inputName1)
+            );
+    }
+
+    private Map<String, String[]> buildSubstitutionMappingAttributesMapping(final Component component) {
+        if (component == null || CollectionUtils.isEmpty(component.getOutputs())) {
+            return Collections.emptyMap();
+        }
+        return component.getOutputs().stream()
+            .map(PropertyDataDefinition::getName)
+            .collect(
+                Collectors.toMap(
+                    outputName -> outputName,
+                    outputName -> new String[]{outputName},
+                    (outputName1, outputName2) -> outputName1)
             );
     }
 
