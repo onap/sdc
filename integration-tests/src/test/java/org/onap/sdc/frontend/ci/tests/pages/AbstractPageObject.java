@@ -37,7 +37,7 @@ public abstract class AbstractPageObject implements PageObject {
 
     public AbstractPageObject(final WebDriver webDriver) {
         this.webDriver = webDriver;
-        timeoutInSeconds = 10;
+        timeoutInSeconds = 20;
     }
 
     /**
