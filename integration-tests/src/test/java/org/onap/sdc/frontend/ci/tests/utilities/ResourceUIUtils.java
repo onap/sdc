@@ -83,7 +83,7 @@ public final class ResourceUIUtils {
     }
 
     public static void selectRandomResourceIcon() throws Exception {
-        final int webDriverWaitingTimeout = 4;
+        final int webDriverWaitingTimeout = 10;
         GeneralUIUtils.moveToStep(StepsEnum.ICON);
         WebDriverWait wait = new WebDriverWait(GeneralUIUtils.getDriver(), webDriverWaitingTimeout);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(@data-tests-id, 'iconBox')]")));
