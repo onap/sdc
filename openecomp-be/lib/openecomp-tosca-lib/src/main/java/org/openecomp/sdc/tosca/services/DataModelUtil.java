@@ -1146,7 +1146,7 @@ public class DataModelUtil {
         substitutionMapping.setCapabilities(manageCapabilityMapping(substitutionNodeType.getCapabilities(),
                 mapping.get(ToscaConstants.CAPABILITY)));
         substitutionMapping.setRequirements(
-                manageRequirementMapping(substitutionNodeType.getRequirements(), mapping.get("requirement")));
+                manageRequirementMapping(substitutionNodeType.getRequirements(), mapping.get(ToscaConstants.REQUIREMENT)));
         return substitutionMapping;
     }
 
