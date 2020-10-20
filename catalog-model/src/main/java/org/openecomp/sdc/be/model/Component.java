@@ -78,6 +78,7 @@ public abstract class Component implements PropertiesOwner {
     private Map<String, List<RequirementDefinition>> requirements;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
     private List<InputDefinition> inputs;
+    private List<OutputDefinition> outputs;
     private List<GroupDefinition> groups;
     private Map<String, PolicyDefinition> policies;
     private String derivedFromGenericType;

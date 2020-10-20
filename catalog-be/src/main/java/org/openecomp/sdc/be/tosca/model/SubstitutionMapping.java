@@ -39,4 +39,5 @@ public class SubstitutionMapping {
     private Map<String, String[]> requirements;
     private NodeFilter substitution_filter;
     private Map<String, String[]> properties;
+    private Map<String, String[]> attributes;
 }
