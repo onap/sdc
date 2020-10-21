@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@
  */
 
 'use strict';
-import { PropertyBEModel, PropertyFEModel } from "../../models";
+import {PropertyBEModel, PropertyFEModel} from "../../models";
 
 export class InstanceBePropertiesMap {
     [instanceId: string]: Array<PropertyBEModel>;
@@ -32,12 +32,14 @@ export class InstanceFePropertiesMap {
 export class InstancePropertiesAPIMap {
     componentInstanceProperties: InstanceBePropertiesMap;
     componentInstanceInputsMap: InstanceBePropertiesMap;
+    componentInstanceOutputsMap: InstanceBePropertiesMap;
     groupProperties: InstanceBePropertiesMap;
     policyProperties: InstanceBePropertiesMap;
 
-    constructor(inputsMapData: InstanceBePropertiesMap, propertiesMapData: InstanceBePropertiesMap, groupPropertiesMapData: InstanceBePropertiesMap, policyPropertiesMapData: InstanceBePropertiesMap) {
-        this.componentInstanceInputsMap = inputsMapData ? inputsMapData: new InstanceBePropertiesMap();
-        this.componentInstanceProperties = propertiesMapData ? propertiesMapData: new InstanceBePropertiesMap();
+    constructor(inputsMapData: InstanceBePropertiesMap, outputsMapData: InstanceBePropertiesMap, propertiesMapData: InstanceBePropertiesMap, groupPropertiesMapData: InstanceBePropertiesMap, policyPropertiesMapData: InstanceBePropertiesMap) {
+        this.componentInstanceInputsMap = inputsMapData ? inputsMapData : new InstanceBePropertiesMap();
+        this.componentInstanceOutputsMap = outputsMapData ? outputsMapData : new InstanceBePropertiesMap();
+        this.componentInstanceProperties = propertiesMapData ? propertiesMapData : new InstanceBePropertiesMap();
         this.groupProperties = groupPropertiesMapData ? groupPropertiesMapData : new InstanceBePropertiesMap();
         this.policyProperties = policyPropertiesMapData ? policyPropertiesMapData : new InstanceBePropertiesMap();
     }

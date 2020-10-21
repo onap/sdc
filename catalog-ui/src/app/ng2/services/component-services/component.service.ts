@@ -23,7 +23,7 @@ import {Injectable, Inject} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import { Component, InputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse, ArtifactModel} from "app/models";
+import { Component, InputBEModel, OutputBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData, OperationModel, CreateOperationResponse, ArtifactModel} from "app/models";
 import {COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
@@ -297,7 +297,6 @@ export class ComponentServiceNg2 {
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/archive', {})
     }
 
-
     deleteInput(component:Component, input:InputBEModel):Observable<InputBEModel> {
 
         return this.http.delete<InputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
@@ -306,12 +305,26 @@ export class ComponentServiceNg2 {
             })
     }
 
+    deleteOutput(component:Component, output:OutputBEModel):Observable<OutputBEModel> {
+        return this.http.delete<OutputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + output.uniqueId + '/output')
+        .map((res) => {
+            return new OutputBEModel(res);
+        })
+    }
+
     updateComponentInputs(component:Component, inputs:InputBEModel[]):Observable<InputBEModel[]> {
 
         return this.http.post<InputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/inputs', inputs)
             .map((res) => {
                 return res.map((input) => new InputBEModel(input));
             })
+    }
+
+    updateComponentOutputs(component:Component, outputs:OutputBEModel[]):Observable<OutputBEModel[]> {
+        return this.http.post<OutputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/outputs', outputs)
+        .map((res) => {
+            return res.map((output) => new OutputBEModel(output));
+        })
     }
 
     filterComponentInstanceProperties(component:Component, filterData:FilterPropertiesAssignmentData):Observable<InstanceBePropertiesMap> {//instance-property-be-map
