@@ -36,11 +36,14 @@ import {InputsUtils} from "./services/inputs.utils";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
 import {SdcUiComponentsModule} from "onap-ui-angular";
 import {ModalFormsModule} from "app/ng2/components/ui/forms/modal-forms.module";
+import {OutputsUtils} from "./services/outputs.utils";
+import {OutputsTableComponent} from "../../components/logic/outputs-table/outputs-table.component";
 
 @NgModule({
     declarations: [
         PropertiesAssignmentComponent,
         InputsTableComponent,
+        OutputsTableComponent,
         HierarchyNavigationComponent,
         FilterPropertiesAssignmentComponent
     ],
@@ -52,13 +55,14 @@ import {ModalFormsModule} from "app/ng2/components/ui/forms/modal-forms.module";
         PoliciesTableModule,
         UiElementsModule,
         SdcUiComponentsModule,
-        ModalFormsModule],
+        ModalFormsModule
+    ],
 
     entryComponents: [PropertiesAssignmentComponent],
     exports: [
         PropertiesAssignmentComponent
     ],
-    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, DataTypeService, ComponentModeService]
+    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, OutputsUtils, DataTypeService, ComponentModeService]
 })
 export class PropertiesAssignmentModule {
 
