@@ -20,7 +20,27 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,21 +49,63 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.*;
-import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.*;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CatalogUpdateTimestamp;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.OutputDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RelationshipInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
@@ -58,15 +120,6 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 
 @org.springframework.stereotype.Component("tosca-operation-facade")
@@ -1079,6 +1132,36 @@ public class ToscaOperationFacade {
 
     }
 
+    public Either<List<OutputDefinition>, StorageOperationStatus> addOutputsToComponent(final Map<String, OutputDefinition> outputs, final String componentId) {
+
+        final Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao
+            .getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            log.debug(COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVertexEither.right().value()));
+
+        }
+
+        final GraphVertex vertex = getVertexEither.left().value();
+        final Map<String, PropertyDefinition> outputsMap = outputs.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> new PropertyDefinition(e.getValue())));
+
+        final StorageOperationStatus status = topologyTemplateOperation.addToscaDataToToscaElement(vertex,
+            EdgeLabelEnum.OUTPUTS, VertexTypeEnum.OUTPUTS, outputsMap, JsonPresentationFields.NAME);
+
+        if (StorageOperationStatus.OK == status) {
+            log.debug(COMPONENT_CREATED_SUCCESSFULLY);
+            List<OutputDefinition> outputDefinitionList = null;
+            if (outputsMap != null && !outputsMap.isEmpty()) {
+                outputDefinitionList = outputsMap.values().stream().map(OutputDefinition::new).collect(Collectors.toList());
+            }
+            return Either.left(outputDefinitionList);
+        }
+        return Either.right(status);
+
+    }
+
     /**
      * Add data types into a Component.
      *
@@ -1342,6 +1425,38 @@ public class ToscaOperationFacade {
             }
         }
         return Either.left(instProperties);
+    }
+
+    public Either<Map<String, List<ComponentInstanceOutput>>, StorageOperationStatus> addComponentInstanceOutputsToComponent(
+        final Component containerComponent, final Map<String, List<ComponentInstanceOutput>> componentInstanceOutput) {
+        requireNonNull(componentInstanceOutput);
+        StorageOperationStatus status;
+        for (final Entry<String, List<ComponentInstanceOutput>> entry : componentInstanceOutput.entrySet()) {
+            final List<ComponentInstanceOutput> instanceOutputList = entry.getValue();
+            final String componentInstanceId = entry.getKey();
+            if (!isEmpty(instanceOutputList)) {
+                for (final ComponentInstanceOutput outputProperty : instanceOutputList) {
+                    final List<ComponentInstanceOutput> componentInstanceOutputs = containerComponent
+                        .getComponentInstancesOutputs().get(componentInstanceId);
+                    final Optional<ComponentInstanceOutput> instanceProperty = componentInstanceOutputs.stream()
+                        .filter(p -> p.getName().equals(outputProperty.getName()))
+                        .findAny();
+                    if (instanceProperty.isPresent()) {
+                        status = updateComponentInstanceOutput(containerComponent, componentInstanceId, outputProperty);
+                    } else {
+                        status = addComponentInstanceOutput(containerComponent, componentInstanceId, outputProperty);
+                    }
+                    if (status != StorageOperationStatus.OK) {
+                        log.debug("Failed to update instance output {} for instance {} error {} ", outputProperty,
+                            componentInstanceId, status);
+                        return Either.right(status);
+                    } else {
+                        log.trace("instance output {} for instance {} updated", outputProperty, componentInstanceId);
+                    }
+                }
+            }
+        }
+        return Either.left(componentInstanceOutput);
     }
 
     public Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addComponentInstancePropertiesToComponent(Component containerComponent, Map<String, List<ComponentInstanceProperty>> instProperties) {
@@ -2442,6 +2557,11 @@ public class ToscaOperationFacade {
         return getToscaElementOperation(resource).deleteToscaDataElement(resource.getUniqueId(), EdgeLabelEnum.INPUTS, VertexTypeEnum.INPUTS, inputName, JsonPresentationFields.NAME);
     }
 
+    public StorageOperationStatus deleteOutputOfResource(final Component resource, final String outputName) {
+        return getToscaElementOperation(resource).deleteToscaDataElement(resource.getUniqueId(), EdgeLabelEnum.OUTPUTS,
+            VertexTypeEnum.OUTPUTS, outputName, JsonPresentationFields.NAME);
+    }
+
     /**
      * Deletes a data type from a component.
      * @param component the container which has the data type
@@ -2654,8 +2774,26 @@ public class ToscaOperationFacade {
         return nodeTemplateOperation.updateComponentInstanceInputs(containerComponent, componentInstanceId, instanceInputs);
     }
 
+    public StorageOperationStatus updateComponentInstanceOutput(final Component containerComponent,
+                                                                final String componentInstanceId,
+                                                                final ComponentInstanceOutput componentInstanceOutput) {
+        return nodeTemplateOperation.updateComponentInstanceOutput(containerComponent, componentInstanceId, componentInstanceOutput);
+    }
+
+    public StorageOperationStatus updateComponentInstanceOutputs(final Component containerComponent,
+                                                                 final String componentInstanceId,
+                                                                 final List<ComponentInstanceOutput> componentInstanceOutputs) {
+        return nodeTemplateOperation.updateComponentInstanceOutputs(containerComponent, componentInstanceId, componentInstanceOutputs);
+    }
+
     public StorageOperationStatus addComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
         return nodeTemplateOperation.addComponentInstanceInput(containerComponent, componentInstanceId, property);
+    }
+
+    public StorageOperationStatus addComponentInstanceOutput(final Component containerComponent,
+                                                             final String componentInstanceId,
+                                                             final ComponentInstanceOutput componentInstanceOutput) {
+        return nodeTemplateOperation.addComponentInstanceOutput(containerComponent, componentInstanceId, componentInstanceOutput);
     }
 
     public void setNodeTypeOperation(NodeTypeOperation nodeTypeOperation) {

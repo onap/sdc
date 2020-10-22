@@ -621,11 +621,15 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
             ToscaElement toscaElement) {
         TopologyTemplate topologyTemplate = (TopologyTemplate) toscaElement;
         Map<String, MapPropertiesDataDefinition> instInputs = topologyTemplate.getInstInputs();
+        Map<String, MapPropertiesDataDefinition> instOutputs = topologyTemplate.getInstOutputs();
         Map<String, MapGroupsDataDefinition> instGroups = topologyTemplate.getInstGroups();
         Map<String, MapArtifactDataDefinition> instArtifactsMap = topologyTemplate.getInstanceArtifacts();
         Map<String, ToscaElement> origCompMap = new HashMap<>();
         if (instInputs == null) {
             instInputs = new HashMap<>();
+        }
+        if (instOutputs == null) {
+            instOutputs = new HashMap<>();
         }
         if (instGroups == null) {
             instGroups = new HashMap<>();

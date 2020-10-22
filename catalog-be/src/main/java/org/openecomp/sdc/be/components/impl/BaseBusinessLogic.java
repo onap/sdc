@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -720,12 +721,27 @@ public abstract class BaseBusinessLogic {
         return Either.left(new ArrayList<>());
     }
 
+    public <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareOutputProperties(
+        final String userId, final String componentId, final ComponentTypeEnum componentTypeEnum,
+        final ComponentInstOutputsMap componentInstOutputsMap) {
+
+        return Either.left(new ArrayList<>());
+    }
+
     public <T extends PropertyDataDefinition> List<PropertyConstraint> setInputConstraint(T inputDefinition) {
         if (StringUtils.isNotBlank(inputDefinition.getParentPropertyType())
                 && StringUtils.isNotBlank(inputDefinition.getSubPropertyInputPath())) {
             return setConstraint(inputDefinition);
         }
 
+        return Collections.emptyList();
+    }
+
+    public <T extends PropertyDataDefinition> List<PropertyConstraint> setOutputConstraint(final T outputDefinition) {
+        if (StringUtils.isNotBlank(outputDefinition.getParentPropertyType()) &&
+            StringUtils.isNotBlank(outputDefinition.getSubPropertyOutputPath())) {
+            return setConstraint(outputDefinition);
+        }
         return Collections.emptyList();
     }
 

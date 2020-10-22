@@ -34,8 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@org.springframework.stereotype.Component
+@Component
 public class InputConverter {
     private PropertyConvertor propertyConvertor;
     private static final Logger log = Logger.getLogger(ToscaExportHandler.class);
