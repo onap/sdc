@@ -33,3 +33,5 @@ node_types:
           - CDS
           - SDNC
           - APPC
+      default_software_version:
+        type: string
