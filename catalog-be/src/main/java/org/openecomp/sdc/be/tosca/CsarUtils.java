@@ -1586,10 +1586,6 @@ public class CsarUtils {
         if (!deploymentArtifactsByType.isEmpty() ){
             artifactsInfo.addArtifactsToGroup(ArtifactGroupTypeEnum.DEPLOYMENT, deploymentArtifactsByType);
 		}
-		//Add component interface operation artifacts
-		if(MapUtils.isNotEmpty(interfaceOperationArtifacts)) {
-			artifactsInfo.addArtifactsToGroup(ArtifactGroupTypeEnum.DEPLOYMENT, interfaceOperationArtifactsByType);
-        }
 
         return artifactsInfo;
     }
