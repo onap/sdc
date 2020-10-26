@@ -41,6 +41,12 @@ public class ToscaUtils {
             if (ResourceTypeEnum.CVFC == resourceType ) {
                 return false;
             }
+            if (component.getComponentMetadataDefinition()!=null && component.getComponentMetadataDefinition().getMetadataDataDefinition()!=null
+                    && component.getComponentMetadataDefinition().getMetadataDataDefinition().getDescription()!=null){
+                if(component.getComponentMetadataDefinition().getMetadataDataDefinition().getDescription().equalsIgnoreCase("Nested VF in service")){
+                    return false;
+                }
+            }
         }
         return true;
     }

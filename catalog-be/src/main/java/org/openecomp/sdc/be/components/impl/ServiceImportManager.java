@@ -92,14 +92,6 @@ public class ServiceImportManager {
     }
   }
 
-  public void populateRealServiceMetadata(UploadServiceInfo serviceMetaData, Service service) {
-    if (service != null && serviceMetaData != null) {
-      service.setTags(serviceMetaData.getTags());
-      service.setContactId(serviceMetaData.getContactId());
-      service.setName(serviceMetaData.getName());
-    }
-  }
-
   public synchronized void init(ServletContext servletContext) {
     if (this.servletContext == null) {
       this.servletContext = servletContext;
