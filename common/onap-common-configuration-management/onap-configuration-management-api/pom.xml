@@ -10,6 +10,6 @@
   <parent>
     <artifactId>onap-common-configuration-management</artifactId>
     <groupId>org.onap.sdc.common</groupId>
-    <version>1.7.2</version>
+    <version>1.7.2-SNAPSHOT</version>
   </parent>
 </project>
