@@ -320,7 +320,7 @@ public class YamlTemplateParsingHandler {
                 .left()
                 .on(err -> logGroupsNotFound(fileName));
 
-        if (MapUtils.isNotEmpty(foundGroups)) {
+        if (MapUtils.isNotEmpty(foundGroups) && matcheKey(foundGroups)) {
             Map<String, GroupDefinition> groups = foundGroups
                     .entrySet()
                     .stream()
@@ -334,6 +334,20 @@ public class YamlTemplateParsingHandler {
             return groups;
         }
         return new HashMap<>();
+    }
+
+    private boolean matcheKey(Map<String, Object> foundGroups){
+        if (foundGroups!=null && !foundGroups.isEmpty()) {
+            for (Map.Entry<String, Object> stringObjectEntry : foundGroups.entrySet()) {
+                String key = stringObjectEntry.getKey();
+                if (key.contains("group")) {
+                    if (foundGroups.get(key) instanceof Map) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private Map<String, Object> logGroupsNotFound(String fileName) {
