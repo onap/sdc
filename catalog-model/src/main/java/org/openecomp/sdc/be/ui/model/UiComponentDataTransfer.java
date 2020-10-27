@@ -35,10 +35,12 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -63,12 +65,14 @@ public class UiComponentDataTransfer {
     private List<ComponentInstance> componentInstances;
     private List<RequirementCapabilityRelDef> componentInstancesRelations;
     private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
+    private Map<String, List<ComponentInstanceOutput>> componentInstancesOutputs;
     private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
     private Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes;
     private Map<String, List<CapabilityDefinition>> capabilities;
     private List<PolicyDefinition> policies;
     private Map<String, List<RequirementDefinition>> requirements;
     private List<InputDefinition> inputs;
+    private List<OutputDefinition> outputs;
     private List<GroupDefinition> groups;
     private Map<String, InterfaceDefinition> interfaces;
 

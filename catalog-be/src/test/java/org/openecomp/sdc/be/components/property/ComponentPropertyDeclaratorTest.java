@@ -16,18 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2020, Nordix Foundation
+ * ================================================================================
  */
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
@@ -55,7 +58,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     @InjectMocks
@@ -71,7 +74,7 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
     private static final String SERVICE_UID = "serviceUid";
     private Service service;
 
-    @Before
+    @BeforeEach
     public void init() {
         service = new ServiceBuilder().setUniqueId(SERVICE_UID).build();
     }
@@ -100,7 +103,8 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
         PropertyDefinition propertyDefinition = new PropertyDefinition();
         resource.setProperties(Collections.singletonList(propertyDefinition));
 
-        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class))).thenReturn(false);
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class)))
+            .thenReturn(false);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
         Assert.assertEquals(status, StorageOperationStatus.OK);
     }
@@ -114,7 +118,8 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
 
         resource.setProperties(new ArrayList<>());
 
-        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class))).thenReturn(false);
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class)))
+            .thenReturn(false);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
         Assert.assertEquals(status, StorageOperationStatus.OK);
     }
@@ -153,8 +158,12 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
         resource.setProperties(Collections.singletonList(propertyDefinition));
 
         when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any())).thenReturn(false);
-        when(propertyOperation.findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()), eq(propertyDefinition.getDefaultValue()))).thenReturn(Either.left(propertyDefinition.getDefaultValue()));
-        when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any())).thenReturn(Either.left(propertyDefinition));
+        when(propertyOperation
+            .findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()),
+                eq(propertyDefinition.getDefaultValue())))
+            .thenReturn(Either.left(propertyDefinition.getDefaultValue()));
+        when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any()))
+            .thenReturn(Either.left(propertyDefinition));
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
         Assert.assertEquals(status, StorageOperationStatus.OK);
     }
@@ -178,8 +187,12 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
         resource.setProperties(Collections.singletonList(propertyDefinition));
 
         when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any())).thenReturn(false);
-        when(propertyOperation.findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()), eq(propertyDefinition.getDefaultValue()))).thenReturn(Either.left(propertyDefinition.getDefaultValue()));
-        when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(propertyOperation
+            .findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()),
+                eq(propertyDefinition.getDefaultValue())))
+            .thenReturn(Either.left(propertyDefinition.getDefaultValue()));
+        when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any()))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
         Assert.assertEquals(status, StorageOperationStatus.NOT_FOUND);
     }
@@ -198,14 +211,14 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
     public void updatePropertiesValues_success() {
         PropertyDataDefinition propertyForDeclaration = getPropertyForDeclaration();
         when(toscaOperationFacade.updatePropertyOfComponent(any(Component.class), any(PropertyDefinition.class)))
-                .thenReturn(Either.left(new PropertyDefinition(propertyForDeclaration)));
+            .thenReturn(Either.left(new PropertyDefinition(propertyForDeclaration)));
 
         Either<List<PropertyDataDefinition>, StorageOperationStatus> updateEither =
-                (Either<List<PropertyDataDefinition>, StorageOperationStatus>) testInstance
-                                                                                       .updatePropertiesValues(service,
-                                                                                               SERVICE_UID, Collections
-                                                                                                                    .singletonList(
-                                                                                                                            propertyForDeclaration));
+            (Either<List<PropertyDataDefinition>, StorageOperationStatus>) testInstance
+                .updatePropertiesValues(service,
+                    SERVICE_UID, Collections
+                        .singletonList(
+                            propertyForDeclaration));
 
         assertTrue(updateEither.isLeft());
 

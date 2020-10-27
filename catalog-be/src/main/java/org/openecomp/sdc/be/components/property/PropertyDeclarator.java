@@ -21,13 +21,14 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
+import java.util.List;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropOutput;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import java.util.List;
 
 public interface PropertyDeclarator {
 
@@ -41,12 +42,29 @@ public interface PropertyDeclarator {
     Either<List<InputDefinition>, StorageOperationStatus> declarePropertiesAsInputs(Component component, String propertiesOwnerId, List<ComponentInstancePropInput> propsToDeclare);
 
     /**
+     * creates a list of outputs from the given list of properties and updates the properties accordingly
+     * @param component the container
+     * @param propertiesOwnerId the id of the owner of the properties to declare (e.g ComponentInstance, Policy, Group etc)
+     * @param propsToDeclare the list of properties that are being declared as outputs
+     * @return the list of outputs that were created from the given properties
+     */
+    Either<List<OutputDefinition>, StorageOperationStatus> declarePropertiesAsOutputs(Component component, String propertiesOwnerId, List<ComponentInstancePropOutput> propsToDeclare);
+
+    /**
      * returns the values of declared properties to each original state before it was declared as an input.
      * this function is to be called when an input, that was created by declaring a property, is deleted.
      * @param component the container of the input to be deleted
      * @param input the input to be deleted
      */
     StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition input);
+
+    /**
+     * returns the values of declared properties to each original state before it was declared as an output.
+     * this function is to be called when an output, that was created by declaring a property, is deleted.
+     * @param component the container of the output to be deleted
+     * @param output the output to be deleted
+     */
+    StorageOperationStatus unDeclarePropertiesAsOutputs(Component component, OutputDefinition output);
 
     /**
      * creates a list of policies from the given list of properties and updates the properties accordingly
@@ -82,4 +100,5 @@ public interface PropertyDeclarator {
      * @param input the input to be deleted
      */
     StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition input);
+
 }

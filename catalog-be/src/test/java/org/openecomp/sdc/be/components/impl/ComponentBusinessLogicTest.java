@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  * Modifications copyright (c) 2019 Nokia
+ * Modifications copyright (c) 2020, Nordix Foundation
  * ================================================================================
  */
+package org.openecomp.sdc.be.components.impl;
 
-package org.openecomp.sdc.be.components;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.impl.utils.TestGenerationUtils.getComponentsUtils;
+import static org.openecomp.sdc.common.util.GeneralUtility.getCategorizedComponents;
 
 import fj.data.Either;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.DummyConfigurationManager;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -45,27 +52,20 @@ import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.components.impl.utils.TestGenerationUtils.getComponentsUtils;
-import static org.openecomp.sdc.common.util.GeneralUtility.getCategorizedComponents;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
 
     private static final User USER = new User();
     private static final String ARTIFACT_LABEL = "toscaArtifact1";
     private static final String ARTIFACT_LABEL2 = "toscaArtifact2";
-
-    private ComponentBusinessLogic testInstance = new ComponentBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
-        groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
-        artifactToscaOperation,componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
-            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator) {
+    DummyConfigurationManager dummyConfigurationManager = new DummyConfigurationManager();
+    private ComponentBusinessLogic testInstance = new ComponentBusinessLogic(elementDao, groupOperation,
+        groupInstanceOperation,
+        groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
+        artifactsBusinessLogic,
+        artifactToscaOperation, componentContactIdValidator, componentNameValidator, componentTagsValidator,
+        componentValidator,
+        componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator) {
         @Override
         public Either<List<String>, ResponseFormat> deleteMarkedComponents() {
             return null;
@@ -77,34 +77,36 @@ public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
         }
 
         @Override
-        public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, String userId) {
+        public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(
+            String componentId, String userId) {
             return null;
         }
 
         @Override
-        public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId, List<String> dataParamsToReturn) {
+        public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(
+            String componentId, List<String> dataParamsToReturn) {
             return null;
         }
     };
-
-
-    DummyConfigurationManager dummyConfigurationManager = new DummyConfigurationManager();;
+    ;
 
     @SuppressWarnings("unchecked")
     @Test
     public void setToscaArtifactsPlaceHolders_normalizeArtifactName() throws Exception {
         Resource resource = new ResourceBuilder().setUniqueId("uid")
-                .setComponentType(ComponentTypeEnum.RESOURCE)
-                .setSystemName("myResource")
-                .build();
+            .setComponentType(ComponentTypeEnum.RESOURCE)
+            .setSystemName("myResource")
+            .build();
         Map<String, Object> artifactsFromConfig = new HashMap<>();
         artifactsFromConfig.put(ARTIFACT_LABEL, buildArtifactMap("artifact:not normalized.yml"));
         artifactsFromConfig.put(ARTIFACT_LABEL2, buildArtifactMap("alreadyNormalized.csar"));
         when(dummyConfigurationManager.getConfigurationMock().getToscaArtifacts()).thenReturn(artifactsFromConfig);
-        when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL, (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL), USER, ArtifactGroupTypeEnum.TOSCA))
-                .thenReturn(buildArtifactDef(ARTIFACT_LABEL));
-        when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL2, (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL2), USER, ArtifactGroupTypeEnum.TOSCA))
-                .thenReturn(buildArtifactDef(ARTIFACT_LABEL2));
+        when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL,
+            (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL), USER, ArtifactGroupTypeEnum.TOSCA))
+            .thenReturn(buildArtifactDef(ARTIFACT_LABEL));
+        when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(resource.getUniqueId(), ARTIFACT_LABEL2,
+            (Map<String, Object>) artifactsFromConfig.get(ARTIFACT_LABEL2), USER, ArtifactGroupTypeEnum.TOSCA))
+            .thenReturn(buildArtifactDef(ARTIFACT_LABEL2));
         testInstance.setToscaArtifactsPlaceHolders(resource, USER);
 
         Map<String, ArtifactDefinition> toscaArtifacts = resource.getToscaArtifacts();
@@ -128,18 +130,19 @@ public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
     }
 
     @Test
-    public void categorizeOneResource(){
+    public void categorizeOneResource() {
         List<Component> componentList = new ArrayList<>();
         String subCategoryName = "Load Balancer";
         String categoryName = "Application L4+";
         Component component = initComponent(ComponentTypeEnum.RESOURCE, subCategoryName, categoryName);
         componentList.add(component);
-        Map<String,Map<String,List<UiLeftPaletteComponent>>> response = getCategorizedComponents(getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
+        Map<String, Map<String, List<UiLeftPaletteComponent>>> response = getCategorizedComponents(
+            getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
         assertThat(response.get(categoryName).get(subCategoryName).size()).isEqualTo(1);
     }
 
     @Test
-    public void categorizeResourcesSameCategoryDifferentSubcategory(){
+    public void categorizeResourcesSameCategoryDifferentSubcategory() {
         List<Component> componentList = new ArrayList<>();
         String categoryName = "Application L4+";
         String subCategoryName = "Load Balancer";
@@ -148,13 +151,14 @@ public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
         String subCategoryName2 = "Database";
         Component component2 = initComponent(ComponentTypeEnum.RESOURCE, subCategoryName2, categoryName);
         componentList.add(component2);
-        Map<String,Map<String,List<UiLeftPaletteComponent>>> response = getCategorizedComponents(getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
+        Map<String, Map<String, List<UiLeftPaletteComponent>>> response = getCategorizedComponents(
+            getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
         assertThat(response.get(categoryName).get(subCategoryName).size()).isEqualTo(1);
         assertThat(response.get(categoryName).get(subCategoryName2).size()).isEqualTo(1);
     }
 
     @Test
-    public void categorizeResourceAndServiceSameCategoryDifferentSubcategory(){
+    public void categorizeResourceAndServiceSameCategoryDifferentSubcategory() {
         List<Component> componentList = new ArrayList<>();
         String categoryName = "Generic";
         String subCategoryName = "Load Balancer";
@@ -162,25 +166,27 @@ public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
         componentList.add(component);
         Component component2 = initComponent(ComponentTypeEnum.SERVICE, null, categoryName);
         componentList.add(component2);
-        Map<String,Map<String,List<UiLeftPaletteComponent>>> response = getCategorizedComponents(getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
+        Map<String, Map<String, List<UiLeftPaletteComponent>>> response = getCategorizedComponents(
+            getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
         assertThat(response.get(categoryName).get(subCategoryName).size()).isEqualTo(1);
         assertThat(response.get("Generic").get("Generic").size()).isEqualTo(1);
     }
 
     @Test
-    public void categorizeResourcesSameCategorySameSubcategory(){
+    public void categorizeResourcesSameCategorySameSubcategory() {
         List<Component> componentList = new ArrayList<>();
         String categoryName = "Application L4+";
         String subCategoryName = "Load Balancer";
         Component component = initComponent(ComponentTypeEnum.RESOURCE, subCategoryName, categoryName);
         componentList.add(component);
         componentList.add(component);
-        Map<String,Map<String,List<UiLeftPaletteComponent>>> response = getCategorizedComponents(getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
+        Map<String, Map<String, List<UiLeftPaletteComponent>>> response = getCategorizedComponents(
+            getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
         assertThat(response.get(categoryName).get(subCategoryName).size()).isEqualTo(2);
     }
 
     @Test
-    public void categorizeTwoServices(){
+    public void categorizeTwoServices() {
         List<Component> componentList = new ArrayList<>();
         String categoryName = "Application L4+";
         String categoryName2 = "IP Mux Demux";
@@ -188,12 +194,13 @@ public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
         componentList.add(component);
         Component component2 = initComponent(ComponentTypeEnum.SERVICE, null, categoryName2);
         componentList.add(component2);
-        Map<String,Map<String,List<UiLeftPaletteComponent>>> response = getCategorizedComponents(getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
+        Map<String, Map<String, List<UiLeftPaletteComponent>>> response = getCategorizedComponents(
+            getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
         assertThat(response.get("Generic").get("Generic").size()).isEqualTo(2);
     }
 
     @Test
-    public void categorizeTwoResourcesDiffCategory(){
+    public void categorizeTwoResourcesDiffCategory() {
         List<Component> componentList = new ArrayList<>();
         String categoryName = "Application L4+";
         String categoryName2 = "IP Mux Demux";
@@ -202,17 +209,18 @@ public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
         componentList.add(component);
         Component component2 = initComponent(ComponentTypeEnum.RESOURCE, subCategoryName, categoryName2);
         componentList.add(component2);
-        Map<String,Map<String,List<UiLeftPaletteComponent>>> response = getCategorizedComponents(getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
+        Map<String, Map<String, List<UiLeftPaletteComponent>>> response = getCategorizedComponents(
+            getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(componentList));
         assertThat(response.get(categoryName).get(subCategoryName).size()).isEqualTo(1);
         assertThat(response.get(categoryName2).get(subCategoryName).size()).isEqualTo(1);
     }
 
     private Component initComponent(ComponentTypeEnum componentTypeEnum, String subCategoryName, String categoryName) {
         Component component = null;
-        if(componentTypeEnum == ComponentTypeEnum.RESOURCE){
+        if (componentTypeEnum == ComponentTypeEnum.RESOURCE) {
             component = new Resource();
         }
-        if(componentTypeEnum == ComponentTypeEnum.SERVICE){
+        if (componentTypeEnum == ComponentTypeEnum.SERVICE) {
             component = new Service();
         }
         component.setComponentType(componentTypeEnum);

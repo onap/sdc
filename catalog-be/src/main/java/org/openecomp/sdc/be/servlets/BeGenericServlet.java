@@ -31,6 +31,21 @@ import fj.data.Either;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -45,6 +60,7 @@ import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.OutputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
@@ -66,6 +82,7 @@ import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
@@ -80,29 +97,13 @@ import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-
 @OpenAPIDefinition(info = @Info(title = "SDC API", description = "SDC External, Distribution and Internal APIs"),
-        servers = {@Server(url = "/sdc", description = "SDC External and Distribution APIs"),
-                @Server(url = "/sdc2/rest", description = "SDC Internal APIs")})
+    servers = {@Server(url = "/sdc", description = "SDC External and Distribution APIs"),
+        @Server(url = "/sdc2/rest", description = "SDC Internal APIs")})
 public class BeGenericServlet extends BasicServlet {
 
     public BeGenericServlet(UserBusinessLogic userAdminManager,
-        ComponentsUtils componentsUtils) {
+                            ComponentsUtils componentsUtils) {
         this.userAdminManager = userAdminManager;
         this.componentsUtils = componentsUtils;
     }
@@ -121,7 +122,8 @@ public class BeGenericServlet extends BasicServlet {
      * @param requestErrorWrapper **************/
 
     protected Response buildErrorResponse(ResponseFormat requestErrorWrapper) {
-        return Response.status(requestErrorWrapper.getStatus()).entity(gson.toJson(requestErrorWrapper.getRequestError())).build();
+        return Response.status(requestErrorWrapper.getStatus())
+            .entity(gson.toJson(requestErrorWrapper.getRequestError())).build();
     }
 
     protected Response buildGeneralErrorResponse() {
@@ -143,26 +145,31 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     @VisibleForTesting
-    public void setRequestServlet(HttpServletRequest request) {this.servletRequest = request;}
+    public void setRequestServlet(HttpServletRequest request) {
+        this.servletRequest = request;
+    }
 
     protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity) {
         return buildOkResponse(errorResponseWrapper, entity, null);
     }
 
-    protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity, Map<String, String> additionalHeaders) {
+    protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity,
+                                       Map<String, String> additionalHeaders) {
         int status = errorResponseWrapper.getStatus();
         ResponseBuilder responseBuilder = Response.status(status);
         if (entity != null) {
-            if (log.isTraceEnabled())
+            if (log.isTraceEnabled()) {
                 log.trace("returned entity is {}", entity.toString());
+            }
             responseBuilder = responseBuilder.entity(entity);
         }
         if (additionalHeaders != null) {
             for (Entry<String, String> additionalHeader : additionalHeaders.entrySet()) {
                 String headerName = additionalHeader.getKey();
                 String headerValue = additionalHeader.getValue();
-                if (log.isTraceEnabled())
+                if (log.isTraceEnabled()) {
                     log.trace("Adding header {} with value {} to the response", headerName, headerValue);
+                }
                 responseBuilder.header(headerName, headerValue);
             }
         }
@@ -207,9 +214,11 @@ public class BeGenericServlet extends BasicServlet {
     protected RelationshipTypeBusinessLogic getRelationshipTypeBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> RelationshipTypeBusinessLogic.class);
     }
+
     protected RequirementBusinessLogic getRequirementBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> RequirementBusinessLogic.class);
     }
+
     ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
     }
@@ -225,6 +234,7 @@ public class BeGenericServlet extends BasicServlet {
     protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
     }
+
     protected UpgradeBusinessLogic getUpgradeBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> UpgradeBusinessLogic.class);
     }
@@ -242,20 +252,23 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(businessLogicClassGen.get());
     }
 
     GroupBusinessLogic getGroupBL(ServletContext context) {
 
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(GroupBusinessLogic.class);
     }
 
     protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ComponentInstanceBusinessLogic.class);
     }
@@ -263,14 +276,14 @@ public class BeGenericServlet extends BasicServlet {
     protected ComponentsUtils getComponentsUtils() {
         ServletContext context = this.servletRequest.getSession().getServletContext();
 
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ComponentsUtils.class);
     }
 
     /**
-     * Used to support Unit Test.<br>
-     * Header Params are not supported in Unit Tests
+     * Used to support Unit Test.<br> Header Params are not supported in Unit Tests
      *
      * @return
      */
@@ -287,7 +300,6 @@ public class BeGenericServlet extends BasicServlet {
     protected String getContentDispositionValue(String artifactFileName) {
         return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
     }
-
 
 
     protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
@@ -352,15 +364,15 @@ public class BeGenericServlet extends BasicServlet {
                 Entry next = (Entry) iterator.next();
                 String propertyName = (String) next.getKey();
 
-                if(!isPropertyNameValid(propertyName)) {
+                if (!isPropertyNameValid(propertyName)) {
                     return Either.right(ActionStatus.INVALID_PROPERTY_NAME);
                 }
 
                 JSONObject value = (JSONObject) next.getValue();
                 Either<PropertyDefinition, ActionStatus> propertyDefinitionEither =
-                        getPropertyDefinitionFromJson(componentId, propertyName, value);
+                    getPropertyDefinitionFromJson(componentId, propertyName, value);
 
-                if(propertyDefinitionEither.isRight()) {
+                if (propertyDefinitionEither.isRight()) {
                     return Either.right(propertyDefinitionEither.right().value());
                 }
 
@@ -376,13 +388,16 @@ public class BeGenericServlet extends BasicServlet {
 
     protected boolean isPropertyNameValid(String propertyName) {
         return Objects.nonNull(propertyName)
-                       && propertyName.matches(PROPERTY_NAME_REGEX);
+            && propertyName.matches(PROPERTY_NAME_REGEX);
 
     }
 
-    private Either<PropertyDefinition, ActionStatus> getPropertyDefinitionFromJson(String componentId, String propertyName, JSONObject value) {
+    private Either<PropertyDefinition, ActionStatus> getPropertyDefinitionFromJson(String componentId,
+                                                                                   String propertyName,
+                                                                                   JSONObject value) {
         String jsonString = value.toJSONString();
-        Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString, PropertyDefinition.class);
+        Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString,
+            PropertyDefinition.class);
         if (convertJsonToObject.isRight()) {
             return Either.right(convertJsonToObject.right().value());
         }
@@ -403,7 +418,8 @@ public class BeGenericServlet extends BasicServlet {
             jsonArray = (JSONArray) parser.parse(data);
             for (Object jsonElement : jsonArray) {
                 String propertyAsString = jsonElement.toString();
-                Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(propertyAsString, PropertyDefinition.class);
+                Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(propertyAsString,
+                    PropertyDefinition.class);
 
                 if (convertJsonToObject.isRight()) {
                     return Either.right(convertJsonToObject.right().value());
@@ -450,12 +466,13 @@ public class BeGenericServlet extends BasicServlet {
 
     }
 
-    protected  <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
+    protected <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
         T t = null;
         Type constraintType = new TypeToken<PropertyConstraint>() {
         }.getType();
         Gson
-            gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
+            gson = new GsonBuilder()
+            .registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
         try {
             log.trace("convert json to object. json=\n {}", data);
             t = gson.fromJson(data, clazz);
@@ -475,7 +492,8 @@ public class BeGenericServlet extends BasicServlet {
     private Either<String, ActionStatus> convertObjectToJson(PropertyDefinition propertyDefinition) {
         Type constraintType = new TypeToken<PropertyConstraint>() {
         }.getType();
-        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintSerialiser()).create();
+        Gson gson = new GsonBuilder()
+            .registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintSerialiser()).create();
         try {
             log.trace("convert object to json. propertyDefinition= {}", propertyDefinition);
             String json = gson.toJson(propertyDefinition);
@@ -494,30 +512,54 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     protected PropertyBusinessLogic getPropertyBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
         return propertytBl;
     }
 
     protected InputsBusinessLogic getInputBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(InputsBusinessLogic.class);
     }
 
+    protected OutputsBusinessLogic getOutputBL(final ServletContext context) {
+        final WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        final WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(OutputsBusinessLogic.class);
+    }
+
     protected PolicyBusinessLogic getPolicyBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(PolicyBusinessLogic.class);
     }
 
-    protected Either<ComponentInstInputsMap, ResponseFormat> parseToComponentInstanceMap(String componentJson, User user, ComponentTypeEnum componentType) {
-        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(componentJson, user, ComponentInstInputsMap.class, AuditingActionEnum.CREATE_RESOURCE, componentType);
+    protected Either<ComponentInstInputsMap, ResponseFormat> parseToComponentInstanceMap(String componentJson,
+                                                                                         User user,
+                                                                                         ComponentTypeEnum componentType) {
+        return getComponentsUtils()
+            .convertJsonToObjectUsingObjectMapper(componentJson, user, ComponentInstInputsMap.class,
+                AuditingActionEnum.CREATE_RESOURCE, componentType);
+    }
+
+    protected Either<ComponentInstOutputsMap, ResponseFormat> parseToComponentInstanceOutputMap(
+        final String componentJson,
+        final User user,
+        final ComponentTypeEnum componentType) {
+        return getComponentsUtils()
+            .convertJsonToObjectUsingObjectMapper(componentJson, user, ComponentInstOutputsMap.class,
+                AuditingActionEnum.CREATE_RESOURCE, componentType);
     }
 
     protected Response declareProperties(String userId, String componentId, String componentType,
-            String componentInstInputsMapObj, DeclarationTypeEnum typeEnum, HttpServletRequest request) {
+                                         String componentInstMapObj, DeclarationTypeEnum typeEnum,
+                                         HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
@@ -531,18 +573,34 @@ public class BeGenericServlet extends BasicServlet {
             modifier.setUserId(userId);
             log.debug("modifier id is {}", userId);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(componentInstInputsMapObj, modifier, componentTypeEnum);
-            if (componentInstInputsMapRes.isRight()) {
-                log.debug("failed to parse componentInstInputsMap");
-                response = buildErrorResponse(componentInstInputsMapRes.right().value());
-                return response;
+            Either<List<ToscaDataDefinition>, ResponseFormat> propertiesAfterDeclaration = null;
+            if (businessLogic instanceof InputsBusinessLogic || businessLogic instanceof PolicyBusinessLogic) {
+                Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(
+                    componentInstMapObj, modifier, componentTypeEnum);
+                if (componentInstInputsMapRes.isRight()) {
+                    log.debug("failed to parse componentInstInputsMap");
+                    response = buildErrorResponse(componentInstInputsMapRes.right().value());
+                    return response;
+                }
+                propertiesAfterDeclaration = businessLogic
+                    .declareProperties(userId, componentId, componentTypeEnum,
+                        componentInstInputsMapRes.left().value());
             }
 
-            Either<List<ToscaDataDefinition>, ResponseFormat> propertiesAfterDeclaration = businessLogic
-                                                                               .declareProperties(userId, componentId,
-                                                                                       componentTypeEnum,
-                                                                                       componentInstInputsMapRes.left().value());
-            if (propertiesAfterDeclaration.isRight()) {
+            if (businessLogic instanceof OutputsBusinessLogic) {
+                Either<ComponentInstOutputsMap, ResponseFormat> componentInstOutputsMapRes = parseToComponentInstanceOutputMap(
+                    componentInstMapObj, modifier, componentTypeEnum);
+                if (componentInstOutputsMapRes.isRight()) {
+                    log.debug("failed to parse componentInstOutputsMap");
+                    response = buildErrorResponse(componentInstOutputsMapRes.right().value());
+                    return response;
+                }
+                propertiesAfterDeclaration = businessLogic
+                    .declareOutputProperties(userId, componentId, componentTypeEnum,
+                        componentInstOutputsMapRes.left().value());
+            }
+
+            if (Objects.nonNull(propertiesAfterDeclaration) && propertiesAfterDeclaration.isRight()) {
                 log.debug("failed to create inputs  for service: {}", componentId);
                 return buildErrorResponse(propertiesAfterDeclaration.right().value());
             }
@@ -550,17 +608,23 @@ public class BeGenericServlet extends BasicServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create inputs for service with id: " + componentId);
+            BeEcompErrorManager.getInstance()
+                .logBeRestApiGeneralError("Create inputs for service with id: " + componentId);
             log.debug("Properties declaration failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+
             return response;
         }
     }
 
     public BaseBusinessLogic getBlForPropertyDeclaration(DeclarationTypeEnum typeEnum,
-                                                          ServletContext context) {
-        if(typeEnum.equals(DeclarationTypeEnum.POLICY)) {
+                                                         ServletContext context) {
+        if (typeEnum.equals(DeclarationTypeEnum.POLICY)) {
             return getPolicyBL(context);
+        }
+
+        if (typeEnum.equals(DeclarationTypeEnum.OUTPUT)) {
+            return getOutputBL(context);
         }
 
         return getInputBL(context);

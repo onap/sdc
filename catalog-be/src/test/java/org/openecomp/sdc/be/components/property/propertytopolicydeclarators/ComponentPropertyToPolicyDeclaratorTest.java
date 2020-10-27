@@ -7,30 +7,31 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2020, Nordix Foundation
+ * ================================================================================
  */
-
 package org.openecomp.sdc.be.components.property;
-
 
 import fj.data.Either;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.ComponentPropertyToPolicyDeclarator;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
@@ -46,7 +47,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     @InjectMocks
@@ -62,7 +63,6 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
     private static final String POLICY = "policy";
     private static final String TEST_VALUE = "testValue";
 
-
     @Test
     public void testDeclarePropertyToPolicy_success() {
         Service service = new Service();
@@ -70,7 +70,7 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
 
         when(toscaOperationFacade.updatePropertyOfComponent(eq(service), Mockito.any())).thenReturn(Either.left(new PropertyDefinition()));
         Either<List<PolicyDefinition>, StorageOperationStatus> declareEither = declarator.declarePropertiesAsPolicies(
-                service, OWNER_ID, createInstancePropInputList(Collections.singletonList(prop1)));
+            service, OWNER_ID, createInstancePropInputList(Collections.singletonList(prop1)));
 
         Assert.assertTrue(declareEither.isLeft());
     }
@@ -88,7 +88,7 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
         when(toscaOperationFacade.updatePropertyOfComponent(eq(service), propertyCaptor.capture())).thenReturn(Either.left(new PropertyDefinition()));
 
         StorageOperationStatus storageOperationStatus =
-                declarator.unDeclarePropertiesAsPolicies(service, policyDefinition);
+            declarator.unDeclarePropertiesAsPolicies(service, policyDefinition);
 
         PropertyDefinition actualProperty = propertyCaptor.getValue();
 
@@ -109,13 +109,13 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
         when(toscaOperationFacade.updatePropertyOfComponent(eq(service), propertyCaptor.capture())).thenReturn(Either.left(new PropertyDefinition()));
 
         Either<List<PolicyDefinition>, StorageOperationStatus> declareEither = declarator.declarePropertiesAsPolicies(
-                service, OWNER_ID, createInstancePropInputList(Collections.singletonList(prop1)));
+            service, OWNER_ID, createInstancePropInputList(Collections.singletonList(prop1)));
 
         Assert.assertTrue(declareEither.isLeft());
 
         PolicyDefinition policyDefinition = createPolicyDefinition(prop1.getUniqueId());
         StorageOperationStatus storageOperationStatus =
-                declarator.unDeclarePropertiesAsPolicies(service, policyDefinition);
+            declarator.unDeclarePropertiesAsPolicies(service, policyDefinition);
 
         List<PropertyDefinition> actualProperties = propertyCaptor.getAllValues();
 

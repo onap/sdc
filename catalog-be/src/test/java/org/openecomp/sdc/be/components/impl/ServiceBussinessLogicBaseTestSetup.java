@@ -93,42 +93,42 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
     protected ServiceBusinessLogic bl;
     protected static final String SERVICE_CATEGORY = "Mobility";
     protected static final String INSTANTIATION_TYPE = "A-la-carte";
-    protected final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    protected UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-    protected WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    protected WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-    protected ResponseFormatManager responseManager = null;
-    protected ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
-    protected AuditCassandraDao auditingDao = Mockito.mock(AuditCassandraDao.class);
-    protected ArtifactsBusinessLogic artifactBl = Mockito.mock(ArtifactsBusinessLogic.class);
-    protected GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
-    protected JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
-    protected ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    protected GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
-    protected UserValidations userValidations = Mockito.mock(UserValidations.class);
-    protected ResourceAdminEvent auditArchive1 = Mockito.mock(ResourceAdminEvent.class);
-    protected CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
-    protected ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
-    protected ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
-    IElementOperation mockElementDao = new ElementOperationMock();
-    DistributionEngine distributionEngine =  Mockito.mock(DistributionEngine.class);
-    ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
-    ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
-    UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
-    protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
-    protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
-    protected ServiceFunctionValidator serviceFunctionValidator = new ServiceFunctionValidator(componentsUtils);
-    protected ServiceInstantiationTypeValidator serviceInstantiationTypeValidator = new ServiceInstantiationTypeValidator(componentsUtils);
-    protected ComponentDescriptionValidator componentDescriptionValidator =  new ComponentDescriptionValidator(componentsUtils);
-    protected ComponentProjectCodeValidator componentProjectCodeValidator =  new ComponentProjectCodeValidator(componentsUtils);
-    protected ComponentIconValidator componentIconValidator = new ComponentIconValidator(componentsUtils);
-    protected ComponentContactIdValidator componentContactIdValidator = new ComponentContactIdValidator(componentsUtils);
-    protected ComponentTagsValidator componentTagsValidator = new ComponentTagsValidator(componentsUtils);
-    protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
-    protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
-    protected ServiceValidator serviceValidator = createServiceValidator();
+    private final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private final UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
+    private final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
+    private final WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
+    private final ResponseFormatManager responseManager = ResponseFormatManager.getInstance();
+    private final ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
+    protected final AuditCassandraDao auditingDao = Mockito.mock(AuditCassandraDao.class);
+    private final ArtifactsBusinessLogic artifactBl = Mockito.mock(ArtifactsBusinessLogic.class);
+    private final GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
+    private final JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
+    protected final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
+    protected final GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
+    private final UserValidations userValidations = Mockito.mock(UserValidations.class);
+    private final ResourceAdminEvent auditArchive1 = Mockito.mock(ResourceAdminEvent.class);
+    private final CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
+    private final ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
+    private final ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
+    private final IElementOperation mockElementDao = new ElementOperationMock();
+    private final DistributionEngine distributionEngine =  Mockito.mock(DistributionEngine.class);
+    private final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    private final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
+    private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    private final ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
+    private final ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
+    private final ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
+    protected final ServiceFunctionValidator serviceFunctionValidator = new ServiceFunctionValidator(componentsUtils);
+    private final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator = new ServiceInstantiationTypeValidator(componentsUtils);
+    private final ComponentDescriptionValidator componentDescriptionValidator =  new ComponentDescriptionValidator(componentsUtils);
+    private final ComponentProjectCodeValidator componentProjectCodeValidator =  new ComponentProjectCodeValidator(componentsUtils);
+    private final ComponentIconValidator componentIconValidator = new ComponentIconValidator(componentsUtils);
+    private final ComponentContactIdValidator componentContactIdValidator = new ComponentContactIdValidator(componentsUtils);
+    private final ComponentTagsValidator componentTagsValidator = new ComponentTagsValidator(componentsUtils);
+    private final ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
+    private final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
+    private final ServiceValidator serviceValidator = createServiceValidator();
 
     protected User user = null;
     protected Resource genericService = null;
@@ -237,7 +237,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
 
         mockAuditingDaoLogic();
 
-        responseManager = ResponseFormatManager.getInstance();
+//        responseManager = ResponseFormatManager.getInstance();
 
 
     }
@@ -422,9 +422,9 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
         Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.eq("DResult"), Mockito.anyString())).thenReturn(emptyEventList);
     }
 
-    private void assertResponse(Either<Service, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
-        assertResponse(createResponse.right().value(), expectedStatus, variables);
-    }
+//    private void assertResponse(Either<Service, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
+//        assertResponse(createResponse.right().value(), expectedStatus, variables);
+//    }
 
     protected void assertComponentException(ComponentException e, ActionStatus expectedStatus, String... variables) {
         ResponseFormat actualResponse = e.getResponseFormat() != null ?
