@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+import static org.openecomp.sdc.be.components.property.GetOutputUtils.isGetOutputValueForOutput;
 import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyCapabilityOfChildInstance;
 
 import com.google.common.collect.Sets;
@@ -61,11 +62,11 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetAttributeValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
@@ -84,6 +85,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -100,6 +102,7 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -312,6 +315,33 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
+    public List<ComponentInstanceOutput> getComponentInstanceOutputsByOutputId(final Component component,
+                                                                               final String outputId) {
+        final List<ComponentInstanceOutput> componentInstanceOutputs = new ArrayList<>();
+        final Map<String, List<ComponentInstanceOutput>> componentInstancesOutputsMap = component
+            .getComponentInstancesOutputs();
+        if (componentInstancesOutputsMap != null && !componentInstancesOutputsMap.isEmpty()) {
+            componentInstancesOutputsMap.forEach(new BiConsumer<String, List<ComponentInstanceOutput>>() {
+                @Override
+                public void accept(String s, List<ComponentInstanceOutput> outputList) {
+                    String componentInstanceName = "";
+                    final Optional<ComponentInstance> componentInstanceOptional = component.getComponentInstances()
+                        .stream().filter(ci -> ci.getUniqueId().equals(s)).findAny();
+                    if (componentInstanceOptional.isPresent()) {
+                        componentInstanceName = componentInstanceOptional.get().getName();
+                    }
+                    if (outputList != null && !outputList.isEmpty()) {
+                        for (final ComponentInstanceOutput output : outputList) {
+                            addComponentInstanceOutput(s, componentInstanceName, output, output.getGetAttributeValues(), outputId,
+                                componentInstanceOutputs);
+                        }
+                    }
+                }
+            });
+        }
+        return componentInstanceOutputs;
+    }
+
     private void addCompInstanceInput(String s, String ciName, ComponentInstanceInput prop, List<GetInputValueDataDefinition> inputsValues, String inputId, List<ComponentInstanceInput> resList) {
         if(inputsValues != null && !inputsValues.isEmpty()){
             for(GetInputValueDataDefinition inputData: inputsValues){
@@ -319,6 +349,23 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     prop.setComponentInstanceId(s);
                     prop.setComponentInstanceName(ciName);
                     resList.add(prop);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void addComponentInstanceOutput(final String uniqueId, final String ciName,
+                                            final ComponentInstanceOutput prop,
+                                            final List<GetAttributeValueDataDefinition> outputsValues,
+                                            final String outputId,
+                                            final List<ComponentInstanceOutput> componentInstanceOutputList) {
+        if (outputsValues != null && !outputsValues.isEmpty()) {
+            for (final GetAttributeValueDataDefinition outputData : outputsValues) {
+                if (isGetOutputValueForOutput(outputData, outputId)) {
+                    prop.setComponentInstanceId(uniqueId);
+                    prop.setComponentInstanceName(ciName);
+                    componentInstanceOutputList.add(prop);
                     break;
                 }
             }
@@ -675,8 +722,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         resourceInstance.setProperties(PropertiesUtils.getProperties(service));
 
-        final List<InputDefinition> serviceInputs = service.getInputs();
-        resourceInstance.setInputs(serviceInputs);
+        resourceInstance.setInputs(service.getInputs());
+        resourceInstance.setOutputs(service.getOutputs());
         resourceInstance.setSourceModelInvariant(service.getInvariantUUID());
         resourceInstance.setSourceModelName(service.getName());
         resourceInstance.setSourceModelUuid(service.getUUID());
