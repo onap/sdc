@@ -30,7 +30,7 @@ An example of a simple heat package stucture is a zip archive containing the fol
 - base_vFW.env    (corresponding environment file)
 - MANIFEST.json   (describes files included in the package)
 
-Examples of heat packages are the packages with .zip extension available in `SDC git repo <https://git.onap.org/sdc/tree/test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/Files/VNFs>`_
+Examples of heat packages are the packages with .zip extension available in `SDC git repo <https://git.onap.org/sdc/tree/integration-tests/src/test/resources/Files/VNFs>`_
 
 ONAP Tosca CSAR Package
 ^^^^^^^^^^^^^^^^^^^^^^^
