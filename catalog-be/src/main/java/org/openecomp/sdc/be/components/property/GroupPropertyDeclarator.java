@@ -20,7 +20,16 @@
 
 package org.openecomp.sdc.be.components.property;
 
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -28,20 +37,11 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 
 @org.springframework.stereotype.Component
 public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefinition, PropertyDataDefinition> {
@@ -49,7 +49,8 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
     private static final Logger log = Logger.getLogger(GroupPropertyDeclarator.class);
     private GroupOperation groupOperation;
 
-    public GroupPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation, GroupOperation groupOperation) {
+    public GroupPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation,
+                                   GroupOperation groupOperation) {
         super(componentsUtils, propertyOperation);
         this.groupOperation = groupOperation;
     }
@@ -60,8 +61,10 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
     }
 
     @Override
-    public Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String groupId, List<PropertyDataDefinition> properties) {
-        log.debug("#updatePropertiesValues - updating group properties for group {} on component {}", groupId, component.getUniqueId());
+    public Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String groupId,
+                                                                    List<PropertyDataDefinition> properties) {
+        log.debug("#updatePropertiesValues - updating group properties for group {} on component {}", groupId,
+            component.getUniqueId());
         StorageOperationStatus updateStatus = groupOperation.updateGroupProperties(component, groupId, properties);
         return updateStatus == StorageOperationStatus.OK ? Either.left(updateStatus) : Either.right(updateStatus);
     }
@@ -75,7 +78,7 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
     @Override
     public void addPropertiesListToInput(PropertyDataDefinition declaredProp, InputDefinition input) {
         List<ComponentInstanceProperty> propertiesList = input.getProperties();
-        if(propertiesList == null) {
+        if (propertiesList == null) {
             propertiesList = new ArrayList<>(); // adding the property with the new value for UI
         }
         propertiesList.add(new ComponentInstanceProperty(declaredProp));
@@ -86,18 +89,19 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
     @Override
     public StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition inputForDelete) {
         return getGroupPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
-                .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties))
-                .orElse(StorageOperationStatus.OK);
+            .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties))
+            .orElse(StorageOperationStatus.OK);
     }
 
     @Override
     public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition inputForDelete) {
         return getGroupPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
-                .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties))
-                .orElse(StorageOperationStatus.OK);
+            .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties))
+            .orElse(StorageOperationStatus.OK);
     }
 
-    private StorageOperationStatus unDeclareGroupProperties(Component container, InputDefinition input, GroupProperties groupProperties) {
+    private StorageOperationStatus unDeclareGroupProperties(Component container, InputDefinition input,
+                                                            GroupProperties groupProperties) {
         String groupId = groupProperties.getGroupId();
         List<PropertyDataDefinition> propsDeclaredAsInput = groupProperties.getProperties();
         propsDeclaredAsInput.forEach(groupProp -> prepareValueBeforeDelete(input, groupProp, Collections.emptyList()));
@@ -109,19 +113,19 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
             return Optional.empty();
         }
         return container.getGroups()
-                .stream()
-                .filter(group -> Objects.nonNull(group.getProperties()))
-                .map(grp -> getGroupPropertiesDeclaredAsInput(grp, inputId))
-                .filter(GroupProperties::isNotEmpty)
-                .findFirst();
+            .stream()
+            .filter(group -> Objects.nonNull(group.getProperties()))
+            .map(grp -> getGroupPropertiesDeclaredAsInput(grp, inputId))
+            .filter(GroupProperties::isNotEmpty)
+            .findFirst();
     }
 
 
     private GroupProperties getGroupPropertiesDeclaredAsInput(GroupDefinition group, String inputId) {
         List<PropertyDataDefinition> propertyDataDefinitions = group.getProperties()
-                .stream()
-                .filter(prop -> isPropertyDeclaredAsInputByInputId(prop, inputId))
-                .collect(toList());
+            .stream()
+            .filter(prop -> isPropertyDeclaredAsInputByInputId(prop, inputId))
+            .collect(toList());
         return new GroupProperties(group.getUniqueId(), propertyDataDefinitions);
     }
 
@@ -130,18 +134,19 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
             return false;
         }
         return property.getGetInputValues().stream()
-                .filter(Objects::nonNull)
-                .anyMatch(getInputVal -> isGetInputValueForInput(getInputVal, inputId));
+            .filter(Objects::nonNull)
+            .anyMatch(getInputVal -> isGetInputValueForInput(getInputVal, inputId));
     }
 
 
     private class GroupProperties {
+
         private String groupId;
         private List<PropertyDataDefinition> properties;
 
         GroupProperties(String groupId, List<PropertyDataDefinition> properties) {
             this.groupId = groupId;
-            this.properties = (properties == null)? null :new ArrayList<>(properties);
+            this.properties = (properties == null) ? null : new ArrayList<>(properties);
         }
 
         String getGroupId() {
@@ -156,4 +161,11 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
             return CollectionUtils.isNotEmpty(properties);
         }
     }
+
+    @Override
+    public StorageOperationStatus unDeclarePropertiesAsOutputs(final Component component,
+                                                               final OutputDefinition outputDefinition) {
+        throw new UnsupportedOperationException();
+    }
+
 }

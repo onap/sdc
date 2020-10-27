@@ -182,6 +182,11 @@ public class NodeTemplateOperation extends BaseOperation {
                     return result;
                 }
 
+                result = addServiceInstanceOutputsToProxyServiceInstance(updatedContainer, componentInstance);
+                if(result.isRight()) {
+                    return result;
+                }
+
                 result = addServiceInstanceInterfacesToProxyServiceInstance(updatedContainer, componentInstance);
                 if(result.isRight()) {
                     return result;
@@ -355,6 +360,29 @@ public class NodeTemplateOperation extends BaseOperation {
             }
         }
 
+        return Either.left(new ImmutablePair<>(updatedContainer, componentInstance.getUniqueId()));
+    }
+
+    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServiceInstanceOutputsToProxyServiceInstance(
+        final TopologyTemplate updatedContainer, final ComponentInstance componentInstance) {
+
+        final List<OutputDefinition> outputsList = componentInstance.getOutputs();
+        if (CollectionUtils.isNotEmpty(outputsList)) {
+            final Map<String, PropertyDataDefinition> outputsMap = outputsList.stream().map(
+                PropertyDataDefinition::new).collect(Collectors.toMap(PropertyDataDefinition::getName, i -> i));
+            final MapPropertiesDataDefinition mapPropertiesDataDefinition = new MapPropertiesDataDefinition(outputsMap);
+            final Map<String, MapPropertiesDataDefinition> dataDefinitionMap = new HashMap<>();
+            dataDefinitionMap.put(componentInstance.getUniqueId(), mapPropertiesDataDefinition);
+            updatedContainer.setInstOutputs(dataDefinitionMap);
+
+            final StorageOperationStatus status =
+                addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(),
+                    EdgeLabelEnum.INST_OUTPUTS, VertexTypeEnum.INST_OUTPUTS, mapPropertiesDataDefinition,
+                    componentInstance.getUniqueId());
+            if (status != StorageOperationStatus.OK) {
+                return Either.right(status);
+            }
+        }
         return Either.left(new ImmutablePair<>(updatedContainer, componentInstance.getUniqueId()));
     }
 
@@ -2290,10 +2318,36 @@ public class NodeTemplateOperation extends BaseOperation {
         return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, properties, pathKeys, JsonPresentationFields.NAME);
     }
 
+    public StorageOperationStatus updateComponentInstanceOutput(final Component containerComponent,
+                                                                final String componentInstanceId,
+                                                                final ComponentInstanceOutput componentInstanceOutput) {
+
+        final List<String> pathKeys = new ArrayList<>();
+        pathKeys.add(componentInstanceId);
+        return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_OUTPUTS,
+            VertexTypeEnum.INST_OUTPUTS, componentInstanceOutput, pathKeys, JsonPresentationFields.NAME);
+    }
+
+    public StorageOperationStatus updateComponentInstanceOutputs(final Component containerComponent,
+                                                                 final String componentInstanceId,
+                                                                 final List<ComponentInstanceOutput> properties) {
+        final List<String> pathKeys = new ArrayList<>();
+        pathKeys.add(componentInstanceId);
+        return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_OUTPUTS,
+            VertexTypeEnum.INST_OUTPUTS, properties, pathKeys, JsonPresentationFields.NAME);
+    }
+
+
     public StorageOperationStatus addComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add(componentInstanceId);
         return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, property, pathKeys, JsonPresentationFields.NAME);
+    }
+
+    public StorageOperationStatus addComponentInstanceOutput(Component containerComponent, String componentInstanceId, ComponentInstanceOutput property) {
+        List<String> pathKeys = new ArrayList<>();
+        pathKeys.add(componentInstanceId);
+        return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_OUTPUTS, VertexTypeEnum.INST_OUTPUTS, property, pathKeys, JsonPresentationFields.NAME);
     }
 
     public StorageOperationStatus createInstanceEdge(GraphVertex metadataVertex, ComponentInstanceDataDefinition componentInstance) {

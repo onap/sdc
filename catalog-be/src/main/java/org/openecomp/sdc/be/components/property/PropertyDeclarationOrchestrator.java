@@ -20,7 +20,14 @@
 
 package org.openecomp.sdc.be.components.property;
 
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
+
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.ComponentInstancePropertyToPolicyDeclarator;
@@ -28,48 +35,54 @@ import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.Comp
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropOutput;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
 
 @org.springframework.stereotype.Component
 public class PropertyDeclarationOrchestrator {
 
     private static final Logger log = Logger.getLogger(PropertyDeclarationOrchestrator.class);
     private ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDeclarator;
+    private ComponentInstanceOutputPropertyDeclarator componentInstanceOutputPropertyDeclarator;
     private ComponentInstancePropertyDeclarator componentInstancePropertyDeclarator;
     private PolicyPropertyDeclarator policyPropertyDeclarator;
     private GroupPropertyDeclarator groupPropertyDeclarator;
     private ComponentPropertyDeclarator servicePropertyDeclarator;
     private List<PropertyDeclarator> propertyDeclaratorsToInput;
+    private List<PropertyDeclarator> propertyDeclaratorsToOutput;
     private List<PropertyDeclarator> propertyDeclaratorsToPolicy;
     private ComponentPropertyToPolicyDeclarator componentPropertyToPolicyDeclarator;
     private ComponentInstancePropertyToPolicyDeclarator componentInstancePropertyToPolicyDeclarator;
 
-    public PropertyDeclarationOrchestrator(ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDeclarator,
-            ComponentInstancePropertyDeclarator componentInstancePropertyDeclarator, PolicyPropertyDeclarator policyPropertyDeclarator,
-            GroupPropertyDeclarator groupPropertyDeclarator, ComponentPropertyDeclarator servicePropertyDeclarator,
-            ComponentPropertyToPolicyDeclarator componentPropertyToPolicyDeclarator,
-            ComponentInstancePropertyToPolicyDeclarator componentInstancePropertyToPolicyDeclarator) {
+    public PropertyDeclarationOrchestrator(
+        ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDeclarator,
+        ComponentInstanceOutputPropertyDeclarator componentInstanceOutputPropertyDeclarator,
+        ComponentInstancePropertyDeclarator componentInstancePropertyDeclarator,
+        PolicyPropertyDeclarator policyPropertyDeclarator,
+        GroupPropertyDeclarator groupPropertyDeclarator, ComponentPropertyDeclarator servicePropertyDeclarator,
+        ComponentPropertyToPolicyDeclarator componentPropertyToPolicyDeclarator,
+        ComponentInstancePropertyToPolicyDeclarator componentInstancePropertyToPolicyDeclarator) {
         this.componentInstanceInputPropertyDeclarator = componentInstanceInputPropertyDeclarator;
+        this.componentInstanceOutputPropertyDeclarator = componentInstanceOutputPropertyDeclarator;
         this.componentInstancePropertyDeclarator = componentInstancePropertyDeclarator;
         this.policyPropertyDeclarator = policyPropertyDeclarator;
         this.groupPropertyDeclarator = groupPropertyDeclarator;
         this.servicePropertyDeclarator = servicePropertyDeclarator;
         this.componentPropertyToPolicyDeclarator = componentPropertyToPolicyDeclarator;
         this.componentInstancePropertyToPolicyDeclarator = componentInstancePropertyToPolicyDeclarator;
-        propertyDeclaratorsToInput = Arrays.asList(componentInstanceInputPropertyDeclarator, componentInstancePropertyDeclarator, policyPropertyDeclarator, groupPropertyDeclarator, servicePropertyDeclarator);
-        propertyDeclaratorsToPolicy = Arrays.asList(componentPropertyToPolicyDeclarator, componentInstancePropertyToPolicyDeclarator);
+        propertyDeclaratorsToInput = Arrays
+            .asList(componentInstanceInputPropertyDeclarator, componentInstancePropertyDeclarator,
+                policyPropertyDeclarator, groupPropertyDeclarator, servicePropertyDeclarator);
+        propertyDeclaratorsToOutput = Arrays
+            .asList(componentInstanceOutputPropertyDeclarator);
+        propertyDeclaratorsToPolicy = Arrays
+            .asList(componentPropertyToPolicyDeclarator, componentInstancePropertyToPolicyDeclarator);
     }
 
     public Either<List<InputDefinition>, StorageOperationStatus> declarePropertiesToInputs(Component component, ComponentInstInputsMap componentInstInputsMap) {
@@ -79,11 +92,25 @@ public class PropertyDeclarationOrchestrator {
         return propertyDeclarator.declarePropertiesAsInputs(component, propsToDeclare.getLeft(), propsToDeclare.getRight());
     }
 
+    public Either<List<OutputDefinition>, StorageOperationStatus> declarePropertiesToOutputs(final Component component,
+                                                                                             final ComponentInstOutputsMap componentInstOutputsMap) {
+        updateOutputPropertiesConstraints(component, componentInstOutputsMap);
+        final PropertyDeclarator propertyDeclarator = getOutputPropertyDeclarator(componentInstOutputsMap);
+        final Pair<String, List<ComponentInstancePropOutput>> propsToDeclare = componentInstOutputsMap.resolvePropertiesToDeclare();
+        return propertyDeclarator.declarePropertiesAsOutputs(component, propsToDeclare.getLeft(), propsToDeclare.getRight());
+    }
+
     private void updatePropertiesConstraints(Component component, ComponentInstInputsMap componentInstInputsMap) {
         componentInstInputsMap.getComponentInstanceProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetComponentInstancesProperties(), k, v));
         componentInstInputsMap.getComponentInstanceInputsMap().forEach((k, v) -> updatePropsConstraints(component.safeGetComponentInstancesInputs(), k, v));
         componentInstInputsMap.getGroupProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetPolicyProperties(), k, v));
         componentInstInputsMap.getPolicyProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetGroupsProperties(), k, v));
+    }
+
+    private void updateOutputPropertiesConstraints(final Component component,
+                                                   final ComponentInstOutputsMap componentInstOutputsMap) {
+        componentInstOutputsMap.getComponentInstanceProperties().forEach((k, v) -> updateOutputPropsConstraints(component.safeGetComponentInstancesProperties(), k, v));
+        componentInstOutputsMap.getComponentInstanceOutputsMap().forEach((k, v) -> updateOutputPropsConstraints(component.safeGetComponentInstancesOutputs(), k, v));
     }
 
     public Either<List<PolicyDefinition>, StorageOperationStatus> declarePropertiesToPolicies(Component component, ComponentInstInputsMap componentInstInputsMap) {
@@ -116,6 +143,24 @@ public class PropertyDeclarationOrchestrator {
         }
     }
 
+    private <T extends PropertyDataDefinition> void updateOutputPropsConstraints(final Map<String, List<T>> instancesProperties ,
+                                                                                 final String ownerId,
+                                                                                 final List<ComponentInstancePropOutput> outputs) {
+        final Optional<List<T>> propertiesOpt = instancesProperties.entrySet()
+            .stream()
+            .filter(e -> e.getKey().equals(ownerId))
+            .map(Map.Entry::getValue)
+            .findFirst();
+        if(propertiesOpt.isPresent()){
+            final Map<String, PropertyDataDefinition> instProps = propertiesOpt.get()
+                .stream()
+                .collect(Collectors.toMap(PropertyDataDefinition::getName, p->p));
+            outputs.stream()
+                .filter(i->instProps.containsKey(i.getName()))
+                .forEach(i->updatePropConstraints(i, instProps.get(i.getName())));
+        }
+    }
+
     private void updatePropConstraints(PropertyDataDefinition input, PropertyDataDefinition property) {
         if(CollectionUtils.isNotEmpty(property.getPropertyConstraints())){
             input.setPropertyConstraints(property.getPropertyConstraints());
@@ -131,6 +176,23 @@ public class PropertyDeclarationOrchestrator {
             StorageOperationStatus storageOperationStatus = propertyDeclarator.unDeclarePropertiesAsInputs(component, inputToDelete);
             if (StorageOperationStatus.OK != storageOperationStatus) {
                 log.debug("#unDeclarePropertiesAsInputs - failed to remove input declaration for input {} on component {}. reason {}", inputToDelete.getName(), component.getUniqueId(), storageOperationStatus);
+                return storageOperationStatus;
+            }
+        }
+        return StorageOperationStatus.OK;
+
+    }
+
+    public StorageOperationStatus unDeclarePropertiesAsOutputs(final Component component,
+                                                               final OutputDefinition outputToDelete) {
+        log.debug("#unDeclarePropertiesAsOutputs - removing output declaration for output {} on component {}", outputToDelete
+            .getName(), component.getUniqueId());
+        for (final PropertyDeclarator propertyDeclarator : propertyDeclaratorsToOutput) {
+            final StorageOperationStatus storageOperationStatus = propertyDeclarator.unDeclarePropertiesAsOutputs(component,
+                outputToDelete);
+            if (StorageOperationStatus.OK != storageOperationStatus) {
+                log.debug("#unDeclarePropertiesAsOutputs - failed to remove output declaration for output {} on component {}. reason {}", outputToDelete
+                    .getName(), component.getUniqueId(), storageOperationStatus);
                 return storageOperationStatus;
             }
         }
@@ -167,6 +229,17 @@ public class PropertyDeclarationOrchestrator {
         Pair<String, List<ComponentInstancePropInput>> propsToDeclare = componentInstInputsMap.resolvePropertiesToDeclare();
         return propsToDeclare.getLeft();
     }
+
+    /**
+     * Get properties owner id
+     *
+     * @param componentInstOutputsMap
+     * @return
+     */
+    public String getOutputPropOwnerId(final ComponentInstOutputsMap componentInstOutputsMap) {
+        return componentInstOutputsMap.resolvePropertiesToDeclare().getLeft();
+    }
+
 
     public StorageOperationStatus unDeclarePropertiesAsPolicies(Component component, PolicyDefinition policyToDelete) {
         log.debug("#unDeclarePropertiesAsInputs - removing policy declaration for input {} on component {}", policyToDelete
@@ -209,6 +282,16 @@ public class PropertyDeclarationOrchestrator {
         }
         throw new IllegalStateException("there are no properties selected for declaration");
 
+    }
+
+    private PropertyDeclarator getOutputPropertyDeclarator(final ComponentInstOutputsMap componentInstOutputsMap) {
+        if (isNotEmpty(componentInstOutputsMap.getComponentInstanceOutputsMap())) {
+            return componentInstanceOutputPropertyDeclarator;
+        }
+        if (isNotEmpty(componentInstOutputsMap.getComponentInstanceProperties())) {
+            return componentInstancePropertyDeclarator;
+        }
+        throw new IllegalStateException("there are no properties selected for declaration");
     }
 
 }

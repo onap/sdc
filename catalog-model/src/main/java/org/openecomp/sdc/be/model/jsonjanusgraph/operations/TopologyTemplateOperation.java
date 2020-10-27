@@ -39,9 +39,6 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
@@ -54,6 +51,7 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
@@ -98,13 +96,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private static final Logger log = Logger.getLogger(TopologyTemplateOperation.class);
-    private static final String PATH_DELIMITER = ".";
 
     @Autowired
     private ArchiveOperation archiveOperation;
 
     public Either<TopologyTemplate, StorageOperationStatus> createTopologyTemplate(TopologyTemplate topologyTemplate) {
-        Either<TopologyTemplate, StorageOperationStatus> result = null;
 
         topologyTemplate.generateUUID();
 
@@ -122,101 +118,90 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (createdVertex.isRight()) {
             JanusGraphOperationStatus status = createdVertex.right().value();
             log.debug( "Error returned after creating topology template data node {}. status returned is ", topologyTemplateVertex, status);
-            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-            return result;
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
 
         topologyTemplateVertex = createdVertex.left().value();
 
         StorageOperationStatus assosiateCommon = assosiateCommonForToscaElement(topologyTemplateVertex, topologyTemplate, null);
         if (assosiateCommon != StorageOperationStatus.OK) {
-            result = Either.right(assosiateCommon);
-            return result;
+            return Either.right(assosiateCommon);
         }
 
         StorageOperationStatus associateCategory = assosiateMetadataToCategory(topologyTemplateVertex, topologyTemplate);
         if (associateCategory != StorageOperationStatus.OK) {
-            result = Either.right(associateCategory);
-            return result;
+            return Either.right(associateCategory);
         }
 
         StorageOperationStatus associateInputs = associateInputsToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInputs != StorageOperationStatus.OK) {
-            result = Either.right(associateInputs);
-            return result;
+            return Either.right(associateInputs);
         }
         StorageOperationStatus associateGroups = associateGroupsToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateGroups != StorageOperationStatus.OK) {
-            result = Either.right(associateGroups);
-            return result;
+            return Either.right(associateGroups);
         }
         StorageOperationStatus associatePolicies = associatePoliciesToComponent(topologyTemplateVertex, topologyTemplate);
         if (associatePolicies != StorageOperationStatus.OK) {
-            result = Either.right(associatePolicies);
-            return result;
+            return Either.right(associatePolicies);
         }
         StorageOperationStatus associateInstAttr = associateInstAttributesToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInstAttr != StorageOperationStatus.OK) {
-            result = Either.right(associateInstAttr);
-            return result;
+            return Either.right(associateInstAttr);
         }
         StorageOperationStatus associateInstProperties = associateInstPropertiesToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInstProperties != StorageOperationStatus.OK) {
-            result = Either.right(associateInstProperties);
-            return result;
+            return Either.right(associateInstProperties);
         }
         StorageOperationStatus associateInstInputs = associateInstInputsToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInstProperties != StorageOperationStatus.OK) {
-            result = Either.right(associateInstInputs);
-            return result;
+            return Either.right(associateInstInputs);
         }
+
+        final StorageOperationStatus storageOperationStatus = associateInstOutputsToComponent(topologyTemplateVertex,
+            topologyTemplate);
+        if (associateInstProperties != StorageOperationStatus.OK) {
+            return Either.right(storageOperationStatus);
+        }
+
         StorageOperationStatus associateInstGroups = associateInstGroupsToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInstGroups != StorageOperationStatus.OK) {
-            result = Either.right(associateInstInputs);
-            return result;
+            return Either.right(associateInstInputs);
         }
 
         StorageOperationStatus associateRequirements = associateRequirementsToResource(topologyTemplateVertex, topologyTemplate);
         if (associateRequirements != StorageOperationStatus.OK) {
-            result = Either.right(associateRequirements);
-            return result;
+            return Either.right(associateRequirements);
         }
 
         StorageOperationStatus associateCapabilities = associateCapabilitiesToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapabilities != StorageOperationStatus.OK) {
-            result = Either.right(associateCapabilities);
-            return result;
+            return Either.right(associateCapabilities);
         }
 
         StorageOperationStatus associateArtifacts = associateTopologyTemplateArtifactsToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateArtifacts != StorageOperationStatus.OK) {
-            result = Either.right(associateArtifacts);
-            return result;
+            return Either.right(associateArtifacts);
         }
 
         StorageOperationStatus addAdditionalInformation = addAdditionalInformationToResource(topologyTemplateVertex, topologyTemplate);
         if (addAdditionalInformation != StorageOperationStatus.OK) {
-            result = Either.right(addAdditionalInformation);
-            return result;
+            return Either.right(addAdditionalInformation);
         }
         StorageOperationStatus associateCapProperties = associateCapPropertiesToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapProperties != StorageOperationStatus.OK) {
-            result = Either.right(associateCapProperties);
-            return result;
+            return Either.right(associateCapProperties);
         }
 
         StorageOperationStatus associateInterfaces = associateInterfacesToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInterfaces != StorageOperationStatus.OK) {
-            result = Either.right(associateInterfaces);
-            return result;
+            return Either.right(associateInterfaces);
         }
 
         StorageOperationStatus associatePathProperties = associateForwardingPathToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapProperties != StorageOperationStatus.OK) {
-            result = Either.right(associatePathProperties);
-            return result;
+            return Either.right(associatePathProperties);
         }
-
 
         return Either.left(topologyTemplate);
 
@@ -243,13 +228,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     private StorageOperationStatus associateForwardingPathToResource(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
         Map<String, ForwardingPathDataDefinition> forwardingPaths = topologyTemplate.getForwardingPaths();
         return associateForwardingPathToComponent(topologyTemplateVertex,forwardingPaths);
-    }
-
-    private StorageOperationStatus associateNodeFilterToResource(GraphVertex topologyTemplateVertex,
-            TopologyTemplate topologyTemplate) {
-        Map<String, CINodeFilterDataDefinition> nodeFilters =
-                topologyTemplate.getNodeFilterComponents();
-        return associateNodeFiltersToComponent(topologyTemplateVertex, nodeFilters);
     }
 
     private StorageOperationStatus associateCapPropertiesToResource(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
@@ -395,6 +373,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return associateInstInputsToComponent(nodeTypeVertex, instProps);
     }
 
+    public StorageOperationStatus associateInstOutputsToComponent(final GraphVertex nodeTypeVertex,
+                                                                  final TopologyTemplate topologyTemplate) {
+        return associateInstOutputsToComponent(nodeTypeVertex, topologyTemplate.getInstOutputs());
+    }
+
     public StorageOperationStatus associateInstGroupsToComponent(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
         Map<String, MapGroupsDataDefinition> instGroups = topologyTemplate.getInstGroups();
         return associateInstGroupsToComponent(nodeTypeVertex, instGroups);
@@ -416,6 +399,20 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_INPUTS, EdgeLabelEnum.INST_INPUTS, instInputs);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
+            }
+        }
+        return StorageOperationStatus.OK;
+    }
+
+    public StorageOperationStatus associateInstOutputsToComponent(final GraphVertex nodeTypeVertex,
+                                                                  final Map<String, MapPropertiesDataDefinition> mapPropertiesDataDefinitionMap) {
+
+        if (MapUtils.isNotEmpty(mapPropertiesDataDefinitionMap)) {
+            final Either<GraphVertex, StorageOperationStatus> associateElementToData =
+                associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_OUTPUTS, EdgeLabelEnum.INST_OUTPUTS,
+                    mapPropertiesDataDefinitionMap);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
             }
         }
         return StorageOperationStatus.OK;
@@ -746,6 +743,14 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
 
         }
+
+        if (!componentParametersView.isIgnoreOutputs()) {
+            status = setOutputsFromGraph(componentV, toscaElement);
+            if (status != JanusGraphOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+            }
+
+        }
         if (!componentParametersView.isIgnoreProperties()) {
             status = setPropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
@@ -756,6 +761,14 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
         if (!componentParametersView.isIgnoreComponentInstancesInputs()) {
             status = setComponentInstancesInputsFromGraph(componentV, toscaElement);
+            if (status != JanusGraphOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+
+            }
+        }
+
+        if (!componentParametersView.isIgnoreComponentInstancesOutputs()) {
+            status = setComponentInstancesOutputsFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
 
@@ -999,6 +1012,18 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
+    private JanusGraphOperationStatus setComponentInstancesOutputsFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
+        Either<Map<String, MapPropertiesDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INST_OUTPUTS);
+        if (result.isLeft()) {
+            topologyTemplate.setInstOutputs(result.left().value());
+        } else {
+            if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+                return result.right().value();
+            }
+        }
+        return JanusGraphOperationStatus.OK;
+    }
+
     private JanusGraphOperationStatus setNodeFilterComponentFromGraph(final GraphVertex componentV,
                                                                       final TopologyTemplate topologyTemplate) {
 
@@ -1133,6 +1158,29 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }
         Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> capabilitiesResult =
                 getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES);
+        if (capabilitiesResult.isLeft()) {
+            toscaElement.setCapabilities(capabilitiesResult.left().value());
+        } else {
+            if (capabilitiesResult.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+                return capabilitiesResult.right().value();
+            }
+        }
+        return JanusGraphOperationStatus.OK;
+    }
+
+    private JanusGraphOperationStatus setOutputsFromGraph(final GraphVertex componentV,
+                                                          final TopologyTemplate toscaElement) {
+        final Either<Map<String, PropertyDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.OUTPUTS);
+        if (result.isLeft()) {
+            toscaElement.setOutputs(result.left().value());
+        } else {
+            if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+                return result.right().value();
+            }
+        }
+        final Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> capabilitiesResult =
+            getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES);
         if (capabilitiesResult.isLeft()) {
             toscaElement.setCapabilities(capabilitiesResult.left().value());
         } else {
