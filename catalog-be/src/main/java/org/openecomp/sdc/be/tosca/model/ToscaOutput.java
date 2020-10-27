@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 Nokia. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.model;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.junit.Assert.assertThat;
+package org.openecomp.sdc.be.tosca.model;
 
-import org.junit.Test;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ComponentInstListInputTest {
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(ComponentInstListInput.class, hasValidGettersAndSetters());
+public class ToscaOutput extends ToscaProperty {
+
+    private Map<String, ToscaAnnotation> annotations;
+
+    //copy constructor
+    public ToscaOutput(final ToscaProperty toscaProperty) {
+        super(toscaProperty);
+    }
+
+    public void addAnnotation(final String name, final ToscaAnnotation annotaion) {
+        if (annotations == null) {
+            annotations = new HashMap<>();
+        }
+        annotations.put(name, annotaion);
     }
 }
