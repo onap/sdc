@@ -12,19 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ================================================================================
+ * Modifications copyright (c) 2020, Nordix Foundation
+ * ================================================================================
  */
-
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
@@ -65,8 +68,7 @@ import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createCapabilityDefinition;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createProperties;
 
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     @InjectMocks
@@ -112,7 +114,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         List<PropertyDataDefinition> properties = Collections.singletonList(prop1);
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
         when(toscaOperationFacade.addComponentInstancePropertiesToComponent(eq(resource), instancePropertiesCaptor
-                .capture())).thenReturn(Either.left(Collections.emptyMap()));
+            .capture())).thenReturn(Either.left(Collections.emptyMap()));
 
         CapabilityDefinition capabilityDefinition = createCapabilityDefinition();
 
@@ -127,14 +129,14 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         resource.setCapabilities(capabilityMap);
 
         Either<List<InputDefinition>, StorageOperationStatus> createdInputs = testInstance
-                .declarePropertiesAsInputs(resource, "inst1", propsToDeclare);
+            .declarePropertiesAsInputs(resource, "inst1", propsToDeclare);
         Assert.assertTrue(createdInputs.isLeft());
     }
 
     @Test
     public void testUnDeclarePropertiesAsInputs() throws Exception {
         Component component = new ResourceBuilder().setComponentType(ComponentTypeEnum.RESOURCE).setUniqueId("resourceId")
-                .setName("resourceName").build();
+            .setName("resourceName").build();
         InputDefinition input = new InputDefinition();
         input.setUniqueId("ComponentInput1_uniqueId");
         input.setPropertyId("ComponentInput1_uniqueId");
@@ -158,7 +160,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         component.setCapabilities(capabilityMap);
         component.setInputs(Collections.singletonList(input));
         when(toscaOperationFacade.updateInstanceCapabilityProperty(any(Resource.class), any(),
-                any(ComponentInstanceProperty.class), any(CapabilityDefinition.class))).thenReturn(StorageOperationStatus.OK);
+            any(ComponentInstanceProperty.class), any(CapabilityDefinition.class))).thenReturn(StorageOperationStatus.OK);
 
         StorageOperationStatus result = testInstance.unDeclarePropertiesAsInputs(component, input);
         Assert.assertEquals(StorageOperationStatus.OK, result);
@@ -180,17 +182,17 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     @Test
     public void declarePropertiesAsInputs_singleComplexProperty() {
         PropertyDefinition innerProp1 = new PropertyDataDefinitionBuilder()
-                .setName(INNER_PROP1)
-                .setValue("true")
-                .setType("boolean")
-                .setUniqueId(complexProperty.getType() + ".datatype.ecomp_generated_naming")
-                .build();
+            .setName(INNER_PROP1)
+            .setValue("true")
+            .setType("boolean")
+            .setUniqueId(complexProperty.getType() + ".datatype.ecomp_generated_naming")
+            .build();
         PropertyDefinition innerProp2 = new PropertyDataDefinitionBuilder()
-                .setName(INNER_PROP2)
-                .setValue("abc")
-                .setType("string")
-                .setUniqueId(complexProperty.getType() + ".datatype.ecomp_generated_naming")
-                .build();
+            .setName(INNER_PROP2)
+            .setValue("abc")
+            .setType("string")
+            .setUniqueId(complexProperty.getType() + ".datatype.ecomp_generated_naming")
+            .build();
         List<ComponentInstancePropInput> propsToDeclare = createComplexPropInputList(innerProp1, innerProp2);
         when(toscaOperationFacade.addComponentInstancePropertiesToComponent(eq(resource), instancePropertiesCaptor.capture())).thenReturn(Either.left(Collections.emptyMap()));
         Either<List<InputDefinition>, StorageOperationStatus> createdInputs = testInstance.declarePropertiesAsInputs(resource, "inst1", propsToDeclare);
@@ -214,17 +216,17 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     @Test
     public void testUndeclareProperty() {
         Service service = new ServiceBuilder()
-                                  .setUniqueId(SERVICE_ID)
-                                  .setName(SERVICE_NAME)
-                                  .build();
+            .setUniqueId(SERVICE_ID)
+            .setName(SERVICE_NAME)
+            .build();
 
 
 
         InputDefinition inputToDelete = InputsBuilder
-                                                .create()
-                                                .setPropertyId(PROPERTY_ID)
-                                                .setName(PROEPRTY_NAME)
-                                                .build();
+            .create()
+            .setPropertyId(PROPERTY_ID)
+            .setName(PROEPRTY_NAME)
+            .build();
 
         inputToDelete.setGetInputValues(getGetInputListForDeclaration());
 
@@ -235,7 +237,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(any(), any())).thenReturn(new LinkedList<>());
 
         StorageOperationStatus undeclareStatus =
-                testInstance.unDeclarePropertiesAsInputs(service, inputToDelete);
+            testInstance.unDeclarePropertiesAsInputs(service, inputToDelete);
 
         assertThat(undeclareStatus).isEqualTo(StorageOperationStatus.OK);
     }
@@ -252,8 +254,8 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
 
     private PropertyDefinition getPropertyForDeclaration() {
         return new PropertyDataDefinitionBuilder()
-                       .setUniqueId(PROPERTY_ID)
-                       .build();
+            .setUniqueId(PROPERTY_ID)
+            .build();
     }
 
     @Test
@@ -262,11 +264,11 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         List<PropertyDataDefinition> properties = Arrays.asList(prop1, prop2);
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
         InputDefinition input = new InputDefinition(new PropertyDataDefinitionBuilder()
-                .setName("listinput")
-                .setType("list")
-                .setDescription("description")
-                .setSchemaType("org.onap.datatype.listinput")
-                .build());
+            .setName("listinput")
+            .setType("list")
+            .setDescription("description")
+            .setSchemaType("org.onap.datatype.listinput")
+            .build());
         // mock returns
         when(toscaOperationFacade.addComponentInstancePropertiesToComponent(eq(resource), instancePropertiesCaptor.capture())).thenReturn(Either.left(Collections.emptyMap()));
         Either<InputDefinition, StorageOperationStatus> result = testInstance.declarePropertiesAsListInput(resource, "inst1", propsToDeclare, input);
@@ -275,7 +277,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         List<ComponentInstanceProperty> capturedInstanceProperties = instancePropertiesCaptor.getValue().get(INSTANCE_ID);
         assertThat(capturedInstanceProperties.size()).isEqualTo(2);
         Map<String, PropertyDataDefinition> propertiesMap =
-                properties.stream().collect(Collectors.toMap(PropertyDataDefinition::getName, e->e));
+            properties.stream().collect(Collectors.toMap(PropertyDataDefinition::getName, e->e));
         for(ComponentInstanceProperty instanceProperty: capturedInstanceProperties) {
             assertThat(propertiesMap.containsKey(instanceProperty.getName())).isTrue();
             PropertyDataDefinition property = propertiesMap.get(instanceProperty.getName());
@@ -290,11 +292,11 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         List<PropertyDataDefinition> properties = Arrays.asList(prop1, prop2);
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
         InputDefinition input = new InputDefinition(new PropertyDataDefinitionBuilder()
-                .setName("listinput")
-                .setType("list")
-                .setDescription("description")
-                .setSchemaType("org.onap.datatype.listinput")
-                .build());
+            .setName("listinput")
+            .setType("list")
+            .setDescription("description")
+            .setSchemaType("org.onap.datatype.listinput")
+            .build());
         Either<InputDefinition, StorageOperationStatus> result = testInstance.declarePropertiesAsListInput(resource, "inst2", propsToDeclare, input);
         // validate result
         assertThat(result.isRight()).isTrue();
@@ -310,12 +312,12 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
 
         Component component = createComponentWithListInput(INPUT_ID, "innerPropName");
         PropertyDefinition prop = new PropertyDataDefinitionBuilder()
-                .setName("propName")
-                .setValue(generateGetInputValueAsListInput(INPUT_ID, "innerPropName"))
-                .setType("list")
-                .setUniqueId("propName")
-                .addGetInputValue(INPUT_ID)
-                .build();
+            .setName("propName")
+            .setValue(generateGetInputValueAsListInput(INPUT_ID, "innerPropName"))
+            .setType("list")
+            .setUniqueId("propName")
+            .addGetInputValue(INPUT_ID)
+            .build();
         component.setProperties(Collections.singletonList(prop));
 
         List<ComponentInstanceProperty> ciPropList = new ArrayList<>();
@@ -458,8 +460,8 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
 
     private Component createComponentWithListInput(String inputName, String propName) {
         InputDefinition input = InputsBuilder.create()
-                .setName(inputName)
-                .build();
+            .setName(inputName)
+            .build();
 
         input.setUniqueId(INPUT_ID);
         input.setName(INPUT_ID);
@@ -467,8 +469,8 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         input.setValue(generateGetInputValueAsListInput(inputName, propName));
 
         return new ResourceBuilder()
-                .setUniqueId(RESOURCE_ID)
-                .addInput(input)
-                .build();
+            .setUniqueId(RESOURCE_ID)
+            .addInput(input)
+            .build();
     }
 }

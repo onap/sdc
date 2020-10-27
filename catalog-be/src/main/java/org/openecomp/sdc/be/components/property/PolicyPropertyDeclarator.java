@@ -19,27 +19,27 @@
  */
 package org.openecomp.sdc.be.components.property;
 
-import fj.data.Either;
-import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.PolicyOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 
+import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.PolicyOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 @org.springframework.stereotype.Component
 public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDefinition, PropertyDataDefinition> {
@@ -47,7 +47,8 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
     private static final Logger log = Logger.getLogger(PolicyPropertyDeclarator.class);
     private PolicyOperation policyOperation;
 
-    public PolicyPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation, PolicyOperation policyOperation) {
+    public PolicyPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation,
+                                    PolicyOperation policyOperation) {
         super(componentsUtils, propertyOperation);
         this.policyOperation = policyOperation;
     }
@@ -58,8 +59,10 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
     }
 
     @Override
-    public Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String policyId, List<PropertyDataDefinition> properties) {
-        log.debug("#updatePropertiesValues - updating policies properties for policy {} on component {}", policyId, component.getUniqueId());
+    public Either<?, StorageOperationStatus> updatePropertiesValues(Component component, String policyId,
+                                                                    List<PropertyDataDefinition> properties) {
+        log.debug("#updatePropertiesValues - updating policies properties for policy {} on component {}", policyId,
+            component.getUniqueId());
         StorageOperationStatus updateStatus = policyOperation.updatePolicyProperties(component, policyId, properties);
         return updateStatus == StorageOperationStatus.OK ? Either.left(updateStatus) : Either.right(updateStatus);
     }
@@ -73,7 +76,7 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
     @Override
     public void addPropertiesListToInput(PropertyDataDefinition declaredProp, InputDefinition input) {
         List<ComponentInstanceProperty> propertiesList = input.getProperties();
-        if(propertiesList == null) {
+        if (propertiesList == null) {
             propertiesList = new ArrayList<>(); // adding the property with the new value for UI
         }
         propertiesList.add(new ComponentInstanceProperty(declaredProp));
@@ -84,21 +87,23 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
     @Override
     public StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition inputForDelete) {
         return getPolicyPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
-                .map(policyProperties -> unDeclarePolicyProperties(component, inputForDelete, policyProperties))
-                .orElse(StorageOperationStatus.OK);
+            .map(policyProperties -> unDeclarePolicyProperties(component, inputForDelete, policyProperties))
+            .orElse(StorageOperationStatus.OK);
     }
 
     @Override
     public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition inputForDelete) {
         return getPolicyPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
-                .map(policyProperties -> unDeclarePolicyProperties(component, inputForDelete, policyProperties))
-                .orElse(StorageOperationStatus.OK);
+            .map(policyProperties -> unDeclarePolicyProperties(component, inputForDelete, policyProperties))
+            .orElse(StorageOperationStatus.OK);
     }
 
-    private StorageOperationStatus unDeclarePolicyProperties(Component container, InputDefinition input, PolicyProperties policyProperties) {
+    private StorageOperationStatus unDeclarePolicyProperties(Component container, InputDefinition input,
+                                                             PolicyProperties policyProperties) {
         String policyId = policyProperties.getPolicyId();
         List<PropertyDataDefinition> propsDeclaredAsInput = policyProperties.getProperties();
-        propsDeclaredAsInput.forEach(policyProp -> prepareValueBeforeDelete(input, policyProp, Collections.emptyList()));
+        propsDeclaredAsInput
+            .forEach(policyProp -> prepareValueBeforeDelete(input, policyProp, Collections.emptyList()));
         return policyOperation.updatePolicyProperties(container, policyId, propsDeclaredAsInput);
     }
 
@@ -107,12 +112,12 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
             return Optional.empty();
         }
         return container.getPolicies()
-                .values()
-                .stream()
-                .filter(policy -> Objects.nonNull(policy.getProperties()))
-                .map(policy -> getPolicyPropertiesDeclaredAsInput(policy, inputId))
-                .filter(PolicyProperties::isNotEmpty)
-                .findFirst();
+            .values()
+            .stream()
+            .filter(policy -> Objects.nonNull(policy.getProperties()))
+            .map(policy -> getPolicyPropertiesDeclaredAsInput(policy, inputId))
+            .filter(PolicyProperties::isNotEmpty)
+            .findFirst();
     }
 
     private boolean isPropertyDeclaredAsInputByInputId(PropertyDataDefinition property, String inputId) {
@@ -120,26 +125,27 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
             return false;
         }
         return property.getGetInputValues().stream()
-                .filter(Objects::nonNull)
-                .anyMatch(getInputVal -> isGetInputValueForInput(getInputVal, inputId));
+            .filter(Objects::nonNull)
+            .anyMatch(getInputVal -> isGetInputValueForInput(getInputVal, inputId));
     }
 
     private PolicyProperties getPolicyPropertiesDeclaredAsInput(PolicyDefinition policy, String inputId) {
         List<PropertyDataDefinition> collect = policy.getProperties()
-                .stream()
-                .filter(prop -> isPropertyDeclaredAsInputByInputId(prop, inputId))
-                .collect(Collectors.toList());
+            .stream()
+            .filter(prop -> isPropertyDeclaredAsInputByInputId(prop, inputId))
+            .collect(Collectors.toList());
         return new PolicyProperties(policy.getUniqueId(), collect);
 
     }
 
     private class PolicyProperties {
+
         private String policyId;
         private List<PropertyDataDefinition> properties;
 
         PolicyProperties(String policyId, List<PropertyDataDefinition> properties) {
             this.policyId = policyId;
-            this.properties = (properties == null)? null : new ArrayList<>(properties);
+            this.properties = (properties == null) ? null : new ArrayList<>(properties);
         }
 
         String getPolicyId() {
@@ -154,4 +160,11 @@ public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDe
             return CollectionUtils.isNotEmpty(properties);
         }
     }
+
+    @Override
+    public StorageOperationStatus unDeclarePropertiesAsOutputs(final Component component,
+                                                               final OutputDefinition outputDefinition) {
+        throw new UnsupportedOperationException();
+    }
+
 }

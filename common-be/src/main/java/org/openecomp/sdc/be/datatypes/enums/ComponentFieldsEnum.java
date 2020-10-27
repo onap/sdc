@@ -24,6 +24,7 @@ public enum ComponentFieldsEnum {
 
     PROPERTIES("properties"),
     INPUTS("inputs"),
+    OUTPUTS("outputs"),
     USERS("users"),
     GROUPS("groups"),
     NON_EXCLUDED_GROUPS("nonExcludedGroups"),
@@ -39,6 +40,7 @@ public enum ComponentFieldsEnum {
     ATTRIBUTES("attributes"),
     COMPONENT_INSTANCES_ATTRIBUTES("componentInstancesAttributes"),
     COMPONENT_INSTANCE_INPUTS("componentInstancesInputs"),
+    COMPONENT_INSTANCE_OUTPUTS("componentInstancesOutputs"),
     COMPONENT_INSTANCE_RELATION("componentInstancesRelations"),
     DEPLOYMENT_ARTIFACTS("deploymentArtifacts"),
     TOSCA_ARTIFACTS("toscaArtifacts"),

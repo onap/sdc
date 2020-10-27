@@ -228,8 +228,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 InterfaceOperation interfaceOperation,
                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                 ArtifactsBusinessLogic artifactsBusinessLogic,
-                                IDistributionEngine distributionEngine, ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
-                                ServiceDistributionValidation serviceDistributionValidation, ForwardingPathValidator forwardingPathValidator,
+                                IDistributionEngine distributionEngine,
+                                ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
+                                ServiceDistributionValidation serviceDistributionValidation,
+                                ForwardingPathValidator forwardingPathValidator,
                                 UiComponentDataConverter uiComponentDataConverter,
                                 ArtifactsOperations artifactToscaOperation,
                                 ComponentContactIdValidator componentContactIdValidator,
@@ -240,9 +242,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 ComponentProjectCodeValidator componentProjectCodeValidator,
                                 ComponentDescriptionValidator componentDescriptionValidator) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator,
-                componentNameValidator, componentTagsValidator, componentValidator,
-                componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation,
+            componentContactIdValidator,
+            componentNameValidator, componentTagsValidator, componentValidator,
+            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
         this.distributionEngine = distributionEngine;
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.serviceDistributionValidation = serviceDistributionValidation;
@@ -251,14 +254,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
 
-    public Either<List<Map<String, Object>>, ResponseFormat> getComponentAuditRecords(String componentVersion, String componentUUID, String userId) {
+    public Either<List<Map<String, Object>>, ResponseFormat> getComponentAuditRecords(String componentVersion,
+                                                                                      String componentUUID,
+                                                                                      String userId) {
         validateUserExists(userId);
         Either<List<Map<String, Object>>, ActionStatus> result;
         try {
 
             // Certified Version
             if (componentVersion.endsWith(".0")) {
-                Either<List<ResourceAdminEvent>, ActionStatus> eitherAuditingForCertified = auditCassandraDao.getByServiceInstanceId(componentUUID);
+                Either<List<ResourceAdminEvent>, ActionStatus> eitherAuditingForCertified = auditCassandraDao
+                    .getByServiceInstanceId(componentUUID);
                 if (eitherAuditingForCertified.isLeft()) {
                     result = Either.left(getAuditingFieldsList(eitherAuditingForCertified.left().value()));
                 } else {
@@ -290,17 +296,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         List<Operation> operationList = new ArrayList<>();
 
         Either<Service, StorageOperationStatus> serviceEither =
-                toscaOperationFacade.getToscaElement(serviceId);
-        if(serviceEither.isRight()) {
+            toscaOperationFacade.getToscaElement(serviceId);
+        if (serviceEither.isRight()) {
             return Either.right(componentsUtils.getResponseFormat
-                    (serviceEither.right().value()));
+                (serviceEither.right().value()));
         }
 
         Service service = serviceEither.left().value();
 
-
         StorageOperationStatus storageOperationStatus =
-                graphLockOperation.lockComponent(service.getUniqueId(), NodeTypeEnum.Service);
+            graphLockOperation.lockComponent(service.getUniqueId(), NodeTypeEnum.Service);
         if (storageOperationStatus != StorageOperationStatus.OK) {
             return Either.right(componentsUtils.getResponseFormat(storageOperationStatus));
         }
@@ -308,8 +313,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         try {
             for (ServiceConsumptionData serviceConsumptionData : serviceConsumptionDataList) {
                 Either<Operation, ResponseFormat> operationEither =
-                        addPropertyServiceConsumption(serviceId, serviceInstanceId, operationId,
-                                userId, serviceConsumptionData);
+                    addPropertyServiceConsumption(serviceId, serviceInstanceId, operationId,
+                        userId, serviceConsumptionData);
 
                 if (operationEither.isRight()) {
                     return Either.right(operationEither.right().value());
@@ -330,64 +335,64 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    public Either <Operation, ResponseFormat> addPropertyServiceConsumption(String serviceId,
-                                                                            String serviceInstanceId,
-                                                                            String operationId,
-                                                                            String userId,
-                                                                            ServiceConsumptionData serviceConsumptionData) {
+    public Either<Operation, ResponseFormat> addPropertyServiceConsumption(String serviceId,
+                                                                           String serviceInstanceId,
+                                                                           String operationId,
+                                                                           String userId,
+                                                                           ServiceConsumptionData serviceConsumptionData) {
         validateUserExists(userId);
 
         Either<Service, StorageOperationStatus> serviceEither =
-                toscaOperationFacade.getToscaElement(serviceId);
-        if(serviceEither.isRight()) {
+            toscaOperationFacade.getToscaElement(serviceId);
+        if (serviceEither.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(serviceEither.right
-                    ().value()));
+                ().value()));
         }
 
         Service parentService = serviceEither.left().value();
 
         List<ComponentInstance> componentInstances = parentService.getComponentInstances();
-        if(CollectionUtils.isEmpty(componentInstances)) {
+        if (CollectionUtils.isEmpty(componentInstances)) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+                .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
 
         Optional<ComponentInstance> serviceInstanceCandidate =
-                componentInstances.stream().filter(instance -> instance.getUniqueId().equals
-                        (serviceInstanceId)).findAny();
+            componentInstances.stream().filter(instance -> instance.getUniqueId().equals
+                (serviceInstanceId)).findAny();
 
-        if(!serviceInstanceCandidate.isPresent()) {
+        if (!serviceInstanceCandidate.isPresent()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+                .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
 
         Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces =
-                parentService.getComponentInstancesInterfaces();
-        if(MapUtils.isEmpty(componentInstancesInterfaces)) {
+            parentService.getComponentInstancesInterfaces();
+        if (MapUtils.isEmpty(componentInstancesInterfaces)) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+                .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
 
         List<InterfaceDefinition> interfaces = new ArrayList<>();
-        for(ComponentInstanceInterface componentInstanceInterface :
-                componentInstancesInterfaces.get(serviceInstanceId)) {
+        for (ComponentInstanceInterface componentInstanceInterface :
+            componentInstancesInterfaces.get(serviceInstanceId)) {
             interfaces.add(componentInstanceInterface);
         }
 
         ComponentInstance serviceInstance = serviceInstanceCandidate.get();
         Optional<InterfaceDefinition> interfaceCandidate = InterfaceOperationUtils
-                .getInterfaceDefinitionFromOperationId(interfaces, operationId);
+            .getInterfaceDefinitionFromOperationId(interfaces, operationId);
 
-        if(!interfaceCandidate.isPresent()) {
+        if (!interfaceCandidate.isPresent()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+                .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
 
         InterfaceDefinition interfaceDefinition = interfaceCandidate.get();
         Map<String, Operation> operations = interfaceDefinition.getOperationsMap();
-        if(MapUtils.isEmpty(operations)) {
+        if (MapUtils.isEmpty(operations)) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+                .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
 
         Operation operation = operations.get(operationId);
@@ -395,22 +400,22 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         ListDataDefinition<OperationInputDefinition> inputs = operation.getInputs();
         Optional<OperationInputDefinition> inputCandidate =
-                getOperationInputByInputId(serviceConsumptionData, inputs);
+            getOperationInputByInputId(serviceConsumptionData, inputs);
 
-        if(!inputCandidate.isPresent()) {
+        if (!inputCandidate.isPresent()) {
             return Either.right(new ResponseFormat(HttpStatus.NOT_FOUND.value()));
         }
 
         OperationInputDefinition operationInputDefinition = inputCandidate.get();
         // add data to operation
 
-        if(Objects.nonNull(serviceConsumptionData.getValue()))  {
+        if (Objects.nonNull(serviceConsumptionData.getValue())) {
             operationEither =
-                    handleConsumptionValue(parentService, serviceInstanceId, serviceConsumptionData, operation,
-                            operationInputDefinition);
+                handleConsumptionValue(parentService, serviceInstanceId, serviceConsumptionData, operation,
+                    operationInputDefinition);
         }
 
-        if(operationEither.isRight()) {
+        if (operationEither.isRight()) {
             return Either.right(operationEither.right().value());
         }
 
@@ -420,26 +425,29 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         interfaceDefinition.setOperationsMap(operations);
 
         parentService.getComponentInstances().remove(serviceInstance);
-        if(CollectionUtils.isEmpty(parentService.getComponentInstances())) {
+        if (CollectionUtils.isEmpty(parentService.getComponentInstances())) {
             parentService.setComponentInstances(new ArrayList<>());
         }
 
         Map<String, Object> instanceInterfaces =
-                MapUtils.isEmpty(serviceInstance.getInterfaces())? new HashMap<>() : serviceInstance.getInterfaces();
+            MapUtils.isEmpty(serviceInstance.getInterfaces()) ? new HashMap<>() : serviceInstance.getInterfaces();
         instanceInterfaces.remove(interfaceDefinition.getUniqueId());
         instanceInterfaces.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
         serviceInstance.setInterfaces(instanceInterfaces);
 
-        removeComponentInstanceInterfaceByInterfaceId(interfaceDefinition.getUniqueId(), componentInstancesInterfaces.get(serviceInstanceId));
-        componentInstancesInterfaces.get(serviceInstanceId).add(new ComponentInstanceInterface(interfaceDefinition.getUniqueId(), interfaceDefinition));
+        removeComponentInstanceInterfaceByInterfaceId(interfaceDefinition.getUniqueId(),
+            componentInstancesInterfaces.get(serviceInstanceId));
+        componentInstancesInterfaces.get(serviceInstanceId)
+            .add(new ComponentInstanceInterface(interfaceDefinition.getUniqueId(), interfaceDefinition));
 
         parentService.getComponentInstances().add(serviceInstance);
 
-        StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceInterfaces(parentService, serviceInstanceId);
+        StorageOperationStatus status = toscaOperationFacade
+            .updateComponentInstanceInterfaces(parentService, serviceInstanceId);
 
-        if(status != StorageOperationStatus.OK) {
+        if (status != StorageOperationStatus.OK) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus
-                    .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
+                .INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
 
         return Either.left(operation);
@@ -447,15 +455,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private void removeComponentInstanceInterfaceByInterfaceId(String interfaceIdToRemove,
                                                                List<ComponentInstanceInterface> instanceInterfaces) {
-        if(CollectionUtils.isEmpty(instanceInterfaces)) {
+        if (CollectionUtils.isEmpty(instanceInterfaces)) {
             return;
         }
 
         Optional<ComponentInstanceInterface> interfaceToRemove =
-                instanceInterfaces.stream().filter(instInterface -> instInterface.getUniqueId().equals
-                        (interfaceIdToRemove)).findAny();
+            instanceInterfaces.stream().filter(instInterface -> instInterface.getUniqueId().equals
+                (interfaceIdToRemove)).findAny();
 
-        if(interfaceToRemove.isPresent()) {
+        if (interfaceToRemove.isPresent()) {
             instanceInterfaces.remove(interfaceToRemove.get());
         }
 
@@ -466,26 +474,26 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                                                      ServiceConsumptionData serviceConsumptionData,
                                                                      Operation operation,
                                                                      OperationInputDefinition
-                                                                             operationInputDefinition) {
+                                                                         operationInputDefinition) {
         String source = serviceConsumptionData.getSource();
         String consumptionValue = serviceConsumptionData.getValue();
         String type = serviceConsumptionData.getType();
         String operationIdentifier = consumptionValue.contains(".")
-                ? consumptionValue.substring(0, consumptionValue.lastIndexOf('.'))
-                : consumptionValue;
+            ? consumptionValue.substring(0, consumptionValue.lastIndexOf('.'))
+            : consumptionValue;
 
         ServiceConsumptionSource sourceValue = ServiceConsumptionSource.getSourceValue(source);
 
-        if(STATIC.equals(sourceValue)) {
+        if (STATIC.equals(sourceValue)) {
             // Validate constraint on input value
             Either<Boolean, ResponseFormat> constraintValidationResult =
-                    validateOperationInputConstraint(operationInputDefinition, consumptionValue, type);
+                validateOperationInputConstraint(operationInputDefinition, consumptionValue, type);
 
             if (constraintValidationResult.isRight()) {
                 return Either.right(constraintValidationResult.right().value());
             }
             return handleConsumptionStaticValue(consumptionValue, type, operation,
-                    operationInputDefinition);
+                operationInputDefinition);
         }
 
         if (Objects.isNull(sourceValue)) {
@@ -495,7 +503,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             List<OperationOutputDefinition> outputs = null;
             if (source.equals(containerService.getUniqueId())) {
                 Either<Service, StorageOperationStatus> serviceToTakePropEither =
-                        toscaOperationFacade.getToscaElement(source);
+                    toscaOperationFacade.getToscaElement(source);
                 if (serviceToTakePropEither.isRight()) {
                     return Either.right(componentsUtils.getResponseFormat(serviceToTakePropEither.right().value()));
                 }
@@ -505,12 +513,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 propertyDefinitions = service.getProperties();
                 componentName = service.getName();
                 outputs = InterfaceOperationUtils.getOtherOperationOutputsOfComponent(operationIdentifier,
-                        service.getInterfaces()).getListToscaDataDefinition();
+                    service.getInterfaces()).getListToscaDataDefinition();
             } else {
                 Optional<ComponentInstance> getComponentInstance = containerService.getComponentInstanceById(source);
-                if(!getComponentInstance.isPresent()){
+                if (!getComponentInstance.isPresent()) {
                     return Either.right(componentsUtils.getResponseFormat(
-                            ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, source));
+                        ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, source));
                 }
                 ComponentInstance componentInstance = getComponentInstance.get();
                 operationInputDefinition.setSource(componentInstance.getUniqueId());
@@ -519,21 +527,21 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 componentName = source.equals(serviceInstanceId) ? SELF : componentInstance.getName();
                 if (MapUtils.isNotEmpty(componentInstance.getInterfaces())) {
                     Map<String, InterfaceDataDefinition> componentInstanceInterfaces =
-                            componentInstance.getInterfaces().entrySet().stream()
-                                    .collect(Collectors.toMap((Map.Entry::getKey),
-                                            (interfaceEntry -> (InterfaceDataDefinition) interfaceEntry.getValue())));
+                        componentInstance.getInterfaces().entrySet().stream()
+                            .collect(Collectors.toMap((Map.Entry::getKey),
+                                (interfaceEntry -> (InterfaceDataDefinition) interfaceEntry.getValue())));
                     outputs = InterfaceOperationUtils.getOtherOperationOutputsOfComponent(operationIdentifier,
-                            componentInstanceInterfaces).getListToscaDataDefinition();
+                        componentInstanceInterfaces).getListToscaDataDefinition();
                 }
             }
 
-            if(sourceValue == ServiceConsumptionSource.SERVICE_INPUT) {
+            if (sourceValue == ServiceConsumptionSource.SERVICE_INPUT) {
                 //The operation input in service consumption has been mapped to an input in the parent service
                 return handleConsumptionInputValue(consumptionValue, containerService, operation,
-                        operationInputDefinition);
+                    operationInputDefinition);
             }
             return handleConsumptionPropertyValue(operation, operationInputDefinition,
-                    serviceConsumptionData, propertyDefinitions, capabilities, outputs, componentName);
+                serviceConsumptionData, propertyDefinitions, capabilities, outputs, componentName);
         }
 
         operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.SOURCE, source);
@@ -545,20 +553,20 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private Optional<OperationInputDefinition> getOperationInputByInputId(ServiceConsumptionData serviceConsumptionData,
                                                                           ListDataDefinition<OperationInputDefinition> inputs) {
 
-        if(CollectionUtils.isEmpty(inputs.getListToscaDataDefinition())) {
+        if (CollectionUtils.isEmpty(inputs.getListToscaDataDefinition())) {
             return Optional.empty();
         }
 
         return inputs.getListToscaDataDefinition().stream().filter(operationInput -> operationInput.getInputId().equals
-                (serviceConsumptionData.getInputId()))
-                .findAny();
+            (serviceConsumptionData.getInputId()))
+            .findAny();
     }
 
     private Either<Operation, ResponseFormat> handleConsumptionPropertyValue(
-            Operation operation, OperationInputDefinition operationInputDefinition,
-            ServiceConsumptionData serviceConsumptionData, List<PropertyDefinition> properties,Map<String,
-            List<CapabilityDefinition>> capabilities,
-            List<OperationOutputDefinition> outputs,  String componentName) {
+        Operation operation, OperationInputDefinition operationInputDefinition,
+        ServiceConsumptionData serviceConsumptionData, List<PropertyDefinition> properties, Map<String,
+        List<CapabilityDefinition>> capabilities,
+        List<OperationOutputDefinition> outputs, String componentName) {
 
         if (CollectionUtils.isEmpty(properties) && CollectionUtils.isEmpty(outputs)) {
             return Either.left(operation);
@@ -566,60 +574,64 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         String consumptionValue = serviceConsumptionData.getValue();
 
         if (CollectionUtils.isNotEmpty(outputs)
-                && isOperationInputMappedToOtherOperationOutput(getOperationOutputName(consumptionValue), outputs)) {
+            && isOperationInputMappedToOtherOperationOutput(getOperationOutputName(consumptionValue), outputs)) {
             return handleConsumptionInputMappedToOperationOutput(operation, operationInputDefinition, outputs,
-                    consumptionValue, componentName);
+                consumptionValue, componentName);
         }
 
         if (CollectionUtils.isNotEmpty(properties) && PropertiesUtils.isNodeProperty(consumptionValue, properties)) {
             return handleConsumptionInputMappedToProperty(operation, operationInputDefinition, serviceConsumptionData,
-                    properties, componentName);
+                properties, componentName);
         }
 
         if (MapUtils.isNotEmpty(capabilities)) {
             return handleConsumptionInputMappedToCapabilityProperty(operation, operationInputDefinition,
-                    serviceConsumptionData, capabilities, componentName);
+                serviceConsumptionData, capabilities, componentName);
         }
 
         return Either.left(operation);
     }
 
     private Either<Operation, ResponseFormat> handleConsumptionInputMappedToProperty(Operation operation,
-                                                                                     OperationInputDefinition operationInputDefinition, ServiceConsumptionData serviceConsumptionData,
-                                                                                     List<PropertyDefinition> properties, String componentName) {
+                                                                                     OperationInputDefinition operationInputDefinition,
+                                                                                     ServiceConsumptionData serviceConsumptionData,
+                                                                                     List<PropertyDefinition> properties,
+                                                                                     String componentName) {
         Optional<PropertyDefinition> servicePropertyCandidate =
-                properties.stream().filter(property -> property.getName()
-                        .equals(serviceConsumptionData.getValue())).findAny();
+            properties.stream().filter(property -> property.getName()
+                .equals(serviceConsumptionData.getValue())).findAny();
 
         if (servicePropertyCandidate.isPresent()) {
             boolean isInputTypeSimilarToOperation =
-                    isAssignedValueFromValidType(operationInputDefinition.getType(),
-                            servicePropertyCandidate.get());
+                isAssignedValueFromValidType(operationInputDefinition.getType(),
+                    servicePropertyCandidate.get());
 
             if (!isInputTypeSimilarToOperation) {
                 return Either.right(componentsUtils.getResponseFormat(
-                        ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
+                    ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
             }
 
             addPropertyToInputValue(componentName, operation, operationInputDefinition,
-                    servicePropertyCandidate.get());
+                servicePropertyCandidate.get());
         }
         return Either.left(operation);
     }
 
     private Either<Operation, ResponseFormat> handleConsumptionInputMappedToOperationOutput(Operation operation,
-                                                                                            OperationInputDefinition operationInputDefinition, List<OperationOutputDefinition> outputs,
-                                                                                            String consumptionValue, String componentName) {
+                                                                                            OperationInputDefinition operationInputDefinition,
+                                                                                            List<OperationOutputDefinition> outputs,
+                                                                                            String consumptionValue,
+                                                                                            String componentName) {
         String outputName = getOperationOutputName(consumptionValue);
         Optional<OperationOutputDefinition> servicePropertyOutputCandidate = outputs.stream()
-                .filter(output -> output.getName().equals(outputName)).findAny();
+            .filter(output -> output.getName().equals(outputName)).findAny();
         if (servicePropertyOutputCandidate.isPresent()) {
             boolean isInputTypeSimilarToOperation =
-                    isAssignedValueFromValidType(operationInputDefinition.getType(),
-                            servicePropertyOutputCandidate.get());
+                isAssignedValueFromValidType(operationInputDefinition.getType(),
+                    servicePropertyOutputCandidate.get());
             if (!isInputTypeSimilarToOperation) {
                 return Either.right(componentsUtils.getResponseFormat(
-                        ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
+                    ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
             }
             addOutputToInputValue(componentName, consumptionValue, operation, operationInputDefinition);
         }
@@ -638,7 +650,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         operationInputDefinition.setSourceProperty(serviceProperty.getUniqueId());
         operation.getInputs().delete(operationInputDefinition);
         operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.GET_PROPERTY,
-                getPropertyValues);
+            getPropertyValues);
         operationInputDefinition.setValue((new Gson()).toJson(getProperty));
         operation.getInputs().add(operationInputDefinition);
     }
@@ -646,10 +658,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private void addOutputToInputValue(String componentName, String consumptionValue,
                                        Operation operation, OperationInputDefinition operationInputDefinition) {
         Map<String, List<String>> getOperationOutput =
-                InterfaceOperationUtils.createMappedOutputDefaultValue(componentName, consumptionValue);
+            InterfaceOperationUtils.createMappedOutputDefaultValue(componentName, consumptionValue);
         operation.getInputs().delete(operationInputDefinition);
         operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.GET_OPERATION_OUTPUT,
-                getOperationOutput);
+            getOperationOutput);
         operationInputDefinition.setValue((new Gson()).toJson(getOperationOutput));
         operation.getInputs().add(operationInputDefinition);
     }
@@ -657,45 +669,45 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     public Either<Operation, ResponseFormat> handleConsumptionStaticValue(String value, String type,
                                                                           Operation operation,
                                                                           OperationInputDefinition
-                                                                                  operationInputDefinition) {
+                                                                              operationInputDefinition) {
         boolean isInputTypeSimilarToOperation =
-                isAssignedValueFromValidType(type, value);
+            isAssignedValueFromValidType(type, value);
 
-        if(!isInputTypeSimilarToOperation) {
+        if (!isInputTypeSimilarToOperation) {
             return Either.right(componentsUtils.getResponseFormat(
-                    ActionStatus.INVALID_CONSUMPTION_TYPE, type));
+                ActionStatus.INVALID_CONSUMPTION_TYPE, type));
         }
 
-		//Validate Constraint and Value
-		Either<Boolean, ResponseFormat> constraintValidationResponse =
-				validateOperationInputConstraint(operationInputDefinition, value, type);
-		if(constraintValidationResponse.isRight()) {
-			return Either.right(constraintValidationResponse.right().value());
-		}
+        //Validate Constraint and Value
+        Either<Boolean, ResponseFormat> constraintValidationResponse =
+            validateOperationInputConstraint(operationInputDefinition, value, type);
+        if (constraintValidationResponse.isRight()) {
+            return Either.right(constraintValidationResponse.right().value());
+        }
 
         addStaticValueToInputOperation(value, operation, operationInputDefinition);
 
         return Either.left(operation);
     }
 
-	private Either<Boolean, ResponseFormat> validateOperationInputConstraint(
-			OperationInputDefinition operationInputDefinition, String value, String type) {
-		ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
-		propertyDefinition.setType(operationInputDefinition.getParentPropertyType());
+    private Either<Boolean, ResponseFormat> validateOperationInputConstraint(
+        OperationInputDefinition operationInputDefinition, String value, String type) {
+        ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
+        propertyDefinition.setType(operationInputDefinition.getParentPropertyType());
 
-		InputDefinition inputDefinition = new InputDefinition();
-		inputDefinition.setDefaultValue(value);
-		inputDefinition.setInputPath(operationInputDefinition.getSubPropertyInputPath());
-		inputDefinition.setType(type);
-		if (Objects.nonNull(operationInputDefinition.getParentPropertyType())) {
-                inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
-		}
+        InputDefinition inputDefinition = new InputDefinition();
+        inputDefinition.setDefaultValue(value);
+        inputDefinition.setInputPath(operationInputDefinition.getSubPropertyInputPath());
+        inputDefinition.setType(type);
+        if (Objects.nonNull(operationInputDefinition.getParentPropertyType())) {
+            inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
+        }
 
-		return PropertyValueConstraintValidationUtil.getInstance()
-				.validatePropertyConstraints(Collections.singletonList(inputDefinition), applicationDataTypeCache);
-	}
+        return PropertyValueConstraintValidationUtil.getInstance()
+            .validatePropertyConstraints(Collections.singletonList(inputDefinition), applicationDataTypeCache);
+    }
 
-	private void addStaticValueToInputOperation(String value, Operation operation,
+    private void addStaticValueToInputOperation(String value, Operation operation,
                                                 OperationInputDefinition operationInputDefinition) {
         operation.getInputs().delete(operationInputDefinition);
         operationInputDefinition.setSource(STATIC.getSource());
@@ -704,22 +716,22 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         operation.getInputs().add(operationInputDefinition);
     }
 
-    private Either<Operation, ResponseFormat>  handleConsumptionInputValue(String inputId,
-                                                                           Service service,
-                                                                           Operation operation,
-                                                                           OperationInputDefinition
-                                                                                   operationInputDefinition) {
+    private Either<Operation, ResponseFormat> handleConsumptionInputValue(String inputId,
+                                                                          Service service,
+                                                                          Operation operation,
+                                                                          OperationInputDefinition
+                                                                              operationInputDefinition) {
         List<InputDefinition> serviceInputs = service.getInputs();
         Optional<InputDefinition> inputForValue =
-                serviceInputs.stream().filter(input -> input.getUniqueId().contains(inputId)).findAny();
+            serviceInputs.stream().filter(input -> input.getUniqueId().contains(inputId)).findAny();
 
-        if(inputForValue.isPresent()) {
+        if (inputForValue.isPresent()) {
             boolean isInputTypeSimilarToOperation =
-                    isAssignedValueFromValidType(operationInputDefinition.getType(), inputForValue.get());
+                isAssignedValueFromValidType(operationInputDefinition.getType(), inputForValue.get());
 
-            if(!isInputTypeSimilarToOperation) {
+            if (!isInputTypeSimilarToOperation) {
                 return Either.right(componentsUtils.getResponseFormat(
-                        ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
+                    ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
             }
             addGetInputValueToOperationInput(operation, operationInputDefinition, inputForValue.get());
         }
@@ -739,22 +751,25 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         operation.getInputs().add(operationInputDefinition);
     }
 
-    private Either<List<Map<String, Object>>, ActionStatus> getAuditRecordsForUncertifiedComponent(String componentUUID, String componentVersion) {
+    private Either<List<Map<String, Object>>, ActionStatus> getAuditRecordsForUncertifiedComponent(String componentUUID,
+                                                                                                   String componentVersion) {
         // First Query
-        Either<List<ResourceAdminEvent>, ActionStatus> eitherprevVerAudit = auditCassandraDao.getAuditByServiceIdAndPrevVersion(componentUUID, componentVersion);
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherprevVerAudit = auditCassandraDao
+            .getAuditByServiceIdAndPrevVersion(componentUUID, componentVersion);
 
         if (eitherprevVerAudit.isRight()) {
             return Either.right(eitherprevVerAudit.right().value());
         }
 
         // Second Query
-        Either<List<ResourceAdminEvent>, ActionStatus> eitherCurrVerAudit = auditCassandraDao.getAuditByServiceIdAndCurrVersion(componentUUID, componentVersion);
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherCurrVerAudit = auditCassandraDao
+            .getAuditByServiceIdAndCurrVersion(componentUUID, componentVersion);
         if (eitherCurrVerAudit.isRight()) {
             return Either.right(eitherCurrVerAudit.right().value());
         }
 
-
-        Either<List<ResourceAdminEvent>, ActionStatus> eitherArchiveRestoreList = getArchiveRestoreEventList(componentUUID);
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherArchiveRestoreList = getArchiveRestoreEventList(
+            componentUUID);
         if (eitherArchiveRestoreList.isRight()) {
             return Either.right(eitherArchiveRestoreList.right().value());
         }
@@ -772,19 +787,20 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         joinedNonDuplicatedList.addAll(currVerAuditList);
         joinedNonDuplicatedList.addAll(getAuditingFieldsList(eitherArchiveRestoreList.left().value()));
 
-
         return Either.left(joinedNonDuplicatedList);
     }
 
     private Either<List<ResourceAdminEvent>, ActionStatus> getArchiveRestoreEventList(String componentUUID) {
         // Archive Query
-        Either<List<ResourceAdminEvent>, ActionStatus> eitherArchiveAudit = auditCassandraDao.getArchiveAuditByServiceInstanceId(componentUUID);
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherArchiveAudit = auditCassandraDao
+            .getArchiveAuditByServiceInstanceId(componentUUID);
         if (eitherArchiveAudit.isRight()) {
             return Either.right(eitherArchiveAudit.right().value());
         }
 
         // Restore Query
-        Either<List<ResourceAdminEvent>, ActionStatus> eitherRestoreAudit = auditCassandraDao.getRestoreAuditByServiceInstanceId(componentUUID);
+        Either<List<ResourceAdminEvent>, ActionStatus> eitherRestoreAudit = auditCassandraDao
+            .getRestoreAuditByServiceInstanceId(componentUUID);
         if (eitherRestoreAudit.isRight()) {
             return Either.right(eitherRestoreAudit.right().value());
         }
@@ -819,17 +835,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     /**
      * createService
      *
-     * @param service
-     *            - Service
-     * @param user
-     *            - modifier data (userId)
+     * @param service - Service
+     * @param user    - modifier data (userId)
      * @return Either<Service, responseFormat>
      */
     public Either<Service, ResponseFormat> createService(Service service, User user) {
 
         // get user details
         user = validateUser(user, "Create Service", service, AuditingActionEnum.CREATE_RESOURCE, false);
-        log.debug("User returned from validation: "+ user.toString());
+        log.debug("User returned from validation: " + user.toString());
         // validate user role
         validateUserRole(user, service, new ArrayList<>(), AuditingActionEnum.CREATE_RESOURCE, null);
         service.setCreatorUserId(user.getUserId());
@@ -839,18 +853,20 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         log.debug("enrich service with version and state");
         service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         service.setVersion(INITIAL_VERSION);
-        service.setConformanceLevel(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
+        service.setConformanceLevel(
+            ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
         service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
         service.setComponentType(ComponentTypeEnum.SERVICE);
-        Either<Service, ResponseFormat> createServiceResponse = validateServiceBeforeCreate(service, user, AuditingActionEnum.CREATE_RESOURCE);
+        Either<Service, ResponseFormat> createServiceResponse = validateServiceBeforeCreate(service, user,
+            AuditingActionEnum.CREATE_RESOURCE);
         if (createServiceResponse.isRight()) {
             return createServiceResponse;
         }
         return createServiceByDao(service, user)
+            .left()
+            .bind(c -> updateCatalog(c, ChangeTypeEnum.LIFECYCLE)
                 .left()
-                .bind(c -> updateCatalog(c, ChangeTypeEnum.LIFECYCLE)
-                        .left()
-                        .map (r -> (Service) r));
+                .map(r -> (Service) r));
     }
 
     private void checkFieldsForOverideAttampt(Service service) {
@@ -861,9 +877,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<Service, ResponseFormat> createServiceByDao(final Service service, final User user) {
-        log.debug("send service {} to dao for create", service.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
+        log.debug("send service {} to dao for create",
+            service.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
 
-        Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
+        Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service,
+            "Create Service");
         if (lockResult.isRight()) {
             ResponseFormat responseFormat = lockResult.right().value();
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE,
@@ -882,7 +900,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             generateAndAddInputsFromGenericTypeProperties(service, genericType);
             beforeCreate(service);
 
-            Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
+            Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade
+                .createToscaComponent(service);
             if (dataModelResponse.isLeft()) {
                 log.debug("Service '{}' created successfully", service.getName());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
@@ -891,13 +910,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 ASDCKpiApi.countCreatedServicesKPI();
                 return Either.left(dataModelResponse.left().value());
             }
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service, ComponentTypeEnum.SERVICE);
+            ResponseFormat responseFormat = componentsUtils.getResponseFormatByComponent(
+                componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service,
+                ComponentTypeEnum.SERVICE);
             log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE,
                 ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         } finally {
-            graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
+            graphLockOperation
+                .unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
         }
     }
 
@@ -946,11 +968,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         // moved to ArtifactOperation
         String serviceUniqueId = service.getUniqueId();
         Map<String, ArtifactDefinition> artifactMap = service.getServiceApiArtifacts();
-        if (artifactMap == null)
+        if (artifactMap == null) {
             artifactMap = new HashMap<>();
+        }
 
-        Map<String, Object> serviceApiArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceApiArtifacts();
-        List<String> exludeServiceCategory = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeServiceCategory();
+        Map<String, Object> serviceApiArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getServiceApiArtifacts();
+        List<String> exludeServiceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getExcludeServiceCategory();
 
         List<CategoryDefinition> categories = service.getCategories();
         boolean isCreateArtifact = true;
@@ -967,8 +992,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (serviceApiArtifacts != null && isCreateArtifact) {
             Set<String> keys = serviceApiArtifacts.keySet();
             for (String serviceApiArtifactName : keys) {
-                Map<String, Object> artifactInfoMap = (Map<String, Object>) serviceApiArtifacts.get(serviceApiArtifactName);
-                ArtifactDefinition artifactDefinition = createArtifactDefinition(serviceUniqueId, serviceApiArtifactName, artifactInfoMap, user, true);
+                Map<String, Object> artifactInfoMap = (Map<String, Object>) serviceApiArtifacts
+                    .get(serviceApiArtifactName);
+                ArtifactDefinition artifactDefinition = createArtifactDefinition(serviceUniqueId,
+                    serviceApiArtifactName, artifactInfoMap, user, true);
                 artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.SERVICE_API);
                 artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
             }
@@ -978,14 +1005,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     @VisibleForTesting
-    protected Either<Service, ResponseFormat> validateServiceBeforeCreate(Service service, User user, AuditingActionEnum actionEnum) {
+    protected Either<Service, ResponseFormat> validateServiceBeforeCreate(Service service, User user,
+                                                                          AuditingActionEnum actionEnum) {
 
         try {
-            serviceValidator.validate(user,service,actionEnum);
+            serviceValidator.validate(user, service, actionEnum);
         } catch (ComponentException exp) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(exp);
             componentsUtils.auditComponentAdmin(responseFormat, user, service,
-                    AuditingActionEnum.CREATE_SERVICE, ComponentTypeEnum.SERVICE);
+                AuditingActionEnum.CREATE_SERVICE, ComponentTypeEnum.SERVICE);
             throw exp;
         }
 
@@ -1003,7 +1031,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     public Either<Map<String, Boolean>, ResponseFormat> validateServiceNameExists(String serviceName, String userId) {
         validateUserExists(userId);
 
-        Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateComponentNameUniqueness(serviceName, null, ComponentTypeEnum.SERVICE);
+        Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
+            .validateComponentNameUniqueness(serviceName, null, ComponentTypeEnum.SERVICE);
         // DE242223
         janusGraphDao.commit();
 
@@ -1013,7 +1042,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.debug("validation was successfully performed.");
             return Either.left(result);
         }
-        ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()));
+        ResponseFormat responseFormat = componentsUtils
+            .getResponseFormat(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()));
         return Either.right(responseFormat);
     }
 
@@ -1041,17 +1071,21 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
+            return Either.right(componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE),
+                ""));
         }
 
         Service currentService = storageStatus.left().value();
 
         if (!ComponentValidationUtils.canWorkOnComponent(currentService, user.getUserId())) {
-            log.info("Restricted operation for user: {}, on service: {}", user.getUserId(), currentService.getCreatorUserId());
+            log.info("Restricted operation for user: {}, on service: {}", user.getUserId(),
+                currentService.getCreatorUserId());
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
 
-        Either<Service, ResponseFormat> validationRsponse = validateAndUpdateServiceMetadata(user, currentService, serviceUpdate);
+        Either<Service, ResponseFormat> validationRsponse = validateAndUpdateServiceMetadata(user, currentService,
+            serviceUpdate);
         if (validationRsponse.isRight()) {
             log.info("service update metadata: validations field.");
             return validationRsponse;
@@ -1062,23 +1096,24 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         lockComponent(serviceId, currentService, "Update Service Metadata");
         try {
             return toscaOperationFacade.updateToscaElement(serviceToUpdate)
-                    .right()
-                    .map(rf -> {
-                        janusGraphDao.rollback();
-                        BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
-                        log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
-                        return (componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-                       })
-                    .left()
-                    .bind(c ->  updateCatalogAndCommit(c));
+                .right()
+                .map(rf -> {
+                    janusGraphDao.rollback();
+                    BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
+                    log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
+                    return (componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+                })
+                .left()
+                .bind(c -> updateCatalogAndCommit(c));
 
         } finally {
             graphLockOperation.unlockComponent(serviceId, NodeTypeEnum.Service);
         }
     }
 
-    private Either<Service, ResponseFormat> updateCatalogAndCommit(Service service){
-        Either<Service, ResponseFormat> res = updateCatalog(service, ChangeTypeEnum.LIFECYCLE).left().map(s -> (Service)s);
+    private Either<Service, ResponseFormat> updateCatalogAndCommit(Service service) {
+        Either<Service, ResponseFormat> res = updateCatalog(service, ChangeTypeEnum.LIFECYCLE).left()
+            .map(s -> (Service) s);
         janusGraphDao.commit();
         return res;
 
@@ -1091,7 +1126,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         validateUserRole(user, serviceToDelete, new ArrayList<>(), null, null);
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), "");
+            throw new ByActionStatusComponentException(
+                componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE),
+                "");
         }
         Service service = storageStatus.left().value();
         Either<Set<String>, StorageOperationStatus> result = null;
@@ -1101,26 +1138,26 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             } catch (ComponentException e) {
                 janusGraphDao.rollback();
                 throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse
-                        (storageStatus.right().value(), ComponentTypeEnum.SERVICE), "");
+                    (storageStatus.right().value(), ComponentTypeEnum.SERVICE), "");
             }
         }
-        try{
-            result = forwardingPathOperation.deleteForwardingPath(service ,pathIdsToDelete);
+        try {
+            result = forwardingPathOperation.deleteForwardingPath(service, pathIdsToDelete);
             if (result.isRight()) {
                 log.debug(FAILED_TO_LOCK_SERVICE_RESPONSE_IS, service.getName(), result.right().value());
                 janusGraphDao.rollback();
                 throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse
-                        (storageStatus.right().value(), ComponentTypeEnum.SERVICE));
+                    (storageStatus.right().value(), ComponentTypeEnum.SERVICE));
             }
             janusGraphDao.commit();
             log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, service.getSystemName());
 
-        } catch (ComponentException e){
+        } catch (ComponentException e) {
             log.error("Exception occurred during delete forwarding path : {}", e.getMessage(), e);
             janusGraphDao.rollback();
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         } finally {
-              graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
+            graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
         }
         return result.left().value();
     }
@@ -1129,19 +1166,20 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Service serviceToDelete = new Service();
         serviceToDelete.setUniqueId(serviceId);
         serviceToDelete.setForwardingPaths(new HashMap<>());
-        pathIdsToDelete.forEach(pathIdToDelete ->  serviceToDelete.getForwardingPaths().put(pathIdToDelete, new ForwardingPathDataDefinition()));
+        pathIdsToDelete.forEach(pathIdToDelete -> serviceToDelete.getForwardingPaths()
+            .put(pathIdToDelete, new ForwardingPathDataDefinition()));
         return serviceToDelete;
     }
 
     public Service updateForwardingPath(String serviceId, Service serviceUpdate, User user, boolean lock) {
-        return createOrUpdateForwardingPath(serviceId, serviceUpdate, user, true,"updateForwardingPath", lock);
+        return createOrUpdateForwardingPath(serviceId, serviceUpdate, user, true, "updateForwardingPath", lock);
     }
 
     public Service createForwardingPath(String serviceId, Service serviceUpdate, User user, boolean lock) {
         return createOrUpdateForwardingPath(serviceId, serviceUpdate, user, false, "createForwardingPath", lock);
     }
 
-    private ForwardingPathDataDefinition  getTrimmedValues(ForwardingPathDataDefinition path){
+    private ForwardingPathDataDefinition getTrimmedValues(ForwardingPathDataDefinition path) {
         ForwardingPathDataDefinition dataDefinition = new ForwardingPathDataDefinition(path.getName());
         dataDefinition.setName(Strings.nullToEmpty(path.getName()).trim());
         dataDefinition.setProtocol(Strings.nullToEmpty(path.getProtocol()).trim());
@@ -1150,24 +1188,26 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         dataDefinition.setPathElements(path.getPathElements());
         dataDefinition.setDescription(path.getDescription());
         dataDefinition.setToscaResourceName(path.getToscaResourceName());
-        return  dataDefinition;
+        return dataDefinition;
     }
 
-    private Service createOrUpdateForwardingPath(String serviceId, Service serviceUpdate, User user, boolean isUpdate, String errorContext, boolean lock) {
+    private Service createOrUpdateForwardingPath(String serviceId, Service serviceUpdate, User user, boolean isUpdate,
+                                                 String errorContext, boolean lock) {
         validateUserAndRole(serviceUpdate, user, errorContext);
 
         Map<String, ForwardingPathDataDefinition> forwardingPaths = serviceUpdate.getForwardingPaths();
 
         Map<String, ForwardingPathDataDefinition> trimmedForwardingPaths =
-                forwardingPaths.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> new ForwardingPathDataDefinition(getTrimmedValues(entry.getValue()))));
+            forwardingPaths.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                entry -> new ForwardingPathDataDefinition(getTrimmedValues(entry.getValue()))));
 
         forwardingPathValidator.validateForwardingPaths(trimmedForwardingPaths.values(),
-                serviceId, isUpdate);
+            serviceId, isUpdate);
 
-        Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade.getToscaElement(serviceId);
+        Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade
+            .getToscaElement(serviceId);
 
-        if(serviceStorageOperationStatusEither.isRight()){
+        if (serviceStorageOperationStatusEither.isRight()) {
             StorageOperationStatus errorStatus = serviceStorageOperationStatusEither.right().value();
             log.debug("Failed to fetch service information by service id, error {}", errorStatus);
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(errorStatus));
@@ -1177,14 +1217,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<ForwardingPathDataDefinition, StorageOperationStatus> result;
         Component component = getForwardingPathOriginComponent();
         final String toscaResourceName;
-        if (  component.getComponentType() == ComponentTypeEnum.RESOURCE) {
+        if (component.getComponentType() == ComponentTypeEnum.RESOURCE) {
             toscaResourceName = ((Resource) component).getToscaResourceName();
         } else {
             toscaResourceName = "";
         }
         if (lock) {
-           lockComponent(storedService.getUniqueId(), storedService, "Add or Update Forwarding Path on Service");
-           log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, storedService.getSystemName());
+            lockComponent(storedService.getUniqueId(), storedService, "Add or Update Forwarding Path on Service");
+            log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, storedService.getSystemName());
         }
         Map<String, ForwardingPathDataDefinition> resultMap = new HashMap<>();
         try {
@@ -1201,7 +1241,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Component getForwardingPathOriginComponent() {
-        Either<Component, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade.getLatestByName(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME);
+        Either<Component, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade
+            .getLatestByName(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME);
         if (forwardingPathOrigin.isRight()) {
             StorageOperationStatus errorStatus = forwardingPathOrigin.right().value();
             log.debug("Failed to fetch normative forwarding path resource by tosca name, error {}", errorStatus);
@@ -1210,7 +1251,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return forwardingPathOrigin.left().value();
     }
 
-    private void populateForwardingPaths(String serviceId, boolean isUpdate, Map<String, ForwardingPathDataDefinition> trimmedForwardingPaths, Map<String, ForwardingPathDataDefinition> resultMap) {
+    private void populateForwardingPaths(String serviceId, boolean isUpdate,
+                                         Map<String, ForwardingPathDataDefinition> trimmedForwardingPaths,
+                                         Map<String, ForwardingPathDataDefinition> resultMap) {
         Either<ForwardingPathDataDefinition, StorageOperationStatus> result;
         try {
             for (ForwardingPathDataDefinition forwardingPathDataDefinition : trimmedForwardingPaths.values()) {
@@ -1233,12 +1276,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         } catch (ComponentException e) {
             janusGraphDao.rollback();
             log.error("Exception occurred during add or update forwarding path property values: {}",
-                    e.getMessage(), e);
+                e.getMessage(), e);
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
     }
 
-    private Service createServiceWithForwardingPathForResponse(String serviceId, Map<String,ForwardingPathDataDefinition> forwardingPathDataDefinitionMap) {
+    private Service createServiceWithForwardingPathForResponse(String serviceId,
+                                                               Map<String, ForwardingPathDataDefinition> forwardingPathDataDefinitionMap) {
         Service service = new Service();
         service.setUniqueId(serviceId);
         service.setForwardingPaths(forwardingPathDataDefinitionMap);
@@ -1251,27 +1295,34 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     @VisibleForTesting
-    Either<Service, ResponseFormat> validateAndUpdateServiceMetadata(User user, Service currentService, Service serviceUpdate) {
+    Either<Service, ResponseFormat> validateAndUpdateServiceMetadata(User user, Service currentService,
+                                                                     Service serviceUpdate) {
 
         try {
             boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentService.getVersion());
-            Either<Boolean, ResponseFormat> response = validateAndUpdateCategory(user, currentService, serviceUpdate, hasBeenCertified, UPDATE_SERVICE_METADATA);
+            Either<Boolean, ResponseFormat> response = validateAndUpdateCategory(user, currentService, serviceUpdate,
+                hasBeenCertified, UPDATE_SERVICE_METADATA);
             if (response.isRight()) {
                 ResponseFormat errorResponse = response.right().value();
                 return Either.right(errorResponse);
             }
 
-            verifyValuesAreIdentical(serviceUpdate.getCreatorUserId(), currentService.getCreatorUserId(), "creatorUserId");
-            verifyValuesAreIdentical(serviceUpdate.getCreatorFullName(), currentService.getCreatorFullName(), "creatorFullName");
-            verifyValuesAreIdentical(serviceUpdate.getLastUpdaterUserId(), currentService.getLastUpdaterUserId(), "lastUpdaterUserId");
-            verifyValuesAreIdentical(serviceUpdate.getLastUpdaterFullName(), currentService.getLastUpdaterFullName(), "lastUpdaterFullName");
+            verifyValuesAreIdentical(serviceUpdate.getCreatorUserId(), currentService.getCreatorUserId(),
+                "creatorUserId");
+            verifyValuesAreIdentical(serviceUpdate.getCreatorFullName(), currentService.getCreatorFullName(),
+                "creatorFullName");
+            verifyValuesAreIdentical(serviceUpdate.getLastUpdaterUserId(), currentService.getLastUpdaterUserId(),
+                "lastUpdaterUserId");
+            verifyValuesAreIdentical(serviceUpdate.getLastUpdaterFullName(), currentService.getLastUpdaterFullName(),
+                "lastUpdaterFullName");
 
             response = validateAndUpdateServiceName(user, currentService, serviceUpdate, hasBeenCertified, null);
             if (response.isRight()) {
                 return Either.right(response.right().value());
             }
 
-            verifyValuesAreIdentical(serviceUpdate.getDistributionStatus(), currentService.getDistributionStatus(), "distributionStatus");
+            verifyValuesAreIdentical(serviceUpdate.getDistributionStatus(), currentService.getDistributionStatus(),
+                "distributionStatus");
 
             if (serviceUpdate.getProjectCode() != null) {
                 response = validateAndUpdateProjectCode(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
@@ -1280,7 +1331,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 }
             }
 
-            response = validateAndUpdateIcon(user, currentService, serviceUpdate, hasBeenCertified, UPDATE_SERVICE_METADATA);
+            response = validateAndUpdateIcon(user, currentService, serviceUpdate, hasBeenCertified,
+                UPDATE_SERVICE_METADATA);
             if (response.isRight()) {
                 return Either.right(response.right().value());
             }
@@ -1303,9 +1355,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 return Either.right(response.right().value());
             }
 
-            verifyValuesAreIdentical(serviceUpdate.getLastUpdateDate(), currentService.getLastUpdateDate(), "lastUpdateDate");
-            verifyValuesAreIdentical(serviceUpdate.getLifecycleState(), currentService.getLifecycleState(), "lifecycleState");
-            verifyValuesAreIdentical(serviceUpdate.isHighestVersion(), currentService.isHighestVersion(), "isHighestVersion");
+            verifyValuesAreIdentical(serviceUpdate.getLastUpdateDate(), currentService.getLastUpdateDate(),
+                "lastUpdateDate");
+            verifyValuesAreIdentical(serviceUpdate.getLifecycleState(), currentService.getLifecycleState(),
+                "lifecycleState");
+            verifyValuesAreIdentical(serviceUpdate.isHighestVersion(), currentService.isHighestVersion(),
+                "isHighestVersion");
             verifyValuesAreIdentical(serviceUpdate.getUUID(), currentService.getUUID(), "uuid");
 
             validateAndUpdateServiceType(currentService, serviceUpdate);
@@ -1316,12 +1371,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 return Either.right(response.right().value());
             }
 
-            response = validateAndUpdateInstantiationTypeValue(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+            response = validateAndUpdateInstantiationTypeValue(user, currentService, serviceUpdate,
+                UPDATE_SERVICE_METADATA);
             if (response.isRight()) {
                 return Either.right(response.right().value());
             }
 
-            verifyValuesAreIdentical(serviceUpdate.getInvariantUUID(), currentService.getInvariantUUID(), "invariantUUID");
+            verifyValuesAreIdentical(serviceUpdate.getInvariantUUID(), currentService.getInvariantUUID(),
+                "invariantUUID");
 
             validateAndUpdateEcompNaming(currentService, serviceUpdate);
 
@@ -1331,14 +1388,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         } catch (ComponentException exception) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(exception);
             componentsUtils.auditComponentAdmin(responseFormat, user, serviceUpdate,
-                    AuditingActionEnum.UPDATE_SERVICE_METADATA, ComponentTypeEnum.SERVICE);
+                AuditingActionEnum.UPDATE_SERVICE_METADATA, ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         }
     }
 
     private void verifyValuesAreIdentical(Object updatedValue, Object originalValue, String fieldName) {
         if (updatedValue != null && !updatedValue.equals(originalValue)) {
-            log.info("update service: received request to update {} to {} the field is not updatable ignoring.", fieldName, updatedValue);
+            log.info("update service: received request to update {} to {} the field is not updatable ignoring.",
+                fieldName, updatedValue);
         }
     }
 
@@ -1359,7 +1417,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateContactId(User user, Service currentService, Service serviceUpdate, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateContactId(User user, Service currentService,
+                                                                       Service serviceUpdate,
+                                                                       AuditingActionEnum audatingAction) {
         String contactIdUpdated = serviceUpdate.getContactId();
         String contactIdCurrent = currentService.getContactId();
         if (!contactIdCurrent.equals(contactIdUpdated)) {
@@ -1369,12 +1429,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateTags(User user, Service currentService, Service serviceUpdate, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateTags(User user, Service currentService,
+                                                                  Service serviceUpdate,
+                                                                  AuditingActionEnum audatingAction) {
         List<String> tagsUpdated = serviceUpdate.getTags();
         List<String> tagsCurrent = currentService.getTags();
         if (tagsUpdated == null || tagsUpdated.isEmpty()) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_TAGS);
-            componentsUtils.auditComponentAdmin(responseFormat, user, serviceUpdate, audatingAction, ComponentTypeEnum.SERVICE);
+            componentsUtils
+                .auditComponentAdmin(responseFormat, user, serviceUpdate, audatingAction, ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         }
 
@@ -1385,7 +1448,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Service currentService, Service serviceUpdate, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Service currentService,
+                                                                         Service serviceUpdate,
+                                                                         AuditingActionEnum audatingAction) {
         String descriptionUpdated = serviceUpdate.getDescription();
         String descriptionCurrent = currentService.getDescription();
         if (!descriptionCurrent.equals(descriptionUpdated)) {
@@ -1395,11 +1460,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateProjectCode(User user, Service currentService, Service serviceUpdate, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateProjectCode(User user, Service currentService,
+                                                                         Service serviceUpdate,
+                                                                         AuditingActionEnum audatingAction) {
         String projectCodeUpdated = serviceUpdate.getProjectCode();
         String projectCodeCurrent = currentService.getProjectCode();
         if (StringUtils.isEmpty(projectCodeCurrent)
-                || !projectCodeCurrent.equals(projectCodeUpdated)) {
+            || !projectCodeCurrent.equals(projectCodeUpdated)) {
 
             try {
                 componentProjectCodeValidator.validateAndCorrectField(user, serviceUpdate, audatingAction);
@@ -1413,7 +1480,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateIcon(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateIcon(User user, Service currentService,
+                                                                  Service serviceUpdate, boolean hasBeenCertified,
+                                                                  AuditingActionEnum audatingAction) {
         String iconUpdated = serviceUpdate.getIcon();
         String iconCurrent = currentService.getIcon();
         if (!iconCurrent.equals(iconUpdated)) {
@@ -1422,14 +1491,18 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 currentService.setIcon(iconUpdated);
             } else {
                 log.info("icon {} cannot be updated once the service has been certified once.", iconUpdated);
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.SERVICE_ICON_CANNOT_BE_CHANGED);
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.SERVICE_ICON_CANNOT_BE_CHANGED);
                 return Either.right(errorResponse);
             }
         }
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateServiceName(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum auditingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateServiceName(User user, Service currentService,
+                                                                         Service serviceUpdate,
+                                                                         boolean hasBeenCertified,
+                                                                         AuditingActionEnum auditingAction) {
         String serviceNameUpdated = serviceUpdate.getName();
         String serviceNameCurrent = currentService.getName();
         if (!serviceNameCurrent.equals(serviceNameUpdated)) {
@@ -1441,12 +1514,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                     return Either.right(exp.getResponseFormat());
                 }
                 currentService.setName(serviceNameUpdated);
-                currentService.getComponentMetadataDefinition().getMetadataDataDefinition().setNormalizedName(ValidationUtils.normaliseComponentName(serviceNameUpdated));
-                currentService.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName(ValidationUtils.convertToSystemName(serviceNameUpdated));
+                currentService.getComponentMetadataDefinition().getMetadataDataDefinition()
+                    .setNormalizedName(ValidationUtils.normaliseComponentName(serviceNameUpdated));
+                currentService.getComponentMetadataDefinition().getMetadataDataDefinition()
+                    .setSystemName(ValidationUtils.convertToSystemName(serviceNameUpdated));
 
             } else {
-                log.info("service name {} cannot be updated once the service has been certified once.", serviceNameUpdated);
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.SERVICE_NAME_CANNOT_BE_CHANGED);
+                log.info("service name {} cannot be updated once the service has been certified once.",
+                    serviceNameUpdated);
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.SERVICE_NAME_CANNOT_BE_CHANGED);
                 return Either.right(errorResponse);
             }
         }
@@ -1471,7 +1548,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateServiceRole(User user, Service currentService, Service updatedService, AuditingActionEnum auditingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateServiceRole(User user, Service currentService,
+                                                                         Service updatedService,
+                                                                         AuditingActionEnum auditingAction) {
         String updatedServiceRole = updatedService.getServiceRole();
         String currentServiceRole = currentService.getServiceRole();
         if (!currentServiceRole.equals(updatedServiceRole)) {
@@ -1479,7 +1558,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 serviceRoleValidator.validateAndCorrectField(user, updatedService, auditingAction);
             } catch (ComponentException exp) {
                 ResponseFormat errorResponse = exp.getResponseFormat();
-                componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, auditingAction, ComponentTypeEnum.SERVICE);
+                componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, auditingAction,
+                    ComponentTypeEnum.SERVICE);
                 return Either.right(errorResponse);
             }
             currentService.setServiceRole(updatedServiceRole);
@@ -1487,15 +1567,18 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateInstantiationTypeValue(User user, Service currentService, Service updatedService, AuditingActionEnum auditingAction) {
-        String updatedInstaType= updatedService.getInstantiationType();
+    private Either<Boolean, ResponseFormat> validateAndUpdateInstantiationTypeValue(User user, Service currentService,
+                                                                                    Service updatedService,
+                                                                                    AuditingActionEnum auditingAction) {
+        String updatedInstaType = updatedService.getInstantiationType();
         String currentInstaType = currentService.getInstantiationType();
         if (!currentInstaType.equals(updatedInstaType)) {
             try {
                 serviceInstantiationTypeValidator.validateAndCorrectField(user, updatedService, auditingAction);
             } catch (ComponentException exp) {
                 ResponseFormat errorResponse = exp.getResponseFormat();
-                componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, auditingAction, ComponentTypeEnum.SERVICE);
+                componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, auditingAction,
+                    ComponentTypeEnum.SERVICE);
                 return Either.right(errorResponse);
             }
             currentService.setInstantiationType(updatedInstaType);
@@ -1503,7 +1586,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdateCategory(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum audatingAction) {
+    private Either<Boolean, ResponseFormat> validateAndUpdateCategory(User user, Service currentService,
+                                                                      Service serviceUpdate, boolean hasBeenCertified,
+                                                                      AuditingActionEnum audatingAction) {
         try {
             List<CategoryDefinition> categoryUpdated = serviceUpdate.getCategories();
             List<CategoryDefinition> categoryCurrent = currentService.getCategories();
@@ -1512,8 +1597,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 if (!hasBeenCertified) {
                     currentService.setCategories(categoryUpdated);
                 } else {
-                    log.info("category {} cannot be updated once the service has been certified once.", categoryUpdated);
-                    ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.SERVICE_CATEGORY_CANNOT_BE_CHANGED);
+                    log.info("category {} cannot be updated once the service has been certified once.",
+                        categoryUpdated);
+                    ResponseFormat errorResponse = componentsUtils
+                        .getResponseFormat(ActionStatus.SERVICE_CATEGORY_CANNOT_BE_CHANGED);
                     return Either.right(errorResponse);
                 }
             }
@@ -1526,10 +1613,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     public Either<ServiceRelations, ResponseFormat> getServiceComponentsRelations(String serviceId, User user) {
         Either<Service, ResponseFormat> serviceResponseFormatEither = getService(serviceId, user);
-        if (serviceResponseFormatEither.isRight()){
+        if (serviceResponseFormatEither.isRight()) {
             return Either.right(serviceResponseFormatEither.right().value());
         }
-        final ServiceRelations serviceRelations = new ForwardingPathUtils().convertServiceToServiceRelations(serviceResponseFormatEither.left().value());
+        final ServiceRelations serviceRelations = new ForwardingPathUtils()
+            .convertServiceToServiceRelations(serviceResponseFormatEither.left().value());
         return Either.left(serviceRelations);
 
 
@@ -1542,7 +1630,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceStatus.isRight()) {
             log.debug("failed to get service {}", serviceId);
-            return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceStatus.right().value()), "");
+            return componentsUtils
+                .getResponseFormat(componentsUtils.convertFromStorageResponse(serviceStatus.right().value()), "");
         }
 
         Service service = serviceStatus.left().value();
@@ -1558,9 +1647,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, service.getName());
             }
             return responseFormat;
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             return e.getResponseFormat();
-        }finally {
+        } finally {
             if (result == null || result != StorageOperationStatus.OK) {
                 log.warn("operation failed. do rollback");
                 BeEcompErrorManager.getInstance().logBeSystemError("Delete Service");
@@ -1598,10 +1687,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
             return responseFormat;
 
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             result = StorageOperationStatus.GENERAL_ERROR;
             return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-        }finally {
+        } finally {
             if (result == null || result != StorageOperationStatus.OK) {
                 log.warn("operation failed. do rollback");
                 BeEcompErrorManager.getInstance().logBeSystemError("Delete Service");
@@ -1622,26 +1711,32 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if (storageStatus.isRight()) {
             log.debug("failed to get service by id {}", serviceId);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), serviceId));
+            return Either.right(componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE),
+                serviceId));
         }
 
-        if(!(storageStatus.left().value() instanceof Service)){
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND), serviceId));
+        if (!(storageStatus.left().value() instanceof Service)) {
+            return Either.right(componentsUtils
+                .getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND),
+                    serviceId));
         }
         Service service = storageStatus.left().value();
         return Either.left(service);
 
 
-
-
     }
 
-    public Either<Service, ResponseFormat> getServiceByNameAndVersion(String serviceName, String serviceVersion, String userId) {
+    public Either<Service, ResponseFormat> getServiceByNameAndVersion(String serviceName, String serviceVersion,
+                                                                      String userId) {
         validateUserExists(userId);
-        Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, serviceVersion);
+        Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade
+            .getComponentByNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, serviceVersion);
         if (storageStatus.isRight()) {
             log.debug("failed to get service by name {} and version {}", serviceName, serviceVersion);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), serviceName));
+            return Either.right(componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE),
+                serviceName));
         }
         Service service = storageStatus.left().value();
         return Either.left(service);
@@ -1655,11 +1750,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         // moved to ArtifactOperation
         String serviceUniqueId = service.getUniqueId();
         Map<String, ArtifactDefinition> artifactMap = service.getArtifacts();
-        if (artifactMap == null)
+        if (artifactMap == null) {
             artifactMap = new HashMap<>();
+        }
 
-        Map<String, Object> informationalServiceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getInformationalServiceArtifacts();
-        List<String> exludeServiceCategory = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeServiceCategory();
+        Map<String, Object> informationalServiceArtifacts = ConfigurationManager.getConfigurationManager()
+            .getConfiguration().getInformationalServiceArtifacts();
+        List<String> exludeServiceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getExcludeServiceCategory();
 
         String category = service.getCategories().get(0).getName();
         boolean isCreateArtifact = true;
@@ -1676,8 +1774,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (informationalServiceArtifacts != null && isCreateArtifact) {
             Set<String> keys = informationalServiceArtifacts.keySet();
             for (String informationalServiceArtifactName : keys) {
-                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalServiceArtifacts.get(informationalServiceArtifactName);
-                ArtifactDefinition artifactDefinition = createArtifactDefinition(serviceUniqueId, informationalServiceArtifactName, artifactInfoMap, user, false);
+                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalServiceArtifacts
+                    .get(informationalServiceArtifactName);
+                ArtifactDefinition artifactDefinition = createArtifactDefinition(serviceUniqueId,
+                    informationalServiceArtifactName, artifactInfoMap, user, false);
                 artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
 
             }
@@ -1686,9 +1786,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private ArtifactDefinition createArtifactDefinition(String serviceId, String logicalName, Map<String, Object> artifactInfoMap, User user, Boolean isServiceApi) {
+    private ArtifactDefinition createArtifactDefinition(String serviceId, String logicalName,
+                                                        Map<String, Object> artifactInfoMap, User user,
+                                                        Boolean isServiceApi) {
 
-        ArtifactDefinition artifactInfo = artifactsBusinessLogic.createArtifactPlaceHolderInfo(serviceId, logicalName, artifactInfoMap, user, ArtifactGroupTypeEnum.INFORMATIONAL);
+        ArtifactDefinition artifactInfo = artifactsBusinessLogic
+            .createArtifactPlaceHolderInfo(serviceId, logicalName, artifactInfoMap, user,
+                ArtifactGroupTypeEnum.INFORMATIONAL);
 
         if (isServiceApi) {
             artifactInfo.setMandatory(false);
@@ -1703,15 +1807,17 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         transitionEnum = DistributionTransitionEnum.getFromDisplayName(distributionTransition);
         if (transitionEnum == null) {
             BeEcompErrorManager.getInstance().logBeSystemError(CHANGE_SERVICE_DISTRIBUTION);
-            log.info("state operation is not valid. operations allowed are: {}", DistributionTransitionEnum.valuesAsString());
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_DISTRIBUTION_STATUS, distributionTransition));
+            log.info("state operation is not valid. operations allowed are: {}",
+                DistributionTransitionEnum.valuesAsString());
+            throw new ByResponseFormatComponentException(componentsUtils
+                .getResponseFormat(ActionStatus.UNSUPPORTED_DISTRIBUTION_STATUS, distributionTransition));
         }
 
         return transitionEnum;
     }
 
     private String validateComment(LifecycleChangeInfoWithAction comment) {
-        if (comment==null || StringUtils.isEmpty(comment.getUserRemarks())) {
+        if (comment == null || StringUtils.isEmpty(comment.getUserRemarks())) {
             return "";
         }
         String data = comment.getUserRemarks();
@@ -1723,34 +1829,43 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (!ValidationUtils.validateLength(data, ValidationUtils.COMMENT_MAX_LENGTH)) {
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CHANGE_SERVICE_DISTRIBUTION);
             log.debug("user comment exceeds limit.");
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.EXCEEDS_LIMIT, "comment", String.valueOf(ValidationUtils.COMMENT_MAX_LENGTH)));
+            throw new ByResponseFormatComponentException(componentsUtils
+                .getResponseFormat(ActionStatus.EXCEEDS_LIMIT, "comment",
+                    String.valueOf(ValidationUtils.COMMENT_MAX_LENGTH)));
         }
         if (!ValidationUtils.validateCommentPattern(data)) {
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+            throw new ByResponseFormatComponentException(
+                componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
 
         return data;
     }
 
-    private void createAudit(User user, AuditingActionEnum auditAction, String comment, Service component, ResponseFormat responseFormat) {
+    private void createAudit(User user, AuditingActionEnum auditAction, String comment, Service component,
+                             ResponseFormat responseFormat) {
         log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
-        componentsUtils.auditComponent(responseFormat, user, component, auditAction, new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
-                ResourceVersionInfo.newBuilder()
-                        .state(component.getLifecycleState().name())
-                        .version(component.getVersion())
-                        .build(),
-                comment);
+        componentsUtils.auditComponent(responseFormat, user, component, auditAction,
+            new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
+            ResourceVersionInfo.newBuilder()
+                .state(component.getLifecycleState().name())
+                .version(component.getVersion())
+                .build(),
+            comment);
     }
 
     private String getEnvNameFromConfiguration() {
-        String configuredEnvName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getEnvironments().get(0);
+        String configuredEnvName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
+            .getEnvironments().get(0);
         log.trace("Update environment name to be {}", configuredEnvName);
         return configuredEnvName;
     }
 
-    public Either<String, ResponseFormat> activateServiceOnTenantEnvironment(String serviceId, String envId, User modifier, ServiceDistributionReqInfo data) {
+    public Either<String, ResponseFormat> activateServiceOnTenantEnvironment(String serviceId, String envId,
+                                                                             User modifier,
+                                                                             ServiceDistributionReqInfo data) {
 
-        Either<ActivationRequestInformation, ResponseFormat> activationRequestInformationEither = serviceDistributionValidation.validateActivateServiceRequest(serviceId, envId, modifier, data);
+        Either<ActivationRequestInformation, ResponseFormat> activationRequestInformationEither = serviceDistributionValidation
+            .validateActivateServiceRequest(serviceId, envId, modifier, data);
         if (activationRequestInformationEither.isRight()) {
             return Either.right(activationRequestInformationEither.right().value());
         }
@@ -1760,14 +1875,18 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<String, ResponseFormat> result = null;
         String did = ThreadLocalsHolder.getUuid();
         Service service = activationRequestInformation.getServiceToActivate();
-        result = buildAndSendServiceNotification(service, envId, did, activationRequestInformation.getWorkloadContext(), modifier);
+        result = buildAndSendServiceNotification(service, envId, did, activationRequestInformation.getWorkloadContext(),
+            modifier);
         return result;
     }
 
-    public Either<String, ResponseFormat> buildAndSendServiceNotification(Service service, String envId, String did, String workloadContext, User modifier) {
+    public Either<String, ResponseFormat> buildAndSendServiceNotification(Service service, String envId, String did,
+                                                                          String workloadContext, User modifier) {
         String envName = getEnvNameFromConfiguration();
-        INotificationData notificationData = distributionEngine.buildServiceForDistribution(service, did, workloadContext);
-        ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envId, envName, modifier);
+        INotificationData notificationData = distributionEngine
+            .buildServiceForDistribution(service, did, workloadContext);
+        ActionStatus notifyServiceResponse = distributionEngine
+            .notifyService(did, service, notificationData, envId, envName, modifier);
         if (notifyServiceResponse == ActionStatus.OK) {
             return Either.left(did);
         } else {
@@ -1778,7 +1897,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    public Either<Service, ResponseFormat> activateDistribution(String serviceId, String envName, User modifier, HttpServletRequest request) {
+    public Either<Service, ResponseFormat> activateDistribution(String serviceId, String envName, User modifier,
+                                                                HttpServletRequest request) {
 
         User user = validateUserExists(modifier.getUserId());
         validateUserRole(user, Collections.singletonList(Role.DESIGNER));
@@ -1786,8 +1906,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         ResponseFormat response;
         Service updatedService;
         String did = ThreadLocalsHolder.getUuid();
-         // DE194021
-        String configuredEnvName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getEnvironments().get(0);
+        // DE194021
+        String configuredEnvName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
+            .getEnvironments().get(0);
         if (configuredEnvName != null && !configuredEnvName.equals(envName)) {
             log.trace("Update environment name to be {} instead of {}", configuredEnvName, envName);
             envName = configuredEnvName;
@@ -1806,22 +1927,28 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<Service, StorageOperationStatus> serviceRes = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceRes.isRight()) {
             log.debug("failed retrieving service");
-            response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
+            response = componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE),
+                serviceId);
             componentsUtils.auditComponent(response, user, null, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
-                    new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
-                    ResourceVersionInfo.newBuilder()
-                            .build(),
-                    did);
+                new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
+                ResourceVersionInfo.newBuilder()
+                    .build(),
+                did);
             return Either.right(response);
         }
         Service service = serviceRes.left().value();
         if (service.isArchived()) {
             log.info("Component is archived. Component id: {}", serviceId);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, service.getName()));
+            return Either
+                .right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, service.getName()));
         }
         if (service.getLifecycleState() != LifecycleStateEnum.CERTIFIED) {
-            log.info("service {} is  not available for distribution. Should be in certified state", service.getUniqueId());
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.SERVICE_NOT_AVAILABLE_FOR_DISTRIBUTION, service.getVersion(), service.getName());
+            log.info("service {} is  not available for distribution. Should be in certified state",
+                service.getUniqueId());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.SERVICE_NOT_AVAILABLE_FOR_DISTRIBUTION, service.getVersion(),
+                    service.getName());
             return Either.right(responseFormat);
         }
         String dcurrStatus = service.getDistributionStatus().name();
@@ -1829,9 +1956,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         StorageOperationStatus readyForDistribution = distributionEngine.isReadyForDistribution(envName);
         if (readyForDistribution == StorageOperationStatus.OK) {
             INotificationData notificationData = distributionEngine.buildServiceForDistribution(service, did, null);
-            ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envName, user);
+            ActionStatus notifyServiceResponse = distributionEngine
+                .notifyService(did, service, notificationData, envName, user);
             if (notifyServiceResponse == ActionStatus.OK) {
-                Either<Service, ResponseFormat> updateStateRes = updateDistributionStatusForActivation(service, user, DistributionStatusEnum.DISTRIBUTED);
+                Either<Service, ResponseFormat> updateStateRes = updateDistributionStatusForActivation(service, user,
+                    DistributionStatusEnum.DISTRIBUTED);
                 if (updateStateRes.isLeft() && updateStateRes.left().value() != null) {
                     updatedService = updateStateRes.left().value();
                     updatedStatus = updatedService.getDistributionStatus().name();
@@ -1849,30 +1978,33 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 result = Either.right(response);
             }
         } else {
-            response = componentsUtils.getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution, ComponentTypeEnum.SERVICE), envName);
+            response = componentsUtils.getResponseFormatByDE(
+                componentsUtils.convertFromStorageResponse(readyForDistribution, ComponentTypeEnum.SERVICE), envName);
             result = Either.right(response);
         }
         componentsUtils.auditComponent(response, user, service, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
-                new ResourceCommonInfo(service.getName(),ComponentTypeEnum.SERVICE.getValue()),
-                ResourceVersionInfo.newBuilder()
-                        .distributionStatus(dcurrStatus)
-                        .build(),
-                ResourceVersionInfo.newBuilder()
-                        .distributionStatus(updatedStatus)
-                        .build(),
-                null, null, did);
+            new ResourceCommonInfo(service.getName(), ComponentTypeEnum.SERVICE.getValue()),
+            ResourceVersionInfo.newBuilder()
+                .distributionStatus(dcurrStatus)
+                .build(),
+            ResourceVersionInfo.newBuilder()
+                .distributionStatus(updatedStatus)
+                .build(),
+            null, null, did);
         return result;
     }
 
     // convert to private after deletion of temp url
-    public Either<Service, ResponseFormat> updateDistributionStatusForActivation(Service service, User user, DistributionStatusEnum state) {
+    public Either<Service, ResponseFormat> updateDistributionStatusForActivation(Service service, User user,
+                                                                                 DistributionStatusEnum state) {
 
         validateUserExists(user.getUserId());
 
         String serviceId = service.getUniqueId();
-         lockComponent(serviceId, service, "updateDistributionStatusForActivation");
+        lockComponent(serviceId, service, "updateDistributionStatusForActivation");
         try {
-            Either<Service, StorageOperationStatus> result = toscaOperationFacade.updateDistributionStatus(service, user, state);
+            Either<Service, StorageOperationStatus> result = toscaOperationFacade
+                .updateDistributionStatus(service, user, state);
             if (result.isRight()) {
                 janusGraphDao.rollback();
                 BeEcompErrorManager.getInstance().logBeSystemError("updateDistributionStatusForActivation");
@@ -1895,9 +2027,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         AuditingActionEnum auditAction = AuditingActionEnum.DISTRIBUTION_DEPLOY;
         Either<Service, StorageOperationStatus> getServiceResponse = toscaOperationFacade.getToscaElement(serviceId);
         if (getServiceResponse.isRight()) {
-            BeEcompErrorManager.getInstance().logBeComponentMissingError("markDistributionAsDeployed", ComponentTypeEnum.SERVICE.getValue(), serviceId);
+            BeEcompErrorManager.getInstance()
+                .logBeComponentMissingError("markDistributionAsDeployed", ComponentTypeEnum.SERVICE.getValue(),
+                    serviceId);
             log.debug("service {} not found", serviceId);
-            ResponseFormat responseFormat = auditDeployError(did, user, auditAction, null, componentsUtils.convertFromStorageResponse(getServiceResponse.right().value(), ComponentTypeEnum.SERVICE), "");
+            ResponseFormat responseFormat = auditDeployError(did, user, auditAction, null, componentsUtils
+                .convertFromStorageResponse(getServiceResponse.right().value(), ComponentTypeEnum.SERVICE), "");
 
             return Either.right(responseFormat);
         }
@@ -1908,16 +2043,19 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
-    public Either<Service, ResponseFormat> generateVfModuleArtifacts(Service service, User modifier, boolean shouldLock, boolean inTransaction) {
+    public Either<Service, ResponseFormat> generateVfModuleArtifacts(Service service, User modifier, boolean shouldLock,
+                                                                     boolean inTransaction) {
         Function<ComponentInstance, List<ArtifactGenerator<ArtifactDefinition>>> artifactTaskGeneratorCreator = ri ->
-                // Only one VF Module Artifact per instance - add it to a list of one
-                buildArtifactGenList(service, modifier, shouldLock, inTransaction, ri);
+            // Only one VF Module Artifact per instance - add it to a list of one
+            buildArtifactGenList(service, modifier, shouldLock, inTransaction, ri);
 
         return generateDeploymentArtifacts(service, artifactTaskGeneratorCreator);
 
     }
 
-    private List<ArtifactGenerator<ArtifactDefinition>> buildArtifactGenList(Service service, User modifier, boolean shouldLock, boolean inTransaction, ComponentInstance ri) {
+    private List<ArtifactGenerator<ArtifactDefinition>> buildArtifactGenList(Service service, User modifier,
+                                                                             boolean shouldLock, boolean inTransaction,
+                                                                             ComponentInstance ri) {
         List<ArtifactGenerator<ArtifactDefinition>> asList = new ArrayList<>();
 
         if (ri.getOriginType() == OriginTypeEnum.VF) {
@@ -1928,13 +2066,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private List<GroupInstance> collectGroupsInstanceForCompInstance(ComponentInstance currVF) {
         Map<String, ArtifactDefinition> deploymentArtifacts = currVF.getDeploymentArtifacts();
-        if(currVF.getGroupInstances() != null){
+        if (currVF.getGroupInstances() != null) {
             currVF.getGroupInstances().forEach(gi -> gi.alignArtifactsUuid(deploymentArtifacts));
         }
         return currVF.getGroupInstances();
     }
 
-    private ArtifactDefinition getVfModuleInstArtifactForCompInstance(ComponentInstance currVF, Service service, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper) {
+    private ArtifactDefinition getVfModuleInstArtifactForCompInstance(ComponentInstance currVF, Service service,
+                                                                      Wrapper<String> payloadWrapper,
+                                                                      Wrapper<ResponseFormat> responseWrapper) {
         ArtifactDefinition vfModuleAertifact = null;
         if (MapUtils.isNotEmpty(currVF.getDeploymentArtifacts())) {
             final Optional<ArtifactDefinition> optionalVfModuleArtifact =
@@ -1946,7 +2086,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
         }
         if (vfModuleAertifact == null) {
-            Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact = createVfModuleArtifact(currVF, service, payloadWrapper.getInnerElement());
+            Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact = createVfModuleArtifact(currVF, service,
+                payloadWrapper.getInnerElement());
             if (createVfModuleArtifact.isLeft()) {
                 vfModuleAertifact = createVfModuleArtifact.left().value();
             } else {
@@ -1973,7 +2114,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> generateVfModuleInstanceArtifact(User modifier, ComponentInstance currVFInstance, Service service, boolean shouldLock, boolean inTransaction) {
+    private Either<ArtifactDefinition, ResponseFormat> generateVfModuleInstanceArtifact(User modifier,
+                                                                                        ComponentInstance currVFInstance,
+                                                                                        Service service,
+                                                                                        boolean shouldLock,
+                                                                                        boolean inTransaction) {
         ArtifactDefinition vfModuleArtifact = null;
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         Wrapper<String> payloadWrapper = new Wrapper<>();
@@ -1982,10 +2127,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             fillVfModuleInstHeatEnvPayload(groupsForCurrVF, payloadWrapper);
         }
         if (responseWrapper.isEmpty() && payloadWrapper.getInnerElement() != null) {
-            vfModuleArtifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, payloadWrapper, responseWrapper);
+            vfModuleArtifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, payloadWrapper,
+                responseWrapper);
         }
         if (responseWrapper.isEmpty() && vfModuleArtifact != null) {
-            vfModuleArtifact = fillVfModulePayload(modifier, currVFInstance, vfModuleArtifact, shouldLock, inTransaction, payloadWrapper, responseWrapper, service);
+            vfModuleArtifact = fillVfModulePayload(modifier, currVFInstance, vfModuleArtifact, shouldLock,
+                inTransaction, payloadWrapper, responseWrapper, service);
         }
 
         Either<ArtifactDefinition, ResponseFormat> result;
@@ -1998,10 +2145,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return result;
     }
 
-    private ArtifactDefinition fillVfModulePayload(User modifier, ComponentInstance currVF, ArtifactDefinition vfModuleArtifact, boolean shouldLock, boolean inTransaction, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper, Service service) {
+    private ArtifactDefinition fillVfModulePayload(User modifier, ComponentInstance currVF,
+                                                   ArtifactDefinition vfModuleArtifact, boolean shouldLock,
+                                                   boolean inTransaction, Wrapper<String> payloadWrapper,
+                                                   Wrapper<ResponseFormat> responseWrapper, Service service) {
         ArtifactDefinition result = null;
-        Either<ArtifactDefinition, ResponseFormat> eitherPayload = artifactsBusinessLogic.generateArtifactPayload(vfModuleArtifact, ComponentTypeEnum.RESOURCE_INSTANCE, service, currVF.getName(), modifier, shouldLock, inTransaction, System::currentTimeMillis,
-                () -> Either.left(artifactsBusinessLogic.createEsArtifactData(vfModuleArtifact, payloadWrapper.getInnerElement().getBytes(StandardCharsets.UTF_8))), currVF.getUniqueId());
+        Either<ArtifactDefinition, ResponseFormat> eitherPayload = artifactsBusinessLogic
+            .generateArtifactPayload(vfModuleArtifact, ComponentTypeEnum.RESOURCE_INSTANCE, service, currVF.getName(),
+                modifier, shouldLock, inTransaction, System::currentTimeMillis,
+                () -> Either.left(artifactsBusinessLogic.createEsArtifactData(vfModuleArtifact,
+                    payloadWrapper.getInnerElement().getBytes(StandardCharsets.UTF_8))), currVF.getUniqueId());
         if (eitherPayload.isLeft()) {
             result = eitherPayload.left().value();
         } else {
@@ -2014,7 +2167,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return result;
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact(ComponentInstance currVF, Service service, String vfModulePayloadString) {
+    private Either<ArtifactDefinition, ResponseFormat> createVfModuleArtifact(ComponentInstance currVF, Service service,
+                                                                              String vfModulePayloadString) {
 
         ArtifactDefinition vfModuleArtifactDefinition = new ArtifactDefinition();
         String newCheckSum = null;
@@ -2032,47 +2186,60 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         vfModuleArtifactDefinition.setArtifactChecksum(newCheckSum);
 
-        Either<ArtifactDefinition, StorageOperationStatus> addArtifactToComponent = artifactToscaOperation.addArtifactToComponent(
+        Either<ArtifactDefinition, StorageOperationStatus> addArtifactToComponent = artifactToscaOperation
+            .addArtifactToComponent(
                 vfModuleArtifactDefinition, service, NodeTypeEnum.ResourceInstance, true, currVF.getUniqueId());
 
         Either<ArtifactDefinition, ResponseFormat> result;
         if (addArtifactToComponent.isLeft()) {
             result = Either.left(addArtifactToComponent.left().value());
         } else {
-            result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtifactToComponent.right().value())));
+            result = Either.right(componentsUtils
+                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtifactToComponent.right().value())));
         }
 
         return result;
     }
 
-    public Either<Service, ResponseFormat> generateHeatEnvArtifacts(Service service, User modifier, boolean shouldLock, boolean inTransaction) {
+    public Either<Service, ResponseFormat> generateHeatEnvArtifacts(Service service, User modifier, boolean shouldLock,
+                                                                    boolean inTransaction) {
 
         Function<ComponentInstance, List<ArtifactGenerator<ArtifactDefinition>>> artifactTaskGeneratorCreator = resourceInstance ->
-                // Get All Deployment Artifacts
-                service.getComponentInstances().stream().filter(ri -> ri != null && ri == resourceInstance).filter(ri -> ri.getDeploymentArtifacts() != null).flatMap(ri -> ri.getDeploymentArtifacts().values().stream()).
-                        // Filter in Only Heat Env
-                                filter(depArtifact -> ArtifactTypeEnum.HEAT_ENV.getType().equals(depArtifact.getArtifactType())).
-                        // Create ArtifactGenerator from those Artifacts
-                                map(depArtifact -> new HeatEnvArtifactGenerator(depArtifact, service, resourceInstance.getName(), modifier, shouldLock, inTransaction, resourceInstance.getUniqueId())).collect(Collectors.toList());
+            // Get All Deployment Artifacts
+            service.getComponentInstances().stream().filter(ri -> ri != null && ri == resourceInstance)
+                .filter(ri -> ri.getDeploymentArtifacts() != null)
+                .flatMap(ri -> ri.getDeploymentArtifacts().values().stream()).
+                // Filter in Only Heat Env
+                    filter(depArtifact -> ArtifactTypeEnum.HEAT_ENV.getType().equals(depArtifact.getArtifactType())).
+                // Create ArtifactGenerator from those Artifacts
+                    map(depArtifact -> new HeatEnvArtifactGenerator(depArtifact, service, resourceInstance.getName(),
+                    modifier, shouldLock, inTransaction, resourceInstance.getUniqueId())).collect(Collectors.toList());
 
         return generateDeploymentArtifacts(service, artifactTaskGeneratorCreator);
 
     }
 
-    private <CallVal> Either<Service, ResponseFormat> generateDeploymentArtifacts(Service service, Function<ComponentInstance, List<ArtifactGenerator<CallVal>>> artifactTaskGeneratorCreator) {
+    private <CallVal> Either<Service, ResponseFormat> generateDeploymentArtifacts(Service service,
+                                                                                  Function<ComponentInstance, List<ArtifactGenerator<CallVal>>> artifactTaskGeneratorCreator) {
 
         // Get Flat List of (Callable) ArtifactGenerator for all the RI in the
         // service
         if (service.getComponentInstances() != null) {
-            List<ArtifactGenerator<CallVal>> artifactGenList = service.getComponentInstances().stream().flatMap(ri -> artifactTaskGeneratorCreator.apply(ri).stream()).collect(Collectors.toList());
+            List<ArtifactGenerator<CallVal>> artifactGenList = service.getComponentInstances().stream()
+                .flatMap(ri -> artifactTaskGeneratorCreator.apply(ri).stream()).collect(Collectors.toList());
             if (artifactGenList != null && !artifactGenList.isEmpty()) {
                 Either<Service, ResponseFormat> callRes = checkDeploymentArtifact(artifactGenList);
-                if (callRes != null) return callRes;
+                if (callRes != null) {
+                    return callRes;
+                }
             }
         }
-        Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaFullElement(service.getUniqueId());
+        Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade
+            .getToscaFullElement(service.getUniqueId());
         if (storageStatus.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
+            return Either.right(componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE),
+                ""));
         }
 
         Service currentService = storageStatus.left().value();
@@ -2081,7 +2248,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
-    private <CallVal> Either<Service, ResponseFormat> checkDeploymentArtifact(List<ArtifactGenerator<CallVal>> artifactGenList) {
+    private <CallVal> Either<Service, ResponseFormat> checkDeploymentArtifact(
+        List<ArtifactGenerator<CallVal>> artifactGenList) {
         for (ArtifactGenerator<CallVal> entry : artifactGenList) {
             Either<CallVal, ResponseFormat> callRes;
             try {
@@ -2103,6 +2271,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     class HeatEnvArtifactGenerator extends ArtifactGenerator<ArtifactDefinition> {
+
         ArtifactDefinition artifactDefinition;
         Service service;
         String resourceInstanceName;
@@ -2111,7 +2280,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         boolean shouldLock;
         boolean inTransaction;
 
-        HeatEnvArtifactGenerator(ArtifactDefinition artifactDefinition, Service service, String resourceInstanceName, User modifier, boolean shouldLock, boolean inTransaction, String instanceId) {
+        HeatEnvArtifactGenerator(ArtifactDefinition artifactDefinition, Service service, String resourceInstanceName,
+                                 User modifier, boolean shouldLock, boolean inTransaction, String instanceId) {
             this.artifactDefinition = artifactDefinition;
             this.service = service;
             this.resourceInstanceName = resourceInstanceName;
@@ -2123,7 +2293,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         @Override
         public Either<ArtifactDefinition, ResponseFormat> call() throws Exception {
-            return artifactsBusinessLogic.forceGenerateHeatEnvArtifact(artifactDefinition, ComponentTypeEnum.RESOURCE_INSTANCE, service, resourceInstanceName, modifier, shouldLock, inTransaction, instanceId);
+            return artifactsBusinessLogic
+                .forceGenerateHeatEnvArtifact(artifactDefinition, ComponentTypeEnum.RESOURCE_INSTANCE, service,
+                    resourceInstanceName, modifier, shouldLock, inTransaction, instanceId);
         }
 
         public ArtifactDefinition getArtifactDefinition() {
@@ -2133,6 +2305,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     class VfModuleArtifactGenerator extends ArtifactGenerator<ArtifactDefinition> {
+
         private User user;
         private ComponentInstance componentInstance;
         private Service service;
@@ -2144,7 +2317,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return generateVfModuleInstanceArtifact(user, componentInstance, service, shouldLock, inTransaction);
         }
 
-        private VfModuleArtifactGenerator(User user, ComponentInstance componentInstance, Service service, boolean shouldLock, boolean inTransaction) {
+        private VfModuleArtifactGenerator(User user, ComponentInstance componentInstance, Service service,
+                                          boolean shouldLock, boolean inTransaction) {
             super();
             this.user = user;
             this.componentInstance = componentInstance;
@@ -2155,23 +2329,29 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
-    private synchronized Either<Service, ResponseFormat> checkDistributionAndDeploy(String distributionId, User user, AuditingActionEnum auditAction, Service service) {
+    private synchronized Either<Service, ResponseFormat> checkDistributionAndDeploy(String distributionId, User user,
+                                                                                    AuditingActionEnum auditAction,
+                                                                                    Service service) {
         boolean isDeployed = isDistributionDeployed(distributionId);
         if (isDeployed) {
             return Either.left(service);
         }
-        Either<Boolean, ResponseFormat> distributionSuccess = checkDistributionSuccess(distributionId, user, auditAction, service);
+        Either<Boolean, ResponseFormat> distributionSuccess = checkDistributionSuccess(distributionId, user,
+            auditAction, service);
         if (distributionSuccess.isRight()) {
             return Either.right(distributionSuccess.right().value());
         }
 
         log.debug("mark distribution {} as deployed - success", distributionId);
-        componentsUtils.auditServiceDistributionDeployed(service.getName(), service.getVersion(), service.getUUID(), distributionId, STATUS_DEPLOYED, "OK", user);
+        componentsUtils.auditServiceDistributionDeployed(service.getName(), service.getVersion(), service.getUUID(),
+            distributionId, STATUS_DEPLOYED, "OK", user);
         return Either.left(service);
     }
 
     private boolean isDistributionDeployed(String distributionId) {
-        Either<List<DistributionDeployEvent>, ActionStatus> alreadyDeployed = auditCassandraDao.getDistributionDeployByStatus(distributionId, AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), STATUS_DEPLOYED);
+        Either<List<DistributionDeployEvent>, ActionStatus> alreadyDeployed = auditCassandraDao
+            .getDistributionDeployByStatus(distributionId, AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(),
+                STATUS_DEPLOYED);
 
         boolean isDeployed = false;
         if (alreadyDeployed.isLeft() && !alreadyDeployed.left().value().isEmpty()) {
@@ -2182,14 +2362,18 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return isDeployed;
     }
 
-    protected Either<Boolean, ResponseFormat> checkDistributionSuccess(String did, User user, AuditingActionEnum auditAction, Service service) {
+    protected Either<Boolean, ResponseFormat> checkDistributionSuccess(String did, User user,
+                                                                       AuditingActionEnum auditAction,
+                                                                       Service service) {
 
         log.trace("checkDistributionSuccess");
         // get all "DRequest" records for this distribution
 
-        Either<List<ResourceAdminEvent>, ActionStatus> distRequestsResponse = auditCassandraDao.getDistributionRequest(did, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName());
+        Either<List<ResourceAdminEvent>, ActionStatus> distRequestsResponse = auditCassandraDao
+            .getDistributionRequest(did, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName());
         if (distRequestsResponse.isRight()) {
-            ResponseFormat error = auditDeployError(did, user, auditAction, service, distRequestsResponse.right().value());
+            ResponseFormat error = auditDeployError(did, user, auditAction, service,
+                distRequestsResponse.right().value());
             return Either.right(error);
         }
 
@@ -2197,7 +2381,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (distributionRequests.isEmpty()) {
             BeEcompErrorManager.getInstance().logBeDistributionMissingError("markDistributionAsDeployed", did);
             log.info("distribution {} is not found", did);
-            ResponseFormat error = auditDeployError(did, user, auditAction, service, ActionStatus.DISTRIBUTION_REQUESTED_NOT_FOUND);
+            ResponseFormat error = auditDeployError(did, user, auditAction, service,
+                ActionStatus.DISTRIBUTION_REQUESTED_NOT_FOUND);
             return Either.right(error);
         }
         boolean isRequestSucceeded = false;
@@ -2210,9 +2395,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
 
         // get all "DNotify" records for this distribution
-        Either<List<DistributionNotificationEvent>, ActionStatus> distNotificationsResponse = auditCassandraDao.getDistributionNotify(did, AuditingActionEnum.DISTRIBUTION_NOTIFY.getName());
+        Either<List<DistributionNotificationEvent>, ActionStatus> distNotificationsResponse = auditCassandraDao
+            .getDistributionNotify(did, AuditingActionEnum.DISTRIBUTION_NOTIFY.getName());
         if (distNotificationsResponse.isRight()) {
-            ResponseFormat error = auditDeployError(did, user, auditAction, service, distNotificationsResponse.right().value());
+            ResponseFormat error = auditDeployError(did, user, auditAction, service,
+                distNotificationsResponse.right().value());
             return Either.right(error);
         }
 
@@ -2237,7 +2424,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(true);
     }
 
-    private ResponseFormat auditDeployError(String did, User user, AuditingActionEnum auditAction, Service service, ActionStatus status, String... params) {
+    private ResponseFormat auditDeployError(String did, User user, AuditingActionEnum auditAction, Service service,
+                                            ActionStatus status, String... params) {
 
         ResponseFormat error = componentsUtils.getResponseFormat(status, params);
         String message = "";
@@ -2247,9 +2435,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         message += error.getFormattedMessage();
 
         if (service != null) {
-            componentsUtils.auditServiceDistributionDeployed(service.getName(), service.getVersion(), service.getUUID(), did, error.getStatus().toString(), message, user);
+            componentsUtils
+                .auditServiceDistributionDeployed(service.getName(), service.getVersion(), service.getUUID(), did,
+                    error.getStatus().toString(), message, user);
         } else {
-            componentsUtils.auditServiceDistributionDeployed("", "", "", did, error.getStatus().toString(), message, user);
+            componentsUtils
+                .auditServiceDistributionDeployed("", "", "", did, error.getStatus().toString(), message, user);
         }
         return error;
     }
@@ -2260,9 +2451,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         List<Role> roles = new ArrayList<>();
         roles.add(Role.ADMIN);
         roles.add(Role.DESIGNER);
-        try{
+        try {
             validateUserRole(user, service, roles, auditAction, null);
-        } catch (ByActionStatusComponentException e){
+        } catch (ByActionStatusComponentException e) {
             log.info("role {} is not allowed to perform this action", user.getRole());
             auditDeployError(did, user, auditAction, service, e.getActionStatus());
             throw e;
@@ -2272,31 +2463,33 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     @Override
     public void setDeploymentArtifactsPlaceHolder(Component component, User user) {
-        if(component instanceof Service){
+        if (component instanceof Service) {
             Service service = (Service) component;
             Map<String, ArtifactDefinition> artifactMap = service.getDeploymentArtifacts();
             if (artifactMap == null) {
                 artifactMap = new HashMap<>();
             }
             service.setDeploymentArtifacts(artifactMap);
-        }else if(component instanceof Resource){
+        } else if (component instanceof Resource) {
             Resource resource = (Resource) component;
             Map<String, ArtifactDefinition> artifactMap = resource.getDeploymentArtifacts();
             if (artifactMap == null) {
                 artifactMap = new HashMap<>();
             }
             Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager()
-                                                                      .getConfiguration().getDeploymentResourceArtifacts();
+                .getConfiguration().getDeploymentResourceArtifacts();
             if (deploymentResourceArtifacts != null) {
                 Map<String, ArtifactDefinition> finalArtifactMap = artifactMap;
-                deploymentResourceArtifacts.forEach((k, v)->processDeploymentResourceArtifacts(user, resource, finalArtifactMap, k,v));
+                deploymentResourceArtifacts
+                    .forEach((k, v) -> processDeploymentResourceArtifacts(user, resource, finalArtifactMap, k, v));
             }
             resource.setDeploymentArtifacts(artifactMap);
         }
 
     }
 
-    private void processDeploymentResourceArtifacts(User user, Resource resource, Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
+    private void processDeploymentResourceArtifacts(User user, Resource resource,
+                                                    Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
         Map<String, Object> artifactDetails = (Map<String, Object>) v;
         Object object = artifactDetails.get(PLACE_HOLDER_RESOURCE_TYPES);
         if (object != null) {
@@ -2306,14 +2499,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
         } else {
             log.info("resource types for artifact placeholder {} were not defined. default is all resources",
-                    k);
+                k);
         }
         if (artifactsBusinessLogic != null) {
             ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-                    resource.getUniqueId(), k, (Map<String, Object>) v,
-                    user, ArtifactGroupTypeEnum.DEPLOYMENT);
+                resource.getUniqueId(), k, (Map<String, Object>) v,
+                user, ArtifactGroupTypeEnum.DEPLOYMENT);
             if (artifactDefinition != null
-                    && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
+                && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
                 artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
             }
         }
@@ -2325,7 +2518,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
@@ -2336,12 +2530,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     @Override
-    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, String userId) {
+    public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(
+        String componentId, String userId) {
 
         validateUserExists(userId);
-        Either<Component, StorageOperationStatus> getComponentRes = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
+        Either<Component, StorageOperationStatus> getComponentRes = toscaOperationFacade
+            .getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
         if (getComponentRes.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getComponentRes.right().value()));
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(componentsUtils.convertFromStorageResponse(getComponentRes.right().value()));
             return Either.right(responseFormat);
         }
 
@@ -2356,36 +2553,49 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     /**
-     * updates group instance with new property values in case of successful update of group instance related component instance will be updated with new modification time and related service will be updated with new last update date
-     *
+     * updates group instance with new property values in case of successful update of group instance related component
+     * instance will be updated with new modification time and related service will be updated with new last update
+     * date
      */
-    public Either<List<GroupInstanceProperty>, ResponseFormat> updateGroupInstancePropertyValues(User modifier, String serviceId, String componentInstanceId, String groupInstanceId, List<GroupInstanceProperty> newProperties) {
+    public Either<List<GroupInstanceProperty>, ResponseFormat> updateGroupInstancePropertyValues(User modifier,
+                                                                                                 String serviceId,
+                                                                                                 String componentInstanceId,
+                                                                                                 String groupInstanceId,
+                                                                                                 List<GroupInstanceProperty> newProperties) {
 
         Either<List<GroupInstanceProperty>, ResponseFormat> actionResult = null;
         Either<ImmutablePair<Component, User>, ResponseFormat> validateUserAndComponentRes;
         Component component = null;
         Either<Boolean, ResponseFormat> lockResult = null;
-        log.debug("Going to update group instance {} of service {} with new property values. ", groupInstanceId, serviceId);
+        log.debug("Going to update group instance {} of service {} with new property values. ", groupInstanceId,
+            serviceId);
         try {
             validateUserAndComponentRes = validateUserAndComponent(serviceId, modifier);
             if (validateUserAndComponentRes.isRight()) {
-                log.debug("Cannot update group instance {} of service {} with new property values. Validation failed.  ", groupInstanceId, serviceId);
+                log.debug(
+                    "Cannot update group instance {} of service {} with new property values. Validation failed.  ",
+                    groupInstanceId, serviceId);
                 actionResult = Either.right(validateUserAndComponentRes.right().value());
             }
             if (actionResult == null) {
                 component = validateUserAndComponentRes.left().value().getKey();
-                lockResult = lockComponentByName(component.getSystemName(), component, "Update Group Instance on Service");
+                lockResult = lockComponentByName(component.getSystemName(), component,
+                    "Update Group Instance on Service");
                 if (lockResult.isRight()) {
-                    log.debug(FAILED_TO_LOCK_SERVICE_RESPONSE_IS, component.getName(), lockResult.right().value().getFormattedMessage());
+                    log.debug(FAILED_TO_LOCK_SERVICE_RESPONSE_IS, component.getName(),
+                        lockResult.right().value().getFormattedMessage());
                     actionResult = Either.right(lockResult.right().value());
                 } else {
                     log.debug(THE_SERVICE_WITH_SYSTEM_NAME_LOCKED, component.getSystemName());
                 }
             }
             if (actionResult == null) {
-                actionResult = validateAndUpdateGroupInstancePropertyValuesAndContainingParents(component, componentInstanceId, groupInstanceId, newProperties);
+                actionResult = validateAndUpdateGroupInstancePropertyValuesAndContainingParents(component,
+                    componentInstanceId, groupInstanceId, newProperties);
                 if (actionResult.isRight()) {
-                    log.debug("Failed to validate and update group instance {} property values and containing parents. The message is {}. ", groupInstanceId, actionResult.right().value().getFormattedMessage());
+                    log.debug(
+                        "Failed to validate and update group instance {} property values and containing parents. The message is {}. ",
+                        groupInstanceId, actionResult.right().value().getFormattedMessage());
                 }
             }
         } catch (Exception e) {
@@ -2393,13 +2603,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             actionResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
             if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
-                graphLockOperation.unlockComponentByName(component.getSystemName(), component.getUniqueId(), NodeTypeEnum.Service);
+                graphLockOperation
+                    .unlockComponentByName(component.getSystemName(), component.getUniqueId(), NodeTypeEnum.Service);
             }
         }
         return actionResult;
     }
 
-    private Either<List<GroupInstanceProperty>, ResponseFormat> validateAndUpdateGroupInstancePropertyValuesAndContainingParents(Component component, String componentInstanceId, String groupInstanceId, List<GroupInstanceProperty> newProperties) {
+    private Either<List<GroupInstanceProperty>, ResponseFormat> validateAndUpdateGroupInstancePropertyValuesAndContainingParents(
+        Component component, String componentInstanceId, String groupInstanceId,
+        List<GroupInstanceProperty> newProperties) {
 
         Either<List<GroupInstanceProperty>, ResponseFormat> actionResult = null;
         Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat> findGroupInstanceRes;
@@ -2409,26 +2622,36 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<GroupInstance, ResponseFormat> updateGroupInstanceResult = null;
         GroupInstance updatedGroupInstance = null;
         boolean inTransaction = true;
-        findGroupInstanceRes = findGroupInstanceOnRelatedComponentInstance(component, componentInstanceId, groupInstanceId);
+        findGroupInstanceRes = findGroupInstanceOnRelatedComponentInstance(component, componentInstanceId,
+            groupInstanceId);
         if (findGroupInstanceRes.isRight()) {
-            log.debug("#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Group instance {} not found. ", groupInstanceId);
+            log.debug(
+                "#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Group instance {} not found. ",
+                groupInstanceId);
             actionResult = Either.right(findGroupInstanceRes.right().value());
         }
         if (actionResult == null) {
             oldGroupInstance = findGroupInstanceRes.left().value().getValue();
             relatedComponentInstance = findGroupInstanceRes.left().value().getKey();
-            updateGroupInstanceResult = groupBusinessLogic.validateAndUpdateGroupInstancePropertyValues(component.getUniqueId(), componentInstanceId, oldGroupInstance, newProperties);
+            updateGroupInstanceResult = groupBusinessLogic
+                .validateAndUpdateGroupInstancePropertyValues(component.getUniqueId(), componentInstanceId,
+                    oldGroupInstance, newProperties);
             if (updateGroupInstanceResult.isRight()) {
-                log.debug("#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Failed to update group instance {} property values. ", oldGroupInstance.getName());
+                log.debug(
+                    "#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Failed to update group instance {} property values. ",
+                    oldGroupInstance.getName());
                 actionResult = Either.right(updateGroupInstanceResult.right().value());
             }
         }
         if (actionResult == null) {
             updatedGroupInstance = updateGroupInstanceResult.left().value();
             if (!oldGroupInstance.getModificationTime().equals(updatedGroupInstance.getModificationTime())) {
-                updateParentsModificationTimeRes = updateParentsModificationTimeAndCustomizationUuid(component, relatedComponentInstance, updatedGroupInstance, inTransaction);
+                updateParentsModificationTimeRes = updateParentsModificationTimeAndCustomizationUuid(component,
+                    relatedComponentInstance, updatedGroupInstance, inTransaction);
                 if (updateParentsModificationTimeRes.isRight()) {
-                    log.debug("#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Failed to update modification time for group instance {}. ", oldGroupInstance.getName());
+                    log.debug(
+                        "#validateAndUpdateGroupInstancePropertyValuesAndContainingParents - Failed to update modification time for group instance {}. ",
+                        oldGroupInstance.getName());
                     actionResult = Either.right(updateParentsModificationTimeRes.right().value());
                 }
             }
@@ -2439,36 +2662,47 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return actionResult;
     }
 
-    private Either<ImmutablePair<ComponentMetadataData, ComponentInstanceData>, ResponseFormat> updateParentsModificationTimeAndCustomizationUuid(Component component, ComponentInstance relatedComponentInstance, GroupInstance updatedGroupInstance,
-                                                                                                                                                  boolean inTranscation) {
+    private Either<ImmutablePair<ComponentMetadataData, ComponentInstanceData>, ResponseFormat> updateParentsModificationTimeAndCustomizationUuid(
+        Component component, ComponentInstance relatedComponentInstance, GroupInstance updatedGroupInstance,
+        boolean inTranscation) {
 
         Either<ImmutablePair<ComponentMetadataData, ComponentInstanceData>, ResponseFormat> actionResult;
         Either<ComponentMetadataData, StorageOperationStatus> serviceMetadataUpdateResult;
-        Either<ComponentInstanceData, ResponseFormat> updateComponentInstanceRes = componentInstanceBusinessLogic.updateComponentInstanceModificationTimeAndCustomizationUuid(relatedComponentInstance, NodeTypeEnum.ResourceInstance,
+        Either<ComponentInstanceData, ResponseFormat> updateComponentInstanceRes = componentInstanceBusinessLogic
+            .updateComponentInstanceModificationTimeAndCustomizationUuid(relatedComponentInstance,
+                NodeTypeEnum.ResourceInstance,
                 updatedGroupInstance.getModificationTime(), inTranscation);
         if (updateComponentInstanceRes.isRight()) {
-            log.debug("Failed to update component instance {} after update of group instance {}. ", relatedComponentInstance.getName(), updatedGroupInstance.getName());
+            log.debug("Failed to update component instance {} after update of group instance {}. ",
+                relatedComponentInstance.getName(), updatedGroupInstance.getName());
             actionResult = Either.right(updateComponentInstanceRes.right().value());
         } else {
             serviceMetadataUpdateResult = toscaOperationFacade.updateComponentLastUpdateDateOnGraph(component);
             if (serviceMetadataUpdateResult.isRight()) {
-                log.debug("Failed to update service {} after update of component instance {} with new property values of group instance {}. ", component.getName(), relatedComponentInstance.getName(), updatedGroupInstance.getName());
-                actionResult = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceMetadataUpdateResult.right().value())));
+                log.debug(
+                    "Failed to update service {} after update of component instance {} with new property values of group instance {}. ",
+                    component.getName(), relatedComponentInstance.getName(), updatedGroupInstance.getName());
+                actionResult = Either.right(componentsUtils.getResponseFormat(
+                    componentsUtils.convertFromStorageResponse(serviceMetadataUpdateResult.right().value())));
             } else {
-                actionResult = Either.left(new ImmutablePair<>(serviceMetadataUpdateResult.left().value(), updateComponentInstanceRes.left().value()));
+                actionResult = Either.left(new ImmutablePair<>(serviceMetadataUpdateResult.left().value(),
+                    updateComponentInstanceRes.left().value()));
             }
         }
         return actionResult;
     }
 
-    private Either<ImmutablePair<Component, User>, ResponseFormat> validateUserAndComponent(String serviceId, User modifier) {
+    private Either<ImmutablePair<Component, User>, ResponseFormat> validateUserAndComponent(String serviceId,
+                                                                                            User modifier) {
 
         Either<ImmutablePair<Component, User>, ResponseFormat> result = null;
         User currUser = null;
         Component component = null;
-        Either<User, ResponseFormat> validationUserResult = validateUserIgnoreAudit(modifier, "updateGroupInstancePropertyValues");
+        Either<User, ResponseFormat> validationUserResult = validateUserIgnoreAudit(modifier,
+            "updateGroupInstancePropertyValues");
         if (validationUserResult.isRight()) {
-            log.debug("#validateUserAndComponent - Failed to validate user with userId {}, for update service {}. ", modifier.getUserId(), serviceId);
+            log.debug("#validateUserAndComponent - Failed to validate user with userId {}, for update service {}. ",
+                modifier.getUserId(), serviceId);
             result = Either.right(validationUserResult.right().value());
         }
         if (result == null) {
@@ -2476,7 +2710,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             try {
                 component = validateComponentExists(serviceId, ComponentTypeEnum.SERVICE, null);
                 if (!ComponentValidationUtils.canWorkOnComponent(component, currUser.getUserId())) {
-                    log.info("#validateUserAndComponent - Restricted operation for user: {}, on service: {}", currUser.getUserId(), component.getCreatorUserId());
+                    log.info("#validateUserAndComponent - Restricted operation for user: {}, on service: {}",
+                        currUser.getUserId(), component.getCreatorUserId());
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
                 }
             } catch (ComponentException e) {
@@ -2491,20 +2726,26 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return result;
     }
 
-    private Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat> findGroupInstanceOnRelatedComponentInstance(Component component, String componentInstanceId, String groupInstanceId) {
+    private Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat> findGroupInstanceOnRelatedComponentInstance(
+        Component component, String componentInstanceId, String groupInstanceId) {
 
         Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat> actionResult = null;
         GroupInstance groupInstance = null;
         ComponentInstance foundComponentInstance = findRelatedComponentInstance(component, componentInstanceId);
         if (foundComponentInstance == null) {
             log.debug("Component instance {} not found on service {}. ", componentInstanceId, component.getName());
-            actionResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstanceId, "resource instance", "service", component.getName()));
-        }
-        else if (isNotEmpty(foundComponentInstance.getGroupInstances())) {
-            groupInstance = foundComponentInstance.getGroupInstances().stream().filter(gi -> gi.getUniqueId().equals(groupInstanceId)).findFirst().orElse(null);
+            actionResult = Either.right(componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstanceId,
+                    "resource instance", "service", component.getName()));
+        } else if (isNotEmpty(foundComponentInstance.getGroupInstances())) {
+            groupInstance = foundComponentInstance.getGroupInstances().stream()
+                .filter(gi -> gi.getUniqueId().equals(groupInstanceId)).findFirst().orElse(null);
             if (groupInstance == null) {
-                log.debug("Group instance {} not found on component instance {}. ", groupInstanceId, foundComponentInstance.getName());
-                actionResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_INSTANCE_NOT_FOUND_ON_COMPONENT_INSTANCE, groupInstanceId, foundComponentInstance.getName()));
+                log.debug("Group instance {} not found on component instance {}. ", groupInstanceId,
+                    foundComponentInstance.getName());
+                actionResult = Either.right(componentsUtils
+                    .getResponseFormat(ActionStatus.GROUP_INSTANCE_NOT_FOUND_ON_COMPONENT_INSTANCE, groupInstanceId,
+                        foundComponentInstance.getName()));
             }
         }
         if (actionResult == null) {
@@ -2516,7 +2757,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private ComponentInstance findRelatedComponentInstance(Component component, String componentInstanceId) {
         ComponentInstance componentInstance = null;
         if (isNotEmpty(component.getComponentInstances())) {
-            componentInstance = component.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(componentInstanceId)).findFirst().orElse(null);
+            componentInstance = component.getComponentInstances().stream()
+                .filter(ci -> ci.getUniqueId().equals(componentInstanceId)).findFirst().orElse(null);
         }
         return componentInstance;
     }
@@ -2530,29 +2772,39 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(user);
     }
 
-    public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String serviceId, List<String> dataParamsToReturn) {
+    public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String serviceId,
+                                                                                                   List<String> dataParamsToReturn) {
 
         ComponentParametersView paramsToReturn = new ComponentParametersView(dataParamsToReturn);
         paramsToReturn.setIgnoreComponentInstancesProperties(false);
-        Either<Service, StorageOperationStatus> serviceResultEither = toscaOperationFacade.getToscaElement(serviceId, paramsToReturn);
+        Either<Service, StorageOperationStatus> serviceResultEither = toscaOperationFacade
+            .getToscaElement(serviceId, paramsToReturn);
 
         if (serviceResultEither.isRight()) {
-            if(serviceResultEither.right().value() == StorageOperationStatus.NOT_FOUND) {
+            if (serviceResultEither.right().value() == StorageOperationStatus.NOT_FOUND) {
                 log.debug("#getUiComponentDataTransferByComponentId - Failed to find service with id {} ", serviceId);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.SERVICE_NOT_FOUND, serviceId));
             }
 
-            log.debug("#getUiComponentDataTransferByComponentId - failed to get service by id {} with filters {}", serviceId, dataParamsToReturn);
-            return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(serviceResultEither.right().value()), ""));
+            log.debug("#getUiComponentDataTransferByComponentId - failed to get service by id {} with filters {}",
+                serviceId, dataParamsToReturn);
+            return Either.right(componentsUtils.getResponseFormatByResource(
+                componentsUtils.convertFromStorageResponse(serviceResultEither.right().value()), ""));
         }
 
         Service service = serviceResultEither.left().value();
-		if (dataParamsToReturn.contains(ComponentFieldsEnum.INPUTS.getValue())) {
-			ListUtils.emptyIfNull(service.getInputs())
-					.forEach(input -> input.setConstraints(setInputConstraint(input)));
-		}
+        if (dataParamsToReturn.contains(ComponentFieldsEnum.INPUTS.getValue())) {
+            ListUtils.emptyIfNull(service.getInputs())
+                .forEach(input -> input.setConstraints(setInputConstraint(input)));
+        }
 
-        UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
+        if (dataParamsToReturn.contains(ComponentFieldsEnum.OUTPUTS.getValue())) {
+            ListUtils.emptyIfNull(service.getOutputs())
+                .forEach(output -> output.setConstraints(setOutputConstraint(output)));
+        }
+
+        UiComponentDataTransfer dataTransfer = uiComponentDataConverter
+            .getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
         return Either.left(dataTransfer);
     }
 
