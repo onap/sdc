@@ -33,6 +33,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import org.junit.Before;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
@@ -58,6 +59,7 @@ import org.openecomp.sdc.be.components.validation.service.ServiceNamingPolicyVal
 import org.openecomp.sdc.be.components.validation.service.ServiceRoleValidator;
 import org.openecomp.sdc.be.components.validation.service.ServiceTypeValidator;
 import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -85,6 +87,8 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -163,6 +167,8 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 
         // Elements
         IElementOperation mockElementDao = new ElementOperationMock();

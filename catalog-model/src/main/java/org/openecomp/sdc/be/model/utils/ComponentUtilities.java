@@ -20,16 +20,16 @@
 
 package org.openecomp.sdc.be.model.utils;
 
+import static java.util.Collections.emptyList;
+
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.Collections.emptyList;
+import org.openecomp.sdc.be.model.OutputDefinition;
 
 public class ComponentUtilities {
     private ComponentUtilities() {
@@ -47,10 +47,22 @@ public class ComponentUtilities {
                 .orElse(emptyList());
     }
 
+    public static List<Annotation> getOutputAnnotations(final Component component, final String outputName) {
+        return getOutputByName(component, outputName)
+            .map(OutputDefinition::getAnnotations)
+            .orElse(emptyList());
+    }
+
     private static Optional<InputDefinition> getInputByName(Component component, String inputName) {
         return component.safeGetInputs().stream()
                 .filter(input -> input.getName().equals(inputName))
                 .findFirst();
+    }
+
+    private static Optional<OutputDefinition> getOutputByName(final Component component, final String outputName) {
+        return component.safeGetOutputs().stream()
+            .filter(output -> output.getName().equals(outputName))
+            .findFirst();
     }
 
     public static boolean isNotUpdatedCapReqName(String prefix, String currName, String previousName) {
