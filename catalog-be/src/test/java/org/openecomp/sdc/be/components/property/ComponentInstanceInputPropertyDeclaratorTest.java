@@ -12,19 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2020, Nordix Foundation
+ * ================================================================================
  */
-
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.AnnotationBuilder;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
@@ -59,7 +62,7 @@ import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.MockGenerator.mockComponentUtils;
 import static org.openecomp.sdc.be.MockGenerator.mockExceptionUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
 
@@ -82,23 +85,23 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
     private Annotation annotation2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         testInstance = new ComponentInstanceInputPropertyDeclarator(mockComponentUtils(), propertyOperation,
-                toscaOperationFacade, componentInstanceBusinessLogic, mockExceptionUtils());
+            toscaOperationFacade, componentInstanceBusinessLogic, mockExceptionUtils());
         annotation1 =  AnnotationBuilder.create()
-                .setType("annotationType1")
-                .setName("annotation1")
-                .addProperty("prop1")
-                .addProperty("prop2")
-                .build();
+            .setType("annotationType1")
+            .setName("annotation1")
+            .addProperty("prop1")
+            .addProperty("prop2")
+            .build();
 
         annotation2 =  AnnotationBuilder.create()
-                .setType("annotationType2")
-                .setName("annotation2")
-                .addProperty("prop3")
-                .build();
+            .setType("annotationType2")
+            .setName("annotation2")
+            .addProperty("prop3")
+            .build();
     }
 
     @Test
@@ -136,10 +139,10 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         expectedMap.put(prop1.getName(), expectedProperties);
 
         when(toscaOperationFacade.addComponentInstanceInputsToComponent(eq(resource), anyMap()))
-                .thenReturn(Either.left(expectedMap));
+            .thenReturn(Either.left(expectedMap));
 
         Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> updateEither =
-                (Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus>) testInstance.updatePropertiesValues(resource, resource.getUniqueId(), expectedProperties);
+            (Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus>) testInstance.updatePropertiesValues(resource, resource.getUniqueId(), expectedProperties);
 
         assertThat(updateEither.isLeft());
         Map<String, List<ComponentInstanceInput>> actualProperties = updateEither.left().value();
@@ -164,12 +167,12 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
 
         Component component = createComponentWithListInput(INPUT_ID, "innerPropName");
         PropertyDefinition prop = new PropertyDataDefinitionBuilder()
-                .setName("propName")
-                .setValue(generateGetInputValueAsListInput(INPUT_ID, "innerPropName"))
-                .setType("list")
-                .setUniqueId("propName")
-                .addGetInputValue(INPUT_ID)
-                .build();
+            .setName("propName")
+            .setValue(generateGetInputValueAsListInput(INPUT_ID, "innerPropName"))
+            .setType("list")
+            .setUniqueId("propName")
+            .addGetInputValue(INPUT_ID)
+            .build();
         component.setProperties(Collections.singletonList(prop));
 
         List<ComponentInstanceInput> ciPropList = new ArrayList<>();
@@ -207,24 +210,24 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
     private void verifyInputAnnotations(InputDefinition inputDefinition) {
         List<Annotation> annotations = inputDefinition.getAnnotations();
         assertThat(annotations)
-                .containsExactlyInAnyOrder(annotation1, annotation2);
+            .containsExactlyInAnyOrder(annotation1, annotation2);
     }
 
     private Component createComponentWithInputAndAnnotation(String inputName) {
         InputDefinition input = InputsBuilder.create()
-                .setName(inputName)
-                .addAnnotation(annotation1)
-                .addAnnotation(annotation2)
-                .build();
+            .setName(inputName)
+            .addAnnotation(annotation1)
+            .addAnnotation(annotation2)
+            .build();
         return new ResourceBuilder()
-                .addInput(input)
-                .build();
+            .addInput(input)
+            .build();
     }
 
     private Component createComponentWithListInput(String inputName, String propName) {
         InputDefinition input = InputsBuilder.create()
-                .setName(inputName)
-                .build();
+            .setName(inputName)
+            .build();
 
         input.setUniqueId(INPUT_ID);
         input.setName(INPUT_ID);
@@ -232,8 +235,8 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         input.setValue(generateGetInputValueAsListInput(inputName, propName));
 
         return new ResourceBuilder()
-                .setUniqueId(RESOURCE_ID)
-                .addInput(input)
-                .build();
+            .setUniqueId(RESOURCE_ID)
+            .addInput(input)
+            .build();
     }
 }

@@ -16,8 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2020, Nordix Foundation
+ * ================================================================================
  */
-
 package org.openecomp.sdc.be.tosca;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -101,6 +102,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplateArtifact;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
+import org.openecomp.sdc.be.tosca.utils.OutputConverter;
 
 public class ToscaExportHandlerTest extends BeConfDependentTest {
 
@@ -128,6 +130,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     private InputConverter inputConverter;
 
     @Mock
+    private OutputConverter outputConverter;
+
+    @Mock
     private GroupExportParser groupExportParser;
 
     @Mock
@@ -148,9 +153,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     @Before
     public void setUpMock() throws Exception {
         MockitoAnnotations.initMocks(this);
-		doReturn(new ToscaProperty()).when(propertyConvertor).convertProperty(any(), any(), eq(PROPERTY));
+        doReturn(new ToscaProperty()).when(propertyConvertor).convertProperty(any(), any(), eq(PROPERTY));
         doReturn(new HashMap<String, Object>()).when(interfacesOperationsConverter)
-                .getInterfacesMap(any(), isNull(), anyMap(), anyMap(), anyBoolean(), anyBoolean());
+            .getInterfacesMap(any(), isNull(), anyMap(), anyMap(), anyBoolean(), anyBoolean());
     }
 
     private Resource getNewResource() {
@@ -377,8 +382,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
 
-        Mockito.when(inputConverter.convertInputs(any(List.class), any(Map.class)))
-            .thenReturn(new HashMap<>());
+        Mockito.when(inputConverter.convertInputs(any(List.class), any(Map.class))).thenReturn(new HashMap<>());
+        Mockito.when(outputConverter.convertOutputs(any(List.class), any(Map.class))).thenReturn(new HashMap<>());
 
         Mockito.when(groupExportParser.getGroups(component))
             .thenReturn(null);
@@ -419,6 +424,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
 
         Mockito.when(inputConverter.convertInputs(anyList(), anyMap())).thenReturn(new HashMap<>());
+        Mockito.when(outputConverter.convertOutputs(anyList(), anyMap())).thenReturn(new HashMap<>());
         // test component contains group
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
         Assert.assertNotNull(result);
@@ -997,11 +1003,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         result = Deencapsulation.invoke(testSubject, "createProxyNodeTypes", componentCache, container);
         Assert.assertNotNull(result);
     }
-    
+
     @Test
     public void testCreateServiceSubstitutionNodeTypes() throws Exception {
         Map<String, Component> componentCache = new HashMap<>();
-              
+
         Component referencedService = getNewService();
         referencedService.setInvariantUUID("uuid");
         referencedService.setUUID("uuid");
@@ -1017,7 +1023,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         componentInstances.add(instance);
         containerService.setComponentInstances(componentInstances);
-        
+
         Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
             .thenReturn(Either.left(Collections.emptyMap()));
         Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
@@ -1481,7 +1487,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testGetProxyNodeTypeInterfacesNoInterfaces() {
         Component service = new Service();
         Optional<Map<String, Object>> proxyNodeTypeInterfaces =
-                testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
         Assert.assertFalse(proxyNodeTypeInterfaces.isPresent());
     }
 
@@ -1489,7 +1495,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testGetProxyNodeTypeInterfaces() {
         Component service = getTestComponent();
         Optional<Map<String, Object>> proxyNodeTypeInterfaces =
-                testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
         Assert.assertTrue(proxyNodeTypeInterfaces.isPresent());
         Map<String, Object> componentInterfaces = proxyNodeTypeInterfaces.get();
         Assert.assertNotNull(componentInterfaces);
@@ -1499,7 +1505,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     @Test
     public void testGetProxyNodeTypePropertiesComponentNull() {
         Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
-                testSubject.getProxyNodeTypeProperties(null, DATA_TYPES);
+            testSubject.getProxyNodeTypeProperties(null, DATA_TYPES);
         Assert.assertFalse(proxyNodeTypeProperties.isPresent());
     }
 
@@ -1507,7 +1513,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testGetProxyNodeTypePropertiesNoProperties() {
         Component service = new Service();
         Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
-                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
         Assert.assertFalse(proxyNodeTypeProperties.isPresent());
     }
 
@@ -1515,9 +1521,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testGetProxyNodeTypeProperties() {
         Component service = getTestComponent();
         service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
-                createMockProperty("componentPropInt", null)));
+            createMockProperty("componentPropInt", null)));
         Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
-                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
         Assert.assertTrue(proxyNodeTypeProperties.isPresent());
         Map<String, ToscaProperty> componentProperties = proxyNodeTypeProperties.get();
         Assert.assertNotNull(componentProperties);
@@ -1528,9 +1534,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testAddInputsToPropertiesNoInputs() {
         Component service = getTestComponent();
         service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
-                createMockProperty("componentPropInt", null)));
+            createMockProperty("componentPropInt", null)));
         Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
-                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
 
         Assert.assertTrue(proxyNodeTypePropertiesResult.isPresent());
         Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
@@ -1545,11 +1551,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testAddInputsToPropertiesWithInputs() {
         Component service = getTestComponent();
         service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
-                createMockProperty("componentPropInt", null)));
+            createMockProperty("componentPropInt", null)));
         service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
-                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
+            "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
         Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
-                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
 
         Assert.assertTrue(proxyNodeTypePropertiesResult.isPresent());
         Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
@@ -1562,9 +1568,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testAddInputsToPropertiesOnlyInputs() {
         Component service = getTestComponent();
         service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
-                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
+            "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
         Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
-                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
 
         Assert.assertTrue(proxyNodeTypePropertiesResult.isPresent());
         Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
@@ -1577,7 +1583,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     public void testOperationImplementationInProxyNodeTypeNotPresent() {
         Component service = getTestComponent();
         InterfaceDefinition interfaceDefinition =
-                service.getInterfaces().get("normalizedServiceComponentName-interface");
+            service.getInterfaces().get("normalizedServiceComponentName-interface");
         interfaceDefinition.setOperations(new HashMap<>());
         final OperationDataDefinition operation = new OperationDataDefinition();
         operation.setName("start");
@@ -1588,9 +1594,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         interfaceDefinition.getOperations().put(operation.getName(), operation);
         service.getInterfaces().put("normalizedServiceComponentName-interface", interfaceDefinition);
         service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
-                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
+            "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
         Optional<Map<String, Object>> proxyNodeTypeInterfaces =
-                testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
+            testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
         Assert.assertTrue(proxyNodeTypeInterfaces.isPresent());
         Map<String, Object> componentInterfaces = proxyNodeTypeInterfaces.get();
         Assert.assertNotNull(componentInterfaces);

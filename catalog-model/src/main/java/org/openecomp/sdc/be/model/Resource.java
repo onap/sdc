@@ -193,6 +193,11 @@ public class Resource extends Component {
     }
 
     @Override
+    public boolean shouldGenerateOutputs() {
+        return !(this.getResourceType().isAtomicType());
+    }
+
+    @Override
     public boolean deriveFromGeneric() {
         return this.shouldGenerateInputs()
                 || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
