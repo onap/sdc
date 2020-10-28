@@ -26,7 +26,6 @@
         <artifactId>openecomp-sdc-lib</artifactId>
         <groupId>org.openecomp.sdc</groupId>
         <version>1.8.1-SNAPSHOT</version>
-        <relativePath>../../..</relativePath>
     </parent>
 
     <dependencies>

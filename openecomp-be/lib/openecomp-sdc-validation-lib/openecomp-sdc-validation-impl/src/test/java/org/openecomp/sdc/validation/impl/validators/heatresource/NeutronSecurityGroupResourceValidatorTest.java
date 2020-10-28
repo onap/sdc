@@ -37,7 +37,7 @@ public class NeutronSecurityGroupResourceValidatorTest {
 
   @Test
   public void testSecurityGroupBaseFileNoPorts() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator,
             HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource(),
             PATH + "security_group_base_file_no_ports/input");
@@ -52,7 +52,7 @@ public class NeutronSecurityGroupResourceValidatorTest {
 
   @Test
   public void testSecurityGroupsCalledByPort() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator,
             HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource(),
             PATH + "security_group_called_by_port/input");

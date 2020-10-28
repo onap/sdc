@@ -39,7 +39,7 @@ public class ManifestValidatorTest {
   @Test
   public void testValidManifest() {
 
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/validFiles");
     Assert.assertNotNull(messages);
     Assert.assertNotNull(messages);
@@ -48,25 +48,25 @@ public class ManifestValidatorTest {
 
   @Test
   public void testManifestMissingFileInZip() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new ManifestValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new ManifestValidator(),
         RESOURCE_PATH + "/missingFileInZip");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertTrue(messages.containsKey("singleVol.yaml"));
-    ValidationTestUtil.validateErrorMessage(messages.get("singleVol.yaml").getErrorMessageList()
+    new ValidationTestUtil().validateErrorMessage(messages.get("singleVol.yaml").getErrorMessageList()
             .get(0).getMessage(),
         "ERROR: " + "[MNF4]: " + Messages.MISSING_FILE_IN_ZIP.getErrorMessage());
   }
 
   @Test
   public void testInvalidManifest() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new ManifestValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new ManifestValidator(),
         RESOURCE_PATH + "/invalidManifest");
     Assert.assertNotNull(messages);
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertTrue(messages.containsKey(SdcCommon.MANIFEST_NAME));
-    ValidationTestUtil.validateErrorMessage(
+    new ValidationTestUtil().validateErrorMessage(
         messages.get(SdcCommon.MANIFEST_NAME).getErrorMessageList().get(0).getMessage(),
         "ERROR: " +"[MNF6]: " + Messages.INVALID_MANIFEST_FILE.getErrorMessage());
 
@@ -74,28 +74,28 @@ public class ManifestValidatorTest {
 
   @Test
   public void testMissingFileInManifest() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new ManifestValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new ManifestValidator(),
         RESOURCE_PATH + "/missingFileInManifest");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertTrue(messages.containsKey("extraFile.env"));
-    ValidationTestUtil.validateErrorMessage(messages.get("extraFile.env").getErrorMessageList()
+    new ValidationTestUtil().validateErrorMessage(messages.get("extraFile.env").getErrorMessageList()
             .get(0).getMessage(),
         "WARNING: " + "[MNF5]: " + Messages.MISSING_FILE_IN_MANIFEST.getErrorMessage());
 
   }
   @Test
   public void testMissingFileTypeInManifest() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new ManifestValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new ManifestValidator(),
         RESOURCE_PATH + "/missingFileTypeInManifest");
-    ValidationTestUtil.validateErrorMessage(
+    new ValidationTestUtil().validateErrorMessage(
         messages.get("MANIFEST.json").getErrorMessageList().get(0).getMessage(),
         "ERROR: " + "[MNF7]: Missing file name in manifest");
   }
 
   @Test
   public void testInvalidFileTypeInManifest() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new ManifestValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new ManifestValidator(),
         RESOURCE_PATH + "/invalidFileTypeInManifest");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 4);
@@ -103,19 +103,19 @@ public class ManifestValidatorTest {
     Assert.assertTrue(messages.containsKey("illegalTypeFile.yaml"));
     Assert.assertTrue(messages.containsKey("single.yaml.illegalSuffix"));
     Assert.assertTrue(messages.containsKey("singleVol.yaml.illegalSuffix"));
-    ValidationTestUtil.validateErrorMessage(
+    new ValidationTestUtil().validateErrorMessage(
         messages.get("single.env.illegalSuffix").getErrorMessageList().get(0).getMessage(),
         "ERROR: "+"[MNF3]: " + Messages.WRONG_ENV_FILE_EXTENSION.getErrorMessage(),
         "single.env.illegalSuffix");
-    ValidationTestUtil.validateErrorMessage(
+    new ValidationTestUtil().validateErrorMessage(
         messages.get("illegalTypeFile.yaml").getErrorMessageList().get(0).getMessage(),
         "ERROR: "+"[MNF8]: " + Messages.INVALID_FILE_TYPE.getErrorMessage(),
         "illegalTypeFile.yaml");
-    ValidationTestUtil.validateErrorMessage(
+    new ValidationTestUtil().validateErrorMessage(
         messages.get("single.yaml.illegalSuffix").getErrorMessageList().get(0).getMessage(),
         "ERROR: "+"[MNF2]: " + Messages.WRONG_HEAT_FILE_EXTENSION.getErrorMessage(),
         "single.yaml.illegalSuffix");
-    ValidationTestUtil.validateErrorMessage(
+    new ValidationTestUtil().validateErrorMessage(
         messages.get("singleVol.yaml.illegalSuffix").getErrorMessageList().get(0).getMessage(),
         "ERROR: "+"[MNF2]: " + Messages.WRONG_HEAT_FILE_EXTENSION.getErrorMessage(),
         "singleVol.yaml.illegalSuffix");
@@ -126,16 +126,16 @@ public class ManifestValidatorTest {
   @Test
   public void testMissingFileInManifestAndInZip() {
 
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new ManifestValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new ManifestValidator(),
         RESOURCE_PATH + "/missingFileInManifestAndInZip");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 2);
     Assert.assertTrue(messages.containsKey("extraFile.env"));
     Assert.assertTrue(messages.containsKey("singleVol.yaml"));
-    ValidationTestUtil.validateErrorMessage(messages.get("extraFile.env").getErrorMessageList()
+    new ValidationTestUtil().validateErrorMessage(messages.get("extraFile.env").getErrorMessageList()
             .get(0).getMessage(), "WARNING: " + "[MNF5]: "+ Messages.MISSING_FILE_IN_MANIFEST
         .getErrorMessage());
-    ValidationTestUtil.validateErrorMessage(messages.get("singleVol.yaml").getErrorMessageList()
+    new ValidationTestUtil().validateErrorMessage(messages.get("singleVol.yaml").getErrorMessageList()
             .get(0).getMessage(), "ERROR: " + "[MNF4]: " + Messages.MISSING_FILE_IN_ZIP
         .getErrorMessage());
 
@@ -143,12 +143,12 @@ public class ManifestValidatorTest {
 
   @Test
   public void testEnvInRoot() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new ManifestValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new ManifestValidator(),
         RESOURCE_PATH + "/envInRoot");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertTrue(messages.containsKey("second.env"));
-    ValidationTestUtil.validateErrorMessage(messages.get("second.env").getErrorMessageList()
+    new ValidationTestUtil().validateErrorMessage(messages.get("second.env").getErrorMessageList()
             .get(0).getMessage(),
         "ERROR: [MNF1]: ENV file must be associated to a HEAT file");
   }

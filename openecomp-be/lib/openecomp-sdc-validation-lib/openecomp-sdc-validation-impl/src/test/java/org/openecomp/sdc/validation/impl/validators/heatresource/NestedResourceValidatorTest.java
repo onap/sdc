@@ -38,7 +38,7 @@ public class NestedResourceValidatorTest {
   @Test
   public void testNoLoopsNesting() {
 
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, null,
             PATH + "no_loops_nesting/negative_test/input");
 
@@ -74,7 +74,7 @@ public class NestedResourceValidatorTest {
 
   @Test
   public void testPropertiesMatchNestedParameters() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, null,
             PATH + "properties_match_nested_parameters/negative_test/input");
 
@@ -89,7 +89,7 @@ public class NestedResourceValidatorTest {
 
   @Test
   public void testWrongValueTypeAssigned() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, null,
             PATH + "properties_match_nested_parameters/wrong_value_type_assigned/input");
 
@@ -107,7 +107,7 @@ public class NestedResourceValidatorTest {
     final Resource resource = new Resource();
     resource.setType("nested-pps_v1.0.yaml");
 
-    final GlobalValidationContext globalValidationContext = ValidationTestUtil.createGlobalContextFromPath(PATH + "missing_nested_file/input");
+    final GlobalValidationContext globalValidationContext = new ValidationTestUtil().createGlobalContextFromPath(PATH + "missing_nested_file/input");
 
     NestedResourceValidator.validateAllPropertiesMatchNestedParameters(null, null, resource, Optional.empty(), globalValidationContext);
 
