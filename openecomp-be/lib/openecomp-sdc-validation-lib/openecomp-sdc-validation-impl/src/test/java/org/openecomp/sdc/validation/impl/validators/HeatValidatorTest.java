@@ -41,7 +41,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testInvalidHeatFormat() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/invalid_heat_format/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -61,7 +61,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testDependsOn() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/depends_on_points_to_existing_resource/input");
 
     Assert.assertNotNull(messages);
@@ -79,7 +79,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testResourcesReferencesExistInHeat() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/resource_references_exist_in_heat/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -98,7 +98,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testGetResourceValueIsValid() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/get_resource_value_valid/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -121,7 +121,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testTwoResourcesDoesNotHoldSameId() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/two_resources_does_not_hold_same_id/positive_test/input");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
@@ -129,7 +129,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testWithWrongFileExtension(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/wrongFileExtension");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.get("single.aad").getErrorMessageList().get(0).getMessage(),
@@ -140,7 +140,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testWithMissingManifestContent(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/missingManifestContent");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.get("single.yaml").getErrorMessageList().get(0).getMessage(),
@@ -152,7 +152,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testWithInvalidHeatContent(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/invalidHeatContent");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.get("single.yaml").getErrorMessageList().get(0).getMessage(),
@@ -167,7 +167,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testGeneratedArtifactExistInHeat() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
             RESOURCE_PATH + "/generated_artifact_exist/negative_test/input");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 3);
@@ -188,7 +188,7 @@ public class HeatValidatorTest {
 
   @Test
   public void negativeTestGetParamPointToExistingParameter() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/get_param_points_to_existing_parameter/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -203,7 +203,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testGetAttrFromNested() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/get_attr_from_nested/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -218,7 +218,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testDefaultValueAlignWithType() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/default_value_align_with_type/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -234,7 +234,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testEnvParametersMatchDefinedHeatParameterTypes() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/env_parameters_match_defined_types/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -249,7 +249,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testReferencedArtifactsExist() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/referenced_artifacts_exist/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -264,7 +264,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testEnvContentIsSubSetOfHeatParameters() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/env_content_is_subset_of_heat/negative_test/input");
 
     Assert.assertNotNull(messages);
@@ -279,7 +279,7 @@ public class HeatValidatorTest {
 
   @Test
   public void testGetParamPseudoParameters() {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(new HeatValidator(),
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(new HeatValidator(),
         RESOURCE_PATH + "/pseudo_parameters/input");
 
     Assert.assertNotNull(messages);
@@ -288,7 +288,7 @@ public class HeatValidatorTest {
   }
   @Test
   public void testNoErrorWhenEmptyValueForParameterInEnv() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/env_empty_value/input");
 
     Assert.assertNotNull(messages);
