@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e24e3661_a2708ce2",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-10-28T16:05:29Z",
+      "side": 1,
+      "message": "needless to have here, already declared in parent pom\nhttps://gerrit.onap.org/r/c/sdc/+/114368/1/pom.xml",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 47
+      },
+      "revId": "cefb7b9dd1c471ef6a6213cd5ec6bba8d065d150",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcb88b53_dec0e1dc",
+        "filename": "onboarding/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-10-28T16:05:29Z",
+      "side": 1,
+      "message": "needless to have here, already declared in parent pom\nhttps://gerrit.onap.org/r/c/sdc/+/114368/1/pom.xml",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 47
+      },
+      "revId": "cefb7b9dd1c471ef6a6213cd5ec6bba8d065d150",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
