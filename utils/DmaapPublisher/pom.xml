@@ -50,7 +50,7 @@
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.18</version>
+      <version>${snakeyaml.version}</version>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>

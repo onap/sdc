@@ -27,7 +27,6 @@
     <groupId>org.openecomp.sdc.onboarding</groupId>
     <artifactId>vendor-software-products-rest</artifactId>
     <version>1.8.1-SNAPSHOT</version>
-    <relativePath>../</relativePath>
   </parent>
 
   <dependencies>
