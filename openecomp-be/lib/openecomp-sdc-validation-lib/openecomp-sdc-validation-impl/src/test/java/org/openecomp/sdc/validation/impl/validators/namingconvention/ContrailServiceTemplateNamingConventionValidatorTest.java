@@ -36,7 +36,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
 
   @Test
   public void testContrailServiceTemplateImageAndFlavorNamesAlignedWithNamingConventionButDifferentVmType() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource(),
             PATH + "imageandflavordifferentvmtype");
     Assert.assertNotNull(messages);
@@ -49,7 +49,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
 
   @Test
   public void testContrailServiceTemplateImageAndFlavorNamesNotAlignedWithNamingConvention() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource(),
             PATH + "/notaligned");
     Assert.assertNotNull(messages);
@@ -63,7 +63,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
 
   @Test
   public void testContrailServiceTemplateImageAndFlavorNamesAlignedWithNamingConvention() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource(),
             PATH + "aligned");
     Assert.assertNotNull(messages);
@@ -72,7 +72,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
 
   @Test
   public void testContrailServiceTemplateMissingParam() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource(),
             PATH + "missingparam");
     Assert.assertNotNull(messages);

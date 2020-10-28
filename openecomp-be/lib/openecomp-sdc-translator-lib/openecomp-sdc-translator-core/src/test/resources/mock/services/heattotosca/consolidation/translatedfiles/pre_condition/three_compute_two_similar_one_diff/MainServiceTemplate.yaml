@@ -80,7 +80,6 @@ topology_template:
       - 107.250.172.217
       entry_schema:
         type: string
-      default: 169.254.1.4
     ps_server_names:
       label: PS server names
       hidden: false
