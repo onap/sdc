@@ -45,7 +45,7 @@ public class YamlValidatorTest {
     Map<String, MessageContainer> messages = runValidation(
         RESOURCE_PATH + "/valid_yaml/input/validHeat.yaml");
     Assert.assertNotNull(messages);
-    Assert.assertEquals(messages.size(), 0);
+    Assert.assertEquals(0, messages.size());
   }
 
   @Test
@@ -54,7 +54,7 @@ public class YamlValidatorTest {
     Map<String, MessageContainer> messages = runValidation(
         RESOURCE_PATH + "/invalid_valid_yaml_structure/input/invalidYamlTab.yaml");
     Assert.assertNotNull(messages);
-    Assert.assertEquals(messages.size(), 1);
+    Assert.assertEquals(1, messages.size());
     ValidationTestUtil.validateErrorMessage(
         messages.get("invalidYamlTab.yaml").getErrorMessageList().get(0).getMessage(),
         "ERROR: " +"[YML2]: "+ Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
@@ -65,18 +65,15 @@ public class YamlValidatorTest {
 
   @Test
   public void testDuplicateKeyInYaml() {
-
-    Map<String, MessageContainer> messages =
-        runValidation(RESOURCE_PATH + "/duplicateKey.yaml");
+    Map<String, MessageContainer> messages = runValidation(RESOURCE_PATH + "/duplicateKey.yaml");
     Assert.assertNotNull(messages);
-    Assert.assertEquals(messages.size(), 1);
+    Assert.assertEquals(1, messages.size());
     Assert.assertTrue(messages.containsKey("duplicateKey.yaml"));
-    ValidationTestUtil.validateErrorMessage(
-        messages.get("duplicateKey.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: " +"[YML2]: "+ Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+    ValidationTestUtil.validateErrorMessage(messages.get("duplicateKey.yaml").getErrorMessageList().get(0).getMessage(),
+        "ERROR: " +"[YML2]: " + Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
         "while parsing MappingNode in 'reader', line 6, column 3:      " +
-            "Key_1_unique:      ^duplicate key: Key_2_not_unique in 'reader', line 31, " +
-            "column 1:        ^");
+                "Key_1_unique:      ^duplicate key: Key_2_not_unique in 'reader', line 31, " +
+                "column 1:        ^");
   }
 
   @Test
@@ -85,7 +82,7 @@ public class YamlValidatorTest {
     Map<String, MessageContainer> messages = runValidation(
         RESOURCE_PATH + "/invalidYamlStructure.yaml");
     Assert.assertNotNull(messages);
-    Assert.assertEquals(messages.size(), 1);
+    Assert.assertEquals(1, messages.size());
     Assert.assertTrue(messages.containsKey("invalidYamlStructure.yaml"));
     ValidationTestUtil.validateErrorMessage(
         messages.get("invalidYamlStructure.yaml").getErrorMessageList().get(0).getMessage(),
@@ -101,7 +98,7 @@ public class YamlValidatorTest {
     Map<String, MessageContainer> messages =
         runValidation(RESOURCE_PATH + "/emptyYaml.yaml");
     Assert.assertNotNull(messages);
-    Assert.assertEquals(messages.size(), 1);
+    Assert.assertEquals(1, messages.size());
     Assert.assertTrue(messages.containsKey("emptyYaml.yaml"));
     ValidationTestUtil.validateErrorMessage(messages.get("emptyYaml.yaml").getErrorMessageList()
             .get(0).getMessage(),
