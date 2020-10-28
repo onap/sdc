@@ -34,7 +34,7 @@ class GlobalContextUtilTest {
     @Test
     void shouldReturnOnlyFilesWithPmDictionaryType() {
         // given
-        GlobalValidationContext globalContext = ValidationTestUtil.createGlobalContextFromPath(TEST_MANIFEST_PATH);
+        GlobalValidationContext globalContext = new ValidationTestUtil().createGlobalContextFromPath(TEST_MANIFEST_PATH);
 
         // when
         Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
