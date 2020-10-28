@@ -73,6 +73,6 @@ public class PmDictionaryValidatorTest {
 
     private Map<String, MessageContainer> runValidation(String path) {
         PmDictionaryValidator validator = new PmDictionaryValidator();
-        return ValidationTestUtil.testValidator(validator, path);
+        return new ValidationTestUtil().testValidator(validator, path);
     }
 }

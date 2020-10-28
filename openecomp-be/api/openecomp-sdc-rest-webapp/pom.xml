@@ -13,14 +13,14 @@
 	</parent>
 
 	<modules>
-		<module>/openecomp-sdc-common-rest</module>
-		<module>/vendor-license-rest</module>
-		<module>/onboarding-rest-war</module>
-		<module>/vendor-software-products-rest</module>
-		<module>/validation-rest</module>
-		<module>/action-library-rest</module>
-		<module>/application-config-rest</module>
-		<module>/healthcheck-rest</module>
+		<module>openecomp-sdc-common-rest</module>
+		<module>vendor-license-rest</module>
+		<module>onboarding-rest-war</module>
+		<module>vendor-software-products-rest</module>
+		<module>validation-rest</module>
+		<module>action-library-rest</module>
+		<module>application-config-rest</module>
+		<module>healthcheck-rest</module>
 		<module>conflict-rest</module>
 		<module>item-permissions-rest</module>
 		<module>item-rest</module>

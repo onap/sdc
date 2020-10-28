@@ -34,7 +34,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "modeled_through_resource_group/positive_test/input");
@@ -50,7 +50,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "modeled_through_resource_group/negative_test/input");
@@ -71,7 +71,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "modeled_through_resource_group/negative_test_non_string/input");
@@ -92,7 +92,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "modeled_through_resource_group/negative_get_resource/input");
@@ -114,7 +114,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "single_vlan_resource/positive_test/input");
@@ -130,7 +130,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "single_vlan_resource/negative_test/two_vlans");
@@ -151,7 +151,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "single_vlan_resource/negative_test/vlan_and_nova");
@@ -171,7 +171,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "naming_convention/negative_test/input");
@@ -192,7 +192,7 @@ public class VirtualMachineInterfaceGuidelineValidatorTest {
     NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
     VirtualMachineInterfaceGuidelineValidator resourceValidator = new
         VirtualMachineInterfaceGuidelineValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "naming_convention/positive_test/input");

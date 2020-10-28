@@ -13,7 +13,6 @@
   <artifactId>onap-generic-artifact-browser-service</artifactId>
 
   <properties>
-    <snakeyaml.version>1.21</snakeyaml.version>
     <jsurfer.version>1.4.3</jsurfer.version>
     <jacoco.skip>false</jacoco.skip>
   </properties>
