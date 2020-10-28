@@ -38,7 +38,7 @@ public class VirtualMachineInterfaceValidatorTest {
   public void hasSingleParentPortNegative()  {
     HeatResourceValidator baseValidator = new HeatResourceValidator();
     VirtualMachineInterfaceValidator resourceValidator = new VirtualMachineInterfaceValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "vlan_multiple_parent_ports/negative_test/input");
@@ -57,7 +57,7 @@ public class VirtualMachineInterfaceValidatorTest {
   public void hasSingleParentPortNegativeWithGetResource()  {
     HeatResourceValidator baseValidator = new HeatResourceValidator();
     VirtualMachineInterfaceValidator resourceValidator = new VirtualMachineInterfaceValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "vlan_multiple_parent_ports/negative_get_resource/input");
@@ -71,7 +71,7 @@ public class VirtualMachineInterfaceValidatorTest {
   public void hasSingleParentPortPositive()  {
     HeatResourceValidator baseValidator = new HeatResourceValidator();
     VirtualMachineInterfaceValidator resourceValidator = new VirtualMachineInterfaceValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "vlan_multiple_parent_ports/positive_test/input");
@@ -87,7 +87,7 @@ public class VirtualMachineInterfaceValidatorTest {
   public void hasBothPropertiesNegativeMissingVlanTag()  {
     HeatResourceValidator baseValidator = new HeatResourceValidator();
     VirtualMachineInterfaceValidator resourceValidator = new VirtualMachineInterfaceValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "vlan_has_two_properties/negative_tag_missing/input");
@@ -107,7 +107,7 @@ public class VirtualMachineInterfaceValidatorTest {
   public void hasBothPropertiesNegativeMissingRefs()  {
     HeatResourceValidator baseValidator = new HeatResourceValidator();
     VirtualMachineInterfaceValidator resourceValidator = new VirtualMachineInterfaceValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "vlan_has_two_properties/negative_refs_missing/input");
@@ -126,7 +126,7 @@ public class VirtualMachineInterfaceValidatorTest {
   public void hasBothPropertiesBothMissingWhichMeansPositive()  {
     HeatResourceValidator baseValidator = new HeatResourceValidator();
     VirtualMachineInterfaceValidator resourceValidator = new VirtualMachineInterfaceValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "vlan_has_two_properties/negative_both_missing/input");
@@ -141,7 +141,7 @@ public class VirtualMachineInterfaceValidatorTest {
   public void hasBothPropertiesPositive()  {
     HeatResourceValidator baseValidator = new HeatResourceValidator();
     VirtualMachineInterfaceValidator resourceValidator = new VirtualMachineInterfaceValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
         resourceValidator,
         HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource(),
         PATH + "vlan_has_two_properties/positive_test/input");

@@ -58,9 +58,8 @@ public class YamlValidator implements Validator {
     }
 
     try {
-      convert(rowContent.get(), Map.class);
+      new YamlUtil().yamlToObject(rowContent.get(), Map.class);
     } catch (Exception exception) {
-
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_YML_2, Messages
                       .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
@@ -68,7 +67,4 @@ public class YamlValidator implements Validator {
     }
   }
 
-  private <T> T convert(InputStream content, Class<T> type) {
-    return new YamlUtil().yamlToObject(content, type);
-  }
 }
