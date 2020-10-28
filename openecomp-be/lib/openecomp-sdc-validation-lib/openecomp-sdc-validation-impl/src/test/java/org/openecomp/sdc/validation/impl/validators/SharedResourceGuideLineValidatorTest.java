@@ -33,12 +33,12 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testBaseHeatExposeNetwork() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeNetwork/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(validator,
+    messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeNetwork/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -49,7 +49,7 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testParseException(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeNetwork/parseException/");
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -64,7 +64,7 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testInvalidGetResource(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/" +
             "baseHeatDoesNotExposeNetworkInvalidGetResource");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
@@ -74,12 +74,12 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testBaseHeatExposeNetworkAndVolume() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeNetworkAndVolume/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(validator,
+    messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeNetworkAndVolume/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -92,12 +92,12 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testBaseHeatExposeServerGroup() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeServerGroup/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(validator,
+    messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeServerGroup/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -108,12 +108,12 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testBaseHeatExposeSecurityGroup() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeSecurityGroup/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(validator,
+    messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeSecurityGroup/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -124,12 +124,12 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testBaseHeatExposeVolume() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeVolume/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(validator,
+    messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatDoesNotExposeVolume/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -140,12 +140,12 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testHeatVolumeExpose() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/heatVolumeExpose/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(validator,
+    messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/heatVolumeExpose/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -157,13 +157,13 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testResourceIsExposedByCallingGetResourceNotFromOutput() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatExposeResourceUsingGetResource/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
 
-    messages = ValidationTestUtil.testValidator(validator,
+    messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/baseHeatExposeResourceUsingGetResource/negative");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -174,7 +174,7 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testMissingBaseHeat() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/missingBaseHeat/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -185,7 +185,7 @@ public class SharedResourceGuideLineValidatorTest {
 
   @Test
   public void testMultiBaseHeat() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/multiBaseHeat/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
