@@ -51,7 +51,7 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
     public class ToscaPropertyUtilsWithHeatExtension extends MyPropertyUtils {
 
         @Override
-        public Property getProperty(Class<? extends Object> type, String name) throws IntrospectionException {
+        public Property getProperty(Class<? extends Object> type, String name)  {
             Class<? extends Object> classType = type;
             try {
                 if (type.equals(Class.forName(TOSCA_MODEL_PARAMETER_DEFINITION))) {
