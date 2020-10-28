@@ -4,8 +4,8 @@
 
     <name>openecomp-facade-lib</name>
     <artifactId>openecomp-facade-lib</artifactId>
-
     <packaging>pom</packaging>
+
     <parent>
         <artifactId>openecomp-core-lib</artifactId>
         <groupId>org.openecomp.sdc.core</groupId>
@@ -17,18 +17,4 @@
         <module>openecomp-facade-core</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-facade-api</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-facade-core</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
 </project>

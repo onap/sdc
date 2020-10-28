@@ -25,8 +25,6 @@ import org.openecomp.core.validation.api.ValidationManager;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.services.ValidationFactory;
 
@@ -36,8 +34,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ValidationManagerImpl implements ValidationManager {
-
-  private static Logger logger = (Logger) LoggerFactory.getLogger(ValidationManagerImpl.class);
 
   private GlobalValidationContext globalContext;
   private List<Validator> validators;

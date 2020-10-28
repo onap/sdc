@@ -17,7 +17,8 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
-import org.onap.sdc.tosca.services.YamlUtil;
+import org.onap.sdc.tosca.services.MyPropertyUtils;
+import org.onap.sdc.tosca.services.StrictMapAppenderConstructor;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
@@ -25,6 +26,12 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.impl.util.YamlValidatorUtil;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -33,42 +40,50 @@ import java.util.Optional;
 import java.util.Set;
 
 public class YamlValidator implements Validator {
-  private static final ErrorMessageCode ERROR_CODE_YML_1 = new ErrorMessageCode("YML1");
-  private static final ErrorMessageCode ERROR_CODE_YML_2 = new ErrorMessageCode("YML2");
+    private static final ErrorMessageCode ERROR_CODE_YML_1 = new ErrorMessageCode("YML1");
+    private static final ErrorMessageCode ERROR_CODE_YML_2 = new ErrorMessageCode("YML2");
 
-  @Override
-  public void validate(GlobalValidationContext globalContext) {
-    Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
+    @Override
+    public void validate(GlobalValidationContext globalContext) {
+        Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
 
-    Collection<String> files = globalContext.files(
-        (fileName, globalValidationContext) -> FileExtensionUtils.isYaml(fileName)
-            && !pmDictionaryFiles.contains(fileName));
+        Collection<String> files = globalContext.files(
+                (fileName, globalValidationContext) -> FileExtensionUtils.isYaml(fileName)
+                        && !pmDictionaryFiles.contains(fileName));
 
-    files.forEach(fileName -> validate(fileName, globalContext));
-  }
-
-  private void validate(String fileName, GlobalValidationContext globalContext) {
-    Optional<InputStream> rowContent = globalContext.getFileContent(fileName);
-    if (rowContent.isEmpty()) {
-      globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_YML_1, Messages
-                      .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-                  Messages.EMPTY_YAML_FILE.getErrorMessage()));
-      return; /* no need to continue validation */
+        files.forEach(fileName -> validate(fileName, globalContext));
     }
 
-    try {
-      convert(rowContent.get(), Map.class);
-    } catch (Exception exception) {
+    private void validate(String fileName, GlobalValidationContext globalContext) {
+        Optional<InputStream> rowContent = globalContext.getFileContent(fileName);
+        if (rowContent.isEmpty()) {
+            globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                    .getErrorWithParameters(ERROR_CODE_YML_1, Messages
+                                    .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+                            Messages.EMPTY_YAML_FILE.getErrorMessage()));
+            return; /* no need to continue validation */
+        }
 
-      globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_YML_2, Messages
-                      .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-                  YamlValidatorUtil.getParserExceptionReason(exception)));
+        try (var yamlContent = rowContent.get()) {
+            Constructor constructor = new StrictMapAppenderConstructor(Map.class);
+            constructor.setAllowDuplicateKeys(false);
+            constructor.setPropertyUtils(new MyPropertyUtils());
+            TypeDescription yamlFileDescription = new TypeDescription(Map.class);
+            constructor.addTypeDescription(yamlFileDescription);
+            LoaderOptions options = new LoaderOptions();
+            options.setAllowDuplicateKeys(false);
+            //No Yaml Constructor takes only Constructor and LoaderOptions, that is why I had to pass anonymous Representer and DumperOptions objects
+            Object yamlObj = new Yaml(constructor, new Representer(), new DumperOptions(), options).load(yamlContent);
+
+            if (yamlObj == null) {
+                throw new Exception();
+            }
+        } catch (Exception exception) {
+            globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                    .getErrorWithParameters(ERROR_CODE_YML_2, Messages
+                                    .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+                            YamlValidatorUtil.getParserExceptionReason(exception)));
+        }
     }
-  }
 
-  private <T> T convert(InputStream content, Class<T> type) {
-    return new YamlUtil().yamlToObject(content, type);
-  }
 }
