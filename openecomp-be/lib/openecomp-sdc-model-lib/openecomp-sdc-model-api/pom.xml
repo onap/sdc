@@ -9,20 +9,14 @@
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
-        <artifactId>openecomp-sdc-lib</artifactId>
+        <artifactId>openecomp-sdc-model-lib</artifactId>
         <version>1.8.1-SNAPSHOT</version>
-        <relativePath>../..</relativePath>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-facade-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-validation-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

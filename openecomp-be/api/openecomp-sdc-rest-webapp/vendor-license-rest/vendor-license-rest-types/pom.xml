@@ -10,7 +10,6 @@
     <groupId>org.openecomp.sdc.onboarding</groupId>
     <artifactId>vendor-license-rest</artifactId>
     <version>1.8.1-SNAPSHOT</version>
-    <relativePath>../</relativePath>
   </parent>
 
   <dependencies>

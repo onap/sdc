@@ -52,30 +52,24 @@ public class PnfTransformationEngineParameterizedTest {
     private static final String OUTPUT_FOLDER = "expectedOutput";
     private static final String DEFAULT_OUTPUT_FILE_NAME = "defaultOutput.yaml";
 
-    private final String inputFileName;
     private final Path inputFilePath;
-    private final String outputFileName;
     private final Path outputFilePath;
-    private final String transformationDescriptorFileName;
     private final Path transformationDescriptorFilePath;
     private final YamlUtil yamlUtil = new YamlUtil();
     private final ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
 
-    public PnfTransformationEngineParameterizedTest(final String inputFileName, final Path inputFilePath,
-            final String outputFileName, final Path outputFilePath,
-            final String transformationDescriptorFileName, final Path transformationDescriptorFilePath) {
-        this.inputFileName = inputFileName;
+    public PnfTransformationEngineParameterizedTest(final Path inputFilePath,
+                                                    final Path outputFilePath,
+                                                    final Path transformationDescriptorFilePath) {
         this.inputFilePath = inputFilePath;
-        this.outputFileName = outputFileName;
         this.outputFilePath = outputFilePath;
-        this.transformationDescriptorFileName = transformationDescriptorFileName;
         this.transformationDescriptorFilePath = transformationDescriptorFilePath;
     }
 
 
     @Parameterized.Parameters(name = "{index}: input: {0}, descriptor: {4}, output: {2}")
     public static Collection<Object> input() throws IOException, URISyntaxException {
-        return Files.list(getPathFromClasspath(TEST_CASES_PATH)).map(path -> {
+        return Files.list(getPathFromClasspath()).map(path -> {
             try {
                 return buildTestCase(path);
             } catch (final IOException e) {
@@ -94,7 +88,7 @@ public class PnfTransformationEngineParameterizedTest {
         }
         final List<Path> transformationDescriptorList;
         try (final Stream<Path> files = Files.walk(testCasePath.resolve(TRANSFORMATION_DESCRIPTOR_FOLDER))) {
-            transformationDescriptorList = files.filter(path -> Files.isRegularFile(path))
+            transformationDescriptorList = files.filter(Files::isRegularFile)
                 .map(path -> Paths.get(TEST_CASES_PATH, testCasePath.getFileName().toString()
                     , TRANSFORMATION_DESCRIPTOR_FOLDER, path.getFileName().toString()))
                 .collect(Collectors.toList());
@@ -102,7 +96,7 @@ public class PnfTransformationEngineParameterizedTest {
 
         final List<Path> outputList;
         try (final Stream<Path> files = Files.walk(testCasePath.resolve(OUTPUT_FOLDER))) {
-            outputList = files.filter(path -> Files.isRegularFile(path)).collect(Collectors.toList());
+            outputList = files.filter(Files::isRegularFile).collect(Collectors.toList());
         }
         final Path defaultOutput = outputList.stream()
             .filter(path -> path.toFile().getName().equals(DEFAULT_OUTPUT_FILE_NAME))
@@ -147,7 +141,7 @@ public class PnfTransformationEngineParameterizedTest {
         }
     }
 
-    private static Path getPathFromClasspath(final String location) throws URISyntaxException {
-        return Paths.get(PnfTransformationEngineParameterizedTest.class.getClassLoader().getResource(location).toURI());
+    private static Path getPathFromClasspath() throws URISyntaxException {
+        return Paths.get(PnfTransformationEngineParameterizedTest.class.getClassLoader().getResource(PnfTransformationEngineParameterizedTest.TEST_CASES_PATH).toURI());
     }
 }
