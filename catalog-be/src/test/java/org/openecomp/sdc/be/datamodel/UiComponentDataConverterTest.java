@@ -34,6 +34,7 @@ import org.openecomp.sdc.be.components.utils.ServiceBuilder;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -73,6 +74,7 @@ public class UiComponentDataConverterTest {
 
     private static final String PROPERTY_UID = "propertyUid";
     private static final String NODE_FILTER_UID = "nodeFilterUid";
+    private static final String SUBSTITUTION_FILTER_UID = "substitutionFilterUid";
     private static final String COMPONENT_UID = "componentUid";
 
     @BeforeClass
@@ -311,6 +313,29 @@ public class UiComponentDataConverterTest {
                 Collections.singletonList("nodeFilter"));
 
         assertThat(uiComponentDataTransfer.getNodeFilter()).isNotEmpty();
+    }
+
+    @Test
+    public void testGetSubstitutionFilterEmptyList() {
+        Resource resource = new ResourceBuilder().build();
+        UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+                Collections.singletonList("substitutionFilter"));
+
+        assertThat(uiComponentDataTransfer.getSubstitutionFilter()).isNull();
+    }
+
+    @Test
+    public void testGetSubstitutionFilter() {
+        SubstitutionFilterDataDefinition substitutionFilter = new SubstitutionFilterDataDefinition();
+        substitutionFilter.setID(SUBSTITUTION_FILTER_UID);
+
+        Resource resource = new ResourceBuilder().build();
+        resource.setSubstitutionFilter(substitutionFilter);
+
+        UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
+                Collections.singletonList("substitutionFilter"));
+
+        assertThat(uiComponentDataTransfer.getSubstitutionFilterForTopologyTemplate()).isNotEmpty();
     }
 
     private Resource buildResourceWithGroups() {

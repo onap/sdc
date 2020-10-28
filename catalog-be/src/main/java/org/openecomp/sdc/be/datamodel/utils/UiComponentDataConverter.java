@@ -378,6 +378,17 @@ public class UiComponentDataConverter {
                             .getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
                     break;
+                case SUBSTITUTION_FILTER:
+                    if (resource.getSubstitutionFilter() == null) {
+                        dataTransfer.setSubstitutionFilterForTopologyTemplate(null);
+                    } else {
+                        final SubstitutionFilterConverter substitutionFilterConverter = new SubstitutionFilterConverter();
+                        final Map<String, UINodeFilter> filterUiMap = new HashMap<>();
+                        filterUiMap.put(resource.getUniqueId(),
+                                substitutionFilterConverter.convertToUi(resource.getSubstitutionFilter()));
+                        dataTransfer.setSubstitutionFilterForTopologyTemplate(filterUiMap);
+                    }
+                    break;
 
                 default:
                     setUiTranferDataByFieldName(dataTransfer, resource, fieldName);

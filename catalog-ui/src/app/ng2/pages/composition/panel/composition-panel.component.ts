@@ -142,8 +142,12 @@ export class CompositionPanelComponent {
 
         if (component.isService() && !this.selectedComponentIsServiceProxyInstance() && !this.selectedComponentIsServiceSubstitutionInstance()) {
             this.tabs.push(tabs.apiArtifacts);
+        }
+
+        if((component.isService() || this.isVF()) && !this.isComponentInstanceSelected()){
             this.tabs.push(tabs.substitutionFilter);
         }
+
         if (component.isService() && (this.selectedComponentIsServiceProxyInstance() || this.selectedComponentIsServiceSubstitutionInstance())) {
             this.tabs.push(tabs.consumption);
             this.tabs.push(tabs.dependencies);
@@ -160,6 +164,10 @@ export class CompositionPanelComponent {
 
     private isPNF = (): boolean => {
         return this.topologyTemplate.isResource() && (this.topologyTemplate as Resource).resourceType === ResourceType.PNF;
+    }
+
+    private isVF = (): boolean => {
+        return this.topologyTemplate.isResource() && (this.topologyTemplate as Resource).resourceType === ResourceType.VF;
     }
 
     private isConfiguration = (): boolean => {
