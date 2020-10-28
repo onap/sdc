@@ -7,17 +7,6 @@ resources:
     type: OS::Neutron::Port
     properties:
      network_id: { get_param: Internal1_net_id }
-resources:
-  port_resource_1:
-    type: OS::Neutron::Port
-    properties:
-     network_id: { get_param: Internal1_net_name }
-resources:
-  port_resource_2:
-    type: OS::Neutron::Port
-    properties:
-     network_id: { get_param: Internal1_net_fqdn }
-
 
 outputs:
   expose_resource_port_output_0:

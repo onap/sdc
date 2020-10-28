@@ -4,17 +4,14 @@
 
     <name>openecomp-facade-api</name>
     <artifactId>openecomp-facade-api</artifactId>
-    <groupId>org.openecomp.sdc.core</groupId>
 
     <parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>openecomp-sdc-lib</artifactId>
+        <groupId>org.openecomp.sdc.core</groupId>
+        <artifactId>openecomp-facade-lib</artifactId>
         <version>1.8.1-SNAPSHOT</version>
-        <relativePath>../../../</relativePath>
     </parent>
 
     <dependencies>
-
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>

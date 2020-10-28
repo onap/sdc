@@ -56,7 +56,7 @@ public class ResourceBaseValidator implements Validator {
     return MapUtils.unmodifiableMap(this.resourceTypeToImpl);
   }
 
-@Override
+  @Override
   public void init(Map<String, Object> properties) {
     if (MapUtils.isEmpty(properties)) {
       return;

@@ -1,4 +1,3 @@
- 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -30,7 +29,7 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 public class UnsortedPropertyUtils extends PropertyUtils {
 
     @Override
-    protected Set<Property> createPropertySet(final Class clazz, final BeanAccess beanAccess) throws IntrospectionException {
+    protected Set<Property> createPropertySet(final Class clazz, final BeanAccess beanAccess) {
         final Collection<Property> fields = getPropertiesMap(clazz, BeanAccess.FIELD).values();
         return new LinkedHashSet<>(fields);
     }

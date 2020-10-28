@@ -25,9 +25,8 @@
 
   <parent>
     <groupId>org.openecomp.sdc</groupId>
-    <artifactId>openecomp-sdc-lib</artifactId>
+    <artifactId>openecomp-sdc-externaltesting-lib</artifactId>
     <version>1.8.1-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
   </parent>
 
   <dependencies>
