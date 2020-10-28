@@ -35,7 +35,7 @@ public class ResourceGroupResourceValidatorTest {
   private static final String PATH = "/org/openecomp/validation/validators/heat_validator/";
   @Test
   public void testResourceGroupWithInvalidIndexVar() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource(),
             PATH + "resource_group_invalid_indexvar/negative_test/input");
 
@@ -89,7 +89,7 @@ public class ResourceGroupResourceValidatorTest {
 
   @Test
   public void testResourceGroupWithInvalidType() {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource(),
             PATH + "resource_group_invalid_type/negative_test/input");
 
@@ -110,7 +110,7 @@ public class ResourceGroupResourceValidatorTest {
 
   @Test
   public void testResourcesGroupWithNested() {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource(),
             PATH + "resources_group_with_nested/negative_test/input");
 

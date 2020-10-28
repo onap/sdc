@@ -19,7 +19,13 @@
 
 package org.openecomp.core.converter.impl.pnfd;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.converter.ServiceTemplateReaderService;
+import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
+import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,20 +37,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.core.converter.ServiceTemplateReaderService;
-import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
-import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 
-@RunWith(Parameterized.class)
+import static org.junit.Assert.assertEquals;
+
 public class PnfTransformationEngineParameterizedTest {
 
     private static final String TEST_CASES_PATH = "transformation/pnfParseEngine";
@@ -52,37 +49,8 @@ public class PnfTransformationEngineParameterizedTest {
     private static final String OUTPUT_FOLDER = "expectedOutput";
     private static final String DEFAULT_OUTPUT_FILE_NAME = "defaultOutput.yaml";
 
-    private final String inputFileName;
-    private final Path inputFilePath;
-    private final String outputFileName;
-    private final Path outputFilePath;
-    private final String transformationDescriptorFileName;
-    private final Path transformationDescriptorFilePath;
     private final YamlUtil yamlUtil = new YamlUtil();
     private final ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-
-    public PnfTransformationEngineParameterizedTest(final String inputFileName, final Path inputFilePath,
-            final String outputFileName, final Path outputFilePath,
-            final String transformationDescriptorFileName, final Path transformationDescriptorFilePath) {
-        this.inputFileName = inputFileName;
-        this.inputFilePath = inputFilePath;
-        this.outputFileName = outputFileName;
-        this.outputFilePath = outputFilePath;
-        this.transformationDescriptorFileName = transformationDescriptorFileName;
-        this.transformationDescriptorFilePath = transformationDescriptorFilePath;
-    }
-
-
-    @Parameterized.Parameters(name = "{index}: input: {0}, descriptor: {4}, output: {2}")
-    public static Collection<Object> input() throws IOException, URISyntaxException {
-        return Files.list(getPathFromClasspath(TEST_CASES_PATH)).map(path -> {
-            try {
-                return buildTestCase(path);
-            } catch (final IOException e) {
-                return null;
-            }
-        }).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
-    }
 
     private static Collection<Object[]> buildTestCase(final Path testCasePath) throws IOException {
         final Path inputFilePath = Files.list(testCasePath)
@@ -94,7 +62,7 @@ public class PnfTransformationEngineParameterizedTest {
         }
         final List<Path> transformationDescriptorList;
         try (final Stream<Path> files = Files.walk(testCasePath.resolve(TRANSFORMATION_DESCRIPTOR_FOLDER))) {
-            transformationDescriptorList = files.filter(path -> Files.isRegularFile(path))
+            transformationDescriptorList = files.filter(Files::isRegularFile)
                 .map(path -> Paths.get(TEST_CASES_PATH, testCasePath.getFileName().toString()
                     , TRANSFORMATION_DESCRIPTOR_FOLDER, path.getFileName().toString()))
                 .collect(Collectors.toList());
@@ -102,7 +70,7 @@ public class PnfTransformationEngineParameterizedTest {
 
         final List<Path> outputList;
         try (final Stream<Path> files = Files.walk(testCasePath.resolve(OUTPUT_FOLDER))) {
-            outputList = files.filter(path -> Files.isRegularFile(path)).collect(Collectors.toList());
+            outputList = files.filter(Files::isRegularFile).collect(Collectors.toList());
         }
         final Path defaultOutput = outputList.stream()
             .filter(path -> path.toFile().getName().equals(DEFAULT_OUTPUT_FILE_NAME))
@@ -115,29 +83,38 @@ public class PnfTransformationEngineParameterizedTest {
                 .filter(path -> path.toFile().getName().equals(transformationDescriptorPath.toFile().getName()))
                 .findFirst().orElse(defaultOutput);
             if (outputPath != null) {
-                testCaseList.add(new Object[] {inputFilePath.toFile().getName(), inputFilePath,
-                    outputPath.toFile().getName(), outputPath,
-                    transformationDescriptorPath.toFile().getName(), transformationDescriptorPath});
+                testCaseList.add(new Object[]{ inputFilePath, outputPath, transformationDescriptorPath});
             }
         }
-
         return testCaseList;
-
     }
 
     @Test
-    public void testTopologyTemplateConversions() throws IOException {
-        final byte[] descriptor = Files.readAllBytes(inputFilePath);
-        final ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(descriptor);
-        final ServiceTemplate serviceTemplate = new ServiceTemplate();
+    public void testTopologyTemplateConversions() throws IOException, URISyntaxException {
+        Files.list(getPathFromClasspath()).forEach(testCasePath -> {
+            try {
+                var paths = buildTestCase(testCasePath);
+                paths.forEach(p -> {
+                    try {
+                        final ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(Files.readAllBytes((Path) p[0]));
+                        final ServiceTemplate serviceTemplate = new ServiceTemplate();
 
-        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTemplateTransformationEngine(
-            serviceTemplateReaderService, serviceTemplate, transformationDescriptorFilePath.toString());
-        pnfdTransformationEngine.transform();
+                        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTemplateTransformationEngine(
+                                serviceTemplateReaderService, serviceTemplate, p[2].toString());
+                        pnfdTransformationEngine.transform();
 
-        final String result = yamlUtil.objectToYaml(serviceTemplate);
-        final String expectedResult = parseToYaml(outputFilePath);
-        assertEquals(expectedResult, result);
+                        final String result = yamlUtil.objectToYaml(serviceTemplate);
+                        final String expectedResult = parseToYaml((Path) p[1]);
+                        assertEquals(expectedResult, result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        );
     }
 
     private String parseToYaml(final Path filePath) throws IOException {
@@ -147,7 +124,7 @@ public class PnfTransformationEngineParameterizedTest {
         }
     }
 
-    private static Path getPathFromClasspath(final String location) throws URISyntaxException {
-        return Paths.get(PnfTransformationEngineParameterizedTest.class.getClassLoader().getResource(location).toURI());
+    private static Path getPathFromClasspath() throws URISyntaxException {
+        return Paths.get(PnfTransformationEngineParameterizedTest.class.getClassLoader().getResource(PnfTransformationEngineParameterizedTest.TEST_CASES_PATH).toURI());
     }
 }
