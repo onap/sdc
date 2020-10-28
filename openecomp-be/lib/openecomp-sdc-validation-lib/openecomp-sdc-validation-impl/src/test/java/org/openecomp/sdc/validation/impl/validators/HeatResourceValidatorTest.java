@@ -29,7 +29,7 @@ public class HeatResourceValidatorTest {
 
   @Test
   public void testParseException(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeNetwork/parseException/");
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
