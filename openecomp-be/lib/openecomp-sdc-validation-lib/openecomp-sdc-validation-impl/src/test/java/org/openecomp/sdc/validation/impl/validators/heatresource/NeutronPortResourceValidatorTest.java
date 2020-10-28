@@ -36,7 +36,7 @@ public class NeutronPortResourceValidatorTest {
   private static final String PATH = "/org/openecomp/validation/validators/heat_validator/";
   @Test
   public void testMoreThanOneBindFromNovaToPort() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
             PATH + "one_nova_points_to_one_port/negative_test/input");
 
@@ -51,7 +51,7 @@ public class NeutronPortResourceValidatorTest {
 
   @Test
   public void testPortNotBindToAnyNovaServerHPR1() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "no_neutron_port/input");
 
@@ -66,7 +66,7 @@ public class NeutronPortResourceValidatorTest {
 
   @Test
   public void testPortNotBindToAnyNovaServerHPR3() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "port_no_bind_to_any_nova_server/input");
 

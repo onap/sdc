@@ -29,86 +29,75 @@ import java.util.Map;
 
 @Test
 public class ResourceBaseValidatorTest {
-private String testValidator = "testValidator";
+    private String testValidator = "testValidator";
 
-  @Test
-  public void testInvalidResourceType(){
-    ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(
-        resourceBaseValidator, "/InvalidResourceType");
-    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: [RBV1]: A resource has an invalid or unsupported type - null, " +
-            "Resource ID [FSB2]");
-  }
+    @Test
+    public void testInvalidResourceType() {
+        ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
+        Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(resourceBaseValidator, "/InvalidResourceType");
+        Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+                "WARNING: [RBV1]: A resource has an invalid or unsupported type - null, Resource ID [FSB2]");
+    }
 
-  @Test
-  public void testInvalidHeatStructure(){
-    ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(resourceBaseValidator,
-        "/InvalidHeatStructure");
-    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: [RBV2]: Invalid HEAT format problem - [while scanning for the next " +
-        "token\n" + "found character '\\t(TAB)' that cannot start any token. " +
-        "(Do not use \\t(TAB) for indentation)\n" +
-        " in 'reader', line 10, column 1:\n" +
-        "    \t\t\tresources:\n" +
-        "    ^\n" +
-        "]");
-  }
+    @Test
+    public void testInvalidHeatStructure() {
+        ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
+        Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(resourceBaseValidator, "/InvalidHeatStructure");
+        Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+                "ERROR: [RBV2]: Invalid HEAT format problem - [while scanning for the next " +
+                        "token\n" + "found character '\\t(TAB)' that cannot start any token. " +
+                        "(Do not use \\t(TAB) for indentation)\n" +
+                        " in 'reader', line 10, column 1:\n" +
+                        "    \t\t\tresources:\n" +
+                        "    ^\n" +
+                        "]");
+    }
 
-  @Test
-  public void testInitWithEmptyPropertiesMap() {
-    ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
-    Map<String, Object> properties = new HashMap<>();
-    resourceBaseValidator.init(properties);
+    @Test
+    public void testInitWithEmptyPropertiesMap() {
+        ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
+        Map<String, Object> properties = new HashMap<>();
+        resourceBaseValidator.init(properties);
+        Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
+    }
 
-    Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
-  }
+    @Test
+    public void testInitPropertiesMap() {
+        ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
+        initProperties(resourceBaseValidator, getValidImplementationConfiguration());
 
-  @Test
-  public void testInitPropertiesMap() {
-    ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
-    initProperties(resourceBaseValidator, getValidImplementationConfiguration());
+        Map<String, ImplementationConfiguration> resourceTypeToImpl = resourceBaseValidator.getResourceTypeToImpl();
+        Assert.assertTrue(MapUtils.isNotEmpty(resourceTypeToImpl));
+        Assert.assertTrue(resourceTypeToImpl.containsKey(testValidator));
+    }
 
-    Map<String, ImplementationConfiguration> resourceTypeToImpl =
-        resourceBaseValidator.getResourceTypeToImpl();
-    Assert.assertTrue(MapUtils.isNotEmpty(resourceTypeToImpl));
-    Assert.assertTrue(resourceTypeToImpl.containsKey(testValidator));
-  }
+    @Test
+    public void testInitPropertiesWithString() {
+        ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(testValidator, "invalidValue");
+        resourceBaseValidator.init(properties);
+        Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
+    }
 
-  @Test
-  public void testInitPropertiesWithString() {
-    ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
-    Map<String, Object> properties = new HashMap<>();
-    properties.put(testValidator, "invalidValue");
+    @Test
+    public void testInitPropertiesWithoutImplClass() {
+        ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
+        initProperties(resourceBaseValidator, new HashMap<>());
+        Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
+    }
 
-    resourceBaseValidator.init(properties);
+    public Map<String, Object> getValidImplementationConfiguration() {
+        Map<String, Object> implConfiguration = new HashMap<>();
+        implConfiguration.put(ConfigConstants.Impl_Class, "org.openecomp.sdc.validation.impl.validators.ForbiddenResourceGuideLineValidator");
+        implConfiguration.put(ConfigConstants.Enable, true);
 
-    Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
-  }
+        return implConfiguration;
+    }
 
-  @Test
-  public void testInitPropertiesWithoutImplClass() {
-    ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
-    initProperties(resourceBaseValidator, new HashMap<>());
+    private void initProperties(ResourceBaseValidator resourceBaseValidator, Map<String, Object> implementationConfiguration) {
+        Map<String, Object> properties = Collections.singletonMap(testValidator, implementationConfiguration);
+        resourceBaseValidator.init(properties);
+    }
 
-    Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
-  }
-
-  public Map<String, Object> getValidImplementationConfiguration() {
-    Map<String, Object> implConfiguration = new HashMap<>();
-    implConfiguration.put(
-        ConfigConstants.Impl_Class, "org.openecomp.sdc.validation.impl.validators.ForbiddenResourceGuideLineValidator");
-    implConfiguration.put(ConfigConstants.Enable, true);
-
-    return implConfiguration;
-  }
-
-  private void initProperties(ResourceBaseValidator resourceBaseValidator,
-                              Map<String, Object> implementationConfiguration) {
-    Map<String, Object> properties =
-        Collections.singletonMap(testValidator, implementationConfiguration);
-
-    resourceBaseValidator.init(properties);
-  }
 }
