@@ -22,23 +22,8 @@
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-enrichment-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-enrichment-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-vendor-software-product-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-validation-impl</artifactId>
-            <version>${project.version}</version>
-        </dependency-->
     </dependencies>
 </project>

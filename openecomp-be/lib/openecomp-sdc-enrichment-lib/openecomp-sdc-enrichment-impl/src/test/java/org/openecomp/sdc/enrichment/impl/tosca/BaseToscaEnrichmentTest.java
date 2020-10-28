@@ -174,8 +174,8 @@ public class BaseToscaEnrichmentTest {
                 name = entry.getName()
                         .substring(entry.getName().lastIndexOf(File.separator) + 1, entry.getName().length());
                 if (expectedResultFileNameSet.contains(name)) {
-                    expected = new String(expectedResultMap.get(name)).trim().replace("\r", "");
-                    actual = new String(FileUtils.toByteArray(zis)).trim().replace("\r", "");
+                    expected = sanitize(new String(expectedResultMap.get(name)));
+                    actual = sanitize(new String(FileUtils.toByteArray(zis)));
                     assertEquals("difference in file: " + name, expected, actual);
 
                     expectedResultFileNameSet.remove(name);
@@ -186,5 +186,9 @@ public class BaseToscaEnrichmentTest {
             }
         }
         assertEquals(0, expectedResultFileNameSet.size());
+    }
+
+    private static String sanitize(String s) {
+        return s.trim().replaceAll("\n", "").replaceAll("\r", "").replaceAll("\\s{2,}", " ").trim();
     }
 }
