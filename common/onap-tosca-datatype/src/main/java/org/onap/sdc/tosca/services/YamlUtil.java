@@ -32,7 +32,7 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.parser.ParserException;
 import org.yaml.snakeyaml.representer.Representer;
-
+import org.yaml.snakeyaml.LoaderOptions;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
@@ -88,10 +88,14 @@ public class YamlUtil {
   public <T> T yamlToObject(InputStream yamlContent, Class<T> typClass) {
     try {
       Constructor constructor = getConstructor(typClass);
+      constructor.setAllowDuplicateKeys(false);
       constructor.setPropertyUtils(getPropertyUtils());
       TypeDescription yamlFileDescription = new TypeDescription(typClass);
       constructor.addTypeDescription(yamlFileDescription);
-      Yaml yaml = new Yaml(constructor);
+      LoaderOptions options = new LoaderOptions();
+      options.setAllowDuplicateKeys(false);
+      //No Yaml Constructor takes only Constructor and LoaderOptions, that is why I had to pass anonymous Representer and DumperOptions objects
+      Yaml yaml = new Yaml(constructor, new Representer(), new DumperOptions(), options);
       T yamlObj = (T) yaml.load(yamlContent);
       if (yamlObj != null) {
         //noinspection ResultOfMethodCallIgnored
@@ -245,13 +249,13 @@ public class YamlUtil {
     //Unsorted properties
     @Override
     protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bnAccess)
-        throws IntrospectionException {
+         {
       return new LinkedHashSet<>(getPropertiesMap(type,
           BeanAccess.FIELD).values());
     }
 
     @Override
-    public Property getProperty(Class<?> type, String name) throws IntrospectionException {
+    public Property getProperty(Class<?> type, String name)  {
       String updatedName = name;
       if (DEFAULT.equals(updatedName)) {
         updatedName = DEFAULT_STR;
@@ -276,8 +280,8 @@ public class YamlUtil {
     }
 
     @Override
-    protected Map<Object, Object> createDefaultMap() {
-      final Map<Object, Object> delegate = super.createDefaultMap();
+    protected Map<Object, Object> createDefaultMap(int initSize) {
+      final Map<Object, Object> delegate = super.createDefaultMap(initSize);
       return new AbstractMap<Object, Object>() {
         @Override
         public Object put(Object key, Object value) {
