@@ -12,7 +12,6 @@
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-rest-webapp</artifactId>
         <version>1.8.1-SNAPSHOT</version>
-        <relativePath>../</relativePath>
     </parent>
     <modules>
         <module>/action-library-rest-services</module>
