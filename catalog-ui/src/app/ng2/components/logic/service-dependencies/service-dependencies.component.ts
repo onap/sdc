@@ -97,6 +97,8 @@ class I18nTexts {
     static deleteNodeFilterMsg: string;
     static validateCapabilitiesTxt: string
     static validateCapabilitiesMsg: string
+    static validateNodePropertiesTxt: string
+    static validateNodePropertiesMsg: string
 
     public static translateTexts(translateService) {
             I18nTexts.removeDirectiveModalTitle = translateService.translate('DIRECTIVES_AND_NODE_FILTER_REMOVE_TITLE');
@@ -114,6 +116,8 @@ class I18nTexts {
             I18nTexts.deleteNodeFilterMsg = translateService.translate('DIRECTIVES_AND_NODE_FILTER_DELETE_NODE_FILTER_MSG');
             I18nTexts.validateCapabilitiesTxt = translateService.translate('VALIDATE_CAPABILITIES_TXT');
             I18nTexts.validateCapabilitiesMsg = translateService.translate('VALIDATE_CAPABILITIES_MSG');
+            I18nTexts.validateNodePropertiesTxt = translateService.translate('VALIDATE_NODE_PROPERTIES_TXT');
+            I18nTexts.validateNodePropertiesMsg = translateService.translate('VALIDATE_NODE_PROPERTIES_MSG');
     }
 }
 
@@ -281,23 +285,27 @@ export class ServiceDependenciesComponent {
     }
 
     onAddNodeFilter = () => {
-        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
-        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilter(this.properties), this.getDisabled);
-        const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
-        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-        this.modalServiceNg2.addDynamicContentToModal(
-            this.modalInstance,
-            ServiceDependenciesEditorComponent,
-            {
-                currentServiceName: this.currentServiceInstance.name,
-                operatorTypes: this.operatorTypes,
-                compositeServiceName: this.compositeService.name,
-                parentServiceInputs: this.parentServiceInputs,
-                selectedInstanceProperties: this.selectedInstanceProperties,
-                selectedInstanceSiblings: this.selectedInstanceSiblings
-            }
-        );
-        this.modalInstance.instance.open();
+        if (!this.selectedInstanceProperties) {
+            this.modalServiceNg2.openAlertModal(I18nTexts.validateNodePropertiesTxt, I18nTexts.validateNodePropertiesMsg);
+        } else {
+            const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+            const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilter(this.properties), this.getDisabled);
+            const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
+            this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+            this.modalServiceNg2.addDynamicContentToModal(
+                this.modalInstance,
+                ServiceDependenciesEditorComponent,
+                {
+                    currentServiceName: this.currentServiceInstance.name,
+                    operatorTypes: this.operatorTypes,
+                    compositeServiceName: this.compositeService.name,
+                    parentServiceInputs: this.parentServiceInputs,
+                    selectedInstanceProperties: this.selectedInstanceProperties,
+                    selectedInstanceSiblings: this.selectedInstanceSiblings
+                }
+            );
+            this.modalInstance.instance.open();
+        }
     }
 
     onAddNodeFilterCapabilities = () => {
@@ -406,7 +414,7 @@ export class ServiceDependenciesComponent {
     }
 
     getDisabled = (): boolean =>  {
-        return false;
+        return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
     }
 
     updateNodeFilter = (constraintType: string, index: number) => {

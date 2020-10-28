@@ -390,6 +390,16 @@ public class UiComponentDataConverter {
                     }
                     break;
 
+                case NODE_FILTER:
+                    if (resource.getNodeFilterComponents() == null) {
+                        dataTransfer.setNodeFilterforNode(null);
+                    } else {
+                        final NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
+                        dataTransfer.setNodeFilterforNode(
+                            nodeFilterConverter.convertDataMapToUI(resource.getNodeFilterComponents()));
+                    }
+                    break;
+
                 default:
                     setUiTranferDataByFieldName(dataTransfer, resource, fieldName);
             }

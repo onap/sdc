@@ -151,7 +151,7 @@ export class CompositionPanelComponent {
         if (component.isService() && (this.selectedComponentIsServiceProxyInstance() || this.selectedComponentIsServiceSubstitutionInstance())) {
             this.tabs.push(tabs.consumption);
             this.tabs.push(tabs.dependencies);
-        } else if (component.isResource() && this.selectedComponentIsVfcInstance()) {
+        } else if (component.isResource() && this.isComponentInstanceSelected()) {
             this.tabs.push(tabs.dependencies);
         }
 
@@ -184,9 +184,5 @@ export class CompositionPanelComponent {
     
     private selectedComponentIsServiceSubstitutionInstance = (): boolean => {
         return this.isComponentInstanceSelected() && this.selectedComponent.isServiceSubstitution();
-    }
-
-    private selectedComponentIsVfcInstance = (): boolean => {
-        return this.isComponentInstanceSelected() && this.selectedComponent.isVFC();
     }
 }

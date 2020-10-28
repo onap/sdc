@@ -1254,9 +1254,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ComponentInstance componentInstance = componentInstanceOptional.get();
 
         try {
-            if (containerComponent instanceof Service || containerComponent instanceof Resource &&
-                isVFC(componentInstance.getOriginType())) {
-
+            if (containerComponent instanceof Service || containerComponent instanceof Resource) {
                 final Either<String, StorageOperationStatus> deleteServiceFilterEither =
                         nodeFilterOperation.deleteNodeFilter(containerComponent, componentInstanceId);
                 if (deleteServiceFilterEither.isRight()) {
@@ -3452,10 +3450,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             log.error("Failed to deleteComponentInstance with instanceId[{}]", componentInstanceId);
             return Either.right(new ResponseFormat());
         }
-    }
-
-    public boolean isVFC(final OriginTypeEnum originTypeEnum) {
-        return OriginTypeEnum.VFC.equals(originTypeEnum);
     }
 
     public void validateUser(final String userId) {
