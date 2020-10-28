@@ -277,6 +277,7 @@ public class ModelConverter {
 			setCapabilitiesToComponentAndGroups(topologyTemplate, resource);
             convertPolicies(topologyTemplate, resource);
             convertNodeFiltersComponents(topologyTemplate, resource);
+            convertSubstitutionFiltersComponents(topologyTemplate, resource);
             convertProperties(topologyTemplate, resource);
             setCapabilitiesToComponent(topologyTemplate, resource);
             setRequirementsToComponent(topologyTemplate, resource);

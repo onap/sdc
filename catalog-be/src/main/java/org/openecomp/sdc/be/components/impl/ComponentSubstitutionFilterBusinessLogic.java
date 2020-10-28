@@ -237,7 +237,7 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(component.getUniqueId(), component,"Add Node Filter on Component");
+                lockComponent(component.getUniqueId(), component,"Delete substitution Filter on Component");
                 wasLocked = true;
             }
             final Either<SubstitutionFilterDataDefinition, StorageOperationStatus> result = substitutionFilterOperation

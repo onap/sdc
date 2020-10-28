@@ -18,6 +18,7 @@ import { InfoTabComponent } from './panel-tabs/info-tab/info-tab.component';
 import { PolicyTargetsTabComponent } from './panel-tabs/policy-targets-tab/policy-targets-tab.component';
 import { PropertiesTabComponent } from './panel-tabs/properties-tab/properties-tab.component';
 import { ReqAndCapabilitiesTabComponent } from './panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
+import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
 
 describe('composition-panel component', () => {
 
@@ -54,8 +55,13 @@ describe('composition-panel component', () => {
                 titleIcon: 'req-capabilities-o', component: ReqAndCapabilitiesTabComponent, input: {},
                 isActive: false, tooltipText: 'Requirements and Capabilities'
             },
+            substitutionFilter: {
+                titleIcon: 'composition-o', component: SubstitutionFilterTabComponent, input: {title: 'SUBSTITUTION FILTER'},
+                isActive: false, tooltipText: 'Substitution Filter'
+            },
             inputs: {titleIcon: 'inputs-o', component: PropertiesTabComponent, input: {title: 'Inputs'}, isActive: false, tooltipText: 'Inputs'},
             settings: {titleIcon: 'settings-o', component: PropertiesTabComponent, input: {}, isActive: false, tooltipText: 'Settings'},
+
         };
 
     beforeEach(
@@ -114,6 +120,7 @@ describe('composition-panel component', () => {
         expect (fixture.componentInstance.tabs[2]).toEqual(tabs.inputs);
         expect (fixture.componentInstance.tabs[3]).toEqual(tabs.infoArtifacts);
         expect (fixture.componentInstance.tabs[4]).toEqual(tabs.apiArtifacts);
+        expect (fixture.componentInstance.tabs[5]).toEqual(tabs.substitutionFilter);
 
     });
 
@@ -157,7 +164,7 @@ describe('composition-panel component', () => {
         fixture.componentInstance.ngOnInit();
 
         // Expect that
-        expect (fixture.componentInstance.tabs.length).toBe(5);
+        expect (fixture.componentInstance.tabs.length).toBe(6);
         expect (fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
         expect (fixture.componentInstance.tabs[1]).toEqual(tabs.properties);
         expect (fixture.componentInstance.tabs[2]).toEqual(tabs.reqAndCapabilities);
@@ -180,7 +187,7 @@ describe('composition-panel component', () => {
         fixture.componentInstance.ngOnInit();
 
         // Expect that
-        expect (fixture.componentInstance.tabs.length).toBe(5);
+        expect (fixture.componentInstance.tabs.length).toBe(6);
         expect (fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
         expect (fixture.componentInstance.tabs[1]).toEqual(tabs.deploymentArtifacts);
         expect (fixture.componentInstance.tabs[2]).toEqual(tabs.properties);
