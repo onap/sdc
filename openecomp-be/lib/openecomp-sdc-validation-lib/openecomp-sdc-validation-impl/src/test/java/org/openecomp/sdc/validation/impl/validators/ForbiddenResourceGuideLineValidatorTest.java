@@ -39,7 +39,7 @@ public class ForbiddenResourceGuideLineValidatorTest {
 
   @BeforeClass
   public static void init() throws IOException {
-    Map<String, Object> resourcesMap = ValidationTestUtil.getResourceMap(mockConfigFileName);
+    Map<String, Object> resourcesMap = new ValidationTestUtil().getResourceMap(mockConfigFileName);
 
     Map<String, Object> resourceBaseValidatorMap =
         (Map<String, Object>) resourcesMap.get("forbiddenResourceGuideLineValidator");
@@ -51,13 +51,13 @@ public class ForbiddenResourceGuideLineValidatorTest {
 
   @Test
   public void testFloatingIpResourceType() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(
         forbiddenResourceGuideLineValidator, RESOURCE_PATH + "/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
 
-    messages = ValidationTestUtil.testValidator(forbiddenResourceGuideLineValidator,
+    messages = new ValidationTestUtil().testValidator(forbiddenResourceGuideLineValidator,
         RESOURCE_PATH + "/negative");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -67,7 +67,7 @@ public class ForbiddenResourceGuideLineValidatorTest {
   }
   @Test
   public void testParseException(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(
         forbiddenResourceGuideLineValidator, RESOURCE_PATH + "/parseException");
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -82,7 +82,7 @@ public class ForbiddenResourceGuideLineValidatorTest {
 
   @Test
   public void testInvalidResourceType(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(
         forbiddenResourceGuideLineValidator, RESOURCE_PATH + "/TestInvalidResourceType");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
         "WARNING: [FRG1]: A resource has an invalid or unsupported type - null, " +

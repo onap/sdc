@@ -12,11 +12,9 @@
         <version>1.8.1-SNAPSHOT</version>
     </parent>
 
-
     <modules>
         <module>openecomp-sdc-vendor-software-product-api</module>
         <module>openecomp-sdc-vendor-software-product-core</module>
     </modules>
-
 
 </project>
