@@ -18,8 +18,17 @@
 
 package org.openecomp.sdc.be.datamodel;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hibernate.validator.internal.util.CollectionHelper.asSet;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,18 +55,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
 import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hibernate.validator.internal.util.CollectionHelper.asSet;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class UiComponentDataConverterTest {
 
@@ -312,7 +309,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("nodeFilter"));
 
-        assertThat(uiComponentDataTransfer.getNodeFilter()).isNotEmpty();
+        assertThat(uiComponentDataTransfer.getNodeFilterforNode()).isNotEmpty();
     }
 
     @Test

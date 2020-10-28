@@ -256,9 +256,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             final ComponentInstance resultValue = actionResponse.left().value();
             if (ComponentTypeEnum.SERVICE.equals(componentTypeEnum) ||
-                ComponentTypeEnum.RESOURCE.equals(componentTypeEnum) &&
-                    componentInstanceBusinessLogic.isVFC(componentInstance.getOriginType())) {
-
+                ComponentTypeEnum.RESOURCE.equals(componentTypeEnum)) {
                 if(CollectionUtils.isNotEmpty(componentInstance.getDirectives())) {
                     final Optional<CINodeFilterDataDefinition> nodeFilterDataDefinition =
                             nodeFilterBusinessLogic.createNodeFilterIfNotExist(componentId, componentInstanceId,

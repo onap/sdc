@@ -511,6 +511,8 @@
     "DIRECTIVES_AND_NODE_FILTER_UPDATE_TEXT": "Changing \"Directive Option\" will remove directives value and erase all the node filter. Are you sure you want to update directives?",
     "VALIDATE_CAPABILITIES_TXT": "Node Filter for Capabilities Properties",
     "VALIDATE_CAPABILITIES_MSG": "The selected Component Instance does not have any capability property",
+    "VALIDATE_NODE_PROPERTIES_TXT": "Node Filter for Properties",
+    "VALIDATE_NODE_PROPERTIES_MSG": "The selected Component Instance does not have any property",
 
     "============= SUBSTITUTION FILTER MANAGE TAB ======" : "",
     "ADD_SUBSTITUTION_FILTER": "Add Substitution Filter",
