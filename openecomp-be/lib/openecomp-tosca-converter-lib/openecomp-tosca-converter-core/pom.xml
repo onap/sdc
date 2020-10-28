@@ -10,16 +10,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openecomp.sdc.core</groupId>
-      <artifactId>openecomp-tosca-lib</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openecomp.sdc.core</groupId>
-      <artifactId>openecomp-facade-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>openecomp-sdc-translator-core</artifactId>
       <version>${project.version}</version>

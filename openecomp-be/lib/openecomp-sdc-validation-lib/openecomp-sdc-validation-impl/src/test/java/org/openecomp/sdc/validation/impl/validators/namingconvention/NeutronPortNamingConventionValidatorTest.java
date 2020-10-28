@@ -30,18 +30,17 @@ import org.openecomp.sdc.validation.util.ValidationTestUtil;
 public class NeutronPortNamingConventionValidatorTest {
 
   NamingConventionGuideLineValidator baseValidator = new NamingConventionGuideLineValidator();
-  NeutronPortNamingConventionValidator resourceValidator = new
-      NeutronPortNamingConventionValidator();
-  private static final  String PATH = "/org/openecomp/validation/validators/guideLineValidator/heatPortNetworkNamingConvention/";
+  NeutronPortNamingConventionValidator resourceValidator = new NeutronPortNamingConventionValidator();
+  private static final String PATH = "/org/openecomp/validation/validators/guideLineValidator/heatPortNetworkNamingConvention/";
   @Test
   public void testHeatPortNetworkNamingConvention() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
             PATH + "positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(baseValidator,
+    messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
             PATH + "negative/");
     Assert.assertNotNull(messages);
@@ -53,13 +52,13 @@ public class NeutronPortNamingConventionValidatorTest {
 
   @Test
   public void testNeutronFixedIpName() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
             PATH + "positiveFixedIP");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(baseValidator,
+    messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
             PATH + "negativeFixedIP/");
     Assert.assertNotNull(messages);
@@ -76,13 +75,13 @@ public class NeutronPortNamingConventionValidatorTest {
 
   @Test
   public void testMissingParam() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
-            resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(new NamingConventionGuideLineValidator(),
+            new NeutronPortNamingConventionValidator(), HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
             PATH + "missingparam/");
     Assert.assertNotNull(messages);
-    Assert.assertEquals(messages.size(), 1);
-    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
-    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-            "WARNING: [NNP2]: Missing get_param in network or network_id, Resource Id [port_resource_2]");
+    Assert.assertEquals(1, messages.size());
+    Assert.assertEquals(1, messages.get("first.yaml").getErrorMessageList().size());
+    Assert.assertEquals("WARNING: [NNP2]: Missing get_param in network or network_id, Resource Id [port_resource_2]",
+            messages.get("first.yaml").getErrorMessageList().get(0).getMessage());
   }
 }
