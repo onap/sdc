@@ -14,11 +14,11 @@
     </parent>
 
     <modules>
-        <module>/openecomp-facade-lib</module>
-        <module>/openecomp-nosqldb-lib</module>
-        <module>/openecomp-utilities-lib</module>
-        <module>/openecomp-config-lib</module>
-        <module>/openecomp-zusammen-lib</module>
-        <module>/openecomp-session-lib</module>
+        <module>openecomp-facade-lib</module>
+        <module>openecomp-nosqldb-lib</module>
+        <module>openecomp-utilities-lib</module>
+        <module>openecomp-config-lib</module>
+        <module>openecomp-zusammen-lib</module>
+        <module>openecomp-session-lib</module>
     </modules>
 </project>

@@ -179,7 +179,7 @@ public class ToscaExportHandler {
     private static final String FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION = "convertToToscaTemplate - failed to get Default Imports section from configuration";
     private static final String NOT_SUPPORTED_COMPONENT_TYPE = "Not supported component type {}";
     private static final String NATIVE_ROOT = "tosca.nodes.Root";
-    private static YamlUtil yamlUtil = new YamlUtil();
+    private static final YamlUtil yamlUtil = new YamlUtil();
 
     public ToscaExportHandler() {
     }
@@ -1847,8 +1847,7 @@ public class ToscaExportHandler {
     private static class UnsortedPropertyUtils extends PropertyUtils {
 
         @Override
-        protected Set<Property> createPropertySet(Class type, BeanAccess bAccess)
-            throws IntrospectionException {
+        protected Set<Property> createPropertySet(Class type, BeanAccess bAccess) {
             Collection<Property> fields = getPropertiesMap(type, BeanAccess.FIELD).values();
             return new LinkedHashSet<>(fields);
         }

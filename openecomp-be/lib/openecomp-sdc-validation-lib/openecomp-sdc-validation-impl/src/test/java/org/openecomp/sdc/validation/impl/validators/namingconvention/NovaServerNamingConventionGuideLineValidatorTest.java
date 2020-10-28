@@ -36,13 +36,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   private static final String PATH = "/org/openecomp/validation/validators/guideLineValidator/novaserverValidation/";
   @Test
   public void testHeatNovaServerMetaDataValidation() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerMetaDataValidation/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(baseValidator,
+    messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerMetaDataValidation/negative/");
     Assert.assertNotNull(messages);
@@ -54,13 +54,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testNovaServerAvailabilityZoneName() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerAvailabilityZoneName/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(baseValidator,
+    messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerAvailabilityZoneName/negative");
     Assert.assertNotNull(messages);
@@ -74,7 +74,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testNovaImageAndFlavorNamesEmptyProperties() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerImageAndFlavor/negativeEmptyProperties");
     Assert.assertNotNull(messages);
@@ -86,13 +86,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
     @Test
     public void testNovaImageAndFlavorNames() {
-        Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+        Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerImageAndFlavor/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(baseValidator,
+    messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerImageAndFlavor/negative");
     Assert.assertNotNull(messages);
@@ -106,12 +106,12 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testNovaResourceNetworkUniqueRole() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaNetworkUniqueRoleConvention/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
-    messages = ValidationTestUtil.testValidator(baseValidator,
+    messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaNetworkUniqueRoleConvention/negative/");
     Assert.assertNotNull(messages);
@@ -123,13 +123,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testNovaServerName() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerNameValidation/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
-    messages = ValidationTestUtil.testValidator(baseValidator,
+    messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaServerNameValidation/negative/");
     Assert.assertNotNull(messages);
@@ -141,7 +141,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testVMNameSyncInNova() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "input");
 
@@ -161,7 +161,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testAvailabilityZoneName() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "availability_zone_name/input");
 
@@ -179,7 +179,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testHeatNovaServerVnfIDValidation() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             "/org/openecomp/validation/validators/guideLineValidator/novaserverValidation/heatNovaServerMetaDataValidation/negativemissingvnfid/");
     Assert.assertNotNull(messages);
@@ -190,7 +190,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testHeatNovaServerVfModuleValidation() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             "/org/openecomp/validation/validators/guideLineValidator/novaserverValidation/heatNovaServerMetaDataValidation/negativemisningvfmodule/");
     Assert.assertNotNull(messages);
@@ -200,7 +200,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testMissingParam() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaNetworkUniqueRoleConvention/missingportNetwork/");
     Assert.assertNotNull(messages);
@@ -217,7 +217,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testNovaResource() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaNetworkUniqueRoleConvention/invalidresource/");
     Assert.assertNotNull(messages);
@@ -227,7 +227,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
   @Test
   public void testEnvFileContent() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "heatNovaNetworkUniqueRoleConvention/input/");
     Assert.assertNotNull(messages);

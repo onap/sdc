@@ -35,7 +35,7 @@ public class NovaServerGroupResourceValidatorTest {
   private static final String PATH = "/org/openecomp/validation/validators/heat_validator/";
   @Test
   public void testPolicyIsAffinityOrAntiAffinity() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource(),
             PATH + "policy_is_affinity_or_anti_affinity/negative_test/input");
 
@@ -50,7 +50,7 @@ public class NovaServerGroupResourceValidatorTest {
 
   @Test
   public void testServerGroupCalledByServer() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource(),
             PATH + "server_group_called_by_nova_server/input");
 
@@ -66,7 +66,7 @@ public class NovaServerGroupResourceValidatorTest {
 
   @Test
   public void testNonServerGroup() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "server_group_called_by_nova_server_negative/input");
 

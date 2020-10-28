@@ -16,5 +16,4 @@
         <module>openecomp-nosqldb-api</module>
         <module>openecomp-nosqldb-core</module>
     </modules>
-
 </project>
