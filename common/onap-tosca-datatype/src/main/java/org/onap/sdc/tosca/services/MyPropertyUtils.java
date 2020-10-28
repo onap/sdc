@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2021 Nokia Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,29 +18,30 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.validation.impl.validators;
+package org.onap.sdc.tosca.services;
 
-import org.junit.jupiter.api.Test;
-import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.validation.util.ValidationTestUtil;
+import org.yaml.snakeyaml.introspector.BeanAccess;
+import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public class MyPropertyUtils extends PropertyUtils {
+    //Unsorted properties
+    @Override
+    protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bnAccess) {
+        return new LinkedHashSet<>(getPropertiesMap(type,
+                BeanAccess.FIELD).values());
+    }
 
-class GlobalContextUtilTest {
-    private static final String TEST_MANIFEST_PATH = "/org/openecomp/validation/validators/global_context_util/";
-
-    @Test
-    void shouldReturnOnlyFilesWithPmDictionaryType() {
-        // given
-        GlobalValidationContext globalContext = new ValidationTestUtil().createGlobalContextFromPath(TEST_MANIFEST_PATH);
-
-        // when
-        Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
-
-        // then
-        assertEquals(1, pmDictionaryFiles.size());
+    @Override
+    public Property getProperty(Class<?> type, String name) {
+        String updatedName = name;
+        if (YamlUtil.DEFAULT.equals(updatedName)) {
+            updatedName = YamlUtil.DEFAULT_STR;
+        }
+        return super.getProperty(type, updatedName);
     }
 
 }

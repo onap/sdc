@@ -3,19 +3,10 @@ heat_template_version: 2013-05-23
 description: heat expose volume resource
 
 resources:
-  port_resource_0:
-    type: OS::Neutron::Port
-    properties:
-     network_id: { get_param: Internal1_net_id }
-resources:
-  port_resource_1:
-    type: OS::Neutron::Port
-    properties:
-     network_id: { get_param: Internal1_net_name }
-resources:
   port_resource_2:
     type: OS::Neutron::Port
     properties:
+      # required to be 'not a map' to trigger error NNP2
      network_id: Internal1_net_fqdn
 
 

@@ -40,7 +40,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testWarningMessageExistWhenConrailV1AndV2ResourcesCollidesInSameHeatFile() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/collidesinsameheatfile/");
     validateMessage(messages,
         "WARNING: [CTL2]: HEAT Package includes both Contrail 2 and Contrail 3 " +
@@ -52,7 +52,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testParseException(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/parseException/");
     validateMessage(messages,
         "ERROR: [CTL4]: Invalid HEAT format problem - [while scanning for the next " +
@@ -68,7 +68,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testWarningMessageExistWhenConrailV1AndV2ResourcesCollidesInDifferentHeatFiles() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/collidesindifferentheatfiles/");
     validateMessage(messages,
         "WARNING: [CTL2]: HEAT Package includes both Contrail 2 and Contrail 3 " +
@@ -80,7 +80,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testWarningMessageNotExistWhenConrailV1AndV2ResourcesCollidesInNonHeatFile() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/collidesinnontheatfiles/");
     validateMessage(messages,
         "WARNING: [CTL2]: HEAT Package includes both Contrail 2 and Contrail 3 " +
@@ -93,7 +93,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testWarningMessageNotExistWhenOnlyConrailV1Resources() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/notcollides/");
     validateMessage(messages,
         "WARNING: [CTL3]: Contrail 2.x deprecated resource is in use, " +
@@ -104,7 +104,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testWarningMessageOnResourceWithContrailType() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/validatenocontrailresource/");
     validateMessage(messages,
         "WARNING: [CTL3]: Contrail 2.x deprecated resource is in use, " +
@@ -114,7 +114,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testInvalidHeatStructure(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/invalidHeatStructure/");
     validateMessage(messages,
         "ERROR: [CTL1]: Invalid HEAT format problem - [The file 'first.yaml' " +
@@ -124,7 +124,7 @@ public class ContrailValidatorTest {
 
   @Test
   public void testInvalidHeatStructuredueToParsingError(){
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(validator,
         RESOURCE_PATH + "/invalidHeatStructure/");
     validateMessage(messages,
         "ERROR: [CTL1]: Invalid HEAT format problem - [The file 'first.yaml' " +

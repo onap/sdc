@@ -24,10 +24,10 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validati
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -63,10 +63,8 @@ import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.va
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
@@ -963,27 +961,12 @@ public class SOL004MetaDirectoryValidatorTest {
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
-                , Messages.INVALID_YAML_FORMAT_1.formatMessage(nonManoPmEventsSource, "while scanning a simple key\n"
-                + " in 'reader', line 2, column 1:\n"
-                + "    key {}\n"
-                + "    ^\n"
-                + "could not find expected ':'\n"
-                + " in 'reader', line 2, column 7:\n"
-                + "    {}\n"
-                + "      ^\n"))
+                , Messages.INVALID_YAML_FORMAT_1.formatMessage(nonManoPmEventsSource, "while scanning a simple key in 'reader', line 2, column 1: key {} ^could not find expected ':' in 'reader', line 2, column 7: key {} ^"))
         );
-        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR, "while scanning a simple key\n" +
-                " in 'reader', line 2, column 1:\n" +
-                "    key {}\n" +
-                "    ^\n" +
-                "could not find expected ':'\n" +
-                " in 'reader', line 2, column 7:\n" +
-                "    {}\n" +
-                "      ^\n")
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR, "while scanning a simple key in 'reader', line 2, column 1: key {} ^could not find expected ':' in 'reader', line 2, column 7: key {} ^")
             );
 
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
-                .validateContent(handler);
+        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
 
@@ -1253,22 +1236,6 @@ public class SOL004MetaDirectoryValidatorTest {
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
 
-    protected void assertExpectedErrors(List<ErrorMessage> actualErrorList, final List<ErrorMessage> expectedErrorList) {
-        if (actualErrorList == null) {
-            actualErrorList = new ArrayList<>();
-        }
-
-        printErrorMessages(actualErrorList);
-
-        assertThat("The actual error list should have the same size as the expected error list " + actualErrorList.toString() 
-                , actualErrorList, hasSize(expectedErrorList.size())
-        );
-
-        assertThat("The actual error and expected error lists should be the same"
-                , actualErrorList, containsInAnyOrder(expectedErrorList.toArray(new ErrorMessage[0]))
-        );
-    }
-
     protected void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors, final int expectedErrors){
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         printErrorMessages(errorMessages);
@@ -1285,6 +1252,27 @@ public class SOL004MetaDirectoryValidatorTest {
                     System.out.println(String.format("%s: %s", errorMessage.getLevel(), errorMessage.getMessage()))
             );
         }
+    }
+
+    private void assertExpectedErrors(List<ErrorMessage> actualErrorList, final List<ErrorMessage> expectedErrorList) {
+        if (actualErrorList == null) {
+            actualErrorList = new ArrayList<>();
+        }
+
+        printErrorMessages(actualErrorList);
+
+        assertThat("The actual error list should have the same size as the expected error list"
+                , actualErrorList, hasSize(expectedErrorList.size())
+        );
+
+        actualErrorList.forEach(error -> {
+            Predicate<ErrorMessage> matching = e -> e.getLevel() == error.getLevel() && sanitize(e.getMessage()).equalsIgnoreCase(sanitize(error.getMessage()));
+            assertTrue("The actual error and expected error lists should be the same", expectedErrorList.stream().anyMatch(matching));
+        });
+    }
+
+    private static String sanitize(String s) {
+        return s.trim().replaceAll("\n", "").replaceAll("\r", "").replaceAll("\\s{2,}", " ").trim();
     }
 
 }
