@@ -49,9 +49,9 @@ import org.openecomp.sdc.validation.base.ResourceBaseValidator;
  */
 public class ValidationTestUtil {
 
-  private ValidationTestUtil(){}
+  public ValidationTestUtil(){}
 
-  public static GlobalValidationContext createGlobalContextFromPath(String path) {
+  public GlobalValidationContext createGlobalContextFromPath(String path) {
     GlobalValidationContext globalValidationContext = new GlobalValidationContext();
     Map<String, byte[]> contentMap = getContentMapByPath(path);
     if (contentMap == null) {
@@ -62,7 +62,7 @@ public class ValidationTestUtil {
     return globalValidationContext;
   }
 
-  private static Map<String, byte[]> getContentMapByPath(String path) {
+  private Map<String, byte[]> getContentMapByPath(String path) {
     Map<String, byte[]> contentMap = new HashMap<>();
     URL url = ValidationTestUtil.class.getResource(path);
     File pathFile = new File(url.getFile());
@@ -89,8 +89,7 @@ public class ValidationTestUtil {
     return contentMap;
   }
 
-  public static Map<String, MessageContainer> testValidator(Validator validator, String path) {
-
+  public Map<String, MessageContainer> testValidator(Validator validator, String path) {
     GlobalValidationContext globalValidationContext = createGlobalContextFromPath(path);
     validator.validate(globalValidationContext);
 
@@ -100,7 +99,7 @@ public class ValidationTestUtil {
 
   }
 
-  public static Map<String, MessageContainer> testValidator(ResourceBaseValidator baseValidator,
+  public Map<String, MessageContainer> testValidator(ResourceBaseValidator baseValidator,
           ResourceValidator resourceValidator,
           String resourceTypeToValidate, String path) {
 
@@ -117,7 +116,7 @@ public class ValidationTestUtil {
     return globalContext.getContextMessageContainers();
   }
 
-  private static void validateFiles(ResourceBaseValidator baseValidator,
+  private void validateFiles(ResourceBaseValidator baseValidator,
           ResourceValidator resourceValidator,
           GlobalValidationContext globalContext,
           Map<String, FileData> fileEnvMap,
@@ -144,7 +143,7 @@ public class ValidationTestUtil {
     }
   }
 
-  private static void validateResources(String fileName, ResourceValidator resourceValidator,
+  private void validateResources(String fileName, ResourceValidator resourceValidator,
           String resourceTypeToValidate, ValidationContext validationContext,
           GlobalValidationContext globalValidationContext){
 
@@ -166,7 +165,7 @@ public class ValidationTestUtil {
                                                            (fileName, resourceEntry, globalValidationContext, validationContext));
   }
 
-  private static boolean isResourceNeedToBeTested(String currResource, String resourceToTest){
+  private boolean isResourceNeedToBeTested(String currResource, String resourceToTest){
     if(Objects.isNull(resourceToTest)){
       return HeatStructureUtil.isNestedResource(currResource);
     }
@@ -174,14 +173,13 @@ public class ValidationTestUtil {
     return currResource.equals(resourceToTest);
   }
 
-  public static void validateErrorMessage(String actualMessage, String expected, String... params) {
-
+  public void validateErrorMessage(String actualMessage, String expected, String... params) {
     Assert.assertEquals(actualMessage.replace("\n", "").replace("\r", ""),
             ErrorMessagesFormatBuilder.getErrorWithParameters(expected, params).replace("\n", "")
                                       .replace("\r", ""));
   }
 
-  public static Map<String, Object> getResourceMap(String configFileName) throws IOException {
+  public Map<String, Object> getResourceMap(String configFileName) throws IOException {
     URL mockResource = ValidationTestUtil.class.getResource(configFileName);
     String json = IOUtils.toString(mockResource.openStream(), "UTF-8");
     return JsonUtil.json2Object(json, Map.class);

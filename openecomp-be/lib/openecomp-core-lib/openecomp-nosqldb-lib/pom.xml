@@ -4,32 +4,15 @@
 
     <name>openecomp-nosqldb-lib</name>
     <artifactId>openecomp-nosqldb-lib</artifactId>
-    <groupId>org.openecomp.sdc.core</groupId>
     <packaging>pom</packaging>
     <parent>
-        <artifactId>openecomp-sdc-lib</artifactId>
-        <groupId>org.openecomp.sdc</groupId>
+        <artifactId>openecomp-core-lib</artifactId>
+        <groupId>org.openecomp.sdc.core</groupId>
         <version>1.8.1-SNAPSHOT</version>
-        <relativePath>../..</relativePath>
     </parent>
 
     <modules>
         <module>openecomp-nosqldb-api</module>
         <module>openecomp-nosqldb-core</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-nosqldb-api</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
-            <artifactId>openecomp-nosqldb-core</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
 </project>

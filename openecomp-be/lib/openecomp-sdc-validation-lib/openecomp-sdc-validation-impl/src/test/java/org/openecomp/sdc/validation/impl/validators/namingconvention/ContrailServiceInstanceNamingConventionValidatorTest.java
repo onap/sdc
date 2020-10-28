@@ -36,7 +36,7 @@ public class ContrailServiceInstanceNamingConventionValidatorTest {
 
   @Test
   public void testContrailServiceInstanceAvailabilityZoneNotAlignedWithNamingConvention() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
             PATH + "notaligned");
     Assert.assertNotNull(messages);
@@ -48,7 +48,7 @@ public class ContrailServiceInstanceNamingConventionValidatorTest {
 
   @Test
   public void testContrailServiceInstanceAvailabilityZoneAlignedWithNamingConvention() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
             PATH + "aligned");
     Assert.assertNotNull(messages);
@@ -56,7 +56,7 @@ public class ContrailServiceInstanceNamingConventionValidatorTest {
   }
   @Test
   public void testContrailServiceInstanceAvailabilityZoneNotAlignedWithNamingConventionMissingParam() {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
             PATH + "missingparam");
     Assert.assertNotNull(messages);
