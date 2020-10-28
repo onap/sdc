@@ -37,7 +37,7 @@ public class ContrailNetworkPolicyResourceValidatorTest {
   private static final String PATH = "/org/openecomp/validation/validators/heat_validator/network_policy_associated_with_attach_policy/";
   @Test
   public void testNetworkPolicyAssociatedWithAttachPolicy() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator, resourceValidator
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator, resourceValidator
             , HeatResourcesTypes.CONTRAIL_NETWORK_RULE_RESOURCE_TYPE.getHeatResource(),
             PATH + "positive");
 
@@ -52,7 +52,7 @@ public class ContrailNetworkPolicyResourceValidatorTest {
 
   @Test
   public void testNonNetworkPolicyResource() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator, resourceValidator
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator, resourceValidator
             , HeatResourcesTypes.CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource(),
             PATH + "negative");
 

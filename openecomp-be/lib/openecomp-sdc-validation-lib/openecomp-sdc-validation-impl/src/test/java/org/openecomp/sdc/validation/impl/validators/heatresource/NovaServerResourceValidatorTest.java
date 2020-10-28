@@ -35,7 +35,7 @@ public class NovaServerResourceValidatorTest {
   private static final String PATH = "/org/openecomp/validation/validators/heat_validator/";
   @Test
   public void testNovaPropertiesHasAssignedValue() throws IOException {
-    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages = new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "nova_properties_has_assigned_value/negative_test/input");
 
@@ -50,7 +50,7 @@ public class NovaServerResourceValidatorTest {
 
   @Test
   public void testServerGroupsPointedByServersDefinedCorrectly() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(baseValidator,
+    Map<String, MessageContainer> messages =new ValidationTestUtil().testValidator(baseValidator,
             resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
             PATH + "server_groups_defined_correctly/negative_test/input");
 

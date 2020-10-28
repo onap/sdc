@@ -17,17 +17,4 @@
         <module>openecomp-sdc-model-api</module>
         <module>openecomp-sdc-model-impl</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-model-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-model-impl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>

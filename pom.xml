@@ -77,7 +77,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <skipYamlJsonValidator>false</skipYamlJsonValidator>
 
         <!-- Yaml for properties -->
-        <snakeyaml.version>1.14</snakeyaml.version>
+        <snakeyaml.version>1.26</snakeyaml.version>
         <functionaljava.version>4.7</functionaljava.version>
         <httpclient.version>4.5.3</httpclient.version>
         <httpcore.version>4.4.1</httpcore.version>
