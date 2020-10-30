@@ -5,6 +5,133 @@
 Release Notes
 =============
 
+Version: 1.7.2
+==============
+
+:Release Date: 2020-11-19
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.1
+
+-  sdc-tosca
+
+   :Version: 1.6.5
+
+Release Purpose
+----------------
+SDC Guilin Release
+
+**Epics**
+
+*  `SDC-3085 <https://jira.onap.org/browse/SDC-3085>`_ - Test Topology Auto Design （NFV Testing Automatic Platform）
+*  `SDC-2802 <https://jira.onap.org/browse/SDC-2802>`_ - Design ETSI SOL007 compliant Network Service Descriptor packages
+
+**Stories**
+
+
+*  `SDC-3275 <https://jira.onap.org/browse/SDC-3275>`_ - Make directives options configurable
+*  `SDC-3262 <https://jira.onap.org/browse/SDC-3262>`_ - Support for node_filters - capabilities
+*  `SDC-3257 <https://jira.onap.org/browse/SDC-3257>`_ - Enable node_filter update action
+*  `SDC-3254 <https://jira.onap.org/browse/SDC-3254>`_ - Map topology inputs to properties in substitution mapping
+*  `SDC-3249 <https://jira.onap.org/browse/SDC-3249>`_ - ETSI Network Service Descriptor CSAR plugin
+*  `SDC-3244 <https://jira.onap.org/browse/SDC-3244>`_ - Change the ONBOARDED_PACKAGE directory to the ETSI_PACKAGE directory
+*  `SDC-3195 <https://jira.onap.org/browse/SDC-3195>`_ - Add UI support  for substitution_filter
+*  `SDC-3184 <https://jira.onap.org/browse/SDC-3184>`_ - Distribute HELM package artifact as a part of VF
+*  `SDC-3183 <https://jira.onap.org/browse/SDC-3183>`_ - Create VF model from VSP with HELM type inside
+*  `SDC-3182 <https://jira.onap.org/browse/SDC-3182>`_ - SDC should support CNF Orchestration
+*  `SDC-3180 <https://jira.onap.org/browse/SDC-3180>`_ - Support for Test Topology Auto Design-  Abstract Service Template
+*  `SDC-3179 <https://jira.onap.org/browse/SDC-3179>`_ - Support for Test Topology Auto Design- Service Import
+*  `SDC-3177 <https://jira.onap.org/browse/SDC-3177>`_ - Config instances types allowed to be used in the component composition
+*  `SDC-3173 <https://jira.onap.org/browse/SDC-3173>`_ - SDC must not use root access to DB
+*  `SDC-3172 <https://jira.onap.org/browse/SDC-3172>`_ - SDC to support automatic retrieval of certificates
+*  `SDC-3167 <https://jira.onap.org/browse/SDC-3167>`_ - Create VSP with HELM as a native artifact type
+*  `SDC-3147 <https://jira.onap.org/browse/SDC-3147>`_ - Add back-end support  for substitution_filter
+*  `SDC-3131 <https://jira.onap.org/browse/SDC-3131>`_ - Improve Utils coverage and improve Sonar score
+*  `SDC-3095 <https://jira.onap.org/browse/SDC-3095>`_ - Add support for node_filter on VFC
+*  `SDC-3094 <https://jira.onap.org/browse/SDC-3094>`_ - Migrate any Python code to version 3.8
+*  `SDC-3087 <https://jira.onap.org/browse/SDC-3087>`_ - E2E Network Slicing: KPI Monitoring
+*  `SDC-3086 <https://jira.onap.org/browse/SDC-3086>`_ - E2E Network Slicing: subnet slicing
+*  `SDC-3084 <https://jira.onap.org/browse/SDC-3084>`_ - Initial support for TOSCA property constraints in ToscaProperty class and constraint valid_values
+*  `SDC-3079 <https://jira.onap.org/browse/SDC-3079>`_ - Make Directive values Tosca compliant
+*  `SDC-3075 <https://jira.onap.org/browse/SDC-3075>`_ - Allow TOSCA Entity Type Schema and specific Interface Type entries in an Interface Type
+*  `SDC-3074 <https://jira.onap.org/browse/SDC-3074>`_ - Add support for directives on VFC
+*  `SDC-3062 <https://jira.onap.org/browse/SDC-3062>`_ - Plugable entry to customize properties during Service creation
+*  `SDC-3061 <https://jira.onap.org/browse/SDC-3061>`_ - Expose generic Service properties as properties, not only as inputs
+*  `SDC-3060 <https://jira.onap.org/browse/SDC-3060>`_ - Update a resource template from a new onboarding package
+*  `SDC-3051 <https://jira.onap.org/browse/SDC-3051>`_ - Upgrade Vulnerable Direct Dependencies
+*  `SDC-3021 <https://jira.onap.org/browse/SDC-3021>`_ - Enable by configuration which global type file should be added to the generated CSAR
+*  `SDC-3020 <https://jira.onap.org/browse/SDC-3020>`_ - Adjust docker-compose and SSL config in Workflow plugin
+*  `SDC-2997 <https://jira.onap.org/browse/SDC-2997>`_ - HEAT to TOSCA VM Consolidation
+*  `SDC-2984 <https://jira.onap.org/browse/SDC-2984>`_ - Remove powermock dependency
+*  `SDC-2957 <https://jira.onap.org/browse/SDC-2957>`_ - Support the substitution_mappings in the VNFD
+*  `SDC-2883 <https://jira.onap.org/browse/SDC-2883>`_ - Support design of Service templates, including NSDs
+*  `SDC-2877 <https://jira.onap.org/browse/SDC-2877>`_ - Support for configuring base tosca type on a category basis
+*  `SDC-2854 <https://jira.onap.org/browse/SDC-2854>`_ - Support 50 characters for VSP name in OnBoarding
+*  `SDC-2820 <https://jira.onap.org/browse/SDC-2820>`_ - Create / Update Entitlement Pool - Support Type Field
+*  `SDC-2810 <https://jira.onap.org/browse/SDC-2810>`_ - Support for deploying a service that contains an ETSI SOL001 v2.7.1 compliant Network Service using an external NFVO
+*  `SDC-2809 <https://jira.onap.org/browse/SDC-2809>`_ - Support for deploying a service that contains an ETSI SOL001 v2.7.1 compliant Network Service using VF-C as the NFVO
+*  `SDC-2808 <https://jira.onap.org/browse/SDC-2808>`_ - Design ETSI SOL001 NSD and generate ETSI SOL001 compliant Network Service descriptor and package
+*  `SDC-2804 <https://jira.onap.org/browse/SDC-2804>`_ - SDC supports onboarding of the SOL007 NS package for an External NFVO
+*  `SDC-2781 <https://jira.onap.org/browse/SDC-2781>`_ - Allow other entries for SOL004 Tosca.meta
+*  `SDC-2775 <https://jira.onap.org/browse/SDC-2775>`_ - Include derived_from types in generated csar
+*  `SDC-2772 <https://jira.onap.org/browse/SDC-2772>`_ - Import of VFC interface implementation
+*  `SDC-2771 <https://jira.onap.org/browse/SDC-2771>`_ - Unassigned requirements in topology template substitution mapping
+*  `SDC-2768 <https://jira.onap.org/browse/SDC-2768>`_ - Support Tosca DependsOn root node relationship
+*  `SDC-2754 <https://jira.onap.org/browse/SDC-2754>`_ - Allow SDC component artifact types to be configurable
+*  `SDC-2688 <https://jira.onap.org/browse/SDC-2688>`_ - Upgrade Selenium
+*  `SDC-2659 <https://jira.onap.org/browse/SDC-2659>`_ - Support setting custom properties required true/false in UI
+*  `SDC-2642 <https://jira.onap.org/browse/SDC-2642>`_ - Archive DCAE-DS project
+*  `SDC-2618 <https://jira.onap.org/browse/SDC-2618>`_ - Mapping between SOL001 NSD and SDC AID DM/SDC Internal TOSCA
+*  `SDC-2612 <https://jira.onap.org/browse/SDC-2612>`_ - SDC supports onboarding of the SOL007 NS package for VFC as the NFVO
+*  `SDC-2590 <https://jira.onap.org/browse/SDC-2590>`_ - Upgrade To Cassandra 3
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA GUILIN BUGS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA GUILIN BUGS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*Known Security Issues*
+
+-  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
+-  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+	N/A
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	SDC DCAE-DS plugin is now deprecated (replaced by DCAE-MOD)
+
+**Other**
+
+	N/A
+
 Version: 1.6.7
 ==============
 
