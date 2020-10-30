@@ -71,7 +71,7 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 			() -> (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER));
 		ComponentInstanceAttribute attributeOfRI = attributeGetter.apply(vfWithInsatncePreUpdate);
 		final String newAttValue = "NewValue";
-		attributeOfRI.setValue(newAttValue);
+		attributeOfRI.set_default(newAttValue);
 		String body = gson.toJson(attributeOfRI);
 		String url = String.format(Urls.UPDATE_ATTRIBUTE_ON_RESOURCE_INSTANCE, config.getCatalogBeHost(),
 			config.getCatalogBePort(), ComponentTypeEnum.findParamByType(ComponentTypeEnum.RESOURCE),
@@ -82,7 +82,7 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 		final Resource vfWithInsatncePostUpdate = swallowException(
 			() -> (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER));
 		ComponentInstanceAttribute updatedAttribute = attributeGetter.apply(vfWithInsatncePostUpdate);
-		assertEquals(updatedAttribute.getValue(), newAttValue);
+		assertEquals(updatedAttribute.get_default(), newAttValue);
 
 	}
 }

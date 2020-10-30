@@ -48,19 +48,19 @@
             <!-- ATTRIBUTE DEFAULT VALUE TEXT - OPTIONAL -->
             <div *ngIf="attributeToEdit.type != 'boolean'">
                 <sdc-input
-                        #defaultValue
+                        #_default
                         [required]="false"
                         label="Default Value"
-                        [(value)]="attributeToEdit.defaultValue"
+                        [(value)]="attributeToEdit._default"
                         [disabled]="false"
-                        name="defaultValue"
+                        name="_default"
                         testId="defaultValue"
                         [maxLength]="255"
                         (valueChange)="defaultValueChanged()">
                 </sdc-input>
 
-                <sdc-validation [validateElement]="defaultValue" (validityChanged)="onValidityChange($event, 'defaultValue')">
-                    <sdc-regex-validator *ngIf="this.attributeToEdit.defaultValue && this.attributeToEdit.defaultValue.length > 0"  message="{{ this.defaultValueErrorMessage }}"
+                <sdc-validation [validateElement]="_default" (validityChanged)="onValidityChange($event, 'default')">
+                    <sdc-regex-validator *ngIf="this.attributeToEdit._default && this.attributeToEdit._default.length > 0" message="{{ this.defaultValueErrorMessage }}"
                                          [pattern]="defaultValuePattern"></sdc-regex-validator>
                     <sdc-custom-validator *ngIf="this.attributeToEdit.type == 'map' && this.attributeToEdit.schema.property.type" message="{{ 'PROPERTY_EDIT_MAP_UNIQUE_KEYS' | translate }}"
                                           [callback]="isMapUnique" [disabled]="false"></sdc-custom-validator>
@@ -71,7 +71,7 @@
             <div *ngIf="attributeToEdit.type == 'boolean'">
                 <sdc-dropdown [disabled]="false" label="Default Value"
                               [required]="false"
-                              [selectedOption]="toDropDownOption(this.attributeToEdit.defaultValue)" placeHolder="Choose Default Value"
+                              [selectedOption]="toDropDownOption(this.attributeToEdit._default)" placeHolder="Choose Default Value"
                               [options]="booleanValues" (changed)="onBooleanDefaultValueSelected($event)">
 
                 </sdc-dropdown>
@@ -88,16 +88,6 @@
                     </sdc-validation>
                 </sdc-dropdown>
             </div>
-
-            <!-- ATTRIBUTE HIDDEN - OPTIONAL -->
-            <sdc-checkbox
-                    label="Hidden"
-                    [checked]="attributeToEdit.hidden"
-                    [disabled]="false"
-                    testId="hidden"
-                    (checkedChange)="this.onHiddenCheckboxClicked($event)"
-            >
-            </sdc-checkbox>
         </div>
     </div>
 

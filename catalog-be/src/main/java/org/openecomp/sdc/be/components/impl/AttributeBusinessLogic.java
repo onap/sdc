@@ -21,11 +21,17 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
@@ -37,15 +43,12 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This class holds the business logic relevant for attributes manipulation.
@@ -113,15 +116,15 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
             }
             Map<String, DataTypeDefinition> eitherAllDataTypes = getAllDataTypes(applicationDataTypeCache);
             // validate property default values
-            Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue((AttributeDefinition)newAttributeDef, eitherAllDataTypes);
+            Either<Boolean, ResponseFormat> defaultValuesValidation = validateAttributeDefaultValue(newAttributeDef, eitherAllDataTypes);
             if (defaultValuesValidation.isRight()) {
                 return Either.right(defaultValuesValidation.right().value());
             }
 
-            handleDefaultValue((AttributeDefinition)newAttributeDef, eitherAllDataTypes);
+            handleAttributeDefaultValue(newAttributeDef, eitherAllDataTypes);
 
             // add the new attribute to resource on graph
-            // need to get StorageOpaerationStatus and convert to ActionStatus from
+            // need to get StorageOperationStatus and convert to ActionStatus from
             // componentsUtils
             Either<AttributeDataDefinition, StorageOperationStatus> either = toscaOperationFacade.addAttributeOfResource(resource, newAttributeDef);
             if (either.isRight()) {
@@ -135,13 +138,73 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
             commitOrRollback(result);
             graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
         }
+    }
 
+    private Either<Boolean, ResponseFormat> validateAttributeDefaultValue(final AttributeDataDefinition attributeDefinition,
+                                                                          final Map<String, DataTypeDefinition> dataTypes) {
+
+
+        if (!attributeOperation.isAttributeTypeValid(attributeDefinition)) {
+            log.info("Invalid type for attribute '{}' type '{}'", attributeDefinition.getName(), attributeDefinition.getType());
+            final ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, attributeDefinition
+                .getType(), attributeDefinition.getName());
+            return Either.right(responseFormat);
+        }
+        String type = attributeDefinition.getType();
+        String innerType = null;
+        if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
+            final ImmutablePair<String, Boolean> propertyInnerTypeValid = attributeOperation.isAttributeInnerTypeValid(
+                attributeDefinition, dataTypes);
+            innerType = propertyInnerTypeValid.getLeft();
+            if (!propertyInnerTypeValid.getRight()) {
+                log.info("Invalid inner type for attribute '{}' type '{}', dataTypeCount '{}'",
+                    attributeDefinition.getName(), attributeDefinition.getType(), dataTypes.size());
+                final ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, attributeDefinition.getName());
+                return Either.right(responseFormat);
+            }
+        }
+        if (!attributeOperation.isAttributeDefaultValueValid(attributeDefinition, dataTypes)) {
+            log.info("Invalid default value for attribute '{}' type '{}'", attributeDefinition.getName(),
+                attributeDefinition.getType());
+            ResponseFormat responseFormat;
+            if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE,
+                    attributeDefinition.getName(), type, innerType,
+                    (String) attributeDefinition.get_default());
+            } else {
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE,
+                    attributeDefinition.getName(), type, (String) attributeDefinition.get_default());
+            }
+            return Either.right(responseFormat);
+
+        }
+        return Either.left(true);
+    }
+
+    private void handleAttributeDefaultValue(final AttributeDataDefinition newAttributeDefinition,
+                                             final Map<String, DataTypeDefinition> dataTypes) {
+        final ToscaPropertyType type = ToscaPropertyType.isValidType(newAttributeDefinition.getType());
+        final PropertyValueConverter converter = type.getConverter();
+        // get inner type
+        String innerType = null;
+        final SchemaDefinition schema = newAttributeDefinition.getSchema();
+        if (schema != null) {
+            final PropertyDataDefinition prop = schema.getProperty();
+            if (schema.getProperty() != null) {
+                innerType = prop.getType();
+            }
+        }
+        if (newAttributeDefinition.get_default() != null) {
+            newAttributeDefinition.set_default(converter
+                .convert((String) newAttributeDefinition.get_default(), innerType, dataTypes));
+        }
     }
 
     private boolean isAttributeExist(List<AttributeDataDefinition> attributes, String resourceUid, String propertyName) {
         boolean isExist = false;
         if (attributes != null) {
-            isExist = attributes.stream().anyMatch(p -> Objects.equals(p.getName(), propertyName) && Objects.equals(p.getParentUniqueId(), resourceUid));
+            isExist = attributes.stream().anyMatch(p -> Objects.equals(p.getName(), propertyName) && Objects.equals(p.getOwnerId(), resourceUid));
         }
         return isExist;
 
@@ -169,8 +232,10 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_NOT_FOUND, ""));
         } else {
             // verify attribute exist in resource
-            Optional<AttributeDataDefinition> optionalAtt = attributes.stream().filter(att -> att.getUniqueId().equals(attributeId) && resourceId.equals(att.getParentUniqueId())).findAny();
-            return optionalAtt.<Either<AttributeDataDefinition, ResponseFormat>>map(Either::left).orElseGet(() -> Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_NOT_FOUND, "")));
+            Optional<AttributeDataDefinition> optionalAtt = attributes.stream().filter(att ->
+                att.getUniqueId().equals(attributeId)).findAny();
+            return optionalAtt.<Either<AttributeDataDefinition, ResponseFormat>>map(Either::left).orElseGet(() ->
+                Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_NOT_FOUND, "")));
         }
     }
 
@@ -213,13 +278,13 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
             Map<String, DataTypeDefinition> eitherAllDataTypes = getAllDataTypes(applicationDataTypeCache);
 
             // validate attribute default values
-            Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue((AttributeDefinition)newAttDef, eitherAllDataTypes);
+            Either<Boolean, ResponseFormat> defaultValuesValidation = validateAttributeDefaultValue(newAttDef, eitherAllDataTypes);
             if (defaultValuesValidation.isRight()) {
                 return Either.right(defaultValuesValidation.right().value());
             }
 
             // add the new property to resource on graph
-            StorageOperationStatus validateAndUpdateAttribute = propertyOperation.validateAndUpdateProperty((AttributeDefinition)newAttDef, eitherAllDataTypes);
+            StorageOperationStatus validateAndUpdateAttribute = attributeOperation.validateAndUpdateAttribute(newAttDef, eitherAllDataTypes);
             if (validateAndUpdateAttribute != StorageOperationStatus.OK) {
                 log.debug("Problem while updating attribute with id {}. Reason - {}", attributeId, validateAndUpdateAttribute);
                 result = Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(validateAndUpdateAttribute), resource.getName()));
