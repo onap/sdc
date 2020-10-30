@@ -16,9 +16,10 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractResourceInfo;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractTemplateInfo;
 import org.openecomp.sdc.be.model.*;
@@ -27,7 +28,6 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.api.*;
-import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -38,7 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+@Getter
+@Setter
 @org.springframework.stereotype.Component("abstractTemplateBusinessLogic")
 public class AbstractTemplateBusinessLogic extends BaseBusinessLogic {
 
@@ -110,12 +111,7 @@ public class AbstractTemplateBusinessLogic extends BaseBusinessLogic {
                             invariantUUID);
                     uuidDuplicatesMap.put(componentUid, uuidInvariantUUIDPair);
 
-                    Either<List<AbstractResourceInfo>, ResponseFormat> abstractResourceEither = getAbstractResourceInfoList(resource, componentInstancesRelations, serviceUniqueId);
-                    if (abstractResourceEither.isRight()) {
-                        return Either.right(abstractResourceEither.right().value());
-                    }
-                    abstractResourceInfoList = abstractResourceEither.left().value();
-                    isContainAbstractResource = true;
+                    isContainAbstractResource = getResourceAbstractStatus(resource, isContainAbstractResource, componentInstancesRelations, serviceUniqueId,abstractResourceInfoList);
                 }
             }
         }
@@ -124,20 +120,22 @@ public class AbstractTemplateBusinessLogic extends BaseBusinessLogic {
         return Either.left(isContainAbstractResource);
     }
 
-    private Either<List<AbstractResourceInfo>, ResponseFormat> getAbstractResourceInfoList(Resource resource, List<RequirementCapabilityRelDef> componentInstancesRelations, String serviceUniqueId) {
-        List<AbstractResourceInfo> abstractResourceInfoList = new ArrayList<>();
+    private boolean getResourceAbstractStatus(Resource resource,Boolean isContainAbstractResource, List<RequirementCapabilityRelDef> componentInstancesRelations,
+                                              String serviceUniqueId,List<AbstractResourceInfo> abstractResourceInfoList) {
         boolean isAbstract = getIsAbstract(resource.getCategories());
         log.debug("before if isAbstract,get resource:{}", resource);
         if (!isAbstract) {
-            log.debug("getAbstractResourceInfoList:Resource is not Abstract");
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.NOT_FOUND));
-            return Either.right(responseFormat);
+            log.debug("getResourceAbstractStatus:resource {} ,with id {} isAbstract{} is missing the isAbstract parameter",
+                    resource.getName(), resource.getUUID(),false);
         }
-        log.debug("getAbstractResourceInfoList:Resource is Abstract");
-
-        AbstractResourceInfo abstractResourceInfo = getAbstractResourceInfo(resource, componentInstancesRelations, serviceUniqueId);
-        abstractResourceInfoList.add(abstractResourceInfo);
-        return Either.left(abstractResourceInfoList);
+        if (isAbstract) {
+            log.debug("getResourceAbstractStatus: resource {} with id {} ,NormalizedName:{},isAbstract{} is abstract resource",
+                    resource.getName(), resource.getUUID(), resource.getNormalizedName(), true);
+            isContainAbstractResource = true;
+            AbstractResourceInfo abstractResourceInfo = getAbstractResourceInfo(resource, componentInstancesRelations, serviceUniqueId);
+            abstractResourceInfoList.add(abstractResourceInfo);
+        }
+        return isContainAbstractResource;
     }
 
     private AbstractResourceInfo getAbstractResourceInfo(Resource resource,List<RequirementCapabilityRelDef> componentInstancesRelations,String serviceUniqueId){
@@ -153,9 +151,11 @@ public class AbstractTemplateBusinessLogic extends BaseBusinessLogic {
         log.debug("get is Abstract,componentInstancesRelations:{}", componentInstancesRelations);
         for (RequirementCapabilityRelDef componentInstancesRelation : componentInstancesRelations) {
             log.debug("for componentInstancesRelation,get componentInstancesRelation:{}", componentInstancesRelation);
+            String toNode = componentInstancesRelation.getToNode();
             String fromNode = componentInstancesRelation.getFromNode();
-            log.debug("for componentInstancesRelation,get fromNode:{},uniqueId:{}", fromNode,uniqueId);
-            if (fromNode.toUpperCase().contains(uniqueId.toUpperCase())) {
+            log.debug("for componentInstancesRelation,get fromNode:{},uniqueId:{},ToNode:{},Relationships:{}",
+                    fromNode,uniqueId,toNode,componentInstancesRelation.getRelationships());
+            if (toNode.toUpperCase().contains(uniqueId.toUpperCase()) || fromNode.toUpperCase().contains(uniqueId.toUpperCase())) {
                 RequirementCapabilityRelDef resourceComponentInstancesRelation = new RequirementCapabilityRelDef();
                 log.debug("fromNode contains name,get componentInstancesRelation:{}", componentInstancesRelation);
                 resourceComponentInstancesRelation.setFromNode(componentInstancesRelation.getFromNode());
