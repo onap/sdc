@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "337f22c9_831fdf26",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-10-30T17:19:52Z",
+      "side": 1,
+      "message": "isn\u0027t 1.6.5?\nat least latest one is 1.6.5",
+      "range": {
+        "startLine": 22,
+        "startChar": 15,
+        "endLine": 22,
+        "endChar": 18
+      },
+      "revId": "14a472ef50d3c2de6e91d5d1ce8cd1be449d89b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
