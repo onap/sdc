@@ -421,7 +421,7 @@ export class TopologyTemplateService {
         return this.http.put<PolicyInstance>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/policies/' + policy.uniqueId + '/undeclare', policy)
     }
 
-    createListInput(componentId: string, input: any, isSelf: boolean): Observable<any> {
+    createListInput(component: Component, input: any, isSelf: boolean): Observable<any> {
         let inputs: any;
         if (isSelf) {
             // change componentInstanceProperties -> serviceProperties
@@ -434,7 +434,7 @@ export class TopologyTemplateService {
         } else {
             inputs = input;
         }
-        return this.http.post<any>(this.baseUrl + 'services/' + componentId + '/create/listInput', inputs);
+        return this.http.post<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/listInput', inputs);
     }
 
     createPolicy(component: Component, policiesToCreate: InstancePropertiesAPIMap, isSelf: boolean): Observable<any> {
