@@ -605,7 +605,7 @@ export class PropertiesAssignmentComponent {
                         console.log("save button clicked. input=", input);
 
                         this.topologyTemplateService
-                        .createListInput(this.component.uniqueId, input, this.isSelf())
+                        .createListInput(this.component, input, this.isSelf())
                         .subscribe(response => {
                             this.setInputTabIndication(response.length);
                             this.checkedPropertiesCount = 0;
