@@ -24,6 +24,7 @@ import {GabService} from "../../../services/gab.service";
 import {BrowserModule} from "@angular/platform-browser";
 import {GenericArtifactBrowserColumnProviderComponent} from "./generic-artifact-browser-column-provider.component";
 import {FormsModule} from "@angular/forms";
+import {UiElementsModule} from "../../ui/ui-elements.module";
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import {FormsModule} from "@angular/forms";
     imports: [
         BrowserModule,
         FormsModule,
-        NgxDatatableModule
+        NgxDatatableModule,
+        UiElementsModule
     ],
     entryComponents: [ //need to add anything that will be dynamically created
         GenericArtifactBrowserComponent,
