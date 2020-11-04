@@ -14,20 +14,27 @@
   ~ limitations under the License.
   -->
 
-<div>
+<div style="height: 80vh ">
+  <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
   <ngx-datatable
       class="material"
       *ngIf="ready"
-      [rows]="rows"
+      [rows]="currentPageRows"
       [columns]="columns"
       [columnMode]="'force'"
       [headerHeight]="125"
       [scrollbarV]="true"
       [scrollbarH]="true"
-      [footerHeight]="0"
+      [footerHeight]="50"
       [loadingIndicator]="isLoading"
       [rowHeight]="200"
       [reorderable]="false"
+      [virtualization]="false"
+      [externalPaging]="true"
+      [count]="page.totalElements"
+      [offset]="page.pageNumber"
+      [limit]="page.size"
+      (page)="setPage($event)"
   >
     <ngx-datatable-column *ngFor="let col of columns" prop="{{col.prop}}" [minWidth]="100" >
       <ng-template let-column="column" height="100" ngx-datatable-header-template>
@@ -55,7 +62,7 @@
       </ng-template>
     </ngx-datatable-column>
 
-    <ngx-datatable-column class="datatable-white-body-cell" [minWidth]="50" [maxWidth]="50" [width]="50" >
+    <ngx-datatable-column class="datatable-white-body-cell" [minWidth]="50" [maxWidth]="100"  >
       <ng-template ngx-datatable-header-template>
         <div data-tests-id="gab-add-btn" class="add-btn add-btn-div" (click)="showAddNewColumn()">Add</div>
       </ng-template>

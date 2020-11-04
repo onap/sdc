@@ -42,18 +42,20 @@ export class GenericArtifactBrowserComponent {
   originColumns: ColumnDefinition[];
   rows: any[];
   originRows: any[];
+  currentPageRows: any[];
   isLoading: boolean;
   ready: boolean;
   columnsFilters: Map<string, string>;
   addNewColumn: boolean;
+  page: Page;
 
-  constructor(private gabService: GabService) {
-  }
+  constructor(private gabService: GabService) {  }
 
   ngOnInit() {
     this.ready = false;
     this.isLoading = true;
     this.columns = [];
+    this.page = new Page();
     this.loadArtifacts();
   }
 
@@ -123,6 +125,9 @@ export class GenericArtifactBrowserComponent {
 
     // update the rows
     this.rows = temp_rows
+    this.updateTotalRowsCount();
+    this.page.pageNumber = 0;
+    this.setRowsForCurrentPage();
   }
 
   private updateSingleColumnFilter(value, column, rows) {
@@ -137,6 +142,7 @@ export class GenericArtifactBrowserComponent {
     this.rows = result.rows;
     this.originRows = result.rows;
     this.columns = result.columns;
+    this.updateTotalRowsCount();
     if (!this.originColumns){
       this.originColumns = [...result.columns];
     }
@@ -184,6 +190,35 @@ export class GenericArtifactBrowserComponent {
 
     return arrayOfRows;
   }
+
+  private updateTotalRowsCount() {
+    this.page.totalElements =  this.rows.length;
+    this.page.totalPages = Math.ceil(this.page.totalElements / this.page.size);
+  }
+
+  setPage(pageInfo) {
+    if (typeof this.rows !== 'undefined' ) {
+      this.page.pageNumber = pageInfo.offset;
+      this.setRowsForCurrentPage();
+    }
+  }
+
+  private setRowsForCurrentPage() {
+    const start = this.page.pageNumber * this.page.size;
+    const end = start + this.page.size;
+    this.currentPageRows = this.rows.slice(start, end);
+  }
+}
+
+export class Page {
+  // The number of elements in the page
+  size = 25;
+  // The total number of elements
+  totalElements = 0;
+  // The total number of pages
+  totalPages = 0;
+  // The current page number
+  pageNumber = 0;
 }
 
 class NormalizationResult {
