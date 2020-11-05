@@ -124,16 +124,15 @@ public class AbstractTemplateBusinessLogic extends BaseBusinessLogic {
                                               String serviceUniqueId,List<AbstractResourceInfo> abstractResourceInfoList) {
         boolean isAbstract = getIsAbstract(resource.getCategories());
         log.debug("before if isAbstract,get resource:{}", resource);
-        if (!isAbstract) {
-            log.debug("getResourceAbstractStatus:resource {} ,with id {} isAbstract{} is missing the isAbstract parameter",
-                    resource.getName(), resource.getUUID(),false);
-        }
         if (isAbstract) {
             log.debug("getResourceAbstractStatus: resource {} with id {} ,NormalizedName:{},isAbstract{} is abstract resource",
                     resource.getName(), resource.getUUID(), resource.getNormalizedName(), true);
             isContainAbstractResource = true;
             AbstractResourceInfo abstractResourceInfo = getAbstractResourceInfo(resource, componentInstancesRelations, serviceUniqueId);
             abstractResourceInfoList.add(abstractResourceInfo);
+        } else {
+            log.debug("getResourceAbstractStatus:resource {} ,with id {} isAbstract{} is missing the isAbstract parameter",
+                    resource.getName(), resource.getUUID(),false);
         }
         return isContainAbstractResource;
     }
