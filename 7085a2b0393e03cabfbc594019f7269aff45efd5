@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b537e2ce_59a56178",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/AbstractTemplateBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-05T09:56:46Z",
+      "side": 1,
+      "message": "replace with else and invert logic for better visibility.",
+      "range": {
+        "startLine": 130,
+        "startChar": 8,
+        "endLine": 131,
+        "endChar": 25
+      },
+      "revId": "7085a2b0393e03cabfbc594019f7269aff45efd5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
