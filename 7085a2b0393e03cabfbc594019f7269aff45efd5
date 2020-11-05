@@ -22,6 +22,30 @@
       "revId": "7085a2b0393e03cabfbc594019f7269aff45efd5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf6a6220_6304d9b7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/AbstractTemplateBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-11-05T10:58:47Z",
+      "side": 1,
+      "message": "Absolutely right, i\u0027ll bring that to master as well.\n\nSorry i wanted to close the tickets",
+      "parentUuid": "b537e2ce_59a56178",
+      "range": {
+        "startLine": 130,
+        "startChar": 8,
+        "endLine": 131,
+        "endChar": 25
+      },
+      "revId": "7085a2b0393e03cabfbc594019f7269aff45efd5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
