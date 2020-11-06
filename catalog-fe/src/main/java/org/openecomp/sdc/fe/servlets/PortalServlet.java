@@ -54,7 +54,7 @@ public class PortalServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     public static final String MISSING_HEADERS_MSG = "Missing Headers In Request";
-    private static final String AUTHORIZATION_ERROR_MSG = "Autherization error";
+    private static final String AUTHORIZATION_ERROR_MSG = "Authorization error";
     private static final String NEW_LINE = System.getProperty("line.separator");
 
 
