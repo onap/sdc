@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.amdocs.zusammen</groupId>
       <artifactId>zusammen-commons-utils</artifactId>
-      <version>${zusammen.version}</version>
+      <version>${zusammen-common-utilities.version}</version>
     </dependency>
     <dependency>
       <groupId>com.amdocs.zusammen</groupId>
