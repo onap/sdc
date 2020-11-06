@@ -1,0 +1,326 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6d2dc19e_b5de6a7e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/AbstractTemplateBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "add missing assertions",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 48
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94018019_c6d00a77",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 22
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4474216f_3e7eb4c6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "if exception expected, use Assertions.assertThrows\nelse fail TCs",
+      "range": {
+        "startLine": 137,
+        "startChar": 48,
+        "endLine": 140,
+        "endChar": 9
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bd42799_cd04be3d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBussinessLogicBaseTestSetup.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 24
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad67eb9a_6ac5ad8c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "add missing assertions",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 45
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "852c0aac_ee374d47",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac2ecba6_a5d170a4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "if exception expected, use Assertions.assertThrows\nelse fail TCs",
+      "range": {
+        "startLine": 108,
+        "startChar": 16,
+        "endLine": 110,
+        "endChar": 9
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "092bc47a_318fff66",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 22,
+        "startChar": 41,
+        "endLine": 24,
+        "endChar": 22
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "253a74a1_93e27d40",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1326,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "if exception expected, use Assertions.assertThrows\nelse fail TCs",
+      "range": {
+        "startLine": 1323,
+        "startChar": 44,
+        "endLine": 1326,
+        "endChar": 9
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da35b7d6_0aa7880d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1358,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "same here.",
+      "range": {
+        "startLine": 1356,
+        "startChar": 30,
+        "endLine": 1358,
+        "endChar": 9
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5ff04e1_85972b80",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/CreateServiceFromYamlParameterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "use lombok @NoArgsConstructor and remove this test class",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 49
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15637f91_974a18dc",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ServiceUploadServletTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "with Junit 5 \u0027public\u0027 is needless",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 6
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9596140_d4af254c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ServiceUploadServletTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "with Junit 5 \u0027public\u0027 is needless",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 10
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9214aa73_fd1e023c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ServiceUploadServletTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-06T19:11:44Z",
+      "side": 1,
+      "message": "with Junit 5 \u0027public\u0027 is needless",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 10
+      },
+      "revId": "ffa7772098843984971f099418b73463f4ff4990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
