@@ -1,49 +1,22 @@
 /*
-
- * Copyright (c) 2018 AT&T Intellectual Property.
-
+ * Copyright (C) 2020 CMCC, Inc. and others. All rights reserved.
  *
-
  * Licensed under the Apache License, Version 2.0 (the "License");
-
  * you may not use this file except in compliance with the License.
-
  * You may obtain a copy of the License at
-
  *
-
  *     http://www.apache.org/licenses/LICENSE-2.0
-
  *
-
  * Unless required by applicable law or agreed to in writing, software
-
  * distributed under the License is distributed on an "AS IS" BASIS,
-
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
  * See the License for the specific language governing permissions and
-
  * limitations under the License.
-
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.codec.binary.Base64;
-import org.junit.Before;
-import org.mockito.Mock;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -61,7 +34,6 @@ import org.openecomp.sdc.be.components.validation.component.*;
 import org.openecomp.sdc.be.components.validation.service.*;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -79,7 +51,6 @@ import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
-import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -91,8 +62,7 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.servlet.ServletContext;
 import java.util.*;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -174,7 +144,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         return new ServiceValidator(componentsUtils, componentFieldValidators, serviceFieldValidators);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         // Elements
