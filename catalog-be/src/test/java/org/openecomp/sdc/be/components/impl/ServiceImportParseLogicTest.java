@@ -16,32 +16,12 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.RESOURCE_NAME;
-
 import fj.data.Either;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-
-import java.util.Map.Entry;
-import java.util.Set;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.MutablePair;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -49,65 +29,37 @@ import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.NodeTypeInfo;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.UploadCapInfo;
-import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadPropInfo;
-import org.openecomp.sdc.be.model.UploadReqInfo;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
-import org.openecomp.sdc.be.model.User;
-
-import java.util.HashMap;
-import java.util.Map;
-
-
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
 
@@ -738,7 +690,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.validateResourceVendorModelNumber( user, resource, AuditingActionEnum.IMPORT_RESOURCE);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -781,7 +733,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.validateVendorReleaseName(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -947,9 +899,10 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.validateVendorName(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
+
     @Test
     public void testValidateVendorName2() {
         Resource resource = createParseResourceObject(true);
@@ -973,7 +926,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.fillResourceMetadata( yamlName, resourceVf, nodeName, user);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -985,7 +938,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -1226,7 +1179,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.validateCapabilityProperties(capabilities, resourceId, defaultCapability);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.NOT_FOUND_404).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -1366,9 +1319,10 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         inputs.put(key, inputDefinition);
 
         try {
-            bl.createInputsOnResource(resource, inputs);
+            Resource inputsOnResource = bl.createInputsOnResource(resource, inputs);
+            assertNotNull(inputsOnResource);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -1383,12 +1337,14 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         InputDefinition inputDefinitionMap = new InputDefinition();
         inputDefinition.setName("inputDefinitionName");
         inputs.put("inputsMap",inputDefinitionMap);
+        List<InputDefinition> inputDefinitionList = new ArrayList<>();
+        Service newService = new Service();
 
-        try {
-            bl.createInputsOnService(service, inputs);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        when(inputsBusinessLogic.createInputsInGraph(any(Map.class),any(Component.class)))
+                .thenReturn(Either.left(inputDefinitionList));
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
+        Service inputsOnService = bl.createInputsOnService(service, inputs);
+        assertNotNull(inputsOnService);
     }
 
     @Test
@@ -1398,7 +1354,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.createServiceTransaction(service, user, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -1409,7 +1365,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.createArtifactsPlaceHolderData(service, user);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -1420,7 +1376,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.setInformationalArtifactsPlaceHolder(service, user);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1472,7 +1428,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.validateResourceFieldsBeforeUpdate(currentResource, updateInfoResource, true, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1496,11 +1452,8 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Resource currentResource = createParseResourceObject(true);
         Resource updateInfoResource = createParseResourceObject(true);
 
-        try {
-            bl.isResourceNameEquals(currentResource, updateInfoResource);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        boolean resourceNameEquals = bl.isResourceNameEquals(currentResource, updateInfoResource);
+        assertTrue(resourceNameEquals);
     }
 
     @Test
@@ -1511,7 +1464,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.prepareResourceForUpdate(oldResource, newResource, user, true, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1524,7 +1477,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.failOnChangeState(response,  user, oldResource, newResource);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1532,11 +1485,8 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     public void testHandleResourceGenericType() {
         Resource resource = createParseResourceObject(true);
 
-        try {
-            bl.handleResourceGenericType(resource);
-        } catch (Exception e) {
-           e.printStackTrace();
-        }
+        Resource resource1 = bl.handleResourceGenericType(resource);
+        assertNotEquals(resource,resource1);
     }
 
     @Test
@@ -1544,11 +1494,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
 
-        try {
-            bl.updateOrCreateGroups(resource, groups);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bl.updateOrCreateGroups(resource, groups);
     }
 
     @Test
@@ -1604,7 +1550,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -1626,7 +1572,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(), e.getResponseFormat().getStatus());
         }
     }
 
@@ -1679,8 +1625,8 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
 
         try {
             bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ComponentException e) {
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -1693,7 +1639,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user);
         } catch (ComponentException e) {
-            e.printStackTrace();
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -1720,7 +1666,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.propagateStateToCertified(user, resource, lifecycleChangeInfo, true, true, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1776,7 +1722,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.setInformationalArtifactsPlaceHolder(resource, user);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1789,7 +1735,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.rollback(false,resource, createdArtifacts,nodeTypesNewCreatedArtifacts);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1815,7 +1761,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.createArtifactsPlaceHolderData(resource, user);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -1870,7 +1816,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.handleGetInputs(property, inputs);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NoSuchElementException.class,e.getClass());
         }
     }
 
@@ -1998,12 +1944,12 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     @Test
     public void testGetResourceAfterCreateRelations() {
         Resource resource = createParseResourceObject(true);
+        Resource newResource = new Resource();
 
-        try {
-            bl.getResourceAfterCreateRelations(resource);
-        }  catch (Exception e) {
-            e.printStackTrace();
-        }
+        when(toscaOperationFacade.getToscaElement(anyString(),any(ComponentParametersView.class)))
+                .thenReturn(Either.left(newResource));
+        Resource resourceAfterCreateRelations = bl.getResourceAfterCreateRelations(resource);
+        assertNotNull(resourceAfterCreateRelations);
     }
 
     @Test
@@ -2039,16 +1985,34 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     }
 
     @Test
+    public void testAssociateComponentInstanceInputsNotNullToComponent2() {
+        String yamlName = "yamlName";
+        Service service = createServiceObject(true);
+        Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
+        List<ComponentInstanceInput> componentInstanceInputs = new ArrayList<>();
+        ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
+        componentInstanceInput.setName("ComponentInstanceInputName");
+        componentInstanceInputs.add(componentInstanceInput);
+        instInputs.put("instInputs",componentInstanceInputs);
+        when(toscaOperationFacade.associateComponentInstanceInputsToComponent(any(Map.class),
+                anyString())).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+        try {
+            bl.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
+        } catch (ComponentException e) {
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
+        }
+    }
+
+    @Test
     public void testAssociateComponentInstancePropertiesToComponent2() {
         String yamlName = "yamlName";
         Service service = createServiceObject(true);
         Map<String, List<ComponentInstanceProperty>> instInputs = new HashMap<>();
+        Map<String, List<ComponentInstanceProperty>> instInputMap = new HashMap<>();
+        when(toscaOperationFacade.associateComponentInstancePropertiesToComponent(any(), anyString()))
+                .thenReturn(Either.left(instInputMap));
 
-        try {
-            bl.associateComponentInstancePropertiesToComponent(yamlName, service, instInputs);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bl.associateComponentInstancePropertiesToComponent(yamlName, service, instInputs);
     }
 
     @Test
@@ -2136,11 +2100,10 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         String yamlName = "yamlName";
         Service resource = createServiceObject(true);
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
-        try {
-            bl.associateResourceInstances(yamlName, resource, relations);
-        } catch (Exception e) {
-           e.printStackTrace();
-        }
+        when(toscaOperationFacade.associateResourceInstances(any(Component.class),
+                anyString(),any(ArrayList.class))).thenReturn(Either.left(relations));
+
+        bl.associateResourceInstances(yamlName, resource, relations);
     }
 
     @Test
@@ -2171,21 +2134,19 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
     @Test
     public void testGetServiceWithGroups() {
         String resourceId = "resourceId";
-        try {
-            bl.getServiceWithGroups(resourceId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Service service = createServiceObject(true);
+        when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(service));
+        bl.getServiceWithGroups(resourceId);
     }
 
     @Test
     public void testGetResourceWithGroups() {
         String resourceId = "resourceId";
-        try {
-            bl.getResourceWithGroups(resourceId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Resource resource = createParseResourceObject(false);
+        when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
+                .thenReturn(Either.left(resource));
+        bl.getResourceWithGroups(resourceId);
     }
 
     @Test
@@ -2193,10 +2154,12 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
+        when(toscaOperationFacade.associateResourceInstances(any(Resource.class),
+                anyString(),any(ArrayList.class))).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         try {
             bl.associateResourceInstances(yamlName, resource, relations);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ComponentException e) {
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 
@@ -2212,7 +2175,7 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList, relations);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertEquals(NullPointerException.class,e.getClass());
         }
     }
 
@@ -2229,8 +2192,8 @@ public class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBase
         try {
             bl.addRelationsToRI(yamlName,resource,uploadResInstancesMap,componentInstancesList,
                     relations);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ComponentException e) {
+            assertEquals(java.util.Optional.of(HttpStatus.BAD_REQUEST_400).get(),e.getResponseFormat().getStatus());
         }
     }
 

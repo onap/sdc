@@ -1,41 +1,25 @@
 /*
-
- * Copyright (c) 2018 AT&T Intellectual Property.
-
+ * Copyright (C) 2020 CMCC, Inc. and others. All rights reserved.
  *
-
  * Licensed under the Apache License, Version 2.0 (the "License");
-
  * you may not use this file except in compliance with the License.
-
  * You may obtain a copy of the License at
-
  *
-
  *     http://www.apache.org/licenses/LICENSE-2.0
-
  *
-
  * Unless required by applicable law or agreed to in writing, software
-
  * distributed under the License is distributed on an "AS IS" BASIS,
-
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
  * See the License for the specific language governing permissions and
-
  * limitations under the License.
-
  */
 
 package org.openecomp.sdc.be.components.impl;
 
 
 import fj.data.Either;
-import io.cucumber.java.hu.Ha;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -50,7 +34,6 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
@@ -150,9 +133,10 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             when(serviceBusinessLogic.validateServiceBeforeCreate(newService,user,AuditingActionEnum.CREATE_RESOURCE))
                     .thenReturn(Either.left(newService));
             when(toscaOperationFacade.validateCsarUuidUniqueness(payloadName)).thenReturn(StorageOperationStatus.OK);
-            sIB1.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
+            Service service = sIB1.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
+            assertNotEquals(oldService,service);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -161,10 +145,18 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         Service oldService = createServiceObject(false);
         String csarUUID = "valid_vf";
         Map<String, byte[]> payload = crateCsarFromPayload();
+        CsarInfo csarInfo = getCsarInfo();
+        Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> map =
+                new HashedMap();
         try {
-            sIB1.createServiceFromCsar(oldService, user, payload, csarUUID);
+            when(csarBusinessLogic.getCsarInfo(eq(oldService),any(),any(User.class),
+                    any(Map.class),anyString())).thenReturn(csarInfo);
+            when(serviceImportParseLogic.findNodeTypesArtifactsToHandle(any(Map.class),eq(csarInfo),
+                    any(Service.class))).thenReturn(Either.left(map));
+            Service serviceFromCsar = sIB1.createServiceFromCsar(oldService, user, payload, csarUUID);
+            assertNull(serviceFromCsar);
         }catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -177,11 +169,20 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         CsarInfo csarInfo =getCsarInfo();
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = new HashMap<>();
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
+        ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
+        Map<String, UploadComponentInstanceInfo> instances = new HashMap<>();
+        UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
+        uploadComponentInstanceInfo.setName("uploadComponentInstanceInfoName");
+        instances.put("uploadComponentInstanceInfo",uploadComponentInstanceInfo);
+        parsedToscaYamlInfo.setInstances(instances);
+        when(csarBusinessLogic.getParsedToscaYamlInfo(eq(topologyTemplateYaml),anyString(),any(Map.class),
+                eq(csarInfo),anyString(),any(Component.class))).thenReturn(parsedToscaYamlInfo);
         try {
-            sIB1.createServiceFromYaml(oldService,topologyTemplateYaml,yamlName,nodeTypesInfo,
-                    csarInfo,nodeTypesArtifactsToCreate,true,true,nodeName);
+            Service serviceFromYaml = sIB1.createServiceFromYaml(oldService, topologyTemplateYaml, yamlName, nodeTypesInfo,
+                    csarInfo, nodeTypesArtifactsToCreate, true, true, nodeName);
+            assertNull(serviceFromYaml);
         }catch (Exception e){
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -191,10 +192,11 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = new HashMap<>();
         CreateServiceFromYamlParameter csfyp = getCsfyp();
         try {
-            sIB1.createServiceAndRIsFromYaml(oldService,false,
-                    nodeTypesArtifactsToCreate,true,true,csfyp);
+            Service serviceAndRIsFromYaml = sIB1.createServiceAndRIsFromYaml(oldService, false,
+                    nodeTypesArtifactsToCreate, true, true, csfyp);
+            assertNull(serviceAndRIsFromYaml);
         }catch (Exception e){
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -204,10 +206,11 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = new HashMap<>();
         CreateServiceFromYamlParameter csfyp = getCsfyp();
         try {
-            sIB1.createServiceAndRIsFromYaml(oldService,false,
-                    nodeTypesArtifactsToCreate,false,true,csfyp);
+            Service serviceAndRIsFromYaml = sIB1.createServiceAndRIsFromYaml(oldService, false,
+                    nodeTypesArtifactsToCreate, false, true, csfyp);
+            assertNull(serviceAndRIsFromYaml);
         }catch (Exception e){
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -238,7 +241,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.createOrUpdateArtifacts(operation,createdArtifacts,yamlFileName,csarInfo,
                     preparedResource,nodeTypeInfoToUpdateArtifacts,true,true);
         }catch (Exception e){
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -253,7 +256,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.handleVfCsarArtifacts(resource,csarInfo,createdArtifacts,artifactOperation,true,true);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -279,7 +282,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.handleVfCsarArtifacts(resource,csarInfo,createdArtifacts,artifactOperation,true,true);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -296,7 +299,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createOrUpdateSingleNonMetaArtifactToComstants(resource,csarInfo,artifactOperation,true,true);
         }catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -382,7 +385,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.organizeVfCsarArtifactsByArtifactOperation(artifactPathAndNameList, existingArtifactsToHandle, resource, user);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
 
     }
@@ -415,7 +418,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             data = Files.readAllBytes(path);
         } catch (IOException e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
         csar.put("valid_vf.csar",data);
         String artifactPath = "valid_vf.csar", artifactFileName = "", artifactType = "";
@@ -428,7 +431,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     artifactLabel, artifactDisplayName, artifactDescription, artifactId, artifactOperation, createdArtifacts,
                     true, true, true);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -452,7 +455,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.handleNodeTypeArtifacts(nodeTypeResource, nodeTypeArtifactsToHandle,
                     createdArtifacts, user, true, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -477,7 +480,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.createOrUpdateArtifacts(operation,createdArtifacts,yamlFileName,csarInfo,
                     preparedService,nodeTypeInfoToUpdateArtifacts,true,true);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -498,7 +501,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.handleVfCsarArtifacts(service,csarInfo,createdArtifacts,artifactOperation,true,true);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -524,7 +527,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.handleVfCsarArtifacts(service,csarInfo,createdArtifacts,artifactOperation,true,true);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -597,7 +600,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.organizeVfCsarArtifactsByArtifactOperation(artifactPathAndNameList, existingArtifactsToHandle, service, user);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
 
     }
@@ -620,7 +623,6 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         CsarInfo csarInfo = getCsarInfo();
         Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
         Either<List<CsarUtils.NonMetaArtifactInfo>, String> result = sIB1.getValidArtifactNames(csarInfo, collectedWarningMessages);
-        System.out.println(result.left().value());
         assertNotNull(result.left().value());
     }
 
@@ -636,7 +638,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             data = Files.readAllBytes(path);
         } catch (IOException e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
         csar.put("valid_vf.csar",data);
         csarInfo.setCsar(csar);
@@ -650,7 +652,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     artifactLabel, artifactDisplayName, artifactDescription, artifactId, artifactOperation, createdArtifacts,
                     true, true, true);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -668,7 +670,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     artifactLabel, artifactDisplayName, artifactDescription, artifactId, artifactOperation, createdArtifacts,
                     true, true, true);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -680,7 +682,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             Either<Service, ResponseFormat> result = sIB1.createGroupsOnResource(service, groups);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -734,7 +736,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.createRIAndRelationsFromYaml(yamlName,resource,uploadComponentInstanceInfoMap,topologyTemplateYaml,nodeTypesNewCreatedArtifacts,
                     nodeTypesInfo,csarInfo,nodeTypesArtifactsToCreate,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -751,7 +753,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createResourceInstancesRelations(user,yamlName,resource,uploadResInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -767,7 +769,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createResourceInstancesRelations(user,yamlName,resource,uploadResInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -795,7 +797,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.processComponentInstance(yamlName, resource, componentInstancesList,allDataTypes,instProperties,instCapabilties,instRequirements,
                     instDeploymentArtifacts,instArtifacts,instAttributes,originCompMap,instInputs,uploadComponentInstanceInfo);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -822,7 +824,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.processComponentInstance(yamlName, resource, componentInstancesList,allDataTypes,instProperties,instCapabilties,instRequirements,
                     instDeploymentArtifacts,instArtifacts,instAttributes,originCompMap,instInputs,uploadComponentInstanceInfo);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -852,7 +854,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addInputsValuesToRi(uploadComponentInstanceInfo,resource,originResource,
                     currentCompInstance,instInputs,allDataTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -887,7 +889,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.processProperty(resource, currentCompInstance, allDataTypes,
                     currPropertiesMap, instPropList, propertyList);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -902,7 +904,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.handleSubstitutionMappings(resource, uploadResInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -917,7 +919,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.handleSubstitutionMappings(resource, uploadResInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -937,7 +939,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createResourceInstances(yamlName,resource,uploadResInstancesMap,nodeNamespaceMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -961,7 +963,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     nodeTypesArtifactsToHandle,nodeTypesNewCreatedArtifacts,nodeTypesInfo,
                     csarInfo,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -982,7 +984,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.handleNestedVfc(resource,nodeTypesArtifactsToHandle,createdArtifacts,
                     nodesInfo,csarInfo,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1002,7 +1004,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.handleComplexVfc(resource,nodeTypesArtifactsToHandle,createdArtifacts,
                     nodesInfo,csarInfo,nodeName,yamlName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1022,7 +1024,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     needLock, nodeTypesArtifactsToHandle,nodeTypesNewCreatedArtifacts,
                     nodeTypesInfo,csarInfo);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1055,7 +1057,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, mapToConvert,
                     nodeTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1080,7 +1082,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     needLock,nodeTypeArtifactsToHandle,nodeTypesNewCreatedArtifacts,
                     forceCertificationAllowed,csarInfo,isNested);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1099,7 +1101,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.createRIAndRelationsFromYaml(yamlName,service,uploadComponentInstanceInfoMap,topologyTemplateYaml,nodeTypesNewCreatedArtifacts,
                     nodeTypesInfo,csarInfo,nodeTypesArtifactsToCreate,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1114,7 +1116,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createServiceInstancesRelations(user, yamlName, service, uploadResInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1128,7 +1130,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createServiceInstancesRelations(user, yamlName, service, uploadResInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1155,7 +1157,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.processComponentInstance(yamlName, service, componentInstancesList,allDataTypes,instProperties,instCapabilties,instRequirements,
                     instDeploymentArtifacts,instArtifacts,instAttributes,originCompMap,instInputs,uploadComponentInstanceInfo);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1182,7 +1184,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.processComponentInstance(yamlName, service, componentInstancesList,allDataTypes,instProperties,instCapabilties,instRequirements,
                     instDeploymentArtifacts,instArtifacts,instAttributes,originCompMap,instInputs,uploadComponentInstanceInfo);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1212,7 +1214,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addInputsValuesToRi(uploadComponentInstanceInfo,resource,originResource,
                         currentCompInstance,instInputs,allDataTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1246,7 +1248,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.processProperty(resource, currentCompInstance, allDataTypes,
                     currPropertiesMap, instPropList, propertyList);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1259,7 +1261,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.processGetInput(getInputValues,inputs,getInputIndex);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1291,7 +1293,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addPropertyValuesToRi(uploadComponentInstanceInfo, resource, originResource, currentCompInstance,
                     instProperties, allDataTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1308,7 +1310,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addPropertyValuesToRi(uploadComponentInstanceInfo, resource, originResource, currentCompInstance,
                     instProperties, allDataTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1327,7 +1329,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addPropertyValuesToRi(uploadComponentInstanceInfo, service, originResource, currentCompInstance,
                     instProperties, allDataTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1345,7 +1347,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addPropertyValuesToRi(uploadComponentInstanceInfo, service, originResource, currentCompInstance,
                     instProperties, allDataTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1403,7 +1405,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.updatePropertyValue(property,propertyInfo,allDataTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1417,7 +1419,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.getOriginResource(yamlName,originCompMap,currentCompInstance);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1439,7 +1441,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.updateCalculatedCapReqWithSubstitutionMappings(resource,uploadResInstancesMap);
         } catch (Exception e) {
-
+            assertNull(e.getMessage());
         }
     }
 
@@ -1505,7 +1507,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addRelationsToRI(yamlName,service,uploadResInstancesMap,componentInstancesList,
                     relations);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1523,7 +1525,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.addRelationsToRI(yamlName,service,uploadResInstancesMap,componentInstancesList,
                     relations);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1535,11 +1537,15 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
 
         UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
+        RequirementDefinition requirementDefinition = new RequirementDefinition();
+        requirementDefinition.setName("zxjtestimportserviceab0.mme_ipu_vdu.dependency.test");
 
         try {
+            when(serviceImportParseLogic.findAviableRequiremen(anyString(),anyString(),any(UploadComponentInstanceInfo.class),
+                    any(ComponentInstance.class),anyString())).thenReturn(Either.left(requirementDefinition));
             sIB1.addRelationToRI(yamlName,service,nodesInfoValue,relations);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1556,7 +1562,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.addRelationToRI(yamlName,service,nodesInfoValue,relations);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1568,7 +1574,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.getResourceAfterCreateRelations(service);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1587,7 +1593,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createServiceInstances(yamlName,service,uploadResInstancesMap,nodeNamespaceMap);
         } catch (Exception e) {
-           e.printStackTrace();
+            assertNull(e.getMessage());
         }
     }
 
@@ -1607,7 +1613,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.createAndAddResourceInstance(uploadComponentInstanceInfo,yamlName,resource,nodeNamespaceMap,
                     existingnodeTypeMap,resourcesInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1628,7 +1634,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.createAndAddResourceInstance(uploadComponentInstanceInfo, yamlName, service, nodeNamespaceMap,
                     existingnodeTypeMap, resourcesInstancesMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1653,7 +1659,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.validateResourceInstanceBeforeCreate(yamlName,uploadComponentInstanceInfo,nodeNamespaceMap);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1683,7 +1689,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             b = sIB1.validateResourceNotExisted(type);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1700,7 +1706,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.handleNestedVF(service,nodeTypesArtifactsToHandle,createdArtifacts,
                     nodesInfo,csarInfo,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1717,7 +1723,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.handleNestedVfc(service,nodeTypesArtifactsToHandle,createdArtifacts,
                     nodesInfo,csarInfo,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1729,17 +1735,41 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         CsarInfo csarInfo = getCsarInfo();
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
         String yamlName = "group.yml";
+        when(serviceImportParseLogic.buildValidComplexVfc(any(CsarInfo.class),anyString(),anyMap()))
+                .thenReturn(createNewResource());
         when(toscaOperationFacade.getFullLatestComponentByToscaResourceName(anyString()))
                 .thenReturn(Either.left(createNewResource()));
+        when(serviceImportParseLogic.validateNestedDerivedFromDuringUpdate(any(Resource.class),any(Resource.class),anyBoolean()))
+                .thenReturn(Either.left(true));
 
         try {
             sIB1.handleComplexVfc(nodeTypesArtifactsToHandle,createdArtifacts,
                     nodesInfo,csarInfo,nodeName,yamlName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
+    @Test
+    public void testHandleComplexVfcStatus(){
+        Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
+        List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
+        Map<String, NodeTypeInfo> nodesInfo = new HashMap<>();
+        CsarInfo csarInfo = getCsarInfo();
+        String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
+        String yamlName = "group.yml";
+        when(serviceImportParseLogic.buildValidComplexVfc(any(CsarInfo.class),anyString(),anyMap()))
+                .thenReturn(createNewResource());
+        when(toscaOperationFacade.getFullLatestComponentByToscaResourceName(anyString()))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+        try {
+            sIB1.handleComplexVfc(nodeTypesArtifactsToHandle,createdArtifacts,
+                    nodesInfo,csarInfo,nodeName,yamlName);
+        } catch (Exception e) {
+            assertNull(e.getMessage());
+        }
+    }
 
     @Test
     public void testHandleComplexVfc2(){
@@ -1759,7 +1789,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.handleComplexVfc(nodeTypesArtifactsToHandle,createdArtifacts,nodesInfo,
                     csarInfo,nodeName,yamlName,oldComplexVfc,newComplexVfc);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1778,10 +1808,12 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         boolean isNested = true;
 
         try {
+            when(csarBusinessLogic.getParsedToscaYamlInfo(anyString(),anyString(),anyMap(),any(CsarInfo.class),
+                    anyString(),any(Component.class))).thenReturn(getParsedToscaYamlInfo());
             sIB1.updateResourceFromYaml(oldRresource,newRresource,actionEnum,createdArtifacts,yamlFileName,yamlFileContent,
                     csarInfo,nodeTypesInfo,nodeTypesArtifactsToHandle,nodeName,isNested);
         } catch (Exception e) {
-
+            assertNull(e.getMessage());
         }
     }
 
@@ -1798,10 +1830,12 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
 
         try {
+            when(csarBusinessLogic.getParsedToscaYamlInfo(anyString(),anyString(),anyMap(),any(CsarInfo.class),
+                    anyString(),any(Component.class))).thenReturn(getParsedToscaYamlInfo());
             sIB1.createResourceFromYaml(resource,topologyTemplateYaml,yamlName,nodeTypesInfo,csarInfo,
                     nodeTypesArtifactsToCreate,shouldLock,inTransaction,nodeName);
         } catch (Exception e) {
-
+            assertNull(e.getMessage());
         }
     }
 
@@ -1830,7 +1864,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     isNormative,createdArtifacts,topologyTemplateYaml,nodeTypesInfo,csarInfo,
                     nodeTypesArtifactsToCreate,shouldLock,inTransaction,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1855,7 +1889,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     isNormative,createdArtifacts,topologyTemplateYaml,nodeTypesInfo,csarInfo,
                     nodeTypesArtifactsToCreate,shouldLock,inTransaction,nodeName);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1869,7 +1903,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createGroupsOnResource(resource, groups);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1920,7 +1954,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.updateGroupMembers(groups,updatedGroupDefinition,component,componentInstances,
                     groupName,members);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1938,7 +1972,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.updateGroupMembers(groups,updatedGroupDefinition,component,componentInstances,
                     groupName,members);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1953,7 +1987,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createResourceTransaction(resource,user,isNormative);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1968,7 +2002,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createResourceTransaction(resource,user,isNormative);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1982,7 +2016,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createResourceTransaction(resource,user,false);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -1995,7 +2029,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.updateExistingResourceByImport(newResource,oldResource,user,
                     true,true,true);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -2007,7 +2041,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         try {
             sIB1.createNewResourceToOldResource(newResource,oldResource,user);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -2026,7 +2060,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             sIB1.createResourcesFromYamlNodeTypesList(yamlName,service,mappedToscaTemplate,needLock,
                     nodeTypesArtifactsToHandle,nodeTypesNewCreatedArtifacts,nodeTypesInfo,csarInfo);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -2060,7 +2094,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, mapToConvert,
                     nodeTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -2094,7 +2128,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
                     nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, mapToConvert,
                     nodeTypes);
         } catch (Exception e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
     }
 
@@ -2255,7 +2289,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
             privateMethod.setAccessible(true);
             returnValue = (Map<String, byte[]>) privateMethod.invoke(servlet, resourceInfo);
         } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
+             assertNull(e.getMessage());
         }
         return returnValue;
     }
@@ -2307,6 +2341,9 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
         Map<String, InputDefinition> inputs = new HashMap<>();
         Map<String, UploadComponentInstanceInfo> instances=new HashMap<>();
+        UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
+        uploadComponentInstanceInfo.setName("uploadComponentInstanceInfo");
+        instances.put("instances",uploadComponentInstanceInfo);
         Map<String, GroupDefinition> groups=new HashMap<>();
         Map<String, PolicyDefinition> policies=new HashMap<>();
         parsedToscaYamlInfo.setGroups(groups);
