@@ -1,0 +1,11 @@
+Code-Review+1: Pawel Kasperkiewicz <pawel.kasperkiewicz@nokia.com>
+Code-Review+1: Tomasz Kogut <tomasz.kogut@nokia.com>
+Code-Review+1: Damian Nowak <damian.nowak@nokia.com>
+Code-Review+1: Krzysztof Kuzmicki <krzysztof.kuzmicki@nokia.com>
+Code-Review+2: Xue Gao <xg353y@intl.att.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Xue Gao <xg353y@intl.att.com>
+Submitted-at: Fri, 06 Nov 2020 12:56:44 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/114546
+Project: sdc
+Branch: refs/heads/guilin
