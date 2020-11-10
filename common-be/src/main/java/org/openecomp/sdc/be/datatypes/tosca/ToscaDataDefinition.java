@@ -78,6 +78,10 @@ public abstract class ToscaDataDefinition {
         return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
     }
 
+    public void setType(String type) {
+        setToscaPresentationValue(JsonPresentationFields.TYPE, type);
+    }
+
     public void setOwnerId(String ownerId) {
         setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
     }
