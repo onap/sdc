@@ -33,6 +33,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition{
     private String name;
     private SchemaDefinition schema;
     private String value;
+    private String type;
 
     public AttributeDataDefinition(final AttributeDataDefinition attributeDataDefinition) {
         super();
@@ -40,6 +41,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition{
         this.setName(attributeDataDefinition.getName());
         this.setSchema(attributeDataDefinition.getSchema());
         this.setValue(attributeDataDefinition.getValue());
+        this.setType(attributeDataDefinition.getType());
     }
 
     public String getParentUniqueId() {
