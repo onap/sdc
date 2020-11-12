@@ -539,7 +539,7 @@ public class ToscaExportHandler {
                                   final ComponentInstance componentInstance) {
         log.debug("createDependency componentCache {}", componentCache);
         final Component componentRI = componentCache.get(componentInstance.getComponentUid());
-        if (componentRI == null) {
+        if (componentRI == null || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
             // all resource must be only once!
             final Either<Component, StorageOperationStatus> resource = toscaOperationFacade
                 .getToscaFullElement(componentInstance.getComponentUid());
