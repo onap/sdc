@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "808982e2_3994e614",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-12T15:13:18Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 135,
+        "startChar": 8,
+        "endLine": 137,
+        "endChar": 0
+      },
+      "revId": "0eef87f837f29dc8b1835633164a97292e753e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
