@@ -84,10 +84,7 @@ export class CompositionPaletteService {
 	                retValObject['Service'] = serviceGroup;
 	            }
 	        }
-	        else {
-	            // Generic will be the 1st category in the left Pallete
 	        	retValObject['Generic'] = resInstances['Generic'];
-	        }
 	    }
         
         // Add all other categories
