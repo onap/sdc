@@ -19,7 +19,8 @@ Overview
 +---------------------+----------------------------------------------------------------------------+------------------------------------------------+
 | sdc-cs-onboard init | Logic for creating the **schemas for SDC onboarding** server               | Create the **schemas**                         |
 +---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-cs              | **Cassandra** server                                                       | Starts **Cassandra**                           |
+| sdc-cs              | **Cassandra** server, this is optional as SDC uses shared ONAP Cassandra by| Starts **Cassandra**                           |
+|                     | default                                                                    |                                                |
 +---------------------+----------------------------------------------------------------------------+------------------------------------------------+
 | sdc-onboard-BE      | Onboarding **Backend** Jetty server                                        | Starts Jetty with the application.             |
 +---------------------+----------------------------------------------------------------------------+------------------------------------------------+
@@ -30,6 +31,13 @@ Overview
 +---------------------+----------------------------------------------------------------------------+------------------------------------------------+
 | sdc-FE              | SDC **Frontend** Jetty server                                              | Starts Jetty with our application.             |
 +---------------------+----------------------------------------------------------------------------+------------------------------------------------+
+| sdc-WFD-BE-init     | Logic for configuring **Workflow Designer**                                | Execute configuration tasks of the WFD         |
++---------------------+----------------------------------------------------------------------------+------------------------------------------------+
+| sdc-WFD-BE          | SDC Workflow **Backtend** Jetty server                                     | Starts Jetty with our application.             |
++---------------------+----------------------------------------------------------------------------+------------------------------------------------+
+| sdc-WFD-FE          | SDC Workflow **Frontend** Jetty server                                     | Starts Jetty with our application.             |
++---------------------+----------------------------------------------------------------------------+------------------------------------------------+
+
 
 
 Deployement dependency map
@@ -51,6 +59,7 @@ Deployement dependency map
     app [class = "app"];
 
     fe -> be-config -> be -> onboarding-be -> onboarding-init -> cassandra-config -> cassandra;
+    sdc-WFD-FE -> sdc-WFD-BE-init -> sdc-WFD-BE;
 
 Connectivity Matrix
 -------------------
@@ -92,20 +101,27 @@ Below is a diagram of the SDC project docker containers and the connections betw
    
 
     blockdiag delivery {
-        node_width = 100;
+        node_width = 140;
         orientation = portrait;
         sdc-cassandra[shape = flowchart.database , color = grey]
         sdc-frontend [color = blue, textcolor="white"]
         sdc-backend [color = yellow]
         sdc-onboarding-backend [color = yellow]
+        sdc-backend [color = yellow]
+        sdc-WFD-frontend [color = brown]
+        sdc-WFD-backend [color = brown]
+        sdc-WFD-BE-init [color = brown]
         sdc-cassandra-Config [color = orange]
         sdc-backend-config [color = orange]
         sdc-onboarding-init [color = orange]
+        sdc-WFD-BE-init -> sdc-WFD-backend;
         sdc-onboarding-init -> sdc-onboarding-backend;
         sdc-cassandra-Config -> sdc-cassandra;
         sdc-backend-config -> sdc-backend;
         sdc-wss-simulator -> sdc-frontend;
+        sdc-WFD-frontend -> SDC-WFD-backend;
         sdc-frontend -> sdc-backend, sdc-onboarding-backend;
+        SDC-WFD-backend -> sdc-cassandra;
         sdc-backend -> sdc-cassandra;
         sdc-onboarding-backend -> sdc-cassandra;
         sdc-sanity -> sdc-backend;
@@ -113,7 +129,7 @@ Below is a diagram of the SDC project docker containers and the connections betw
         group deploy_group {
             color = green;
             label = "Application Layer"
-            sdc-backend; sdc-onboarding-backend; sdc-frontend; sdc-cassandra; sdc-cassandra-Config; sdc-backend-config; sdc-onboarding-init;
+            sdc-backend; sdc-onboarding-backend; sdc-frontend; sdc-cassandra; sdc-cassandra-Config; sdc-backend-config; sdc-onboarding-init; sdc-WFD-frontend; sdc-WFD-backend; sdc-WFD-BE-init;
         }
         group testing_group {
             color = purple;
