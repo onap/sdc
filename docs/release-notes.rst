@@ -5,7 +5,7 @@
 Release Notes
 =============
 
-Version: 1.7.2
+Version: 1.7.3
 ==============
 
 :Release Date: 2020-11-19
@@ -91,7 +91,7 @@ SDC Guilin Release
 
 **Tasks**
 
-The full list of implemented tasks is available on `JIRA GUILIN BUGS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
+The full list of implemented tasks is available on `JIRA GUILIN TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22Guilin%20Release%22>`_
 
 **Bug Fixes**
 
