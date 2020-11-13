@@ -14,6 +14,11 @@ SDC supports the following packages types
 - Heat Package
 - ONAP Tosca CSAR Package
 - ETSI SOL004 Tosca CSAR Package
+- Basic Helm package support for CNF
+
+For an extensive guide on how to perform onboarding, please refer to the ONAP User guide:
+* :ref:`doc_guide_user_des`
+
 
 Heat Package
 ^^^^^^^^^^^^
@@ -49,6 +54,12 @@ Other Points to note when onboarding this package are:
 - During onboarding the ETSI NFV-SOL004 CSAR structure is transformed to the internal ONAP CSAR structure.
 - The original input CSAR is maintained and stored as the SDC artifact *ETSI_PACKAGE* in the xNF internal model. For existing legacy xNF, it can be stored as *ONBOARDED_PACKAGE* instead.
 - The non-mano artifacts are mapped to the corresponding SDC Artifact Type in the xNF internal model.
+
+Basic Helm package support for CNF
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The helm package support is new since Guilin release, helm chart packaged as tgz file can be onboarded and distributed.
+The support is limited for this first release.
 
 Package Types applicable to Resource Types
 ------------------------------------------
@@ -88,7 +99,11 @@ How does SDC determine which package type is being onboarded
 SDC onboarding processes each of the package types differently. SDC determines which package type is being onboarded, and
 hence which logic to use, based on the following
 
-First SDC checks the extension of the package. If the package extension is *.zip* then the package is treated as a `Heat package`_.
+First SDC checks the extension of the package. If the package extension is *.zip* then the package is treated as a `Heat package`_ or `Basic Helm package support for CNF`_.
+
+To determine whether the package is of type Helm, SDC looks into the package content and tries to find Helm base files if not found it will treat it as Heat.
+
+If it determines that this is a Helm package, SDC will add dummy Heat descriptor files.
 
 If the package extension is *.csar* and the following is true
 
