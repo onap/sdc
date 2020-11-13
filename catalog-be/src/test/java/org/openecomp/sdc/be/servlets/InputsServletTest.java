@@ -20,14 +20,38 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -65,30 +89,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class InputsServletTest extends JerseyTest {
 
     /* Constants */
@@ -119,10 +119,11 @@ public class InputsServletTest extends JerseyTest {
     private static HttpServletRequest request;
 
     String appConfigDir = "src/test/resources/config/catalog-be";
-    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+        appConfigDir);
     ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
-    @BeforeClass
+    @BeforeAll
     public static void configureMocks() {
         request = mock(HttpServletRequest.class);
         userBusinessLogic = mock(UserBusinessLogic.class);
@@ -140,8 +141,9 @@ public class InputsServletTest extends JerseyTest {
 
     }
 
-    @Before
-    public void resetMocks() {
+    @BeforeEach
+    public void before() throws Exception {
+        super.setUp();
         Mockito.reset(resourceImportManager);
         Mockito.reset(servletUtils);
         Mockito.reset(componentsUtils);
@@ -159,8 +161,14 @@ public class InputsServletTest extends JerseyTest {
         when(httpSession.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(
             Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(new WebAppContextWrapper());
-        when(servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)).thenReturn(webApplicationContext);
+        when(servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE))
+            .thenReturn(webApplicationContext);
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Override
@@ -183,18 +191,15 @@ public class InputsServletTest extends JerseyTest {
         return resourceConfig;
     }
 
-
-
-
     private InputDefinition setUpListInput() {
         InputDefinition listInput = new InputDefinition();
         listInput.setName(LISTINPUT_NAME);
         listInput.setType("list");
         SchemaDefinition listInputSchema = new SchemaDefinition();
         listInputSchema.setProperty(new PropertyDataDefinitionBuilder()
-                .setType(LISTINPUT_SCHEMA_TYPE)
-                .setIsRequired(false)
-                .build()
+            .setType(LISTINPUT_SCHEMA_TYPE)
+            .setIsRequired(false)
+            .build()
         );
         listInput.setSchema(listInputSchema);
         return listInput;
@@ -235,11 +240,13 @@ public class InputsServletTest extends JerseyTest {
         ComponentInstListInput requestBodyObj = setUpCreateListInputParams();
         Entity<ComponentInstListInput> entity = Entity.entity(requestBodyObj, MediaType.APPLICATION_JSON);
 
-        doReturn(Either.left(requestBodyObj)).when(componentsUtils).convertJsonToObjectUsingObjectMapper(any(), any(), eq(ComponentInstListInput.class),
-            eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.SERVICE));
+        doReturn(Either.left(requestBodyObj)).when(componentsUtils)
+            .convertJsonToObjectUsingObjectMapper(any(), any(), eq(ComponentInstListInput.class),
+                eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.SERVICE));
 
-        doReturn(Either.left(Collections.emptyList())).when(inputsBusinessLogic).createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
-            any(), eq(true), eq(false));
+        doReturn(Either.left(Collections.emptyList())).when(inputsBusinessLogic)
+            .createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
+                any(), eq(true), eq(false));
 
         ResponseFormat responseFormat = new ResponseFormat(HttpStatus.OK_200.getStatusCode());
         doReturn(responseFormat).when(componentsUtils).getResponseFormat(ActionStatus.OK);
@@ -247,7 +254,7 @@ public class InputsServletTest extends JerseyTest {
         Response response = buildCreateListInputCall().post(entity);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200.getStatusCode());
         verify(inputsBusinessLogic, times(1)).createListInput(USER_ID, RESOURCE_ID,
-                ComponentTypeEnum.SERVICE, requestBodyObj, true, false);
+            ComponentTypeEnum.SERVICE, requestBodyObj, true, false);
     }
 
     @Test
@@ -257,22 +264,23 @@ public class InputsServletTest extends JerseyTest {
 
         // for parseToComponentInstListInput
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(any(), userCaptor.capture(), eq(ComponentInstListInput.class),
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(any(), userCaptor.capture(), eq(ComponentInstListInput.class),
                 eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.SERVICE)))
-                .thenReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode())));
+            .thenReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode())));
 
         when(inputsBusinessLogic.createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
-                any(), eq(true), eq(false)))
-                .thenReturn(Either.left(Collections.emptyList()));
+            any(), eq(true), eq(false)))
+            .thenReturn(Either.left(Collections.emptyList()));
 
         Response response = buildCreateListInputCall().post(entity);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400.getStatusCode());
         verify(componentsUtils, times(1))
-                .convertJsonToObjectUsingObjectMapper(any(), any(), eq(ComponentInstListInput.class),
+            .convertJsonToObjectUsingObjectMapper(any(), any(), eq(ComponentInstListInput.class),
                 eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.SERVICE));
         assertThat(userCaptor.getValue().getUserId()).isEqualTo(USER_ID);
         verify(inputsBusinessLogic, never()).createListInput(USER_ID, RESOURCE_ID,
-                ComponentTypeEnum.SERVICE, requestBodyObj, true, false);
+            ComponentTypeEnum.SERVICE, requestBodyObj, true, false);
     }
 
 
@@ -283,19 +291,20 @@ public class InputsServletTest extends JerseyTest {
 
         // for parseToComponentInstListInput
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(any(), userCaptor.capture(), eq(ComponentInstListInput.class),
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(any(), userCaptor.capture(), eq(ComponentInstListInput.class),
                 eq(AuditingActionEnum.CREATE_RESOURCE), eq(ComponentTypeEnum.SERVICE)))
-                .thenReturn(Either.left(requestBodyObj));
+            .thenReturn(Either.left(requestBodyObj));
 
         when(inputsBusinessLogic.createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
-                any(), eq(true), eq(false)))
-                .thenReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode())));
+            any(), eq(true), eq(false)))
+            .thenReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode())));
 
         Response response = buildCreateListInputCall().post(entity);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400.getStatusCode());
         verify(inputsBusinessLogic, times(1))
-                .createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
-                        any(), eq(true), eq(false));
+            .createListInput(eq(USER_ID), eq(RESOURCE_ID), eq(ComponentTypeEnum.SERVICE),
+                any(), eq(true), eq(false));
     }
 
 
@@ -304,7 +313,8 @@ public class InputsServletTest extends JerseyTest {
         ComponentInstListInput requestBodyObj = setUpCreateListInputParams();
         Entity<ComponentInstListInput> entity = Entity.entity(requestBodyObj, MediaType.APPLICATION_JSON);
 
-        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()));
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR))
+            .thenReturn(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()));
 
         Response response = buildCreateListInputCall().post(entity);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400.getStatusCode());
@@ -312,7 +322,8 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_getDataType_success() throws Exception {
-        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID),eq(LISTINPUT_SCHEMA_TYPE))).thenReturn(Either.left(new DataTypeDefinition()));
+        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID), eq(LISTINPUT_SCHEMA_TYPE)))
+            .thenReturn(Either.left(new DataTypeDefinition()));
 
         ResponseFormat responseFormat = new ResponseFormat();
         responseFormat.setStatus(HttpStatus.OK_200.getStatusCode());
@@ -324,11 +335,13 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_getDataType_fail() throws Exception {
-        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID),eq(LISTINPUT_SCHEMA_TYPE))).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID), eq(LISTINPUT_SCHEMA_TYPE)))
+            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
         ResponseFormat responseFormat = new ResponseFormat();
         responseFormat.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode());
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.BAD_REQUEST))).thenReturn(ActionStatus.GENERAL_ERROR);
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.BAD_REQUEST)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(eq(ActionStatus.GENERAL_ERROR))).thenReturn(responseFormat);
 
         Response response = buildGetDataTypeCall().get();
@@ -337,8 +350,10 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_getDataType_fail_exception() throws Exception {
-        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID),eq(LISTINPUT_SCHEMA_TYPE))).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.GENERAL_ERROR))).thenReturn(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()));
+        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID), eq(LISTINPUT_SCHEMA_TYPE)))
+            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+        when(componentsUtils.getResponseFormat(eq(ActionStatus.GENERAL_ERROR)))
+            .thenReturn(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()));
 
         Response response = buildGetDataTypeCall().get();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400.getStatusCode());
@@ -346,7 +361,8 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_getDataTypes_success() throws Exception {
-        when(dataTypeBusinessLogic.getPrivateDataTypes(eq(RESOURCE_ID))).thenReturn(Either.left(Collections.emptyList()));
+        when(dataTypeBusinessLogic.getPrivateDataTypes(eq(RESOURCE_ID)))
+            .thenReturn(Either.left(Collections.emptyList()));
 
         ResponseFormat responseFormat = new ResponseFormat();
         responseFormat.setStatus(HttpStatus.OK_200.getStatusCode());
@@ -358,11 +374,13 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_getDataTypes_fail() throws Exception {
-        when(dataTypeBusinessLogic.getPrivateDataTypes(eq(RESOURCE_ID))).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+        when(dataTypeBusinessLogic.getPrivateDataTypes(eq(RESOURCE_ID)))
+            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
         ResponseFormat responseFormat = new ResponseFormat();
         responseFormat.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode());
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.BAD_REQUEST))).thenReturn(ActionStatus.GENERAL_ERROR);
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.BAD_REQUEST)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(eq(ActionStatus.GENERAL_ERROR))).thenReturn(responseFormat);
 
         Response response = buildGetDataTypesCall().get();
@@ -371,8 +389,10 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_getDataTypes_fail_exception() throws Exception {
-        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID),eq(LISTINPUT_SCHEMA_TYPE))).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.GENERAL_ERROR))).thenReturn(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()));
+        when(dataTypeBusinessLogic.getPrivateDataType(eq(RESOURCE_ID), eq(LISTINPUT_SCHEMA_TYPE)))
+            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+        when(componentsUtils.getResponseFormat(eq(ActionStatus.GENERAL_ERROR)))
+            .thenReturn(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()));
 
         Response response = buildGetDataTypesCall().get();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400.getStatusCode());
@@ -381,9 +401,11 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_deleteDataType_success() throws Exception {
-        when(dataTypeBusinessLogic.deletePrivateDataType(RESOURCE_ID, LISTINPUT_SCHEMA_TYPE)).thenReturn(Either.left(new DataTypeDefinition()));
+        when(dataTypeBusinessLogic.deletePrivateDataType(RESOURCE_ID, LISTINPUT_SCHEMA_TYPE))
+            .thenReturn(Either.left(new DataTypeDefinition()));
 
-        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
+        when(componentsUtils.getResponseFormat(ActionStatus.OK))
+            .thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
 
         Response response = buildGetDataTypeCall().delete();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200.getStatusCode());
@@ -391,8 +413,10 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_deleteDataType_failure_exception() throws Exception {
-        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
-        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(new ResponseFormat(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode()));
+        when(componentsUtils.getResponseFormat(ActionStatus.OK))
+            .thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR))
+            .thenReturn(new ResponseFormat(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode()));
         Response response = buildGetDataTypeCall().delete();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode());
         verify(componentsUtils, never()).getResponseFormat(ActionStatus.OK);
@@ -400,10 +424,14 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_deleteDataType_failure_notFound() throws Exception {
-        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
-        when(dataTypeBusinessLogic.deletePrivateDataType(RESOURCE_ID, LISTINPUT_SCHEMA_TYPE)).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND)).thenReturn(ActionStatus.ARTIFACT_NOT_FOUND);
-        when(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND)).thenReturn(new ResponseFormat(HttpStatus.NOT_FOUND_404.getStatusCode()));
+        when(componentsUtils.getResponseFormat(ActionStatus.OK))
+            .thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
+        when(dataTypeBusinessLogic.deletePrivateDataType(RESOURCE_ID, LISTINPUT_SCHEMA_TYPE))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND))
+            .thenReturn(ActionStatus.ARTIFACT_NOT_FOUND);
+        when(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND))
+            .thenReturn(new ResponseFormat(HttpStatus.NOT_FOUND_404.getStatusCode()));
         Response response = buildGetDataTypeCall().delete();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND_404.getStatusCode());
         verify(componentsUtils, never()).getResponseFormat(ActionStatus.OK);
@@ -412,16 +440,17 @@ public class InputsServletTest extends JerseyTest {
     @Test
     public void test_deleteInput_success() throws Exception {
         when(inputsBusinessLogic.deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME))
-                .thenReturn(new InputDefinition());
-        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
+            .thenReturn(new InputDefinition());
+        when(componentsUtils.getResponseFormat(ActionStatus.OK))
+            .thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
 
         // invoke delete call
         Response response = target("/v1/catalog/services/{id}/delete/{inputId}/input")
-                .resolveTemplate("id", RESOURCE_ID)
-                .resolveTemplate("inputId", LISTINPUT_NAME)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, USER_ID)
-                .delete();
+            .resolveTemplate("id", RESOURCE_ID)
+            .resolveTemplate("inputId", LISTINPUT_NAME)
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .delete();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200.getStatusCode());
         verify(inputsBusinessLogic, times(1)).deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME);
     }
@@ -431,15 +460,15 @@ public class InputsServletTest extends JerseyTest {
     public void test_deleteInput_failure_deleteInput() throws Exception {
         ComponentException componentException = new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
         when(inputsBusinessLogic.deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME))
-                .thenThrow(componentException);
+            .thenThrow(componentException);
 
         // invoke delete call
         Response response = target("/v1/catalog/services/{id}/delete/{inputId}/input")
-                .resolveTemplate("id", RESOURCE_ID)
-                .resolveTemplate("inputId", LISTINPUT_NAME)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, USER_ID)
-                .delete();
+            .resolveTemplate("id", RESOURCE_ID)
+            .resolveTemplate("inputId", LISTINPUT_NAME)
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .delete();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400.getStatusCode());
         verify(componentsUtils, never()).getResponseFormat(ActionStatus.OK);
     }
@@ -447,24 +476,24 @@ public class InputsServletTest extends JerseyTest {
 
     private Invocation.Builder buildCreateListInputCall() {
         return target("/v1/catalog/services/{id}/create/listInput")
-                .resolveTemplate("id", RESOURCE_ID)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, USER_ID);
+            .resolveTemplate("id", RESOURCE_ID)
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID);
     }
 
     private Invocation.Builder buildGetDataTypeCall() {
         return target("/v1/catalog/services/{id}/dataType/{dataTypeName}")
-                .resolveTemplate("id", RESOURCE_ID)
-                .resolveTemplate("dataTypeName", LISTINPUT_SCHEMA_TYPE)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, USER_ID);
+            .resolveTemplate("id", RESOURCE_ID)
+            .resolveTemplate("dataTypeName", LISTINPUT_SCHEMA_TYPE)
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID);
     }
 
     private Invocation.Builder buildGetDataTypesCall() {
         return target("/v1/catalog/services/{id}/dataTypes")
-                .resolveTemplate("id", RESOURCE_ID)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, USER_ID);
+            .resolveTemplate("id", RESOURCE_ID)
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID);
     }
 
 }
