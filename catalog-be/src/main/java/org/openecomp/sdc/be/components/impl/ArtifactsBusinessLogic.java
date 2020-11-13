@@ -796,7 +796,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 log.debug("handleGetArtifactsByType - not failed groupType {} , component id {}", artifactGroupType, componentId);
                 throw new ByActionStatusComponentException(ActionStatus.MISSING_INFORMATION);
             }
-            if (groupType == ArtifactGroupTypeEnum.DEPLOYMENT) {
+            if (parentId == null && groupType == ArtifactGroupTypeEnum.DEPLOYMENT) {
                 List<ArtifactDefinition> list = getDeploymentArtifacts(component, componentId);
                 if (list != null && !list.isEmpty()) {
                     resMap = list.stream().collect(Collectors.toMap(ArtifactDataDefinition::getArtifactLabel, Function.identity()));
