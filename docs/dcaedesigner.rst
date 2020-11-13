@@ -6,7 +6,4 @@
 DCAE-Designer
 ==============
 
-Here are the links to our DCAE-Designer pages found in the ONAP Services websites
-
-- `Introduction <https://wiki.onap.org/display/DW/DCAE-Design+Studio/>`_
-- `Deployment guide <https://wiki.onap.org/display/DW/DCAE-Design+Studio+deployment>`_
+DCAE Designer is deprecated and replaced by DCAE-MOD, it is no longer deployed with SDC.

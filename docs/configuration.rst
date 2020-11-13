@@ -12,6 +12,9 @@ Configuration
 Global Configuration
 ====================
 
+SDC configuration is applied by several init containers running Chef recipes
+The files below describe the environment files that are applied on startup
+
 environment.json
 ----------------
 
