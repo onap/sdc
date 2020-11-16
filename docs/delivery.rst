@@ -55,11 +55,14 @@ Deployement dependency map
     be-config [label = "sdc-backend-config", class = "job"];
     cassandra-config [label = "sdc-cassandra-config", class = "job"];
     onboarding-init [label = "sdc-onboarding-init", class = "job"];
+    sdc-WFD-FE [label = "sdc-workflow-fe", class = "app"];
+    sdc-WFD-BE [label = "sdc-workflow-be", class = "app"];
+    sdc-WFD-BE-init [label = "sdc-workflow-init", class = "job"];
     job [class = "job"];
     app [class = "app"];
 
     fe -> be-config -> be -> onboarding-be -> onboarding-init -> cassandra-config -> cassandra;
-    sdc-WFD-FE -> sdc-WFD-BE-init -> sdc-WFD-BE;
+    sdc-WFD-FE -> sdc-WFD-BE-init -> sdc-WFD-BE -> cassandra-config;
 
 Connectivity Matrix
 -------------------
@@ -119,9 +122,9 @@ Below is a diagram of the SDC project docker containers and the connections betw
         sdc-cassandra-Config -> sdc-cassandra;
         sdc-backend-config -> sdc-backend;
         sdc-wss-simulator -> sdc-frontend;
-        sdc-WFD-frontend -> SDC-WFD-backend;
+        sdc-WFD-frontend -> sdc-WFD-backend;
         sdc-frontend -> sdc-backend, sdc-onboarding-backend;
-        SDC-WFD-backend -> sdc-cassandra;
+        sdc-WFD-backend -> sdc-cassandra;
         sdc-backend -> sdc-cassandra;
         sdc-onboarding-backend -> sdc-cassandra;
         sdc-sanity -> sdc-backend;

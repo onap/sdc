@@ -11,5 +11,5 @@ User Guides In ONAP Confluence
 These are links to the SDC user guides found in ONAP User Guides:
 
 * :ref:`sdc_onboarding_package_types`
-* :ref:`doc_guide_user_des`
+* :ref:`User Guides <user-guides>`
 
