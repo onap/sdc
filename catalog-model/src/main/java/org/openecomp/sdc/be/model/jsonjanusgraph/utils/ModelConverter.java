@@ -1874,7 +1874,7 @@ public class ModelConverter {
                 attributesMap = new MapAttributesDataDefinition();
 
                 attributesMap.setMapToscaDataDefinition(entry.getValue().stream().map(AttributeDefinition::new)
-                    .collect(Collectors.toMap(AttributeDataDefinition::getName, Function.identity())));
+                    .collect(Collectors.toMap(AttributeDataDefinition::getName, Function.identity(),(entity1,entity2) -> entity1)));
 
                 topologyTemplate.getInstAttributes().put(entry.getKey(), attributesMap);
             }
