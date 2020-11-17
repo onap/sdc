@@ -17,7 +17,7 @@ SDC supports the following packages types
 - Basic Helm package support for CNF
 
 For an extensive guide on how to perform onboarding, please refer to the ONAP User guide:
-* :ref:`User Guides <user-guides>`
+* :ref:`User Guides <omaster_doc:doc_guide_user_des>`
 
 
 Heat Package
