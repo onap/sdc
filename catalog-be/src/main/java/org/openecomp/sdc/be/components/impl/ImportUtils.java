@@ -20,21 +20,33 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.be.components.impl.ResourceImportManager.PROPERTY_NAME_PATTERN_IGNORE_LENGTH;
+import static org.openecomp.sdc.be.datatypes.elements.Annotation.setAnnotationsName;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.tinkerpop.gremlin.structure.T;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -42,7 +54,6 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -69,25 +80,6 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.openecomp.sdc.be.components.impl.ResourceImportManager.PROPERTY_NAME_PATTERN_IGNORE_LENGTH;
-import static org.openecomp.sdc.be.datatypes.elements.Annotation.setAnnotationsName;
-import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataType;
-import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataTypeDefinitionWithName;
 
 @Component
 public final class ImportUtils {
@@ -614,14 +606,6 @@ public final class ImportUtils {
 
         return getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS, elementGenByName, func);
 
-    }
-
-    public static Either<Map<String, AttributeDataDefinition>, ResultStatusEnum> getAttributes(
-        Map<String, Object> toscaJson) {
-        Function<String, AttributeDataDefinition> elementGenByName = ImportUtils::createAttribute;
-        Function<Map<String, Object>, AttributeDataDefinition> func = ImportUtils::createModuleAttribute;
-
-        return getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.ATTRIBUTES, elementGenByName, func);
     }
 
     public static <T> Either<Map<String, T>, ResultStatusEnum> getElements(Map<String, Object> toscaJson,

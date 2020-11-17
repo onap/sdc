@@ -24,7 +24,6 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonSt
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
 import fj.data.Either;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -36,13 +35,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
@@ -71,20 +67,13 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -92,7 +81,6 @@ import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -102,7 +90,6 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
@@ -115,16 +102,12 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -132,21 +115,15 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.tosca.CsarUtils;
-import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -154,11 +131,9 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 @Getter
@@ -1297,7 +1272,18 @@ public class ServiceImportBusinessLogic{
         return eitherGetResource.left().value();
     }
 
-    protected void processComponentInstance(String yamlName, Resource resource, List<ComponentInstance> componentInstancesList, Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes, Map<String, List<ComponentInstanceProperty>> instProperties, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements, Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String, List<AttributeDataDefinition>> instAttributes, Map<String, Resource> originCompMap, Map<String, List<ComponentInstanceInput>> instInputs, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
+    protected void processComponentInstance(String yamlName, Resource resource,
+                                            List<ComponentInstance> componentInstancesList,
+                                            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+                                            Map<String, List<ComponentInstanceProperty>> instProperties,
+                                            Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties,
+                                            Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
+                                            Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts,
+                                            Map<String, Map<String, ArtifactDefinition>> instArtifacts,
+                                            Map<String, List<AttributeDataDefinition>> instAttributes,
+                                            Map<String, Resource> originCompMap,
+                                            Map<String, List<ComponentInstanceInput>> instInputs,
+                                            UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
                 .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName()))
                 .findFirst();
@@ -1736,7 +1722,18 @@ public class ServiceImportBusinessLogic{
         return eitherGetResource.left().value();
     }
 
-    protected void processComponentInstance(String yamlName, Service service, List<ComponentInstance> componentInstancesList, Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes, Map<String, List<ComponentInstanceProperty>> instProperties, Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties, Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements, Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String, List<AttributeDataDefinition>> instAttributes, Map<String, Resource> originCompMap, Map<String, List<ComponentInstanceInput>> instInputs, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
+    protected void processComponentInstance(String yamlName, Service service,
+                                            List<ComponentInstance> componentInstancesList,
+                                            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+                                            Map<String, List<ComponentInstanceProperty>> instProperties,
+                                            Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties,
+                                            Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
+                                            Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts,
+                                            Map<String, Map<String, ArtifactDefinition>> instArtifacts,
+                                            Map<String, List<AttributeDataDefinition>> instAttributes,
+                                            Map<String, Resource> originCompMap,
+                                            Map<String, List<ComponentInstanceInput>> instInputs,
+                                            UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         log.debug("enter ServiceImportBusinessLogic processComponentInstance");
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
                 .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName()))

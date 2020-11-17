@@ -22,9 +22,20 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import static org.openecomp.sdc.be.utils.TypeUtils.setField;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import fj.data.Either;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -33,6 +44,7 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.JanusGraphVertex;
+import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -52,7 +64,6 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -74,11 +85,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import fj.data.Either;
 
 public abstract class ToscaElementOperation extends BaseOperation {
     private static final String FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR = "failed to fetch {} for tosca element with id {}, error {}";
@@ -1003,15 +1009,21 @@ public abstract class ToscaElementOperation extends BaseOperation {
             if (attributes instanceof Map) {
                 final Map<String, Object> map = (Map<String, Object>) attributes;
                 attributeDataDefinitionMap.putAll(map.values().stream().map(attributeMap -> {
-                    final AttributeDefinition attributeDef = new AttributeDefinition();
+                    final AttributeDataDefinition attributeDef = new AttributeDataDefinition();
                     final String name = (String) ((Map<String, Object>) attributeMap).get("name");
                     attributeDef.setName(name);
                     final String type = (String) ((Map<String, Object>) attributeMap).get("type");
                     attributeDef.setType(type);
                     final String description = (String) ((Map<String, Object>) attributeMap).get("description");
                     attributeDef.setDescription(description);
+                    final Object _default = ((Map<String, Object>) attributeMap).get("_default");
+                    attributeDef.set_default(_default);
+                    final String status = (String) ((Map<String, Object>) attributeMap).get("status");
+                    attributeDef.setStatus(status);
+                    final EntrySchema entry_schema = (EntrySchema) ((Map<String, Object>) attributeMap).get("entry_schema");
+                    attributeDef.setEntry_schema(entry_schema);
                     return attributeDef;
-                }).collect(Collectors.toMap(AttributeDefinition::getName, a -> a)));
+                }).collect(Collectors.toMap(AttributeDataDefinition::getName, a -> a)));
             }
         }
         return attributeDataDefinitionMap;

@@ -25,6 +25,10 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.openecomp.sdc.be.components.utils.PropertiesUtils.resolvePropertyValueFromInput;
 import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.addInterfaceTypeElement;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import fj.data.Either;
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -58,7 +63,6 @@ import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
@@ -123,9 +127,6 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import fj.data.Either;
 
 @org.springframework.stereotype.Component("tosca-export-handler")
 public class ToscaExportHandler {
@@ -1079,12 +1080,26 @@ public class ToscaExportHandler {
         if (component instanceof Resource) {
             final List<AttributeDataDefinition> attributes = ((Resource) component).getAttributes();
             if (CollectionUtils.isNotEmpty(attributes)) {
-                final Map<String, AttributeDataDefinition> attributeDataDefinitionMap
-                    = attributes.stream().collect(Collectors.toMap(AttributeDataDefinition::getName, a -> a));
+                final Map<String, Object> attributeDataDefinitionMap = new HashMap<>();
+                attributes.forEach(attributeDataDefinition ->
+                    buildAttributeData(attributeDataDefinition, attributeDataDefinitionMap));
+
                 toscaNodeType.setAttributes(attributeDataDefinitionMap);
             }
         }
         return toscaNodeType;
+    }
+
+    private void buildAttributeData(final AttributeDataDefinition originalAttributeDataDefinition,
+                                    final Map<String, Object> attributeDataDefinitionMap) {
+
+        attributeDataDefinitionMap.put(originalAttributeDataDefinition.getName(),
+            new ObjectMapper().convertValue(new AttributeDefinition(
+                originalAttributeDataDefinition.getType(),
+                originalAttributeDataDefinition.getDescription(),
+                originalAttributeDataDefinition.get_default(),
+                originalAttributeDataDefinition.getStatus(),
+                originalAttributeDataDefinition.getEntry_schema()), Object.class));
     }
 
     private Either<Map<String, Object>, ToscaError> createProxyInterfaceTypes(Component container) {

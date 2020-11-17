@@ -24,7 +24,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
 @Getter

@@ -41,13 +41,12 @@ export interface IAttributeModel {
     //server data
     uniqueId:string;
     name:string;
-    defaultValue:string;
+    _default:string;
     description:string;
     type:string;
     schema:SchemaAttributeGroupModel;
     status:string;
     value:string;
-    hidden:boolean;
     parentUniqueId:string;
     //custom data
     resourceInstanceUniqueId:string;
@@ -60,13 +59,12 @@ export class AttributeModel implements IAttributeModel {
     //server data
     uniqueId:string;
     name:string;
-    defaultValue:string;
+    _default:string;
     description:string;
     type:string;
     schema:SchemaAttributeGroupModel;
     status:string;
     value:string;
-    hidden:boolean;
     parentUniqueId:string;
     //custom data
     resourceInstanceUniqueId:string;
@@ -77,20 +75,18 @@ export class AttributeModel implements IAttributeModel {
         if (attribute) {
             this.uniqueId = attribute.uniqueId;
             this.name = attribute.name;
-            this.defaultValue = attribute.defaultValue;
+            this._default = attribute._default;
             this.description = attribute.description;
             this.type = attribute.type;
             this.status = attribute.status;
             this.schema = attribute.schema;
             this.value = attribute.value;
-            this.hidden = attribute.hidden;
             this.parentUniqueId = attribute.parentUniqueId;
             this.resourceInstanceUniqueId = attribute.resourceInstanceUniqueId;
             this.readonly = attribute.readonly;
             this.valueUniqueUid = attribute.valueUniqueUid;
         } else {
-            this.defaultValue = '';
-            this.hidden = false;
+            this._default = '';
         }
 
         if (!this.schema || !this.schema.property) {
@@ -104,13 +100,13 @@ export class AttributeModel implements IAttributeModel {
     }
 
     public convertToServerObject():string {
-        if (this.defaultValue && this.type === 'map') {
-            this.defaultValue = '{' + this.defaultValue + '}';
+        if (this._default && this.type === 'map') {
+            this._default = '{' + this._default + '}';
         }
-        if (this.defaultValue && this.type === 'list') {
-            this.defaultValue = '[' + this.defaultValue + ']';
+        if (this._default && this.type === 'list') {
+            this._default = '[' + this._default + ']';
         }
-        this.defaultValue = this.defaultValue != "" && this.defaultValue != "[]" && this.defaultValue != "{}" ? this.defaultValue : null;
+        this._default = this._default != "" && this._default != "[]" && this._default != "{}" ? this._default : null;
 
         return JSON.stringify(this);
     };
@@ -118,10 +114,10 @@ export class AttributeModel implements IAttributeModel {
 
     public convertValueToView() {
         //unwrapping value {} or [] if type is complex
-        if (this.defaultValue && (this.type === 'map' || this.type === 'list') &&
-            ['[', '{'].indexOf(this.defaultValue.charAt(0)) > -1 &&
-            [']', '}'].indexOf(this.defaultValue.slice(-1)) > -1) {
-            this.defaultValue = this.defaultValue.slice(1, -1);
+        if (this._default && (this.type === 'map' || this.type === 'list') &&
+            ['[', '{'].indexOf(this._default.charAt(0)) > -1 &&
+            [']', '}'].indexOf(this._default.slice(-1)) > -1) {
+            this._default = this._default.slice(1, -1);
         }
 
         //also for value - for the modal in canvas
