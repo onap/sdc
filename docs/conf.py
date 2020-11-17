@@ -9,6 +9,8 @@ linkcheck_ignore = [
 
 intersphinx_mapping = {}
 
+intersphinx_mapping['onap-doc'] = ('../../en/%s'.format(doc_url) % branch, None)
+
 html_last_updated_fmt = '%d-%b-%y %H:%M'
 
 def setup(app):
