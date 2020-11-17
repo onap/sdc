@@ -15,6 +15,7 @@ SDC Documentation
    delivery.rst
    humaninterfaces.rst
    genericdesignerintegration.rst
+   onboardingpackage.rst
    installation.rst
    logging.rst
    release-notes.rst
