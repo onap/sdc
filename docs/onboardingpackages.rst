@@ -17,7 +17,7 @@ SDC supports the following packages types
 - Basic Helm package support for CNF
 
 For an extensive guide on how to perform onboarding, please refer to the ONAP User guide:
-* :ref:`User Guides <user-guides>`
+* :ref:`User Guides <onap-doc:doc_guide_user_des>`
 
 
 Heat Package
@@ -56,7 +56,7 @@ Other Points to note when onboarding this package are:
 - The non-mano artifacts are mapped to the corresponding SDC Artifact Type in the xNF internal model.
 
 Basic Helm package support for CNF
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The helm package support is new since Guilin release, helm chart packaged as tgz file can be onboarded and distributed.
 The support is limited for this first release.
