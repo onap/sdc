@@ -2660,7 +2660,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		resource.getComponentInstances()
 				.stream()
 				.filter(i -> !i.isCreatedFromCsar())
-				.forEach(i->processUiComponentInstance(oldResource, i, instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instProperties, instInputs, instAttributes));
+			.forEach(i -> processUiComponentInstance(oldResource, i, instCapabilities, instRequirements,
+				instDeploymentArtifacts, instArtifacts, instProperties, instInputs, instAttributes));
 
 		associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
 		associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);

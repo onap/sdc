@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcabi.aspects.Loggable;
@@ -32,25 +33,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.stereotype.Controller;
-
+import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +48,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
+import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.stereotype.Controller;
 
 /**
  * Web Servlet for actions on Attributes
@@ -122,18 +122,17 @@ public class AttributeServlet extends AbstractValidationsServlet {
         log.debug("Start handle request of {} modifier id is {} data is {}", url, userId, data);
 
         try {
-            Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-            Wrapper<AttributeDataDefinition> attributesWrapper = new Wrapper<>();
-            // convert json to AttributeDefinition
+            final Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+            AttributeDataDefinition attributeDataDefinition = convertJsonToObject(data, errorWrapper);
 
-            buildAttributeFromString(data, attributesWrapper, errorWrapper);
             if (errorWrapper.isEmpty()) {
                 AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-                Either<AttributeDataDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
+                Either<AttributeDataDefinition, ResponseFormat> createAttribute = businessLogic
+                    .createAttribute(resourceId, attributeDataDefinition, userId);
                 if (createAttribute.isRight()) {
                     errorWrapper.setInnerElement(createAttribute.right().value());
                 } else {
-                    attributesWrapper.setInnerElement(createAttribute.left().value());
+                    attributeDataDefinition = createAttribute.left().value();
                 }
             }
 
@@ -142,10 +141,9 @@ public class AttributeServlet extends AbstractValidationsServlet {
                 log.info("Failed to create Attribute. Reason - ", errorWrapper.getInnerElement());
                 response = buildErrorResponse(errorWrapper.getInnerElement());
             } else {
-                AttributeDataDefinition createdAttDef = attributesWrapper.getInnerElement();
-                log.debug("Attribute {} created successfully with id {}", createdAttDef.getName(), createdAttDef.getUniqueId());
+                log.debug("Attribute {} created successfully with id {}", attributeDataDefinition.getName(), attributeDataDefinition.getUniqueId());
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.CREATED);
-                response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(createdAttDef));
+                response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(attributeDataDefinition));
             }
 
             return response;
@@ -197,21 +195,16 @@ public class AttributeServlet extends AbstractValidationsServlet {
         log.debug("modifier id is {}", userId);
 
         try {
-            // convert json to PropertyDefinition
-            Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-            Wrapper<AttributeDataDefinition> attributesWrapper = new Wrapper<>();
-            // convert json to AttributeDefinition
-
-            buildAttributeFromString(data, attributesWrapper, errorWrapper);
-
+            final Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+            AttributeDataDefinition attributeDataDefinition = convertJsonToObject(data, errorWrapper);
             if (errorWrapper.isEmpty()) {
                 AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-                Either<AttributeDataDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic.updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
-                // update property
+                Either<AttributeDataDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic
+                    .updateAttribute(resourceId, attributeId, attributeDataDefinition, userId);
                 if (eitherUpdateAttribute.isRight()) {
                     errorWrapper.setInnerElement(eitherUpdateAttribute.right().value());
                 } else {
-                    attributesWrapper.setInnerElement(eitherUpdateAttribute.left().value());
+                    attributeDataDefinition = eitherUpdateAttribute.left().value();
                 }
             }
 
@@ -220,10 +213,9 @@ public class AttributeServlet extends AbstractValidationsServlet {
                 log.info("Failed to update Attribute. Reason - ", errorWrapper.getInnerElement());
                 response = buildErrorResponse(errorWrapper.getInnerElement());
             } else {
-                AttributeDataDefinition updatedAttribute = attributesWrapper.getInnerElement();
-                log.debug("Attribute id {} updated successfully ", updatedAttribute.getUniqueId());
+                log.debug("Attribute id {} updated successfully ", attributeDataDefinition.getUniqueId());
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(updatedAttribute));
+                response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(attributeDataDefinition));
             }
 
             return response;
@@ -295,7 +287,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
             Wrapper<ResponseFormat> errorWrapper) {
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            final AttributeDataDefinition attribute = gson.fromJson(data, AttributeDefinition.class);
+            final AttributeDataDefinition attribute = gson.fromJson(data, AttributeDataDefinition.class);
             if (attribute == null) {
                 log.info(ATTRIBUTE_CONTENT_IS_INVALID, data);
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
@@ -309,6 +301,20 @@ public class AttributeServlet extends AbstractValidationsServlet {
             errorWrapper.setInnerElement(responseFormat);
             log.debug(ATTRIBUTE_CONTENT_IS_INVALID, data, e);
             log.info(ATTRIBUTE_CONTENT_IS_INVALID, data);
+        }
+    }
+
+    private AttributeDataDefinition convertJsonToObject(final String data,
+                                                        final Wrapper<ResponseFormat> errorWrapper) {
+
+        final ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(data, AttributeDataDefinition.class);
+        } catch (final IOException e) {
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ATTRIBUTE_CONTENT_IS_INVALID, data);
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+            errorWrapper.setInnerElement(responseFormat);
+            return null;
         }
     }
 }

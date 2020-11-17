@@ -79,6 +79,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
@@ -116,6 +117,7 @@ public abstract class BaseBusinessLogic {
     protected JanusGraphDao janusGraphDao;
     protected JanusGraphGenericDao janusGraphGenericDao;
     protected PropertyOperation propertyOperation;
+    protected AttributeOperation attributeOperation;
     protected ApplicationDataTypeCache applicationDataTypeCache;
     protected ToscaOperationFacade toscaOperationFacade;
     protected ApplicationDataTypeCache dataTypeCache;
@@ -193,6 +195,11 @@ public abstract class BaseBusinessLogic {
     @Autowired
     public void setPropertyOperation(PropertyOperation propertyOperation) {
         this.propertyOperation = propertyOperation;
+    }
+
+    @Autowired
+    public void setAttributeOperation(AttributeOperation attributeOperation) {
+        this.attributeOperation = attributeOperation;
     }
 
     User validateUserNotEmpty(User user, String ecompErrorContext) {
@@ -476,28 +483,6 @@ public abstract class BaseBusinessLogic {
 
         }
         return Either.left(true);
-    }
-
-
-    void handleDefaultValue(IComplexDefaultValue newAttributeDef, Map<String, DataTypeDefinition> dataTypes) {
-        // convert property
-        ToscaPropertyType type = ToscaPropertyType.isValidType(newAttributeDef.getType());
-        PropertyValueConverter converter = type.getConverter();
-        // get inner type
-        String innerType = null;
-
-        SchemaDefinition schema = newAttributeDef.getSchema();
-        if (schema != null) {
-            PropertyDataDefinition prop = schema.getProperty();
-            if (schema.getProperty() != null) {
-                innerType = prop.getType();
-            }
-        }
-        String convertedValue;
-        if (newAttributeDef.getDefaultValue() != null) {
-            convertedValue = converter.convert(newAttributeDef.getDefaultValue(), innerType, dataTypes);
-            newAttributeDef.setDefaultValue(convertedValue);
-        }
     }
 
     void validateComponentTypeEnum(ComponentTypeEnum componentTypeEnum, String errorContext, Wrapper<ResponseFormat> errorWrapper) {

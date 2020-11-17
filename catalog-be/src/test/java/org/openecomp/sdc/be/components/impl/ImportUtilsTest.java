@@ -20,26 +20,13 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.Lists;
 import fj.data.Either;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
-import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
-import org.openecomp.sdc.be.utils.TypeUtils;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -49,11 +36,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
+import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.yaml.snakeyaml.Yaml;
 
 public class ImportUtilsTest {
 
@@ -300,17 +299,6 @@ public class ImportUtilsTest {
         HeatParameterDefinition parameterDefinition = parameterDefList.get(0);
 
         assertParameter(parameterDefinition, name, type, null, defValue);
-
-    }
-
-    @Test
-    public void testGetAttributesFromYml() throws IOException {
-
-        Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaWithAttribute.yml");
-        Either<Map<String, AttributeDataDefinition>, ResultStatusEnum> actualAttributes = ImportUtils.getAttributes(toscaJson);
-        assertTrue(actualAttributes.isLeft());
-        Map<String, Map<String, Object>> expectedAttributes = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.ATTRIBUTES);
-        compareAttributes(expectedAttributes, actualAttributes.left().value());
 
     }
 
