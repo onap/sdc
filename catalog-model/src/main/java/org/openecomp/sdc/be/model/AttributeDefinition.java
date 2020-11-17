@@ -20,7 +20,6 @@
 package org.openecomp.sdc.be.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
@@ -31,7 +30,7 @@ import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 @ToString
 public class AttributeDefinition extends AttributeDataDefinition implements IOperationParameter, IComplexDefaultValue {
 
-    // All names are according to TOSCA spec from 
+    // All names are according to TOSCA spec from
     // https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/os/TOSCA-Simple-Profile-YAML-v1.3-os.html#DEFN_ELEMENT_ATTRIBUTE_DEFN
     private String type;
     private String description;

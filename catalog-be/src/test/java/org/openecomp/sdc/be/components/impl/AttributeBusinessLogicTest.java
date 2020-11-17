@@ -17,81 +17,77 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  * Modifications copyright (c) 2019 Nokia
+ * Modifications Copyright (C) 2020 Nordix Foundation
  * ================================================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import junit.framework.Assert;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AttributeDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.Mockito.when;
-
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-
-public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
+public class AttributeBusinessLogicTest extends BaseBusinessLogicMock {
 
 	private AttributeBusinessLogic createTestSubject() {
 		return new AttributeBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
 			interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation );
 	}
 
-	UserValidations userValidations  = Mockito.mock(UserValidations.class);
-	ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
-	JanusGraphDao janusGraphDao = Mockito.mock(JanusGraphDao.class);
-	ToscaOperationFacade toscaOperationFacade  = Mockito.mock(ToscaOperationFacade.class);
-	ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
-	PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
-	Field baseBusinessLogic;
-	Field baseBusinessLogic1;
-	Field baseBusinessLogic2;
-	Field baseBusinessLogic3;
-	AttributeBusinessLogic attributeBusinessLogic=createTestSubject();
-	IGraphLockOperation igraphLockOperation = Mockito.mock(IGraphLockOperation.class);
+	private UserValidations userValidations  = Mockito.mock(UserValidations.class);
+	private ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+	private JanusGraphDao janusGraphDao = Mockito.mock(JanusGraphDao.class);
+	private ToscaOperationFacade toscaOperationFacade  = Mockito.mock(ToscaOperationFacade.class);
+	private ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+	private AttributeOperation attributeOperation = Mockito.mock(AttributeOperation.class);
+	private Field baseBusinessLogic;
+	private AttributeBusinessLogic attributeBusinessLogic=createTestSubject();
+	private IGraphLockOperation igraphLockOperation = Mockito.mock(IGraphLockOperation.class);
 
 	@Before
-	public void setup() throws Exception{
-
+	public void setup() throws Exception {
 		baseBusinessLogic = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("graphLockOperation");
 		baseBusinessLogic.setAccessible(true);
 		baseBusinessLogic.set(attributeBusinessLogic, igraphLockOperation);
 
-		baseBusinessLogic1 = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("userValidations");
+		final Field baseBusinessLogic1 = attributeBusinessLogic.getClass().getSuperclass()
+			.getDeclaredField("userValidations");
 		baseBusinessLogic1.setAccessible(true);
 		baseBusinessLogic1.set(attributeBusinessLogic, userValidations);
 
-		baseBusinessLogic2 = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("componentsUtils");
+		final Field baseBusinessLogic2 = attributeBusinessLogic.getClass().getSuperclass()
+			.getDeclaredField("componentsUtils");
 		baseBusinessLogic2.setAccessible(true);
 		baseBusinessLogic2.set(attributeBusinessLogic, componentsUtils);
 
-		baseBusinessLogic3 = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("janusGraphDao");
+		final Field baseBusinessLogic3 = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("janusGraphDao");
 		baseBusinessLogic3.setAccessible(true);
 		baseBusinessLogic3.set(attributeBusinessLogic, janusGraphDao);
 
@@ -103,85 +99,20 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		baseBusinessLogic.setAccessible(true);
 		baseBusinessLogic.set(attributeBusinessLogic, applicationDataTypeCache);
 
-		baseBusinessLogic = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("propertyOperation");
+		baseBusinessLogic = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("attributeOperation");
 		baseBusinessLogic.setAccessible(true);
-		baseBusinessLogic.set(attributeBusinessLogic, propertyOperation);
+		baseBusinessLogic.set(attributeBusinessLogic, attributeOperation);
 	}
 
 	@Test
-	public void testCreateAttribute() throws Exception {
-		AttributeBusinessLogic testSubject;
-		String resourceId = "";
-		PropertyDefinition newAttributeDef = null;
-		String userId = "";
-		Either<AttributeDataDefinition, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
-	}
-
-	@Test
-	public void testIsAttributeExist() throws Exception {
-		AttributeBusinessLogic testSubject;List<AttributeDataDefinition> attributes = null;
-		String resourceUid = "";
-		String propertyName = "";
-		boolean result;
-
-		// test 1
-		testSubject=createTestSubject();attributes = null;
-	}
-
-	@Test
-	public void testGetAttribute() throws Exception {
-		AttributeBusinessLogic testSubject;
-		String resourceId = "";
-		String attributeId = "";
-		String userId = "";
-		Either<PropertyDefinition, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
-	}
-
-	@Test
-	public void testUpdateAttribute() throws Exception {
-		AttributeBusinessLogic testSubject;
-		String resourceId = "";
-		String attributeId = "";
-		PropertyDefinition newAttDef = null;
-		String userId = "";
-		Either<PropertyDefinition, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
-	}
-
-	@Test
-	public void testDeleteAttribute() throws Exception {
-		AttributeBusinessLogic testSubject;
-		String resourceId = "";
-		String attributeId = "";
-		String userId = "";
-		Either<PropertyDefinition, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
-	}
-
-	@Test
-	public void createAttribute_lockfail() throws Exception {
+	public void createAttribute_lockfail() {
 		Either<AttributeDataDefinition, ResponseFormat> response;
-		AttributeDataDefinition prop= new AttributeDataDefinition();
-
-		response = attributeBusinessLogic.createAttribute("RES01", prop, "USR01");
-
-		Assert.assertEquals(true,response.isRight());
-
+		response = attributeBusinessLogic.createAttribute("RES01", new AttributeDataDefinition(), "USR01");
+		assertTrue(response.isRight());
 	}
 
 	@Test
-	public void createAttribute_Success() throws Exception {
-
+	public void createAttribute_Success() {
 		Component resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
@@ -192,32 +123,29 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 		when(igraphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
-		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
 		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 		AttributeDataDefinition attributeDataDefinition = new AttributeDataDefinition();
 		Either<AttributeDataDefinition, StorageOperationStatus> either = Either.left(attributeDataDefinition);
-		when(toscaOperationFacade.addAttributeOfResource(anyObject(), anyObject())).thenReturn(either);
+		when(toscaOperationFacade.addAttributeOfResource(any(), any())).thenReturn(either);
 
-		when(propertyOperation.isPropertyTypeValid(anyObject())).thenReturn(true);
+		when(attributeOperation.isAttributeTypeValid(any())).thenReturn(true);
 
 		Map<String, DataTypeDefinition> data = new HashMap<>();
 		data.put("ONE", new DataTypeDefinition());
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
 		when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
 
-		when(propertyOperation.isPropertyDefaultValueValid(anyObject(), anyObject())).thenReturn(true);
+		when(attributeOperation.isAttributeDefaultValueValid(any(), any())).thenReturn(true);
 		Either<AttributeDataDefinition, ResponseFormat> response;
 
 		response = attributeBusinessLogic.createAttribute("RES01", attrib, "USR01");
 
-		Assert.assertEquals(true, response.isLeft());
-
+		assertTrue(response.isLeft());
 	}
 
 	@Test
-	public void createAttribute_failtogettoscaelement() throws Exception {
-
+	public void createAttribute_failtogettoscaelement() throws NoSuchFieldException, IllegalAccessException {
 		Component resource= new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
@@ -231,19 +159,16 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		baseBusinessLogic = attributeBusinessLogic.getClass().getSuperclass().getDeclaredField("toscaOperationFacade");
 		baseBusinessLogic.setAccessible(true);
 		baseBusinessLogic.set(attributeBusinessLogic, toscaOperationFacade);
-		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
 		Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.GENERAL_ERROR);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		response = attributeBusinessLogic.createAttribute("RES01", prop, "USR01");
 
-		Assert.assertEquals(true,response.isRight());
-
+		assertTrue(response.isRight());
 	}
 
 	@Test
-	public void createAttribute_componentvalidationfails() throws Exception {
-
+	public void createAttribute_componentvalidationfails() {
 		Component resource= new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 		resource.setIsDeleted(false);
@@ -254,47 +179,42 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		Either<AttributeDataDefinition, ResponseFormat> response;
 		AttributeDataDefinition prop= new AttributeDataDefinition();
 
-		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
 		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		response = attributeBusinessLogic.createAttribute("RES01", prop, "USR01");
 
-		Assert.assertEquals(true,response.isRight());
-
+		assertTrue(response.isRight());
 	}
 
 	@Test
-	public void createAttribute_componentalreadyexist_fails() throws Exception {
-
+	public void createAttribute_componentalreadyexist_fails() {
 		Either<AttributeDataDefinition, ResponseFormat> response;
 		AttributeDefinition attrib = new AttributeDefinition();
 		attrib.setName("RES01");
-		attrib.setParentUniqueId("RES01");
+		attrib.setOwnerId("RES01");
 
 		List<AttributeDataDefinition> attributes = new ArrayList<>();
 		attributes.add(attrib);
 
-		Component resource = new Resource();
+		final Resource resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
-		((Resource) resource).setAttributes(attributes);
+		resource.setAttributes(attributes);
 
 		when(igraphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
-		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
 		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		response = attributeBusinessLogic.createAttribute("RES01", attrib, "USR01");
 
-		Assert.assertEquals(true, response.isRight());
-
+		assertTrue(response.isRight());
 	}
 
 	@Test
-	public void createAttribute_addresourcetostoragefails() throws Exception {
+	public void createAttribute_addresourcetostoragefails() {
 
 		Component resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -304,33 +224,32 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		IGraphLockOperation igraphLockOperation = Mockito.mock(IGraphLockOperation.class);
 		when(igraphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
-		//Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.INVALID_PROPERTY);
 		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 		AttributeDataDefinition attributeDataDefinition = new AttributeDataDefinition();
 		Either<AttributeDataDefinition, StorageOperationStatus> either = Either
 			.right(StorageOperationStatus.CONNECTION_FAILURE);
-		when(toscaOperationFacade.addAttributeOfResource(anyObject(), anyObject())).thenReturn(either);
+		when(toscaOperationFacade.addAttributeOfResource(any(),any())).thenReturn(either);
 
-		when(propertyOperation.isPropertyTypeValid(anyObject())).thenReturn(true);
+		when(attributeOperation.isAttributeTypeValid(any())).thenReturn(true);
 
 		Map<String, DataTypeDefinition> data = new HashMap<>();
 		data.put("ONE", new DataTypeDefinition());
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
 		when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
 
-		when(propertyOperation.isPropertyDefaultValueValid(anyObject(), anyObject())).thenReturn(true);
+		when(attributeOperation.isAttributeDefaultValueValid(any(),any())).thenReturn(true);
 		Either<AttributeDataDefinition, ResponseFormat> response;
 
 		AttributeDataDefinition attrib = new AttributeDefinition();
 		response = attributeBusinessLogic.createAttribute("RES01", attrib, "USR01");
 
-		Assert.assertEquals(true, response.isRight());
+		assertTrue( response.isRight());
 
 	}
 
 	@Test
-	public void testgetAttribute_ATTRIBUTE_NOT_FOUND() throws Exception {
+	public void testgetAttribute_ATTRIBUTE_NOT_FOUND() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		Component resource= new Resource();
@@ -341,88 +260,79 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		result=attributeBusinessLogic.getAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isRight());
+		assertTrue(result.isRight());
 	}
 
 	@Test
-	public void testgetAttribute_success() throws Exception {
+	public void testgetAttribute_success() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
 
-		Component resource = new Resource();
+		final Resource resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
 
 		AttributeDefinition attrib = new AttributeDefinition();
 		attrib.setUniqueId("ATTR01");
-		attrib.setParentUniqueId("RES01");
+		attrib.setOwnerId("RES01");
 
 		List<AttributeDataDefinition> attr = new ArrayList<>();
 		attr.add(attrib);
 
-		((Resource) resource).setAttributes(attr);
+		resource.setAttributes(attr);
 		Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		result = attributeBusinessLogic.getAttribute("RES01", "ATTR01", "USR01");
-		Assert.assertEquals(true, result.isLeft());
+		assertTrue( result.isLeft());
 	}
 
 	@Test
-	public void testgetAttribute_RESOURCE_NOT_FOUND() throws Exception {
+	public void testgetAttribute_RESOURCE_NOT_FOUND() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		result=attributeBusinessLogic.getAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isRight());
+		assertTrue(result.isRight());
 	}
 
 	@Test
-	public void testdeleteAttribute_FAILED_TO_LOCK_COMPONENT() throws Exception {
+	public void testdeleteAttribute_FAILED_TO_LOCK_COMPONENT() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		result=attributeBusinessLogic.deleteAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isRight());
+		assertTrue(result.isRight());
 	}
 
 	@Test
-	public void testdeleteAttribute_get_RESOURCE_from_DB_failed() throws Exception {
+	public void testdeleteAttribute_get_RESOURCE_from_DB_failed() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
 
 		Either<Component, StorageOperationStatus> toscastatus=Either.right(StorageOperationStatus.CONNECTION_FAILURE);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		result=attributeBusinessLogic.deleteAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isRight());
+		assertTrue(result.isRight());
 	}
 
 	@Test
-	public void testdeleteAttribute_get_RESOURCE_verification_failed() throws Exception {
+	public void testdeleteAttribute_get_RESOURCE_verification_failed() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
-
-
 		Component resource= new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(true);
 		resource.setLastUpdaterUserId("USR01");
-
-
 		when(igraphLockOperation.lockComponent(any(),any())).thenReturn(StorageOperationStatus.OK);
-
-
-
-
 		Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
-
 		result=attributeBusinessLogic.deleteAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isRight());
+		assertTrue(result.isRight());
 	}
 
 	@Test
-	public void testdeleteAttribute_nonexistingresource() throws Exception {
+	public void testdeleteAttribute_nonexistingresource() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
 
 
@@ -437,15 +347,13 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 		when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
 		result=attributeBusinessLogic.deleteAttribute("RES01","ATTR01", "USR01");
-		Assert.assertEquals(true,result.isRight());
+		assertTrue(result.isRight());
 	}
 
 	@Test
-	public void testdeleteAttribute_success() throws Exception {
+	public void testdeleteAttribute_success() {
 		Either<AttributeDataDefinition, ResponseFormat> result;
-
-
-		Component resource= new Resource();
+		final Resource resource = new Resource();
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		resource.setIsDeleted(false);
 		resource.setLastUpdaterUserId("USR01");
@@ -458,13 +366,13 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{
 
 		AttributeDefinition attrib = new AttributeDefinition();
 		attrib.setUniqueId("ATTR01");
-		attrib.setParentUniqueId("RES01");
+		attrib.setOwnerId("RES01");
 		List<AttributeDataDefinition> attributes = new ArrayList<>();
 		attributes.add(attrib);
-		((Resource) resource).setAttributes(attributes);
+		resource.setAttributes(attributes);
 
 		result = attributeBusinessLogic.deleteAttribute("RES01", "ATTR01", "USR01");
-		Assert.assertEquals(true, result.isLeft());
+		assertTrue( result.isLeft());
 	}
 
 }

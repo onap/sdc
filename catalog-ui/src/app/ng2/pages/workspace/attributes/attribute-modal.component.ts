@@ -15,7 +15,7 @@ import { AttributeOptions } from './attributes-options';
 })
 export class AttributeModalComponent implements OnInit {
 
-    @ViewChild('defaultValue') validatedInput: InputComponent;
+    @ViewChild('_default') validatedInput: InputComponent;
 
     public readonly types = AttributeOptions.types;                         // integer, string, boolean etc.
 
@@ -44,13 +44,9 @@ export class AttributeModalComponent implements OnInit {
         this.revalidateDefaultValue();
     }
 
-    onHiddenCheckboxClicked(event: boolean) {
-        this.attributeToEdit.hidden = event;
-    }
-
     onTypeSelected(selectedElement: IDropDownOption) {
         if (this.attributeToEdit.type !== selectedElement.value && selectedElement.value === 'boolean') {
-            this.attributeToEdit.defaultValue = ''; // Clean old value in case we choose change type to boolean
+            this.attributeToEdit._default = ''; // Clean old value in case we choose change type to boolean
         }
         this.attributeToEdit.type = selectedElement.value;
         this.revalidateDefaultValue();
@@ -58,7 +54,7 @@ export class AttributeModalComponent implements OnInit {
 
     onBooleanDefaultValueSelected(selectedElement: IDropDownOption) {
         if (this.attributeToEdit.type === 'boolean') {
-            this.attributeToEdit.defaultValue = selectedElement.value;
+            this.attributeToEdit._default = selectedElement.value;
         }
     }
 
@@ -92,8 +88,8 @@ export class AttributeModalComponent implements OnInit {
     }
 
     public isMapUnique = () => {
-        if (this.attributeToEdit && this.attributeToEdit.type === 'map' && this.attributeToEdit.defaultValue) {
-            return ValidationUtils.validateUniqueKeys(this.attributeToEdit.defaultValue);
+        if (this.attributeToEdit && this.attributeToEdit.type === 'map' && this.attributeToEdit._default) {
+            return ValidationUtils.validateUniqueKeys(this.attributeToEdit._default);
         }
         return true;
     }
@@ -102,7 +98,7 @@ export class AttributeModalComponent implements OnInit {
         this.setDefaultValuePattern(this.attributeToEdit.type);
         setTimeout(() => {
             if (this.validatedInput) {
-                this.validatedInput.onKeyPress(this.attributeToEdit.defaultValue);
+                this.validatedInput.onKeyPress(this.attributeToEdit._default);
             } }, 250);
     }
 

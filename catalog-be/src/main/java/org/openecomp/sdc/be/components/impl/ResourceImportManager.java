@@ -28,10 +28,22 @@ import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementO
 import static org.openecomp.sdc.be.utils.TypeUtils.setField;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import javax.servlet.ServletContext;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -62,9 +74,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -95,20 +105,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.Yaml;
-
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Component("resourceImportManager")
 public class ResourceImportManager {
@@ -359,7 +355,6 @@ public class ResourceImportManager {
             if (StringUtils.isEmpty(resource.getToscaResourceName())) {
                 setToscaResourceName(toscaJson, resource);
             }
-            setAttributes(toscaJson, resource);
             setCapabilities(toscaJson, resource, parentResource);
             setProperties(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
@@ -678,28 +673,6 @@ public class ResourceImportManager {
                 .right()
                 .value(), JsonPresentationFields.PROPERTY));
         }
-    }
-
-    private ResultStatusEnum setAttributes(Map<String, Object> toscaJson, Resource resource) {
-        ResultStatusEnum result = ResultStatusEnum.OK;
-        Either<Map<String, AttributeDataDefinition>, ResultStatusEnum> attributes = ImportUtils
-            .getAttributes(toscaJson);
-        if (attributes.isLeft()) {
-            List<AttributeDataDefinition> attributeList = new ArrayList<>();
-            Map<String, AttributeDataDefinition> value = attributes.left().value();
-            if (value != null) {
-                for (Entry<String, AttributeDataDefinition> entry : value.entrySet()) {
-                    String name = entry.getKey();
-                    AttributeDataDefinition attributeDef = entry.getValue();
-                    attributeDef.setName(name);
-                    attributeList.add(attributeDef);
-                }
-            }
-            resource.setAttributes(attributeList);
-        } else {
-            result = attributes.right().value();
-        }
-        return result;
     }
 
     private Resource setDerivedFrom(Map<String, Object> toscaJson, Resource resource) {
@@ -1024,16 +997,17 @@ public class ResourceImportManager {
 
                 final Map<String, Object> attributeMap = (Map<String, Object>) value;
 
-                final AttributeDefinition attributeDefinition = new AttributeDefinition();
+                final AttributeDataDefinition attributeDefinition = new AttributeDataDefinition();
                 attributeDefinition.setName(key);
 
                 setField(attributeMap, ToscaTagNamesEnum.DESCRIPTION, attributeDefinition::setDescription);
                 setField(attributeMap, ToscaTagNamesEnum.TYPE, attributeDefinition::setType);
+                setField(attributeMap, ToscaTagNamesEnum.DEFAULT_VALUE, attributeDefinition::set_default);
                 setField(attributeMap, ToscaTagNamesEnum.STATUS, attributeDefinition::setStatus);
-                setField(attributeMap, ToscaTagNamesEnum.ENTRY_SCHEMA, attributeDefinition::setEntry_schema);
+                setField(attributeMap, ToscaTagNamesEnum.ENTRY_SCHEMA, attributeDefinition::setSchema);
                 attributeDataDefinitionList.add(attributeDefinition);
             } else {
-                final AttributeDefinition attributeDefinition = new AttributeDefinition();
+                final AttributeDataDefinition attributeDefinition = new AttributeDataDefinition();
                 attributeDefinition.setName(key);
                 attributeDataDefinitionList.add(attributeDefinition);
             }

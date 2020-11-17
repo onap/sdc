@@ -108,6 +108,7 @@ public enum JsonPresentationFields {
     //property
     DEFINITION("definition", null),
     DEFAULT_VALUE("defaultValue", null),
+    DEFAULT("default", null),
     REQUIRED("required", null),
     PASSWORD("password", null),
     CONSTRAINTS("constraints", null),

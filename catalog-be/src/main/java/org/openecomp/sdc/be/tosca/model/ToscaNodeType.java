@@ -25,7 +25,6 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 
 @Getter
 @Setter
@@ -41,6 +40,6 @@ public class ToscaNodeType {
     private Map<String, ToscaCapability> capabilities;
 
     private List<Map<String, ToscaRequirement>> requirements;
-    private Map<String, AttributeDataDefinition> attributes;
+    private Map<String, Object> attributes;
 
 }

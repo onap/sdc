@@ -56,28 +56,18 @@ describe('attributes modal component', () => {
         })
     );
 
-    it('test that when hidden is clicked, hidden attribute is set', async () => {
-        fixture.componentInstance.attributeToEdit = new AttributeModel();
-        const hidden = fixture.componentInstance.attributeToEdit.hidden;
-        fixture.componentInstance.ngOnInit();
-
-        expect(hidden).toBe(false);
-        fixture.componentInstance.onHiddenCheckboxClicked(true);
-        expect(fixture.componentInstance.attributeToEdit.hidden).toBe(true);
-    });
-
     it('test that when type is set to boolean default value is cleared', async () => {
         const component = fixture.componentInstance;
         component.attributeToEdit = new AttributeModel();
         component.ngOnInit();
 
         component.onTypeSelected({ value : 'string', label : 'string'});
-        component.attributeToEdit.defaultValue = 'some_value';
+        component.attributeToEdit._default = 'some_value';
         component.onTypeSelected({ value : 'boolean', label : 'boolean'});
-        expect(component.attributeToEdit.defaultValue).toBe('');
+        expect(component.attributeToEdit._default).toBe('');
 
         component.onBooleanDefaultValueSelected({ value : 'true', label : 'true'});
-        expect(component.attributeToEdit.defaultValue).toBe('true');
+        expect(component.attributeToEdit._default).toBe('true');
     });
 
     it('test that when certain type is selected, the correct regex pattern is chosen', async () => {
@@ -120,9 +110,9 @@ describe('attributes modal component', () => {
         expect(component.isMapUnique()).toBe(true); // map is not selected so return true by default
         component.onTypeSelected({ value : 'map', label : 'map'});
         component.onEntrySchemaTypeSelected({ value : 'boolean', label : 'boolean' });
-        component.attributeToEdit.defaultValue = '"1":true,"2":false';
+        component.attributeToEdit._default = '"1":true,"2":false';
         expect(component.isMapUnique()).toBe(true);
-        component.attributeToEdit.defaultValue = '"1":true,"1":false';
+        component.attributeToEdit._default = '"1":true,"1":false';
         expect(component.isMapUnique()).toBe(false);
     });
 });

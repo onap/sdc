@@ -45,7 +45,9 @@ public class TypeUtils {
     public enum ToscaTagNamesEnum {
         DERIVED_FROM("derived_from"), IS_PASSWORD("is_password"),
         // Properties
-        PROPERTIES("properties"), TYPE("type"), STATUS("status"), ENTRY_SCHEMA("entry_schema"), REQUIRED("required"), DESCRIPTION("description"), DEFAULT_VALUE("default"), VALUE("value"), CONSTRAINTS("constraints"),
+        PROPERTIES("properties"), TYPE("type"), STATUS("status"),
+        ENTRY_SCHEMA("entry_schema"), REQUIRED("required"), DESCRIPTION("description"),
+        DEFAULT_VALUE("default"), VALUE("value"), CONSTRAINTS("constraints"),
         // Group Types
         MEMBERS("members"), METADATA("metadata"),
         // Policy Types
