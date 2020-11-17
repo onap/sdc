@@ -1,6 +1,7 @@
 from docs_conf.conf import *
 
 branch = 'latest'
+doc_onap_url = 'https://docs.onap.org'
 master_doc = 'index'
 
 linkcheck_ignore = [
@@ -8,6 +9,8 @@ linkcheck_ignore = [
 ]
 
 intersphinx_mapping = {}
+
+intersphinx_mapping['onap-doc'] = ('{}/en/%s'.format(doc_onap_url) % branch, None)
 
 html_last_updated_fmt = '%d-%b-%y %H:%M'
 
