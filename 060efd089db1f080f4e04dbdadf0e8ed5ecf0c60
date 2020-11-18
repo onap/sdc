@@ -1,0 +1,1775 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85efff09_5a24f34d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 152,
+        "startChar": 8,
+        "endLine": 152,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd5de552_d53845c9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 174,
+        "startChar": 8,
+        "endLine": 174,
+        "endChar": 58
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9343a18_f821f3ef",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 185,
+        "startChar": 8,
+        "endLine": 185,
+        "endChar": 61
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9d2ca0e_3a4becf3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 195,
+        "startChar": 8,
+        "endLine": 195,
+        "endChar": 50
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "416022d5_7468439a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 225,
+        "startChar": 8,
+        "endLine": 227,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f3b7b2f_21a3f620",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 238,
+        "startChar": 8,
+        "endLine": 238,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11b1b320_2aa6d026",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 261,
+        "startChar": 8,
+        "endLine": 261,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a165f130_b6de29df",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 402,
+        "startChar": 7,
+        "endLine": 402,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7bf277b_580efd4a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 428,
+        "startChar": 8,
+        "endLine": 431,
+        "endChar": 5
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44ffc474_512d344a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 450,
+        "startChar": 8,
+        "endLine": 450,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f5bfe25_109436b2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 471,
+        "startChar": 8,
+        "endLine": 473,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14081d12_2f72dcf4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 495,
+        "startChar": 8,
+        "endLine": 495,
+        "endChar": 62
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fb10990_52876960",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 567,
+        "startChar": 8,
+        "endLine": 569,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5af2527e_b094f00b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 614,
+        "startChar": 8,
+        "endLine": 614,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e40abee_a4e59c10",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 692,
+        "startChar": 8,
+        "endLine": 692,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59183f8b_916ea3a4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 708,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 708,
+        "startChar": 8,
+        "endLine": 708,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1959ffb5_41e12889",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 721,
+        "startChar": 8,
+        "endLine": 721,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbea7c0c_fb3f3b61",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 745,
+        "startChar": 8,
+        "endLine": 745,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a29fbe4_3a9d2f5e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 770,
+        "startChar": 8,
+        "endLine": 770,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29fc0682_dbef427f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 798,
+        "startChar": 8,
+        "endLine": 798,
+        "endChar": 50
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4544be8c_2a3129bd",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 841,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 841,
+        "startChar": 8,
+        "endLine": 841,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a09c5592_e61fdaba",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 853,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 853,
+        "startChar": 9,
+        "endLine": 853,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "847ec728_fcec0404",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 870,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 870,
+        "startChar": 8,
+        "endLine": 870,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd4ac02c_c2c37a65",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 906,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 906,
+        "startChar": 8,
+        "endLine": 906,
+        "endChar": 50
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfcbe1ed_28b62436",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 922,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 922,
+        "startChar": 8,
+        "endLine": 922,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1585b340_3e01f66c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 937,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 937,
+        "startChar": 8,
+        "endLine": 937,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fb2a2ee_81fee4f0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 966,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 966,
+        "startChar": 8,
+        "endLine": 966,
+        "endChar": 61
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "46dfd069_5c71dffd",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 987,
+        "startChar": 8,
+        "endLine": 987,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f22e58c4_9925e50e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1005,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1005,
+        "startChar": 8,
+        "endLine": 1005,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0393c25_6f41e48b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1019,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1019,
+        "startChar": 8,
+        "endLine": 1019,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57bb3d9f_f63d3bc5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1030,
+        "startChar": 8,
+        "endLine": 1030,
+        "endChar": 50
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15f07e36_eb86a0bc",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1053,
+        "startChar": 8,
+        "endLine": 1053,
+        "endChar": 61
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0891506f_752a02a3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1079,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1079,
+        "startChar": 8,
+        "endLine": 1079,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26b9681a_d8c6658e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1107,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1107,
+        "startChar": 8,
+        "endLine": 1107,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e206a756_9cc45ce3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1175,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1175,
+        "startChar": 8,
+        "endLine": 1175,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d76700a0_423b554f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1194,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1192,
+        "startChar": 8,
+        "endLine": 1194,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40661260_1231aaca",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1208,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1208,
+        "startChar": 8,
+        "endLine": 1208,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec9d0e24_f5c626b3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1228,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1226,
+        "startChar": 8,
+        "endLine": 1228,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b354d3a2_44a11b48",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1292,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1292,
+        "startChar": 8,
+        "endLine": 1292,
+        "endChar": 61
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a4614d2_9fb0d76d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1311,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1311,
+        "startChar": 8,
+        "endLine": 1311,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ce85897_77c6a67c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1386,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1386,
+        "startChar": 8,
+        "endLine": 1386,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2d3423b_0402a3e1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1407,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1405,
+        "startChar": 8,
+        "endLine": 1407,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "083b7fb1_ef5b8a8c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1433,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1433,
+        "startChar": 8,
+        "endLine": 1433,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2334d2af_23339901",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1449,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1449,
+        "startChar": 7,
+        "endLine": 1449,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa4dd7d3_bc9fa77c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1465,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1465,
+        "startChar": 8,
+        "endLine": 1465,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f70de5e6_7614b709",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1483,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1483,
+        "startChar": 8,
+        "endLine": 1483,
+        "endChar": 50
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "130c6f1f_a15d3b87",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1532,
+        "startChar": 7,
+        "endLine": 1532,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9e7e07c_9e72a223",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1544,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1544,
+        "startChar": 7,
+        "endLine": 1544,
+        "endChar": 50
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b440e14_7cdec7b7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1557,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1557,
+        "startChar": 8,
+        "endLine": 1557,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7ee7cbd_db3147da",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1576,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1576,
+        "startChar": 8,
+        "endLine": 1576,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f6bdb74_0f709fc2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1594,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1594,
+        "startChar": 8,
+        "endLine": 1594,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27c3e1ec_f303da2c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1613,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1613,
+        "startChar": 8,
+        "endLine": 1613,
+        "endChar": 48
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3abfb387_1b97ab5b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1634,
+        "startChar": 8,
+        "endLine": 1634,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cc1404d_ce4f7bd6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1655,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1655,
+        "startChar": 8,
+        "endLine": 1655,
+        "endChar": 62
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "776999a3_37d03f86",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1680,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1680,
+        "startChar": 8,
+        "endLine": 1680,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bd49c94_dcb611dc",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1702,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1702,
+        "startChar": 8,
+        "endLine": 1702,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42294875_c84d9916",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1715,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1715,
+        "startChar": 7,
+        "endLine": 1715,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "706c6a5e_8f752ca0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1775,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1775,
+        "startChar": 8,
+        "endLine": 1775,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d3146da_0caf1da8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1787,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1787,
+        "startChar": 8,
+        "endLine": 1787,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ef2f2ee_203bc01a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1799,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1799,
+        "startChar": 8,
+        "endLine": 1799,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efa6d919_056408c5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1810,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1810,
+        "startChar": 8,
+        "endLine": 1810,
+        "endChar": 59
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d2f8f0a_cfdbaddf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1819,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1819,
+        "startChar": 8,
+        "endLine": 1819,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27c47903_64b5f9b4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1824,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "add missing assert",
+      "range": {
+        "startLine": 1824,
+        "startChar": 5,
+        "endLine": 1824,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0173427_f86b6201",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1843,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1843,
+        "startChar": 8,
+        "endLine": 1843,
+        "endChar": 49
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5259b364_a573e348",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1873,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1873,
+        "startChar": 8,
+        "endLine": 1873,
+        "endChar": 52
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bbe1f599_63f34958",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1903,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "should this TC pass for Service creation ? (\u0027positive\u0027 testing)\nor\nshould it fail bcz of some information is missing during Service creation? (\u0027negative\u0027 testing)\n\nether way, you should not expect \u0027any\u0027 Exception, but some concrete, and definitely NOT NullPointerException",
+      "range": {
+        "startLine": 1903,
+        "startChar": 8,
+        "endLine": 1903,
+        "endChar": 60
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6528f52_4bcfdc57",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2134,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "avoid using printStackTrace, log properly",
+      "range": {
+        "startLine": 2134,
+        "startChar": 12,
+        "endLine": 2134,
+        "endChar": 32
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "522bbd15_0d870c28",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2174,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "avoid using printStackTrace, log properly",
+      "range": {
+        "startLine": 2172,
+        "startChar": 10,
+        "endLine": 2174,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e776fc38_29fc8761",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBussinessLogicBaseTestSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 663,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "move this to file and read it from file, to improve readability",
+      "range": {
+        "startLine": 653,
+        "startChar": 16,
+        "endLine": 663,
+        "endChar": 30
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "169de678_0b420db2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBussinessLogicBaseTestSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "move this to file and read it from file, to improve readability",
+      "range": {
+        "startLine": 696,
+        "startChar": 8,
+        "endLine": 711,
+        "endChar": 38
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e639faae_91d26905",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBussinessLogicBaseTestSetup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 844,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "move this to file and read it from file, to improve readability",
+      "range": {
+        "startLine": 830,
+        "startChar": 15,
+        "endLine": 844,
+        "endChar": 37
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aba26575_44cbea21",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "add missing assert",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 84
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bd78bec_d852d85a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2299,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "avoid using printStackTrace, log properly instead",
+      "range": {
+        "startLine": 2297,
+        "startChar": 8,
+        "endLine": 2299,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c91e913_901b4d3f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/CreateServiceFromYamlParameterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 22
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "094ac0a3_0df06915",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 22
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5c0d8fe_aee424f1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "avoid using printStackTrace, log properly instead",
+      "range": {
+        "startLine": 277,
+        "startChar": 8,
+        "endLine": 279,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77f9067b_878c03b6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-18T10:01:03Z",
+      "side": 1,
+      "message": "avoid using printStackTrace, log properly instead",
+      "range": {
+        "startLine": 321,
+        "startChar": 8,
+        "endLine": 323,
+        "endChar": 9
+      },
+      "revId": "060efd089db1f080f4e04dbdadf0e8ed5ecf0c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
