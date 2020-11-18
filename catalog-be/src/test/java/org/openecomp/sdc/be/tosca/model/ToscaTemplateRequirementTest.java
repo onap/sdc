@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,91 +20,60 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.exception.InvalidArgumentException;
 
+class ToscaTemplateRequirementTest {
 
-public class ToscaTemplateRequirementTest {
+    @Test
+    void testSetRelationship() {
+        final ToscaTemplateRequirement toscaTemplateRequirement = new ToscaTemplateRequirement();
+        toscaTemplateRequirement.setRelationship(null);
+        assertNull(toscaTemplateRequirement.getRelationship());
 
-	private ToscaTemplateRequirement createTestSubject() {
-		return new ToscaTemplateRequirement();
-	}
+        final String relationshipType = "aType";
+        toscaTemplateRequirement.setRelationship(relationshipType);
+        Object actualRelationship = toscaTemplateRequirement.getRelationship();
+        assertEquals(relationshipType, actualRelationship);
 
-	
-	@Test
-	public void testGetCapability() throws Exception {
-		ToscaTemplateRequirement testSubject;
-		String result;
+        final ToscaRelationship toscaRelationship = new ToscaRelationship();
+        toscaRelationship.setType(relationshipType);
+        toscaTemplateRequirement.setRelationship(toscaRelationship);
+        actualRelationship = toscaTemplateRequirement.getRelationship();
+        assertEquals(toscaRelationship, actualRelationship);
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCapability();
-	}
+        assertThrows(InvalidArgumentException.class, () -> toscaTemplateRequirement.setRelationship(1));
+    }
 
-	
-	@Test
-	public void testSetCapability() throws Exception {
-		ToscaTemplateRequirement testSubject;
-		String capability = "";
+    @Test
+    void testIsRelationshipComplexNotation() {
+        final ToscaTemplateRequirement toscaTemplateRequirement = new ToscaTemplateRequirement();
+        assertFalse(toscaTemplateRequirement.isRelationshipComplexNotation());
+        toscaTemplateRequirement.setRelationship("");
+        assertFalse(toscaTemplateRequirement.isRelationshipComplexNotation());
+        toscaTemplateRequirement.setRelationship(new ToscaRelationship());
+        assertTrue(toscaTemplateRequirement.isRelationshipComplexNotation());
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCapability(capability);
-	}
+    @Test
+    void testGetRelationshipAsComplexType() {
+        final ToscaTemplateRequirement toscaTemplateRequirement = new ToscaTemplateRequirement();
+        ToscaRelationship actualRelationship = toscaTemplateRequirement.getRelationshipAsComplexType();
+        assertNull(actualRelationship);
+        final String relationshipType = "aType";
+        toscaTemplateRequirement.setRelationship(relationshipType);
+        actualRelationship = toscaTemplateRequirement.getRelationshipAsComplexType();
+        assertEquals(relationshipType, actualRelationship.getType());
 
-	
-	@Test
-	public void testGetNode() throws Exception {
-		ToscaTemplateRequirement testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getNode();
-	}
-
-	
-	@Test
-	public void testSetNode() throws Exception {
-		ToscaTemplateRequirement testSubject;
-		String node = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setNode(node);
-	}
-
-	
-	@Test
-	public void testGetRelationship() throws Exception {
-		ToscaTemplateRequirement testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRelationship();
-	}
-
-	
-	@Test
-	public void testSetRelationship() throws Exception {
-		ToscaTemplateRequirement testSubject;
-		String relationship = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRelationship(relationship);
-	}
-
-	
-	@Test
-	public void testToMap() throws Exception {
-		ToscaTemplateRequirement testSubject;
-		Map<String, Object> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toMap();
-	}
+        final ToscaRelationship expectedRelationship = new ToscaRelationship();
+        toscaTemplateRequirement.setRelationship(expectedRelationship);
+        actualRelationship = toscaTemplateRequirement.getRelationshipAsComplexType();
+        assertEquals(expectedRelationship, actualRelationship);
+    }
 }

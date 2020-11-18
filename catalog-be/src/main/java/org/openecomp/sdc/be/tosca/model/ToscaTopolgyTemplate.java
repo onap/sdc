@@ -22,25 +22,22 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 public class ToscaTopolgyTemplate {
+
+    @Setter
     private Map<String, ToscaProperty> inputs;
+    @Setter
     private Map<String, ToscaNodeTemplate> node_templates;
     private Map<String, ToscaGroupTemplate> groups;
     private Map<String, ToscaPolicyTemplate> policies;
+    @Setter
     private SubstitutionMapping substitution_mappings;
-
-    public Map<String, ToscaNodeTemplate> getNode_templates() {
-        return node_templates;
-    }
-
-    public void setNode_templates(Map<String, ToscaNodeTemplate> node_templates) {
-        this.node_templates = node_templates;
-    }
-
-    public Map<String, ToscaGroupTemplate> getGroups() {
-        return groups;
-    }
+    @Setter
+    private Map<String, ToscaRelationshipTemplate> relationshipTemplates;
 
     public void addGroups(Map<String, ToscaGroupTemplate> groups) {
         if ( this.groups == null ){
@@ -49,30 +46,10 @@ public class ToscaTopolgyTemplate {
         this.groups.putAll(groups);
     }
 
-    public SubstitutionMapping getSubstitution_mappings() {
-        return substitution_mappings;
-    }
-
-    public void setSubstitution_mappings(SubstitutionMapping substitution_mapping) {
-        this.substitution_mappings = substitution_mapping;
-    }
-
-    public Map<String, ToscaProperty> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(Map<String, ToscaProperty> inputs) {
-        this.inputs = inputs;
-    }
-
 	public void addPolicies(Map<String, ToscaPolicyTemplate> policiesMap) {
 		if ( this.policies == null ){
             this.policies = new HashMap<>();
         }
         this.policies.putAll(policiesMap);		
-	}
-
-	public Map<String, ToscaPolicyTemplate> getPolicies() {
-		return policies;
 	}
 }

@@ -61,6 +61,7 @@ import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
@@ -71,6 +72,8 @@ import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
@@ -90,6 +93,7 @@ import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
@@ -1366,11 +1370,12 @@ public class NodeTemplateOperation extends BaseOperation {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
             }
 
-            for (CapabilityRequirementRelationship immutablePair : relationships) {
-                String requirement = immutablePair.getRelation().getRequirement();
+            for (final CapabilityRequirementRelationship relationship : relationships) {
+                final String requirement = relationship.getRelation().getRequirement();
 
-                Either<Map<JsonPresentationFields, T>, StorageOperationStatus> associateRes = connectInstancesInContainer(fromNode, toNode, immutablePair.getRelation(), relation.isOriginUI(), calculatedCapabilty, calculatedRequirement,
+                Either<Map<JsonPresentationFields, T>, StorageOperationStatus> associateRes = connectInstancesInContainer(fromNode, toNode, relationship.getRelation(), relation.isOriginUI(), calculatedCapabilty, calculatedRequirement,
                         fullFilledCapabilty, fullfilledRequirement, compositionDataDefinition, containerV.getUniqueId());
+
 
                 if (associateRes.isRight()) {
                     status = associateRes.right().value();
@@ -1381,21 +1386,25 @@ public class NodeTemplateOperation extends BaseOperation {
                     return Either.right(status);
                 }
 
-                RelationshipInstDataDefinition relationshipInstData = (RelationshipInstDataDefinition) associateRes.left().value().get(JsonPresentationFields.RELATIONSHIP);
+                final Map<JsonPresentationFields, T> relationshipFieldsMap = associateRes.left().value();
+                final RelationshipInstDataDefinition relationshipInstData =
+                    (RelationshipInstDataDefinition) relationshipFieldsMap.get(JsonPresentationFields.RELATIONSHIP);
+                createRelationshipInterfaces(relationship.getOperations()).ifPresent(relationshipInstData::setInterfaces);
                 RelationshipImpl relationshipImplResult = new RelationshipImpl();
                 relationshipImplResult.setType(relationshipInstData.getType());
                 RelationshipInfo requirementAndRelationshipPair = new RelationshipInfo(requirement, relationshipImplResult);
-                requirementAndRelationshipPair.setCapability(immutablePair.getRelation().getCapability());
-                requirementAndRelationshipPair.setRequirement(immutablePair.getRelation().getRequirement());
+                requirementAndRelationshipPair.setCapability(relationship.getRelation().getCapability());
+                requirementAndRelationshipPair.setRequirement(relationship.getRelation().getRequirement());
                 requirementAndRelationshipPair.setCapabilityOwnerId(relationshipInstData.getCapabilityOwnerId());
                 requirementAndRelationshipPair.setRequirementOwnerId(relationshipInstData.getRequirementOwnerId());
-                requirementAndRelationshipPair.setCapabilityUid(immutablePair.getRelation().getCapabilityUid());
-                requirementAndRelationshipPair.setRequirementUid(immutablePair.getRelation().getRequirementUid());
+                requirementAndRelationshipPair.setCapabilityUid(relationship.getRelation().getCapabilityUid());
+                requirementAndRelationshipPair.setRequirementUid(relationship.getRelation().getRequirementUid());
                 requirementAndRelationshipPair.setId(relationshipInstData.getUniqueId());
                 CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
                 capReqRel.setRelation(requirementAndRelationshipPair);
-                capReqRel.setCapability((CapabilityDataDefinition) associateRes.left().value().get(JsonPresentationFields.CAPABILITY));
-                capReqRel.setRequirement((RequirementDataDefinition) associateRes.left().value().get(JsonPresentationFields.REQUIREMENT));
+                capReqRel.setCapability((CapabilityDataDefinition) relationshipFieldsMap.get(JsonPresentationFields.CAPABILITY));
+                capReqRel.setRequirement((RequirementDataDefinition) relationshipFieldsMap.get(JsonPresentationFields.REQUIREMENT));
+                capReqRel.setOperations(relationship.getOperations());
                 relationshipsResult.add(capReqRel);
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "update customization UUID for from CI {} and to CI {}", relation.getFromNode(), relation.getToNode());
                 status = updateCustomizationUUID(relation.getFromNode(), compositionDataDefinition);
@@ -1418,6 +1427,54 @@ public class NodeTemplateOperation extends BaseOperation {
             return Either.right(status);
         }
         return Either.left(relationsList);
+    }
+
+    private Optional<ListDataDefinition<InterfaceDataDefinition>> createRelationshipInterfaces(
+        final List<OperationUi> operationList) {
+
+        if (CollectionUtils.isEmpty(operationList)) {
+            return Optional.empty();
+        }
+        final ListDataDefinition<InterfaceDataDefinition> interfaceList = new ListDataDefinition<>();
+        final Map<String, List<OperationUi>> operationByInterfaceType = operationList.stream()
+            .collect(Collectors.groupingBy(OperationUi::getInterfaceType));
+        for (final Entry<String, List<OperationUi>> interfaceEntry : operationByInterfaceType.entrySet()) {
+            interfaceList.add(createInterface(interfaceEntry.getKey(), interfaceEntry.getValue()));
+        }
+        return Optional.of(interfaceList);
+    }
+
+    private InterfaceDataDefinition createInterface(final String interfaceType, final List<OperationUi> operationList) {
+        final InterfaceDataDefinition interfaceDataDefinition = new InterfaceDataDefinition();
+        interfaceDataDefinition.setType(interfaceType);
+        if (CollectionUtils.isNotEmpty(operationList)) {
+            final Map<String, OperationDataDefinition> operationMap =
+                operationList.stream().collect(Collectors.toMap(OperationUi::getOperationType, this::createOperation));
+            interfaceDataDefinition.setOperations(operationMap);
+        }
+        return interfaceDataDefinition;
+    }
+
+    private OperationDataDefinition createOperation(final OperationUi operation) {
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setName(operation.getOperationType());
+        operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+        implementation.setArtifactName(operation.getImplementation());
+        operationDataDefinition.setImplementation(implementation);
+        if (CollectionUtils.isNotEmpty(operation.getInputs())) {
+            final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
+            operation.getInputs().forEach(input -> {
+                final OperationInputDefinition operationInputDefinition = new OperationInputDefinition();
+                operationInputDefinition.setLabel(input.getName());
+                operationInputDefinition.setType(input.getType());
+                operationInputDefinition.setValue(input.getValue());
+                inputs.add(operationInputDefinition);
+            });
+            operationDataDefinition.setInputs(inputs);
+        }
+
+        return operationDataDefinition;
     }
 
     private StorageOperationStatus updateAllAndCalculatedCapReqOnGraph(String componentId, GraphVertex containerV, Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult,

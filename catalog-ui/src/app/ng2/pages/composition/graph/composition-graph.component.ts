@@ -65,6 +65,7 @@ import {
 import { CompositionGraphLinkUtils } from './utils/composition-graph-links-utils';
 import { CompositionGraphPaletteUtils } from './utils/composition-graph-palette-utils';
 import { ServicePathGraphUtils } from './utils/composition-graph-service-path-utils';
+import { RelationshipOperationsStepComponent } from "app/ng2/pages/composition/graph/connection-wizard/relationship-operations-step/relationship-operations-step.component";
 
 declare const window: any;
 
@@ -266,6 +267,7 @@ export class CompositionGraphComponent implements AfterViewInit {
                 steps.push(new StepModel(fromNodeName, FromNodeStepComponent));
                 steps.push(new StepModel(toNodeName, ToNodeStepComponent));
                 steps.push(new StepModel('Properties', PropertiesStepComponent));
+                steps.push(new StepModel('Operations', RelationshipOperationsStepComponent));
                 const wizardTitle = 'Connect: ' + fromNodeName + ' to ' + toNodeName;
                 const modalInstance = this.modalService.createMultiStepsWizard(wizardTitle, steps, this.createLinkFromMenu, ConnectionWizardHeaderComponent);
                 modalInstance.instance.open();

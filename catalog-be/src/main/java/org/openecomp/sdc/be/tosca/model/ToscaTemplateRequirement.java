@@ -20,49 +20,51 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+import org.openecomp.sdc.exception.InvalidArgumentException;
 
+@Getter
+@Setter
 public class ToscaTemplateRequirement {
     private String capability;
     private String node;
-    private String relationship;
+    private Object relationship;
 
-    public ToscaTemplateRequirement() {
+    public ToscaRelationship getRelationshipAsComplexType() {
+        if (relationship == null) {
+            return null;
+        }
+        if (relationship instanceof ToscaRelationship) {
+            return (ToscaRelationship) relationship;
+        }
+        final ToscaRelationship toscaRelationship = new ToscaRelationship();
+        toscaRelationship.setType((String) relationship);
+        return toscaRelationship;
     }
 
-    public String getCapability() {
-        return capability;
-    }
-
-    public void setCapability(String capability) {
-        this.capability = capability;
-    }
-
-    public String getNode() {
-        return node;
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }
-
-    public String getRelationship() {
-        return relationship;
-    }
-
-    public void setRelationship(String relationship) {
+    public void setRelationship(final Object relationship) {
+        if (relationship == null) {
+            this.relationship = null;
+            return;
+        }
+        if (!(relationship instanceof ToscaRelationship) && !(relationship instanceof String)) {
+            throw new InvalidArgumentException(String.format("relationship %s type not expected. "
+                + "Supported types are %s and %s", relationship.getClass(), ToscaRelationship.class, String.class));
+        }
         this.relationship = relationship;
     }
 
-    public Map<String, Object> toMap() throws IllegalArgumentException, IllegalAccessException {
-        Map<String, Object> map = new HashMap<>();
-        Field[] fields = this.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            map.put(field.getName(), field.get(this));
-        }
-        return map;
+    /**
+     * Checks if the relationship entry is a complex type ({@link ToscaRelationship}).
+     *
+     * The relationship can be a simple notation (string) (see Tosca 1.3, Section 3.7.3.2.2), or a multi-line grammar
+     * notation (complex) (see Tosca 1.3, Section 3.7.3.2.3).
+     *
+     * @return {@code true} if the relationship is a complex type, {@code false} otherwise
+     */
+    public boolean isRelationshipComplexNotation() {
+        return relationship instanceof ToscaRelationship;
     }
+
 }

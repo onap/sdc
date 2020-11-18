@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
@@ -155,11 +157,14 @@ public class InterfacesOperationsConverter {
         Map<String, Object> toscaInterfaceDefinitions = new HashMap<>();
         for (InterfaceDefinition interfaceDefinition : interfaces.values()) {
             ToscaInterfaceDefinition toscaInterfaceDefinition = new ToscaInterfaceDefinition();
-            String interfaceType;
+            final String interfaceType;
             if(componentInstance != null && LOCAL_INTERFACE_TYPE.equals(interfaceDefinition.getType())) {
                 interfaceType = DERIVED_FROM_BASE_DEFAULT + componentInstance.getSourceModelName();
             } else {
                 interfaceType = getInterfaceType(component, interfaceDefinition.getType());
+            }
+            if (componentInstance == null) {
+                toscaInterfaceDefinition.setType(interfaceType);
             }
             toscaInterfaceDefinition.setType(interfaceType);
             final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
@@ -202,6 +207,25 @@ public class InterfacesOperationsConverter {
         }
 
         return toscaInterfaceDefinitions;
+    }
+
+    public void removeInterfacesWithoutOperations(final Map<String, Object> interfaceMap) {
+        if (MapUtils.isEmpty(interfaceMap)) {
+            return;
+        }
+        final Set<String> emptyInterfaces = interfaceMap.entrySet().stream()
+            .filter(entry -> {
+                final Object value = entry.getValue();
+                if (value instanceof ToscaInterfaceDefinition) {
+                    final ToscaInterfaceDefinition interfaceDefinition = (ToscaInterfaceDefinition) value;
+                    return MapUtils.isEmpty(interfaceDefinition.getOperations());
+                } else if (value instanceof Map) {
+                    final Map<String, Object> interfaceDefMap = (Map<String, Object>) value;
+                    return MapUtils.isEmpty(interfaceDefMap);
+                }
+                return false;
+            }).map(Entry::getKey).collect(Collectors.toSet());
+        emptyInterfaces.forEach(interfaceMap::remove);
     }
 
     private Map<String, Object> createInterfaceInputMap(final InterfaceDefinition interfaceDefinition,
