@@ -20,17 +20,20 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.openecomp.sdc.be.components.utils.PropertiesUtils.resolvePropertyValueFromInput;
 import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.addInterfaceTypeElement;
+import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_ATTRIBUTE;
+import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_INPUT;
+import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_PROPERTY;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import fj.data.Either;
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,8 +74,10 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.exception.ToscaExportException;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -95,7 +100,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
+import org.openecomp.sdc.be.tosca.builder.ToscaRelationshipBuilder;
 import org.openecomp.sdc.be.tosca.model.CapabilityFilter;
 import org.openecomp.sdc.be.tosca.model.NodeFilter;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
@@ -107,6 +112,8 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaPolicyTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyAssignment;
+import org.openecomp.sdc.be.tosca.model.ToscaRelationshipTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateArtifact;
@@ -329,6 +336,12 @@ public class ToscaExportHandler {
             }
             log.debug("node templates converted");
             topologyTemplate.setNode_templates(nodeTemplates.left().value());
+        }
+        final Map<String, ToscaRelationshipTemplate> relationshipTemplatesMap =
+            new ToscaExportRelationshipTemplatesHandler()
+                .createFrom(topologyTemplate.getNode_templates());
+        if (!relationshipTemplatesMap.isEmpty()) {
+            topologyTemplate.setRelationshipTemplates(relationshipTemplatesMap);
         }
 
         SubstitutionMapping substitutionMapping = new SubstitutionMapping();
@@ -950,30 +963,31 @@ public class ToscaExportHandler {
         String instanceUniqueId,
         Component parentComponent) {
 
-        Map<String, Object> interfaces;
-
+        final Map<String, Object> interfaceMap;
         // we need to handle service proxy interfaces
         if (isComponentOfTypeServiceProxy(componentInstance)) {
             if (MapUtils.isEmpty(componentInstanceInterfaces)
                 || !componentInstanceInterfaces.containsKey(instanceUniqueId)) {
-                interfaces = null;
-            } else {
-                List<ComponentInstanceInterface> currServiceInterfaces =
-                    componentInstanceInterfaces.get(instanceUniqueId);
-
-                Map<String, InterfaceDefinition> tmpInterfaces = new HashMap<>();
-                currServiceInterfaces.forEach(instInterface -> tmpInterfaces.put(instInterface
-                    .getUniqueId(), instInterface));
-
-                interfaces = interfacesOperationsConverter
-                    .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, true, true);
+                nodeTemplate.setInterfaces(null);
+                return;
             }
+
+            final List<ComponentInstanceInterface> currServiceInterfaces =
+                componentInstanceInterfaces.get(instanceUniqueId);
+
+            final Map<String, InterfaceDefinition> tmpInterfaces = new HashMap<>();
+            currServiceInterfaces.forEach(instInterface -> tmpInterfaces.put(instInterface
+                .getUniqueId(), instInterface));
+
+            interfaceMap = interfacesOperationsConverter
+                .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, true, true);
         } else {
-            interfaces =
+            interfaceMap =
                 getComponentInstanceInterfaceInstances(componentInstanceInterfaces,
                     componentInstance, instanceUniqueId);
         }
-        nodeTemplate.setInterfaces(interfaces);
+        interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
+        nodeTemplate.setInterfaces(MapUtils.isEmpty(interfaceMap) ? null : interfaceMap);
     }
 
     private boolean isComponentOfTypeServiceProxy(ComponentInstance componentInstance) {
@@ -1048,30 +1062,6 @@ public class ToscaExportHandler {
                 .forEach(prop -> propertyConvertor.convertAndAddValue(dataTypes, props, prop,
                     prop::getDefaultValue));
         }
-    }
-
-    /**
-     *
-     */
-    private void convertAndAddValue(Map<String, DataTypeDefinition> dataTypes, ComponentInstance componentInstance,
-                                    Map<String, Object> props, PropertyDefinition prop, Supplier<String> supplier) {
-        Object convertedValue = convertValue(dataTypes, componentInstance, prop, supplier);
-        if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
-            props.put(prop.getName(), convertedValue);
-        }
-    }
-
-    private <T extends PropertyDefinition> Object convertValue(Map<String, DataTypeDefinition> dataTypes,
-                                                               ComponentInstance componentInstance, T input,
-                                                               Supplier<String> supplier) {
-        log.debug("Convert property or input value {} for instance {}", input.getName(),
-            componentInstance.getUniqueId());
-        String propertyType = input.getType();
-        String innerType = null;
-        if (input.getSchema() != null && input.getSchema().getProperty() != null) {
-            innerType = input.getSchema().getProperty().getType();
-        }
-        return propertyConvertor.convertToToscaObject(input, supplier.get(), dataTypes, true);
     }
 
     private ToscaNodeType createNodeType(Component component) {
@@ -1265,7 +1255,11 @@ public class ToscaExportHandler {
         proxyProperties.ifPresent(toscaNodeType::setProperties);
 
         Optional<Map<String, Object>> proxyInterfaces = getProxyNodeTypeInterfaces(proxyComponent, dataTypes);
-        proxyInterfaces.ifPresent(toscaNodeType::setInterfaces);
+        if (proxyInterfaces.isPresent()) {
+            final Map<String, Object> interfaceMap = proxyInterfaces.get();
+            interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
+            toscaNodeType.setInterfaces(MapUtils.isEmpty(interfaceMap) ? null : interfaceMap);
+        }
 
         return toscaNodeType;
     }
@@ -1277,92 +1271,110 @@ public class ToscaExportHandler {
                                                                                        Component originComponent,
                                                                                        Map<String, Component> componentCache) {
 
-        List<Map<String, ToscaTemplateRequirement>> toscaRequirements = new ArrayList<>();
-        if (!addRequirements(component, componentInstance, relations, originComponent, toscaRequirements,
-            componentCache)) {
-            log.debug("Failed to convert component instance requirements for the component instance {}. ",
-                componentInstance.getName());
-            return Either.right(ToscaError.NODE_TYPE_REQUIREMENT_ERROR);
-        }
-        if (!toscaRequirements.isEmpty()) {
-            nodeTypeTemplate.setRequirements(toscaRequirements);
+        final List<Map<String, ToscaTemplateRequirement>> toscaRequirements;
+        final List<RequirementCapabilityRelDef> requirementDefinitionList = filterRequirements(componentInstance,
+            relations);
+        if (isNotEmpty(requirementDefinitionList)) {
+            try {
+                toscaRequirements = buildRequirements(component, componentInstance,
+                    requirementDefinitionList, originComponent, componentCache);
+                if (!toscaRequirements.isEmpty()) {
+                    nodeTypeTemplate.setRequirements(toscaRequirements);
+                }
+            } catch (final Exception e) {
+                log.debug("Failed to convert component instance requirements for the component instance {}. ",
+                    componentInstance.getName(), e);
+                return Either.right(ToscaError.NODE_TYPE_REQUIREMENT_ERROR);
+            }
         }
         log.debug("Finished to convert requirements for the node type {} ", componentInstance.getName());
         return Either.left(nodeTypeTemplate);
     }
 
-    private boolean addRequirements(Component component, ComponentInstance componentInstance,
-                                    List<RequirementCapabilityRelDef> relations, Component originComponent,
-                                    List<Map<String, ToscaTemplateRequirement>> toscaRequirements,
-                                    Map<String, Component> componentCache) {
-        List<RequirementCapabilityRelDef> filteredRelations = relations.stream()
-            .filter(p -> componentInstance.getUniqueId().equals(p.getFromNode())).collect(Collectors.toList());
-        return isEmpty(filteredRelations) ||
-            filteredRelations.stream()
-                .allMatch(
-                    rel -> addRequirement(componentInstance, originComponent, component.getComponentInstances(), rel,
-                        toscaRequirements, componentCache));
+    private List<Map<String, ToscaTemplateRequirement>> buildRequirements(final Component component,
+                                                                          final ComponentInstance componentInstance,
+                                                                          final List<RequirementCapabilityRelDef> filteredRelations,
+                                                                          final Component originComponent,
+                                                                          final Map<String, Component> componentCache)
+        throws ToscaExportException {
+
+        final List<Map<String, ToscaTemplateRequirement>> toscaRequirements = new ArrayList<>();
+        for (RequirementCapabilityRelDef relationshipDefinition : filteredRelations) {
+            final Map<String, ToscaTemplateRequirement> toscaTemplateRequirementMap =
+                buildRequirement(componentInstance, originComponent, component.getComponentInstances(),
+                    relationshipDefinition, componentCache);
+            toscaRequirements.add(toscaTemplateRequirementMap);
+        }
+
+        return toscaRequirements;
     }
 
-    private boolean addRequirement(ComponentInstance fromInstance, Component fromOriginComponent,
-                                   List<ComponentInstance> instancesList, RequirementCapabilityRelDef rel,
-                                   List<Map<String, ToscaTemplateRequirement>> toscaRequirements,
-                                   Map<String, Component> componentCache) {
+    private List<RequirementCapabilityRelDef> filterRequirements(ComponentInstance componentInstance,
+                                                                 List<RequirementCapabilityRelDef> relations) {
+        return relations.stream()
+            .filter(p -> componentInstance.getUniqueId().equals(p.getFromNode())).collect(Collectors.toList());
+    }
 
-        boolean result = true;
-        Map<String, List<RequirementDefinition>> reqMap = fromOriginComponent.getRequirements();
-        RelationshipInfo reqAndRelationshipPair = rel.getRelationships().get(0).getRelation();
-        Either<Component, StorageOperationStatus> getOriginRes = null;
-        Optional<RequirementDefinition> reqOpt = Optional.empty();
-        Component toOriginComponent = null;
-        Optional<CapabilityDefinition> capOpt = Optional.empty();
+    private Map<String, ToscaTemplateRequirement> buildRequirement(final ComponentInstance fromInstance,
+                                                                   final Component fromOriginComponent,
+                                                                   final List<ComponentInstance> instancesList,
+                                                                   final RequirementCapabilityRelDef relationshipDefinition,
+                                                                   final Map<String, Component> componentCache)
+        throws ToscaExportException {
 
-        ComponentInstance toInstance = instancesList.stream().filter(i -> rel.getToNode().equals(i.getUniqueId()))
+        final Map<String, List<RequirementDefinition>> reqMap = fromOriginComponent.getRequirements();
+        final CapabilityRequirementRelationship capabilityRequirementRelationship = relationshipDefinition
+            .getRelationships().get(0);
+        final RelationshipInfo relationshipInfo = capabilityRequirementRelationship.getRelation();
+
+        final ComponentInstance toInstance = instancesList.stream()
+            .filter(i -> relationshipDefinition.getToNode().equals(i.getUniqueId()))
             .findFirst().orElse(null);
         if (toInstance == null) {
-            log.debug("Failed to find a relation from the node {} to the node {}", fromInstance.getName(),
-                rel.getToNode());
-            result = false;
+            final String errorMsg = String
+                .format("Failed to find a relation from the node %s to the node %s", fromInstance.getName(),
+                    relationshipDefinition.getToNode());
+            log.debug(errorMsg);
+            throw new ToscaExportException(errorMsg);
         }
-        if (result) {
-            reqOpt = findRequirement(fromOriginComponent, reqMap, reqAndRelationshipPair, fromInstance.getUniqueId());
-            if (!reqOpt.isPresent()) {
-                log.debug("Failed to find a requirement with uniqueId {} on a component with uniqueId {}",
-                    reqAndRelationshipPair.getRequirementUid(), fromOriginComponent.getUniqueId());
-                result = false;
+        final Optional<RequirementDefinition> reqOpt =
+            findRequirement(fromOriginComponent, reqMap, relationshipInfo, fromInstance.getUniqueId());
+        if (reqOpt.isEmpty()) {
+            final String errorMsg = String
+                .format("Failed to find a requirement with uniqueId %s on a component with uniqueId %s",
+                    relationshipInfo.getRequirementUid(), fromOriginComponent.getUniqueId());
+            log.debug(errorMsg);
+            throw new ToscaExportException(errorMsg);
+        }
+        final ComponentParametersView filter = new ComponentParametersView(true);
+        filter.setIgnoreComponentInstances(false);
+        filter.setIgnoreCapabilities(false);
+        filter.setIgnoreGroups(false);
+        final Either<Component, StorageOperationStatus> getOriginRes =
+            toscaOperationFacade.getToscaElement(toInstance.getActualComponentUid(), filter);
+        if (getOriginRes.isRight()) {
+            final String errorMsg = String.format(
+                "Failed to build substituted name for the requirement %s. "
+                    + "Failed to get an origin component with uniqueId %s",
+                reqOpt.get().getName(), toInstance.getActualComponentUid());
+            log.debug(errorMsg);
+            throw new ToscaExportException(errorMsg);
+        }
+        final Component toOriginComponent = getOriginRes.left().value();
+        Optional<CapabilityDefinition> capOpt = toOriginComponent.getCapabilities().get(reqOpt.get().getCapability()).stream()
+            .filter(c -> isCapabilityBelongToRelation(relationshipInfo, c)).findFirst();
+        if (capOpt.isEmpty()) {
+            capOpt = findCapability(relationshipInfo, toOriginComponent, fromOriginComponent, reqOpt.get());
+            if (capOpt.isEmpty()) {
+                final String errorMsg = String
+                    .format("Failed to find a capability with name %s on a component with uniqueId %s",
+                        relationshipInfo.getCapability(), fromOriginComponent.getUniqueId());
+                log.debug(errorMsg);
+                throw new ToscaExportException(errorMsg);
             }
         }
-        if (result) {
-            ComponentParametersView filter = new ComponentParametersView(true);
-            filter.setIgnoreComponentInstances(false);
-            filter.setIgnoreCapabilities(false);
-            filter.setIgnoreGroups(false);
-            getOriginRes = toscaOperationFacade.getToscaElement(toInstance.getActualComponentUid(), filter);
-            if (getOriginRes.isRight()) {
-                log.debug(
-                    "Failed to build substituted name for the requirement {}. Failed to get an origin component with uniqueId {}",
-                    reqOpt.get().getName(), toInstance.getActualComponentUid());
-                result = false;
-            }
-        }
-        if (result) {
-            toOriginComponent = getOriginRes.left().value();
-            capOpt = toOriginComponent.getCapabilities().get(reqOpt.get().getCapability()).stream()
-                .filter(c -> isCapabilityBelongToRelation(reqAndRelationshipPair, c)).findFirst();
-            if (!capOpt.isPresent()) {
-                capOpt = findCapability(reqAndRelationshipPair, toOriginComponent, fromOriginComponent, reqOpt.get());
-                if (!capOpt.isPresent()) {
-                    result = false;
-                    log.debug("Failed to find a capability with name {} on a component with uniqueId {}",
-                        reqAndRelationshipPair.getCapability(), fromOriginComponent.getUniqueId());
-                }
-            }
-        }
-        if (result) {
-            result = buildAndAddRequirement(toscaRequirements, fromOriginComponent, toOriginComponent, capOpt.get(),
-                reqOpt.get(), reqAndRelationshipPair, toInstance, componentCache);
-        }
-        return result;
+        return buildRequirement(fromOriginComponent, toOriginComponent, capOpt.get(), reqOpt.get(),
+            capabilityRequirementRelationship, toInstance, componentCache);
     }
 
     private boolean isCapabilityBelongToRelation(RelationshipInfo reqAndRelationshipPair,
@@ -1383,40 +1395,50 @@ public class ToscaExportHandler {
         return cap;
     }
 
-    private boolean buildAndAddRequirement(List<Map<String, ToscaTemplateRequirement>> toscaRequirements,
-                                           Component fromOriginComponent, Component toOriginComponent,
-                                           CapabilityDefinition capability, RequirementDefinition requirement,
-                                           RelationshipInfo reqAndRelationshipPair, ComponentInstance toInstance,
-                                           Map<String, Component> componentCache) {
+    private Map<String, ToscaTemplateRequirement> buildRequirement(final Component fromOriginComponent,
+                                                                   final Component toOriginComponent,
+                                                                   final CapabilityDefinition capability,
+                                                                   final RequirementDefinition requirement,
+                                                                   final CapabilityRequirementRelationship capabilityRequirementRelationship,
+                                                                   final ComponentInstance toInstance,
+                                                                   final Map<String, Component> componentCache)
+        throws ToscaExportException {
+
         List<String> reducedPath = capability.getPath();
         if (capability.getOwnerId() != null) {
             reducedPath = capabilityRequirementConverter
                 .getReducedPathByOwner(capability.getPath(), capability.getOwnerId());
         }
-        Either<String, Boolean> buildCapNameRes = capabilityRequirementConverter.buildSubstitutedName(componentCache,
-            toOriginComponent, reducedPath, reqAndRelationshipPair.getCapability(), capability.getPreviousName());
-        if (buildCapNameRes.isRight()) {
+        final RelationshipInfo relationshipInfo = capabilityRequirementRelationship.getRelation();
+        final Either<String, Boolean> capabilityNameEither = capabilityRequirementConverter.buildSubstitutedName(componentCache,
+            toOriginComponent, reducedPath, relationshipInfo.getCapability(), capability.getPreviousName());
+        if (capabilityNameEither.isRight()) {
+            final String errorMsg = String.format(
+                "Failed to build a substituted capability name for the capability with name %s on a component with uniqueId %s",
+                capabilityRequirementRelationship.getCapability(), toOriginComponent.getUniqueId());
             log.debug(
-                "Failed to build a substituted capability name for the capability with name {} on a component with uniqueId {}",
-                reqAndRelationshipPair.getCapability(), fromOriginComponent.getUniqueId());
-            return false;
+                errorMsg);
+            throw new ToscaExportException(errorMsg);
         }
-        Either<String, Boolean> buildReqNameRes = capabilityRequirementConverter
+        final Either<String, Boolean> requirementNameEither = capabilityRequirementConverter
             .buildSubstitutedName(componentCache, fromOriginComponent,
-                requirement.getPath(), reqAndRelationshipPair.getRequirement(), requirement.getPreviousName());
-        if (buildReqNameRes.isRight()) {
-            log.debug(
-                "Failed to build a substituted requirement name for the requirement with name {} on a component with uniqueId {}",
-                reqAndRelationshipPair.getRequirement(), fromOriginComponent.getUniqueId());
-            return false;
+                requirement.getPath(), relationshipInfo.getRequirement(), requirement.getPreviousName());
+        if (requirementNameEither.isRight()) {
+            final String errorMsg = String.format("Failed to build a substituted requirement name for the requirement "
+                    + "with name %s on a component with uniqueId %s",
+                capabilityRequirementRelationship.getRequirement(), fromOriginComponent.getUniqueId());
+            log.debug(errorMsg);
+            throw new ToscaExportException(errorMsg);
         }
-        ToscaTemplateRequirement toscaRequirement = new ToscaTemplateRequirement();
-        Map<String, ToscaTemplateRequirement> toscaReqMap = new HashMap<>();
+        final ToscaTemplateRequirement toscaRequirement = new ToscaTemplateRequirement();
+        final Map<String, ToscaTemplateRequirement> toscaReqMap = new HashMap<>();
         toscaRequirement.setNode(toInstance.getName());
-        toscaRequirement.setCapability(buildCapNameRes.left().value());
-        toscaReqMap.put(buildReqNameRes.left().value(), toscaRequirement);
-        toscaRequirements.add(toscaReqMap);
-        return true;
+        toscaRequirement.setCapability(capabilityNameEither.left().value());
+        if (isNotEmpty(capabilityRequirementRelationship.getOperations())) {
+            toscaRequirement.setRelationship(new ToscaRelationshipBuilder().from(capabilityRequirementRelationship));
+        }
+        toscaReqMap.put(requirementNameEither.left().value(), toscaRequirement);
+        return toscaReqMap;
     }
 
     private Optional<RequirementDefinition> findRequirement(Component fromOriginComponent,
@@ -1673,10 +1695,81 @@ public class ToscaExportHandler {
 
         CustomRepresenter() {
             super();
+            this.representers.put(ToscaPropertyAssignment.class, new RepresentToscaPropertyAssignment());
             // null representer is exceptional and it is stored as an instance
             // variable.
             this.nullRepresenter = new RepresentNull();
 
+        }
+
+        private class RepresentToscaPropertyAssignment implements Represent {
+            public Node representData(Object data) {
+                final ToscaPropertyAssignment toscaOperationAssignment = (ToscaPropertyAssignment) data;
+                if (toscaOperationAssignment.getValue() instanceof String) {
+                    final String stringValue = (String) toscaOperationAssignment.getValue();
+                    if (isPropertyOrAttributeFunction(stringValue)) {
+                        return representGetAttribute(stringValue);
+                    }
+
+                    return representScalar(Tag.STR, stringValue);
+                }
+                return represent(null);
+            }
+
+            public Node representGetAttribute(final String getAttributeFunction) {
+                return represent(new Yaml().load(getAttributeFunction));
+            }
+
+            public boolean isPropertyOrAttributeFunction(final String value) {
+                try {
+                    final Yaml yaml = new Yaml();
+                    final Object yamlObj = yaml.load(value);
+                    if (!(yamlObj instanceof Map)) {
+                        return false;
+                    }
+                    final Map<String, Object> getAttributeMap = (Map) yamlObj;
+                    if (getAttributeMap.size() != 1) {
+                        return false;
+                    }
+                    final List<String> functionList = Arrays
+                        .asList(GET_ATTRIBUTE.getFunctionName(), GET_INPUT.getFunctionName(),
+                            GET_PROPERTY.getFunctionName());
+                    final Optional<String> function = getAttributeMap.keySet().stream()
+                        .filter(key -> functionList.stream().anyMatch(function1 -> function1.equals(key))).findFirst();
+
+                    if (function.isEmpty()) {
+                        return false;
+                    }
+                    final String functionName = function.get();
+                    final Object getAttributeValueObj = getAttributeMap.get(functionName);
+                    if (GET_INPUT.getFunctionName().equals(functionName)) {
+                        return validateGetInputValue(getAttributeValueObj);
+                    } else {
+                        return validateGetPropertyOrAttributeValue(getAttributeValueObj);
+                    }
+                } catch (final Exception ignored) {
+                    return false;
+                }
+            }
+        }
+
+        public boolean validateGetInputValue(final Object valueObj) {
+            if (!(valueObj instanceof List) && !(valueObj instanceof String)) {
+                return false;
+            }
+            if (valueObj instanceof List) {
+                return ((List) valueObj).size() > 1;
+            }
+
+            return true;
+        }
+
+        public boolean validateGetPropertyOrAttributeValue(final Object valueObj) {
+            if (valueObj instanceof List) {
+                return ((List) valueObj).size() > 1;
+            }
+
+            return false;
         }
 
         @Override
@@ -1689,8 +1782,16 @@ public class ToscaExportHandler {
             if ("dependencies".equals(property.getName())) {
                 return null;
             }
+            if (javaBean instanceof ToscaRelationshipTemplate && "name".equals(property.getName())) {
+                return null;
+            }
+
             removeDefaultP(propertyValue);
             NodeTuple defaultNode = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
+
+            if (javaBean instanceof ToscaTopolgyTemplate && "relationshipTemplates".equals(property.getName())) {
+                return new NodeTuple(representData("relationship_templates"), defaultNode.getValueNode());
+            }
 
             return "_defaultp_".equals(property.getName())
                 ? new NodeTuple(representData("default"), defaultNode.getValueNode()) : defaultNode;

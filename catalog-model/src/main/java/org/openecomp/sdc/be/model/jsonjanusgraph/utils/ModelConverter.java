@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +62,7 @@ import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
@@ -70,6 +72,8 @@ import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -119,6 +123,8 @@ import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ProductMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
+import org.openecomp.sdc.be.ui.model.OperationUi;
+import org.openecomp.sdc.be.ui.model.PropertyAssignmentUi;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class ModelConverter {
@@ -444,9 +450,48 @@ public class ModelConverter {
         CapabilityRequirementRelationship rel = new CapabilityRequirementRelationship();
         RelationshipInfo relationshipPair = getRelationshipInfo(relation);
         rel.setRelation(relationshipPair);
+        rel.setOperations(convertToOperations(relation.getInterfaces()));
         requirementCapabilityRelDef.setRelationships(Arrays.asList(rel));
 
         return requirementCapabilityRelDef;
+    }
+
+    private static List<OperationUi> convertToOperations(final ListDataDefinition<InterfaceDataDefinition> interfaces) {
+        if (interfaces == null || interfaces.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<OperationUi> operationUiList = new ArrayList<>();
+        for (final InterfaceDataDefinition interfaceDataDefinition : interfaces.getListToscaDataDefinition()) {
+            if (MapUtils.isEmpty(interfaceDataDefinition.getOperations())) {
+                continue;
+            }
+            for (final Entry<String, OperationDataDefinition> operationEntry :
+                interfaceDataDefinition.getOperations().entrySet()) {
+                final OperationUi operationUi = new OperationUi();
+                operationUi.setOperationType(operationEntry.getKey());
+                operationUi.setInterfaceType(interfaceDataDefinition.getType());
+                final OperationDataDefinition operationDataDefinition = operationEntry.getValue();
+                final ArtifactDataDefinition implementation = operationDataDefinition.getImplementation();
+                if (implementation != null) {
+                    operationUi.setImplementation(implementation.getArtifactName());
+                }
+
+                final ListDataDefinition<OperationInputDefinition> inputs = operationDataDefinition.getInputs();
+                if (inputs != null && !inputs.isEmpty()) {
+                    final List<OperationInputDefinition> operationInputDefinitionList =
+                        inputs.getListToscaDataDefinition();
+                    operationInputDefinitionList.forEach(operationInputDefinition -> {
+                        final PropertyAssignmentUi propertyAssignmentUi = new PropertyAssignmentUi();
+                        propertyAssignmentUi.setName(operationInputDefinition.getLabel());
+                        propertyAssignmentUi.setType(operationInputDefinition.getType());
+                        propertyAssignmentUi.setValue(operationInputDefinition.getValue());
+                        operationUi.addToInputs(propertyAssignmentUi);
+                    });
+                }
+                operationUiList.add(operationUi);
+            }
+        }
+        return operationUiList;
     }
 
     /**

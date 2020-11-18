@@ -9,6 +9,19 @@ import {FormElementsModule} from "../../../../components/ui/form-components/form
 import {ConnectionWizardHeaderComponent} from "./connection-wizard-header/connection-wizard-header.component";
 import {ConnectionPropertiesViewComponent} from "./connection-properties-view/connection-properties-view.component";
 import {BrowserModule} from "@angular/platform-browser";
+import {RelationshipOperationsStepComponent} from './relationship-operations-step/relationship-operations-step.component';
+import {InterfaceOperationModule} from "../../../interface-operation/interface-operation.module";
+import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
+import {TranslateModule} from "../../../../shared/translator/translate.module";
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
+import {OperationCreatorModule} from "../../../interface-operation/operation-creator/operation-creator.module";
+import {CreateInterfaceOperationComponent} from './create-interface-operation/create-interface-operation.component';
+import {DropdownModule} from "onap-ui-angular/dist/form-elements/dropdown/dropdown.module";
+import {InputModule} from "onap-ui-angular/dist/form-elements/text-elements/input/input.module";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {SdcUiComponentsModule} from "onap-ui-angular/dist";
+import {CreateInputRowComponent} from './create-interface-operation/create-input-row/create-input-row.component';
+import {InterfaceOperationListComponent} from './relationship-operations-step/interface-operation-list/interface-operation-list.component';
 
 @NgModule({
     declarations: [
@@ -16,24 +29,40 @@ import {BrowserModule} from "@angular/platform-browser";
         ToNodeStepComponent,
         PropertiesStepComponent,
         ConnectionWizardHeaderComponent,
-        ConnectionPropertiesViewComponent
+        ConnectionPropertiesViewComponent,
+        RelationshipOperationsStepComponent,
+        CreateInterfaceOperationComponent,
+        CreateInputRowComponent,
+        InterfaceOperationListComponent
     ],
-    imports: [
-        FormElementsModule,
-        PropertyTableModule,
-        SelectRequirementOrCapabilityModule,
-        BrowserModule
-    ],
+  imports: [
+    FormElementsModule,
+    PropertyTableModule,
+    SelectRequirementOrCapabilityModule,
+    BrowserModule,
+    InterfaceOperationModule,
+    UiElementsModule,
+    TranslateModule,
+    SvgIconModule,
+    OperationCreatorModule,
+    DropdownModule,
+    InputModule,
+    FormsModule,
+    SdcUiComponentsModule,
+    ReactiveFormsModule
+  ],
     exports: [
         FromNodeStepComponent,
         ToNodeStepComponent,
         PropertiesStepComponent,
+        RelationshipOperationsStepComponent,
         ConnectionWizardHeaderComponent,
         ConnectionPropertiesViewComponent
     ],
     entryComponents: [FromNodeStepComponent,
         ToNodeStepComponent,
         PropertiesStepComponent,
+        RelationshipOperationsStepComponent,
         ConnectionWizardHeaderComponent,
         ConnectionPropertiesViewComponent
     ],
