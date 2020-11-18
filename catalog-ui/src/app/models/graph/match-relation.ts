@@ -21,7 +21,7 @@
 import {Requirement} from "../requirement";
 import {Capability} from "../capability";
 import {Relationship, RelationshipModel} from "./relationship";
-import {PropertyModel} from "../properties";
+import {Operation} from "../../ng2/pages/composition/graph/connection-wizard/create-interface-operation/model/operation";
 
 export class Match {
     requirement:Requirement;
@@ -29,6 +29,7 @@ export class Match {
     isFromTo:boolean;
     fromNode:string;
     toNode:string;
+    operations?:Array<Operation>;
     private _relationship:Relationship;
 
     constructor(requirement:Requirement, capability:Capability, isFromTo:boolean, fromNode:string, toNode:string) {
@@ -54,6 +55,7 @@ export class Match {
     public matchToRelation = ():Relationship => {
         const relationship:Relationship = new Relationship();
         relationship.setRelationProperties(this.capability, this.requirement);
+        relationship.operations = this.operations;
         return relationship;
     };
 
@@ -74,5 +76,22 @@ export class Match {
         relationshipModel.setRelationshipModelParams(this.fromNode, this.toNode, [relationship]);
         return relationshipModel;
     };
+
+    public addToOperations(operation: Operation): void {
+        if (!this.operations) {
+            this.operations = new Array<Operation>();
+        }
+        this.operations.push(operation);
+    }
+
+    public removeFromOperations(operation: Operation): void {
+        if (!this.operations) {
+            return;
+        }
+        const index = this.operations.indexOf(operation);
+        if (index > -1) {
+            this.operations.splice(index, 1);
+        }
+    }
 }
 

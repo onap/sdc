@@ -1,0 +1,141 @@
+<!--
+  ~ ============LICENSE_START=======================================================
+  ~  Copyright (C) 2021 Nordix Foundation
+  ~  ================================================================================
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  ~  SPDX-License-Identifier: Apache-2.0
+  ~  ============LICENSE_END=========================================================
+  -->
+
+<div class="operation-creator">
+  <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+  <form [formGroup]="form">
+    <div class="w-sdc-form">
+
+    <div class="side-by-side">
+      <div class="form-item">
+        <sdc-dropdown
+            label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
+            [required]="true"
+            testId="interface-name"
+            [selectedOption]="selectedInterfaceType"
+            placeHolder="Select..."
+            [disabled]="isReadOnly"
+            (changed)="onSelectInterfaceType($event)"
+            [options]="interfaceTypeOptions">
+        </sdc-dropdown>
+        <div *ngIf="interfaceTypeFormCtrl.invalid && (interfaceTypeFormCtrl.dirty || interfaceTypeFormCtrl.touched)"
+             class="input-error">
+          <div *ngIf="interfaceTypeFormCtrl.errors.required">
+            {{'OPERATION_INTERFACE_REQUIRED_ERROR' | translate}}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <sdc-dropdown
+            #operationDropdown
+            label="{{ 'OPERATION_NAME' | translate }}"
+            [required]="true"
+            testId="operation-name"
+            [selectedOption]="selectedOperation"
+            placeHolder="Select..."
+            [disabled]="isReadOnly"
+            (changed)="onSelectOperation($event)"
+            [options]="operationOptions">
+        </sdc-dropdown>
+        <div *ngIf="operationTypeFormCtrl.invalid && (operationTypeFormCtrl.dirty || operationTypeFormCtrl.touched)"
+             class="input-error">
+          <div *ngIf="operationTypeFormCtrl.errors.required">
+            {{'OPERATION_OPERATION_REQUIRED_ERROR' | translate}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="i-sdc-form-item sdc-input">
+      <label for="implementationInput" class="sdc-label__label required">{{ 'OPERATION_IMPLEMENTATION' | translate }}</label>
+      <div class="sdc-input-wrapper">
+        <input id="implementationInput" formControlName="implementation" required="required" class="sdc-input__input"/>
+      </div>
+      <div *ngIf="implementationFormCtrl.invalid && (implementationFormCtrl.dirty || implementationFormCtrl.touched)"
+           class="input-error">
+        <div *ngIf="implementationFormCtrl.errors.required">
+          {{'OPERATION_IMPLEMENTATION_REQUIRED_ERROR' | translate}}
+        </div>
+        <div *ngIf="implementationFormCtrl.errors.minLength">
+          minLength
+        </div>
+      </div>
+    </div>
+
+    <div class="separator-buttons">
+      <tabs tabStyle="round-tabs" [hideIndicationOnTabChange]="true">
+        <tab tabTitle="Inputs"></tab>
+      </tabs>
+      <a
+          class="add-param-link add-btn"
+          *ngIf="!isReadOnly"
+          data-tests-id="addInputParameter"
+          [ngClass]="{'disabled':isReadOnly}"
+          (click)="addInput()">{{ 'OPERATION_ADD_INPUT' | translate }}</a>
+    </div>
+
+    <div class="generic-table">
+      <div class="header-row table-row">
+        <span class="cell header-cell field-name">{{ 'OPERATION_PARAM_NAME' | translate }}</span>
+        <span class="cell header-cell field-type">{{ 'OPERATION_PARAM_TYPE' | translate }}</span>
+        <span class="cell header-cell field-property">
+          {{ 'OPERATION_PARAM_VALUE' | translate }}
+        </span>
+        <span class="cell header-cell remove" *ngIf="!isReadOnly">●●●</span>
+      </div>
+      <div *ngIf="!validateInputs()"
+           class="input-error">
+        <div *ngIf="inputErrorMap.get('duplicatedName')">
+          {{ 'OPERATION_INPUT_NAME_UNIQUE_ERROR' | translate }}
+        </div>
+        <div *ngIf="inputErrorMap.get('invalidName')">
+          {{ 'OPERATION_INPUT_NAME_ERROR' | translate }}
+        </div>
+      </div>
+
+      <app-create-input-row
+          *ngFor="let input of inputs$ | async"
+          class="data-row"
+          [formGroup]=""
+          [propertyAssignment]="input"
+          (onDelete)="onDeleteInput($event)"
+          [isReadOnly]="isReadOnly">
+      </app-create-input-row>
+    </div>
+    <div class="create-interface-operation-footer">
+      <sdc-button class="create-operation-btn"
+                  testId="addBtn"
+                  [type]="'primary'"
+                  [size]="'small'"
+                  [text]="'OPERATION_ADD' | translate"
+                  [disabled]="form.invalid"
+                  (click)="createOperation()">
+      </sdc-button>
+      <sdc-button class="cancel-operation-btn"
+                  testId="cancelBtn"
+                  [type]="'secondary'"
+                  [size]="'small'"
+                  [text]="'OPERATION_CANCEL' | translate"
+                  (click)="onClickCancel()">
+      </sdc-button>
+    </div>
+  </div>
+  </form>
+</div>

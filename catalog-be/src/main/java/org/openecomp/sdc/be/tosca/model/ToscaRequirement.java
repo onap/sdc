@@ -21,25 +21,13 @@
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
-import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ToscaRequirement extends ToscaTemplateRequirement {
 
     private List<Object> occurrences;
-
-    public ToscaRequirement() {
-    }
-
-    public List<Object> getOccurrences() {
-        return occurrences;
-    }
-
-    public void setOccurrences(List<Object> occurrences) {
-        this.occurrences = occurrences;
-    }
-
-    public Map<String, Object> toMap() throws IllegalArgumentException, IllegalAccessException {
-        return super.toMap();
-    }
 
 }

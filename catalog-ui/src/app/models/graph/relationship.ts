@@ -21,6 +21,7 @@
 import * as _ from "lodash";
 import {Capability} from "../capability";
 import {Requirement} from "../requirement";
+import {Operation} from "../../ng2/pages/composition/graph/connection-wizard/create-interface-operation/model/operation";
 
 export class RelationshipModel {
     fromNode:string;
@@ -103,12 +104,19 @@ export class Relationship {
     relation: RelationshipType;
     capability?: Capability;
     requirement?: Requirement;
+    operations?:Array<Operation>;
 
     constructor(fullRelationship?:Relationship) {
         if (fullRelationship) {
             this.relation = new RelationshipType(fullRelationship.relation);
             this.capability = fullRelationship.capability && new Capability(fullRelationship.capability);
             this.requirement = fullRelationship.requirement && new Requirement(fullRelationship.requirement);
+            if (fullRelationship.operations) {
+                this.operations = new Array<Operation>();
+                fullRelationship.operations.forEach(operation => {
+                    this.operations.push(new Operation(operation));
+                });
+            }
         } else {
             this.relation = new RelationshipType();
         }
@@ -118,7 +126,7 @@ export class Relationship {
         this.relation.setRelationProperties(capability, requirement);
         this.capability = capability;
         this.requirement = requirement;
-    };
+    }
 
     public toJSON = ():any => {
         let temp = angular.copy(this);

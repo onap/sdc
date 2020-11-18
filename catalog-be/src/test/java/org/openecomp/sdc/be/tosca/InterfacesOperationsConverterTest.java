@@ -21,9 +21,12 @@ package org.openecomp.sdc.be.tosca;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,6 +73,7 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
+import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
@@ -665,5 +669,49 @@ class InterfacesOperationsConverterTest {
 
         assertTrue(MapUtils.isNotEmpty(resultMap)
                 && resultMap.containsKey("NotLocal"));
+    }
+
+    @Test
+    void testRemoveInterfacesWithoutOperationsEmptyMap() {
+        final Map<String, Object> interfaceMap = new HashMap<>();
+        interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
+        assertThat(interfaceMap, is(anEmptyMap()));
+    }
+
+    @Test
+    void testRemoveInterfacesWithoutOperationsNullParameter() {
+        final Map<String, Object> interfaceMap = null;
+        interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
+        assertThat(interfaceMap, is(nullValue()));
+    }
+
+    @Test
+    void testRemoveInterfacesWithoutOperationsSuccess() {
+        final Map<String, Object> interfaceMap = new HashMap<>();
+        final ToscaInterfaceDefinition toscaInterfaceDefinition1 = new ToscaInterfaceDefinition();
+        interfaceMap.put("toscaInterfaceDefinition1", toscaInterfaceDefinition1);
+
+        final ToscaInterfaceDefinition toscaInterfaceDefinition2 = new ToscaInterfaceDefinition();
+        final Map<String, Object> toscaInterfaceDefinition2OperationMap = new HashMap<>();
+        toscaInterfaceDefinition2OperationMap.put("operation1", new Object());
+        toscaInterfaceDefinition2.setOperations(toscaInterfaceDefinition2OperationMap);
+        interfaceMap.put("toscaInterfaceDefinition2", toscaInterfaceDefinition2);
+
+        final Map<String, Object> toscaInterfaceDefinition3 = new HashMap<>();
+        interfaceMap.put("toscaInterfaceDefinition3", toscaInterfaceDefinition3);
+
+        final Map<String, Object> toscaInterfaceDefinition4 = new HashMap<>();
+        toscaInterfaceDefinition4.put("operation1", new Object());
+        interfaceMap.put("toscaInterfaceDefinition4", toscaInterfaceDefinition4);
+
+        final Object notAToscaInterfaceDefinition = new Object();
+        interfaceMap.put("notAToscaInterfaceDefinition", notAToscaInterfaceDefinition);
+
+        interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
+        assertFalse(interfaceMap.containsKey("toscaInterfaceDefinition1"));
+        assertTrue(interfaceMap.containsKey("toscaInterfaceDefinition2"));
+        assertFalse(interfaceMap.containsKey("toscaInterfaceDefinition3"));
+        assertTrue(interfaceMap.containsKey("toscaInterfaceDefinition4"));
+        assertTrue(interfaceMap.containsKey("notAToscaInterfaceDefinition"));
     }
 }

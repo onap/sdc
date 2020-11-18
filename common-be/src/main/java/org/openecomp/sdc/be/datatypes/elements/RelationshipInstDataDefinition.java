@@ -190,6 +190,15 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME, modificationTime);
     }
 
+    public void setInterfaces(final ListDataDefinition<InterfaceDataDefinition> operations) {
+        setToscaPresentationValue(JsonPresentationFields.INTERFACES, operations);
+    }
+
+    @SuppressWarnings("unchecked")
+    public ListDataDefinition<InterfaceDataDefinition> getInterfaces() {
+        return (ListDataDefinition<InterfaceDataDefinition>) getToscaPresentationValue(JsonPresentationFields.INTERFACES);
+    }
+
     @Override
     public String toString() {
         String uniqueId = getUniqueId();
