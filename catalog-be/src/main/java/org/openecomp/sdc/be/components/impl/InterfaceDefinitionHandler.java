@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
@@ -172,9 +173,13 @@ public class InterfaceDefinitionHandler {
     private OperationDataDefinition createOperation(final String operationName,
                                                     final Map<String, Object> operationDefinitionMap) {
         final OperationDataDefinition operation = new OperationDataDefinition();
+        operation.setUniqueId(UUID.randomUUID().toString());
         operation.setName(operationName);
 
-        handleOperationImplementation(operationDefinitionMap).ifPresent(operation::setImplementation);
+        operation.setImplementation(
+            handleOperationImplementation(operationDefinitionMap)
+                .orElse(new ArtifactDataDefinition())
+        );
         if (operationDefinitionMap.containsKey(INPUTS.getElementName())) {
             final Map<String, Object> interfaceInputs =
                 (Map<String, Object>) operationDefinitionMap.get(INPUTS.getElementName());
@@ -189,6 +194,8 @@ public class InterfaceDefinitionHandler {
         final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
         for (final Entry<String, Object> interfaceInput : interfaceInputs.entrySet()) {
             final OperationInputDefinition operationInput = new OperationInputDefinition();
+            operationInput.setUniqueId(UUID.randomUUID().toString());
+            operationInput.setInputId(operationInput.getUniqueId());
             operationInput.setName(interfaceInput.getKey());
             if (interfaceInput.getValue() instanceof Map) {
                 final LinkedHashMap<String, Object> inputPropertyValue =

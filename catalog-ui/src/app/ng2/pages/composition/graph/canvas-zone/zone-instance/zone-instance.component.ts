@@ -66,7 +66,7 @@ export class ZoneInstanceComponent implements OnInit {
     }
 
     private setMode = (mode:ZoneInstanceMode, event?:any, afterSaveCallback?:Function):void => {
-        
+
         if(event){ //prevent event from handle and then repeat event from zone instance
             event.stopPropagation();
         }

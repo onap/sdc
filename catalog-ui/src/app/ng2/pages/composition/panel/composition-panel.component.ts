@@ -39,6 +39,7 @@ import { CompositionStateModel, GraphState } from '../common/store/graph.state';
 import { ServiceConsumptionTabComponent } from './panel-tabs/service-consumption-tab/service-consumption-tab.component';
 import { ServiceDependenciesTabComponent } from './panel-tabs/service-dependencies-tab/service-dependencies-tab.component';
 import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
+import {InterfaceOperationsComponent} from "../interface-operatons/interface-operations.component";
 
 const tabs = {
     infoTab : {titleIcon: 'info-circle', component: InfoTabComponent, input: {}, isActive: true, tooltipText: 'Information'},
@@ -55,7 +56,8 @@ const tabs = {
     settings: {titleIcon: 'settings-o', component: PropertiesTabComponent, input: {}, isActive: false, tooltipText: 'Settings'},
     consumption: {titleIcon: 'api-o', component: ServiceConsumptionTabComponent, input: {title: 'OPERATION CONSUMPTION'}, isActive: false, tooltipText: 'Service Consumption'},
     dependencies: {titleIcon: 'archive', component: ServiceDependenciesTabComponent, input: {title: 'DIRECTIVES AND NODE FILTER'}, isActive: false, tooltipText: 'Service Dependencies'},
-    substitutionFilter: {titleIcon: 'composition-o', component: SubstitutionFilterTabComponent, input: {title: 'SUBSTITUTION FILTER'}, isActive: false, tooltipText: 'Substitution Filter'}
+    substitutionFilter: {titleIcon: 'composition-o', component: SubstitutionFilterTabComponent, input: {title: 'SUBSTITUTION FILTER'}, isActive: false, tooltipText: 'Substitution Filter'},
+    interfaceOperations: {titleIcon: 'composition-o', component: InterfaceOperationsComponent, input: {title: 'Interface Operations'}, isActive: false, tooltipText: 'Interface Operations'}
 };
 
 @Component({
@@ -84,6 +86,12 @@ export class CompositionPanelComponent {
             this.initTabs(component);
             this.activatePreviousActiveTab();
         });
+    }
+
+
+    onRightClick(selectedComponent: any) {
+        console.info("onRightClick", selectedComponent)
+        return false;
     }
 
     ngOnDestroy() {
@@ -151,8 +159,10 @@ export class CompositionPanelComponent {
         if (component.isService() && (this.selectedComponentIsServiceProxyInstance() || this.selectedComponentIsServiceSubstitutionInstance())) {
             this.tabs.push(tabs.consumption);
             this.tabs.push(tabs.dependencies);
+            this.tabs.push(tabs.interfaceOperations);
         } else if (component.isResource() && this.isComponentInstanceSelected()) {
             this.tabs.push(tabs.dependencies);
+            this.tabs.push(tabs.interfaceOperations);
         }
 
     }

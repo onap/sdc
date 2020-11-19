@@ -49,7 +49,7 @@ import { ServiceDependenciesModule } from "../../../components/logic/service-dep
 import { ServiceConsumptionModule } from "../../../components/logic/service-consumption/service-consumption.module";
 import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
 import {SubstitutionFilterModule} from "../../../components/logic/substitution-filter/substitution-filter.module";
-
+import {InterfaceOperationsComponent} from "../interface-operatons/interface-operations.component";
 
 
 @NgModule({
@@ -67,7 +67,8 @@ import {SubstitutionFilterModule} from "../../../components/logic/substitution-f
         ServiceDependenciesTabComponent,
         SubstitutionFilterTabComponent,
         RequirementListComponent,
-        EnvParamsComponent
+        EnvParamsComponent,
+        InterfaceOperationsComponent,
     ],
     imports: [
         GlobalPipesModule,
@@ -81,7 +82,7 @@ import {SubstitutionFilterModule} from "../../../components/logic/substitution-f
         NgxDatatableModule,
         ServiceDependenciesModule,
         ServiceConsumptionModule,
-        SubstitutionFilterModule
+        SubstitutionFilterModule,
         // EnvParamsModule
     ],
     entryComponents: [
@@ -98,7 +99,8 @@ import {SubstitutionFilterModule} from "../../../components/logic/substitution-f
         SubstitutionFilterTabComponent,
         RequirementListComponent,
         PanelTabComponent,
-        EnvParamsComponent
+        EnvParamsComponent,
+        InterfaceOperationsComponent
         ],
     exports: [
         CompositionPanelComponent

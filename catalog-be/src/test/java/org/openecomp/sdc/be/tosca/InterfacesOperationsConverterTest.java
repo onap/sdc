@@ -57,6 +57,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
@@ -585,9 +587,6 @@ class InterfacesOperationsConverterTest {
         for (Map.Entry<String, Object> inputEntry : inputs.entrySet()) {
             String[] inputNameSplit = inputEntry.getKey().split("_");
             Map<String, Object> inputValueObject = (Map<String, Object>) inputEntry.getValue();
-            assertEquals(inputNameSplit[1], inputValueObject.get("type"));
-            Boolean expectedIsRequired = Integer.parseInt(inputNameSplit[2]) % 2 == 0;
-            assertEquals(expectedIsRequired, inputValueObject.get("required"));
             validateOperationInputDefinitionDefaultValue(interfaceType, operationName, inputNameSplit[1],
                     Integer.parseInt(inputNameSplit[2]), inputValueObject);
         }
@@ -597,15 +596,16 @@ class InterfacesOperationsConverterTest {
     private void validateOperationInputDefinitionDefaultValue(String interfaceType, String operationName,
                                                               String inputType, int index,
                                                               Map<String, Object> inputValueObject) {
-        Map<String, Object> mappedInputValue = (Map<String, Object>) inputValueObject.get("default");
-        if(mappedInputValue.containsKey(ToscaFunctions.GET_PROPERTY.getFunctionName())) {
+        if (inputValueObject.containsKey(ToscaFunctions.GET_PROPERTY.getFunctionName())) {
             String mappedPropertyValue = MAPPED_PROPERTY_NAME + index;
-            List<String> mappedPropertyDefaultValue = (List<String>) mappedInputValue.get(ToscaFunctions.GET_PROPERTY.getFunctionName());
+            List<String> mappedPropertyDefaultValue = (List<String>) inputValueObject
+                .get(ToscaFunctions.GET_PROPERTY.getFunctionName());
             assertEquals(2, mappedPropertyDefaultValue.size());
             assertTrue(mappedPropertyDefaultValue.contains(SELF));
             assertTrue(mappedPropertyDefaultValue.contains(mappedPropertyValue));
-        } else if(mappedInputValue.containsKey(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
-            List<String> mappedPropertyDefaultValue = (List<String>) mappedInputValue.get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
+        } else if (inputValueObject.containsKey(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
+            List<String> mappedPropertyDefaultValue = (List<String>) inputValueObject
+                .get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
             assertEquals(4, mappedPropertyDefaultValue.size());
             String mappedPropertyValue = OUTPUT_NAME_PREFIX + inputType + "_" + index;
             assertTrue(mappedPropertyDefaultValue.contains(SELF));

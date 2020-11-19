@@ -349,17 +349,17 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             final OriginTypeEnum originType = resourceInstance.getOriginType();
             validateInstanceName(resourceInstance);
             if (originType == OriginTypeEnum.ServiceProxy) {
-                    origComponent = getOrigComponentForServiceProxy(containerComponent, resourceInstance);
-	            } else if (originType == OriginTypeEnum.ServiceSubstitution){
-                    origComponent = getOrigComponentForServiceSubstitution(resourceInstance);
-                } else {
-                    origComponent = getAndValidateOriginComponentOfComponentInstance(containerComponent, resourceInstance);
-                    validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
-                }
-                validateResourceInstanceState(containerComponent, origComponent);
-                overrideFields(origComponent, resourceInstance);
-                compositionBusinessLogic.validateAndSetDefaultCoordinates(resourceInstance);
+                origComponent = getOrigComponentForServiceProxy(containerComponent, resourceInstance);
+            } else if (originType == OriginTypeEnum.ServiceSubstitution) {
+                origComponent = getOrigComponentForServiceSubstitution(resourceInstance);
+            } else {
+                origComponent = getAndValidateOriginComponentOfComponentInstance(containerComponent, resourceInstance);
+                validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
             }
+            validateResourceInstanceState(containerComponent, origComponent);
+            overrideFields(origComponent, resourceInstance);
+            compositionBusinessLogic.validateAndSetDefaultCoordinates(resourceInstance);
+        }
             return createComponent(needLock, containerComponent,origComponent, resourceInstance, user);
 
     }
@@ -2443,6 +2443,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (component.isArchived() == true){
             ActionStatus actionStatus = ActionStatus.COMPONENT_IS_ARCHIVED;
             throw new ByActionStatusComponentException(actionStatus, component.getName());
+        }
+        final Map<String, InterfaceDefinition> componentInterfaces = component.getInterfaces();
+        if(MapUtils.isNotEmpty(componentInterfaces)) {
+            componentInterfaces.forEach(componentInstance::addInterface);
         }
         return component;
     }
