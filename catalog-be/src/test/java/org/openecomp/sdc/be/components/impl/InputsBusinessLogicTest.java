@@ -777,8 +777,8 @@ public class InputsBusinessLogicTest {
         inputDef.setDefaultValue(NEW_VALUE); // update value
         inputDef.setRequired(Boolean.TRUE); // update value
         Map<String, String> newMetadata = new HashMap<>();
-        newMetadata.put("key1", "value2");
-        newMetadata.put("key2", "value3");
+        newMetadata.put("key2", "value2");
+        newMetadata.put("key3", "value3");
         inputDef.setMetadata(newMetadata);
         newInputDefs.add(inputDef);
 
@@ -802,8 +802,8 @@ public class InputsBusinessLogicTest {
         assertEquals(NEW_VALUE, service.getInputs().get(0).getDefaultValue());
         assertEquals(Boolean.TRUE, service.getInputs().get(0).isRequired());
         assertEquals(2, service.getInputs().get(0).getMetadata().size());
-        assertEquals("value2", service.getInputs().get(0).getMetadata().get("key1"));
-        assertEquals("value3", service.getInputs().get(0).getMetadata().get("key2"));
+        assertEquals("value2", service.getInputs().get(0).getMetadata().get("key2"));
+        assertEquals("value3", service.getInputs().get(0).getMetadata().get("key3"));
     }
 
 }

@@ -8,7 +8,7 @@ import { Service } from '../../../../models/components/service';
 import { Resource } from '../../../../models/components/resource';
 import { GroupInstance } from '../../../../models/graph/zones/group-instance';
 import { PolicyInstance } from '../../../../models/graph/zones/policy-instance';
-import { ArtifactGroupType, ResourceType } from '../../../../utils/constants';
+import { ArtifactGroupType } from '../../../../utils/constants';
 import { WorkspaceState } from '../../../store/states/workspace.state';
 import { CompositionPanelComponent } from './composition-panel.component';
 import { ArtifactsTabComponent } from './panel-tabs/artifacts-tab/artifacts-tab.component';
@@ -19,6 +19,7 @@ import { PolicyTargetsTabComponent } from './panel-tabs/policy-targets-tab/polic
 import { PropertiesTabComponent } from './panel-tabs/properties-tab/properties-tab.component';
 import { ReqAndCapabilitiesTabComponent } from './panel-tabs/req-capabilities-tab/req-capabilities-tab.component';
 import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
+import {InterfaceOperationsComponent} from "../interface-operatons/interface-operations.component";
 
 describe('composition-panel component', () => {
 
@@ -61,7 +62,13 @@ describe('composition-panel component', () => {
             },
             inputs: {titleIcon: 'inputs-o', component: PropertiesTabComponent, input: {title: 'Inputs'}, isActive: false, tooltipText: 'Inputs'},
             settings: {titleIcon: 'settings-o', component: PropertiesTabComponent, input: {}, isActive: false, tooltipText: 'Settings'},
-
+            interfaceOperations: {
+                titleIcon: 'composition-o',
+                component: InterfaceOperationsComponent,
+                input: {title: 'Interface Operations'},
+                isActive: false,
+                tooltipText: 'Interface Operations'
+            }
         };
 
     beforeEach(
@@ -157,17 +164,17 @@ describe('composition-panel component', () => {
         fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
         fixture.componentInstance.selectedComponentIsServiceProxyInstance = jest.fn(() => true);
 
-        // const pnfMock = Mock.of<Service>({ isResource : () => false });
         fixture.componentInstance.topologyTemplate = selectedComponent;
 
         // Call ngOnInit
         fixture.componentInstance.ngOnInit();
 
         // Expect that
-        expect (fixture.componentInstance.tabs.length).toBe(6);
+        expect (fixture.componentInstance.tabs.length).toBe(7);
         expect (fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
         expect (fixture.componentInstance.tabs[1]).toEqual(tabs.properties);
         expect (fixture.componentInstance.tabs[2]).toEqual(tabs.reqAndCapabilities);
+        expect (fixture.componentInstance.tabs[6]).toEqual(tabs.interfaceOperations);
 
     });
 

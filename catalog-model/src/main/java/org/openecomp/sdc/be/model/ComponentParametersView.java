@@ -98,6 +98,8 @@ public class ComponentParametersView {
                     this.setIgnoreNodeFilter(false);
                     this.setIgnoreSubstitutionFilter(false);
                     this.setIgnoreCapabiltyProperties(false);
+                    this.setIgnoreInterfaces(false);
+                    this.setIgnoreComponentInstancesInterfaces(false);
                     break;
                 case COMPONENT_INSTANCES_PROPERTIES:
                     this.setIgnoreComponentInstances(false); //we need this in order to get the calculate capabilities requirements
@@ -160,6 +162,7 @@ public class ComponentParametersView {
                     break;
                 case COMPONENT_INSTANCES_INTERFACES:
                     this.setIgnoreComponentInstances(false);
+                    this.setIgnoreInterfaces(false);
                     this.setIgnoreComponentInstancesInterfaces(false);
                     break;
                 case DATA_TYPES:
