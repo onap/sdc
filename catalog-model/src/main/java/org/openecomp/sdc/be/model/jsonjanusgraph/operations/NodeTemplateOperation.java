@@ -169,8 +169,9 @@ public class NodeTemplateOperation extends BaseOperation {
                 }
                 result = Either.right(status);
             }
-            if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
-                TopologyTemplate updatedContainer = addComponentInstanceRes.left().value();
+            final TopologyTemplate updatedContainer = addComponentInstanceRes.left().value();
+            if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy
+                || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
                 result = addCapAndReqToProxyServiceInstance(updatedContainer, componentInstance, componentInstanceData);
                 if(result.isRight()) {
                     return result;
@@ -185,12 +186,15 @@ public class NodeTemplateOperation extends BaseOperation {
                 if(result.isRight()) {
                     return result;
                 }
-
-                result = addServiceInstanceInterfacesToProxyServiceInstance(updatedContainer, componentInstance);
+            }
+            if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy
+                || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution
+                || componentInstance.getOriginType() == OriginTypeEnum.VF
+                || componentInstance.getOriginType() == OriginTypeEnum.VFC) {
+                result = addComponentInstanceInterfacesToTopologyTemplate(updatedContainer, componentInstance);
                 if(result.isRight()) {
                     return result;
                 }
-
             }
         }
         if (result == null) {
@@ -362,11 +366,11 @@ public class NodeTemplateOperation extends BaseOperation {
         return Either.left(new ImmutablePair<>(updatedContainer, componentInstance.getUniqueId()));
     }
 
-    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServiceInstanceInterfacesToProxyServiceInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance) {
+    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addComponentInstanceInterfacesToTopologyTemplate(TopologyTemplate updatedContainer, ComponentInstance componentInstance) {
         Map<String, Object> interfaces = componentInstance.getInterfaces();
 
         if(MapUtils.isNotEmpty(interfaces)){
-            Map<String, InterfaceDataDefinition> interfacesMap = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (InterfaceDataDefinition) e.getValue()));
+            Map<String, InterfaceDataDefinition> interfacesMap = interfaces.entrySet().stream().collect(Collectors.toMap(e -> ((InterfaceDataDefinition) e.getValue()).getUniqueId(), e -> (InterfaceDataDefinition) e.getValue()));
             MapInterfaceDataDefinition instInterfaces = new MapInterfaceDataDefinition(interfacesMap);
 
             Map<String, MapInterfaceDataDefinition> instInterfacesMap = new HashMap<>();

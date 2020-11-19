@@ -65,6 +65,7 @@ export class InputModel implements IInputModel {
     schema:SchemaPropertyGroupModel;
     defaultValue:string;
     value:string;
+    toscaDefaultValue?: string;
 
     //costom properties
     isNew:boolean;
@@ -94,6 +95,7 @@ export class InputModel implements IInputModel {
             this.filterTerm = this.name + ' ' + this.description + ' ' + this.type + ' ' + this.componentInstanceName;
             this.inputs = input.inputs;
             this.properties = input.properties;
+            this.toscaDefaultValue = input.toscaDefaultValue;
         }
     }
 

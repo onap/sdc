@@ -375,7 +375,8 @@ public class ResourceImportManager {
                     log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(),
                         resource.getName());
                 } else {
-                    moduleInterfaces.put(interfaceNameValue.getKey(), eitherInterface.left().value());
+                    final InterfaceDefinition interfaceDefinition = eitherInterface.left().value();
+                    moduleInterfaces.put(interfaceNameValue.getKey(), interfaceDefinition);
                 }
 
             }

@@ -103,6 +103,7 @@ export class ComponentInstance implements IComponentInstance{
     public invariantName:string;
     public originArchived:boolean;
     public directives: string[];
+    public interfaces:any;
 
     constructor(componentInstance?:ComponentInstance) {
 
@@ -135,6 +136,7 @@ export class ComponentInstance implements IComponentInstance{
             this.sourceModelUuid = componentInstance.sourceModelUuid;
             this.originArchived = componentInstance.originArchived;
             this.directives = componentInstance.directives;
+            this.interfaces = componentInstance.interfaces;
         }
     }
 

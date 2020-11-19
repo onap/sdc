@@ -35,7 +35,7 @@ import {
     PropertyModel,
     IFileDownload,
     AttributeModel,
-    Capability, Requirement
+    Capability, Requirement, BEOperationModel, InterfaceModel
 } from "app/models";
 import {ArtifactGroupType, COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
@@ -65,6 +65,11 @@ import { PolicyInstance } from "../../../models/graph/zones/policy-instance";
 import { PropertyBEModel } from "../../../models/properties-inputs/property-be-model";
 import {map} from "rxjs/operators";
 import {CapabilitiesConstraintObject} from "../../components/logic/capabilities-constraint/capabilities-constraint.component";
+import {
+    BEInterfaceOperationModel,
+    ComponentInstanceInterfaceModel,
+    InterfaceOperationModel
+} from "../../../models/interfaceOperation";
 
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
@@ -108,8 +113,8 @@ export class TopologyTemplateService {
             [COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
-    getComponentResourceInstances(component: Component): Observable<ComponentGenericResponse> {
-        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES]);
+    getComponentInstances(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES]);
     }
 
     getComponentInputs(component: Component): Observable<ComponentGenericResponse> {
@@ -478,6 +483,7 @@ export class TopologyTemplateService {
     }
 
     protected getComponentDataByFieldsName(componentType: string, componentId: string, fields: string[]): Observable<ComponentGenericResponse> {
+        console.info("Topology template -> getComponentDataByFieldsName with id:", componentId)
         let params: HttpParams = new HttpParams();
         _.forEach(fields, (field: string): void => {
             params = params.append(API_QUERY_PARAMS.INCLUDE, field);
@@ -485,6 +491,7 @@ export class TopologyTemplateService {
         // tslint:disable-next-line:object-literal-shorthand
         return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params: params})
             .map((res) => {
+                console.info("Topology template -> getComponentDataByFieldsName response:", res);
                 return componentType === ComponentType.SERVICE ? new ServiceGenericResponse().deserialize(res) :
                         new ComponentGenericResponse().deserialize(res);
             });
@@ -562,6 +569,24 @@ export class TopologyTemplateService {
     getDirectiveList(): Observable<string[]> {
         return this.http.get<ListDirectiveResponse>(this.baseUrl + "directives")
         .pipe(map(response => response.directives));
+    }
+
+    updateComponentInstanceInterfaceOperation(componentMetaDataId: string,
+                                              componentMetaDataType: string,
+                                              componentInstanceId: string,
+                                              operation: InterfaceOperationModel): Observable<ComponentInstance> {
+        const operationList = {
+            interfaces: {
+                [operation.interfaceType]: {
+                    type: operation.interfaceType,
+                    operations: {
+                        [operation.name]: new BEInterfaceOperationModel(operation)
+                    }
+                }
+            }
+        };
+        return this.http.put<ComponentInstance>(this.baseUrl + this
+        .getServerTypeUrl(componentMetaDataType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList);
     }
 
 }
