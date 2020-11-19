@@ -43,14 +43,14 @@ export class InputsTableComponent {
     @Input() readonly: boolean;
     @Input() isLoading: boolean;
     @Input() componentType: string;
-    
+    @Input() showDelete:boolean;
     @Output() inputChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() fePropertiesMap: InstanceFePropertiesMap;
 
     @ViewChildren('metadataViewChildren') public metadataViewChildren: QueryList<DynamicElementComponent>;
-    
+
     sortBy: String;
     reverse: boolean;
     selectedInputToDelete: InputFEModel;
@@ -107,15 +107,15 @@ export class InputsTableComponent {
         var mapKeyError = input.metadataMapKeyError;
         if(input.metadataMapKeyError){
             dynamicElementComponent.cmpRef.instance.control.setErrors({mapKeyError});
-        } 
+        }
     };
 
     onMetadataValueChanged = (input: InputFEModel, event, metadataEntry: MetadataEntry) => {
         input.updateMetadataValue(metadataEntry, event.value);
         this.inputChanged.emit(input);
     };
-    
-    
+
+
     createNewMetadataEntry = (input: InputFEModel): void => {
         let metadataEntry = new MetadataEntry("", "");
         input.addMetadataEntry(metadataEntry);
@@ -126,7 +126,7 @@ export class InputsTableComponent {
         input.deleteMetadataEntry(metadataEntry);
         this.inputChanged.emit(input);
     }
-    
+
     onDeleteInput = () => {
         this.deleteInput.emit(this.selectedInputToDelete);
         this.modalService.closeCurrentModal();

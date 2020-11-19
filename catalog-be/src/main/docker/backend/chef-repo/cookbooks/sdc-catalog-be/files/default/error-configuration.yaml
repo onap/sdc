@@ -2410,10 +2410,23 @@ errors:
       message: 'Error: Invalid Content. %1 has invalid format.',
       messageId: "SVC4723"
     }
-#---------SVC4732------------------------------
+#---------SVC4734------------------------------
     # %1 - list of validation errors
     INVALID_PM_DICTIONARY_FILE: {
         code: 400,
         message: 'Error: Invalid PM Dictionary File. %1',
-        messageId: "SVC4732"
+        messageId: "SVC4734"
+    }
+#-----------SVC4735---------------------------
+    #%1 - input name
+    INPUT_ALREADY_EXIST: {
+        code: 409,
+        message: "Error: Input with '%1' name already exists.",
+        messageId: "SVC4735"
+    }
+#---------SVC4736------------------------------
+    INVALID_INPUT_NAME: {
+        code: 400,
+        message: "Error: Input name contains invalid characters. It should have only letters, numbers and underscores.",
+        messageId: "SVC4736"
     }
