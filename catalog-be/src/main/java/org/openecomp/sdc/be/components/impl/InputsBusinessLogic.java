@@ -23,6 +23,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -33,6 +34,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponent
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
@@ -40,7 +42,9 @@ import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUti
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstListInput;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -61,15 +65,16 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
+import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +86,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component("inputsBusinessLogic")
+@org.springframework.stereotype.Component("inputsBusinessLogic")
 public class InputsBusinessLogic extends BaseBusinessLogic {
 
     private static final String CREATE_INPUT = "CreateInput";
@@ -874,4 +879,102 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     }
 
+    public Either<EntryData<String, InputDefinition>, ResponseFormat> addInputToComponent(String componentId,
+                                                                                                String inputName,
+                                                                                                InputDefinition newInputDefinition,
+                                                                                                String userId) {
+        Either<EntryData<String, InputDefinition>, ResponseFormat> result = null;
+
+        validateUserExists(userId);
+
+        Either<Component, StorageOperationStatus> serviceElement =
+                toscaOperationFacade.getToscaElement(componentId);
+        if (serviceElement.isRight()) {
+            result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+            return result;
+        }
+        Component component = serviceElement.left().value();
+        NodeTypeEnum nodeType = component.getComponentType().getNodeType();
+        StorageOperationStatus lockResult = graphLockOperation.lockComponent(componentId, nodeType );
+        if (!lockResult.equals(StorageOperationStatus.OK)) {
+            BeEcompErrorManager.getInstance().logBeFailedLockObjectError(CREATE_INPUT, nodeType.name().toLowerCase(), componentId);
+            log.info("Failed to lock component {}. Error - {}", componentId, lockResult);
+            result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return result;
+        }
+
+        try {
+            if (!ComponentValidationUtils.canWorkOnComponent(component, userId)) {
+                result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+                return result;
+            }
+
+            List<InputDefinition> inputs = component.getInputs();
+
+            if(CollectionUtils.isEmpty(inputs)) {
+                inputs = new ArrayList<>();
+            }
+
+            if(isInputExistInComponent(inputs, inputName)) {
+
+                result = Either.right(componentsUtils.getResponseFormat(ActionStatus
+                                .INPUT_ALREADY_EXIST, inputName));
+                return result;
+
+            } else {
+
+                Map<String, DataTypeDefinition> allDataTypes = getAllDataTypes(applicationDataTypeCache);
+
+                // validate input default values
+                Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newInputDefinition, allDataTypes);
+                if (defaultValuesValidation.isRight()) {
+                    result = Either.right(defaultValuesValidation.right().value());
+                    return result;
+                }
+                // convert Input
+                if (newInputDefinition != null) {
+                ToscaPropertyType type = getType(newInputDefinition.getType());
+                if (type != null) {
+                    PropertyValueConverter converter = type.getConverter();
+                    // get inner type
+                    String innerType = null;
+                        SchemaDefinition schema = newInputDefinition.getSchema();
+                        if (schema != null) {
+                            PropertyDataDefinition prop = schema.getProperty();
+                            if (prop != null) {
+                                innerType = prop.getType();
+                            }
+                        }
+                        String convertedValue = null;
+                        if (newInputDefinition.getDefaultValue() != null) {
+                            convertedValue = converter.convert(
+                                    newInputDefinition.getDefaultValue(), innerType, allDataTypes);
+                            newInputDefinition.setDefaultValue(convertedValue);
+                        }
+                    }
+                }
+                Either<InputDefinition, StorageOperationStatus> addInputEither =
+                        toscaOperationFacade.addInputToComponent(inputName, newInputDefinition, component);
+
+                if (addInputEither.isRight()) {
+                    log.info("Failed to add new input {}. Error - {}", componentId,
+                            addInputEither.right().value());
+                    result = Either.right(componentsUtils.getResponseFormat(ActionStatus
+                            .GENERAL_ERROR));
+                    return result;
+                }
+            }
+            result = Either.left(new EntryData<>(inputName, newInputDefinition));
+            return result;
+        } finally {
+            commitOrRollback(result);
+            // unlock component
+            graphLockOperation.unlockComponent(componentId, nodeType);
+        }
+    }
+
+    private boolean isInputExistInComponent(List<InputDefinition> inputs, String inputName) {
+        return CollectionUtils.isNotEmpty(inputs) &&
+            inputs.stream().filter(input -> input.getName().equals(inputName)).findAny().isPresent();
+    }
 }

@@ -19,12 +19,13 @@
  */
 
 import { Injectable } from '@angular/core';
-import { InputFEModel} from "app/models";
+import { InputBEModel, InputFEModel } from "app/models";
+import { DataTypeService } from "app/ng2/services/data-type.service";
 
 @Injectable()
 export class InputsUtils {
 
-    constructor() {}
+    constructor(private dataTypeService:DataTypeService) {}
 
     public initDefaultValueObject = (input: InputFEModel): void => {
         input.resetDefaultValueObjValidation();
@@ -35,6 +36,12 @@ export class InputsUtils {
     public resetInputDefaultValue = (input: InputFEModel, newDefaultValue: string): void => {
         input.defaultValue = newDefaultValue;
         this.initDefaultValueObject(input);
+    }
+
+    public convertAddInputBAToInputFE = (input: InputBEModel): InputFEModel => {
+        const newFEInput: InputFEModel = new InputFEModel(input); //Convert input to FE
+        this.initDefaultValueObject(newFEInput);
+        return newFEInput;
     }
 
 }

@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -84,6 +85,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Tags({@Tag(name = "SDC Internal APIs")})
@@ -97,6 +99,7 @@ public class InputsServlet extends AbstractValidationsServlet {
     private static final Logger log = Logger.getLogger(InputsServlet.class);
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(InputsServlet.class.getName());
     private static final String START_HANDLE_REQUEST_OF = "(get) Start handle request of {}";
+    private static final String CREATE_INPUT = "CreateInput";
 
     private final DataTypeBusinessLogic businessLogic;
     private final InputsBusinessLogic inputsBusinessLogic;
@@ -334,6 +337,21 @@ public class InputsServlet extends AbstractValidationsServlet {
                 DeclarationTypeEnum.INPUT, request);
     }
 
+    @POST
+    @Path("/{componentType}/{componentId}/create/input")
+    @Operation(description = "Create inputs on service", method = "POST", summary = "Return inputs list", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component not found")})
+    public Response createInput(@PathParam("componentType") final String componentType,
+                                         @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
+                                         @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                         @Parameter(description = "ComponentIns Inputs Object to be created",
+                                                 required = true) String componentInstInputsMapObj) {
+
+        return createInput(componentId, componentInstInputsMapObj, request, userId);
+    }
 
     /**
      * Creates a "list input" and updates given list of properties to get value from the input.
@@ -564,6 +582,50 @@ public class InputsServlet extends AbstractValidationsServlet {
             log.debug("Delete data type failed with exception", e);
             response = buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             return response;
+        }
+    }
+
+    private Response createInput(String componentId, String data,  HttpServletRequest request,String userId) {
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {} modifier id is {} data is {}", url, userId, data);
+        loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, StatusCode.STARTED,"CREATE_INPUTS by user {} ", userId);
+
+        try{
+            Either<Map<String, InputDefinition>, ActionStatus> inputDefinition =
+                    getInputModel(componentId, data);
+            if (inputDefinition.isRight()) {
+                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(inputDefinition.right().value());
+                return buildErrorResponse(responseFormat);
+            }
+
+            Map<String, InputDefinition> inputs = inputDefinition.left().value();
+            if (inputs == null || inputs.size() != 1) {
+                log.info("Input content is invalid - {}", data);
+                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+                return buildErrorResponse(responseFormat);
+            }
+
+            Map.Entry<String, InputDefinition> entry = inputs.entrySet().iterator().next();
+            InputDefinition newInputDefinition = entry.getValue();
+            newInputDefinition.setParentUniqueId(componentId);
+            String inputName = newInputDefinition.getName();
+
+            Either<EntryData<String, InputDefinition>, ResponseFormat> addInputEither =
+                    inputsBusinessLogic.addInputToComponent(componentId, inputName, newInputDefinition, userId);
+
+            if(addInputEither.isRight()) {
+                return buildErrorResponse(addInputEither.right().value());
+            }
+
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, StatusCode.COMPLETE,"CREATE_INPUTS by user {} ", userId);
+            return buildOkResponse(newInputDefinition);
+
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE_INPUT);
+            log.debug("create input failed with exception", e);
+            ResponseFormat responseFormat =
+                    getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
+            return buildErrorResponse(responseFormat);
         }
     }
 }

@@ -227,6 +227,16 @@ export class TopologyTemplateService {
             });
     }
 
+    createServiceInput(componentId: string, inputModel: InputBEModel): Observable<InputBEModel> {
+        const serverObject = {};
+        serverObject[inputModel.name] = inputModel;
+        return this.http.post<InputBEModel>(this.baseUrl + 'services/' + componentId + '/create/input', serverObject)
+            .map((res) => {
+                const input: InputBEModel = new InputBEModel(res);
+                return input;
+            });
+    }
+
     getDependencies(componentType: string, componentId: string): Observable<IDependenciesServerResponse[]> {
         return this.http.get<IDependenciesServerResponse[]>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/dependencies');
     }
