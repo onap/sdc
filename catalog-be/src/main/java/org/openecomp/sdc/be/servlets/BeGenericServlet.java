@@ -68,6 +68,7 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
@@ -393,6 +394,19 @@ public class BeGenericServlet extends BasicServlet {
         return Either.left(propertyDefinition);
     }
 
+    private Either<InputDefinition, ActionStatus> getInputDefinitionFromJson(String componentId, String inputName, JSONObject value) {
+        String jsonString = value.toJSONString();
+        Either<InputDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(jsonString, InputDefinition.class);
+        if (convertJsonToObject.isRight()) {
+            return Either.right(convertJsonToObject.right().value());
+        }
+        InputDefinition inputDefinition = convertJsonToObject.left().value();
+        String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, inputName);
+        inputDefinition.setUniqueId(uniqueId);
+
+        return Either.left(inputDefinition);
+    }
+
     protected Either<Map<String, PropertyDefinition>, ActionStatus> getPropertiesListForUpdate(String data) {
 
         Map<String, PropertyDefinition> properties = new HashMap<>();
@@ -420,7 +434,6 @@ public class BeGenericServlet extends BasicServlet {
         }
 
     }
-
 
     protected String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
         JSONObject root = new JSONObject();
@@ -564,5 +577,46 @@ public class BeGenericServlet extends BasicServlet {
         }
 
         return getInputBL(context);
+    }
+
+    protected Either<Map<String, InputDefinition>, ActionStatus> getInputModel(String componentId, String data) {
+        JSONParser parser = new JSONParser();
+        JSONObject root;
+        try {
+            Map<String, InputDefinition> inputs = new HashMap<>();
+            root = (JSONObject) parser.parse(data);
+
+            Set entrySet = root.entrySet();
+            Iterator iterator = entrySet.iterator();
+            while (iterator.hasNext()) {
+                Entry next = (Entry) iterator.next();
+                String inputName = (String) next.getKey();
+
+                if(!isInputNameValid(inputName)) {
+                    return Either.right(ActionStatus.INVALID_INPUT_NAME);
+                }
+
+                JSONObject value = (JSONObject) next.getValue();
+                Either<InputDefinition, ActionStatus> inputDefinitionEither =
+                        getInputDefinitionFromJson(componentId, inputName, value);
+
+                if(inputDefinitionEither.isRight()) {
+                    return Either.right(inputDefinitionEither.right().value());
+                }
+
+                inputs.put(inputName, inputDefinitionEither.left().value());
+            }
+
+            return Either.left(inputs);
+        } catch (ParseException e) {
+            log.warn("Input content is invalid - {}", data, e);
+            return Either.right(ActionStatus.INVALID_CONTENT);
+        }
+    }
+
+    protected boolean isInputNameValid(String inputName) {
+        return Objects.nonNull(inputName)
+                && inputName.matches(PROPERTY_NAME_REGEX);
+
     }
 }

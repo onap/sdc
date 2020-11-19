@@ -2482,6 +2482,46 @@ public class ToscaOperationFacade {
         return Either.left(newProperty);
 	}
 
+    public Either<InputDefinition, StorageOperationStatus> addInputToComponent(String inputName,
+                                                                                     InputDefinition newInputDefinition,
+                                                                                     Component component) {
+        newInputDefinition.setName(inputName);
+
+        StorageOperationStatus status = getToscaElementOperation(component)
+                .addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.INPUTS, VertexTypeEnum.INPUTS, newInputDefinition, JsonPresentationFields.NAME);
+        if (status != StorageOperationStatus.OK) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add the input {} to the component {}. Status is {}. ", inputName, component.getName(), status);
+            return Either.right(status);
+        }
+
+        ComponentParametersView filter = new ComponentParametersView(true);
+        filter.setIgnoreProperties(false);
+        filter.setIgnoreInputs(false);
+        Either<Component, StorageOperationStatus> getUpdatedComponentRes = getToscaElement(component.getUniqueId(), filter);
+        if (getUpdatedComponentRes.isRight()) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to get updated component {}. Status is {}. ", component.getUniqueId(), getUpdatedComponentRes.right().value());
+            return Either.right(status);
+        }
+
+        InputDefinition newInput = null;
+        List<InputDefinition> inputs =
+                (getUpdatedComponentRes.left().value()).getInputs();
+        if (CollectionUtils.isNotEmpty(inputs)) {
+            Optional<InputDefinition> inputOptional = inputs.stream().filter(
+                    inputEntry -> inputEntry.getName().equals(inputName)).findAny();
+            if (inputOptional.isPresent()) {
+                newInput = inputOptional.get();
+            }
+        }
+        if (newInput == null) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to find recently added input {} " +
+                    "on the component {}. Status is {}. ", inputs, component.getUniqueId(), StorageOperationStatus.NOT_FOUND);
+            return Either.right(StorageOperationStatus.NOT_FOUND);
+        }
+
+        return Either.left(newInput);
+    }
+
 	public StorageOperationStatus deletePropertyOfComponent(Component component, String propertyName) {
 		return getToscaElementOperation(component).deleteToscaDataElement(component.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, propertyName, JsonPresentationFields.NAME);
 	}
@@ -2536,8 +2576,7 @@ public class ToscaOperationFacade {
 		return result;
 	}
 
-
-	public Either<AttributeDataDefinition, StorageOperationStatus> addAttributeOfResource(Component component, AttributeDataDefinition newAttributeDef) {
+    public Either<AttributeDataDefinition, StorageOperationStatus> addAttributeOfResource(Component component, AttributeDataDefinition newAttributeDef) {
 
         Either<Component, StorageOperationStatus> getUpdatedComponentRes = null;
         Either<AttributeDataDefinition, StorageOperationStatus> result = null;

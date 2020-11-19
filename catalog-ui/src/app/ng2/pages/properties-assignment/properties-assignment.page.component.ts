@@ -1052,6 +1052,41 @@ export class PropertiesAssignmentComponent {
         modal.instance.open();
     }
 
+    /*** addInput ***/
+    addInput = () => {
+        let modalTitle = 'Add Input';
+        let modal = this.ModalService.createCustomModal(new ModalModel(
+            'sm',
+            modalTitle,
+            null,
+            [
+                new ButtonModel('Save', 'blue', () => {
+                    modal.instance.dynamicContent.instance.isLoading = true;
+                    const newInput: InputBEModel = modal.instance.dynamicContent.instance.propertyModel;
+                    this.topologyTemplateService.createServiceInput(this.component.uniqueId, newInput)
+                        .subscribe((response) => {
+                            modal.instance.dynamicContent.instance.isLoading = false;
+                            const newInputProp: InputFEModel = this.inputsUtils.convertInputBEToInputFE(response);
+                            this.inputs.push(newInputProp);
+                            modal.instance.close();
+                        }, (error) => {
+                            modal.instance.dynamicContent.instance.isLoading = false;
+                            this.Notification.error({
+                                message: 'Failed to add input:' + error,
+                                title: 'Failure'
+                            });
+                        });
+                }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
+                new ButtonModel('Cancel', 'outline grey', () => {
+                    modal.instance.close();
+                }),
+            ],
+            null
+        ));
+        this.ModalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
+        modal.instance.open();
+    }
+
     /*** SEARCH RELATED FUNCTIONS ***/
     searchPropertiesInstances = (filterData:FilterPropertiesAssignmentData) => {
         let instanceBePropertiesMap:InstanceBePropertiesMap;
