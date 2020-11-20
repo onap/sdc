@@ -32,11 +32,6 @@ pmDictionary:
                   }
 ---
 pmDictionary:
-    pmDictionaryHeader:
-        pmDefVsn: AcmeNumber.1.0
-        pmDefSchemaVsn: 1.0
-        nfType: myPnf
-        vendor: Acme
     pmDictionaryMeasurements:
     -   measType: DRB.UEThpDl
         measDescription: Average DL UE throughput in gNB
