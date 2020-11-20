@@ -13,6 +13,9 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
+  * Modifications copyright (c) 2020 Nokia
+ * ================================================================================
+
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -203,6 +206,11 @@
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.vnfsdk.validation</groupId>
+      <artifactId>validation-pmdictionary</artifactId>
+      <version>${onap.vnfsdk.validation.pmdictionary.version}</version>
     </dependency>
 
   </dependencies>
