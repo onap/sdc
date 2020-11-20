@@ -929,10 +929,22 @@ public class SOL004MetaDirectoryValidatorTest {
             + "    {}\n"
             + "      ^\n"))
         );
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR,"while scanning a simple key\n" +
+                " in 'reader', line 2, column 1:\n" +
+                "    key {}\n" +
+                "    ^\n" +
+                "could not find expected ':'\n" +
+                " in 'reader', line 2, column 7:\n" +
+                "    {}\n" +
+                "      ^\n")
+        );
 
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
             .validateContent(handler);
 
+        System.out.println("///////////////////////////////////////" +
+                "hgfhgf");
+        System.out.println(actualErrorMap.get(SdcCommon.UPLOAD_FILE).get(0).getMessage());
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
 
@@ -966,6 +978,9 @@ public class SOL004MetaDirectoryValidatorTest {
         );
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
             , Messages.EMPTY_YAML_FILE_1.formatMessage(nonManoVesEventsSource))
+        );
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+                , "PM_Dictionary YAML file is empty")
         );
 
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
@@ -1005,6 +1020,10 @@ public class SOL004MetaDirectoryValidatorTest {
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
             , Messages.INVALID_YAML_EXTENSION.formatMessage(nonManoVesEventsSource))
         );
+        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+                , "PM_Dictionary YAML file is empty")
+        );
+
 
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
             .validateContent(handler);
