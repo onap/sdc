@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d546c12_78d2f383",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/YamlUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-11-23T13:10:17Z",
+      "side": 1,
+      "message": "setAllowDuplicateKeys(false) is the reason for failing TCs, some of yaml file have duplicated keys\nhere are some examples:\nopenecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/guideLineValidator/heatPortNetworkNamingConvention/missingparam/first.yaml\nopenecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/guideLineValidator/heatPortNetworkNamingConvention/positive/first.yaml\nopenecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/guideLineValidator/vlan_validation/modeled_through_resource_group/negative_test/input/main.yml\nopenecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/heat_validator/vlan_resource_validation/vlan_multiple_parent_ports/positive_test/input/main.yml\netc.\n\nI see two possible solutions:\n1. edit and fix all duplicated keys in yaml files (probably a lot, but IMPO - preferable)\n2. revert setting \u0027false\u0027 for setAllowDuplicateKeys",
+      "range": {
+        "startLine": 91,
+        "startChar": 6,
+        "endLine": 96,
+        "endChar": 43
+      },
+      "revId": "ecc9ad1ce114eff47ae086755862261c40b705cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
