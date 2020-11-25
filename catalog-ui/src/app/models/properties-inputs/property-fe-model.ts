@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -273,8 +275,8 @@ export class PropertyFEModel extends PropertyBEModel {
             return JSON.stringify(valueObj);
         }
 
-        // return string value as is
-        return valueObj;
+        // return trimmed string value
+        return valueObj.trim();
     }
 
     static parseValueObj(value: string, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType, defaultValue?: string): any {
