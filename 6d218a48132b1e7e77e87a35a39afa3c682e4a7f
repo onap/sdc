@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b233fe85_d712ed11",
+        "filename": "catalog-ui/src/app/models/properties-inputs/input-fe-model.spec.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2020-11-25T15:52:46Z",
+      "side": 1,
+      "message": "Consider adding a test case with \u0027null\u0027 as input argument",
+      "revId": "6d218a48132b1e7e77e87a35a39afa3c682e4a7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
