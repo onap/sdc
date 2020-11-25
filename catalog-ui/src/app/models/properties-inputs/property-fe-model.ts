@@ -273,8 +273,8 @@ export class PropertyFEModel extends PropertyBEModel {
             return JSON.stringify(valueObj);
         }
 
-        // return string value as is
-        return valueObj;
+        // return trimmed string value
+        return valueObj.trim();
     }
 
     static parseValueObj(value: string, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType, defaultValue?: string): any {
