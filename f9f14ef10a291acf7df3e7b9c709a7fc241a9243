@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7920083d_7af36c87",
+        "filename": "catalog-ui/src/app/models/properties-inputs/input-fe-model.spec.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-11-26T08:17:32Z",
+      "side": 1,
+      "message": "Missing license.",
+      "revId": "f9f14ef10a291acf7df3e7b9c709a7fc241a9243",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04d67393_5abba25e",
+        "filename": "catalog-ui/src/app/models/properties-inputs/input-fe-model.spec.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-11-26T08:17:32Z",
+      "side": 1,
+      "message": "Consider. Split to two test cases: \n1) single space on prefix and suffix\n2) more spaces on prefix and suffix",
+      "range": {
+        "startLine": 7,
+        "startChar": 19,
+        "endLine": 7,
+        "endChar": 37
+      },
+      "revId": "f9f14ef10a291acf7df3e7b9c709a7fc241a9243",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42c5114c_5a1fb83f",
+        "filename": "catalog-ui/src/app/models/properties-inputs/property-fe-model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-11-26T08:17:32Z",
+      "side": 1,
+      "message": "Please add modification copyright. \nhttps://wiki.onap.org/display/DW/Working+with+SDC",
+      "revId": "f9f14ef10a291acf7df3e7b9c709a7fc241a9243",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
