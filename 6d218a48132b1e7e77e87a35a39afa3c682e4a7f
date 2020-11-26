@@ -16,6 +16,24 @@
       "revId": "6d218a48132b1e7e77e87a35a39afa3c682e4a7f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e0caedb_b5682cf8",
+        "filename": "catalog-ui/src/app/models/properties-inputs/input-fe-model.spec.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-11-26T07:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b233fe85_d712ed11",
+      "revId": "6d218a48132b1e7e77e87a35a39afa3c682e4a7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
