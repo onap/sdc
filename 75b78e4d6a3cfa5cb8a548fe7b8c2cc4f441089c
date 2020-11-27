@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b390578_0d85426b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "please make first 3 fields final",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09f2ba3d_794b0fc4",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "this shouldn\u0027t be object field, because it introduces unnecessary state to this object. \nIf you make it variable in validateContentAgainstSchema method and pass it as parameter to other methods, then this class will be stateless, which is good.",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0791b668_74b510c6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "init this field where it\u0027s declared and remove it from constructor",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "746819c5_5512d662",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "this should be private, but i see that you have written many tests to this method, so you can either refactor tests to operate on validateContentAgainstSchema method, or extract this method to separate class and test that class. I prefer second solution",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c6a414a_0ac3faba",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "please rename this to for example errorMessages",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d4697da_67ee8dbc",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "please extract lambda to separate method,",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4409e61a_238aeb4c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "please rename this variable to errors/validationErrors or something more meaningful",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdf4f5f0_2c8b14e8",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "you can consider changing it to use stream on \u0027err\u0027 then map it to message and then using forEach to add messages to \u0027error\u0027",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d3d5dd2_40b83bdb",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "please remove blank line",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39d9ebad_81f3e33b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "You should use logger",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f18271b6_8b1c730b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "please remove blank line",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4db5b39_eafae3e2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "can be made final",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3549a645_5495a0f5",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "Two comments:\n1. This stream can be removed and call forEach directly on collection\n2. If you have streams splited into multiple lines, then place dot at the beginning of new line (not at the end of previous line)",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "388b1be7_193e9df1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "please make it private",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e50872c0_9e9766fb",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "Consider changing naming convention of your test to the following:\nshouldDoSomething_whenSomething.\nFor example here it could be changed to\nshouldReportEmptyYamlMessage_whenPmDictionaryIsEmpty",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39b0465a_eb90cdfa",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T15:19:52Z",
+      "side": 1,
+      "message": "Please remove all first blank lines from each test method in all your tests",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
