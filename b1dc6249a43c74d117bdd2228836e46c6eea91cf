@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de511bb0_7f30acc6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-11-27T12:51:47Z",
+      "side": 1,
+      "message": "pls remove this blank line",
+      "revId": "b1dc6249a43c74d117bdd2228836e46c6eea91cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ce5e332_31123895",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-11-27T12:51:47Z",
+      "side": 1,
+      "message": "\"The actual error message and expected error message lists should be the same\" pls extract to variable",
+      "revId": "b1dc6249a43c74d117bdd2228836e46c6eea91cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f9773c7_b73a0a7b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 946,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-11-27T12:51:47Z",
+      "side": 1,
+      "message": "pls remove this System.out.println",
+      "revId": "b1dc6249a43c74d117bdd2228836e46c6eea91cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "261db323_b79579c2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1271,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-11-27T12:51:47Z",
+      "side": 1,
+      "message": "pls remove blank line",
+      "revId": "b1dc6249a43c74d117bdd2228836e46c6eea91cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
