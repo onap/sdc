@@ -78,6 +78,16 @@
       <artifactId>openecomp-sdc-validation-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onap.vnfsdk.validation</groupId>
+      <artifactId>validation-pmdictionary</artifactId>
+      <version>1.2.15-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vavr</groupId>
+      <artifactId>vavr</artifactId>
+      <version>0.10.3</version>
+    </dependency>
   </dependencies>
 
 </project>

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2017 European Support Limited
+ * Copyright © 2020 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +38,15 @@ public class YamlValidator implements Validator {
   @Override
   public void validate(GlobalValidationContext globalContext) {
     Collection<String> files = globalContext.files(
-        (fileName, globalValidationContext) -> fileName.endsWith(".yaml")
-            || fileName.endsWith(".yml") || fileName.endsWith(".env"));
+        (fileName, globalValidationContext) -> FileExtensionUtils.isYaml(fileName)
+            && !FileExtensionUtils.isPmDictionary(fileName));
 
-    files.stream().forEach(fileName -> validate(fileName, globalContext));
+    files.forEach(fileName -> validate(fileName, globalContext));
   }
 
   private void validate(String fileName, GlobalValidationContext globalContext) {
     Optional<InputStream> rowContent = globalContext.getFileContent(fileName);
-    if (!rowContent.isPresent()) {
+    if (rowContent.isEmpty()) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_YML_1, Messages
                       .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
