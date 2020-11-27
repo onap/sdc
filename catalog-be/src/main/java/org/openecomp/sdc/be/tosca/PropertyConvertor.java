@@ -105,6 +105,7 @@ public class PropertyConvertor {
         if(propertyType.equals(PropertyType.CAPABILITY)) {
             prop.setStatus(property.getStatus());
         }
+        prop.setMetadata(property.getMetadata());
         return prop;
     }
     

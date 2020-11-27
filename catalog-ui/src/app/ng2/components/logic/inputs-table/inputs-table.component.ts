@@ -22,12 +22,14 @@
 /**
  * Created by rc2122 on 5/4/2017.
  */
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter, ViewChildren, QueryList } from "@angular/core";
 import { InputFEModel } from "app/models";
 import { ModalService } from "../../../services/modal.service";
 import { InstanceFeDetails } from "app/models/instance-fe-details";
 import { InstanceFePropertiesMap } from "../../../../models/properties-inputs/property-fe-map";
 import { DataTypeService } from "../../../services/data-type.service";
+import { MetadataEntry } from "app/models/metadataEntry";
+import { DynamicElementComponent } from "../../ui/dynamic-element/dynamic-element.component";
 
 @Component({
     selector: 'inputs-table',
@@ -41,10 +43,13 @@ export class InputsTableComponent {
     @Input() readonly: boolean;
     @Input() isLoading: boolean;
     @Input() componentType: string;
+    
     @Output() inputChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() fePropertiesMap: InstanceFePropertiesMap;
+
+    @ViewChildren('metadataViewChildren') public metadataViewChildren: QueryList<DynamicElementComponent>;
     
     sortBy: String;
     reverse: boolean;
@@ -93,6 +98,35 @@ export class InputsTableComponent {
         this.inputChanged.emit(input);
     }
 
+    onMetadataKeyChanged = (input: InputFEModel, event, metadataEntry: MetadataEntry) => {
+        let dynamicElementComponent = this.metadataViewChildren.filter(element => element.name == input.name + "_" + metadataEntry.key).pop();
+
+        input.updateMetadataKey(metadataEntry, event.value);
+        this.inputChanged.emit(input);
+
+        var mapKeyError = input.metadataMapKeyError;
+        if(input.metadataMapKeyError){
+            dynamicElementComponent.cmpRef.instance.control.setErrors({mapKeyError});
+        } 
+    };
+
+    onMetadataValueChanged = (input: InputFEModel, event, metadataEntry: MetadataEntry) => {
+        input.updateMetadataValue(metadataEntry, event.value);
+        this.inputChanged.emit(input);
+    };
+    
+    
+    createNewMetadataEntry = (input: InputFEModel): void => {
+        let metadataEntry = new MetadataEntry("", "");
+        input.addMetadataEntry(metadataEntry);
+        this.inputChanged.emit(input);
+    }
+
+    deleteMetadataEntry = (input: InputFEModel, metadataEntry: MetadataEntry) => {
+        input.deleteMetadataEntry(metadataEntry);
+        this.inputChanged.emit(input);
+    }
+    
     onDeleteInput = () => {
         this.deleteInput.emit(this.selectedInputToDelete);
         this.modalService.closeCurrentModal();
@@ -100,8 +134,6 @@ export class InputsTableComponent {
 
     openDeleteModal = (input: InputFEModel) => {
         console.log('exist inputs: ' + this.inputs)
-        
-        
         this.selectedInputToDelete = input;
         this.modalService.createActionModal("Delete Input", "Are you sure you want to delete this input?", "Delete", this.onDeleteInput, "Close").instance.open();
     }
@@ -133,6 +165,16 @@ export class InputsTableComponent {
     checkInstanceFePropertiesMapIsFilled(){
         return _.keys(this.fePropertiesMap).length > 0
     }
+
+    hasInputMetadata(){
+        for(let input of this.inputs){
+            if (input.metadataEntries.length > 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 

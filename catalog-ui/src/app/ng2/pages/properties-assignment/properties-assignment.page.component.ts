@@ -367,7 +367,9 @@ export class PropertiesAssignmentComponent {
 
         if (this.isPropertiesTabSelected) {
             this.isValidChangedData = this.changedData.every((changedItem) => (<PropertyFEModel>changedItem).valueObjIsValid);
-        } else if (this.isInputsTabSelected || this.isPoliciesTabSelected) {
+        } else if (this.isInputsTabSelected) {
+            this.isValidChangedData = this.changedData.every((changedItem) => (<InputFEModel>changedItem).defaultValueObjIsValid && (<InputFEModel>changedItem).metadataIsValid);
+        } else if (this.isPoliciesTabSelected) {
             this.isValidChangedData = this.changedData.every((changedItem) => (<InputFEModel>changedItem).defaultValueObjIsValid);
         }
         this.updateHasChangedData();
@@ -846,6 +848,7 @@ export class PropertiesAssignmentComponent {
             handleReverseItem = (changedItem) => {
                 changedItem = <InputFEModel>changedItem;
                 this.inputsUtils.resetInputDefaultValue(changedItem, changedItem.defaultValue);
+                changedItem.resetMetadata();
                 changedItem.required = changedItem.requiredOrig;
             };
         }
