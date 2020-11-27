@@ -24,6 +24,8 @@ import {PropertyFEModel} from "../../models";
 import {PROPERTY_DATA} from "../../utils/constants";
 import {InputBEModel} from "./input-be-model";
 import {DerivedPropertyType} from "./property-be-model";
+import { Metadata } from "app/models/metadata";
+import { MetadataEntry } from "app/models/metadataEntry";
 
 export class InputFEModel extends InputBEModel {
     isSimpleType: boolean;
@@ -35,6 +37,10 @@ export class InputFEModel extends InputBEModel {
     defaultValueObjIsChanged:boolean;
     derivedDataType: DerivedPropertyType;
     requiredOrig: boolean;
+    metadataOrig: Metadata;
+    metadataIsValid:boolean;
+    metadataEntries: MetadataEntry[] = [];
+    metadataMapKeyError: string;
 
     constructor(input?: InputBEModel) {
         super(input);
@@ -50,6 +56,14 @@ export class InputFEModel extends InputBEModel {
             this.updateDefaultValueObjOrig();
 
             this.requiredOrig = this.required;
+            this.metadataOrig = _.cloneDeep(input.metadata);
+            this.metadataIsValid = true;
+			
+            if (input.metadata){
+                for (let key of Object.keys(input.metadata)){
+                    this.metadataEntries.push(new MetadataEntry(key, input.metadata[key]));
+                }
+            }
         }
     }
 
@@ -84,7 +98,66 @@ export class InputFEModel extends InputBEModel {
         return this.required !== this.requiredOrig;
     }
 
-    hasChanged(): boolean {
-        return this.hasDefaultValueChanged() || this.hasRequiredChanged();
+    public updateMetadataKey(metadataEntry: MetadataEntry, newKey){
+        if (!newKey){
+	        this.metadataIsValid = false;
+            this.metadataMapKeyError = 'Key cannot be empty.';
+            metadataEntry.key = newKey;
+            return;
+        } else if (metadataEntry.metaDataMapKey != newKey && this.metadata[newKey]){
+            this.metadataIsValid = false;
+            this.metadataMapKeyError = 'This key already exists!!.';
+            metadataEntry.key = newKey;
+            return;
+        }
+        this.metadataIsValid = true;
+        this.metadataMapKeyError = null;
+
+        if(metadataEntry.metaDataMapKey != newKey){
+            this.metadata[newKey] = _.cloneDeep(this.metadata[metadataEntry.metaDataMapKey]);
+            delete this.metadata[metadataEntry.metaDataMapKey];
+            metadataEntry.metaDataMapKey = newKey;
+        }
+        metadataEntry.key = newKey;  
     }
+
+   	public updateMetadataValue(metadataEntry: MetadataEntry, value: string){
+        metadataEntry.value = value;
+        this.metadata[metadataEntry.key] = value;
+   	}
+
+    public addMetadataEntry(metadataEntry: MetadataEntry){
+        this.metadataEntries.push(metadataEntry);
+        if (!this.metadata){
+            this.metadata = new Metadata;
+        }
+        this.metadata[metadataEntry.key] = metadataEntry.value;
+    }
+	
+    public deleteMetadataEntry(metadataEntry: MetadataEntry){
+        let metadataEntryIndex = this.metadataEntries.findIndex(item => item.key === metadataEntry.key);
+        if (metadataEntryIndex != -1){
+            this.metadataEntries.splice(metadataEntryIndex, 1);
+        }
+        delete this.metadata[metadataEntry.key];
+    }
+
+    public resetMetadata = (): void => {
+        this.metadata =  _.cloneDeep(this.metadataOrig);
+        this.metadataIsValid = true;
+
+        this.metadataEntries = [];
+        for (let key of Object.keys(this.metadata)){
+            this.metadataEntries.push(new MetadataEntry(key, this.metadata[key]));
+        }
+    }
+    
+    hasMetadataChanged(): boolean {
+        return !_.isEqual(this.metadata, this.metadataOrig);
+    }
+
+    hasChanged(): boolean {
+        return this.hasDefaultValueChanged() || this.hasRequiredChanged() || this.hasMetadataChanged();
+    }
+
 }

@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import org.apache.commons.collections.MapUtils;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @EqualsAndHashCode(callSuper = false)
@@ -84,6 +86,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private List<GetPolicyValueDataDefinition> getPolicyValues;
 
     private List<String> propertyConstraints;
+    
+    private Map<String, String> metadata;
 
     public PropertyDataDefinition() {
         super();
@@ -122,6 +126,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.subPropertyInputPath = propertyDataDefinition.getSubPropertyInputPath();
         if (isNotEmpty(propertyDataDefinition.annotations)) {
             this.setAnnotations(propertyDataDefinition.annotations);
+        }
+        if (MapUtils.isNotEmpty(propertyDataDefinition.getMetadata())) {
+            setMetadata(new HashMap<>(propertyDataDefinition.getMetadata()));
         }
         if(isNotEmpty(propertyDataDefinition.getPropertyConstraints())){
             setPropertyConstraints(new ArrayList<>(propertyDataDefinition.getPropertyConstraints()));

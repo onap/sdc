@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,6 +48,9 @@ public class ToscaProperty {
     @Getter
     @Setter
     private String status;
+    @Getter
+    @Setter
+    private Map<String, String> metadata;
 
     public ToscaProperty(final ToscaProperty toscaProperty) {
         this.type = toscaProperty.type;
@@ -56,6 +60,7 @@ public class ToscaProperty {
         this.entry_schema = toscaProperty.entry_schema;
         this.status = toscaProperty.status;
         this.constraints = toscaProperty.constraints;
+        this.metadata = toscaProperty.metadata;
     }
 
     public Object getDefaultp() {

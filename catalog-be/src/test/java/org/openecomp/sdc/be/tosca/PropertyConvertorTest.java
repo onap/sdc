@@ -90,6 +90,16 @@ public class PropertyConvertorTest {
         assertNotNull(result);
         assertEquals(Integer.valueOf(def), result.getDefaultp());
     }
+    
+    @Test
+    public void convertPropertyWithMetadata() {
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("key1", "value");
+        property.setMetadata(metadata);
+        ToscaProperty result = propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
+        assertNotNull(result);
+        assertEquals(metadata, result.getMetadata());
+    }
 
     @Test
     public void convertPropertiesWhenValueAndDefaultNullInOne() {

@@ -764,6 +764,9 @@ public class InputsBusinessLogicTest {
         oldInputDef.setType(INPUT_TYPE);
         oldInputDef.setDefaultValue(OLD_VALUE);
         oldInputDef.setRequired(Boolean.FALSE);
+        Map<String, String> oldMetadata = new HashMap<>();
+        oldMetadata.put("key1", "value1");
+        oldInputDef.setMetadata(oldMetadata);
         oldInputDefs.add(oldInputDef);
         service.setInputs(oldInputDefs);
 
@@ -773,6 +776,10 @@ public class InputsBusinessLogicTest {
         inputDef.setType(INPUT_TYPE);
         inputDef.setDefaultValue(NEW_VALUE); // update value
         inputDef.setRequired(Boolean.TRUE); // update value
+        Map<String, String> newMetadata = new HashMap<>();
+        newMetadata.put("key1", "value2");
+        newMetadata.put("key2", "value3");
+        inputDef.setMetadata(newMetadata);
         newInputDefs.add(inputDef);
 
         // used in validateComponentExists
@@ -792,8 +799,11 @@ public class InputsBusinessLogicTest {
             testInstance.updateInputsValue(service.getComponentType(), COMPONENT_ID, newInputDefs, USER_ID, true, false);
         assertThat(result.isLeft()).isTrue();
         // check if values are updated
-        assertEquals(service.getInputs().get(0).getDefaultValue(), NEW_VALUE);
-        assertEquals(service.getInputs().get(0).isRequired(), Boolean.TRUE);
+        assertEquals(NEW_VALUE, service.getInputs().get(0).getDefaultValue());
+        assertEquals(Boolean.TRUE, service.getInputs().get(0).isRequired());
+        assertEquals(2, service.getInputs().get(0).getMetadata().size());
+        assertEquals("value2", service.getInputs().get(0).getMetadata().get("key1"));
+        assertEquals("value3", service.getInputs().get(0).getMetadata().get("key2"));
     }
 
 }

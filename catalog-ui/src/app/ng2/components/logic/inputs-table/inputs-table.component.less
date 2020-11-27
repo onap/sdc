@@ -3,6 +3,37 @@
 
 :host /deep/ input { width:100%;}
 
+.metadata-container {
+    .metadata-entry {
+        border-top:solid 1px #d2d2d2;
+        flex: 1;
+        display:flex;
+        flex-direction:row;
+        align-items: stretch;
+		
+        .metadata-key-value {
+            flex: 1;
+            padding:8px;
+            justify-content: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .metadata-key {
+            flex: 0 0 50%;
+            border-right:#d2d2d2 solid 1px;
+        }
+
+        .delete-icon {
+            flex: 0 0 auto;
+            margin-right:10px;
+            align-self:center;
+            cursor:pointer;
+        }
+    }
+}
+
 .properties-table {
     display:flex;
     flex-direction:column;
@@ -46,7 +77,22 @@
         }
         .valueCol {
             justify-content: flex-start;
+            padding: 10px 8px 10px 8px;
+        }
+
+        .metadata-col-small {
             padding: 10px;
+	        flex: 0 0 115px;
+         }
+        .metadata-col-wide {
+            justify-content: flex-start;
+            padding: 0px;
+            flex: 1;
+
+           .metadata-col-wide-text {
+	            justify-content: flex-start;
+	            padding: 10px;
+			}
         }
     }
     .table-header, .table-row {
@@ -85,6 +131,37 @@
         .selected-row {
             background-color:#e6f6fb;
         }
+        .table-cell.valueCol {
+            padding:8px;
+        }
+        .table-cell.metadataCol {
+            padding:0px;
+            .value-input {
+                flex: 1;
+                border: none;
+                background-color: inherit;
+
+                &:focus, &:active {
+                    border:none;
+                    outline:none;
+                }
+            }
+			.metadata-add {
+		        padding: 10px;
+	        	height: 40px;
+        	}
+        }
+
+        .table-cell.metadata-col-small {
+	        flex: 0 0 115px;
+            padding: 0px 10px 0px 10px;
+            .metadata-add {
+                padding: 10px 0px 10px 0px;
+                height: 40px;
+                margin-right: 0px;
+            }
+        }
+
     }
 
      .table-cell {
@@ -123,13 +200,13 @@
 
         // Column: Type
         &.col2 {
-            flex: 0 0 140px;
+            flex: 0 1 140px;
             max-width: 140px;
         }
 
         // Column: From Instance
         &.col3 {
-            flex: 0 0 120px;
+            flex: 0 1 120px;
             max-width: 120px;
         }
 
@@ -169,12 +246,6 @@
                 }
             }
         }
-
-         &.input-value-col {
-             padding: 8px;
-         }
-
-
     }
 
     .filtered {
