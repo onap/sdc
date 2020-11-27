@@ -1,0 +1,146 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d89c9d9_e137ca67",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "Set instead of List?",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb41ccc9_e9e23f95",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "split to map(String::toLowerCase).anyMatch(fileName::endsWith)",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b977b5e_821568c2",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "please consider using Try from vavr",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "802ba33e_32b197d8",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "you throw NoSuchElementException in the same method, for me looks weird",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a6fe821_ef6f0036",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "in validation/csarvalidation also YAMLException from snakeyaml is catched",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ad752cb_80f1e6e3",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/YamlValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "use one regex",
+      "range": {
+        "startLine": 47,
+        "startChar": 2,
+        "endLine": 49,
+        "endChar": 34
+      },
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4972623_b5338455",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/pm_dictionary_validator/invalid_pm_dictionary.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "convert schema to yaml format",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b111149_572002de",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/pm_dictionary_validator/valid_pm_dictionary.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-27T13:05:30Z",
+      "side": 1,
+      "message": "convert schema to yaml format",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
