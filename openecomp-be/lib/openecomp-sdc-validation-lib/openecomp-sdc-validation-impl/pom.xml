@@ -1,5 +1,6 @@
 <!--
   ~ Copyright © 2016-2018 European Support Limited
+  ~ Copyright © 2020 Nokia
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -77,6 +78,16 @@
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>openecomp-sdc-validation-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.vnfsdk.validation</groupId>
+      <artifactId>validation-pmdictionary</artifactId>
+      <version>${onap.vnfsdk.validation.pmdictionary.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vavr</groupId>
+      <artifactId>vavr</artifactId>
+      <version>${io.vavr.version}</version>
     </dependency>
   </dependencies>
 

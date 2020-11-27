@@ -62,6 +62,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <onap.logging.version>1.6.1</onap.logging.version>
         <apache-commons-text.version>1.9</apache-commons-text.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
+        <io.vavr.version>0.10.3</io.vavr.version>
 
         <commons.collections.version>4.1</commons.collections.version>
         <ws.rs.version>2.1</ws.rs.version>
@@ -81,6 +82,9 @@ Modifications copyright (c) 2018-2019 Nokia
         <httpclient.version>4.5.3</httpclient.version>
         <httpcore.version>4.4.1</httpcore.version>
         <json-simple.version>1.1</json-simple.version>
+
+        <!-- PM Dictionary validation -->
+        <onap.vnfsdk.validation.pmdictionary.version>1.2.15</onap.vnfsdk.validation.pmdictionary.version>
 
         <!-- Logging start -->
         <!-- logback -->
