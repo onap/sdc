@@ -1,0 +1,228 @@
+---
+# PM Dictionary schema specifying and describing the meta information
+# used to define perf3gpp measurements in the PM Dictionary
+pmMetaData: { presence: required, structure: {
+  pmHeader: {
+    presence: required,
+    structure: {
+      nfType: {
+        presence: required,
+        comment: "NF type; should match the nfName-vendor string used in
+                      the fileReady or perf3gpp eventName"
+      },
+      pmDefSchemaVsn: {
+        presence: required,
+        value: 2.0,
+        comment: "PM Dictionary Schema Version from the VES Event
+                      Registration specification"
+      },
+      pmDefVsn: {
+        presence: required,
+        comment: "vendor-defined PM Dictionary version"
+      }
+    }
+  },
+  pmFields: {
+    presence: required,
+    structure: {
+      iMeasInfoId: {
+        presence: required,
+        comment: "vendor-defined integer measurement group identifier"
+      },
+      iMeasType: {
+        presence: required,
+        comment: "vendor-defined integer identifier for the measType;
+                      must be combined with measInfoId to identify a
+                      specific measurement."
+      },
+      measChangeType: {
+        presence: required,
+        value: [added, modified, deleted],
+        comment: "indicates the type of change that occurred during
+                      measLastChange"
+      },
+      measCollectionMethod: {
+        presence: required,
+        value: [CC, SI, DER, Gauge, Average],
+        comment: "the measurement collection method; CC, SI, DER and
+                      Gauge are as defined in 3GPP; average contains the
+                      average value of the measurement during the
+                      granularity period"
+      },
+      measCondition: {
+        presence: required,
+        comment: "description of the condition causing the measurement"
+      },
+      measDescription: {
+        presence: required,
+        comment: "description of the measurement information
+                      and purpose"
+      },
+      measFamily: {
+        presence: required,
+        comment: "abbreviation for a family of measurements, in
+                      3GPP format, or vendor defined"
+      },
+      measInfoId: {
+        presence: required,
+        comment: "name for a group of related measurements in
+                      3GPP format or vendor defined"
+      },
+      measLastChange: {
+        presence: required,
+        comment: "version of the PM Dictionary the last time this
+                      measurement was added, modified or deleted"
+      },
+      measObjClass: {
+        presence: required,
+        value: [NGBTS, NGCELL, IPNO, IPSEC, ETHIF],
+        comment: "measurement object class"
+      },
+      measResultRange: {
+        presence: optional,
+        comment: "range of the measurement result; only necessary when
+                      the range is smaller than the full range of the
+                      data type"
+      },
+      measResultType: {
+        presence: required,
+        value: [float, uint32, uint64],
+        comment: "data type of the measurement result"
+      },
+      measResultUnits: {
+        presence: required,
+        value: [seconds, minutes, nanoseconds, microseconds, dB,
+                number, kilobytes, bytes, ethernetFrames,
+                packets, users],
+        comment: "units of measure for the measurement result"
+      },
+      measType: {
+        presence: required,
+        comment: "measurement name in 3GPP or vendor-specific format;
+                      vendor specific names are preceded with VS"
+      },
+      measAdditionalFields: {
+        presence: required,
+        comment: "vendor-specific PM Dictionary fields",
+        structure: {
+          vendorField1: {
+            presence: required,
+            value: [X, Y, Z],
+            comment: "vendor field 1 description"
+          },
+          vendorField2: {
+            presence: optional,
+            value: [A, B],
+            comment: "vendor field 2 description."
+          }
+        }
+      }
+    }
+  }
+}}
+...
+# PM Dictionary perf3gpp measurements for the gnb-Nokia NF (bracket style yaml)
+---
+pmMetaData:
+  pmHeader:
+    nfType: gnb-Nokia
+    pmDefSchemaVsn: 2.0
+    pmDefVsn: 5G19_1906_002
+  pmFields:
+    iMeasInfoId: 2204
+    iMeasType: 1
+    measCollectionMethod: CC
+    measCondition: "This measurement is updated when X2AP: SgNB Modification Required message is sent to MeNB
+                      with the SCG Change Indication set as PSCellChange."
+    measDescription: "This counter indicates the number of intra gNB intra frequency PSCell change attempts."
+    measFamily: NINFC
+    measInfoId: "NR Intra Frequency PSCell Change"
+    measLastChange: 5G18A_1807_003
+    measObjClass: NGCELL
+    measResultRange: 0-4096
+    measResultType: integer
+    measResultUnits: number
+    measType: VS.NINFC.IntraFrPscelChAttempt
+    measAdditionalFields:
+      vendorField1: X
+      vendorField2: B
+...
+---
+pmMetaData:
+  pmHeader:
+    nfType: gnb-Nokia
+    pmDefSchemaVsn: 2.0
+    pmDefVsn: 5G19_1906_002
+  pmFields:
+    iMeasInfoId: 2204
+    iMeasType: 2
+    measCollectionMethod: CC
+    measCondition: "This measurement is updated when the TDCoverall timer has elapsed before gNB receives the X2AP: SgNB Modification Confirm message."
+    measDescription: "This measurement the number of intra gNB intra frequency PSCell change failures due to TDCoverall timer expiry."
+    measFamily: NINFC
+    measInfoId: "NR Intra Frequency PSCell Change"
+    measLastChange: 5G18A_1807_003
+    measObjClass: NGCELL
+    measResultRange: 0-4096
+    measResultType: float
+    measResultUnits: number
+    measType: VS.NINFC.IntraFrPscelChFailTdcExp
+    measAdditionalFields:
+      vendorField1:
+        - Y
+        - X
+...
+---
+pmMetaData:
+  pmHeader:
+    nfType: gnb-Nokia
+    pmDefSchemaVsn: 2.0
+    pmDefVsn: 5G19_1906_002
+  pmFields:
+    iMeasInfoId: 2206
+    iMeasType: 1
+    measCondition: "This measurement is updated when MeNB replies to X2AP: SgNB Modification Required message with the X2AP: SgNB Modification Refuse message."
+    measCollectionMethod: CC
+    measDescription: "This counter indicates the number of intra gNB intra frequency PSCell change failures due to MeNB refusal."
+    measFamily: NINFC
+    measInfoId: "NR Intra Frequency PSCell Change"
+    measLastChange: 5G19_1906_002
+    measObjClass: NGCELL
+    measResultRange: 0-4096
+    measResultType: float
+    measChangeType: added
+    measResultUnits: number
+    measType: VS.NINFC.IntraFrPscelChFailMenbRef
+    measAdditionalFields:
+      vendorField1:
+        - Z
+        - A
+      vendorField2: A
+...
+---
+pmMetaData:
+  pmHeader:
+    nfType: gnb-Nokia
+    pmDefSchemaVsn: 2.0
+    pmDefVsn: 5G19_1906_002
+  pmFields:
+    iMeasInfoId: 2206
+    iMeasType: 1
+    measCondition: "This measurement is updated when MeNB replies to X2AP: SgNB Modification Required message with the X2AP: SgNB Modification Refuse message."
+    measCollectionMethod: CC
+    measDescription: "This counter indicates the number of intra gNB intra frequency PSCell change failures due to MeNB refusal."
+    measFamily: NINFC
+    measInfoId: "NR Intra Frequency PSCell Change"
+    measLastChange: 5G19_1906_002
+    measObjClass: NGCELL
+    measResultRange: 0-4096
+    measResultType: float
+    measChangeType: added
+    measResultUnits: number
+    measType: VS.NINFC.IntraFrPscelChFailMenbRef
+    measAdditionalFields:
+      vendorField1:
+        - X
+        - Y
+      vendorField2: A
+...
