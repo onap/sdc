@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5aa0a649_b3b660a6",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d89c9d9_e137ca67",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb41ccc9_e9e23f95",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "89d63460_f91d3168",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "Your solution calls toLowerCase on extensions, not on filename. \nHowever i still refactored it to:\n\n        String fileNameLower \u003d fileName.toLowerCase();\n        return VALID_PM_DICTIONARY_EXTENSIONS.stream()\n            .anyMatch(fileNameLower::endsWith);",
+      "parentUuid": "eb41ccc9_e9e23f95",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b977b5e_821568c2",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2020-11-27T13:05:30Z",
       "side": 1,
       "message": "please consider using Try from vavr",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be139acd_83ebf7bd",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "Imo classical try catch is more readable than vavr Try",
+      "parentUuid": "3b977b5e_821568c2",
       "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "ea081098_be50845d",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "I could remove that, however rowContent is Optional. So I will need to split line 46 in order to check if rowContent.isPresent, if so, readBytes, else add error to context (as in line 53).\n\nI find the solution i provided more concise and readable",
+      "parentUuid": "802ba33e_32b197d8",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9a6fe821_ef6f0036",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
         "patchSetId": 2
@@ -81,6 +153,24 @@
       "writtenOn": "2020-11-27T13:05:30Z",
       "side": 1,
       "message": "in validation/csarvalidation also YAMLException from snakeyaml is catched",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74c8c7b4_2652e883",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "It should be handled in VNFSDK code. \nUsing snakeyaml is implementation detail of VNFSDK code and here, as a client of that lib I shouldnt have any knowledge about those details.",
+      "parentUuid": "9a6fe821_ef6f0036",
       "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -110,6 +200,30 @@
     },
     {
       "key": {
+        "uuid": "8a6ebe44_79c1d3f3",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/YamlValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "Imo it\u0027s more readable now",
+      "parentUuid": "2ad752cb_80f1e6e3",
+      "range": {
+        "startLine": 47,
+        "startChar": 2,
+        "endLine": 49,
+        "endChar": 34
+      },
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c4972623_b5338455",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/pm_dictionary_validator/invalid_pm_dictionary.yaml",
         "patchSetId": 2
@@ -127,6 +241,24 @@
     },
     {
       "key": {
+        "uuid": "6accb2d4_1fddc9b5",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/pm_dictionary_validator/invalid_pm_dictionary.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4972623_b5338455",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b111149_572002de",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/pm_dictionary_validator/valid_pm_dictionary.yaml",
         "patchSetId": 2
@@ -141,6 +273,24 @@
       "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a4f7661_64bd6721",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/resources/org/openecomp/validation/validators/pm_dictionary_validator/valid_pm_dictionary.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-27T14:18:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b111149_572002de",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
