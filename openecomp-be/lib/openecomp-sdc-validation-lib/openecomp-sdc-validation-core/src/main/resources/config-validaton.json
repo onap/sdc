@@ -4,6 +4,10 @@
       "enable": true,
       "implementationClass": "org.openecomp.sdc.validation.impl.validators.SharedResourceGuideLineValidator"
     },
+    "pmDictionaryValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.PmDictionaryValidator"
+    },
     "forbiddenResourceGuideLineValidator": {
       "enable": true,
       "implementationClass": "org.openecomp.sdc.validation.impl.validators.ForbiddenResourceGuideLineValidator",
