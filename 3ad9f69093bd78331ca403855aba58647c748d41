@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "80b3b7e6_d3ead4af",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-30T07:39:12Z",
+      "side": 1,
+      "message": "show me how you implement this with vavr and make decision classical try catch is more readable, i am really curius",
+      "parentUuid": "be139acd_83ebf7bd",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "802ba33e_32b197d8",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
         "patchSetId": 2
@@ -212,6 +230,30 @@
       "side": 1,
       "message": "Imo it\u0027s more readable now",
       "parentUuid": "2ad752cb_80f1e6e3",
+      "range": {
+        "startLine": 47,
+        "startChar": 2,
+        "endLine": 49,
+        "endChar": 34
+      },
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2a6b0d9_55cf25ef",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/YamlValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-11-30T07:39:12Z",
+      "side": 1,
+      "message": "why? you have to invoke 3 functions instead of one",
+      "parentUuid": "8a6ebe44_79c1d3f3",
       "range": {
         "startLine": 47,
         "startChar": 2,
