@@ -143,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "5abe231f_102415e0",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-30T19:26:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b1efe8c8_4ba6046f",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "802ba33e_32b197d8",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
         "patchSetId": 2
@@ -178,6 +196,24 @@
     },
     {
       "key": {
+        "uuid": "8232c28d_8327a555",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-30T19:26:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ea081098_be50845d",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6fe821_ef6f0036",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
         "patchSetId": 2
@@ -210,6 +246,24 @@
       "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee4986a7_4b181125",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/PmDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-30T19:26:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "74c8c7b4_2652e883",
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -296,6 +350,30 @@
       "side": 1,
       "message": "discussed offline, require changes",
       "parentUuid": "c2a6b0d9_55cf25ef",
+      "range": {
+        "startLine": 47,
+        "startChar": 2,
+        "endLine": 49,
+        "endChar": 34
+      },
+      "revId": "3ad9f69093bd78331ca403855aba58647c748d41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51eeb059_d29cbd27",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/YamlValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2020-11-30T19:26:54Z",
+      "side": 1,
+      "message": "I extracted this method and isPmDictionary method to utilility class. They share common behavior, so i handled both methods in same way, and extracted common logic. However i did not use regex. Please check FileExtensionUtils file in new patchset and let me know if its ok to you",
+      "parentUuid": "fbc9c702_0890f18d",
       "range": {
         "startLine": 47,
         "startChar": 2,
