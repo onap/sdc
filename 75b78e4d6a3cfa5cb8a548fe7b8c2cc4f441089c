@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3267271e_b321c3de",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b390578_0d85426b",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "09f2ba3d_794b0fc4",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bf3a3c1_d82b1e13",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09f2ba3d_794b0fc4",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9d930743_e673f96a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0791b668_74b510c6",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "746819c5_5512d662",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
         "patchSetId": 2
@@ -67,6 +121,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc652d75_a63a8f3e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "746819c5_5512d662",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "4093e7b5_38f49b67",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c6a414a_0ac3faba",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d4697da_67ee8dbc",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
         "patchSetId": 2
@@ -101,6 +191,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9699d03e_6b8299a1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d4697da_67ee8dbc",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "5872ba9c_c6b0b630",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4409e61a_238aeb4c",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bdf4f5f0_2c8b14e8",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
         "patchSetId": 2
@@ -135,6 +261,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33b9b2b7_88990af6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bdf4f5f0_2c8b14e8",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "93b1f9f7_5cc1bc18",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d3d5dd2_40b83bdb",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "39d9ebad_81f3e33b",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
         "patchSetId": 2
@@ -169,6 +331,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b24330d_621b2689",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39d9ebad_81f3e33b",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "76cf5578_26031303",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f18271b6_8b1c730b",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d4db5b39_eafae3e2",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
         "patchSetId": 2
@@ -203,6 +401,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c904ed76_deb2b410",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d4db5b39_eafae3e2",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "a0c31072_fc995413",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3549a645_5495a0f5",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "388b1be7_193e9df1",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorUtils.java",
         "patchSetId": 2
@@ -237,6 +471,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfdab563_150c5e8d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "388b1be7_193e9df1",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "1aff84b6_ef7e59e4",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e50872c0_9e9766fb",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "39b0465a_eb90cdfa",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
         "patchSetId": 2
@@ -271,6 +541,24 @@
       "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2db4aea_0cf02fc1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-11-30T12:08:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39b0465a_eb90cdfa",
+      "revId": "75b78e4d6a3cfa5cb8a548fe7b8c2cc4f441089c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
