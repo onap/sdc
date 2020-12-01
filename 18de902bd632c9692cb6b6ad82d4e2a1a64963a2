@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5511ad5_ba2cbfea",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ContentsSchemaCompliantReporterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-12-01T11:03:34Z",
+      "side": 1,
+      "message": "migrate to Junit 5",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 22
+      },
+      "revId": "18de902bd632c9692cb6b6ad82d4e2a1a64963a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d37541f_b739f548",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/resources/validation.files/measurements/pmEvents-invalid.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-12-01T11:03:34Z",
+      "side": 1,
+      "message": "trim spaces",
+      "range": {
+        "startLine": 54,
+        "startChar": 52,
+        "endLine": 56,
+        "endChar": 37
+      },
+      "revId": "18de902bd632c9692cb6b6ad82d4e2a1a64963a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
