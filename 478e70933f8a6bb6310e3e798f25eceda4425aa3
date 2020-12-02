@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d0fa0f2_a395dba7",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-12-02T09:31:45Z",
+      "side": 1,
+      "message": "considere to extract to parent pom\n(see https://jira.onap.org/browse/SDC-2875)",
+      "range": {
+        "startLine": 85,
+        "startChar": 6,
+        "endLine": 85,
+        "endChar": 31
+      },
+      "revId": "478e70933f8a6bb6310e3e798f25eceda4425aa3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e33faac7_9f793ac7",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-12-02T09:31:45Z",
+      "side": 1,
+      "message": "considere to extract to parent pom\n(see https://jira.onap.org/browse/SDC-2875)",
+      "range": {
+        "startLine": 90,
+        "startChar": 6,
+        "endLine": 90,
+        "endChar": 31
+      },
+      "revId": "478e70933f8a6bb6310e3e798f25eceda4425aa3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
