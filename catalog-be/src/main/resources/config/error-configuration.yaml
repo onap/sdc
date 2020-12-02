@@ -2398,3 +2398,10 @@ errors:
       message: 'Error: Invalid Content. %1 has invalid format.',
       messageId: "SVC4723"
     }
+#---------SVC4732------------------------------
+    # %1 - list of validation errors
+    INVALID_PM_DICTIONARY_FILE: {
+        code: 400,
+        message: 'Error: Invalid PM Dictionary File. %1',
+        messageId: "SVC4732"
+    }
