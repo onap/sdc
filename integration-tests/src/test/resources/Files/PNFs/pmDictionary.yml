@@ -50,6 +50,8 @@ pmMetaData:
     measAdditionalFields:
       vendorField1: X
       vendorField2: B
+      measAggregationLevels: NRCellCU
+    measChangeType: added
 ---
 pmMetaData:
   pmHeader:
@@ -72,6 +74,8 @@ pmMetaData:
     measType: VS.NINFC.IntraFrPscelChFailTdcExp
     measAdditionalFields:
       vendorField1: Y
+      measAggregationLevels: NRCellCU
+    measChangeType: added
 ---
 pmMetaData:
   pmHeader:
@@ -95,4 +99,6 @@ pmMetaData:
     measAdditionalFields:
       vendorField1: Z
       vendorField2: A
+      measAggregationLevels: NRCellCU
+    measChangeType: added
 ...

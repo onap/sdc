@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- * Modifications copyright (c) 2019 Nokia
+ * Modifications copyright (c) 2020 Nokia
  * ================================================================================
  */
 
@@ -69,6 +69,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.ComponentUtils;
+import org.openecomp.sdc.be.components.impl.validation.PMDictionaryValidator;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
@@ -2630,6 +2631,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 String artifactType = artifactInfo.getArtifactType();
                 String fileExtension = GeneralUtility.getFilenameExtension(artifactInfo.getArtifactName());
                 PayloadTypeEnum payloadType = ArtifactTypeToPayloadTypeSelector.getPayloadType(artifactType, fileExtension);
+
+                final Optional<ResponseFormat> pmDictionaryError = validateIfPmDictionary(artifactType, decodedPayload);
+                if (pmDictionaryError.isPresent()) {
+                    return Either.right(pmDictionaryError.get());
+                }
+
                 Either<Boolean, ActionStatus> isPayloadValid = payloadType.isValid(decodedPayload);
                 if (isPayloadValid.isRight()) {
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(isPayloadValid.right().value(), artifactType);
@@ -2657,6 +2664,16 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         log.trace("Ended payload handling");
         return Either.left(decodedPayload);
+    }
+
+    private Optional<ResponseFormat> validateIfPmDictionary(String artifactType, byte[] decodedPayload) {
+        return new PMDictionaryValidator()
+            .validateIfPmDictionary(artifactType, decodedPayload)
+            .map(this::preparePmDictionaryResponse);
+    }
+
+    private ResponseFormat preparePmDictionaryResponse(String errorMessage) {
+        return componentsUtils.getResponseFormat(ActionStatus.INVALID_PM_DICTIONARY_FILE, errorMessage);
     }
 
     public Either<ArtifactDefinition, ResponseFormat> deleteArtifactByInterface(
