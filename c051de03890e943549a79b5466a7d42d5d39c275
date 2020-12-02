@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0201a286_819b79ea",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-02T09:07:04Z",
+      "side": 1,
+      "message": "Nokia 2020",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84f798b0_b77a137a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-02T09:07:04Z",
+      "side": 1,
+      "message": "sampleDefinitionFile1 and sampleDefinitionFile2 consider to rename",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8a2dad8_191d82d6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/utils/FileExtractorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-02T09:07:04Z",
+      "side": 1,
+      "message": "pmDictionaryManifest and pmDictionaryManifest2 consider to rename",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
