@@ -82,6 +82,9 @@ Modifications copyright (c) 2018-2019 Nokia
         <httpcore.version>4.4.1</httpcore.version>
         <json-simple.version>1.1</json-simple.version>
 
+        <!-- PM Dictionary validation -->
+        <onap.vnfsdk.validation.pmdictionary.version>1.2.15</onap.vnfsdk.validation.pmdictionary.version>
+
         <!-- Logging start -->
         <!-- logback -->
         <logback.version>1.2.3</logback.version>

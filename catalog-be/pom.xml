@@ -781,6 +781,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.onap.vnfsdk.validation</groupId>
+            <artifactId>validation-pmdictionary</artifactId>
+            <version>${onap.vnfsdk.validation.pmdictionary.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
