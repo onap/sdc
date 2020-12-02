@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "28639bbb_4c0b9f5d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-02T11:12:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0201a286_819b79ea",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84f798b0_b77a137a",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c9c40b74_224d89bf",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-02T11:12:56Z",
+      "side": 1,
+      "message": "We are not the authors of file sampleManifest2.mf and it seems to me that we should not change this name.",
+      "parentUuid": "84f798b0_b77a137a",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f8a2dad8_191d82d6",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/utils/FileExtractorTest.java",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2020-12-02T09:07:04Z",
       "side": 1,
       "message": "pmDictionaryManifest and pmDictionaryManifest2 consider to rename",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01f1f84a_d8279320",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/utils/FileExtractorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-02T11:12:56Z",
+      "side": 1,
+      "message": "pmDictionaryManifest.mf has been renamed to manifestCompliantWithSOL004.mf.\nWe are not the authors of file sampleManifest2.mf and it seems to me that we should not change this name.",
+      "parentUuid": "f8a2dad8_191d82d6",
       "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
