@@ -17,7 +17,7 @@
  *  *
  *  * SPDX-License-Identifier: Apache-2.0
  *  * ============LICENSE_END=========================================================
- *
+ *  * Modifications copyright (c) 2020 Nokia
  */
 
 package org.openecomp.sdc.be.components.impl.artifact;
@@ -144,9 +144,9 @@ public enum PayloadTypeEnum {
     private static Either<Boolean, ActionStatus> isValidYaml(byte[] payload) {
         YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
         if (yamlToObjectConverter.isValidYaml(payload)) {
-            log.debug("Invalid YAML format");
             return Either.left(true);
         }
+        log.debug("Invalid YAML format");
         return Either.right(ActionStatus.INVALID_YAML);
     }
 
