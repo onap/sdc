@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "32184988_be5b925c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidatorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-02T11:24:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9c40b74_224d89bf",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f8a2dad8_191d82d6",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/utils/FileExtractorTest.java",
         "patchSetId": 5
@@ -104,6 +122,24 @@
       "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "548d4a69_968c075c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/utils/FileExtractorTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-02T11:24:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "01f1f84a_d8279320",
+      "revId": "c051de03890e943549a79b5466a7d42d5d39c275",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
