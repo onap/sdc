@@ -223,11 +223,11 @@ export class ComponentServiceNg2 {
             payloadData: oldOperation.artifactData
         };
 
-        const headers = new HttpHeaders();
+
         JSON.stringify(payload);
         const payloadString = JSON.stringify(payload, null, '  ');
         const md5Result = md5(payloadString).toLowerCase();
-        headers.append('Content-MD5', btoa(md5Result));
+        const headers = new HttpHeaders().append('Content-MD5', btoa(md5Result));
 
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uuid + '/interfaces/' + newOperation.interfaceId + '/operations/' + newOperation.uniqueId + '/artifacts/' + newOperation.implementation.artifactUUID,
                 payload, {headers}
