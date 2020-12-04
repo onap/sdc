@@ -268,7 +268,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, newInput.getDefaultValue(), true, innerType, dataTypes);
 
-        String newValue = currentInput.getDefaultValue();
+        String newValue = newInput.getDefaultValue();
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
