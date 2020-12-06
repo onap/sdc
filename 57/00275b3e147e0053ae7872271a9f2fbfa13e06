@@ -1,0 +1,10 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Pawel Kasperkiewicz <pawel.kasperkiewicz@nokia.com>
+Code-Review+1: Tomasz Kogut <tomasz.kogut@nokia.com>
+Code-Review+1: Maciej Malewski <maciej.malewski@nokia.com>
+Code-Review+2: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Submitted-by: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Submitted-at: Sun, 06 Dec 2020 17:31:07 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/116039
+Project: sdc
+Branch: refs/heads/master
