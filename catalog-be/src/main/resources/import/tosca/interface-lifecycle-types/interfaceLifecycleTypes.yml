@@ -1,5 +1,4 @@
 tosca.interfaces.Root:
-  derived_from: tosca.entity.Root
   description: The TOSCA root Interface Type all other TOSCA Interface Types derive from
 
 tosca.interfaces.nfv.vnf.lifecycle.Nfv:
