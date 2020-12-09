@@ -106,6 +106,12 @@ export interface ICookie {
     userEmail: string;
 }
 
+export interface ICredential {
+    enabled: boolean;
+    userName: string;
+    userPass: string;
+}
+
 // tslint:disable-next-line:interface-name
 export interface IConfigStatuses {
     inDesign: IConfigStatus;

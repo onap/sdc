@@ -36,6 +36,7 @@ import {
 import { ConfigService } from './services/config.service';
 import { AuthenticationService } from './services/authentication.service';
 import { Cookie2Service } from './services/cookie.service';
+import { CredentialService } from './services/credential.service';
 import { ComponentServiceNg2 } from './services/component-services/component.service';
 import { ComponentServiceFactoryNg2 } from './services/component-services/component.service.factory';
 import { ServiceServiceNg2 } from './services/component-services/service.service';
@@ -186,6 +187,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
         ModalsHandlerProvider,
         UserService,
         Cookie2Service,
+        CredentialService,
         ConfigService,
         ComponentServiceNg2,
         ComponentServiceFactoryNg2,

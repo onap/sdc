@@ -34,11 +34,18 @@ const AUTHORIZATION_HEADER = 'X-AUTH-TOKEN';
 const STORAGE_AUTH_KEY = 'sdc-auth-token';
 const REQUEST_ID_HEADER = 'X-ECOMP-RequestID';
 const CONTENT_MD5_HEADER = 'Content-MD5';
+const BASIC_AUTH = 'Authorization';
 
 export function applySecurity(options, data) {
     let headers = options.headers || (options.headers = {});
     if (options.isAnonymous) {
         return;
+    }
+
+    if (Configuration.get('basicAuthEnabled')) {
+        const userName = Configuration.get('userName');
+        const userPass = Configuration.get('userPass');
+        headers[BASIC_AUTH] = 'Basic ' + window.btoa(`${userName}:${userPass}`);
     }
 
     let authToken = localStorage.getItem(STORAGE_AUTH_KEY);
