@@ -10,6 +10,9 @@ template "catalog-fe-config" do
       :kb_host_ip   => node['Nodes']['KB'],
       :catalog_port => node['BE'][:http_port],
       :ssl_port     => node['BE'][:https_port],
+      :basic_auth_flag => node['basic_auth']['enabled'],
+      :user_name => node['basic_auth'][:user_name],
+      :user_pass => node['basic_auth'][:user_pass],
       :dcae_fe_vip  => node['DCAE_FE_VIP']
    })
 end
