@@ -20,6 +20,12 @@ default['cassandra']['socket_read_timeout'] = 20000
 default['cassandra']['socket_connect_timeout'] = 20000
 default['cassandra']['janusgraph_connection_timeout'] = 10000
 
+#Basicauth
+default['basic_auth']['enabled'] = false
+default['basic_auth'][:user_name] = "userName"
+default['basic_auth'][:user_pass] = "userPass"
+default['basic_auth']['excludedUrls'] = ""
+
 #ExternalTesting
 default['EXTTEST']['ep1_config'] = "vtp,VTP,true,http://refrepo:8702/onapapi/vnfsdk-marketplace,onap.*"
 default['EXTTEST']['ep2_config'] = "repository,Repository,false,,.*"
