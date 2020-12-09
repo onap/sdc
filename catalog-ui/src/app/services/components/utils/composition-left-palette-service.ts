@@ -1,25 +1,25 @@
 /*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+* ============LICENSE_START=======================================================
+* SDC
+* ================================================================================
+* Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+* ================================================================================
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* ============LICENSE_END=========================================================
+*/
 /**
- * Created by obarda on 3/13/2016.
- */
+* Created by obarda on 3/13/2016.
+*/
 'use strict';
 import * as _ from "lodash";
 import {LeftPaletteComponent, LeftPaletteMetadataTypes} from "app/models/components/displayComponent";
@@ -73,12 +73,12 @@ export class LeftPaletteLoaderService {
             _.forEach(leftPaletteComponentMetadata, (componentMetadata:ComponentMetadata) => {
                 this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
             });
-            
+
             /* add groups */
             this.restangular.one('/groupTypes').get({'internalComponentType': componentInternalType}).then((leftPaletteGroupTypes:GroupTpes) => {
                 _.forEach(leftPaletteGroupTypes, (groupMetadata: GroupMetadata) => {
                     this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Group, groupMetadata));
-                }); 
+                });
                 this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
             });
 
@@ -86,7 +86,7 @@ export class LeftPaletteLoaderService {
             this.restangular.one('/policyTypes').get({'internalComponentType': componentInternalType}).then((leftPalettePolicyTypes:PolicyTpes) => {
                 _.forEach(leftPalettePolicyTypes, (policyMetadata: PolicyMetadata) => {
                     this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Policy, policyMetadata));
-                }); 
+                });
                 this.EventListenerService.notifyObservers(EVENTS.LEFT_PALETTE_UPDATE_EVENT);
             });
         });

@@ -44,3 +44,9 @@ authCookie:
   redirectURL: "redirect_url"
   excludedUrls: ['/.*']
   onboardingExcludedUrls: ['/.*']
+
+basicAuth:
+  enabled: <%= @basic_auth_enabled %>
+  userName: <%= @basic_auth_username %>
+  userPass: <%= @basic_auth_password %>
+  excludedUrls: ""

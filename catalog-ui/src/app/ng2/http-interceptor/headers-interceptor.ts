@@ -11,7 +11,7 @@ import { TranslateService } from '../shared/translator/translate.service';
 @Injectable()
 export class HeadersInterceptor implements HttpInterceptor {
 
-    constructor(private injector: Injector, private cookieService: Cookie2Service, private httpHelperService: HttpHelperService) {}
+constructor(private injector: Injector, private cookieService: Cookie2Service, private httpHelperService: HttpHelperService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let authReq = req.clone({ headers: req.headers.set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())

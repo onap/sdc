@@ -39,6 +39,11 @@ healthCheckSocketTimeoutInMs: 5000
 
 healthCheckIntervalInSeconds: 5
 
+basicAuth:
+  enabled: <%= @basic_auth_flag %>
+  userName: <%= @user_name %>
+  userPass: <%= @user_pass %>
+
 onboarding:
     hostFe: <%= @fe_host_ip %>
     <% if node[:disableHttp] -%>

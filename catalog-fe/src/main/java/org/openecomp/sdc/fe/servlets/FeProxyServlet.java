@@ -21,13 +21,17 @@
 package org.openecomp.sdc.fe.servlets;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.util.Base64;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.http.HttpHeader;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.fe.config.Configuration;
+import org.openecomp.sdc.fe.config.Configuration.BasicAuthConfig;
 import org.openecomp.sdc.fe.config.Configuration.CatalogFacadeMsConfig;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
@@ -37,7 +41,6 @@ import org.openecomp.sdc.fe.impl.LogHandler;
 import org.openecomp.sdc.fe.utils.BeProtocol;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -96,14 +99,18 @@ public class FeProxyServlet extends SSLProxyServlet {
 	}
 
 	@Override
-	protected void onProxyResponseSuccess(HttpServletRequest request, HttpServletResponse proxyResponse, Response response) {
-		try {
-			logFeResponse(request, response);
-		} catch (Exception e) {
-			FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
-            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"FeProxyServlet onProxyResponseSuccess", "sdc-FE", "Unexpected FE response logging error: ", e);
+	protected void addProxyHeaders(HttpServletRequest clientRequest, Request proxyRequest)
+	{
+		Configuration config = getConfiguration(clientRequest);
+		if (config == null) {
+			log.error("failed to retrieve configuration.");
 		}
-		super.onProxyResponseSuccess(request, proxyResponse, response);
+		BasicAuthConfig basicAuth = config.getBasicAuth();
+		if (basicAuth.getEnabled()) {
+			proxyRequest.header(HttpHeader.AUTHORIZATION,
+				"Basic " + Base64.getEncoder().encodeToString((basicAuth.getUserName() + ":" + basicAuth.getUserPass()).getBytes()));
+		}
+		super.addProxyHeaders(clientRequest, proxyRequest);
 	}
 
 	private void logFeRequest(HttpServletRequest httpRequest){

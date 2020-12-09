@@ -61,6 +61,8 @@ public class Configuration extends BasicConfiguration {
 
     private CookieConfig authCookie;
 
+    private BasicAuthConfig basicAuth;
+
     private CatalogFacadeMsConfig catalogFacadeMs;
     /**
      * be http context
@@ -265,6 +267,14 @@ public class Configuration extends BasicConfiguration {
         this.authCookie = authCookie;
     }
 
+    public BasicAuthConfig getBasicAuth() {
+        return basicAuth;
+    }
+
+    public void setBasicAuth(BasicAuthConfig basicAuth) {
+        this.basicAuth = basicAuth;
+    }
+
     @Override
     public String toString() {
         return new StringBuilder().append(format("backend host: %s%n", beHost))
@@ -454,6 +464,36 @@ public class Configuration extends BasicConfiguration {
         public void setCookieName(String cookieName) {
             this.cookieName = cookieName;
         }
+    }
+
+    public static class BasicAuthConfig {
+        boolean enabled = false;
+        String userName = "";
+        String userPass = "";
+
+        public boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getUserPass() {return userPass;
+        }
+
+        public void setUserPass(String userPass) {
+            this.userPass = userPass;
+        }
+
     }
 
     public static class CatalogFacadeMsConfig {

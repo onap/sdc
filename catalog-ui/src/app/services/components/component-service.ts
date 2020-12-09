@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,14 @@
 'use strict';
 import * as _ from "lodash";
 import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, IValidate, RelationshipModel, PropertyModel, Component, ComponentInstance,
-    AttributeModel, IAppConfigurtaion, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
+AttributeModel, IAppConfigurtaion, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
 import {SharingService} from "app/services-ng2";
 import {ComponentMetadata} from "../../models/component-metadata";
 
 export interface IComponentService {
 
-    getComponent(id:string);
+getComponent(id:string);
     updateComponent(component:Component):ng.IPromise<Component>;
     changeLifecycleState(component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> ;
     validateName(newName:string, subtype?:string):ng.IPromise<IValidate>;
@@ -208,7 +208,7 @@ export class ComponentService implements IComponentService {
         });
         return deferred.promise;
     };
-    
+
     public importComponent = (component: Component): ng.IPromise<Component> => {
         component.vendorName = "xfr";
         component.vendorRelease = "xfr";
