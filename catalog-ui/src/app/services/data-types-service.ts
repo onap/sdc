@@ -22,6 +22,8 @@
 import { DataTypePropertyModel } from "../models/data-type-properties";
 import {ComponentInstance, InputModel, DataTypesMap, PropertyModel, InputPropertyBase, IAppConfigurtaion, SchemaProperty} from "../models";
 import {PROPERTY_DATA} from "../utils/constants";
+import {ISdcConfig} from "../ng2/config/sdc-config.config";
+
 
 export interface IDataTypesService {
 
@@ -48,7 +50,7 @@ export class DataTypesService implements IDataTypesService {
         '$http'
     ];
 
-    constructor(private sdcConfig:IAppConfigurtaion,
+    constructor(private sdcConfig:ISdcConfig,
                 private $q:ng.IQService,
                 private $http:ng.IHttpService) {
 
@@ -62,13 +64,20 @@ export class DataTypesService implements IDataTypesService {
     selectedComponentInputs:Array<InputModel>;
 
     public initDataTypes = ():void => {
-        this.$http({
-            url: this.sdcConfig.api.root + this.sdcConfig.api.component_api_root + "dataTypes",
-            method: "get"
-        }).then((response:any) => {
+        let authConfig = this.sdcConfig.basicAuth;
+        if (authConfig.enabled) {
+        this.$http.get(this.sdcConfig.api.root + this.sdcConfig.api.component_api_root + "dataTypes",
+            {headers: {'Authorization': 'Basic ' + btoa(authConfig.userName + ":" + authConfig.userPass)}}
+        ).then((response:any) => {
             this.dataTypes = response.data;
             delete this.dataTypes['tosca.datatypes.Root'];
         });
+        } else {
+        this.$http.get(this.sdcConfig.api.root + this.sdcConfig.api.component_api_root + "dataTypes").then((response:any) => {
+            this.dataTypes = response.data;
+            delete this.dataTypes['tosca.datatypes.Root'];
+        });
+}
     };
 
     public getAllDataTypes = ():DataTypesMap => {

@@ -24,9 +24,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.codec.binary.Base64;
+import org.glassfish.jersey.server.ContainerRequest;
 import org.onap.sdc.security.Passwords;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -59,6 +64,8 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
     private static final Logger log = Logger.getLogger(BasicAuthenticationFilter.class);
     private static final String COMPONENT_UTILS_FAILED = "Authentication Filter Failed to get component utils.";
     private static final String CONSUMER_BL_FAILED = "Authentication Filter Failed to get consumerBL.";
+    private static final ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
+    private static final Configuration.BasicAuthConfig basicAuthConf = configurationManager.getConfiguration().getBasicAuth();
 
     @Context
     private HttpServletRequest sr;
@@ -70,8 +77,15 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+        audit.startLog(requestContext);
 
-		audit.startLog(requestContext);
+        if (!basicAuthConf.getEnabled()) {
+            return;
+        }
+        List<String> excludedUrls = Arrays.asList(basicAuthConf.getExcludedUrls().split(","));
+        if (excludedUrls.contains(((ContainerRequest) requestContext).getRequestUri().getPath())) {
+            return;
+        }
 
         String authHeader = requestContext.getHeaderString(Constants.AUTHORIZATION_HEADER);
         if (authHeader != null) {
@@ -79,24 +93,23 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
             String failedToRetrieveAuthErrorMsg = "Authentication Filter Failed Couldn't retrieve authentication, no basic authentication.";
             if (st.hasMoreTokens()) {
                 String basic = st.nextToken();
-
                 if ("Basic".equalsIgnoreCase(basic)) {
                     String credentials = new String(Base64.decodeBase64(st.nextToken()), StandardCharsets.UTF_8);
                     log.debug("Credentials: {}", credentials);
                     checkUserCredentials(requestContext, credentials);
                 } else {
-					log.error(failedToRetrieveAuthErrorMsg);
+                    log.error(failedToRetrieveAuthErrorMsg);
                     authInvalidHeaderError(requestContext);
                 }
             } else {
-				log.error(failedToRetrieveAuthErrorMsg);
+                log.error(failedToRetrieveAuthErrorMsg);
                 authInvalidHeaderError(requestContext);
             }
-
         } else {
-			log.error("Authentication Filter Failed no authorization header");
+            log.error("Authentication Filter Failed no authorization header");
             authRequiredError(requestContext);
         }
+
     }
 
 	private void checkUserCredentials(ContainerRequestContext requestContext, String credentials) {
@@ -105,17 +118,14 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
             String userName = credentials.substring(0, p).trim();
             String password = credentials.substring(p + 1).trim();
 
-            ConsumerBusinessLogic consumerBL = getConsumerBusinessLogic();
-            if (consumerBL == null) {
-				abortWith(requestContext, CONSUMER_BL_FAILED, Response.serverError().status(Status.INTERNAL_SERVER_ERROR).build());
-            } else {
-                Either<ConsumerDefinition, ResponseFormat> result = consumerBL.getConsumer(userName);
-                validatePassword(requestContext, userName, password, result);
+            if (!userName.equals(basicAuthConf.getUserName()) || !password.equals(basicAuthConf.getUserPass())) {
+                log.error("Authentication Failed. Invalid userName or password");
+                authInvalidPasswordError(requestContext, userName);
             }
+          authSuccessful(requestContext, userName);
         } else {
-			log.error("Authentication Filter Failed Couldn't retrieve authentication, no basic authentication.");
+            log.error("Authentication Filter Failed Couldn't retrieve authentication, no basic authentication.");
             authInvalidHeaderError(requestContext);
-
         }
     }
 
@@ -130,12 +140,7 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
             }
         } else {
             ConsumerDefinition consumerCredentials = result.left().value();
-            if (!Passwords.isExpectedPassword(password, consumerCredentials.getConsumerSalt(), consumerCredentials.getConsumerPassword())) {
-				log.error("Authentication Filter Failed invalid password");
-				authInvalidPasswordError(requestContext, userName);
-            } else {
-				authSuccessful(requestContext, userName);
-            }
+
         }
     }
 

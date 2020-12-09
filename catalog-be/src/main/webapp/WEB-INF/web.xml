@@ -17,6 +17,7 @@
             <param-name>jersey.config.server.provider.classnames</param-name>
             <param-value>
                 org.glassfish.jersey.media.multipart.MultiPartFeature,
+                org.openecomp.sdc.be.filters.BasicAuthenticationFilter,
                 org.openecomp.sdc.be.filters.BeServletFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
                 org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature,
@@ -172,6 +173,23 @@
         <url-pattern>/sdc2/rest/*</url-pattern>
         <url-pattern>/sdc/*</url-pattern>
     </filter-mapping>
+
+<!--
+    <filter>
+        <filter-name>basicAuthFilter</filter-name>
+        <filter-class>
+            org.openecomp.sdc.be.filters.BasicAuthenticationFilter
+        </filter-class>
+        <init-param>
+            <param-name>excludedUrls</param-name>
+            <param-value>/sdc2/rest/healthCheck,/sdc2/rest/v1/user,/sdc2/rest/v1/user/jh0003,/sdc2/rest/v1/screen,/sdc2/rest/v1/consumers,/sdc2/rest/v1/catalog/uploadType/datatypes,/sdc2/rest/v1/catalog/upload/multipart</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>basicAuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>-->
 
     <!--    <filter>-->
     <!--        <filter-name>beRestrictionAccessFilter</filter-name>-->

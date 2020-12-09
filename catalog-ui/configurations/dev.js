@@ -87,6 +87,11 @@ const SDC_CONFIG = {
 		"userEmail": "HTTP_CSP_EMAIL",
 		"xEcompRequestId": " X-ECOMP-RequestID"
 	},
+	"basicAuth": {
+		"enabled": "true",
+		"userName": "testName",
+		"userPass": "testPass"
+	},
 	"imagesPath": "",
 	"enableWorkflowAssociation": "true",
 	"cpEndPointInstances" : ["cloudep","ossep","personep","premisesep"],

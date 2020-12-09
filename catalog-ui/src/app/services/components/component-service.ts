@@ -20,10 +20,11 @@
 'use strict';
 import * as _ from "lodash";
 import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, IValidate, RelationshipModel, PropertyModel, Component, ComponentInstance,
-    AttributeModel, IAppConfigurtaion, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
+    AttributeModel, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
 import {SharingService} from "app/services-ng2";
 import {ComponentMetadata} from "../../models/component-metadata";
+import {SdcConfigToken, ISdcConfig} from "../../ng2/config/sdc-config.config";
 
 export interface IComponentService {
 
@@ -87,7 +88,7 @@ export class ComponentService implements IComponentService {
     ];
 
     constructor(protected restangular:restangular.IElement,
-                protected sdcConfig:IAppConfigurtaion,
+                protected sdcConfig:ISdcConfig,
                 protected sharingService:SharingService,
                 protected $q:ng.IQService,
                 protected $base64:any
@@ -100,7 +101,10 @@ export class ComponentService implements IComponentService {
             }
             return elem;
         });
-        //    this.restangular.setDefaultHeaders({'Content-Type': 'application/json; charset=UTF-8'});
+        let authConfig = this.sdcConfig.basicAuth;
+        if (authConfig.enabled) {
+            this.restangular.setDefaultHeaders({'Authorization': 'Basic ' + btoa(authConfig.userName + ":" + authConfig.userPass)});
+        }
     }
 
     //this function is override by each service, we need to change this method to abstract when updtaing typescript version

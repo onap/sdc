@@ -24,6 +24,12 @@ default['DCAE']['BE'][:http_port] = 8082
 default['DCAE']['BE'][:https_port] = 8444
 default['DCAE_BE_VIP'] = "dcae-be"
 
+#BasicAuth
+default['basic_auth']['enabled'] = true
+default['basic_auth'][:user_name] = "testName"
+default['basic_auth'][:user_pass] = "testPass"
+default['basic_auth']['excludedUrls'] = "/sdc2/rest/healthCheck,/sdc2/rest/v1/user,/sdc2/rest/v1/user/jh0003,/sdc2/rest/v1/screen,/sdc2/rest/v1/consumers,/sdc2/rest/v1/catalog/uploadType/datatypes,/sdc2/rest/v1/catalog/upload/multipart"
+
 #Cassandra
 default['cassandra']['cassandra_port'] = 9042
 default['cassandra']['datacenter_name'] = "DC-"
