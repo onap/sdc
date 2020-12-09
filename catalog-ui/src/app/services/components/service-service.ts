@@ -26,6 +26,7 @@ import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
 import {Distribution, DistributionComponent, Service, PropertyModel, Component, IAppConfigurtaion} from "app/models";
 import {SharingService} from "app/services-ng2";
+import {ISdcConfig} from "../../ng2/config/sdc-config.config";
 
 export interface IServiceService extends IComponentService {
     getDistributionsList(uuid:string):ng.IPromise<Array<Distribution>>;
@@ -47,7 +48,7 @@ export class ServiceService extends ComponentService implements IServiceService 
     public distribution:string = "distribution";
 
     constructor(protected restangular:restangular.IElement,
-                protected sdcConfig:IAppConfigurtaion,
+                protected sdcConfig:ISdcConfig,
                 protected sharingService:SharingService,
                 protected $q:ng.IQService,
                 protected $base64:any) {

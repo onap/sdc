@@ -1,27 +1,28 @@
 /*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
+* ============LICENSE_START=======================================================
+* SDC
+* ================================================================================
+* Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+* ================================================================================
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* ============LICENSE_END=========================================================
+*/
 
 'use strict';
 import { DataTypePropertyModel } from "../models/data-type-properties";
 import {ComponentInstance, InputModel, DataTypesMap, PropertyModel, InputPropertyBase, IAppConfigurtaion, SchemaProperty} from "../models";
 import {PROPERTY_DATA} from "../utils/constants";
+import {ISdcConfig} from "../ng2/config/sdc-config.config";
 
 export interface IDataTypesService {
 
@@ -48,7 +49,7 @@ export class DataTypesService implements IDataTypesService {
         '$http'
     ];
 
-    constructor(private sdcConfig:IAppConfigurtaion,
+    constructor(private sdcConfig:ISdcConfig,
                 private $q:ng.IQService,
                 private $http:ng.IHttpService) {
 
@@ -62,13 +63,16 @@ export class DataTypesService implements IDataTypesService {
     selectedComponentInputs:Array<InputModel>;
 
     public initDataTypes = ():void => {
-        this.$http({
-            url: this.sdcConfig.api.root + this.sdcConfig.api.component_api_root + "dataTypes",
-            method: "get"
-        }).then((response:any) => {
+        let authConfig = this.sdcConfig.basicAuth;
+        let httpOptions = {};
+        if (authConfig.enabled) {
+            httpOptions = {headers: {'Authorization': 'Basic ' + btoa(authConfig.userName + ":" + authConfig.userPass)}};
+        }
+        this.$http.get(this.sdcConfig.api.root + this.sdcConfig.api.component_api_root + "dataTypes", httpOptions).then((response:any) => {
             this.dataTypes = response.data;
             delete this.dataTypes['tosca.datatypes.Root'];
         });
+
     };
 
     public getAllDataTypes = ():DataTypesMap => {

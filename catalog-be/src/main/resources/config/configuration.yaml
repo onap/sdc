@@ -114,6 +114,12 @@ neo4j:
     user: neo4j
     password: "12345"
 
+basicAuth:
+  enabled: false
+  userName: "testName"
+  userPass: "testPass"
+  excludedUrls: ""
+
 cassandraConfig:
     cassandraHosts: [192.168.33.10]
     cassandraPort: 9042
