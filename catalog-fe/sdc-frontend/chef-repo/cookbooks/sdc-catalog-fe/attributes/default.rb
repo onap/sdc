@@ -18,3 +18,8 @@ default['ONBOARDING_BE'][:https_port] = 8445
 default['DCAE']['FE'][:http_port] = 8183
 default['DCAE']['FE'][:https_port] = 9444
 default['DCAE_FE_VIP'] = "dcaed-fe"
+
+#BasicAuth
+default['basic_auth']['enabled'] = true
+default['basic_auth'][:user_name] = "testName"
+default['basic_auth'][:user_pass] = "testPass"
