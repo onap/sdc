@@ -118,6 +118,8 @@ public class Configuration extends BasicConfiguration {
 
     private DcaeConfig dcae;
 
+    private BasicAuthConfig basicAuth;
+
     private CassandrConfig cassandraConfig;
 
     private SwitchoverDetectorConfig switchoverDetector;
@@ -1173,6 +1175,53 @@ public class Configuration extends BasicConfiguration {
                     + downloadCsarUri + "]";
         }
 
+    }
+
+    public BasicAuthConfig getBasicAuth() {
+        return basicAuth;
+    }
+
+    public void setBasicAuth(BasicAuthConfig basicAuth) {
+        this.basicAuth = basicAuth;
+    }
+
+    public static class BasicAuthConfig {
+        boolean enabled;
+        String userName;
+        String userPass;
+        String excludedUrls;
+
+        public boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getUserPass() {
+            return userPass;
+        }
+
+        public void setUserPass(String userPass) {
+            this.userPass = userPass;
+        }
+
+        public String getExcludedUrls() {
+            return excludedUrls;
+        }
+
+        public void setExcludedUrls(String excludedUrls) {
+            this.excludedUrls = excludedUrls;
+        }
     }
 
     public DcaeConfig getDcae() {

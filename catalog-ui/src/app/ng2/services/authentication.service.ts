@@ -21,6 +21,7 @@
 import {Injectable, Inject} from '@angular/core';
 import {IAppConfigurtaion, ICookie} from "../../models/app-config";
 import {Cookie2Service} from "./cookie.service";
+import {CredentialService} from "./credential.service";
 import { Observable } from 'rxjs/Observable';
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import { IUserProperties } from "app/models";
@@ -31,9 +32,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class AuthenticationService {
 
     private _loggedinUser:IUserProperties;
-    
-    constructor(private cookieService:Cookie2Service, private http: HttpClient, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig, private cacheService: CacheService) {
+
+    constructor(private cookieService:Cookie2Service, private http: HttpClient, private credentialService:CredentialService, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig, private cacheService: CacheService) {
         this.cookieService = cookieService;
+        this.credentialService = credentialService;
     }
 
     private getAuthHeaders():HttpHeaders {
@@ -43,6 +45,10 @@ export class AuthenticationService {
         .set(cookie.userLastName, this.cookieService.getLastName())
         .set(cookie.userEmail, this.cookieService.getEmail())
         .set(cookie.userIdSuffix, this.cookieService.getUserId())
+
+        if (this.credentialService.basicAuthEnabled()) {
+            authHeaders = authHeaders.set('Authorization', this.credentialService.getBasicAuth())
+        }
         return authHeaders;
     }
 

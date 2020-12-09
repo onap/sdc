@@ -19,7 +19,7 @@
  */
 
 'use strict';
-import {IAppConfigurtaion, IApi} from "../models/app-config";
+import {ISdcConfig} from "app/ng2/config/sdc-config.config";
 
 interface IConfigurationUiService {
     getConfigurationUi():ng.IPromise<any>;
@@ -28,15 +28,20 @@ interface IConfigurationUiService {
 export class ConfigurationUiService implements IConfigurationUiService {
 
     static '$inject' = ['$http', '$q', 'sdcConfig'];
-    private api:IApi;
+    private sdcConfig:ISdcConfig;
 
-    constructor(private $http:ng.IHttpService, private $q:ng.IQService, sdcConfig:IAppConfigurtaion) {
-        this.api = sdcConfig.api;
+    constructor(private $http:ng.IHttpService, private $q:ng.IQService, sdcConfig:ISdcConfig) {
+        this.sdcConfig = sdcConfig;
     }
 
     public getConfigurationUi = ():ng.IPromise<any> => {
         let defer = this.$q.defer<any>();
-        this.$http.get(this.api.root + this.api.GET_configuration_ui)
+        let authConfig = this.sdcConfig.basicAuth;
+        let httpOptions = {};
+        if (authConfig.enabled) {
+            httpOptions = {headers: {'Authorization': 'Basic ' + btoa(authConfig.userName + ":" + authConfig.userPass)}};
+        }
+        this.$http.get(this.sdcConfig.api.root + this.sdcConfig.api.GET_configuration_ui, httpOptions)
             .then((result:any) => {
                 defer.resolve(result.data);
             });

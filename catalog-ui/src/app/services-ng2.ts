@@ -1,6 +1,7 @@
 // Angular 2 services
 export * from './ng2/services/config.service';
 export * from './ng2/services/authentication.service';
+export * from './ng2/services/credential.service';
 export * from './ng2/services/user.service';
 export * from './ng2/services/data-type.service';
 export * from './ng2/services/modal.service';
