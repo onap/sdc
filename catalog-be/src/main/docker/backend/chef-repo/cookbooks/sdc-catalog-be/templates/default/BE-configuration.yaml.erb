@@ -95,7 +95,11 @@ authCookie:
   excludedUrls: [<%= node['access_restriction']['excluded_urls'] %>]
   onboardingExcludedUrls: [<%= node['access_restriction']['excluded_urls_onboarding'] %>]
 
-
+basicAuth:
+  enabled: <%= @basic_auth_flag %>
+  userName: <%= @user_name %>
+  userPass: <%= @user_pass %>
+  excludedUrls: "/sdc2/rest/healthCheck,/sdc2/rest/v1/user,/sdc2/rest/v1/user/jh0003,/sdc2/rest/v1/screen,/sdc2/rest/v1/consumers,/sdc2/rest/v1/catalog/uploadType/datatypes,/sdc2/rest/v1/catalog/upload/multipart,/sdc2/rest/v1/catalog/uploadType/capability,/sdc2/rest/v1/catalog/uploadType/relationship,/sdc2/rest/v1/catalog/uploadType/interfaceLifecycle,/sdc2/rest/v1/catalog/uploadType/categories,/sdc2/rest/v1/catalog/uploadType/grouptypes,/sdc2/rest/v1/catalog/uploadType/policytypes,/sdc2/rest/v1/catalog/uploadType/annotationtypes"
 
 cassandraConfig:
     cassandraHosts: [<%= @cassandra_ip %>]
