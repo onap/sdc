@@ -24,8 +24,9 @@
 'use strict';
 import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
-import {PropertyModel, IAppConfigurtaion, Resource, Component} from "../../models";
+import {PropertyModel, Resource, Component} from "../../models";
 import {SharingService} from "app/services-ng2";
+import {ISdcConfig} from "../../ng2/config/sdc-config.config";
 
 export interface IResourceService extends IComponentService {
     updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>>
@@ -42,7 +43,7 @@ export class ResourceService extends ComponentService implements IResourceServic
     ];
 
     constructor(protected restangular:restangular.IElement,
-                protected sdcConfig:IAppConfigurtaion,
+                protected sdcConfig:ISdcConfig,
                 protected sharingService:SharingService,
                 protected $q:ng.IQService,
                 protected $base64:any
