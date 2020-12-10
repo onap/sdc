@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNfvNsCsarEntryGenerator.class);
-    static final String ETSI_NS_COMPONENT_CATEGORY = "ETSI Network Service";
+    static final String ETSI_NS_COMPONENT_CATEGORY = "ETSI NFV Network Service";
     static final String NSD_FILE_PATH_FORMAT = "Artifacts/%s/%s.csar";
 
     private final EtsiNfvNsdCsarGenerator etsiNfvNsdCsarGenerator;
