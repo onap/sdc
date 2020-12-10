@@ -41,11 +41,18 @@ public class PMDictionaryValidator {
         try {
             List<YamlDocumentValidationError> validationErrors = new YamlContentValidator().validate(fileContent);
             validationErrors.stream()
-                .map(YamlDocumentValidationError::getMessage)
+                .map(this::formatErrorMessage)
                 .forEach(errors::add);
         } catch (Exception e) {
             errors.add(e.getMessage());
         }
         return errors;
+    }
+
+    private String formatErrorMessage(YamlDocumentValidationError error) {
+        return String.format("Document number: %d, Path: %s, Message: %s",
+                error.getYamlDocumentNumber(),
+                error.getPath(),
+                error.getMessage());
     }
 }
