@@ -101,7 +101,8 @@ export class DistributionService {
                                 const artifactObj = {
                                     url: artifact.artifactUrl,
                                     name: artifact.artifactName,
-                                    statuses: artifact.statuses
+                                    statuses: artifact.statuses,
+                                    errorReason: artifact.errorReason
                                 };
                                 artifacts.push(artifactObj);
                             });
@@ -161,6 +162,7 @@ export class DistributionService {
                 url: distributionStatus['url'],
                 time: distributionStatus['timestamp'],
                 status: distributionStatus['status'],
+                errorReason: distributionStatus['errorReason']
             };
 
 
@@ -190,7 +192,8 @@ export class DistributionService {
                 // Case where there is a url -> should add its status
                 component.artifacts[artifactPosition].statuses.push({
                     timeStamp: detailedArtifactStatus.time,
-                    status: detailedArtifactStatus.status
+                    status: detailedArtifactStatus.status,
+                    errorReason: detailedArtifactStatus.errorReason
                 });
             } else {
                 // Should update the Component -> status from MSO

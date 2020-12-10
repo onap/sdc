@@ -23,7 +23,8 @@ export class DistributionComponentArtifactTableComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.artifacts = this.distributionService.getArtifactstByDistributionIDAndComponentsName(this.rowDistributionID, this.componentName);
+        const artifacts = this.distributionService.getArtifactstByDistributionIDAndComponentsName(this.rowDistributionID, this.componentName);
+        this.artifacts = this.prepareArtifacts(artifacts);
         if (this.statusFilter) {
             this.artifacts.forEach(
             (artifact) => {
@@ -39,6 +40,21 @@ export class DistributionComponentArtifactTableComponent implements OnInit {
         } else {
             return null;
         }
+    }
+
+    private prepareArtifacts(artifacts: any[]) {
+        if (artifacts !== undefined && artifacts !== null) {
+            artifacts.forEach(function (artifact) {
+                if (artifact !== null && artifact['statuses'] !== undefined && artifact['statuses'] !== null) {
+                    artifact['statuses'].forEach(function (status) {
+                        if (status.errorReason === null || status.errorReason === 'null') {
+                            status.errorReason = ''
+                        }
+                    })
+                }
+            });
+        }
+        return artifacts
     }
 
     private copyToClipboard(urlToCopy: any) {
