@@ -68,7 +68,7 @@ class PMDictionaryValidatorTest {
 
         // then
         assertTrue(errors.isPresent());
-        assertThat(errors.get(), is("Line number: 1, Path: /, Message: error"));
+        assertThat(errors.get(), is("Document number: 1, Path: /, Message: error"));
     }
 
     @Test
