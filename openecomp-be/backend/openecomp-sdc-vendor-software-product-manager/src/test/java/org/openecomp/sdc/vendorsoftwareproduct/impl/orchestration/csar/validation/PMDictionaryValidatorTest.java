@@ -58,7 +58,7 @@ class PMDictionaryValidatorTest {
 
         // then
         assertThat(errors.size(), is(1));
-        assertThat(errors.get(0), is("Key not found: pmDictionaryHeader"));
+        assertThat(errors.get(0), is("Document number: 1, Path: /pmDictionary/, Message: Key not found: pmDictionaryHeader"));
     }
 
     @Test
