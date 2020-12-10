@@ -2,9 +2,9 @@ const mockApis = require('./configurations/mock.json').sdcConfig;
 const proxy = require('http-proxy-middleware');
 const devPort = 9000;
 
-const fePort = 8181;
-const feHost = "localhost";
-const protocol="http";
+const fePort = 30207;
+const feHost = "10.129.66.241";
+const protocol="https";
 const isDirectToFE = true;
 
 const portalCookieValue = "randomValue"; //for dev solely, in production - the webseal would add the cookie by itself.

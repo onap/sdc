@@ -11,8 +11,9 @@
     <ngx-datatable-row-detail [rowHeight]="'auto'">
       <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
           <div *ngFor="let status of row.statuses">
-            <span class = "status" [attr.data-tests-id]="generateDataTestID('statusTimeStamp_',componentName, row.name, status.status)">{{ status.timeStamp | date:'short':'UTC'}}</span>
-            <span class = "status" [attr.data-tests-id]="generateDataTestID('statusValue_',componentName, row.name, status.status)">{{ status.status }}</span>
+            <span class = "status timestamp" [attr.data-tests-id]="generateDataTestID('statusTimeStamp_',componentName, row.name, status.status)">{{ status.timeStamp | date:'short':'UTC'}}</span>
+            <span class = "status value" [attr.data-tests-id]="generateDataTestID('statusValue_',componentName, row.name, status.status)">{{ status.status }}</span>
+            <span class = "status message" [attr.data-tests-id]="generateDataTestID('statusMessageValue_',componentName, row.name, status.errorReason)">{{ status.errorReason }}</span>
           </div>
       </ng-template>
     </ngx-datatable-row-detail>
@@ -56,6 +57,11 @@
     <ngx-datatable-column [resizeable]="false" [width]="280" name="Status">
       <ng-template ngx-datatable-cell-template let-row="row">
         <div class = "distributionRowValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('status_',componentName, row.name)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="getLatestArtifact(row.name).status">{{ getLatestArtifact(row.name).status }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column [resizeable]="false" [width]="280" name="Message">
+      <ng-template ngx-datatable-cell-template let-row="row">
+        <div class = "distributionRowValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('message_',componentName, row.name)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="getLatestArtifact(row.name).errorReason">{{ getLatestArtifact(row.name).errorReason }}</div>
       </ng-template>
     </ngx-datatable-column>
   </ngx-datatable>
