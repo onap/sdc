@@ -2632,10 +2632,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 String fileExtension = GeneralUtility.getFilenameExtension(artifactInfo.getArtifactName());
                 PayloadTypeEnum payloadType = ArtifactTypeToPayloadTypeSelector.getPayloadType(artifactType, fileExtension);
 
-                final Optional<ResponseFormat> pmDictionaryError = validateIfPmDictionary(artifactType, decodedPayload);
-                if (pmDictionaryError.isPresent()) {
-                    return Either.right(pmDictionaryError.get());
-                }
+//                final Optional<ResponseFormat> pmDictionaryError = validateIfPmDictionary(artifactType, decodedPayload);
+//                if (pmDictionaryError.isPresent()) {
+//                    return Either.right(pmDictionaryError.get());
+//                }
 
                 Either<Boolean, ActionStatus> isPayloadValid = payloadType.isValid(decodedPayload);
                 if (isPayloadValid.isRight()) {
