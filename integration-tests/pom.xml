@@ -3,6 +3,7 @@
 SDC
 ================================================================================
 Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
+Modifications copyright (c) 2020 Nokia
 ================================================================================
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -101,6 +102,12 @@ limitations under the License.
         <dependency>
             <groupId>org.openecomp.sdc.be</groupId>
             <artifactId>catalog-dao</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

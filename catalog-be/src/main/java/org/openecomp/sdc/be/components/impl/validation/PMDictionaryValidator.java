@@ -64,7 +64,7 @@ public class PMDictionaryValidator {
     }
 
     private String formatErrorMessage(YamlDocumentValidationError error) {
-        return String.format("Line number: %d, Path: %s, Message: %s",
+        return String.format("Document number: %d, Path: %s, Message: %s",
             error.getYamlDocumentNumber(),
             error.getPath(),
             error.getMessage());
