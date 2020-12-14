@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c675bb8_98f8cf94",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2020-12-14T14:01:32Z",
+      "side": 1,
+      "message": "if (artifacts)",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36735c95_c67c53d3",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2020-12-14T14:01:32Z",
+      "side": 1,
+      "message": "use arrow function",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc67bb4e_17212550",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2020-12-14T14:01:32Z",
+      "side": 1,
+      "message": "if ( artifact \u0026\u0026 artifact[\u0027statuses\u0027] \u0026\u0026 artifact[\u0027statuses\u0027]",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bb49003_6b18489e",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2020-12-14T14:01:32Z",
+      "side": 1,
+      "message": "use arrow function",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc75a8d2_ef2bffd8",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2020-12-14T14:01:32Z",
+      "side": 1,
+      "message": "!status.errorReason || status.errorReason \u003d\u003d\u003d \u0027null\u0027",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
