@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "09c07b88_514d7c21",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5234
+      },
+      "writtenOn": "2020-12-15T12:58:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5c675bb8_98f8cf94",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "36735c95_c67c53d3",
         "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e29f353b_071fc545",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5234
+      },
+      "writtenOn": "2020-12-15T12:58:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "36735c95_c67c53d3",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "f80dd920_af4bbe14",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5234
+      },
+      "writtenOn": "2020-12-15T12:58:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dc67bb4e_17212550",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0bb49003_6b18489e",
         "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
         "patchSetId": 2
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "8347652f_5fee1364",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5234
+      },
+      "writtenOn": "2020-12-15T12:58:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0bb49003_6b18489e",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dc75a8d2_ef2bffd8",
         "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
         "patchSetId": 2
@@ -84,6 +156,24 @@
       "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9456a966_44e1c0ef",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/disribution/distribution-component-table/distribution-component-artifact-table/distribution-component-artifact-table.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5234
+      },
+      "writtenOn": "2020-12-15T12:58:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dc75a8d2_ef2bffd8",
+      "revId": "e25faaa29fbfe863497780353bdd1ef2485a4e67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
