@@ -228,8 +228,6 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         if (onapSubstitutionMapping != null) {
             substitutionMapping.setRequirements(onapSubstitutionMapping.getRequirements());
             substitutionMapping.setCapabilities(onapSubstitutionMapping.getCapabilities());
-            substitutionMapping.setProperties(onapSubstitutionMapping.getProperties());
-            substitutionMapping.setAttributes(onapSubstitutionMapping.getAttributes());
         }
         componentToscaTemplate.getTopology_template().setSubstitution_mappings(substitutionMapping);
     }
