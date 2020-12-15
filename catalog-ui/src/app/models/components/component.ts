@@ -35,6 +35,7 @@ import {Requirement} from "../requirement";
 import {Relationship} from "../graph/relationship";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../graph/zones/group-instance";
+import { Metadata } from "app/models/metadata";
 
 
 // import {}
@@ -142,6 +143,7 @@ export abstract class Component implements IComponent {
     public archived:boolean;
     public vspArchived: boolean;
     public componentMetadata: ComponentMetadata;
+    public categorySpecificMetadata: Metadata = new Metadata();
 
     constructor(componentService:IComponentService, protected $q:ng.IQService, component?:Component) {
         if (component) {
@@ -198,10 +200,34 @@ export abstract class Component implements IComponent {
             this.policies = component.policies;
             this.archived = component.archived;
             this.vspArchived = component.vspArchived;
+
+            if (component.categorySpecificMetadata && component.categories && component.categories[0]){
+                this.copyCategoryMetadata(component);
+                this.copySubcategoryMetadata(component);
+            }
         }
 
         //custom properties
         this.componentService = componentService;
+    }
+
+    private copyCategoryMetadata = (component:Component):void => {
+        if (component.categories[0].metadataKeys){
+            for (let key of Object.keys(component.categorySpecificMetadata)) {
+                if (component.categories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
+                    this.categorySpecificMetadata[key] = component.categorySpecificMetadata[key];
+                }
+            }
+        }
+    }
+    private copySubcategoryMetadata = (component:Component):void => {
+        if (component.categories[0].subcategories && component.categories[0].subcategories[0] && component.categories[0].subcategories[0].metadataKeys){
+            for (let key of Object.keys(component.categorySpecificMetadata)) {
+                if (component.categories[0].subcategories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
+                    this.categorySpecificMetadata[key] = component.categorySpecificMetadata[key];
+                }
+            }
+        }
     }
 
     public setUniqueId = (uniqueId:string):void => {
@@ -543,6 +569,11 @@ export abstract class Component implements IComponent {
         this.archived = componentMetadata.archived || false;
         this.vspArchived = componentMetadata.vspArchived;
         this.componentMetadata = componentMetadata;
+        if (componentMetadata.categorySpecificMetadata){
+            this.categorySpecificMetadata = componentMetadata.categorySpecificMetadata;
+        } else {
+            this.categorySpecificMetadata = new Metadata();
+        }
     }
 
     public toJSON = ():any => {

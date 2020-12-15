@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.resources.data.category;
 import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
 import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
@@ -59,6 +60,11 @@ public class SubCategoryData extends GraphNode {
 		List<String> iconsfromJson = getGson()
 				.fromJson((String) properties.get(GraphPropertiesDictionary.ICONS.getProperty()), listType);
 		subCategoryDataDefinition.setIcons(iconsfromJson);
+		
+		final Type metadataKeylistType = new TypeToken<List<MetadataKeyDataDefinition>>() {}.getType();
+		final List<MetadataKeyDataDefinition> metadataKeysfromJson = getGson()
+		        .fromJson((String) properties.get(GraphPropertiesDictionary.METADATA_KEYS.getProperty()), metadataKeylistType);
+		subCategoryDataDefinition.setMetadataKeys(metadataKeysfromJson);
 	}
 
 	public SubCategoryDataDefinition getSubCategoryDataDefinition() {
@@ -80,6 +86,7 @@ public class SubCategoryData extends GraphNode {
 		// String icons=getGson().toJson(subCategoryDataDefinition.getIcons());
 		// addIfExists(map, GraphPropertiesDictionary.ICONS, icons);
 		addIfExists(map, GraphPropertiesDictionary.ICONS, subCategoryDataDefinition.getIcons());
+		addIfExists(map, GraphPropertiesDictionary.METADATA_KEYS, subCategoryDataDefinition.getMetadataKeys());
 		return map;
 	}
 }

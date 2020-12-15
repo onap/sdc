@@ -39,10 +39,12 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
+import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
@@ -105,6 +107,8 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
@@ -776,6 +780,7 @@ public class ModelConverter {
             } else {
                 resource.setResourceVendorModelNumber("");
             }
+            
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             Service service = (Service) component;
             if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)) != null){
@@ -803,6 +808,41 @@ public class ModelConverter {
         component.setUUID((String) toscaElement.getMetadataValue(JsonPresentationFields.UUID));
         component.setIsDeleted((Boolean) toscaElement.getMetadataValue(JsonPresentationFields.IS_DELETED));
         component.setToscaType(toscaElement.getToscaType().getValue());
+        final List<String> metadataKeys = getCategorySpecificMetadataKeys(toscaElement);
+        if (CollectionUtils.isNotEmpty(metadataKeys)) {
+            final Map<String, String> categorySpecificMetadata = new HashMap<>();
+            for (final String metadataKey: metadataKeys) {
+                categorySpecificMetadata.put(metadataKey, (String) toscaElement.getMetadata().get(metadataKey));
+            }
+            component.setCategorySpecificMetadata(categorySpecificMetadata );
+        }
+    }
+    
+    private static List<String> getCategorySpecificMetadataKeys(final ToscaElement toscaElement){
+        final List<String> metadataKeys = new ArrayList<>();
+        final Optional<CategoryDefinition> category = getCategory(toscaElement);
+        if (category.isPresent()) {
+            if (CollectionUtils.isNotEmpty(category.get().getMetadataKeys())) {
+                for (final MetadataKeyDataDefinition metadataKey: category.get().getMetadataKeys()) {
+                    metadataKeys.add(metadataKey.getName());
+                }
+            }
+            final Optional<SubCategoryDefinition> subCategory = getSubCategory(category.get());
+            if (subCategory.isPresent() && CollectionUtils.isNotEmpty(subCategory.get().getMetadataKeys())) {
+                for (final MetadataKeyDataDefinition metadataKey: subCategory.get().getMetadataKeys()) {
+                    metadataKeys.add(metadataKey.getName());
+                }
+            }
+        }
+        return metadataKeys;
+    }
+    
+    private static Optional<CategoryDefinition> getCategory(ToscaElement toscaElement) {
+        return CollectionUtils.isEmpty(toscaElement.getCategories()) ? Optional.empty() : Optional.of(toscaElement.getCategories().get(0));
+    }
+    
+    private static Optional<SubCategoryDefinition> getSubCategory(CategoryDefinition category) {
+        return CollectionUtils.isEmpty(category.getSubcategories()) ? Optional.empty() : Optional.of(category.getSubcategories().get(0));
     }
 
     private static NodeType convertToNodeType(Component component) {
@@ -1345,6 +1385,10 @@ public class ModelConverter {
         toscaElement.setMetadataValue(JsonPresentationFields.TAGS, component.getTags());
         toscaElement.setMetadataValue(JsonPresentationFields.INVARIANT_UUID, component.getInvariantUUID());
         toscaElement.setMetadataValue(JsonPresentationFields.CONTACT_ID, component.getContactId());
+        for (final String key: component.getCategorySpecificMetadata().keySet()) {
+            toscaElement.setMetadataValue(key, component.getCategorySpecificMetadata().get(key));       
+        }
+
         final List<DataTypeDefinition> dataTypes = component.getDataTypes();
         if (CollectionUtils.isNotEmpty(dataTypes)) {
             toscaElement.setDataTypes(dataTypes.stream()
