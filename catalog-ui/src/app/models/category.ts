@@ -28,6 +28,7 @@ export interface ICategoryBase {
     normalizedName:string;
     uniqueId:string;
     icons:Array<string>;
+    metadataKeys: IMetadataKey[];
 
     //custom properties
     filterTerms:string;
@@ -45,4 +46,10 @@ export interface ISubCategory extends ICategoryBase {
 }
 
 export interface IGroup extends ICategoryBase {
+}
+
+export interface IMetadataKey {
+	name:string;
+	mandatory:boolean
+	validValues: string[];
 }

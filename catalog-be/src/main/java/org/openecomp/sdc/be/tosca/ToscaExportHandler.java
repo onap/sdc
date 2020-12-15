@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterProp
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -410,37 +412,40 @@ public class ToscaExportHandler {
         }
     }
 
-    private ToscaMetadata convertMetadata(Component component) {
+    private Map<String, String> convertMetadata(Component component) {
         return convertMetadata(component, false, null);
     }
 
-    private ToscaMetadata convertMetadata(Component component, boolean isInstance,
+    private Map<String, String> convertMetadata(Component component, boolean isInstance,
                                           ComponentInstance componentInstance) {
-        ToscaMetadata toscaMetadata = new ToscaMetadata();
-        toscaMetadata.setInvariantUUID(component.getInvariantUUID());
-        toscaMetadata.setUUID(component.getUUID());
-        toscaMetadata.setDescription(component.getDescription());
-        toscaMetadata.setName(component.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
+        Map<String, String> toscaMetadata = new LinkedHashMap<>();
+        toscaMetadata.put(JsonPresentationFields.INVARIANT_UUID.getPresentation(), component.getInvariantUUID());
+        toscaMetadata.put(JsonPresentationFields.UUID.getPresentation(), component.getUUID());
+        toscaMetadata.put(JsonPresentationFields.NAME.getPresentation(), component.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
+        toscaMetadata.put(JsonPresentationFields.DESCRIPTION.getPresentation(), component.getDescription());
 
         List<CategoryDefinition> categories = component.getCategories();
         CategoryDefinition categoryDefinition = categories.get(0);
-        toscaMetadata.setCategory(categoryDefinition.getName());
+        toscaMetadata.put(JsonPresentationFields.CATEGORY.getPresentation(), categoryDefinition.getName());
 
         if (isInstance) {
-            toscaMetadata.setVersion(component.getVersion());
-            toscaMetadata.setCustomizationUUID(componentInstance.getCustomizationUUID());
+            toscaMetadata.put(JsonPresentationFields.VERSION.getPresentation(),component.getVersion());
+            toscaMetadata.put(JsonPresentationFields.CUSTOMIZATION_UUID.getPresentation(), componentInstance.getCustomizationUUID());
             if (componentInstance.getSourceModelInvariant() != null
                 && !componentInstance.getSourceModelInvariant().isEmpty()) {
-                toscaMetadata.setVersion(componentInstance.getComponentVersion());
-                toscaMetadata.setSourceModelInvariant(componentInstance.getSourceModelInvariant());
-                toscaMetadata.setSourceModelUuid(componentInstance.getSourceModelUuid());
-                toscaMetadata.setSourceModelName(componentInstance.getSourceModelName());
+                toscaMetadata.put(JsonPresentationFields.VERSION.getPresentation(),componentInstance.getComponentVersion());
+                toscaMetadata.put(JsonPresentationFields.CI_SOURCE_MODEL_INVARIANT.getPresentation(),componentInstance.getSourceModelInvariant());
+                toscaMetadata.put(JsonPresentationFields.CI_SOURCE_MODEL_UUID.getPresentation(),componentInstance.getSourceModelUuid());
+                toscaMetadata.put(JsonPresentationFields.CI_SOURCE_MODEL_NAME.getPresentation(),componentInstance.getSourceModelName());
                 if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
-                	toscaMetadata.setName(componentInstance.getSourceModelName() + " " + OriginTypeEnum.ServiceProxy.getDisplayValue());
+                    toscaMetadata.put(JsonPresentationFields.NAME.getPresentation(),
+                        componentInstance.getSourceModelName() + " " + OriginTypeEnum.ServiceProxy.getDisplayValue());
                 } else if (componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
-                    toscaMetadata.setName(componentInstance.getSourceModelName() + " " + OriginTypeEnum.ServiceSubstitution.getDisplayValue());
+                    toscaMetadata.put(JsonPresentationFields.NAME.getPresentation(),
+                        componentInstance.getSourceModelName() + " " + OriginTypeEnum.ServiceSubstitution
+                            .getDisplayValue());
                 }
-                toscaMetadata.setDescription(componentInstance.getDescription());
+                toscaMetadata.put(JsonPresentationFields.DESCRIPTION.getPresentation(),componentInstance.getDescription());
             }
 
         }
@@ -449,32 +454,36 @@ public class ToscaExportHandler {
                 Resource resource = (Resource) component;
 
             if (isInstance && (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution)) {
-                    toscaMetadata.setType(componentInstance.getOriginType().getDisplayValue());
+                    toscaMetadata.put(JsonPresentationFields.TYPE.getPresentation(), componentInstance.getOriginType().getDisplayValue());
                 } else {
-                    toscaMetadata.setType(resource.getResourceType().name());
+                    toscaMetadata.put(JsonPresentationFields.TYPE.getPresentation(), resource.getResourceType().name());
                 }
-                toscaMetadata.setSubcategory(categoryDefinition.getSubcategories().get(0).getName());
-                toscaMetadata.setResourceVendor(resource.getVendorName());
-                toscaMetadata.setResourceVendorRelease(resource.getVendorRelease());
-                toscaMetadata.setResourceVendorModelNumber(resource.getResourceVendorModelNumber());
+                toscaMetadata.put(JsonPresentationFields.SUB_CATEGORY.getPresentation(), categoryDefinition.getSubcategories().get(0).getName());
+                toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR.getPresentation(), resource.getVendorName());
+                toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_RELEASE.getPresentation(),resource.getVendorRelease());
+                toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER.getPresentation(),resource.getResourceVendorModelNumber());
                 break;
             case SERVICE:
                 Service service = (Service) component;
-                toscaMetadata.setType(component.getComponentType().getValue());
-                toscaMetadata.setServiceType(service.getServiceType());
-                toscaMetadata.setServiceRole(service.getServiceRole());
-                toscaMetadata.setServiceFunction(service.getServiceFunction());
-                toscaMetadata.setEnvironmentContext(service.getEnvironmentContext());
-                resolveInstantiationTypeAndSetItToToscaMetaData(toscaMetadata, service);
+                toscaMetadata.put(JsonPresentationFields.TYPE.getPresentation(),component.getComponentType().getValue());
+                toscaMetadata.put(JsonPresentationFields.SERVICE_TYPE.getPresentation(),service.getServiceType());
+                toscaMetadata.put(JsonPresentationFields.SERVICE_ROLE.getPresentation(),service.getServiceRole());
+                toscaMetadata.put(JsonPresentationFields.SERVICE_FUNCTION.getPresentation(),service.getServiceFunction());
+                toscaMetadata.put(JsonPresentationFields.ENVIRONMENT_CONTEXT.getPresentation(),service.getEnvironmentContext());
+                toscaMetadata.put(JsonPresentationFields.INSTANTIATION_TYPE.getPresentation(),service.getEnvironmentContext() == null ? StringUtils.EMPTY : service.getInstantiationType());
                 if (!isInstance) {
                     // DE268546
-                    toscaMetadata.setServiceEcompNaming(((Service) component).isEcompGeneratedNaming());
-                    toscaMetadata.setEcompGeneratedNaming(((Service) component).isEcompGeneratedNaming());
-                    toscaMetadata.setNamingPolicy(((Service) component).getNamingPolicy());
+                    toscaMetadata.put(JsonPresentationFields.ECOMP_GENERATED_NAMING.getPresentation(),service.isEcompGeneratedNaming().toString()); 
+                    toscaMetadata.put(JsonPresentationFields.ECOMP_GENERATED_NAMING.getPresentation(),service.isEcompGeneratedNaming().toString());
+                    toscaMetadata.put(JsonPresentationFields.NAMING_POLICY.getPresentation(),service.getNamingPolicy());
                 }
                 break;
             default:
                 log.debug(NOT_SUPPORTED_COMPONENT_TYPE, component.getComponentType());
+        }
+        
+        for (final String key: component.getCategorySpecificMetadata().keySet()) {
+            toscaMetadata.put(key, component.getCategorySpecificMetadata().get(key));
         }
         return toscaMetadata;
     }
