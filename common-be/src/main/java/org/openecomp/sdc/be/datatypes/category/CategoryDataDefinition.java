@@ -40,6 +40,7 @@ public class CategoryDataDefinition extends ToscaDataDefinition {
     private String uniqueId;
     private List<String> icons;
     private boolean useServiceSubstitutionForNestedServices = false;
+    private List<MetadataKeyDataDefinition> metadataKeys;
 
     public CategoryDataDefinition(CategoryDataDefinition c) {
         this.name = c.name;
@@ -47,6 +48,7 @@ public class CategoryDataDefinition extends ToscaDataDefinition {
         this.uniqueId = c.uniqueId;
         this.icons = c.icons;
         this.useServiceSubstitutionForNestedServices = c.useServiceSubstitutionForNestedServices;
+        this.metadataKeys = c.metadataKeys;
     }
 
 }

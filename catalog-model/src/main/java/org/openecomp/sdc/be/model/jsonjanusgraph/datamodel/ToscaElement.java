@@ -85,11 +85,14 @@ public abstract class ToscaElement {
     }
 
     public void setMetadataValue(JsonPresentationFields name, Object value) {
+        setMetadataValue(name.getPresentation(), value);
+    }
+    
+    public void setMetadataValue(String name, Object value) {
         if (metadata == null) {
             metadata = new HashMap<>();
         }
-        metadata.put(name.getPresentation(), value);
-
+        metadata.put(name, value);
     }
     // --------------------
     public String getUUID() {

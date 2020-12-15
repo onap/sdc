@@ -303,6 +303,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.RESOURCE_CATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, categoryName);
         metadataProperties.put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
+        metadataProperties.put(GraphPropertyEnum.METADATA_KEYS, "[]");
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
 
@@ -314,6 +315,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.RESOURCE_SUBCATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, subcategory);
         metadataProperties.put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(subcategory));
+        metadataProperties.put(GraphPropertyEnum.METADATA_KEYS, "[]");
         subCat.setMetadataProperties(metadataProperties);
         subCat.updateMetadataJsonWithCurrentMetadataProperties();
 
@@ -337,6 +339,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.SERVICE_CATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, categoryName);
         metadataProperties.put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
+        metadataProperties.put(GraphPropertyEnum.METADATA_KEYS, "[]");
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
 

@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
@@ -1189,6 +1190,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         Type listTypeCat = new TypeToken<List<String>>() {}.getType();
         List<String> iconsfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.ICONS.getProperty()), listTypeCat);
         category.setIcons(iconsfromJsonCat);
+        
+        final Type metadataKeysTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {}.getType();
+        final List<MetadataKeyDataDefinition> metadataKeysfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.METADATA_KEYS), metadataKeysTypeCat);
+        category.setMetadataKeys(metadataKeysfromJsonCat);
+        
         categories.add(category);
         toscaElement.setCategories(categories);
 
