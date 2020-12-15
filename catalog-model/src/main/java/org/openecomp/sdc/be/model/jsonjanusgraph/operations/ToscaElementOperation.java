@@ -54,6 +54,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
@@ -330,7 +331,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.IS_ARCHIVED, toscaElement.getMetadataValue(JsonPresentationFields.IS_ARCHIVED));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.ARCHIVE_TIME, toscaElement.getMetadataValue(JsonPresentationFields.ARCHIVE_TIME));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.IS_VSP_ARCHIVED, toscaElement.getMetadataValue(JsonPresentationFields.IS_VSP_ARCHIVED));
-        toscaElement.getMetadata().entrySet().stream().filter(e -> e.getValue() != null).forEach(e -> nodeTypeVertex.setJsonMetadataField(JsonPresentationFields.getByPresentation(e.getKey()), e.getValue()));
+        toscaElement.getMetadata().entrySet().stream().filter(e -> e.getValue() != null).forEach(e -> nodeTypeVertex.setJsonMetadataField(e.getKey(), e.getValue()));
 
         nodeTypeVertex.setUniqueId(toscaElement.getUniqueId());
         nodeTypeVertex.setType(toscaElement.getComponentType());
@@ -1046,6 +1047,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
         subcategory.setUniqueId((String) subCategoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
         subcategory.setNormalizedName(subCategoryNormalizedName);
         subcategory.setName((String) subCategoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
+        
+        Type listTypeSubcat = new TypeToken<List<MetadataKeyDataDefinition>>() {
+        }.getType();
+        List<MetadataKeyDataDefinition> metadataKeys = getGson().fromJson((String) subCategoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).value(), listTypeSubcat);
+        subcategory.setMetadataKeys(metadataKeys);
+        
         Either<Vertex, JanusGraphOperationStatus> parentVertex = janusGraphDao.getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         Vertex categoryV = parentVertex.left().value();
         String categoryNormalizedName = (String) categoryV.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
@@ -1077,6 +1084,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
         category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
         category.setUseServiceSubstitutionForNestedServices((Boolean) categoryV.property(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty()).orElse(false));
 
+        Type listTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {
+        }.getType();
+        List<MetadataKeyDataDefinition> metadataKeys = getGson().fromJson((String) categoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).value(), listTypeCat);
+        category.setMetadataKeys(metadataKeys);
+        
         categories.add(category);
         catalogComponent.setCategories(categories);
         return JanusGraphOperationStatus.OK;
@@ -1104,6 +1116,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
         List<String> iconsfromJsonSubcat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.ICONS), listTypeSubcat);
         subcategory.setIcons(iconsfromJsonSubcat);
 
+        final Type metadataKeysTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {}.getType();
+        final List<MetadataKeyDataDefinition> metadataKeysfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.METADATA_KEYS), metadataKeysTypeCat);
+        subcategory.setMetadataKeys(metadataKeysfromJsonCat);
+  
         Either<GraphVertex, JanusGraphOperationStatus> parentVertex = janusGraphDao
             .getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         if (parentVertex.isRight()) {

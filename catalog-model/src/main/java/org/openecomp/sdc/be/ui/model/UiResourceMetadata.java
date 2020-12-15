@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,6 +43,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
     private String licenseType;
     private String toscaResourceName;
     private List<String> derivedFrom;
+    private Map<String, String> categorySpecificMetadata;
 
 
     public UiResourceMetadata(List<CategoryDefinition> categories, List<String> derivedFrom,
@@ -55,6 +57,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
         this.licenseType = metadata.getLicenseType();
         this.toscaResourceName = metadata.getToscaResourceName();
         this.derivedFrom = derivedFrom;
+        this.categorySpecificMetadata = metadata.getCategorySpecificMetadata();
     }
 
 }

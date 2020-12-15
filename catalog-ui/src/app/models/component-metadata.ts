@@ -21,6 +21,7 @@
 import { CapabilitiesGroup, RequirementsGroup } from 'app/models';
 import { ComponentType } from 'app/utils';
 import { IMainCategory } from './category';
+import { Metadata } from "app/models/metadata";
 /**
  * Created by obarda on 4/18/2017.
  */
@@ -53,6 +54,7 @@ export interface IComponentMetadata {
     vspArchived: boolean;
     selectedCategory: string;
     filterTerm: string;
+    categorySpecificMetadata: Metadata;
 
     // Resource only
     resourceType: string;
@@ -115,6 +117,7 @@ export class ComponentMetadata implements IComponentMetadata {
     public toscaResourceName: string;
     public selectedCategory: string;
     public filterTerm: string;
+    public categorySpecificMetadata: Metadata = new Metadata();
 
     // Resource only
     public resourceType: string;
@@ -192,6 +195,7 @@ export class ComponentMetadata implements IComponentMetadata {
         this.toscaResourceName = response.toscaResourceName;
         this.capabilities = response.capabilities;
         this.requirements = response.requirements;
+        this.categorySpecificMetadata = response.categorySpecificMetadata;
         return this;
     }
 

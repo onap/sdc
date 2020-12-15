@@ -116,6 +116,14 @@
             <span class="value" data-tests-id="rightTab_customizationModuleUUID" tooltip="{{component.customizationUUID}}">{{component.customizationUUID}}</span>
         </div>
 
+        <!-- Category specific metadata -->
+        <ng-container *ngFor="let metadata of component.categorySpecificMetadata | keyValue">
+            <div class="component-details-panel-item">
+                <span class="name" innerHTML="{{metadata.key}}"></span>
+                <span class="value" tooltip="{{metadata.value}}">{{metadata.value}}</span>
+            </div>
+        </ng-container>
+
         <!-- DESCRIPTION -->
         <div class="component-details-panel-item description">
             <span class="name" [innerHTML]="'GENERAL_LABEL_DESCRIPTION' | translate"></span>
