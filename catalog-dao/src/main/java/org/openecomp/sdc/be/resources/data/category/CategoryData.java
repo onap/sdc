@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
+import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import java.lang.reflect.Type;
@@ -60,6 +61,11 @@ public class CategoryData extends GraphNode {
 		List<String> iconsfromJson = getGson()
 				.fromJson((String) properties.get(GraphPropertiesDictionary.ICONS.getProperty()), listType);
 		categoryDataDefinition.setIcons(iconsfromJson);
+		
+		final Type metadataKeylistType = new TypeToken<List<MetadataKeyDataDefinition>>() {}.getType();
+		final List<MetadataKeyDataDefinition> metadataKeysfromJson = getGson()
+		        .fromJson((String) properties.get(GraphPropertiesDictionary.METADATA_KEYS.getProperty()), metadataKeylistType);
+		categoryDataDefinition.setMetadataKeys(metadataKeysfromJson);
 	}
 
 	@Override
@@ -82,6 +88,7 @@ public class CategoryData extends GraphNode {
 		// addIfExists(map, GraphPropertiesDictionary.ICONS, icons);
         addIfExists(map, GraphPropertiesDictionary.ICONS, categoryDataDefinition.getIcons());
         addIfExists(map, GraphPropertiesDictionary.USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES, categoryDataDefinition.isUseServiceSubstitutionForNestedServices());
+        addIfExists(map, GraphPropertiesDictionary.METADATA_KEYS, categoryDataDefinition.getMetadataKeys());
 		return map;
 	}
 

@@ -167,6 +167,20 @@ public class GraphVertex {
 		}
 		return null;
 	}
+	
+   public void setJsonMetadataField(String field, Object value) {
+        if (metadataJson == null) {
+            metadataJson = new HashMap<>();
+        }
+        metadataJson.put(field, value);
+    }
+
+    public Object getJsonMetadataField(String field) {
+        if (metadataJson != null) {
+            return metadataJson.get(field);
+        }
+        return null;
+    }
 
 	/**
 	 * Updates metadata json with current metadataProperties. Note that already existing property containing in metadata json can be overrided by new value if metadataProperties contains the same property (by key). Note that metadata json can contain

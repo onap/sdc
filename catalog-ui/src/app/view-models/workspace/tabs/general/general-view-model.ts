@@ -24,12 +24,13 @@ import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FL
     ResourceType, ComponentState, instantiationType, ComponentFactory} from "app/utils";
 import { EventListenerService, ProgressService} from "app/services";
 import {CacheService, OnboardingService, ImportVSPService} from "app/services-ng2";
-import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent, Component} from "app/models";
+import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent, Component, IMetadataKey} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {Dictionary} from "lodash";
 import { PREVIOUS_CSAR_COMPONENT } from "../../../../utils/constants";
 import { Observable, Subject } from "rxjs";
-
+import { MetadataEntry } from "app/models/metadataEntry";
+import { Metadata } from "app/models/metadata";
 
 export class Validation {
     componentNameValidationPattern:RegExp;
@@ -630,6 +631,20 @@ export class GeneralViewModel {
             this.$scope.component.selectedCategory = this.$scope.componentCategories.selectedCategory;
             this.$scope.component.categories = this.convertCategoryStringToOneArray();
             this.$scope.component.icon = DEFAULT_ICON;
+            if (this.$scope.component.categories[0].metadataKeys) {
+                for (let metadataKey of this.$scope.component.categories[0].metadataKeys) {
+                    if (!this.$scope.component.categorySpecificMetadata[metadataKey.name]) {
+                        this.$scope.component.categorySpecificMetadata[metadataKey.name] = "";
+                   }
+                }
+            }
+            if (this.$scope.component.categories[0].subcategories && this.$scope.component.categories[0].subcategories[0].metadataKeys) {
+                for (let metadataKey of this.$scope.component.categories[0].subcategories[0].metadataKeys) {
+                    if (!this.$scope.component.categorySpecificMetadata[metadataKey.name]) {
+                        this.$scope.component.categorySpecificMetadata[metadataKey.name] = "";
+                   }
+                }
+            }
         };
 
         this.$scope.onEcompGeneratedNamingChange = (): void => {
@@ -645,10 +660,50 @@ export class GeneralViewModel {
         };
         this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
 
+
+        this.$scope.isMetadataKeyMandatory = (key: string): boolean => {
+            let metadataKey = this.getMetadataKey(this.$scope.component.categories, key);
+            return metadataKey && metadataKey.mandatory;
+        }
+
+        this.$scope.getMetadataKeyValidValues = (key: string): string[] => {
+            let metadataKey = this.getMetadataKey(this.$scope.component.categories, key);
+            if (metadataKey) {
+                return metadataKey.validValues;
+            }
+            return [];	
+        }
+
+        this.$scope.isMetadataKeyForComponentCategory = (key: string): boolean => {
+            return this.getMetadataKey(this.$scope.component.categories, key) != null;
+        }
+
     }
 
     private setUnsavedChanges = (hasChanges: boolean): void => {
         this.$state.current.data.unsavedChanges = hasChanges;
+    }
+
+    private getMetadataKey(categories: IMainCategory[], key: string) : IMetadataKey {
+        let metadataKey = this.getSubcategoryMetadataKey(this.$scope.component.categories, key);
+        if (!metadataKey){
+            return this.getCategoryMetadataKey(this.$scope.component.categories, key);
+        }
+        return metadataKey;
+    }
+
+    private getSubcategoryMetadataKey(categories: IMainCategory[], key: string) : IMetadataKey {
+	    if (categories[0].subcategories && categories[0].subcategories[0].metadataKeys && categories[0].subcategories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
+            return categories[0].subcategories[0].metadataKeys.find(metadataKey => metadataKey.name == key);
+        }
+        return null;
+    }
+
+    private getCategoryMetadataKey(categories: IMainCategory[], key: string) : IMetadataKey {
+	    if (categories[0].metadataKeys && categories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
+            return categories[0].metadataKeys.find(metadataKey => metadataKey.name == key);
+        }
+        return null;
     }
 
 }

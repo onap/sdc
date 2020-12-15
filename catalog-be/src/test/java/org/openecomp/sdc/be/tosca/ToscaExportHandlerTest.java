@@ -433,10 +433,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         componentInstance.setOriginType(OriginTypeEnum.ServiceProxy);
         componentInstance.setSourceModelInvariant("targetModelInvariant");
 
-        ToscaMetadata result;
-
         // default test
-        result = Deencapsulation.invoke(testSubject, "convertMetadata", component, isInstance, componentInstance);
+        Map<String, String> result = Deencapsulation.invoke(testSubject, "convertMetadata", component, isInstance, componentInstance);
         Assert.assertNotNull(result);
     }
 
