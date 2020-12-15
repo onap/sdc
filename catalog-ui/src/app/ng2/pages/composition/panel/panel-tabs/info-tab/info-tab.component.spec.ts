@@ -19,6 +19,8 @@ import _ from "lodash";
 import { TranslateService } from "../../../../../shared/translator/translate.service";
 import { SdcUiServices } from "onap-ui-angular";
 import { Component as TopologyTemplate, FullComponentInstance, ComponentInstance } from '../../../../../../../app/models';
+import {KeyValuePipe} from "../../../../../pipes/key-value.pipe";
+
 
 
 describe('InfoTabComponent', () => {
@@ -48,7 +50,7 @@ describe('InfoTabComponent', () => {
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
                     imports: [ ],
-                    declarations: [ InfoTabComponent, TranslatePipe ],
+                    declarations: [ InfoTabComponent, TranslatePipe, KeyValuePipe ],
                     schemas: [ NO_ERRORS_SCHEMA ],
                     providers: [
                         { provide: Store, useValue: {} },

@@ -37,7 +37,7 @@ public class ToscaNodeTemplate {
 
     private String type;
     private List<String> directives;
-    private ToscaMetadata metadata;
+    private Map<String, String> metadata;
     private String description;
     private Map<String, Object> properties;
     private List<Map<String, ToscaTemplateRequirement>> requirements;

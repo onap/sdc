@@ -25,7 +25,9 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
+import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.MetadataKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -40,6 +42,7 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -226,7 +229,7 @@ public class CategoriesImportManager {
     }
 
     private List<CategoryDefinition> createServiceCategories(Map<String, Object> categories) {
-        List<CategoryDefinition> categroiesDef = new ArrayList<>();
+        List<CategoryDefinition> categoriesDef = new ArrayList<>();
         String catName = null;
         List<String> icons = null;
         for (Entry<String, Object> entry : categories.entrySet()) {
@@ -242,10 +245,29 @@ public class CategoriesImportManager {
             final boolean useServiceSubstitutionForNestedServices = useServiceSubstitutionForNestedServicesProperty == null ? 
                     false : (Boolean) useServiceSubstitutionForNestedServicesProperty;
             catDef.setUseServiceSubstitutionForNestedServices(useServiceSubstitutionForNestedServices);
-            categroiesDef.add(catDef);
+            catDef.setMetadataKeys(getMetadataKeys(category));
+            categoriesDef.add(catDef);
         }
 
-        return categroiesDef;
+        return categoriesDef;
+    }
+    
+    private List<MetadataKeyDataDefinition> getMetadataKeys(Map<String, Object> parentObject) {
+        Map<String, Object> metadataKeys = (Map<String, Object>) parentObject.getOrDefault(MetadataKeyEnum.METADATA_KEYS.getName(), Collections.EMPTY_MAP);
+        List<MetadataKeyDataDefinition> metadataKeyDefs = new ArrayList<>();
+        for (Entry<String, Object> metadataKey : metadataKeys.entrySet()) {
+            Map<String, Object> metadataKeyInfo = (Map<String, Object>) metadataKey.getValue();
+            MetadataKeyDataDefinition metadataKeyDef = new MetadataKeyDataDefinition();
+            String metadataKeyName = (String) metadataKeyInfo.get(MetadataKeyEnum.NAME.getName());
+            metadataKeyDef.setName(metadataKeyName);
+            final Object mandatoryProperty = metadataKeyInfo.get(MetadataKeyEnum.MANDATORY.getName());
+            final boolean mandatory = mandatoryProperty == null ? false : (Boolean) mandatoryProperty;
+            metadataKeyDef.setMandatory(mandatory);
+            List<String> validValues = (List<String>) metadataKeyInfo.get(MetadataKeyEnum.VALID_VALUES.getName());
+            metadataKeyDef.setValidValues(validValues);
+            metadataKeyDefs.add(metadataKeyDef);
+        }
+        return metadataKeyDefs;
     }
 
     private List<CategoryDefinition> createResourceCategories(Map<String, Object> categoryPerType) {
@@ -268,6 +290,7 @@ public class CategoriesImportManager {
                 subDef.setIcons(subcategoryIcons);
                 normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(subcategoryName);
                 subDef.setNormalizedName(normalizedName);
+                subDef.setMetadataKeys(getMetadataKeys(subcategoryInfo));
                 subcateDef.add(subDef);
             }
 

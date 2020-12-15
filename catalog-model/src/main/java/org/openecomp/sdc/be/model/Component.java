@@ -29,6 +29,7 @@ import static org.apache.commons.collections.MapUtils.isEmpty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +90,14 @@ public abstract class Component implements PropertiesOwner {
     private Map<String, InterfaceDefinition> interfaces;
     private List<DataTypeDefinition> dataTypes;
     private SubstitutionFilterDataDefinition substitutionFilter;
+    
+    public void setCategorySpecificMetadata(final Map<String, String> categorySpecificMetadata) {
+        componentMetadataDefinition.getMetadataDataDefinition().setCategorySpecificMetadata(categorySpecificMetadata);
+    }
+    public Map<String, String> getCategorySpecificMetadata() {
+        final Map<String, String> categorySpecificMetadata = componentMetadataDefinition.getMetadataDataDefinition().getCategorySpecificMetadata();
+        return categorySpecificMetadata == null ? Collections.emptyMap() : categorySpecificMetadata;
+    }
 
     public Component(ComponentMetadataDefinition componentMetadataDefinition) {
         this.componentMetadataDefinition = componentMetadataDefinition;

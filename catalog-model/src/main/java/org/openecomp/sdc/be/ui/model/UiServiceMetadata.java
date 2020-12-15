@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
@@ -38,6 +39,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
     private String environmentContext;
     private String instantiationType;
     private String serviceFunction;
+    private Map<String, String> categorySpecificMetadata;
 
     public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {
         super(categories, metadata);
@@ -49,6 +51,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
         this.environmentContext = metadata.getEnvironmentContext();
         this.instantiationType = metadata.getInstantiationType();
         this.serviceFunction = metadata.getServiceFunction();
+        this.categorySpecificMetadata = metadata.getCategorySpecificMetadata();
     }
 
 }
