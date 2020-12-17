@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5ba3eb5_824ed210",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarLoader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-12-17T09:28:37Z",
+      "side": 1,
+      "message": "remove \"public\" access modifier",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 6
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fff68a5f_2d93297d",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarLoader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-12-17T09:28:37Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 10
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1eb074c8_54178f3e",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarLoader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-12-17T09:28:37Z",
+      "side": 1,
+      "message": "use name() instead of toString()",
+      "range": {
+        "startLine": 45,
+        "startChar": 110,
+        "endLine": 45,
+        "endChar": 120
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "588d0ed0_150fda60",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarValidationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-12-17T09:28:37Z",
+      "side": 1,
+      "message": "migrate to jUnit 5",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 33
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e92badb1_66525691",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-12-17T09:28:37Z",
+      "side": 1,
+      "message": "migrate to jUnit5",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 6
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5acf4580_402cc7f9",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 6931
+      },
+      "writtenOn": "2020-12-17T09:28:37Z",
+      "side": 1,
+      "message": "please chain it",
+      "range": {
+        "startLine": 71,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 73
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
