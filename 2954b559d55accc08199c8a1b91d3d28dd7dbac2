@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f651b0ec_bd4812d8",
+        "filename": "releases/1.8.0-container.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2020-12-17T08:55:56Z",
+      "side": 1,
+      "message": "update to the a recent one ?",
+      "range": {
+        "startLine": 8,
+        "startChar": 14,
+        "endLine": 8,
+        "endChar": 33
+      },
+      "revId": "2954b559d55accc08199c8a1b91d3d28dd7dbac2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
