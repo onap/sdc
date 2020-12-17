@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f41aabeb_6804cb30",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarLoader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T14:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5ba3eb5_824ed210",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 6
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fff68a5f_2d93297d",
         "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarLoader.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef78fe96_13abdebb",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarLoader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T14:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fff68a5f_2d93297d",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 10
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "a08a35a6_9802deec",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarLoader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T14:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1eb074c8_54178f3e",
+      "range": {
+        "startLine": 45,
+        "startChar": 110,
+        "endLine": 45,
+        "endChar": 120
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "588d0ed0_150fda60",
         "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarValidationTest.java",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1680da23_040a44e1",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/CsarValidationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T14:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "588d0ed0_150fda60",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 33
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "21544919_1a9433c0",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T14:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e92badb1_66525691",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 6
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5acf4580_402cc7f9",
         "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
         "patchSetId": 5
@@ -137,6 +257,30 @@
       "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "46f4b09c_e8f9a196",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T14:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5acf4580_402cc7f9",
+      "range": {
+        "startLine": 71,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 73
+      },
+      "revId": "e3c4af5e588b865fd7cc3c27a86c083f5bd2a10e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
