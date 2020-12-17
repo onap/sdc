@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "d8ff9fde_52328142",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-17T08:14:15Z",
+      "side": 1,
+      "message": "Nokia 2020",
+      "range": {
+        "startLine": 5,
+        "startChar": 3,
+        "endLine": 5,
+        "endChar": 12
+      },
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0b067866_3536f24e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 3
@@ -34,6 +57,74 @@
       "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f974325_30ff020e",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-17T08:14:15Z",
+      "side": 1,
+      "message": "Nokia 2020",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57f1357d_769cb084",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-17T08:14:15Z",
+      "side": 1,
+      "message": "missing information about LICENSE",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c903cde5_5e452649",
+        "filename": "openecomp-be/backend/openecomp-sdc-validation-manager/src/test/java/org/openecomp/sdc/validation/util/ValidationManagerUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-17T08:14:15Z",
+      "side": 1,
+      "message": "unnecessary white space",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86e44d9f_2d49b987",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2020-12-17T08:14:15Z",
+      "side": 1,
+      "message": "unnecessary white space",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
