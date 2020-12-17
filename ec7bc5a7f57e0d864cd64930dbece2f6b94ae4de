@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "cc4ec291_27bda17a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T08:34:29Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d8ff9fde_52328142",
+      "range": {
+        "startLine": 5,
+        "startChar": 3,
+        "endLine": 5,
+        "endChar": 12
+      },
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0b067866_3536f24e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 3
@@ -77,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "5f1a007b_c60e0c34",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T08:34:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9f974325_30ff020e",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57f1357d_769cb084",
         "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
         "patchSetId": 3
@@ -91,6 +133,24 @@
       "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3d79e06_11d3789c",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/validation/pmdictionary/ZipValidationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T08:34:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57f1357d_769cb084",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -111,6 +171,24 @@
     },
     {
       "key": {
+        "uuid": "4bd75a90_f16c01d9",
+        "filename": "openecomp-be/backend/openecomp-sdc-validation-manager/src/test/java/org/openecomp/sdc/validation/util/ValidationManagerUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T08:34:29Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c903cde5_5e452649",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "86e44d9f_2d49b987",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
         "patchSetId": 3
@@ -125,6 +203,24 @@
       "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c28fcc3c_b94e957c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/PMDictionaryValidatorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2020-12-17T08:34:29Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "86e44d9f_2d49b987",
+      "revId": "ec7bc5a7f57e0d864cd64930dbece2f6b94ae4de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
