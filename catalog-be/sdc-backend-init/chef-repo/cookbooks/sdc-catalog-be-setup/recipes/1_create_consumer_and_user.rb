@@ -1,3 +1,4 @@
+require 'base64'
 if node['disableHttp']
   protocol = "https"
   https_flag = "--https"
@@ -15,9 +16,21 @@ else
   user_conf_dir = ""
 end
 
+if node['basic_auth']
+  basic_auth_enabled = node['basic_auth']['enabled']
+  basic_auth_user = node['basic_auth']['user_name']
+  basic_auth_pass = node['basic_auth']['user_pass']
+  if basic_auth_enabled
+    basic_auth_config = "--header " + Base64.encode64(basic_auth_user + ":" + basic_auth_pass)
+  else
+    # set default user configuration file
+    basic_auth_config = ""
+  end
+end
+
 bash "executing-create_users" do
   code <<-EOH
-    sdcuserinit -i #{node['Nodes']['BE']} -p #{be_port} #{user_conf_dir} #{https_flag}
+    sdcuserinit -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{user_conf_dir} #{https_flag}
     rc=$?
     if [[ $rc != 0 ]]; then exit $rc; fi
   EOH
@@ -26,7 +39,7 @@ end
 
 bash "executing-create_consumers" do
   code <<-EOH
-    sdcconsumerinit -i #{node['Nodes']['BE']} -p #{be_port} #{https_flag}
+    sdcconsumerinit -i #{node['Nodes']['BE']} -p #{be_port} #{basic_auth_config} #{https_flag}
     rc=$?
     if [[ $rc != 0 ]]; then exit $rc; fi
   EOH
