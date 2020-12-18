@@ -21,9 +21,11 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Component, IApi, Resource, Service } from 'app/models';
 import { ComponentFactory } from 'app/utils/component-factory';
+import { CredentialService } from "./credential.service";
 import { Observable } from 'rxjs';
 import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 import { SharingService } from './sharing.service';
+import { HttpHeaders } from '@angular/common/http';
 
 // tslint:disable-next-line:interface-name
 interface IComponentsArray {
@@ -40,14 +42,24 @@ export class HomeService {
     ];
 
     constructor(private http: HttpClient,
+                private credentialService:CredentialService,
                 @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
                 private sharingService: SharingService,
                 private componentFactory: ComponentFactory) {
         this.api = sdcConfig.api;
+        this.credentialService = credentialService;
+    }
+
+    private getAuthHeaders():HttpHeaders {
+        let authHeaders: HttpHeaders = new HttpHeaders();
+        if (this.credentialService.basicAuthEnabled()) {
+            authHeaders = authHeaders.set('Authorization', this.credentialService.getBasicAuth())
+        }
+        return authHeaders;
     }
 
     public getAllComponents(smallObjects?: boolean): Observable<Component[]> {
-        return this.http.get<IComponentsArray>(this.api.root + this.api.GET_element)
+        return this.http.get<IComponentsArray>(this.api.root + this.api.GET_element, {headers: this.getAuthHeaders()})
             .map((response) => {
                 const componentResponse: IComponentsArray = response;
                 let componentsList: Component[] = [];
