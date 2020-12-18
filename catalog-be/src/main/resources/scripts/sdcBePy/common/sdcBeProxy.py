@@ -15,21 +15,22 @@ class SdcBeProxy:
     BODY_SEPARATOR = "\r\n\r\n"
     CHARTSET = 'UTF-8'
 
-    def __init__(self, be_ip, be_port, scheme, user_id="jh0003",
+    def __init__(self, be_ip, be_port, header, scheme, user_id="jh0003",
                  debug=False, connector=None):
         if not check_arguments_not_none(be_ip, be_port, scheme, user_id):
             raise AttributeError("The be_host, be_port, scheme or admin_user are missing")
         url = get_url(be_ip, be_port, scheme)
         self.con = connector if connector \
-            else CurlConnector(url, user_id, scheme=scheme, debug=debug)
+            else CurlConnector(url, user_id, header, scheme=scheme, debug=debug)
 
     def check_backend(self):
         return self.con.get('/sdc2/rest/v1/user/jh0003')
 
     def check_user(self, user_name):
-        return self.con.get("/sdc2/rest/v1/user/" + user_name)
+          return self.con.get("/sdc2/rest/v1/user" + user_name)
 
     def create_user(self, first_name, last_name, user_id, email, role):
+
         return self.con.post('/sdc2/rest/v1/user', json.dumps({
             'firstName': first_name,
             'lastName': last_name,
@@ -39,10 +40,10 @@ class SdcBeProxy:
         }))
 
     def check_consumer(self, consumer_name):
-        return self.con.get("/sdc2/rest/v1/consumers/" + consumer_name)
+        return self.con.get("/sdc2/rest/v1/consumers" + consumer_name)
 
     def create_consumer(self, consumer_name, slat, password):
-        return self.con.post("/sdc2/rest/v1/consumers/", json.dumps({
+        return self.con.post("/sdc2/rest/v1/consumers", json.dumps({
             'consumerName': consumer_name,
             'consumerSalt': slat,
             'consumerPassword': password
@@ -67,7 +68,7 @@ class CurlConnector:
     CONTENT_TYPE_HEADER = "Content-Type: application/json"
     ACCEPT_HEADER = "Accept: application/json; charset=UTF-8"
 
-    def __init__(self, url, user_id_header, buffer=None, scheme="http", debug=False):
+    def __init__(self, url, user_id_header, header, buffer=None, scheme="http", debug=False):
         self.c = pycurl.Curl()
         self.c.setopt(pycurl.HEADER, True)
 
@@ -82,6 +83,11 @@ class CurlConnector:
         if not buffer:
             self.buffer = BytesIO()
 
+        if header is None:
+            self.basicauth_header = ""
+        else:
+            self.basicauth_header = "Authorization: Basic " + header
+
         self.url = url
         self._check_schema(scheme)
 
@@ -90,7 +96,9 @@ class CurlConnector:
             self.c.setopt(pycurl.URL, self.url + path)
             self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
                                               CurlConnector.CONTENT_TYPE_HEADER,
-                                              CurlConnector.ACCEPT_HEADER])
+                                              CurlConnector.ACCEPT_HEADER,
+                                              self.basicauth_header])
+
 
             if with_buffer:
                 write = self.buffer.write if not buffer else buffer.write
@@ -105,9 +113,11 @@ class CurlConnector:
         try:
             self.c.setopt(pycurl.URL, self.url + path)
             self.c.setopt(pycurl.POST, 1)
+
             self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
-                                              CurlConnector.CONTENT_TYPE_HEADER,
-                                              CurlConnector.ACCEPT_HEADER])
+                                           CurlConnector.CONTENT_TYPE_HEADER,
+                                           CurlConnector.ACCEPT_HEADER,
+                                           self.basicauth_header])
 
             self.c.setopt(pycurl.POSTFIELDS, data)
 
@@ -122,7 +132,9 @@ class CurlConnector:
         try:
             self.c.setopt(pycurl.URL, self.url + path)
             self.c.setopt(pycurl.POST, 1)
-            self.c.setopt(pycurl.HTTPHEADER, [self.user_header])
+            self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
+                                           self.basicauth_header])
+
 
             self.c.setopt(pycurl.HTTPPOST, post_body)
 
