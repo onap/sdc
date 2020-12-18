@@ -22,9 +22,9 @@ default['cassandra']['janusgraph_connection_timeout'] = 10000
 
 #Basicauth
 default['basic_auth']['enabled'] = false
-default['basic_auth'][:user_name] = "userName"
-default['basic_auth'][:user_pass] = "userPass"
-default['basic_auth']['excludedUrls'] = ""
+default['basic_auth'][:user_name] = "testName"
+default['basic_auth'][:user_pass] = "testPass"
+default['basic_auth']['excludedUrls'] = "/v1.0/healthcheck"
 
 #ExternalTesting
 default['EXTTEST']['ep1_config'] = "vtp,VTP,true,http://refrepo:8702/onapapi/vnfsdk-marketplace,onap.*"

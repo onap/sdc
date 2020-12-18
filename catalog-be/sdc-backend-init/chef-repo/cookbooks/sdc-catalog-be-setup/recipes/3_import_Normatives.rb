@@ -1,3 +1,4 @@
+require 'base64'
 be_ip=node['Nodes'][:BE]
 
 if node['disableHttp']
@@ -10,6 +11,17 @@ else
   param="-i #{be_ip} -p #{be_port}"
 end
 
+if node['basic_auth']
+  basic_auth_enabled = node['basic_auth']['enabled']
+  basic_auth_user = node['basic_auth']['user_name']
+  basic_auth_pass = node['basic_auth']['user_pass']
+  if basic_auth_enabled
+    basic_auth_config = "--header " + Base64.encode64(basic_auth_user + ":" + basic_auth_pass)
+  else
+    # set default user configuration file
+    basic_auth_config = ""
+  end
+end
 cookbook_file "/var/tmp/normatives.tar.gz" do
   source "normatives.tar.gz"
 end
@@ -25,7 +37,7 @@ bash "executing-import_Normatives" do
     # add --debug to the sdcinit command to enable debug
 
     cd /var/tmp/normatives/import/tosca
-    sdcinit #{param} > /var/lib/jetty/logs/init.log
+    sdcinit #{param} #{basic_auth_config} > /var/lib/jetty/logs/init.log
     rc=$?
     if [[ $rc != 0 ]]; then exit $rc; fi
 
