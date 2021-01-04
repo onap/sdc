@@ -97,7 +97,8 @@ public class FileData {
         CONTROLLER_BLUEPRINT_ARCHIVE("CONTROLLER_BLUEPRINT_ARCHIVE"),
         HELM("HELM"),
         OTHER("OTHER"),
-        PNF_SW_INFORMATION("PNF_SW_INFORMATION");
+        PNF_SW_INFORMATION("PNF_SW_INFORMATION"),
+        PM_DICTIONARY("PM_DICTIONARY");
 
         private String displayName;
 
