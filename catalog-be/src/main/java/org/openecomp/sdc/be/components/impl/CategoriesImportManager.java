@@ -154,19 +154,14 @@ public class CategoriesImportManager {
     private Either<SubCategoryDefinition, ResponseFormat> createSubCategorieDeo(Map.Entry<String, List<CategoryDefinition>> entry, CategoryDefinition newcategory, SubCategoryDefinition subcategory, NodeTypeEnum nodeTypeSubCategory) {
         log.debug("createSubCategorieDeo: creating subcategory  {}", subcategory);
         Either<SubCategoryDefinition, ActionStatus> createdSubCategory = elementOperation.createSubCategory(newcategory.getUniqueId(), subcategory, nodeTypeSubCategory);
+        if (createdSubCategory.isRight() && ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY == createdSubCategory.right().value()) {
+            log.debug(" create subcategory for {}  category {} subcategory {} already exists, updating", entry.getKey(), newcategory.getName(), subcategory.getName());
+            String subCategoryId = UniqueIdBuilder.buildSubCategoryUid(newcategory.getUniqueId(), subcategory.getNormalizedName());
+            createdSubCategory = elementOperation.updateSubCategory(subCategoryId, subcategory, nodeTypeSubCategory);
+        }
         if (createdSubCategory.isRight()) {
-            if (ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY == createdSubCategory.right().value()) {
-                log.debug(" create subcategory for {}  category {} subcategory {} already exists retrieving", entry.getKey(), newcategory.getName(), subcategory.getName());
-                String subCategoryId = UniqueIdBuilder.buildSubCategoryUid(newcategory.getUniqueId(), subcategory.getNormalizedName());
-                createdSubCategory = elementOperation.getSubCategory(nodeTypeSubCategory, subCategoryId);
-                if (createdSubCategory.isRight()) {
-                    log.debug("failed to get sub category that exists subCategoryId: {} type: {}", subCategoryId, nodeTypeSubCategory);
-                    return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
-                }
-            } else {
-                log.debug("Failed to create subcategory for {}  category: {} subcategory: {} error {}", entry.getKey(), newcategory.getName(), subcategory.getName(), createdSubCategory.right().value());
-                return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
-            }
+            log.debug("Failed to create subcategory for {}  category: {} subcategory: {} error {}", entry.getKey(), newcategory.getName(), subcategory.getName(), createdSubCategory.right().value());
+            return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
         } else {
             log.debug("createSubCategorieDeo: create subcategory was successful {}", createdSubCategory.left().value());
         }
@@ -176,19 +171,14 @@ public class CategoriesImportManager {
     private Either<CategoryDefinition, ResponseFormat> createCategorieDeo(Map.Entry<String, List<CategoryDefinition>> entry, CategoryDefinition category, NodeTypeEnum nodeTypeCategory) {
         log.debug("createCategorieDeo: creating category {}", category);
         Either<CategoryDefinition, ActionStatus> createdCategory = elementOperation.createCategory(category, nodeTypeCategory);
+        if (createdCategory.isRight() && ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS == createdCategory.right().value()) {
+            log.debug("createCategorieDeo: already exists, updating {}", category);
+            createdCategory = elementOperation.updateCategory(category, nodeTypeCategory);
+        }
+        
         if (createdCategory.isRight()) {
             log.debug("Failed to create category for {}  {} error {}", entry.getKey(), category.getName(), createdCategory.right().value());
-            if (ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS != createdCategory.right().value()) {
-                return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
-            } else {
-                log.debug("createCategorieDeo: category exists {} retriving.", category);
-                String categoryId = UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), nodeTypeCategory);
-                createdCategory = elementOperation.getCategory(nodeTypeCategory, categoryId);
-                if (createdCategory.isRight()) {
-                    log.debug("failed to get category that exists categoryId: {} type: {}", categoryId, nodeTypeCategory);
-                    return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
-                }
-            }
+            return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
         } else {
             log.debug("createCategorieDeo: create category was successful {}", createdCategory.left().value());
         }

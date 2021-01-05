@@ -141,6 +141,41 @@ public class ElementOperation implements IElementOperation {
             }
         }
     }
+    
+    @Override
+    public Either<CategoryDefinition, ActionStatus> updateCategory(CategoryDefinition category, NodeTypeEnum nodeType) {
+        return updateCategory(category, nodeType, false);
+    }
+
+    @Override
+    public Either<CategoryDefinition, ActionStatus> updateCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction) {
+        Either<CategoryDefinition, ActionStatus> result = null;
+        category.setUniqueId(UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), nodeType));
+        CategoryData categoryData = new CategoryData(nodeType, category);
+
+        try {
+            Either<CategoryData, JanusGraphOperationStatus> updatedNode = janusGraphGenericDao
+                .updateNode(categoryData, CategoryData.class);
+            if (updatedNode.isRight()) {
+                JanusGraphOperationStatus value = updatedNode.right().value();
+                ActionStatus actionStatus = ActionStatus.GENERAL_ERROR;
+                log.debug("Problem while creating category, reason {}", value);
+                result = Either.right(actionStatus);
+                return result;
+            }
+            CategoryDefinition created = new CategoryDefinition(updatedNode.left().value().getCategoryDataDefinition());
+            result = Either.left(created);
+            return result;
+        } finally {
+            if (!inTransaction) {
+                if (result != null && result.isLeft()) {
+                    janusGraphGenericDao.commit();
+                } else {
+                    janusGraphGenericDao.rollback();
+                }
+            }
+        }
+    }
 
     @Override
     public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType) {
@@ -170,9 +205,10 @@ public class ElementOperation implements IElementOperation {
             CategoryDataDefinition categoryDataDefinition = categoryNode.left().value().getCategoryDataDefinition();
             subCategory.setUniqueId(UniqueIdBuilder.buildSubCategoryUid(categoryDataDefinition.getUniqueId(), subCategory.getNormalizedName()));
             SubCategoryData subCategoryData = new SubCategoryData(nodeType, subCategory);
-
+           
             Either<SubCategoryData, JanusGraphOperationStatus> subCategoryNode = janusGraphGenericDao
                 .createNode(subCategoryData, SubCategoryData.class);
+            
             if (subCategoryNode.isRight()) {
                 JanusGraphOperationStatus janusGraphOperationStatus = subCategoryNode.right().value();
                 log.debug("Problem while creating category, reason {}", janusGraphOperationStatus);
@@ -182,7 +218,7 @@ public class ElementOperation implements IElementOperation {
                 result = Either.right(actionStatus);
                 return result;
             }
-
+            
             Either<GraphRelation, JanusGraphOperationStatus> relation = janusGraphGenericDao
                 .createRelation(categoryNode.left().value(), subCategoryNode.left().value(), GraphEdgeLabels.SUB_CATEGORY, null);
             if (relation.isRight()) {
@@ -190,8 +226,46 @@ public class ElementOperation implements IElementOperation {
                 result = Either.right(actionStatus);
                 return result;
             }
+
             SubCategoryDefinition subCategoryCreated = new SubCategoryDefinition(subCategoryNode.left().value().getSubCategoryDataDefinition());
             result = Either.left(subCategoryCreated);
+            return result;
+        } finally {
+            if (!inTransaction) {
+                if (result != null && result.isLeft()) {
+                    janusGraphGenericDao.commit();
+                } else {
+                    janusGraphGenericDao.rollback();
+                }
+            }
+        }
+    }
+    
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType) {
+        return updateSubCategory(subCategoryId, subCategory, nodeType, false);
+    }
+
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction) {
+
+        Either<SubCategoryDefinition, ActionStatus> result = null;
+        try {
+            subCategory.setUniqueId(subCategoryId);
+            SubCategoryData subCategoryData = new SubCategoryData(nodeType, subCategory);
+           
+            Either<SubCategoryData, JanusGraphOperationStatus> subCategoryNode = janusGraphGenericDao
+                .updateNode(subCategoryData, SubCategoryData.class);
+            
+            if (subCategoryNode.isRight()) {
+                JanusGraphOperationStatus janusGraphOperationStatus = subCategoryNode.right().value();
+                log.debug("Problem while updating sub category, reason {}", janusGraphOperationStatus);
+                result = Either.right(ActionStatus.GENERAL_ERROR);
+                return result;
+            }
+
+            SubCategoryDefinition subCategoryUpdated = new SubCategoryDefinition(subCategoryNode.left().value().getSubCategoryDataDefinition());
+            result = Either.left(subCategoryUpdated);
             return result;
         } finally {
             if (!inTransaction) {
