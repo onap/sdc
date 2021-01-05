@@ -132,6 +132,12 @@ public class ElementOperationMock implements IElementOperation {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public Either<CategoryDefinition, ActionStatus> updateCategory(CategoryDefinition category, NodeTypeEnum nodeType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public Either<CategoryDefinition, ActionStatus> deleteCategory(NodeTypeEnum nodeType, String categoryId) {
@@ -147,6 +153,12 @@ public class ElementOperationMock implements IElementOperation {
 
     @Override
     public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -249,9 +261,21 @@ public class ElementOperationMock implements IElementOperation {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public Either<CategoryDefinition, ActionStatus> updateCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction) {
         // TODO Auto-generated method stub
         return null;
     }
