@@ -32,14 +32,10 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.resources.data.*;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -59,35 +55,28 @@ public class ArtifactOperationTest extends ModelTestBase {
     @javax.annotation.Resource(name = "janusgraph-generic-dao")
     private JanusGraphGenericDao janusGraphDao;
 
-    @javax.annotation.Resource(name = "tosca-operation-facade")
-    private ToscaOperationFacade toscaOperationFacade;
-
     @javax.annotation.Resource
     private ArtifactOperation artifactOperation;
 
-    private static final Logger log = LoggerFactory.getLogger(ToscaOperationFacade.class);
+    private static final String RESOURCE_ID = "resourceId";
+    private static final String RESOURCE_ID_2 = "resourceId2";
 
-    private static String RESOURCE_ID = "resourceId";
-    private static String RESOURCE_ID_2 = "resourceId2";
-
-    private static String USER_ID = "muUserId";
-    private static String CATEGORY_NAME = "category/mycategory";
+    private static final String USER_ID = "muUserId";
 
     @BeforeClass
     public static void setupBeforeClass() {
-
         ModelTestBase.init();
     }
 
     @Before
     public void createUserAndCategory() {
+        String CATEGORY_NAME = "category/mycategory";
         deleteAndCreateCategory(CATEGORY_NAME);
-        deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID, null);
+        deleteAndCreateUser();
     }
 
     @Test
     public void testCreateDeleteArtifactWithHeatParams() {
-
         ArtifactDefinition artifactWithHeat = createResourceWithHeat();
 
         List<HeatParameterDefinition> heatParameters = artifactWithHeat.getListHeatParameters();
@@ -113,7 +102,6 @@ public class ArtifactOperationTest extends ModelTestBase {
 
     @Test
     public void testUpdateArtifactWithHeatParams() {
-
         ArtifactDefinition artifactWithHeat = createResourceWithHeat();
 
         List<HeatParameterDefinition> heatParameters = artifactWithHeat.getListHeatParameters();
@@ -125,7 +113,7 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertTrue(parameterNode.isLeft());
 
         // update to artifact without params
-        ArtifactDefinition artifactNoParams = createArtifactDefinition(USER_ID, RESOURCE_ID, ARTIFACT_NAME);
+        ArtifactDefinition artifactNoParams = createArtifactDefinition();
         artifactNoParams.setUniqueId(artifactWithHeat.getUniqueId());
         artifactNoParams.setArtifactType("HEAT");
         artifactNoParams.setArtifactVersion("2");
@@ -180,11 +168,10 @@ public class ArtifactOperationTest extends ModelTestBase {
         Either<HeatParameterData, JanusGraphOperationStatus> parameterNodeAfterDelete = janusGraphDao.getNode(parameterData.getUniqueIdKey(), parameterData.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterDelete.isLeft());
 
-        Either<ArtifactDefinition, StorageOperationStatus> removeArifact = artifactOperation.removeArifactFromResource(RESOURCE_ID_2, (String) artifactAfterUpdateValue.getUniqueId(), NodeTypeEnum.Resource, true, false);
-        removeArifact = artifactOperation.removeArifactFromResource(RESOURCE_ID, artifactWithHeat.getUniqueId(), NodeTypeEnum.Resource, true, false);
+        artifactOperation.removeArifactFromResource(RESOURCE_ID_2, artifactAfterUpdateValue.getUniqueId(), NodeTypeEnum.Resource, true, false);
+        artifactOperation.removeArifactFromResource(RESOURCE_ID, artifactWithHeat.getUniqueId(), NodeTypeEnum.Resource, true, false);
         janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID), ResourceMetadataData.class);
         janusGraphDao.deleteNode(new UniqueIdData(NodeTypeEnum.Resource, RESOURCE_ID_2), ResourceMetadataData.class);
-
     }
 
     @Test
@@ -240,13 +227,13 @@ public class ArtifactOperationTest extends ModelTestBase {
         ArtifactData updatedArtifactData = updatedArtifact.left().value();
         assertEquals(atifactToUpdate.getArtifactVersion(), updatedArtifactData.getArtifactDataDefinition()
                                                                               .getArtifactVersion());
-        assertFalse(((String) updatedArtifactData.getUniqueId()).equalsIgnoreCase((String) origArtifactData.getUniqueId()));
+        assertFalse(updatedArtifactData.getUniqueId().equalsIgnoreCase(origArtifactData.getUniqueId()));
 
         List<HeatParameterDefinition> heatParametersAfterUpdate = artifactDefinitionUpdated.getListHeatParameters();
         assertNotNull(heatParametersAfterUpdate);
         assertEquals(1, heatParametersAfterUpdate.size());
         HeatParameterDefinition UpdatedHeatParameter = heatParametersAfterUpdate.get(0);
-        assertFalse(UpdatedHeatParameter.getUniqueId().equalsIgnoreCase((String) parameterData.getUniqueId()));
+        assertFalse(UpdatedHeatParameter.getUniqueId().equalsIgnoreCase(parameterData.getUniqueId()));
         Either<HeatParameterData, JanusGraphOperationStatus> parameterNodeAfterUpdate = janusGraphDao.getNode(new HeatParameterData(UpdatedHeatParameter).getUniqueIdKey(), UpdatedHeatParameter.getUniqueId(), HeatParameterData.class);
         assertTrue(parameterNodeAfterUpdate.isLeft());
 
@@ -277,8 +264,8 @@ public class ArtifactOperationTest extends ModelTestBase {
     }
 
     private ArtifactDefinition createResourceWithHeat() {
-        ResourceMetadataData resource = createResource(RESOURCE_ID);
-        ArtifactDefinition artifactDefinition = createArtifactDefinition(USER_ID, RESOURCE_ID, ARTIFACT_NAME);
+        createResource(RESOURCE_ID);
+        ArtifactDefinition artifactDefinition = createArtifactDefinition();
         artifactDefinition.setArtifactType("HEAT");
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
 
@@ -297,73 +284,25 @@ public class ArtifactOperationTest extends ModelTestBase {
         return artifact.left().value();
     }
 
-    private ArtifactDefinition addArtifactToService(String userId, String serviceId, String artifactName) {
-        ArtifactDefinition artifactInfo = createArtifactDefinition(userId, serviceId, artifactName);
-
-        Either<ArtifactDefinition, StorageOperationStatus> artifact = artifactOperation.addArifactToComponent(artifactInfo, serviceId, NodeTypeEnum.Service, true, true);
-        assertTrue(artifact.isLeft());
-        return artifact.left().value();
-    }
-
-    private ArtifactDefinition createArtifactDefinition(String userId, String serviceId, String artifactName) {
+    private ArtifactDefinition createArtifactDefinition() {
         ArtifactDefinition artifactInfo = new ArtifactDefinition();
 
-        artifactInfo.setArtifactName(artifactName + ".sh");
+        artifactInfo.setArtifactName(ArtifactOperationTest.ARTIFACT_NAME + ".sh");
         artifactInfo.setArtifactType("SHELL");
         artifactInfo.setDescription("hdkfhskdfgh");
         artifactInfo.setArtifactChecksum("UEsDBAoAAAAIAAeLb0bDQz");
 
-        artifactInfo.setUserIdCreator(userId);
+        artifactInfo.setUserIdCreator(ArtifactOperationTest.USER_ID);
         String fullName = "Jim H";
         artifactInfo.setUpdaterFullName(fullName);
         long time = System.currentTimeMillis();
         artifactInfo.setCreatorFullName(fullName);
         artifactInfo.setCreationDate(time);
         artifactInfo.setLastUpdateDate(time);
-        artifactInfo.setUserIdLastUpdater(userId);
-        artifactInfo.setArtifactLabel(artifactName);
-        artifactInfo.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(serviceId, artifactInfo.getArtifactLabel()));
+        artifactInfo.setUserIdLastUpdater(ArtifactOperationTest.USER_ID);
+        artifactInfo.setArtifactLabel(ArtifactOperationTest.ARTIFACT_NAME);
+        artifactInfo.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(ArtifactOperationTest.RESOURCE_ID, artifactInfo.getArtifactLabel()));
         return artifactInfo;
-    }
-
-    public Service createService(String userId, CategoryDefinition category, String serviceName, String serviceVersion, boolean isHighestVersion) {
-
-        Service service = buildServiceMetadata(userId, category, serviceName, serviceVersion);
-
-        service.setHighestVersion(isHighestVersion);
-
-        Either<Service, StorageOperationStatus> result = toscaOperationFacade.createToscaComponent(service);
-
-        log.info(result.toString());
-        assertTrue(result.isLeft());
-        Service resultService = result.left().value();
-
-        // assertEquals("check resource unique id",
-        // UniqueIdBuilder.buildServiceUniqueId(serviceName, serviceVersion),
-        // resultService.getUniqueId());
-        assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultService.getLifecycleState());
-
-        return resultService;
-    }
-
-    private Service buildServiceMetadata(String userId, CategoryDefinition category, String serviceName, String serviceVersion) {
-
-        Service service = new Service();
-        service.setName(serviceName);
-        service.setVersion(serviceVersion);
-        service.setDescription("description 1");
-
-        service.setCreatorUserId(userId);
-        service.setContactId("contactId@sdc.com");
-        List<CategoryDefinition> categories = new ArrayList<>();
-        categories.add(category);
-        service.setCategories(categories);
-        service.setIcon("images/my.png");
-        List<String> tags = new ArrayList<>();
-        tags.add("TAG1");
-        tags.add("TAG2");
-        service.setTags(tags);
-        return service;
     }
 
     private void deleteAndCreateCategory(String category) {
@@ -372,22 +311,16 @@ public class ArtifactOperationTest extends ModelTestBase {
         OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], janusGraphDao);
     }
 
-    private UserData deleteAndCreateUser(String userId, String firstName, String lastName, String role) {
+    private void deleteAndCreateUser() {
         UserData userData = new UserData();
-        userData.setUserId(userId);
-        userData.setFirstName(firstName);
-        userData.setLastName(lastName);
-        if (role != null && !role.isEmpty()) {
-            userData.setRole(role);
-        } else {
-            userData.setRole("ADMIN");
-        }
+        userData.setUserId(ArtifactOperationTest.USER_ID);
+        userData.setFirstName("first_muUserId");
+        userData.setLastName("last_muUserId");
+        userData.setRole("ADMIN");
 
-        janusGraphDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class);
+        janusGraphDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), ArtifactOperationTest.USER_ID, UserData.class);
         janusGraphDao.createNode(userData, UserData.class);
         janusGraphDao.commit();
-
-        return userData;
     }
 
     public ResourceMetadataData createResource(String resourceName) {

@@ -123,21 +123,16 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     }
 
     private Either<InterfaceData, JanusGraphOperationStatus> addInterfaceToGraph(InterfaceDefinition interfaceInfo, String interfaceName, String resourceId) {
-
         InterfaceData interfaceData = new InterfaceData(interfaceInfo);
-
         ResourceMetadataData resourceData = new ResourceMetadataData();
         resourceData.getMetadataDataDefinition().setUniqueId(resourceId);
 
         String interfaceNameSplitted = getShortInterfaceName(interfaceInfo);
-
         interfaceInfo.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(resourceId, interfaceNameSplitted));
 
         Either<InterfaceData, JanusGraphOperationStatus> existInterface = janusGraphGenericDao
             .getNode(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), InterfaceData.class);
-
         if (existInterface.isRight()) {
-
             return createInterfaceNodeAndRelation(interfaceNameSplitted, resourceId, interfaceData, resourceData);
         } else {
             log.debug("Interface {} already exist", interfaceData.getUniqueId());
@@ -205,7 +200,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
     @Override
     public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfacesOfResource(String resourceId, boolean recursively, boolean inTransaction) {
-
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> result = null;
         Map<String, InterfaceDefinition> interfaces = new HashMap<>();
         try {
@@ -242,7 +236,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     }
 
     private JanusGraphOperationStatus findAllInterfacesNotRecursively(String resourceId, Map<String, InterfaceDefinition> interfaces) {
-
         Either<List<ImmutablePair<InterfaceData, GraphEdge>>, JanusGraphOperationStatus> interfaceNodes = janusGraphGenericDao
             .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.INTERFACE,
                 NodeTypeEnum.Interface, InterfaceData.class);
@@ -286,7 +279,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     }
 
     public JanusGraphOperationStatus findAllInterfacesRecursively(String resourceId, Map<String, InterfaceDefinition> interfaces) {
-
         JanusGraphOperationStatus
             findAllInterfacesNotRecursively = findAllInterfacesNotRecursively(resourceId, interfaces);
         if (!findAllInterfacesNotRecursively.equals(JanusGraphOperationStatus.OK)) {
@@ -307,10 +299,9 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                 return parentNodesStatus;
             }
         }
-        ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
-        String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
-        JanusGraphOperationStatus
-            addParentIntStatus = findAllInterfacesRecursively(parentUniqueId, interfaces);
+        ImmutablePair<ResourceMetadataData, GraphEdge> parentNodePair = parentNodes.left().value();
+        String parentUniqueId = parentNodePair.getKey().getMetadataDataDefinition().getUniqueId();
+        JanusGraphOperationStatus addParentIntStatus = findAllInterfacesRecursively(parentUniqueId, interfaces);
 
         if (addParentIntStatus != JanusGraphOperationStatus.OK) {
             log.error("Failed to fetch all interfaces of resource {}", parentUniqueId);
@@ -642,9 +633,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
     @Override
     public Either<InterfaceDefinition, StorageOperationStatus> createInterfaceOnResource(InterfaceDefinition interf, String resourceId, String interfaceName, boolean failIfExist, boolean inTransaction) {
-
         Either<InterfaceData, JanusGraphOperationStatus> status = addInterfaceToGraph(interf, interfaceName, resourceId);
-
         if (status.isRight()) {
             janusGraphGenericDao.rollback();
             log.error("Failed to add interface {} to resource {}", interfaceName, resourceId);
@@ -711,7 +700,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                 janusGraphGenericDao.commit();
             }
 
-            Operation opDefResult = status.left().value();// convertOperationDataToOperation(operationData);
+            Operation opDefResult = status.left().value();
             log.debug("The returned Operation is {}", opDefResult);
             return Either.left(opDefResult);
         }
@@ -916,9 +905,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         return interfaceName.toLowerCase();
     }
 
-    /**
-     *
-     */
     public Either<InterfaceDefinition, StorageOperationStatus> createInterfaceType(InterfaceDefinition interf) {
         return createInterfaceType(interf, false);
     }

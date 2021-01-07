@@ -108,10 +108,10 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
-//    @Test(expected = ComponentException.class)
-//    public void testGetUserContextNull() {
-//        testSubject.getUser("userId");
-//    }
+    @Test(expected = ComponentException.class)
+    public void testGetUserContextNull() {
+        testSubject.getUser("userId");
+    }
 
     @Test(expected = ComponentException.class)
     public void testGetUserContextIdEmpty() {
