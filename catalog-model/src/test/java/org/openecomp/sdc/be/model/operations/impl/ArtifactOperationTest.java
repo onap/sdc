@@ -297,14 +297,6 @@ public class ArtifactOperationTest extends ModelTestBase {
         return artifact.left().value();
     }
 
-    private ArtifactDefinition addArtifactToService(String userId, String serviceId, String artifactName) {
-        ArtifactDefinition artifactInfo = createArtifactDefinition(userId, serviceId, artifactName);
-
-        Either<ArtifactDefinition, StorageOperationStatus> artifact = artifactOperation.addArifactToComponent(artifactInfo, serviceId, NodeTypeEnum.Service, true, true);
-        assertTrue(artifact.isLeft());
-        return artifact.left().value();
-    }
-
     private ArtifactDefinition createArtifactDefinition(String userId, String serviceId, String artifactName) {
         ArtifactDefinition artifactInfo = new ArtifactDefinition();
 
