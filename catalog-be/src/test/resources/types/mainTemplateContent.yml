@@ -1,0 +1,332 @@
+    tosca_definitions_version: tosca_simple_yaml_1_1
+    metadata:
+      invariantUUID: 6d17f281-683b-4198-a676-0faeecdc9025
+      UUID: bfeab6b4-199b-4a2b-b724-de416c5e9811
+      name: ser09080002
+      description: ser09080002
+      type: Service
+      category: E2E Service
+      serviceType: ''
+      serviceRole: ''
+      instantiationType: A-la-carte
+      serviceEcompNaming: true
+      ecompGeneratedNaming: true
+      namingPolicy: ''
+      environmentContext: General_Revenue-Bearing
+      serviceFunction: ''
+    imports:
+    - nodes:
+      file: nodes.yml
+    - datatypes:
+      file: data.yml
+    - capabilities:
+      file: capabilities.yml
+    - relationships:
+      file: relationships.yml
+    - groups:
+      file: groups.yml
+    - policies:
+      file: policies.yml
+    - annotations:
+      file: annotations.yml
+    - service-ser09080002-interface:
+      file: service-Ser09080002-template-interface.yml
+    - resource-ExtCP:
+      file: resource-Extcp-template.yml
+    - resource-zxjTestImportServiceAb:
+      file: resource-Zxjtestimportserviceab-template.yml
+    - resource-zxjTestImportServiceAb-interface:
+      file: resource-Zxjtestimportserviceab-template-interface.yml
+    - resource-zxjTestServiceNotAbatract:
+      file: resource-Zxjtestservicenotabatract-template.yml
+    - resource-zxjTestServiceNotAbatract-interface:
+      file: resource-Zxjtestservicenotabatract-template-interface.yml
+    - resource-ext ZTE VL:
+      file: resource-ExtZteVl-template.yml
+    topology_template:
+      inputs:
+        skip_post_instantiation_configuration:
+          default: true
+          type: boolean
+          required: false
+        controller_actor:
+          default: SO-REF-DATA
+          type: string
+          required: false
+        cds_model_version:
+          type: string
+          required: false
+        cds_model_name:
+          type: string
+          required: false
+      node_templates:
+        ext ZTE VL 0:
+          type: tosca.nodes.nfv.ext.zte.VL
+          metadata:
+            invariantUUID: 27ab7610-1a97-4daa-938a-3b48e7afcfd0
+            UUID: 9ea63e2c-4b8a-414f-93e3-5703ca5cee0d
+            customizationUUID: e45e79b0-07ab-46b4-ac26-1e9f155ce53c
+            version: '1.0'
+            name: ext ZTE VL
+            description: Ext ZTE VL
+            type: VL
+            category: Generic
+            subcategory: Network Elements
+            resourceVendor: ONAP (Tosca)
+            resourceVendorRelease: 1.0.0.wd03
+            resourceVendorModelNumber: ''
+        zxjTestServiceNotAbatract 0:
+          type: org.openecomp.resource.vf.Zxjtestservicenotabatract
+          metadata:
+            invariantUUID: ce39ce8d-6f97-4e89-8555-ae6789cdcf1c
+            UUID: 4ac822be-f1ae-4ace-a4b8-bf6b5d977005
+            customizationUUID: ee34e1e8-68e2-480f-8ba6-f257bbe90d6a
+            version: '1.0'
+            name: zxjTestServiceNotAbatract
+            description: zxjTestServiceNotAbatract
+            type: VF
+            category: Network L4
+            subcategory: Common Network Resources
+            resourceVendor: zxjImportService
+            resourceVendorRelease: '1.0'
+            resourceVendorModelNumber: ''
+          properties:
+            nf_naming:
+              ecomp_generated_naming: true
+            skip_post_instantiation_configuration: true
+            multi_stage_design: 'false'
+            controller_actor: SO-REF-DATA
+            availability_zone_max_count: 1
+          capabilities:
+            mme_ipu_vdu.scalable:
+              properties:
+              max_instances: 1
+              min_instances: 1
+            mme_ipu_vdu.nfv_compute:
+              properties:
+              num_cpus: '2'
+              flavor_extra_specs: {}
+              mem_size: '8192'
+        ExtCP 0:
+          type: org.openecomp.resource.cp.extCP
+          metadata:
+            invariantUUID: 9b772728-93f5-424f-bb07-f4cae2783614
+            UUID: 424ac220-4864-453e-b757-917fe4568ff8
+            customizationUUID: 6e65d8a8-4379-4693-87aa-82f9e34b92fd
+            version: '1.0'
+            name: ExtCP
+            description: The AT&T Connection Point base type all other CP derive from
+            type: CP
+            category: Generic
+            subcategory: Network Elements
+            resourceVendor: ONAP (Tosca)
+            resourceVendorRelease: 1.0.0.wd03
+            resourceVendorModelNumber: ''
+          properties:
+            mac_requirements:
+              mac_count_required:
+                is_required: false
+            exCP_naming:
+            ecomp_generated_naming: true
+        zxjTestImportServiceAb 0:
+          type: org.openecomp.resource.vf.Zxjtestimportserviceab
+          metadata:
+            invariantUUID: 41474f7f-3195-443d-a0a2-eb6020a56279
+            UUID: 92e32e49-55f8-46bf-984d-a98c924037ec
+            customizationUUID: 98c7a6c7-a867-45fb-8597-dd464f98e4aa
+            version: '1.0'
+            name: zxjTestImportServiceAb
+            description: zxjTestImportServiceAbstract
+            type: VF
+            category: Generic
+            subcategory: Abstract
+            resourceVendor: zxjImportService
+            resourceVendorRelease: '1.0'
+            resourceVendorModelNumber: ''
+          properties:
+            nf_naming:
+              ecomp_generated_naming: true
+            skip_post_instantiation_configuration: true
+            multi_stage_design: 'false'
+            controller_actor: SO-REF-DATA
+            availability_zone_max_count: 1
+          requirements:
+          - mme_ipu_vdu.dependency:
+            capability: feature
+            node: ExtCP 0
+          - imagefile.dependency:
+            capability: feature
+            node: ext ZTE VL 0
+          capabilities:
+            mme_ipu_vdu.scalable:
+              properties:
+              max_instances: 1
+              min_instances: 1
+            mme_ipu_vdu.nfv_compute:
+              properties:
+              num_cpus: '2'
+              flavor_extra_specs: {}
+              mem_size: '8192'
+      substitution_mappings:
+        node_type: org.openecomp.service.Ser09080002
+        capabilities:
+          extcp0.feature:
+          - ExtCP 0
+          - feature
+          zxjtestservicenotabatract0.mme_ipu_vdu.monitoring_parameter:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.monitoring_parameter
+          zxjtestimportserviceab0.imagefile.guest_os:
+          - zxjTestImportServiceAb 0
+          - imagefile.guest_os
+          zxjtestimportserviceab0.imagefile.feature:
+          - zxjTestImportServiceAb 0
+          - imagefile.feature
+          zxjtestservicenotabatract0.imagefile.guest_os:
+          - zxjTestServiceNotAbatract 0
+          - imagefile.guest_os
+          zxjtestimportserviceab0.ipu_cpd.feature:
+          - zxjTestImportServiceAb 0
+          - ipu_cpd.feature
+          zxjtestservicenotabatract0.mme_ipu_vdu.virtualbinding:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.virtualbinding
+          zxjtestimportserviceab0.mme_ipu_vdu.feature:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.feature
+          extztevl0.feature:
+          - ext ZTE VL 0
+          - feature
+          zxjtestimportserviceab0.imagefile.image_fle:
+          - zxjTestImportServiceAb 0
+          - imagefile.image_fle
+          zxjtestimportserviceab0.mme_ipu_vdu.monitoring_parameter:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.monitoring_parameter
+          zxjtestservicenotabatract0.ipu_cpd.feature:
+          - zxjTestServiceNotAbatract 0
+          - ipu_cpd.feature
+          zxjtestservicenotabatract0.mme_ipu_vdu.nfv_compute:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.nfv_compute
+          zxjtestservicenotabatract0.mme_ipu_vdu.scalable:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.scalable
+          extcp0.internal_connectionPoint:
+          - ExtCP 0
+          - internal_connectionPoint
+          zxjtestimportserviceab0.mme_ipu_vdu.virtualbinding:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.virtualbinding
+          zxjtestservicenotabatract0.imagefile.image_fle:
+          - zxjTestServiceNotAbatract 0
+          - imagefile.image_fle
+          extztevl0.virtual_linkable:
+          - ext ZTE VL 0
+          - virtual_linkable
+          zxjtestservicenotabatract0.imagefile.feature:
+          - zxjTestServiceNotAbatract 0
+          - imagefile.feature
+          zxjtestimportserviceab0.localstorage.feature:
+          - zxjTestImportServiceAb 0
+          - localstorage.feature
+          zxjtestservicenotabatract0.localstorage.local_attachment:
+          - zxjTestServiceNotAbatract 0
+          - localstorage.local_attachment
+          zxjtestimportserviceab0.mme_ipu_vdu.scalable:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.scalable
+          zxjtestservicenotabatract0.localstorage.feature:
+          - zxjTestServiceNotAbatract 0
+          - localstorage.feature
+          zxjtestimportserviceab0.mme_ipu_vdu.nfv_compute:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.nfv_compute
+          zxjtestimportserviceab0.localstorage.local_attachment:
+          - zxjTestImportServiceAb 0
+          - localstorage.local_attachment
+          zxjtestservicenotabatract0.mme_ipu_vdu.feature:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.feature
+          zxjtestimportserviceab0.ipu_cpd.forwarder:
+          - zxjTestImportServiceAb 0
+          - ipu_cpd.forwarder
+          zxjtestservicenotabatract0.ipu_cpd.forwarder:
+          - zxjTestServiceNotAbatract 0
+          - ipu_cpd.forwarder
+        requirements:
+          zxjtestservicenotabatract0.imagefile.dependency:
+          - zxjTestServiceNotAbatract 0
+          - imagefile.dependency
+          zxjtestservicenotabatract0.mme_ipu_vdu.local_storage:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.local_storage
+          zxjtestservicenotabatract0.ipu_cpd.dependency:
+          - zxjTestServiceNotAbatract 0
+          - ipu_cpd.dependency
+          zxjtestservicenotabatract0.mme_ipu_vdu.volume_storage:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.volume_storage
+          zxjtestservicenotabatract0.ipu_cpd.virtualbinding:
+          - zxjTestServiceNotAbatract 0
+          - ipu_cpd.virtualbinding
+          zxjtestservicenotabatract0.mme_ipu_vdu.dependency:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.dependency
+          zxjtestservicenotabatract0.localstorage.dependency:
+          - zxjTestServiceNotAbatract 0
+          - localstorage.dependency
+          zxjtestimportserviceab0.imagefile.dependency:
+          - zxjTestImportServiceAb 0
+          - imagefile.dependency
+          zxjtestimportserviceab0.mme_ipu_vdu.volume_storage:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.volume_storage
+          zxjtestimportserviceab0.ipu_cpd.virtualbinding:
+          - zxjTestImportServiceAb 0
+          - ipu_cpd.virtualbinding
+          extcp0.virtualLink:
+          - ExtCP 0
+          - virtualLink
+          extcp0.virtualBinding:
+          - ExtCP 0
+          - virtualBinding
+          zxjtestimportserviceab0.mme_ipu_vdu.guest_os:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.guest_os
+          extcp0.dependency:
+          - ExtCP 0
+          - dependency
+          zxjtestimportserviceab0.localstorage.dependency:
+          - zxjTestImportServiceAb 0
+          - localstorage.dependency
+          zxjtestservicenotabatract0.ipu_cpd.virtualLink:
+          - zxjTestServiceNotAbatract 0
+          - ipu_cpd.virtualLink
+          extztevl0.dependency:
+          - ext ZTE VL 0
+          - dependency
+          zxjtestimportserviceab0.ipu_cpd.dependency:
+          - zxjTestImportServiceAb 0
+          - ipu_cpd.dependency
+          zxjtestimportserviceab0.mme_ipu_vdu.dependency:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.dependency
+          zxjtestimportserviceab0.mme_ipu_vdu.local_storage:
+          - zxjTestImportServiceAb 0
+          - mme_ipu_vdu.local_storage
+          zxjtestimportserviceab0.ipu_cpd.virtualLink:
+          - zxjTestImportServiceAb 0
+          - ipu_cpd.virtualLink
+          extcp0.external_virtualLink:
+          - ExtCP 0
+          - external_virtualLink
+          zxjtestservicenotabatract0.mme_ipu_vdu.guest_os:
+          - zxjTestServiceNotAbatract 0
+          - mme_ipu_vdu.guest_os
+          zxjtestimportserviceab0.ipu_cpd.forwarder:
+          - zxjTestImportServiceAb 0
+          - ipu_cpd.forwarder
+          zxjtestservicenotabatract0.ipu_cpd.forwarder:
+          - zxjTestServiceNotAbatract 0
+          - ipu_cpd.forwarder\n
