@@ -56,39 +56,40 @@ public class CompositionEntityDataManagerImplTest {
   private static final String COMPONENT1 = "component1";
   private static final String NIC1 = "nic1";
   private static final String SIMPLE_SCHEMA = "{\n" +
-      "  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n" +
-      "  \"type\": \"object\",\n" +
-      "  \"properties\": {\n" +
-      "    \"a\": {\n" +
-      "      \"type\": \"number\"\n" +
-      "    }\n" +
-      "  }\n" +
-      "}";
+          "  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n" +
+          "  \"type\": \"object\",\n" +
+          "  \"properties\": {\n" +
+          "    \"a\": {\n" +
+          "      \"type\": \"number\"\n" +
+          "    }\n" +
+          "  }\n" +
+          "}";
   private static final String NETWORK_COMPOSITION_SCHEMA = "{\n" +
-      "  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n" +
-      "  \"type\": \"object\",\n" +
-      "  \"properties\": {\n" +
-      "    \"name\": {\n" +
-      "      \"type\": \"string\",\n" +
-      "      \"enum\": [\n" +
-      "        \"network1 name\"\n" +
-      "      ],\n" +
-      "      \"default\": \"network1 name\"\n" +
-      "    },\n" +
-      "    \"dhcp\": {\n" +
-      "      \"type\": \"boolean\",\n" +
-      "      \"enum\": [\n" +
-      "        true\n" +
-      "      ],\n" +
-      "      \"default\": true\n" +
-      "    }\n" +
-      "  },\n" +
-      "  \"additionalProperties\": false,\n" +
-      "  \"required\": [\n" +
-      "    \"name\",\n" +
-      "    \"dhcp\"\n" +
-      "  ]\n" +
-      "}";
+          "  \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n" +
+          "  \"type\": \"object\",\n" +
+          "  \"properties\": {\n" +
+          "    \"name\": {\n" +
+          "      \"type\": \"string\",\n" +
+          "      \"enum\": [\n" +
+          "        \"network1 name\"\n" +
+          "      ],\n" +
+          "      \"default\": \"network1 name\"\n" +
+          "    },\n" +
+          "    \"dhcp\": {\n" +
+          "      \"type\": \"boolean\",\n" +
+          "      \"enum\": [\n" +
+          "        true\n" +
+          "      ],\n" +
+          "      \"default\": true\n" +
+          "    }\n" +
+          "  },\n" +
+          "  \"additionalProperties\": false,\n" +
+          "  \"required\": [\n" +
+          "    \"name\",\n" +
+          "    \"dhcp\"\n" +
+          "  ]\n" +
+          "}";
+  String invalidQuestionnaireData = "{\"a\": \"b\"}";
 
   private Map<CompositionEntityId, Collection<String>> errorsById;
   @InjectMocks
@@ -98,19 +99,11 @@ public class CompositionEntityDataManagerImplTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-  }
+    compositionEntityDataManager.addEntity(new VspQuestionnaireEntity(VSP1, VERSION), null);
 
-  @Test(expected = CoreException.class)
-  public void testAddNullEntity_negative() {
-    compositionEntityDataManager.addEntity(null, null);
-  }
-
-  @Test
-  public void testAddEntity() {
-    compositionEntityDataManager
-        .addEntity(new VspQuestionnaireEntity(VSP1, VERSION), null);
-
-    String invalidQuestionnaireData = "{\"a\": \"b\"}";
+    doReturn(SIMPLE_SCHEMA).when(compositionEntityDataManager).generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, null);
+    doReturn(SIMPLE_SCHEMA).when(compositionEntityDataManager).generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.component, null);
+    doReturn(SIMPLE_SCHEMA).when(compositionEntityDataManager).generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.nic, null);
 
     ComponentEntity component = new ComponentEntity(VSP1, VERSION, COMPONENT1);
     component.setQuestionnaireData(invalidQuestionnaireData);
@@ -121,56 +114,43 @@ public class CompositionEntityDataManagerImplTest {
     compositionEntityDataManager.addEntity(nic, null);
   }
 
-  // TODO: 3/15/2017 fix and enable
-  //@Test(dependsOnMethods = "testAddEntity")
-  public void testValidateEntitiesQuestionnaire() {
-    doReturn(SIMPLE_SCHEMA).when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, null);
-    doReturn(SIMPLE_SCHEMA).when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.component, null);
-    doReturn(SIMPLE_SCHEMA).when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.nic, null);
+  @Test(expected = CoreException.class)
+  public void testAddNullEntity_negative() {
+    compositionEntityDataManager.addEntity(null, null);
+  }
 
+  @Test
+  public void testValidateEntitiesQuestionnaire() {
     errorsById = compositionEntityDataManager.validateEntitiesQuestionnaire();
     Assert.assertNotNull(errorsById);
-    Assert.assertEquals(errorsById.size(), 2); // both component and nic data don't mach schemas
-    CompositionEntityId nicId =
-        new NicEntity(VSP1, VERSION, COMPONENT1, NIC1).getCompositionEntityId();
+    Assert.assertEquals(3, errorsById.size());
+    CompositionEntityId nicId = new NicEntity(VSP1, VERSION, COMPONENT1, NIC1).getCompositionEntityId();
     Assert.assertTrue(errorsById.containsKey(nicId));
     Assert.assertTrue(errorsById.containsKey(nicId.getParentId()));
   }
 
   @Test
   public void testBuildTrees() {
-    testAddEntity();
     compositionEntityDataManager.buildTrees();
   }
 
-  // TODO: 3/15/2017 fix and enable
-  //@Test(dependsOnMethods = "testBuildTrees")
-  public void testAddErrorsToTrees() {
-    compositionEntityDataManager.addErrorsToTrees(errorsById);
-  }
-
-  // TODO: 3/15/2017 fix and enable
-  //@Test(dependsOnMethods = "testAddErrorsToTrees")
+  @Test
   public void testGetTrees() {
+    errorsById = compositionEntityDataManager.validateEntitiesQuestionnaire();
+    compositionEntityDataManager.buildTrees();
+    compositionEntityDataManager.addErrorsToTrees(errorsById);
     Collection<CompositionEntityValidationData> trees = compositionEntityDataManager.getTrees();
     Assert.assertNotNull(trees);
     Assert.assertEquals(trees.size(), 1);
 
     CompositionEntityValidationData vspValidationData = trees.iterator().next();
-    assertValidationData(vspValidationData, VSP1, CompositionEntityType.vsp, false);
     Assert.assertEquals(vspValidationData.getSubEntitiesValidationData().size(), 1);
 
-    CompositionEntityValidationData componentValidationData =
-        vspValidationData.getSubEntitiesValidationData().iterator().next();
-    assertValidationData(componentValidationData, COMPONENT1, CompositionEntityType.component,
-        true);
+    CompositionEntityValidationData componentValidationData = vspValidationData.getSubEntitiesValidationData().iterator().next();
+    assertValidationData(componentValidationData, COMPONENT1, CompositionEntityType.component,true);
     Assert.assertEquals(componentValidationData.getSubEntitiesValidationData().size(), 1);
 
-    CompositionEntityValidationData nicValidationData =
-        componentValidationData.getSubEntitiesValidationData().iterator().next();
+    CompositionEntityValidationData nicValidationData = componentValidationData.getSubEntitiesValidationData().iterator().next();
     assertValidationData(nicValidationData, NIC1, CompositionEntityType.nic, true);
     Assert.assertNull(nicValidationData.getSubEntitiesValidationData());
   }
@@ -188,11 +168,11 @@ public class CompositionEntityDataManagerImplTest {
     schemaTemplateInput.setNetwork(network);
 
     doReturn(NETWORK_COMPOSITION_SCHEMA).when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.composition, CompositionEntityType.network,
-            schemaTemplateInput);
+            .generateSchema(SchemaTemplateContext.composition, CompositionEntityType.network,
+                    schemaTemplateInput);
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
-        .validateEntity(networkEntity, SchemaTemplateContext.composition, schemaTemplateInput);
+            .validateEntity(networkEntity, SchemaTemplateContext.composition, schemaTemplateInput);
     assertValidationData(validationData, "network1", CompositionEntityType.network, false);
   }
 
@@ -212,11 +192,11 @@ public class CompositionEntityDataManagerImplTest {
     schemaTemplateInput.setNetwork(origNetwork);
 
     doReturn(NETWORK_COMPOSITION_SCHEMA).when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.composition, CompositionEntityType.network,
-            schemaTemplateInput);
+            .generateSchema(SchemaTemplateContext.composition, CompositionEntityType.network,
+                    schemaTemplateInput);
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
-        .validateEntity(networkEntity, SchemaTemplateContext.composition, schemaTemplateInput);
+            .validateEntity(networkEntity, SchemaTemplateContext.composition, schemaTemplateInput);
     assertValidationData(validationData, "network1", CompositionEntityType.network, true);
     Assert.assertEquals(validationData.getErrors().size(), 2);
   }
@@ -224,7 +204,7 @@ public class CompositionEntityDataManagerImplTest {
   @Test
   public void testNicAndComponentValidQuestionnaire() {
     compositionEntityDataManager
-        .addEntity(new VspQuestionnaireEntity(VSP1, VERSION), null);
+            .addEntity(new VspQuestionnaireEntity(VSP1, VERSION), null);
 
     ComponentEntity componentEntity = new ComponentEntity(VSP1, VERSION, COMPONENT1);
     componentEntity.setQuestionnaireData(loadFileToString("quesionnaire/validComponent.json"));
@@ -235,19 +215,19 @@ public class CompositionEntityDataManagerImplTest {
     compositionEntityDataManager.addEntity(nicEntity, null);
 
     doReturn(SIMPLE_SCHEMA)
-        .when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, null);
+            .when(compositionEntityDataManager)
+            .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, null);
 
     doReturn(loadFileToString("quesionnaire/schema/componentQuestionnaire.json"))
-        .when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.component, null);
+            .when(compositionEntityDataManager)
+            .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.component, null);
 
     doReturn(loadFileToString("quesionnaire/schema/nicQuestionnaire.json"))
-        .when(compositionEntityDataManager)
-        .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.nic, null);
+            .when(compositionEntityDataManager)
+            .generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.nic, null);
 
     Map<CompositionEntityId, Collection<String>> errorsById =
-        compositionEntityDataManager.validateEntitiesQuestionnaire();
+            compositionEntityDataManager.validateEntitiesQuestionnaire();
     Assert.assertEquals(errorsById.size(), 1);
   }
 
@@ -260,14 +240,14 @@ public class CompositionEntityDataManagerImplTest {
     compositionEntityDataManager.addEntity(componentEntity, null);
 
     Map<CompositionEntityId, Collection<String>> errorsById =
-        compositionEntityDataManager.validateEntitiesQuestionnaire();
+            compositionEntityDataManager.validateEntitiesQuestionnaire();
     Assert.assertEquals(errorsById.size(), 2);
 
     CompositionEntityId component = new ArrayList<>(errorsById.keySet()).get(1);
     List<String> errors = (List<String>) errorsById.get(component);
     Assert.assertEquals(errors.size(), 1);
     Assert.assertEquals(errors.get(0),
-        "#/general/recovery/pointObjective: 20.0 is not lower or equal to 15");
+            "#/general/recovery/pointObjective: 20.0 is not lower or equal to 15");
   }
 
   private static void assertValidationData(CompositionEntityValidationData validationData,
