@@ -1,29 +1,16 @@
 /*
-
- * Copyright (c) 2018 AT&T Intellectual Property.
-
+ * Copyright (C) 2020 CMCC, Inc. and others. All rights reserved.
  *
-
  * Licensed under the Apache License, Version 2.0 (the "License");
-
  * you may not use this file except in compliance with the License.
-
  * You may obtain a copy of the License at
-
  *
-
  *     http://www.apache.org/licenses/LICENSE-2.0
-
  *
-
  * Unless required by applicable law or agreed to in writing, software
-
  * distributed under the License is distributed on an "AS IS" BASIS,
-
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
  * See the License for the specific language governing permissions and
-
  * limitations under the License.
 
  */
@@ -44,6 +31,13 @@ class ServiceImportManagerTest {
     @InjectMocks
     private ServiceImportManager serviceImportManager;
 
+    public static final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
+
+    @BeforeEach
+    public void setup() {
+        serviceImportManager = new ServiceImportManager();
+    }
+
     private ServiceImportManager createTestSubject() {
         return new ServiceImportManager();
     }
@@ -55,6 +49,7 @@ class ServiceImportManagerTest {
 
         testSubject = createTestSubject();
         result = testSubject.getServiceImportBusinessLogic();
+        assertNull(result);
     }
 
     @Test
@@ -64,6 +59,7 @@ class ServiceImportManagerTest {
 
         testSubject = createTestSubject();
         testSubject.setServiceImportBusinessLogic(serviceImportBusinessLogic);
+        assertNotNull(testSubject);
     }
 
     @Test
@@ -73,6 +69,7 @@ class ServiceImportManagerTest {
 
         testSubject = createTestSubject();
         result = testSubject.getServiceBusinessLogic();
+        assertNull(result);
     }
 
     @Test
@@ -82,15 +79,17 @@ class ServiceImportManagerTest {
 
         testSubject = createTestSubject();
         testSubject.setServiceBusinessLogic(serviceBusinessLogic);
+        assertNotNull(testSubject);
     }
 
     @Test
     void testPopulateServiceMetadata() {
-        UploadServiceInfo serviceMetaData = null;
-        Service service = null;
-        if (serviceMetaData != null || service != null) {
-            serviceImportManager.populateServiceMetadata(serviceMetaData, service);
-        }
+        UploadServiceInfo serviceMetaData = new UploadServiceInfo();
+        serviceMetaData.setDescription("Description");
+        serviceMetaData.setVendorName("VendorName");
+        serviceMetaData.setVendorRelease("VendorRelease");
+        Service service = new Service();
+        service.setName("service");
+        serviceImportManager.populateServiceMetadata(serviceMetaData, service);
     }
-
 }
