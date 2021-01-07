@@ -15,26 +15,7 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
-import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
-
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -56,13 +37,7 @@ import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessL
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
-import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
+import org.openecomp.sdc.be.components.validation.component.*;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -78,36 +53,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.NodeTypeInfo;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
-import org.openecomp.sdc.be.model.UploadPropInfo;
-import org.openecomp.sdc.be.model.UploadReqInfo;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -115,11 +61,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -135,6 +77,15 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
+
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
+import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
 @Getter
 @Setter
@@ -1216,60 +1167,65 @@ public class ServiceImportBusinessLogic{
 
     protected Resource createResourceInstancesRelations(User user, String yamlName, Resource resource,
                                                       Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
-        log.debug("#createResourceInstancesRelations - Going to create relations ");
-        List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
-        if (((MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) &&
-                resource.getResourceType() != ResourceTypeEnum.PNF)) { // PNF can have no resource instances
-            log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ", resource.getUniqueId(), yamlName);
-            BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ", BeEcompErrorManager.ErrorSeverity.ERROR);
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
-        }
-        Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
-        Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
-        Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
-        Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
-        Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
-        Map<String, Resource> originCompMap = new HashMap<>();
-        List<RequirementCapabilityRelDef> relations = new ArrayList<>();
-        Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
+        try {
+            log.debug("#createResourceInstancesRelations - Going to create relations ");
 
-        log.debug("enter ServiceImportBusinessLogic createResourceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = serviceBusinessLogic.dataTypeCache.getAll();
-        if (allDataTypes.isRight()) {
-            JanusGraphOperationStatus status = allDataTypes.right().value();
-            BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
-                    "Failed to update property value on instance. Status is " + status, BeEcompErrorManager.ErrorSeverity.ERROR);
-            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
-                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)), yamlName));
-        }
-        Resource finalResource = resource;
-        uploadResInstancesMap
-                .values()
-                .forEach(i -> processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes,
-                        instProperties, instCapabilities, instRequirements, instDeploymentArtifacts,
-                        instArtifacts, instAttributes, originCompMap, instInputs, i));
-        serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
-        serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
-        serviceImportParseLogic
-                .associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts);
-        serviceImportParseLogic.associateArtifactsToInstances(yamlName, resource, instArtifacts);
-        serviceImportParseLogic.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements);
-        serviceImportParseLogic.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes);
-        resource = serviceImportParseLogic.getResourceAfterCreateRelations(resource);
+            List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
+            if (((MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) &&
+                    resource.getResourceType() != ResourceTypeEnum.PNF)) { // PNF can have no resource instances
+                log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ", resource.getUniqueId(), yamlName);
+                BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ", BeEcompErrorManager.ErrorSeverity.ERROR);
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
+            }
+            Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
+            Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
+            Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
+            Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
+            Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
+            Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
+            Map<String, Resource> originCompMap = new HashMap<>();
+            List<RequirementCapabilityRelDef> relations = new ArrayList<>();
+            Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
-        serviceImportParseLogic
-                .addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList, relations);
-        serviceImportParseLogic.associateResourceInstances(yamlName, resource, relations);
-        handleSubstitutionMappings(resource, uploadResInstancesMap);
-        log.debug("************* in create relations, getResource start");
-        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
-        log.debug("************* in create relations, getResource end");
-        if (eitherGetResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource));
+            log.debug("enter ServiceImportBusinessLogic createResourceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = serviceBusinessLogic.dataTypeCache.getAll();
+            if (allDataTypes.isRight()) {
+                JanusGraphOperationStatus status = allDataTypes.right().value();
+                BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
+                        "Failed to update property value on instance. Status is " + status, BeEcompErrorManager.ErrorSeverity.ERROR);
+                throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
+                        DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)), yamlName));
+            }
+            Resource finalResource = resource;
+            uploadResInstancesMap
+                    .values()
+                    .forEach(i -> processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes,
+                            instProperties, instCapabilities, instRequirements, instDeploymentArtifacts,
+                            instArtifacts, instAttributes, originCompMap, instInputs, i));
+            serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
+            serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
+            serviceImportParseLogic
+                    .associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts);
+            serviceImportParseLogic.associateArtifactsToInstances(yamlName, resource, instArtifacts);
+            serviceImportParseLogic.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements);
+            serviceImportParseLogic.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes);
+            resource = serviceImportParseLogic.getResourceAfterCreateRelations(resource);
+
+            serviceImportParseLogic
+                    .addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList, relations);
+            serviceImportParseLogic.associateResourceInstances(yamlName, resource, relations);
+            handleSubstitutionMappings(resource, uploadResInstancesMap);
+            log.debug("************* in create relations, getResource start");
+            Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
+            log.debug("************* in create relations, getResource end");
+            if (eitherGetResource.isRight()) {
+                throw new ComponentException(componentsUtils.getResponseFormatByResource(
+                        componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource));
+            }
+            return eitherGetResource.left().value();
+        }catch (Exception e){
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
-        return eitherGetResource.left().value();
     }
 
     protected void processComponentInstance(String yamlName, Resource resource,
@@ -1661,65 +1617,69 @@ public class ServiceImportBusinessLogic{
 
     protected Service createServiceInstancesRelations(User user, String yamlName, Service service,
                                                     Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
-        log.debug("#createResourceInstancesRelations - Going to create relations ");
-        List<ComponentInstance> componentInstancesList = service.getComponentInstances();
-        if (((MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)))) { // PNF can have no resource instances
-            log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ", service.getUniqueId(), yamlName);
-            BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ", BeEcompErrorManager.ErrorSeverity.ERROR);
-            throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
-        }
-        Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
-        Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
-        Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
-        Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
-        Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
-        Map<String, Resource> originCompMap = new HashMap<>();
-        List<RequirementCapabilityRelDef> relations = new ArrayList<>();
-        Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
+        try {
+            log.debug("#createResourceInstancesRelations - Going to create relations ");
+            List<ComponentInstance> componentInstancesList = service.getComponentInstances();
+            if (((MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)))) { // PNF can have no resource instances
+                log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ", service.getUniqueId(), yamlName);
+                BeEcompErrorManager.getInstance().logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ", BeEcompErrorManager.ErrorSeverity.ERROR);
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
+            }
+            Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
+            Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
+            Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
+            Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
+            Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
+            Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
+            Map<String, Resource> originCompMap = new HashMap<>();
+            List<RequirementCapabilityRelDef> relations = new ArrayList<>();
+            Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
-        log.debug("enter ServiceImportBusinessLogic  createServiceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = serviceBusinessLogic.dataTypeCache.getAll();
-        if (allDataTypes.isRight()) {
-            JanusGraphOperationStatus status = allDataTypes.right().value();
-            BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
-                    "Failed to update property value on instance. Status is " + status, BeEcompErrorManager.ErrorSeverity.ERROR);
-            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
-                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)), yamlName));
-        }
-        Service finalResource = service;
-        uploadResInstancesMap
-                .values()
-                .forEach(i -> processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes,
-                        instProperties, instCapabilities, instRequirements, instDeploymentArtifacts,
-                        instArtifacts, instAttributes, originCompMap, instInputs, i));
-        serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
-        serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
-        serviceImportParseLogic.associateDeploymentArtifactsToInstances(user, yamlName, service, instDeploymentArtifacts);
-        serviceImportParseLogic.associateArtifactsToInstances(yamlName, service, instArtifacts);
-        serviceImportParseLogic.associateOrAddCalculatedCapReq(yamlName, service, instCapabilities, instRequirements);
-        log.debug("enter createServiceInstancesRelations test,instRequirements:{},instCapabilities:{}",
-                instRequirements, instCapabilities);
-        serviceImportParseLogic.associateInstAttributeToComponentToInstances(yamlName, service, instAttributes);
-        ToscaElement serviceTemplate = ModelConverter.convertToToscaElement(service);
-        Map<String, ListCapabilityDataDefinition> capabilities = serviceTemplate.getCapabilities();
-        Map<String, ListRequirementDataDefinition> requirements = serviceTemplate.getRequirements();
+            log.debug("enter ServiceImportBusinessLogic  createServiceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = serviceBusinessLogic.dataTypeCache.getAll();
+            if (allDataTypes.isRight()) {
+                JanusGraphOperationStatus status = allDataTypes.right().value();
+                BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
+                        "Failed to update property value on instance. Status is " + status, BeEcompErrorManager.ErrorSeverity.ERROR);
+                throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
+                        DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)), yamlName));
+            }
+            Service finalResource = service;
+            uploadResInstancesMap
+                    .values()
+                    .forEach(i -> processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes,
+                            instProperties, instCapabilities, instRequirements, instDeploymentArtifacts,
+                            instArtifacts, instAttributes, originCompMap, instInputs, i));
+            serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
+            serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
+            serviceImportParseLogic.associateDeploymentArtifactsToInstances(user, yamlName, service, instDeploymentArtifacts);
+            serviceImportParseLogic.associateArtifactsToInstances(yamlName, service, instArtifacts);
+            serviceImportParseLogic.associateOrAddCalculatedCapReq(yamlName, service, instCapabilities, instRequirements);
+            log.debug("enter createServiceInstancesRelations test,instRequirements:{},instCapabilities:{}",
+                    instRequirements, instCapabilities);
+            serviceImportParseLogic.associateInstAttributeToComponentToInstances(yamlName, service, instAttributes);
+            ToscaElement serviceTemplate = ModelConverter.convertToToscaElement(service);
+            Map<String, ListCapabilityDataDefinition> capabilities = serviceTemplate.getCapabilities();
+            Map<String, ListRequirementDataDefinition> requirements = serviceTemplate.getRequirements();
 
-        serviceImportParseLogic.associateCapabilitiesToService(yamlName, service, capabilities);
-        serviceImportParseLogic.associateRequirementsToService(yamlName, service, requirements);
-        service = getResourceAfterCreateRelations(service);
+            serviceImportParseLogic.associateCapabilitiesToService(yamlName, service, capabilities);
+            serviceImportParseLogic.associateRequirementsToService(yamlName, service, requirements);
+            service = getResourceAfterCreateRelations(service);
 
-        addRelationsToRI(yamlName, service, uploadResInstancesMap, componentInstancesList, relations);
-        serviceImportParseLogic.associateResourceInstances(yamlName, service, relations);
-        handleSubstitutionMappings(service, uploadResInstancesMap);
-        log.debug("************* in create relations, getResource start");
-        Either<Service, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
-        log.debug("************* in create relations, getResource end");
-        if (eitherGetResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByComponent(
-                    componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), service, service.getComponentType()));
+            addRelationsToRI(yamlName, service, uploadResInstancesMap, componentInstancesList, relations);
+            serviceImportParseLogic.associateResourceInstances(yamlName, service, relations);
+            handleSubstitutionMappings(service, uploadResInstancesMap);
+            log.debug("************* in create relations, getResource start");
+            Either<Service, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
+            log.debug("************* in create relations, getResource end");
+            if (eitherGetResource.isRight()) {
+                throw new ComponentException(componentsUtils.getResponseFormatByComponent(
+                        componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), service, service.getComponentType()));
+            }
+            return eitherGetResource.left().value();
+        }catch (Exception e){
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
-        return eitherGetResource.left().value();
     }
 
     protected void processComponentInstance(String yamlName, Service service,
