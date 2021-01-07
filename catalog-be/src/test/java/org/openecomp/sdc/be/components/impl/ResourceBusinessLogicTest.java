@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,6 +45,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.ServletContext;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -89,16 +90,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -127,29 +119,21 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 public class ResourceBusinessLogicTest {
 
 	private final ConfigurationManager configurationManager = new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
-	private static final Logger log = LoggerFactory.getLogger(ResourceBusinessLogicTest.class);
 	private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
 	private static final String RESOURCE_SUBCATEGORY = "Router";
 
 	private static final String UPDATED_SUBCATEGORY = "Gateway";
-
-    private String resourceId = "resourceId1";
-    private String operationId = "uniqueId1";
-    Resource resourceUpdate;
 
 	private static final String RESOURCE_NAME = "My-Resource_Name with   space";
 	private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
@@ -160,7 +144,7 @@ public class ResourceBusinessLogicTest {
 
 	final ServletContext servletContext = Mockito.mock(ServletContext.class);
 	IElementOperation mockElementDao;
-    JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
+	JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
 	UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
 	ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
 	NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
@@ -174,8 +158,8 @@ public class ResourceBusinessLogicTest {
 	WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
 	UserValidations userValidations = Mockito.mock(UserValidations.class);
 	WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-    IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
-    ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
+	IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
+	ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
 	IElementOperation elementDao = new ElementOperationMock();
 
 	CsarUtils csarUtils = Mockito.mock(CsarUtils.class);
@@ -228,7 +212,7 @@ public class ResourceBusinessLogicTest {
 	protected ComponentTagsValidator componentTagsValidator = new ComponentTagsValidator(componentsUtils);
 	protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
 	private ComponentValidator componentValidator = createComponentValidator();
-    private SoftwareInformationBusinessLogic softwareInformationBusinessLogic = Mockito.mock(SoftwareInformationBusinessLogic.class);
+	private SoftwareInformationBusinessLogic softwareInformationBusinessLogic = Mockito.mock(SoftwareInformationBusinessLogic.class);
 
 	private ComponentValidator createComponentValidator() {
 		List<ComponentFieldValidator> componentFieldValidators = Arrays.asList(componentNameValidator,
@@ -239,8 +223,6 @@ public class ResourceBusinessLogicTest {
 	}
 
 	ResourceBusinessLogic bl;
-	public ResourceBusinessLogicTest() {
-	}
 
 	@Before
 	public void setup() {
@@ -280,18 +262,6 @@ public class ResourceBusinessLogicTest {
 		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
 		when(toscaOperationFacade.validateComponentNameExists(eq(RESOURCE_NAME), any(ResourceTypeEnum.class),
 				eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherCount);
-		/*
-		 * when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME,
-		 * ResourceTypeEnum.VF,
-        when(interfaceOperation.updateInterface(anyString(), anyObject())).thenReturn(Either.left(InterfaceOperationTestUtils.mockInterfaceDefinitionToReturn(RESOURCE_NAME)));
-		 * ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		 * when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME,
-		 * ResourceTypeEnum.PNF,
-		 * ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		 * when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME,
-		 * ResourceTypeEnum.CR,
-		 * ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		 */
 		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
 		when(toscaOperationFacade.validateToscaResourceNameExists("tosca.nodes.Root")).thenReturn(validateDerivedExists);
 
@@ -309,7 +279,7 @@ public class ResourceBusinessLogicTest {
 		when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
 		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
 		when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
-        when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+		when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
 		// BL object
 		artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
@@ -325,18 +295,19 @@ public class ResourceBusinessLogicTest {
 		bl.setCapabilityTypeOperation(capabilityTypeOperation);
 		bl.setComponentsUtils(componentsUtils);
 		bl.setLifecycleManager(lifecycleBl);
-		bl.setGraphLockOperation(graphLockOperation);
 		bl.setArtifactsManager(artifactManager);
+		bl.setGraphLockOperation(graphLockOperation);
 		bl.setPropertyOperation(propertyOperation);
-        bl.setJanusGraphDao(mockJanusGraphDao);
+		bl.setJanusGraphDao(mockJanusGraphDao);
 		bl.setApplicationDataTypeCache(applicationDataTypeCache);
 		bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
 		bl.setCatalogOperations(catalogOperation);
 		toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
+		csarBusinessLogic.setComponentsUtils(componentsUtils);
 		toscaOperationFacade.setTopologyTemplateOperation(topologyTemplateOperation);
 		bl.setToscaOperationFacade(toscaOperationFacade);
 		bl.setUserValidations(userValidations);
-        bl.setInterfaceTypeOperation(interfaceTypeOperation);
+		bl.setInterfaceTypeOperation(interfaceTypeOperation);
 
 		csarBusinessLogic.setCsarOperation(csarOperation);
 		Resource resourceCsar = createResourceObjectCsar(true);
@@ -351,18 +322,62 @@ public class ResourceBusinessLogicTest {
 		bl.setComponentContactIdValidator(componentContactIdValidator);
 		bl.setComponentProjectCodeValidator(componentProjectCodeValidator);
 		bl.setComponentValidator(componentValidator);
-        reslist = new ArrayList<Resource>();
-        reslist.add(resourceResponse);
-        reslist.add(genericVF);
-        reslist.add(genericCR);
-        reslist.add(genericVFC);
-        reslist.add(genericPNF);
-        Either<List<Resource>, StorageOperationStatus> returneval= Either.left(reslist);
-        when(toscaOperationFacade.getAllCertifiedResources(true, true)).thenReturn(returneval);
-        when(toscaOperationFacade.validateComponentNameUniqueness("Resource", ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(true));
-        Either<List<Resource>, StorageOperationStatus> returnevalexception= Either.right(StorageOperationStatus.BAD_REQUEST);
-        when(toscaOperationFacade.getAllCertifiedResources(false, false)).thenReturn(returnevalexception);
+		reslist = new ArrayList<>();
+		reslist.add(resourceResponse);
+		reslist.add(genericVF);
+		reslist.add(genericCR);
+		reslist.add(genericVFC);
+		reslist.add(genericPNF);
+		Either<List<Resource>, StorageOperationStatus> returneval= Either.left(reslist);
+		when(toscaOperationFacade.getAllCertifiedResources(true, true)).thenReturn(returneval);
+		when(toscaOperationFacade.validateComponentNameUniqueness("Resource", ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(true));
+		Either<List<Resource>, StorageOperationStatus> returnevalexception= Either.right(StorageOperationStatus.BAD_REQUEST);
+		when(toscaOperationFacade.getAllCertifiedResources(false, false)).thenReturn(returnevalexception);
+	}
 
+	@Test(expected = ComponentException.class)
+	public void createResourcesFromYamlNodeTypesList() throws IOException {
+		Map<String, Object> mappedToscaTemplate = new HashMap<>();
+		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
+		List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
+		Map<String, NodeTypeInfo> nodeTypesInfo = new HashMap<>();
+		bl.createResourcesFromYamlNodeTypesList(
+				"",
+				resourceResponse,
+				mappedToscaTemplate,
+				false,
+				nodeTypesArtifactsToHandle,
+				nodeTypesNewCreatedArtifacts,
+				nodeTypesInfo,
+				new CsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name", ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml"),true));
+	}
+
+	@Test
+	public void handleNodeTypeArtifactsTest() {
+		Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = new HashMap<>();
+		List<ArtifactDefinition> defs = new ArrayList<>();
+		defs.add(new ArtifactDefinition());
+		nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.CREATE, defs);
+		nodeTypeArtifactsToHandle.put(ArtifactOperationEnum.UPDATE, defs);
+		assertTrue(bl.handleNodeTypeArtifacts(resourceResponse, nodeTypeArtifactsToHandle, new ArrayList<>(), user, true, true).isRight());
+	}
+
+	@Test
+	public void getUiComponentDataTransferByComponentIdTest() {
+		when(toscaOperationFacade.getToscaElement(eq(""), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(genericCR));
+		assertTrue(bl.getUiComponentDataTransferByComponentId("", new ArrayList<>()).isLeft());
+		when(toscaOperationFacade.getToscaElement(eq(""), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.OK));
+		assertTrue(bl.getUiComponentDataTransferByComponentId("", new ArrayList<>()).isRight());
+	}
+
+	@Test
+	public void shouldUpgradeToLatestDerivedTest() {
+		createCR();
+		createVF();
+		when(toscaOperationFacade.shouldUpgradeToLatestDerived(genericCR)).thenReturn(Either.left(genericCR));
+		when(toscaOperationFacade.shouldUpgradeToLatestDerived(genericVFC)).thenReturn(Either.right(StorageOperationStatus.OK));
+		assertTrue(bl.shouldUpgradeToLatestDerived(genericVF).isLeft());
+		assertTrue(bl.shouldUpgradeToLatestDerived(genericCR).isLeft());
 	}
 
 	private Resource createResourceObject(boolean afterCreate) {
@@ -454,24 +469,48 @@ public class ResourceBusinessLogicTest {
 		setCanWorkOnResource(resource);
 		validateUserRoles(Role.ADMIN, Role.DESIGNER);
 		Either<Resource, StorageOperationStatus> resourceLinkedToCsarRes = Either.left(resource);
-		when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(),
-				resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
+		when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(), resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
 		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
 		when(toscaOperationFacade.validateToscaResourceNameExists("tosca.nodes.Root")).thenReturn(validateDerivedExists);
-        Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-        when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Resource createdResource = null;
 		try {
-			createdResource = bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
-			assertThat(resource.getUniqueId()).isEqualTo(createdResource.getUniqueId());
+			assertThat(resource.getUniqueId()).isEqualTo(bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId()).getUniqueId());
 		} catch (ComponentException e) {
-			assertThat(new Integer(200)).isEqualTo(e.getResponseFormat()
-					.getStatus());
+			assertThat(e.getResponseFormat().getStatus()).isEqualTo(200);
 		}
 	}
 
+	@Test
+	public void testUpdateUnhappyScenario() {
+		Resource resource = createResourceObjectCsar(true);
+		setCanWorkOnResource(resource);
+		validateUserRoles(Role.ADMIN, Role.DESIGNER);
+
+		when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(), resource.getSystemName())).thenReturn(Either.left(resource));
+		when(toscaOperationFacade.validateToscaResourceNameExists("tosca.nodes.Root")).thenReturn(Either.left(true));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(Either.left(setCanWorkOnResource(resource)));
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(Either.left(resource));
+
+		when(csarOperation.getCsar("valid_vf.csar", user)).thenReturn(Either.left(new HashMap<>()));
+
+
+		try {
+			Resource createdResource = bl.validateAndUpdateResourceFromCsar(resource, user, null, "", resource.getUniqueId());
+			assertThat(resource.getUniqueId()).isEqualTo(createdResource.getUniqueId());
+		} catch (ComponentException e) {
+			assertThat(e.getResponseFormat().getStatus()).isEqualTo(400);
+		}
+		try {
+			resource.setCsarVersion("2");
+			when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(), resource.getSystemName())).thenReturn(Either.left(resource));
+			bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
+		} catch (ComponentException e) {
+			assertThat(e.getResponseFormat().getStatus()).isEqualTo(400);
+		}
+	}
 	/* CREATE validations - start ***********************/
 	// Resource name - start
 
@@ -867,19 +906,19 @@ public class ResourceBusinessLogicTest {
 		try {
 			bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		} catch (ComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
+			assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
 		}
 	}
 
 	private void testVendorReleaseWrongFormat() {
 		Resource resource = createResourceObject(false);
 		// contains >
-        String vendorReleaseWrongFormat = "1>2";
-        resource.setVendorRelease(vendorReleaseWrongFormat);
+		String vendorReleaseWrongFormat = "1>2";
+		resource.setVendorRelease(vendorReleaseWrongFormat);
 		try {
 			bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		} catch (ComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_RELEASE, vendorReleaseWrongFormat);
+			assertComponentException(e, ActionStatus.INVALID_VENDOR_RELEASE, vendorReleaseWrongFormat);
 		}
 	}
 
@@ -1040,17 +1079,17 @@ public class ResourceBusinessLogicTest {
 	}
 
 	private void assertResponse(Either<Resource, ResponseFormat> createResponse, ActionStatus expectedStatus,
-			String... variables) {
+								String... variables) {
 		assertResponse(createResponse.right()
 				.value(), expectedStatus, variables);
 	}
 
-    // UPDATE tests - start
-    // Resource name
-    @Test
-    public void testResourceNameWrongFormat_UPDATE() {
-        Resource resource = createResourceObject(true);
-        Resource updatedResource = createResourceObject(true);
+	// UPDATE tests - start
+	// Resource name
+	@Test
+	public void testResourceNameWrongFormat_UPDATE() {
+		Resource resource = createResourceObject(true);
+		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
 		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
@@ -1068,10 +1107,10 @@ public class ResourceBusinessLogicTest {
 		}
 	}
 
-    @Test
-    public void testResourceNameAfterCertify_UPDATE() {
-        Resource resource = createResourceObject(true);
-        Resource updatedResource = createResourceObject(true);
+	@Test
+	public void testResourceNameAfterCertify_UPDATE() {
+		Resource resource = createResourceObject(true);
+		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
 		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
@@ -1091,10 +1130,10 @@ public class ResourceBusinessLogicTest {
 		}
 	}
 
-    @Test
-    public void testResourceNameAlreadyExist_UPDATE() {
-        Resource resource = createResourceObject(true);
-        Resource updatedResource = createResourceObject(true);
+	@Test
+	public void testResourceNameAlreadyExist_UPDATE() {
+		Resource resource = createResourceObject(true);
+		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
 		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
@@ -1271,7 +1310,7 @@ public class ResourceBusinessLogicTest {
 		try {
 			bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		} catch (ComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
+			assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
 		}
 	}
 
@@ -1294,7 +1333,7 @@ public class ResourceBusinessLogicTest {
 		try {
 			bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		} catch (ComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
+			assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
 		}
 	}
 
@@ -1339,6 +1378,11 @@ public class ResourceBusinessLogicTest {
 		} catch (ComponentException e) {
 			assertComponentException(e, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
 		}
+	}
+
+	@Test(expected = ComponentException.class)
+	public void createResourceFromCsarTest() {
+		bl.createResourceFromCsar(resourceResponse, user, new HashMap<>(), "");
 	}
 
 	@Test
@@ -1543,7 +1587,7 @@ public class ResourceBusinessLogicTest {
 
 		when(lifecycleBl.changeState(anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
 				any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean()))
-						.thenReturn(Either.left(createdResource));
+				.thenReturn(Either.left(createdResource));
 
 		Resource resourceToUpdtae = createResourceObject(false);
 
@@ -1588,7 +1632,7 @@ public class ResourceBusinessLogicTest {
 	@Test
 	public void testIfNodeTypeNameHasValidPrefix() {
 		final List<String> definedNodeTypeNamespaceList = ConfigurationManager.getConfigurationManager()
-			.getConfiguration().getDefinedResourceNamespace();
+				.getConfiguration().getDefinedResourceNamespace();
 
 		definedNodeTypeNamespaceList.parallelStream().forEach(validNodeTypePrefix -> {
 			final String nodeName = validNodeTypePrefix + "." + "abc";
@@ -1697,68 +1741,50 @@ public class ResourceBusinessLogicTest {
 		bl.validatePropertiesDefaultValues(basic);
 	}
 
-	// @Test
-	// public void testDeleteMarkedResourcesNoResources() {
-	// List<GraphVertex> ids = new ArrayList<>();
-	// Either<List<GraphVertex>, StorageOperationStatus> eitherNoResources =
-	// Either.left(ids);
-	// when(topologyTemplateOperation.getAllComponentsMarkedForDeletion(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
-	//
-	// Either<List<String>, ResponseFormat> deleteMarkedResources =
-	// bl.deleteMarkedComponents();
-	// assertTrue(deleteMarkedResources.isLeft());
-	// assertTrue(deleteMarkedResources.left().value().isEmpty());
-	//
-	// Mockito.verify(artifactManager,
-	// Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
-	//
-	// }
-	//
-	// @Test
-	// public void testDeleteMarkedResources() {
-	// List<String> ids = new ArrayList<String>();
-	// String resourceInUse = "123";
-	// ids.add(resourceInUse);
-	// String resourceFree = "456";
-	// ids.add(resourceFree);
-	// Either<List<String>, StorageOperationStatus> eitherNoResources =
-	// Either.left(ids);
-	// when(toscaOperationFacade.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
-	//
-	// Either<Boolean, StorageOperationStatus> resourceInUseResponse =
-	// Either.left(true);
-	// Either<Boolean, StorageOperationStatus> resourceFreeResponse =
-	// Either.left(false);
-	//
-	// List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
-	// Either<List<ArtifactDefinition>, StorageOperationStatus>
-	// getArtifactsResponse = Either.left(artifacts);
-	// when(toscaOperationFacade.getComponentArtifactsForDelete(resourceFree,
-	// NodeTypeEnum.Resource, true)).thenReturn(getArtifactsResponse);
-	//
-	// when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
-	// when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
-	//
-	// Either<Component, StorageOperationStatus> eitherDelete = Either.left(new
-	// Resource());
-	// when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
-	//
-	// when(artifactManager.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
-	// List<String> deletedComponents = new ArrayList<>();
-	// deletedComponents.add(resourceFree);
-	// when(toscaOperationFacade.deleteMarkedElements(ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(deletedComponents));
-	//
-	// Either<List<String>, ResponseFormat> deleteMarkedResources =
-	// bl.deleteMarkedComponents();
-	// assertTrue(deleteMarkedResources.isLeft());
-	// List<String> resourceIdList = deleteMarkedResources.left().value();
-	// assertFalse(resourceIdList.isEmpty());
-	// assertTrue(resourceIdList.contains(resourceFree));
-	// assertFalse(resourceIdList.contains(resourceInUse));
-	//
-	// Mockito.verify(artifactManager,
-	// Mockito.times(1)).deleteAllComponentArtifactsIfNotOnGraph(artifacts);
-	// }
+	@Test
+	public void testDeleteMarkedResourcesNoResources() {
+		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(new ArrayList<>());
+
+		when(toscaOperationFacade.deleteMarkedElements(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
+
+		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
+		assertTrue(deleteMarkedResources.isLeft());
+		assertTrue(deleteMarkedResources.left().value().isEmpty());
+	}
+
+	@Test
+	public void testDeleteMarkedResources() {
+		List<String> ids = new ArrayList<>();
+		String resourceInUse = "123";
+		String resourceFree = "456";
+		ids.add(resourceInUse);
+		ids.add(resourceFree);
+		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
+		when(toscaOperationFacade.getAllComponentsMarkedForDeletion(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
+
+		Either<Boolean, StorageOperationStatus> resourceInUseResponse =	Either.left(true);
+		Either<Boolean, StorageOperationStatus> resourceFreeResponse = Either.left(false);
+
+		List<ArtifactDefinition> artifacts = new ArrayList<>();
+
+		when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
+		when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
+
+		Either<Component, StorageOperationStatus> eitherDelete = Either.left(new
+				Resource());
+		when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
+
+		List<String> deletedComponents = new ArrayList<>();
+		deletedComponents.add(resourceFree);
+		when(toscaOperationFacade.deleteMarkedElements(ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(deletedComponents));
+
+		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
+		assertTrue(deleteMarkedResources.isLeft());
+		List<String> resourceIdList = deleteMarkedResources.left().value();
+		assertFalse(resourceIdList.isEmpty());
+		assertTrue(resourceIdList.contains(resourceFree));
+		assertFalse(resourceIdList.contains(resourceInUse));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -2204,32 +2230,32 @@ public class ResourceBusinessLogicTest {
 	}
 
 
-    @Test
-    public void testgetAllCertifiedResources() throws Exception {
-        List<Resource> list = bl.getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, "USER");
-        Assert.assertEquals(reslist,list);
-    }
+	@Test
+	public void testgetAllCertifiedResources() throws Exception {
+		List<Resource> list = bl.getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, "USER");
+		Assert.assertEquals(reslist,list);
+	}
 
-    @Test(expected = StorageException.class)
-    public void testgetAllCertifiedResources_exception() throws Exception {
-        List<Resource> list = bl.getAllCertifiedResources(false, HighestFilterEnum.NON_HIGHEST_ONLY, "USER");
-        Assert.assertEquals(reslist,list);
-    }
+	@Test(expected = StorageException.class)
+	public void testgetAllCertifiedResources_exception() throws Exception {
+		List<Resource> list = bl.getAllCertifiedResources(false, HighestFilterEnum.NON_HIGHEST_ONLY, "USER");
+		Assert.assertEquals(reslist,list);
+	}
 
-    @Test
-    public void testvalidateResourceNameExists() throws Exception {
-        Either<Map<String, Boolean>, ResponseFormat> res = bl.validateResourceNameExists("Resource", ResourceTypeEnum.CR, "jh0003");
-        Assert.assertEquals(true,res.isLeft());
-    }
+	@Test
+	public void testvalidateResourceNameExists() throws Exception {
+		Either<Map<String, Boolean>, ResponseFormat> res = bl.validateResourceNameExists("Resource", ResourceTypeEnum.CR, "jh0003");
+		Assert.assertEquals(true,res.isLeft());
+	}
 
-    @Test
+	@Test
 	public void rollbackWithEitherAlwaysReturnARuntimeException() {
 		JanusGraphDao janusGraphDao = mockJanusGraphDao;
 		ActionStatus actionStatus = ActionStatus.INPUTS_NOT_FOUND;
 		String params = "testName";
 
 		Either<Object, RuntimeException> result =
-			ResourceBusinessLogic.rollbackWithEither(janusGraphDao, actionStatus, params);
+				ResourceBusinessLogic.rollbackWithEither(janusGraphDao, actionStatus, params);
 
 		assertTrue(result.isRight());
 		assertTrue(result.right().value() instanceof ByActionStatusComponentException);
@@ -2242,7 +2268,7 @@ public class ResourceBusinessLogicTest {
 		String params = "testName";
 
 		Either<Object, RuntimeException> result =
-			ResourceBusinessLogic.rollbackWithEither(janusGraphDao, actionStatus, params);
+				ResourceBusinessLogic.rollbackWithEither(janusGraphDao, actionStatus, params);
 
 		assertTrue(result.isRight());
 		assertTrue(result.right().value() instanceof ByActionStatusComponentException);

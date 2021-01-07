@@ -145,21 +145,20 @@ public class SdcResourceIconMigrationTest {
         verify(janusGraphDao, times(2)).commit();
     }
 
-    // A temp remark for this test - following Commit hash:    08595ad21b0c409c69e3902232f5575963199e3e [ASDC-641] – Migration workaround for deployment artifact timeout. Reviewer: Lior.
-//    @Test
-//    public void migrationFailedWhenInstanceVertexUpdateFailed() {
-//        mockInstancesFoundFlow();
-//        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.TOPOLOGY_TEMPLATE), eq(null), anyMap(), eq(JsonParseFlagEnum.ParseAll)))
-//                .thenReturn(Either.left(Lists.newArrayList(topologyTemplateVertex)));
-//        when(compositionDataDefinition.getComponentInstances()).thenReturn(Maps.newHashMap("a", componentInstanceDataDefinition));
-//        doReturn(Maps.newHashMap(JsonConstantKeysEnum.COMPOSITION.getValue(), compositionDataDefinition)).when(topologyTemplateVertex).getJson();
-//        when(janusGraphDao.updateVertex(any(GraphVertex.class))).thenReturn(Either.left(graphVertex))
-//                .thenReturn(Either.left(graphVertex))
-//                .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
-//
-//        assertEquals(MigrationResult.MigrationStatus.FAILED, iconMigration.migrate().getMigrationStatus());
-//        verify(janusGraphDao, times(2)).commit();
-//    }
+    @Test
+    public void migrationFailedWhenInstanceVertexUpdateFailed() {
+        mockInstancesFoundFlow();
+        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.TOPOLOGY_TEMPLATE), eq(null), anyMap(), eq(JsonParseFlagEnum.ParseAll)))
+                .thenReturn(Either.left(Lists.newArrayList(topologyTemplateVertex)));
+        when(compositionDataDefinition.getComponentInstances()).thenReturn(Maps.newHashMap("a", componentInstanceDataDefinition));
+        doReturn(Maps.newHashMap(JsonConstantKeysEnum.COMPOSITION.getValue(), compositionDataDefinition)).when(topologyTemplateVertex).getJson();
+        when(janusGraphDao.updateVertex(any(GraphVertex.class))).thenReturn(Either.left(graphVertex))
+                .thenReturn(Either.left(graphVertex))
+                .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+
+        assertEquals(MigrationResult.MigrationStatus.COMPLETED, iconMigration.migrate().getMigrationStatus());
+        verify(janusGraphDao, times(2)).commit();
+    }
 
     @Test
     public void migrationCompletedWhenVertexJsonIsEmpty() {
