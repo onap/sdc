@@ -55,7 +55,6 @@ import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -1527,37 +1526,40 @@ public class ServiceImportParseLogic {
 
     @SuppressWarnings("unchecked")
     protected void setInformationalArtifactsPlaceHolder(Service service, User user) {
-        Map<String, ArtifactDefinition> artifactMap = service.getArtifacts();
-        if (artifactMap == null) {
-            artifactMap = new HashMap<>();
-        }
-        String resourceUniqueId = service.getUniqueId();
-        List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
-                .getExcludeResourceCategory();
-        List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration()
-                .getExcludeResourceType();
-        Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager()
-                .getConfiguration().getInformationalResourceArtifacts();
-        List<CategoryDefinition> categories = service.getCategories();
-        boolean isCreateArtifact = true;
-        if (exludeResourceCategory != null) {
-            String category = categories.get(0).getName();
-            isCreateArtifact = exludeResourceCategory.stream().noneMatch(e->e.equalsIgnoreCase(category));
-        }
 
-        if (informationalResourceArtifacts != null && isCreateArtifact) {
-            Set<String> keys = informationalResourceArtifacts.keySet();
-            for (String informationalResourceArtifactName : keys) {
-                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts
-                        .get(informationalResourceArtifactName);
-                ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-                        resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
-                        ArtifactGroupTypeEnum.INFORMATIONAL);
-                artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
-
+            Map<String, ArtifactDefinition> artifactMap = service.getArtifacts();
+            if (artifactMap == null) {
+                artifactMap = new HashMap<>();
             }
-        }
-        service.setArtifacts(artifactMap);
+            String resourceUniqueId = service.getUniqueId();
+            List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
+                    .getExcludeResourceCategory();
+            List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration()
+                    .getExcludeResourceType();
+            Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager()
+                    .getConfiguration().getInformationalResourceArtifacts();
+            List<CategoryDefinition> categories = service.getCategories();
+            boolean isCreateArtifact = true;
+            if (exludeResourceCategory != null) {
+                String category = categories.get(0).getName();
+                isCreateArtifact = exludeResourceCategory.stream().noneMatch(e -> e.equalsIgnoreCase(category));
+            }
+
+            if (informationalResourceArtifacts != null && isCreateArtifact) {
+                Set<String> keys = informationalResourceArtifacts.keySet();
+                for (String informationalResourceArtifactName : keys) {
+                    Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts
+                            .get(informationalResourceArtifactName);
+                    if(serviceBusinessLogic.artifactsBusinessLogic!=null){
+                        ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic.createArtifactPlaceHolderInfo(
+                                resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
+                                ArtifactGroupTypeEnum.INFORMATIONAL);
+                        artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
+                    }
+                }
+            }
+            service.setArtifacts(artifactMap);
+
     }
 
     public void rollback(boolean inTransaction, Service service, List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
@@ -1659,21 +1661,29 @@ public class ServiceImportParseLogic {
 
 
     private void validateFields(Resource currentResource, Resource updateInfoResource, boolean inTransaction, boolean isNested) {
-        boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentResource.getVersion());
-        log.debug("validate resource name before update");
-        validateResourceName(currentResource, updateInfoResource, hasBeenCertified, isNested);
-        log.debug("validate description before update");
-        serviceBusinessLogic.componentDescriptionValidator.validateAndCorrectField(null, updateInfoResource, null);
-        log.debug("validate icon before update");
-        log.debug("validate tags before update");
-        serviceBusinessLogic.componentTagsValidator.validateAndCorrectField(null, updateInfoResource, null);
-        log.debug("validate vendor name before update");
-        log.debug("validate resource vendor model number before update");
-        log.debug("validate vendor release before update");
-        log.debug("validate contact info before update");
-        serviceBusinessLogic.componentContactIdValidator.validateAndCorrectField(null, updateInfoResource, null);
-        log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
-        log.debug("validate category before update");
+
+            boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentResource.getVersion());
+            log.debug("validate resource name before update");
+            validateResourceName(currentResource, updateInfoResource, hasBeenCertified, isNested);
+            log.debug("validate description before update");
+            if(serviceBusinessLogic.componentDescriptionValidator!=null){
+                serviceBusinessLogic.componentDescriptionValidator.validateAndCorrectField(null, updateInfoResource, null);
+            }
+            log.debug("validate icon before update");
+            log.debug("validate tags before update");
+            if(serviceBusinessLogic.componentTagsValidator!=null){
+                serviceBusinessLogic.componentTagsValidator.validateAndCorrectField(null, updateInfoResource, null);
+            }
+            log.debug("validate vendor name before update");
+            log.debug("validate resource vendor model number before update");
+            log.debug("validate vendor release before update");
+            log.debug("validate contact info before update");
+            if(serviceBusinessLogic.componentContactIdValidator!=null){
+                serviceBusinessLogic.componentContactIdValidator.validateAndCorrectField(null, updateInfoResource, null);
+            }
+            log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
+            log.debug("validate category before update");
+
     }
 
 
@@ -1720,13 +1730,16 @@ public class ServiceImportParseLogic {
     }
 
     protected Resource failOnChangeState(ResponseFormat response, User user, Resource oldResource, Resource newResource) {
-        log.info("resource {} cannot be updated. reason={}", oldResource.getUniqueId(),
-                response.getFormattedMessage());
-        componentsUtils.auditResource(response, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
-                ResourceVersionInfo.newBuilder()
-                        .state(oldResource.getLifecycleState().name())
-                        .version(oldResource.getVersion())
-                        .build());
+            if(response.getRequestError() != null){
+                log.info("resource {} cannot be updated. reason={}", oldResource.getUniqueId(),
+                        response.getFormattedMessage());
+
+                componentsUtils.auditResource(response, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
+                        ResourceVersionInfo.newBuilder()
+                                .state(oldResource.getLifecycleState().name())
+                                .version(oldResource.getVersion())
+                                .build());
+            }
         throw new ComponentException(response);
     }
 
@@ -2087,40 +2100,43 @@ public class ServiceImportParseLogic {
     }
 
     protected void setInformationalArtifactsPlaceHolder(Resource resource, User user) {
-        Map<String, ArtifactDefinition> artifactMap = resource.getArtifacts();
-        if (artifactMap == null) {
-            artifactMap = new HashMap<>();
-        }
-        String resourceUniqueId = resource.getUniqueId();
-        List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
-                .getExcludeResourceCategory();
-        List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration()
-                .getExcludeResourceType();
-        Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager()
-                .getConfiguration().getInformationalResourceArtifacts();
-        List<CategoryDefinition> categories = resource.getCategories();
-        boolean isCreateArtifact = true;
-        if (exludeResourceCategory != null) {
-            String category = categories.get(0).getName();
-            isCreateArtifact = exludeResourceCategory.stream().noneMatch(e->e.equalsIgnoreCase(category));
-        }
-        if (isCreateArtifact && exludeResourceType != null) {
-            String resourceType = resource.getResourceType().name();
-            isCreateArtifact = exludeResourceType.stream().noneMatch(e->e.equalsIgnoreCase(resourceType));
-        }
-        if (informationalResourceArtifacts != null && isCreateArtifact) {
-            Set<String> keys = informationalResourceArtifacts.keySet();
-            for (String informationalResourceArtifactName : keys) {
-                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts
-                        .get(informationalResourceArtifactName);
-                ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-                        resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
-                        ArtifactGroupTypeEnum.INFORMATIONAL);
-                artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
 
+            Map<String, ArtifactDefinition> artifactMap = resource.getArtifacts();
+            if (artifactMap == null) {
+                artifactMap = new HashMap<>();
             }
-        }
-        resource.setArtifacts(artifactMap);
+            String resourceUniqueId = resource.getUniqueId();
+            List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
+                    .getExcludeResourceCategory();
+            List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration()
+                    .getExcludeResourceType();
+            Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager()
+                    .getConfiguration().getInformationalResourceArtifacts();
+            List<CategoryDefinition> categories = resource.getCategories();
+            boolean isCreateArtifact = true;
+            if (exludeResourceCategory != null) {
+                String category = categories.get(0).getName();
+                isCreateArtifact = exludeResourceCategory.stream().noneMatch(e->e.equalsIgnoreCase(category));
+            }
+            if (isCreateArtifact && exludeResourceType != null) {
+                String resourceType = resource.getResourceType().name();
+                isCreateArtifact = exludeResourceType.stream().noneMatch(e->e.equalsIgnoreCase(resourceType));
+            }
+            if (informationalResourceArtifacts != null && isCreateArtifact) {
+                Set<String> keys = informationalResourceArtifacts.keySet();
+                for (String informationalResourceArtifactName : keys) {
+                    Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts
+                            .get(informationalResourceArtifactName);
+                    if(serviceBusinessLogic.artifactsBusinessLogic!=null){
+                        ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic.createArtifactPlaceHolderInfo(
+                                resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
+                                ArtifactGroupTypeEnum.INFORMATIONAL);
+                        artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
+                    }
+                }
+            }
+            resource.setArtifacts(artifactMap);
+
     }
 
     public void rollback(boolean inTransaction, Resource resource, List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {

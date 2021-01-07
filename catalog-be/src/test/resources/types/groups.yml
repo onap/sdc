@@ -1,0 +1,40 @@
+zxjTestImportServiceAb 0:
+  type: org.openecomp.resource.vf.Zxjtestimportserviceab
+  metadata:
+    invariantUUID: 41474f7f-3195-443d-a0a2-eb6020a56279
+    UUID: 92e32e49-55f8-46bf-984d-a98c924037ec
+    customizationUUID: 40286158-96d0-408e-9f27-21d43817d37c
+    version: '1.0'
+    name: zxjTestImportServiceAb
+    description: zxjTestImportServiceAbstract
+    type: VF
+    category: Generic
+    subcategory: Abstract
+    resourceVendor: zxjImportService
+    resourceVendorRelease: '1.0'
+    resourceVendorModelNumber: ''
+  properties:
+    skip_post_instantiation_configuration: true
+    nf_naming:
+      ecomp_generated_naming: true
+    multi_stage_design: 'false'
+    controller_actor: SO-REF-DATA
+    availability_zone_max_count: 1
+  requirements:
+  - imagefile.dependency:
+      capability: feature
+      node: ext ZTE VL 0
+  - mme_ipu_vdu.dependency:
+      capability: feature
+      node: ExtCP 0
+  capabilities:
+    mme_ipu_vdu.scalable:
+      properties:
+        max_instances: 1
+        min_instances: 1
+    mme_ipu_vdu.nfv_compute:
+      properties:
+        num_cpus: '2'
+        flavor_extra_specs: {
+          }
+        mem_size: '8192'
