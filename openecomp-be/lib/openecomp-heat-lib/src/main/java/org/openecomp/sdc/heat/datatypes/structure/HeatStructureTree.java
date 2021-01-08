@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (C) 2020 Nokia
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -53,9 +54,11 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
     private Set<HeatStructureTree> helm;
 
     public HeatStructureTree() {
+        heat = new TreeSet<>();
     }
 
     public HeatStructureTree(String fileName, boolean isBase) {
+        this();
         this.isBase = isBase;
         this.fileName = fileName;
     }
@@ -76,7 +79,7 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
      * @return the heat structure tree by name
      */
     public static HeatStructureTree getHeatStructureTreeByName(Set<HeatStructureTree> filesSet,
-                                                               String filename) {
+        String filename) {
         for (HeatStructureTree heatStructureTree : filesSet) {
             if (heatStructureTree.getFileName().equals(filename)) {
                 return heatStructureTree;
@@ -166,7 +169,7 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         this.other.add(other);
     }
 
-    public void addToHelmList(HeatStructureTree helm){
+    public void addToHelmList(HeatStructureTree helm) {
         if (this.helm == null) {
             this.helm = new TreeSet<>();
         }
@@ -198,7 +201,7 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
      */
     public void removeFromVolumeOrNetwork(String fileNameToRemove, FileData.Type type) {
         Set<HeatStructureTree> volumeOrNetworkSet =
-                type.equals(FileData.Type.HEAT_VOL) ? this.volume : this.network;
+            type.equals(FileData.Type.HEAT_VOL) ? this.volume : this.network;
         HeatStructureTree toRemove = getHeatStructureTreeByName(volumeOrNetworkSet, fileNameToRemove);
 
         volumeOrNetworkSet.remove(toRemove);
@@ -215,7 +218,6 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         result1 = 31 * result1 + (nested != null ? nested.hashCode() : 0);
         result1 = 31 * result1 + (errors != null ? errors.hashCode() : 0);
 
-
         return result1;
     }
 
@@ -231,7 +233,7 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         HeatStructureTree heatStructureTree = (HeatStructureTree) other;
 
         if (fileName != null ? !fileName.equals(heatStructureTree.fileName)
-                : heatStructureTree.fileName != null) {
+            : heatStructureTree.fileName != null) {
             return false;
         }
         if (env != null ? !env.equals(heatStructureTree.env) : heatStructureTree.env != null) {
@@ -241,19 +243,19 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
             return false;
         }
         if (volume != null ? !volume.equals(heatStructureTree.volume)
-                : heatStructureTree.volume != null) {
+            : heatStructureTree.volume != null) {
             return false;
         }
         if (network != null ? !network.equals(heatStructureTree.network)
-                : heatStructureTree.network != null) {
+            : heatStructureTree.network != null) {
             return false;
         }
         if (artifacts != null ? !artifacts.equals(heatStructureTree.artifacts)
-                : heatStructureTree.artifacts != null) {
+            : heatStructureTree.artifacts != null) {
             return false;
         }
         if (nested != null ? !nested.equals(heatStructureTree.nested)
-                : heatStructureTree.nested != null) {
+            : heatStructureTree.nested != null) {
             return false;
         }
 
