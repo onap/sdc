@@ -67,7 +67,7 @@ public class HeatTreeManagerTest extends TreeBaseTest {
     heatTreeManager.addErrors(errorMap);
     HeatStructureTree tree = heatTreeManager.getTree();
     Assert.assertNotNull(tree);
-    Assert.assertNull(tree.getHeat());
+    Assert.assertTrue(tree.getHeat().isEmpty());
 
   }
 
