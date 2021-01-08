@@ -1,35 +1,45 @@
 {
+  "heat": [],
   "nested": [
     {
       "fileName": "TOSCA-Metadata",
+      "heat": [],
       "nested": [
         {
-          "fileName": "TOSCA.meta"
+          "fileName": "TOSCA.meta",
+          "heat": []
         }
       ]
     },
     {
-      "fileName": "MainServiceTemplate.yaml"
+      "fileName": "MainServiceTemplate.yaml",
+      "heat": []
     },
     {
       "fileName": "Definitions",
+      "heat": [],
       "nested": [
         {
-          "fileName": "GlobalSubstitutionTypesServiceTemplate.yaml"
+          "fileName": "GlobalSubstitutionTypesServiceTemplate.yaml",
+          "heat": []
         }
       ]
     },
     {
       "fileName": "Artifacts",
+      "heat": [],
       "nested": [
         {
           "fileName": "OTHER",
+          "heat": [],
           "nested": [
             {
-              "fileName": "clearWaterIMSOTHERDEPLOYMENT.zip"
+              "fileName": "clearWaterIMSOTHERDEPLOYMENT.zip",
+              "heat": []
             },
             {
-              "fileName": "clearWaterIMSOTHER.zip"
+              "fileName": "clearWaterIMSOTHER.zip",
+              "heat": []
             }
           ]
         }
