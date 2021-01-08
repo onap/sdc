@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +68,7 @@ public class HeatTreeManagerTest extends TreeBaseTest {
     heatTreeManager.addErrors(errorMap);
     HeatStructureTree tree = heatTreeManager.getTree();
     Assert.assertNotNull(tree);
-    Assert.assertNull(tree.getHeat());
+    Assert.assertTrue(tree.getHeat().isEmpty());
 
   }
 
