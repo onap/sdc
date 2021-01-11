@@ -22,6 +22,30 @@
       "revId": "f1e744b41ea6a371ac0c6a5aa0b39f747cb4a50f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "079ee07a_770b6f89",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/structure/HeatStructureTree.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-01-11T06:27:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb5099e9_372b7739",
+      "range": {
+        "startLine": 7,
+        "startChar": 31,
+        "endLine": 7,
+        "endChar": 35
+      },
+      "revId": "f1e744b41ea6a371ac0c6a5aa0b39f747cb4a50f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
