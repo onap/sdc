@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "f10a409f_7b87ef48",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/ArtifactOperationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-11T15:33:58Z",
+      "side": 1,
+      "message": "those 2 I selected (createService, buildServiceMetadata)",
+      "parentUuid": "87609dc5_817a646f",
+      "range": {
+        "startLine": 321,
+        "startChar": 4,
+        "endLine": 360,
+        "endChar": 0
+      },
+      "revId": "62864da199c52a5938a44d927603649cbe9553a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "29c47b6f_d0e18d71",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperationTest.java",
         "patchSetId": 3
@@ -131,6 +155,30 @@
       "side": 1,
       "message": "Not sure, I chose to stay with the one implemented in this test",
       "parentUuid": "29c47b6f_d0e18d71",
+      "range": {
+        "startLine": 119,
+        "startChar": 4,
+        "endLine": 151,
+        "endChar": 0
+      },
+      "revId": "62864da199c52a5938a44d927603649cbe9553a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f92b3ddb_f382b484",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-11T15:33:58Z",
+      "side": 1,
+      "message": "it would be understandable if you have huge number of TCs, but in this case we have 3 old and 2 new (added by you), in my opinion it should be migrated to Junit 5 (all 5 TCs), what do you think?",
+      "parentUuid": "0095998e_7b42c5a9",
       "range": {
         "startLine": 119,
         "startChar": 4,
