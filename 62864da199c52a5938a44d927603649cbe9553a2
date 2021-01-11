@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ceef1a61_f627431c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-11T15:21:36Z",
+      "side": 1,
+      "message": "My bad, thanks Vasyl :)",
+      "parentUuid": "63cb1486_d27639ae",
+      "range": {
+        "startLine": 355,
+        "startChar": 1,
+        "endLine": 363,
+        "endChar": 2
+      },
+      "revId": "62864da199c52a5938a44d927603649cbe9553a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dbfd6941_6aaad70e",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/ArtifactOperationTest.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2021-01-11T14:41:59Z",
       "side": 1,
       "message": "what about other \u0027unused\u0027 methods, should we remove them too?",
+      "range": {
+        "startLine": 321,
+        "startChar": 4,
+        "endLine": 360,
+        "endChar": 0
+      },
+      "revId": "62864da199c52a5938a44d927603649cbe9553a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87609dc5_817a646f",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/ArtifactOperationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-11T15:21:36Z",
+      "side": 1,
+      "message": "I don\u0027t have any unused methods reported by my ide, but yeah, removing dead code is always great. Which one in particular ?",
+      "parentUuid": "dbfd6941_6aaad70e",
       "range": {
         "startLine": 321,
         "startChar": 4,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "0095998e_7b42c5a9",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-11T15:21:36Z",
+      "side": 1,
+      "message": "Not sure, I chose to stay with the one implemented in this test",
+      "parentUuid": "29c47b6f_d0e18d71",
+      "range": {
+        "startLine": 119,
+        "startChar": 4,
+        "endLine": 151,
+        "endChar": 0
+      },
+      "revId": "62864da199c52a5938a44d927603649cbe9553a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1b077584_59af6855",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/CompositionEntityDataManagerImplTest.java",
         "patchSetId": 3
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "54f47d88_2786812a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/CompositionEntityDataManagerImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-11T15:21:36Z",
+      "side": 1,
+      "message": "Thanks ! Should have been deleted",
+      "parentUuid": "1b077584_59af6855",
+      "range": {
+        "startLine": 132,
+        "startChar": 2,
+        "endLine": 136,
+        "endChar": 0
+      },
+      "revId": "62864da199c52a5938a44d927603649cbe9553a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b1ba83d_762cebc3",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/CompositionEntityDataManagerImplTest.java",
         "patchSetId": 3
@@ -105,6 +201,30 @@
       "writtenOn": "2021-01-11T14:41:59Z",
       "side": 1,
       "message": "swap \u0027actual\u0027 and \u0027expected\u0027 values in assertions",
+      "range": {
+        "startLine": 144,
+        "startChar": 3,
+        "endLine": 151,
+        "endChar": 90
+      },
+      "revId": "62864da199c52a5938a44d927603649cbe9553a2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "531c662d_cbf177bf",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/CompositionEntityDataManagerImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-11T15:21:36Z",
+      "side": 1,
+      "message": "Thanks ! Forgot to swap when re-enabling the test :)",
+      "parentUuid": "2b1ba83d_762cebc3",
       "range": {
         "startLine": 144,
         "startChar": 3,
