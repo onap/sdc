@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "bdf4939b_9a48612d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T12:54:20Z",
+      "side": 1,
+      "message": "I am not a big fan of throwing an exception and not logging it, but could be discussed I don\u0027t know this specific case",
+      "range": {
+        "startLine": 1564,
+        "startChar": 12,
+        "endLine": 1564,
+        "endChar": 17
+      },
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "57bccca3_234e6a0c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
