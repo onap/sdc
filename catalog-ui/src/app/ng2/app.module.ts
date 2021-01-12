@@ -93,6 +93,7 @@ import {ServiceDependenciesModule} from './components/logic/service-dependencies
 import {ServiceDependenciesEditorModule} from './pages/service-dependencies-editor/service-dependencies-editor.module';
 import {PropertyCreatorModule} from './pages/properties-assignment/property-creator/property-creator.module';
 import {DeclareListModule} from './pages/properties-assignment/declare-list/declare-list.module';
+import { InputListModule } from "./pages/properties-assignment/input-list/input-list.module";
 import {WorkflowServiceNg2} from './services/workflow.service';
 import {ToscaTypesServiceNg2} from "./services/tosca-types.service";
 import {CapabilitiesFilterPropertiesEditorComponentModule} from "./pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.module";
@@ -149,6 +150,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     AttributesOutputsModule,
     PropertyCreatorModule,
     DeclareListModule,
+    InputListModule,
     PluginFrameModule,
     PluginsModule,
     InterfaceOperationModule,

@@ -18,11 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
-import { SchemaProperty, SchemaPropertyGroupModel } from '../schema-property';
-import { ToscaPresentationData } from '../tosca-presentation';
-import { PropertyInputDetail } from './property-input-detail';
-import { Metadata } from '../metadata';
+import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils/constants';
+import {SchemaProperty, SchemaPropertyGroupModel} from '../schema-property';
+import {ToscaPresentationData} from '../tosca-presentation';
+import {PropertyInputDetail} from './property-input-detail';
+import {Metadata} from '../metadata';
+import {ToscaGetFunctionType} from "../tosca-get-function-type.enum";
 
 export enum DerivedPropertyType {
     SIMPLE,
@@ -65,6 +66,7 @@ export class PropertyBEModel {
     inputPath: string;
     toscaPresentation: ToscaPresentationData;
     metadata: Metadata;
+    toscaGetFunctionType: ToscaGetFunctionType;
 
     constructor(property?: PropertyBEModel) {
         if (property) {
@@ -90,6 +92,7 @@ export class PropertyBEModel {
             this.getPolicyValues = property.getPolicyValues;
             this.inputPath = property.inputPath;
             this.metadata = property.metadata;
+            this.toscaGetFunctionType = property.toscaGetFunctionType;
         }
 
         if (!this.schema || !this.schema.property) {
@@ -116,6 +119,13 @@ export class PropertyBEModel {
         } else {
             return DerivedPropertyType.COMPLEX;
         }
+    }
+
+    /**
+     * Checks whether the property value is a tosca get function (e.g. get_input, get_property, get_attribute)
+     */
+    public isToscaGetFunction(): boolean {
+        return this.toscaGetFunctionType != null;
     }
 }
 

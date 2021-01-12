@@ -423,10 +423,12 @@ class ComponentInstanceBusinessLogicTest {
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST))
             .thenReturn(ActionStatus.INVALID_CONTENT);
 
-        ComponentException e = assertThrows(ComponentException.class,
-            () -> componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
-                ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId"));
-        assertThat(e.getActionStatus()).isEqualTo(ActionStatus.INVALID_CONTENT);
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> response = componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
+            ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
+        assertThat(response.isRight()).as("Response should be an error").isTrue();
+        final ResponseFormat responseFormat = response.right().value();
+        assertThat(responseFormat.getStatus()).as("Response status should be as expected").isEqualTo(400);
+        assertThat(responseFormat.getMessageId()).as("Error message id should be as expected").isEqualTo("SVC4000");
     }
 
     @Test
