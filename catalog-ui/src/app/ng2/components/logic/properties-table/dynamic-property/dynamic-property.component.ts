@@ -84,7 +84,7 @@ export class DynamicPropertyComponent {
         let primitiveProperties = ['string', 'integer', 'float', 'boolean'];
 
         //Property has constraints
-        if(this.property.constraints){
+        if(this.property.constraints && this.property.constraints[0]){
             this.constraints = this.property.constraints[0].validValues
         }
 

@@ -123,6 +123,10 @@ export class TopologyTemplateService {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INPUTS]);
     }
 
+    getComponentInputsValues(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INPUTS]);
+    }
+
     getComponentInputsWithProperties(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId,
             [COMPONENT_FIELDS.COMPONENT_INPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
@@ -208,7 +212,7 @@ export class TopologyTemplateService {
         return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params: params});
     }
 
-    createServiceProperty(componentId: string, propertyModel: PropertyBEModel): Observable<PropertyBEModel> {
+     createServiceProperty(componentId: string, propertyModel: PropertyBEModel): Observable<PropertyBEModel> {
         const serverObject = {};
         serverObject[propertyModel.name] = propertyModel;
         return this.http.post<PropertyBEModel>(this.baseUrl + 'services/' + componentId + '/properties', serverObject)

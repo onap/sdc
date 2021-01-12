@@ -2430,3 +2430,10 @@ errors:
         message: "Error: Input name contains invalid characters. It should have only letters, numbers and underscores.",
         messageId: "SVC4736"
     }
+    #---------SVC4139------------------------------
+    # %1 - The action that is not supported
+    NOT_SUPPORTED: {
+        code: 400,
+        message: '%1 is not yet supported',
+        messageId: "SVC4139"
+    }

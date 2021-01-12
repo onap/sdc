@@ -21,6 +21,7 @@
 export class PropertyInputDetail {
     inputId: string;
     inputName: string;
+    inputType: string;
     inputPath: string;
     list: boolean;
 }

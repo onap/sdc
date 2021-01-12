@@ -35,6 +35,7 @@ import lombok.EqualsAndHashCode;
 
 import org.apache.commons.collections.MapUtils;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -55,6 +56,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String label;
     private Boolean immutable = Boolean.FALSE;
     private Boolean mappedToComponentProperty = Boolean.TRUE;
+    private ToscaGetFunctionType toscaGetFunctionType;
+
     private String inputPath;
     private String status;
     private String inputId;
@@ -107,6 +110,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setInputId(propertyDataDefinition.getInputId());
         this.setInstanceUniqueId(propertyDataDefinition.getInstanceUniqueId());
         this.setPropertyId(propertyDataDefinition.getPropertyId());
+        this.setToscaGetFunctionType(propertyDataDefinition.getToscaGetFunctionType());
         this.parentPropertyType = propertyDataDefinition.getParentPropertyType();
         this.subPropertyInputPath = propertyDataDefinition.getSubPropertyInputPath();
         if (isNotEmpty(propertyDataDefinition.annotations)) {

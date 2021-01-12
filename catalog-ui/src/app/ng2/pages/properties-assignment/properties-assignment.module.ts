@@ -52,7 +52,8 @@ import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigt
     HierarchyNavigationModule,
     UiElementsModule,
     SdcUiComponentsModule,
-    ModalFormsModule],
+    ModalFormsModule
+  ],
 
   entryComponents: [PropertiesAssignmentComponent],
   exports: [

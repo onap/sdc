@@ -73,6 +73,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
@@ -1972,6 +1973,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             resultOp = Either.left(updatedProperties);
             return resultOp;
 
+        } catch (final ComponentException e) {
+            return Either.right(e.getResponseFormat());
         } finally {
             if (resultOp == null || resultOp.isRight()) {
                 janusGraphDao.rollback();
@@ -2169,10 +2172,17 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             innerType = propDef.getType();
         }
+
         // Specific Update Logic
+        String newValue = property.getValue();
+
+        if (property.getToscaGetFunctionType() != null) {
+            validateToscaGetFunction(property);
+            return Either.left(newValue);
+        }
+
         Either<Object, Boolean> isValid = propertyOperation
             .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType, allDataTypes);
-        String newValue = property.getValue();
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (!res) {
@@ -2196,6 +2206,31 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
         }
         return Either.left(newValue);
+    }
+
+    private <T extends PropertyDefinition> void validateToscaGetFunction(T property) {
+        if (property.getToscaGetFunctionType() == ToscaGetFunctionType.GET_INPUT) {
+            final List<GetInputValueDataDefinition> getInputValues = property.getGetInputValues();
+            if (CollectionUtils.isEmpty(getInputValues)) {
+                log.debug("No input information provided. Cannot set get_input.");
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
+            }
+            if (getInputValues.size() > 1) {
+                log.debug("More than one input provided. Cannot set get_input.");
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
+            }
+            final GetInputValueDataDefinition getInputValueDataDefinition = getInputValues.get(0);
+
+            if (!property.getType().equals(getInputValueDataDefinition.getInputType())) {
+                log.debug("Input type '{}' diverges from the property type '{}'. Cannot set get_input.",
+                    getInputValueDataDefinition.getInputType(), property.getType());
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
+            }
+            return;
+        }
+
+        throw new ByActionStatusComponentException(ActionStatus.NOT_SUPPORTED,
+            "Tosca function " + property.getToscaGetFunctionType().getToscaGetFunctionName());
     }
 
     private ResponseFormat updateInputOnContainerComponent(ComponentInstanceInput input, String newValue, Component containerComponent,
