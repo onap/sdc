@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f50edbb0_283e6780",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T13:31:22Z",
+      "side": 1,
+      "message": "Cognitive complexity of 28, Sonar sure is going to complain",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "242b741b_0fc532c0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 936,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T13:31:22Z",
+      "side": 1,
+      "message": "It shouldn\u0027t be on the same level as the preceding if :)",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5382681a_9fa2f8fe",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T13:31:22Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be on the same alignment as the the live above ?",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17bb3918_1911f470",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T13:31:22Z",
+      "side": 1,
+      "message": "Sorry but I do not get the point of this variable ? It\u0027s assigned and never used as far as I can tell",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
