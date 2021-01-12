@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57bccca3_234e6a0c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T12:51:39Z",
+      "side": 1,
+      "message": "might as well delete it :)",
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f32ed7ef_f93dcd86",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T12:51:39Z",
+      "side": 1,
+      "message": "It doesn\u0027t seems to be used for much",
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95d658c9_bd941bec",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-12T12:51:39Z",
+      "side": 1,
+      "message": "I do not see any assertion",
+      "range": {
+        "startLine": 1361,
+        "startChar": 16,
+        "endLine": 1361,
+        "endChar": 39
+      },
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
