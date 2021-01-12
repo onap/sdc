@@ -16,6 +16,24 @@
       "revId": "e793ef16f62ece166b5176912428dcd30f378c60",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "574eb0e6_f31b5952",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/category/MetadataKeyDataDefinition.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-01-12T16:38:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5edf6c2_0b35df9f",
+      "revId": "e793ef16f62ece166b5176912428dcd30f378c60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
