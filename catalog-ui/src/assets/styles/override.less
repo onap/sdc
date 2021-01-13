@@ -22,16 +22,16 @@
 @sdcui_color_purple: #9063cd;
 @sdcui_color_light-purple: #caa2dd;
 
-.sdc-modal .sdc-modal__wrapper .sdc-modal__header {
-    height:auto;
-}
+
 //override sdc-ui version 53 css, used by onboarding. This can be removed after we update past version 42
 sdc-modal {
     position: static !important;
-}
-
-.sdc-modal .sdc-modal__wrapper .sdc-modal__header {
-    height: auto;
+    .sdc-modal__wrapper.sdc-modal-type-error {
+        align-self: baseline;
+    }
+    .sdc-modal__wrapper .sdc-modal__header {
+        height: auto;
+    }
 }
 
 .sdc-menu-list {

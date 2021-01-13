@@ -28,6 +28,9 @@
     color: $blue;
 }
 .sdc-modal {
+    .sdc-modal__wrapper.sdc-modal-type-error {
+        align-self: baseline;
+    }
     .sdc-modal__wrapper.sdc-modal-type-custom {
         .sdc-modal__content {
             padding: 0;
