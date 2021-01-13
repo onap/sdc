@@ -67,6 +67,23 @@
       "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d15306a_0c0f23ca",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/inputs.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2021-01-13T07:15:01Z",
+      "side": 1,
+      "message": "i suppose this should be InputBEToInputFE",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
