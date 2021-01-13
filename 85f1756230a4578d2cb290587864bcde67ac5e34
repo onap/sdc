@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d4c6477c_13bd0603",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-01-13T18:39:52Z",
+      "side": 1,
+      "message": "Refactored the code. Thanks for you inputs.",
+      "parentUuid": "f50edbb0_283e6780",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "242b741b_0fc532c0",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae595001_95ffdaf5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 936,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-01-13T18:39:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "242b741b_0fc532c0",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "755c1e03_2eee25da",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 941,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-01-13T18:39:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5382681a_9fa2f8fe",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "17bb3918_1911f470",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
         "patchSetId": 1
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "7daca1fc_45aeeee4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-01-13T18:39:52Z",
+      "side": 1,
+      "message": "Corrected the declaration scope.",
+      "parentUuid": "17bb3918_1911f470",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7d15306a_0c0f23ca",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/inputs.utils.ts",
         "patchSetId": 1
@@ -81,6 +153,24 @@
       "writtenOn": "2021-01-13T07:15:01Z",
       "side": 1,
       "message": "i suppose this should be InputBEToInputFE",
+      "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff87cffc_4b5f800c",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/inputs.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-01-13T18:39:52Z",
+      "side": 1,
+      "message": "Corrected the naming. Thanks.",
+      "parentUuid": "7d15306a_0c0f23ca",
       "revId": "85f1756230a4578d2cb290587864bcde67ac5e34",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
