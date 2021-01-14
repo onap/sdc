@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,12 +36,25 @@ import static junit.framework.TestCase.assertTrue;
 
 public class SecurityManagerTest {
     private File certDir;
+    private String cerDirPath = "/tmp/cert/";
     private SecurityManager securityManager;
+
+    private File PrepareCertFiles(String origFilePath, String newFilePath) throws IOException, URISyntaxException {
+        File origFile = new File(getClass().getResource(origFilePath).toURI());
+        File newFile = new File(newFilePath);
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        return newFile;
+    }
+
+    private byte[] readAllBytes(String path) throws URISyntaxException, IOException {
+        return Files.readAllBytes(Paths.get(getClass().getResource(path).toURI()));
+    }
 
     @Before
     public void setUp() throws IOException {
-        certDir = new File("/tmp/cert");
-        if(certDir.exists()){
+        certDir = new File(cerDirPath);
+        if (certDir.exists()) {
             tearDown();
         }
         certDir.mkdirs();
@@ -50,18 +63,15 @@ public class SecurityManagerTest {
 
     @After
     public void tearDown() throws IOException {
-        if(certDir.exists()) {
+        if (certDir.exists()) {
             FileUtils.deleteDirectory(certDir);
         }
         securityManager.cleanTrustedCertificates();
     }
 
     @Test
-    public void testGetCertificates() throws IOException, SecurityManagerException {
-        File origFile = new File("src/test/resources/cert/root-certificate.pem");
-        File newFile = new File("/tmp/cert/root-certificate.pem");
-        newFile.createNewFile();
-        FileUtils.copyFile(origFile, newFile);
+    public void testGetCertificates() throws IOException, SecurityManagerException, URISyntaxException {
+        File newFile = PrepareCertFiles("/cert/root-certificate.pem", cerDirPath + "/root-certificate.pem");
         assertEquals(1, securityManager.getTrustedCertificates().size());
         newFile.delete();
         assertEquals(0, securityManager.getTrustedCertificates().size());
@@ -75,7 +85,7 @@ public class SecurityManagerTest {
 
     @Test(expected = SecurityManagerException.class)
     public void testGetCertificatesException() throws IOException, SecurityManagerException {
-        File newFile = new File("/tmp/cert/root-certificate.pem");
+        File newFile = new File(cerDirPath + "root-certificate.pem");
         newFile.createNewFile();
         assertEquals(1, securityManager.getTrustedCertificates().size());
         newFile.delete();
@@ -83,16 +93,10 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void testGetCertificatesUpdated() throws IOException, SecurityManagerException {
-        File origFile = new File("src/test/resources/cert/root-certificate.pem");
-        File newFile = new File("/tmp/cert/root-certificate.pem");
-        newFile.createNewFile();
-        FileUtils.copyFile(origFile, newFile);
+    public void testGetCertificatesUpdated() throws IOException, SecurityManagerException, URISyntaxException {
+        File newFile = PrepareCertFiles("/cert/root-certificate.pem", cerDirPath + "root-certificate.pem");
         assertTrue(securityManager.getTrustedCertificates().size() == 1);
-        File otherOrigFile = new File("src/test/resources/cert/package-certificate.pem");
-        File otherNewFile = new File("/tmp/cert/package-certificate.pem");
-        newFile.createNewFile();
-        FileUtils.copyFile(otherOrigFile, otherNewFile);
+        File otherNewFile = PrepareCertFiles("/cert/package-certificate.pem", cerDirPath + "package-certificate.pem");
         assertEquals(2, securityManager.getTrustedCertificates().size());
         otherNewFile.delete();
         assertEquals(1, securityManager.getTrustedCertificates().size());
@@ -102,58 +106,82 @@ public class SecurityManagerTest {
 
     @Test
     public void verifySignedDataTestCertIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
-        File origFile = new File("src/test/resources/cert/root.cert");
-        File newFile = new File("/tmp/cert/root.cert");
-        newFile.createNewFile();
-        FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.csar").toURI()));
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        byte[] signature = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.csar");
         assertTrue(securityManager.verifySignedData(signature, null, archive));
     }
 
     @Test(expected = SecurityManagerException.class)
     public void verifySignedDataTestCertNotIncludedIntoSignatureButExpected() throws IOException, URISyntaxException, SecurityManagerException {
-        File origFile = new File("src/test/resources/cert/root.cert");
-        File newFile = new File("/tmp/cert/root.cert");
-        newFile.createNewFile();
-        FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.csar").toURI()));
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
         securityManager.verifySignedData(signature, null, archive);
     }
 
     @Test
     public void verifySignedDataTestCertNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
-        File origFile = new File("src/test/resources/cert/root.cert");
-        File newFile = new File("/tmp/cert/root.cert");
-        newFile.createNewFile();
-        FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
-        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cert").toURI()));
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
+        byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cert");
+        assertTrue(securityManager.verifySignedData(signature, cert, archive));
+    }
+
+    @Test
+    public void verifySignedDataTestCertIntermediateNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/signing-ca2.crt", cerDirPath + "signing-ca2.crt");
+        byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
+        byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4-no-intermediate.cert");
+        assertTrue(securityManager.verifySignedData(signature, cert, archive));
+    }
+
+    @Test(expected = SecurityManagerException.class)
+    public void verifySignedDataTestCertWrongIntermediate() throws IOException, URISyntaxException, SecurityManagerException {
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
+        byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
+        byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4-no-intermediate.cert");
+        securityManager.verifySignedData(signature, cert, archive);
+    }
+
+    @Test
+    public void verifySignedDataTestCertIncludedIntoSignatureWithWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
+        byte[] signature = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.csar");
+        assertTrue(securityManager.verifySignedData(signature, null, archive));
+    }
+
+    @Test
+    public void verifySignedDataTestCertWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
+        byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
+        byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cert");
         assertTrue(securityManager.verifySignedData(signature, cert, archive));
     }
 
     @Test(expected = SecurityManagerException.class)
     public void verifySignedDataTestWrongCertificate() throws IOException, URISyntaxException, SecurityManagerException {
-        File origFile = new File("src/test/resources/cert/root-certificate.pem");
-        File newFile = new File("/tmp/cert/root-certificate.cert");
-        newFile.createNewFile();
-        FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
-        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cert").toURI()));
+        PrepareCertFiles("/cert/root-certificate.pem", cerDirPath + "root-certificate.cert");
+        byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
+        byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cert");
         securityManager.verifySignedData(signature, cert, archive);
     }
 
     @Test(expected = SecurityManagerException.class)
     public void verifySignedDataTestChangedArchive() throws IOException, URISyntaxException, SecurityManagerException {
-        File origFile = new File("src/test/resources/cert/root.cert");
-        File newFile = new File("/tmp/cert/root.cert");
-        newFile.createNewFile();
-        FileUtils.copyFile(origFile, newFile);
-        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/tampered-signed-package/dummyPnfv4.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/tampered-signed-package/dummyPnfv4.csar").toURI()));
+        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        byte[] signature = readAllBytes("/cert/tampered-signed-package/dummyPnfv4.cms");
+        byte[] archive = readAllBytes("/cert/tampered-signed-package/dummyPnfv4.csar");
         securityManager.verifySignedData(signature, null, archive);
     }
 }
