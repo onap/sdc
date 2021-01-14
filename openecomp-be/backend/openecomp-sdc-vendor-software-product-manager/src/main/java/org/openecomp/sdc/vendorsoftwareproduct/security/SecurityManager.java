@@ -20,23 +20,15 @@
 package org.openecomp.sdc.vendorsoftwareproduct.security;
 
 import com.google.common.collect.ImmutableSet;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PublicKey;
 import java.security.Security;
-import java.security.SignatureException;
 import java.security.cert.CertPathBuilder;
 import java.security.cert.CertStore;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
@@ -49,7 +41,12 @@ import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.function.Predicate;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.Set;
+
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
@@ -77,6 +74,7 @@ public class SecurityManager {
 
     private Logger logger = LoggerFactory.getLogger(SecurityManager.class);
     private Set<X509Certificate> trustedCertificates = new HashSet<>();
+    private Set<X509Certificate> trustedCertificatesFromPackage = new HashSet<>();
     private File certificateDirectory;
 
     static {
@@ -113,7 +111,7 @@ public class SecurityManager {
      * @return set of trustedCertificates
      * @throws SecurityManagerException
      */
-    public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException {
+    public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException, FileNotFoundException {
         //if file number in certificate directory changed reload certs
         String[] certFiles = certificateDirectory.list();
         if (certFiles == null) {
@@ -123,6 +121,10 @@ public class SecurityManager {
         if (trustedCertificates.size() != certFiles.length) {
             trustedCertificates = new HashSet<>();
             processCertificateDir();
+        }
+        if (!trustedCertificatesFromPackage.isEmpty()) {
+            return Stream.concat(trustedCertificatesFromPackage.stream(), trustedCertificates.stream())
+                    .collect(Collectors.toUnmodifiableSet());
         }
         return ImmutableSet.copyOf(trustedCertificates);
     }
@@ -146,7 +148,7 @@ public class SecurityManager {
     public boolean verifySignedData(final byte[] messageSyntaxSignature, final byte[] packageCert,
                                     final byte[] innerPackageFile) throws SecurityManagerException {
         try (ByteArrayInputStream signatureStream = new ByteArrayInputStream(messageSyntaxSignature);
-            final PEMParser pemParser = new PEMParser(new InputStreamReader(signatureStream))) {
+             final PEMParser pemParser = new PEMParser(new InputStreamReader(signatureStream))) {
             final Object parsedObject = pemParser.readObject();
             if (!(parsedObject instanceof ContentInfo)) {
                 throw new SecurityManagerException("Signature is not recognized");
@@ -158,17 +160,17 @@ public class SecurityManager {
             final Collection<SignerInformation> signers = signedData.getSignerInfos().getSigners();
             final SignerInformation firstSigner = signers.iterator().next();
             final X509Certificate cert;
+            Collection<X509CertificateHolder> certs;
             if (packageCert == null) {
-                final Collection<X509CertificateHolder> firstSignerCertificates = signedData.getCertificates()
-                    .getMatches(firstSigner.getSID());
-                if (!firstSignerCertificates.iterator().hasNext()) {
-                    throw new SecurityManagerException(
-                        "No certificate found in cms signature that should contain one!");
-                }
-                cert = loadCertificate(firstSignerCertificates.iterator().next().getEncoded());
+                certs = signedData.getCertificates().getMatches(null);
+                cert = readSignCert(certs, firstSigner).orElseThrow(() -> new SecurityManagerException(
+                        "No matching certificate found in certificate file that should contain one!"));
             } else {
-                cert = loadCertificate(packageCert);
+                certs = parseCertsFromPem(packageCert);
+                cert = readSignCert(certs, firstSigner).orElseThrow(() -> new SecurityManagerException(
+                        "No certificate found in cms signature that should contain one!"));
             }
+            trustedCertificatesFromPackage = readTrustedCerts(certs, firstSigner);
 
             if (verifyCertificate(cert, getTrustedCertificates()) == null) {
                 return false;
@@ -183,7 +185,36 @@ public class SecurityManager {
         }
     }
 
-    private void processCertificateDir() throws SecurityManagerException {
+    private Optional<X509Certificate> readSignCert(final Collection<X509CertificateHolder> certs, final SignerInformation firstSigner) {
+        return certs.stream()
+               .filter(crt -> firstSigner.getSID().match(crt))
+               .findAny()
+               .map(this::loadCertificate);
+    }
+
+    private Set<X509Certificate> readTrustedCerts(final Collection<X509CertificateHolder> certs, final SignerInformation firstSigner) {
+        return certs.stream()
+                .filter(crt -> !firstSigner.getSID().match(crt))
+                .map(this::loadCertificate)
+                .filter(Predicate.not(this::isSelfSigned))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<X509CertificateHolder> parseCertsFromPem(final byte[] packageCert) throws IOException {
+        final ByteArrayInputStream packageCertStream = new ByteArrayInputStream(packageCert);
+        final PEMParser pemParser = new PEMParser(new InputStreamReader(packageCertStream));
+        Object readObject = pemParser.readObject();
+        Set<X509CertificateHolder> allCerts = new HashSet<>();
+        while (readObject != null) {
+            if (readObject instanceof X509CertificateHolder) {
+                allCerts.add((X509CertificateHolder) readObject);
+            }
+            readObject = pemParser.readObject();
+        }
+        return allCerts;
+    }
+
+    private void processCertificateDir() throws SecurityManagerException, FileNotFoundException {
         if (!certificateDirectory.exists() || !certificateDirectory.isDirectory()) {
             logger.error("Issue with certificate directory, check if exists!");
             return;
@@ -207,27 +238,30 @@ public class SecurityManager {
         return new File(certDirLocation);
     }
 
-    private X509Certificate loadCertificate(File certFile) throws SecurityManagerException {
-        try (InputStream fileInputStream = new FileInputStream(certFile)) {
-            CertificateFactory factory = CertificateFactory.getInstance("X.509");
-            return (X509Certificate) factory.generateCertificate(fileInputStream);
-        } catch (CertificateException | IOException e) {
-            throw new SecurityManagerException("Error during loading Certificate file!", e);
+    private X509Certificate loadCertificate(File certFile) throws SecurityManagerException, FileNotFoundException {
+        return loadCertificateFactory(new FileInputStream(certFile));
+    }
+
+    private X509Certificate loadCertificate(X509CertificateHolder cert) {
+        try {
+            return loadCertificateFactory(new ByteArrayInputStream(cert.getEncoded()));
+        } catch (IOException | SecurityManagerException e) {
+            throw new RuntimeException("Error during loading Certificate from bytes!", e);
         }
     }
 
-    private X509Certificate loadCertificate(byte[] certFile) throws SecurityManagerException {
-        try (InputStream in = new ByteArrayInputStream(certFile)) {
+    private X509Certificate loadCertificateFactory(InputStream in) throws SecurityManagerException {
+        try {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
             return (X509Certificate) factory.generateCertificate(in);
-        } catch (CertificateException | IOException e) {
+        } catch (CertificateException e) {
             throw new SecurityManagerException("Error during loading Certificate from bytes!", e);
         }
     }
 
     private PKIXCertPathBuilderResult verifyCertificate(X509Certificate cert,
                                                         Set<X509Certificate> additionalCerts)
-        throws GeneralSecurityException, SecurityManagerException {
+            throws GeneralSecurityException, SecurityManagerException {
         if (null == cert) {
             throw new SecurityManagerException("The certificate is empty!");
         }
@@ -256,7 +290,7 @@ public class SecurityManager {
     private PKIXCertPathBuilderResult verifyCertificate(X509Certificate cert,
                                                         Set<X509Certificate> allTrustedRootCerts,
                                                         Set<X509Certificate> allIntermediateCerts)
-        throws GeneralSecurityException {
+            throws GeneralSecurityException {
 
         // Create the selector that specifies the starting certificate
         X509CertSelector selector = new X509CertSelector();
@@ -286,14 +320,14 @@ public class SecurityManager {
         pkixParams.addCertStore(createCertStore(allTrustedRootCerts));
 
         CertPathBuilder builder = CertPathBuilder
-            .getInstance(CertPathBuilder.getDefaultType(), BouncyCastleProvider.PROVIDER_NAME);
+                .getInstance(CertPathBuilder.getDefaultType(), BouncyCastleProvider.PROVIDER_NAME);
         return (PKIXCertPathBuilderResult) builder.build(pkixParams);
     }
 
     private CertStore createCertStore(Set<X509Certificate> certificateSet) throws InvalidAlgorithmParameterException,
-        NoSuchAlgorithmException, NoSuchProviderException {
+            NoSuchAlgorithmException, NoSuchProviderException {
         return CertStore.getInstance("Collection", new CollectionCertStoreParameters(certificateSet),
-            BouncyCastleProvider.PROVIDER_NAME);
+                BouncyCastleProvider.PROVIDER_NAME);
     }
 
     private boolean isExpired(X509Certificate cert) {
@@ -309,18 +343,7 @@ public class SecurityManager {
         return false;
     }
 
-    private boolean isSelfSigned(Certificate cert)
-        throws CertificateException, NoSuchAlgorithmException,
-        NoSuchProviderException {
-        try {
-            // Try to verify certificate signature with its own public key
-            PublicKey key = cert.getPublicKey();
-            cert.verify(key);
-            return true;
-        } catch (SignatureException | InvalidKeyException e) {
-            logger.error(e.getMessage(), e);
-            //not self-signed
-            return false;
-        }
+    private boolean isSelfSigned(X509Certificate cert) {
+        return cert.getIssuerDN().equals(cert.getSubjectDN());
     }
 }
