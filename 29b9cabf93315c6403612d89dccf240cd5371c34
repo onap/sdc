@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "663bfbf1_62afab5b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-14T13:40:44Z",
+      "side": 1,
+      "message": "The copyright is still overwritten",
+      "revId": "29b9cabf93315c6403612d89dccf240cd5371c34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b949ec6_973812af",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-14T13:40:44Z",
+      "side": 1,
+      "message": "Is it used ?",
+      "revId": "29b9cabf93315c6403612d89dccf240cd5371c34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f4422d8_e7dd78c5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 793,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-14T13:40:44Z",
+      "side": 1,
+      "message": "Variable not used",
+      "revId": "29b9cabf93315c6403612d89dccf240cd5371c34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
