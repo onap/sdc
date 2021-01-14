@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class SecurityManagerTest {
     @Before
     public void setUp() throws IOException {
         certDir = new File("/tmp/cert");
-        if(certDir.exists()){
+        if (certDir.exists()) {
             tearDown();
         }
         certDir.mkdirs();
@@ -50,7 +50,7 @@ public class SecurityManagerTest {
 
     @After
     public void tearDown() throws IOException {
-        if(certDir.exists()) {
+        if (certDir.exists()) {
             FileUtils.deleteDirectory(certDir);
         }
         securityManager.cleanTrustedCertificates();
@@ -118,7 +118,7 @@ public class SecurityManagerTest {
         newFile.createNewFile();
         FileUtils.copyFile(origFile, newFile);
         byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
-        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.csar").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
         securityManager.verifySignedData(signature, null, archive);
     }
 
@@ -126,6 +126,69 @@ public class SecurityManagerTest {
     public void verifySignedDataTestCertNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
         File origFile = new File("src/test/resources/cert/root.cert");
         File newFile = new File("/tmp/cert/root.cert");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
+        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cert").toURI()));
+        assertTrue(securityManager.verifySignedData(signature, cert, archive));
+    }
+
+    @Test
+    public void verifySignedDataTestCertIntermediateNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
+        File origFile = new File("src/test/resources/cert/root.cert");
+        File newFile = new File("/tmp/cert/root.cert");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        origFile = new File("src/test/resources/cert/signing-ca2.crt");
+        newFile = new File("/tmp/cert/signing-ca2.crt");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
+        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4-no-intermediate.cert").toURI()));
+        assertTrue(securityManager.verifySignedData(signature, cert, archive));
+    }
+
+    @Test(expected = SecurityManagerException.class)
+    public void verifySignedDataTestCertWrongIntermediate() throws IOException, URISyntaxException, SecurityManagerException {
+        File origFile = new File("src/test/resources/cert/root.cert");
+        File newFile = new File("/tmp/cert/root.cert");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        origFile = new File("src/test/resources/cert/signing-ca1.crt");
+        newFile = new File("/tmp/cert/signing-ca1.crt");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.csar").toURI()));
+        byte[] cert = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4-no-intermediate.cert").toURI()));
+        securityManager.verifySignedData(signature, cert, archive);
+    }
+
+    @Test
+    public void verifySignedDataTestCertIncludedIntoSignatureWithWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
+        File origFile = new File("src/test/resources/cert/root.cert");
+        File newFile = new File("/tmp/cert/root.cert");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        origFile = new File("src/test/resources/cert/signing-ca1.crt");
+        newFile = new File("/tmp/cert/signing-ca1.crt");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.cms").toURI()));
+        byte[] archive = Files.readAllBytes(Paths.get(getClass().getResource("/cert/2-file-signed-package/dummyPnfv4.csar").toURI()));
+        assertTrue(securityManager.verifySignedData(signature, null, archive));
+    }
+
+    @Test
+    public void verifySignedDataTestCertWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
+        File origFile = new File("src/test/resources/cert/root.cert");
+        File newFile = new File("/tmp/cert/root.cert");
+        newFile.createNewFile();
+        FileUtils.copyFile(origFile, newFile);
+        origFile = new File("src/test/resources/cert/signing-ca1.crt");
+        newFile = new File("/tmp/cert/signing-ca1.crt");
         newFile.createNewFile();
         FileUtils.copyFile(origFile, newFile);
         byte[] signature = Files.readAllBytes(Paths.get(getClass().getResource("/cert/3-file-signed-package/dummyPnfv4.cms").toURI()));
