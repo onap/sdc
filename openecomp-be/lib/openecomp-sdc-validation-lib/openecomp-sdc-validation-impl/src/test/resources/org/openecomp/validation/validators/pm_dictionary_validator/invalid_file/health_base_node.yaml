@@ -1,0 +1,65 @@
+heat_template_version: '2013-05-23'
+
+description: Heat template that deploys PnP PNF simulator
+
+parameters:
+  health_node_name_0:
+    type: string
+    label: Node name
+    description: Name of the node
+  # Flavors of each node 
+  health_node_flavor_name: 
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used for health node
+  # Images of each node
+  health_node_image_name: 
+     type: string
+     label: Image name
+     description: OpenStack VM image to be used for node
+  # Others
+  private_net_id:
+    type: string
+    label: Private network name or ID
+    description: Private network 
+  key_name:
+    type: string
+    label: Key pair name
+    description: Public/Private key pair name
+  vnf_id:
+    type: string
+    label: VNF ID
+    description: The VNF ID is provided by ONAP
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+  vf_module_id:
+    type: string
+    label: module ID
+    description: The Module ID is provided by ONAP
+  vf_module_name:
+    type: string
+    description: Unique name for VNF Module instance
+  dcae_collector_ip_0:
+    type: string
+
+resources:
+  health_node:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: health_node_name_0 }
+      key_name: { get_param: key_name }
+      image: { get_param: health_node_image_name }
+      flavor: { get_param: health_node_flavor_name }
+      networks:
+        - network: { get_param: private_net_id }
+      metadata: 
+        vnf_name: { get_param: vnf_name }
+        vnf_id: { get_param: vnf_id }
+        vf_module_name: { get_param: vf_module_name }
+        vf_module_id: { get_param: vf_module_id }
+
+outputs:
+  oam_management_v4_address:
+    value: {get_attr: [health_node, networks, { get_param: private_net_id }, 0]}
+
