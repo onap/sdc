@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2020 Nokia Intellectual Property. All rights reserved.
+ * Copyright (C) 2020-2021 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ package org.openecomp.sdc.validation.impl.validators;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import java.io.InputStream;
-import java.util.List;
 import org.onap.validation.yaml.YamlContentValidator;
 import org.onap.validation.yaml.error.YamlDocumentValidationError;
 import org.openecomp.core.validation.ErrorMessageCode;
@@ -32,16 +30,25 @@ import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.validation.Validator;
 
+import java.io.InputStream;
+import java.util.List;
+import java.util.Set;
+
 public class PmDictionaryValidator implements Validator {
 
     private static final ErrorMessageCode PM_DICT_ERROR_CODE = new ErrorMessageCode("PM_DICT");
 
     @Override
     public void validate(GlobalValidationContext globalContext) {
-        globalContext.getFiles().stream()
-            .filter(FileExtensionUtils::isPmDictionary)
-            .map(fileName -> new ValidationHelper(globalContext, fileName))
-            .forEach(ValidationHelper::validate);
+        Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
+        validatePmDictionaryFiles(globalContext, pmDictionaryFiles);
+    }
+
+
+    private void validatePmDictionaryFiles(GlobalValidationContext globalContext, Set<String> pmDictionaryFiles) {
+        pmDictionaryFiles.stream()
+                .map(fileName -> new ValidationHelper(globalContext, fileName))
+                .forEach(ValidationHelper::validate);
     }
 
     private static class ValidationHelper {
@@ -56,35 +63,35 @@ public class PmDictionaryValidator implements Validator {
 
         public void validate() {
             Option.ofOptional(globalContext.getFileContent(fileName))
-                .peek(this::validateFileContent)
-                .onEmpty(() -> addErrorToContext(formatMessage("File is empty")));
+                    .peek(this::validateFileContent)
+                    .onEmpty(() -> addErrorToContext(formatMessage("File is empty")));
         }
 
         private void validateFileContent(InputStream inputStream) {
             Try.of(inputStream::readAllBytes)
-                .mapTry(fileContent -> new YamlContentValidator().validate(fileContent))
-                .onSuccess(this::reportValidationErrorsIfPresent)
-                .onFailure(e -> addErrorToContext(formatMessage(e.getMessage())));
+                    .mapTry(fileContent -> new YamlContentValidator().validate(fileContent))
+                    .onSuccess(this::reportValidationErrorsIfPresent)
+                    .onFailure(e -> addErrorToContext(formatMessage(e.getMessage())));
         }
 
         private void reportValidationErrorsIfPresent(List<YamlDocumentValidationError> validationErrors) {
             validationErrors.stream()
-                .map(this::prepareValidationMessage)
-                .forEach(this::addErrorToContext);
+                    .map(this::prepareValidationMessage)
+                    .forEach(this::addErrorToContext);
         }
 
         private String prepareValidationMessage(YamlDocumentValidationError error) {
             final String errorMessage = String.format("Document Number: %s, Path: %s, Problem: %s",
-                error.getYamlDocumentNumber(),
-                error.getPath(),
-                error.getMessage()
+                    error.getYamlDocumentNumber(),
+                    error.getPath(),
+                    error.getMessage()
             );
             return formatMessage(errorMessage);
         }
 
         private String formatMessage(String message) {
             return ErrorMessagesFormatBuilder
-                .getErrorWithParameters(PM_DICT_ERROR_CODE, message);
+                    .getErrorWithParameters(PM_DICT_ERROR_CODE, message);
         }
 
         private void addErrorToContext(String message) {
