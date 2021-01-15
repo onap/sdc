@@ -24,13 +24,22 @@ import io.vavr.control.Option;
 import io.vavr.control.Try;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.onap.validation.yaml.YamlContentValidator;
 import org.onap.validation.yaml.error.YamlDocumentValidationError;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
+import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.validation.Validator;
+import org.openecomp.sdc.validation.util.ValidationUtil;
 
 public class PmDictionaryValidator implements Validator {
 
@@ -38,10 +47,32 @@ public class PmDictionaryValidator implements Validator {
 
     @Override
     public void validate(GlobalValidationContext globalContext) {
-        globalContext.getFiles().stream()
-            .filter(FileExtensionUtils::isPmDictionary)
+        Map<String, FileData.Type> filesWithTypes = readAllFilesWithTypes(globalContext);
+        Set<String> pmDictionaryFiles = getPmDictionaryFiles(filesWithTypes);
+        validatePmDictionaryFiles(globalContext, pmDictionaryFiles);
+    }
+
+    private void validatePmDictionaryFiles(GlobalValidationContext globalContext, Set<String> pmDictionaryFiles) {
+        pmDictionaryFiles.stream()
             .map(fileName -> new ValidationHelper(globalContext, fileName))
             .forEach(ValidationHelper::validate);
+    }
+
+    private Set<String> getPmDictionaryFiles(Map<String, FileData.Type> filesWithTypes) {
+        return filesWithTypes.entrySet().stream()
+                .filter(isPmDictionaryType())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+    }
+
+    private Map<String, FileData.Type> readAllFilesWithTypes(GlobalValidationContext globalContext) {
+        ManifestContent manifestContent = ValidationUtil.validateManifest(globalContext);
+        return ManifestUtil.getFileTypeMap(manifestContent);
+    }
+
+    private Predicate<Map.Entry<String, FileData.Type>> isPmDictionaryType() {
+        return entry -> entry.getValue()
+                .equals(FileData.Type.PM_DICTIONARY);
     }
 
     private static class ValidationHelper {

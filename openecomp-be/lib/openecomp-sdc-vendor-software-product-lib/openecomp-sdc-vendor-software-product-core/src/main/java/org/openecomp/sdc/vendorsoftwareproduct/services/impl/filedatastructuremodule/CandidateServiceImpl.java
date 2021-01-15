@@ -363,6 +363,13 @@ public class CandidateServiceImpl implements CandidateService {
   }
 
   @Override
+  public String createManifestFromExisting(VspDetails vspDetails, FilesDataStructure structure, ManifestContent existingManifest) {
+    return JsonUtil.object2Json(manifestCreator.createManifestFromExisting(vspDetails, structure, existingManifest)
+            .orElseThrow(() -> new CoreException(new ErrorCode.ErrorCodeBuilder()
+                    .withMessage(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage()).build())));
+  }
+
+  @Override
   public Optional<ManifestContent> createManifest(VspDetails vspDetails,
                                                   FileContentHandler fileContentHandler,
                                                   AnalyzedZipHeatFiles analyzedZipHeatFiles) {

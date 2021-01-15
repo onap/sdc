@@ -31,6 +31,8 @@ import java.util.Optional;
 public interface ManifestCreator {
   Optional<ManifestContent> createManifest(VspDetails vspDetails, FilesDataStructure filesDataStructure);
 
+  Optional<ManifestContent> createManifestFromExisting(VspDetails vspDetails, FilesDataStructure filesDataStructure, ManifestContent existingManifest);
+
   Optional<ManifestContent> createManifest(VspDetails vspDetails, FileContentHandler
       fileContentHandler, AnalyzedZipHeatFiles analyzedZipHeatFiles);
 

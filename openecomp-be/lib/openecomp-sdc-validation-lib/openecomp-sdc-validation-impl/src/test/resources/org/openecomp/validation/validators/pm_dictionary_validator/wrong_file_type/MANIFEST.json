@@ -1,0 +1,21 @@
+{
+    "name": "Health VNF",
+    "description": "Health VNF onboarding package.",
+    "data": [
+        {
+            "file": "health_base_node.yaml",
+            "type": "HEAT",
+            "isBase": "true",
+            "data": [
+                {
+                    "file": "health_base_node.env",
+                    "type": "HEAT_ENV"
+                }
+            ]
+        },
+        {
+            "file": "pmdict.yaml",
+            "type": "OTHER"
+        }
+    ]
+}

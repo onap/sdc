@@ -80,6 +80,8 @@ public interface CandidateService {
 
   String createManifest(VspDetails vspDetails, FilesDataStructure structure);
 
+  String createManifestFromExisting(VspDetails vspDetails, FilesDataStructure structure, ManifestContent existingManifest);
+
   Optional<List<ErrorMessage>> validateFileDataStructure(FilesDataStructure filesDataStructure);
 
   void updateValidationData(String vspId, Version version, ValidationStructureList validationData);
