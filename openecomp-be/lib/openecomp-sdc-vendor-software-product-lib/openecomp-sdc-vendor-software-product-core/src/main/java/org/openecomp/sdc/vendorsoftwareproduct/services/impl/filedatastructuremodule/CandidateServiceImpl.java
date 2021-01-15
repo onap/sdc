@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications copyright (c) 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -360,6 +361,13 @@ public class CandidateServiceImpl implements CandidateService {
     return JsonUtil.object2Json(manifestCreator.createManifest(vspDetails, structure)
         .orElseThrow(() -> new CoreException(new ErrorCode.ErrorCodeBuilder()
             .withMessage(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage()).build())));
+  }
+
+  @Override
+  public String createManifestFromExisting(VspDetails vspDetails, FilesDataStructure structure, ManifestContent existingManifest) {
+    return JsonUtil.object2Json(manifestCreator.createManifestFromExisting(vspDetails, structure, existingManifest)
+            .orElseThrow(() -> new CoreException(new ErrorCode.ErrorCodeBuilder()
+                    .withMessage(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage()).build())));
   }
 
   @Override

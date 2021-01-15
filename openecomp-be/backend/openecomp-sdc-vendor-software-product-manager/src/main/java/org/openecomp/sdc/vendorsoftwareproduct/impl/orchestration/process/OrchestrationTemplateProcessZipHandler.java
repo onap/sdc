@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications copyright (c) 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +91,13 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     }
 
 
-    String manifest = candidateService.createManifest(vspDetails, structure);
+    ManifestContent zipManifestFile = readManifestFromZip(fileContentMap);
+    String manifest = null;
+    if (zipManifestFile == null) {
+      manifest = candidateService.createManifest(vspDetails, structure);
+    } else {
+      manifest = candidateService.createManifestFromExisting(vspDetails, structure, zipManifestFile);
+    }
     fileContentMap.addFile(SdcCommon.MANIFEST_NAME, manifest.getBytes());
 
     Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
@@ -142,6 +149,16 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     uploadFileResponse.addStructureErrors(uploadErrors);
     candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
     return response;
+  }
+
+  private ManifestContent readManifestFromZip(FileContentHandler fileContentMap) {
+    ManifestContent zipManifestFile = null;
+    try (InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+      zipManifestFile = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+    } catch (Exception e) {
+      LOGGER.error("Invalid package content", e);
+    }
+    return zipManifestFile;
   }
 
   private FileContentHandler addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
