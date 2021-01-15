@@ -30,7 +30,6 @@ import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
-import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.log.api.ILogConfiguration;
@@ -46,6 +45,7 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     private List<GroupInstance> groupInstances;
     private Map<String, Object> interfaces;
     private List<PropertyDefinition> properties;
+    private List<AttributeDefinition> attributes;
     private CINodeFilterDataDefinition nodeFilter;
     private List<InputDefinition> inputs;
 

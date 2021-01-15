@@ -51,6 +51,10 @@ public class LoggerSupportability extends LoggerBase {
             logger);
     }
 
+    public static LoggerSupportability getLogger(Class<?> clazz) {
+        return LoggerFactory.getMdcLogger(LoggerSupportability.class, org.slf4j.LoggerFactory.getLogger(clazz));
+    }
+
     public static LoggerSupportability getLogger(String className) {
         return LoggerFactory.getMdcLogger(LoggerSupportability.class,
             org.slf4j.LoggerFactory.getLogger(className));
