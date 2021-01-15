@@ -65,6 +65,8 @@ import { PolicyInstance } from "../../../models/graph/zones/policy-instance";
 import { PropertyBEModel } from "../../../models/properties-inputs/property-be-model";
 import {map} from "rxjs/operators";
 import {CapabilitiesConstraintObject} from "../../components/logic/capabilities-constraint/capabilities-constraint.component";
+import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
+import {InstanceAttributesAPIMap} from "../../../models/attributes-outputs/attribute-fe-map";
 
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
@@ -121,6 +123,11 @@ export class TopologyTemplateService {
             [COMPONENT_FIELDS.COMPONENT_INPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
     }
 
+    getComponentOutputsWithAttributes(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId,
+            [COMPONENT_FIELDS.COMPONENT_OUTPUTS, COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES, COMPONENT_FIELDS.COMPONENT_ATTRIBUTES]);
+    }
+
     getComponentDeploymentArtifacts(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_DEPLOYMENT_ARTIFACTS]);
     }
@@ -157,6 +164,11 @@ export class TopologyTemplateService {
     createInput(component: Component, inputsToCreate: InstancePropertiesAPIMap, isSelf: boolean): Observable<any> {
         const inputs = isSelf ? { serviceProperties: inputsToCreate.componentInstanceProperties } : inputsToCreate;
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/inputs', inputs);
+    }
+
+    createOutput(component: Component, outputsToCreate: InstanceAttributesAPIMap, isSelf: boolean): Observable<any> {
+        const outputs = isSelf ? { serviceProperties: outputsToCreate.componentInstanceAttributes } : outputsToCreate;
+        return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/create/outputs', outputs);
     }
 
     restoreComponent(componentType: string, componentId: string) {
@@ -201,6 +213,16 @@ export class TopologyTemplateService {
             });
     }
 
+    createServiceAttribute(componentId: string, attributeModel: AttributeBEModel): Observable<AttributeBEModel> {
+        const serverObject = {};
+        serverObject[attributeModel.name] = attributeModel;
+        return this.http.post<AttributeBEModel>(this.baseUrl + 'services/' + componentId + '/attributes', serverObject)
+            .map((res) => {
+                const attribute: AttributeBEModel = new AttributeBEModel(res);
+                return attribute;
+            });
+    }
+
     getServiceProperties(componentId: string): Observable<PropertyBEModel[]> {
         return this.http.get<any>(this.baseUrl + 'services/' + componentId + '/properties')
             .map((res) => {
@@ -211,12 +233,31 @@ export class TopologyTemplateService {
             });
     }
 
+    getServiceAttributes(componentId: string): Observable<AttributeBEModel[]> {
+        return this.http.get<any>(this.baseUrl + 'services/' + componentId + '/attributes')
+            .map((res) => {
+                if (!res) {
+                    return new Array<AttributeBEModel>();
+                }
+                return CommonUtils.initAttributes(res);
+            });
+    }
+
     updateServiceProperties(componentId: string, properties: PropertyBEModel[]) {
         return this.http.put<any>( this.baseUrl + 'services/' + componentId + '/properties', properties)
             .map((res) => {
                 const resJson = res;
                 return _.map(resJson,
                     (resValue: PropertyBEModel) => new PropertyBEModel(resValue));
+            });
+    }
+
+    updateServiceAttributes(componentId: string, attributes: AttributeBEModel[]) {
+        return this.http.put<any>( this.baseUrl + 'services/' + componentId + '/attributes', attributes)
+            .map((res) => {
+                const resJson = res;
+                return _.map(resJson,
+                    (resValue: AttributeBEModel) => new AttributeBEModel(resValue));
             });
     }
 
@@ -234,6 +275,13 @@ export class TopologyTemplateService {
             .map((res) => {
                 const input: InputBEModel = new InputBEModel(res);
                 return input;
+            });
+    }
+
+    deleteServiceAttribute(componentId: string, attribute: AttributeBEModel): Observable<string> {
+        return this.http.delete(this.baseUrl + 'services/' + componentId + '/attributes/' + attribute.uniqueId )
+            .map((res: Response) => {
+                return attribute.uniqueId;
             });
     }
 

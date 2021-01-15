@@ -11,7 +11,7 @@ import { AttributeOptions } from './attributes-options';
 @Component({
     selector: 'attribute-modal',
     templateUrl: './attribute-modal.component.html',
-    styleUrls: ['./attributes.component.less']
+    styleUrls: ['../../../../view-models/workspace/tabs/attributes/attributes.component.less']
 })
 export class AttributeModalComponent implements OnInit {
 

@@ -7,11 +7,11 @@ import { ModalComponent } from 'onap-ui-angular/dist/modals/modal.component';
 import { AttributeModel } from '../../../../models';
 import { Resource } from '../../../../models';
 import { ModalsHandler } from '../../../../utils';
-import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
-import { TranslateService } from '../../../shared/translator/translate.service';
-import { WorkspaceState } from '../../../store/states/workspace.state';
-import { WorkspaceService } from '../workspace.service';
-import { AttributeModalComponent } from './attribute-modal.component';
+import { TopologyTemplateService } from '../../../../ng2/services/component-services/topology-template.service';
+import { TranslateService } from '../../../../ng2/shared/translator/translate.service';
+import { WorkspaceState } from '../../../../ng2/store/states/workspace.state';
+import { WorkspaceService } from '../../../../ng2/pages/workspace/workspace.service';
+import { AttributeModalComponent } from '../../../../ng2/pages/workspace/attributes/attribute-modal.component';
 
 @Component({
     selector: 'attributes',
