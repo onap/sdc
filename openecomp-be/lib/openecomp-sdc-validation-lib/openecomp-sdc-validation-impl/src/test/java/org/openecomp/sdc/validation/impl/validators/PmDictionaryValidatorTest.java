@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2020 Nokia Intellectual Property. All rights reserved.
+ * Copyright (C) 2020-2021 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,26 +31,44 @@ import org.openecomp.sdc.validation.util.ValidationTestUtil;
 public class PmDictionaryValidatorTest {
 
     private static final String RESOURCE_PATH = "/org/openecomp/validation/validators/pm_dictionary_validator";
-    private static final String VALID_PM_DICTIONARY_YAML = "valid_pm_dictionary.yaml";
-    private static final String INVALID_PM_DICTIONARY_YAML = "invalid_pm_dictionary.yaml";
+    private static final String VALID_PM_DICTIONARY_PACKAGE_PATH = "valid_file/";
+    private static final String INVALID_PM_DICTIONARY_PACKAGE_PATH = "invalid_file/";
+    private static final String WRONG_PM_DICTIONARY_TYPE_PACKAGE_PATH = "wrong_file_type/";
+    private static final String PM_DICTIONARY_FILE_NAME = "pmdict.yaml";
+
 
     @Test
-    public void shouldNotReturnErrorsWhenValidPmDict() {
+    void shouldNotReturnErrorsWhenValidPmDict() {
+        // when
         Map<String, MessageContainer> messages = runValidation(
-            RESOURCE_PATH + "/" + VALID_PM_DICTIONARY_YAML);
+            RESOURCE_PATH + "/" + VALID_PM_DICTIONARY_PACKAGE_PATH);
 
+        // then
         assertNotNull(messages);
         assertEquals(0, messages.size());
     }
 
     @Test
-    public void shouldReturnErrorsWhenInvalidPmDict() {
+    void shouldReturnErrorsWhenInvalidPmDict() {
+        // when
         Map<String, MessageContainer> messages = runValidation(
-            RESOURCE_PATH + "/" + INVALID_PM_DICTIONARY_YAML);
+            RESOURCE_PATH + "/" + INVALID_PM_DICTIONARY_PACKAGE_PATH);
 
+        // then
         assertNotNull(messages);
-        assertNotNull(messages.get(INVALID_PM_DICTIONARY_YAML));
-        assertEquals(4, messages.get(INVALID_PM_DICTIONARY_YAML).getErrorMessageList().size());
+        assertNotNull(messages.get(PM_DICTIONARY_FILE_NAME));
+        assertEquals(4, messages.get(PM_DICTIONARY_FILE_NAME).getErrorMessageList().size());
+    }
+
+    @Test
+    void shouldNotReturnErrorsWhenInvalidPmDictButWrongPmDictionaryTypeInManifest() {
+        // when
+        Map<String, MessageContainer> messages = runValidation(
+                RESOURCE_PATH + "/" + WRONG_PM_DICTIONARY_TYPE_PACKAGE_PATH);
+
+        // then
+        assertNotNull(messages);
+        assertEquals(0, messages.size());
     }
 
     private Map<String, MessageContainer> runValidation(String path) {
