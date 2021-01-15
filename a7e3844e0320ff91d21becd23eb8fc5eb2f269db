@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4dcb5673_eb44d319",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "I think copyOf is redundant here, stream collect creates new object and we can get the return stream to be unmodified by using collector \n.collect(Collectors.toUnmodifiableSet())",
+      "range": {
+        "startLine": 129,
+        "startChar": 12,
+        "endLine": 130,
+        "endChar": 50
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7504221c_2bbb7703",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "I would recommend splinting reading certificates on to two methods, one that read package cert and one that reads trusted certs. That way the initialization at the beginning will be unnecessary and methods that return cert will not change trustedCertificateFromPackage \"silently\". It would be something like this:\n\nif(packageCerts \u003d\u003d null) {\n    cert \u003d readPackageCertFromCms(...)\n    trustedCertificateFromPackage \u003d readTrustedCertFromCms(...)\n} else {\n    cert \u003d readPackageCertFromPackage(...)\n    trustedCertificateFromPackage \u003d readTrustedCertFromPackage(...)\n}",
+      "range": {
+        "startLine": 166,
+        "startChar": 11,
+        "endLine": 170,
+        "endChar": 70
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "022a0158_3f0cec6b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "please avoid doing assignment in while/if statements. Also by moving it together with \"instanceof\" we can get rid of \"Object object\"",
+      "range": {
+        "startLine": 213,
+        "startChar": 15,
+        "endLine": 213,
+        "endChar": 56
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f653105b_77fa083a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "I think it should be moved to new method, that takes pemParser as an argument",
+      "range": {
+        "startLine": 213,
+        "startChar": 8,
+        "endLine": 223,
+        "endChar": 9
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c73dcb1_50eb00d7",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "I suggest creating method for that with origin file and new file as parameters, due to fact that this part of code is repeated multiple times across tests.",
+      "range": {
+        "startLine": 139,
+        "startChar": 8,
+        "endLine": 142,
+        "endChar": 46
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d543905a_eef1e30c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "Please use \"Paths.get(getClass().getResource(...)\" in order to load files from resources",
+      "range": {
+        "startLine": 143,
+        "startChar": 7,
+        "endLine": 143,
+        "endChar": 71
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bda07865_151bdd7e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "Please use parameterized location for all created files and remember to delete them after tests",
+      "range": {
+        "startLine": 144,
+        "startChar": 28,
+        "endLine": 144,
+        "endChar": 38
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e352f678_f83ab66a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T08:30:39Z",
+      "side": 1,
+      "message": "I suggest creating method for that with file path, reason same as above",
+      "range": {
+        "startLine": 147,
+        "startChar": 27,
+        "endLine": 147,
+        "endChar": 135
+      },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
