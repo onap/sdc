@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "292ecf21_e3ca38fc",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/test/java/org/openecomp/sdc/tosca/csar/SOL004ManifestOnboardingTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-15T17:41:16Z",
+      "side": 1,
+      "message": "all new TCs should be developed using Junit 5, please migrate to.",
+      "range": {
+        "startLine": 417,
+        "startChar": 4,
+        "endLine": 435,
+        "endChar": 9
+      },
+      "revId": "fa3bc4fa5867458bafdde4f0866eb2775e60c76f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
