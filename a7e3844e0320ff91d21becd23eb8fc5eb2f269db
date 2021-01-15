@@ -25,6 +25,23 @@
     },
     {
       "key": {
+        "uuid": "7e30e1d6_af919917",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2021-01-15T08:43:37Z",
+      "side": 1,
+      "message": "do not override class variable. Use Set.clear method.",
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7504221c_2bbb7703",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
         "patchSetId": 3
@@ -42,6 +59,23 @@
         "endLine": 170,
         "endChar": 70
       },
+      "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66e34b47_945a1bc6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2021-01-15T08:43:37Z",
+      "side": 1,
+      "message": "pls move methods to separate class",
       "revId": "a7e3844e0320ff91d21becd23eb8fc5eb2f269db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
