@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2017 European Support Limited
+ * Modifications copyright (c) 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +55,54 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
     addModulesToManifestFileDataList(filesDataStructure, fileDataList);
     addNestedToManifest(filesDataStructure, fileDataList);
     addArtifactsToManifestFileDataList(filesDataStructure, fileDataList);
+
     ManifestContent manifestContent = createManifest(vspDetails, fileDataList);
     return Optional.of(manifestContent);
+  }
+
+  @Override
+  public Optional<ManifestContent> createManifestFromExisting(VspDetails vspDetails, FilesDataStructure filesDataStructure, ManifestContent existingManifest) {
+    if (Objects.isNull(filesDataStructure)) {
+      return Optional.empty();
+    }
+
+    List<FileData> fileDataList = new ArrayList<>();
+    addModulesToManifestFileDataList(filesDataStructure, fileDataList);
+    addNestedToManifest(filesDataStructure, fileDataList);
+    addArtifactsToManifestFileDataList(filesDataStructure, fileDataList, existingManifest);
+
+    ManifestContent manifestContent = createManifest(vspDetails, fileDataList);
+    return Optional.of(manifestContent);
+  }
+
+  private void addArtifactsToManifestFileDataList(FilesDataStructure filesDataStructure, List<FileData> fileDataList, ManifestContent existingManifest) {
+    Collection<String> forArtifacts = CollectionUtils
+            .union(filesDataStructure.getArtifacts(), filesDataStructure.getUnassigned());
+    if (CollectionUtils.isNotEmpty(forArtifacts)) {
+      for (String artifact : forArtifacts) {
+        if (isCloudSpecificArtifact(artifact)) {
+          fileDataList.add(createBaseFileData(FileData.Type.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT, artifact));
+        } else if (isControllerBlueprintArchive(artifact)) {
+          fileDataList.add(createBaseFileData(FileData.Type.CONTROLLER_BLUEPRINT_ARCHIVE, artifact));
+        } else if (isHelm(artifact)) {
+          fileDataList.add(createBaseFileData(FileData.Type.HELM, artifact));
+        } else if (isPmDictionary(artifact, existingManifest)) {
+          fileDataList.add(createBaseFileData(FileData.Type.PM_DICTIONARY, artifact));
+        }
+        else {
+          fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
+        }
+      }
+    }
+  }
+
+  private boolean isPmDictionary(String artifact, ManifestContent existingManifest) {
+    return existingManifest.getData()
+            .stream()
+            .filter(fileData -> fileData.getType()
+                    .equals(FileData.Type.PM_DICTIONARY))
+            .map(FileData::getFile)
+            .anyMatch(pmDictionaryFile -> pmDictionaryFile.equals(artifact));
   }
 
   private void addNestedToManifest(
@@ -172,8 +219,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
           fileDataList.add(createBaseFileData(FileData.Type.CONTROLLER_BLUEPRINT_ARCHIVE, artifact));
         } else if (isHelm(artifact)) {
           fileDataList.add(createBaseFileData(FileData.Type.HELM, artifact));
-        }
-        else {
+        } else {
           fileDataList.add(createBaseFileData(FileData.Type.OTHER, artifact));
         }
       }
