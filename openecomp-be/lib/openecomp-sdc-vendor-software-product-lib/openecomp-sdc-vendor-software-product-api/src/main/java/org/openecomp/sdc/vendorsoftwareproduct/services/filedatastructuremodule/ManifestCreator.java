@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications copyright (c) 2021 Nokia
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +31,8 @@ import java.util.Optional;
 
 public interface ManifestCreator {
   Optional<ManifestContent> createManifest(VspDetails vspDetails, FilesDataStructure filesDataStructure);
+
+  Optional<ManifestContent> createManifestFromExisting(VspDetails vspDetails, FilesDataStructure filesDataStructure, ManifestContent existingManifest);
 
   Optional<ManifestContent> createManifest(VspDetails vspDetails, FileContentHandler
       fileContentHandler, AnalyzedZipHeatFiles analyzedZipHeatFiles);
