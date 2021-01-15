@@ -69,7 +69,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
@@ -79,6 +78,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
@@ -1228,7 +1228,7 @@ public class ServiceImportBusinessLogic{
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
+        Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1279,7 +1279,7 @@ public class ServiceImportBusinessLogic{
                                             Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
                                             Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts,
                                             Map<String, Map<String, ArtifactDefinition>> instArtifacts,
-                                            Map<String, List<AttributeDataDefinition>> instAttributes,
+                                            Map<String, List<AttributeDefinition>> instAttributes,
                                             Map<String, Resource> originCompMap,
                                             Map<String, List<ComponentInstanceInput>> instInputs,
                                             UploadComponentInstanceInfo uploadComponentInstanceInfo) {
@@ -1671,7 +1671,7 @@ public class ServiceImportBusinessLogic{
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
+        Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1728,7 +1728,7 @@ public class ServiceImportBusinessLogic{
                                             Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
                                             Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts,
                                             Map<String, Map<String, ArtifactDefinition>> instArtifacts,
-                                            Map<String, List<AttributeDataDefinition>> instAttributes,
+                                            Map<String, List<AttributeDefinition>> instAttributes,
                                             Map<String, Resource> originCompMap,
                                             Map<String, List<ComponentInstanceInput>> instInputs,
                                             UploadComponentInstanceInfo uploadComponentInstanceInfo) {

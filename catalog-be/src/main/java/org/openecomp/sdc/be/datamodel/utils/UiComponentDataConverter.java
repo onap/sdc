@@ -138,6 +138,9 @@ public class UiComponentDataConverter {
             case PROPERTIES:
                 setProperties(dataTransfer, component);
                 break;
+            case ATTRIBUTES:
+                setAttributes(dataTransfer, component);
+                break;
             case INTERFACES:
                 setInterfaces(dataTransfer, component);
                 break;
@@ -305,6 +308,14 @@ public class UiComponentDataConverter {
             dataTransfer.setProperties(new ArrayList<>());
         } else {
             dataTransfer.setProperties(component.getProperties());
+        }
+    }
+
+    private void setAttributes(UiComponentDataTransfer dataTransfer, Component component) {
+        if (component.getAttributes() == null) {
+            dataTransfer.setAttributes(new ArrayList<>());
+        } else {
+            dataTransfer.setAttributes(component.getAttributes());
         }
     }
 
