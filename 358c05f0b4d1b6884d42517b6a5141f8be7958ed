@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "d72f11d0_7a259bb3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57bccca3_234e6a0c",
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f32ed7ef_f93dcd86",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -56,6 +74,24 @@
       "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5206158a_d40d42d0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 1,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "f32ed7ef_f93dcd86",
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -79,6 +115,30 @@
       "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "996bef5d_f8f6f7a8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 1,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "95d658c9_bd941bec",
+      "range": {
+        "startLine": 1361,
+        "startChar": 16,
+        "endLine": 1361,
+        "endChar": 39
+      },
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

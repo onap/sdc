@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "05cf8c47_531ac7b9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "This was previously developed by China Mobile, and then our colleagues made a mistake. Now we want to change it back",
+      "parentUuid": "58c53b30_25553137",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e328e205_5c22ae30",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -33,6 +51,24 @@
       "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcaac804_fb4ae259",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "e328e205_5c22ae30",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1234fc82_ebaf0183",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "b287b6d4_b982fe20",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3eb46966_e98d07da",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -67,6 +121,24 @@
       "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56cdb6da_25b680db",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1220,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "3eb46966_e98d07da",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e57689ec_10c42d71",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1267,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "bfffb77d_24882844",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2c7b6225_4ea9eb49",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -101,6 +191,24 @@
       "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c37c1571_479750de",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1281,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "2c7b6225_4ea9eb49",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "17753eff_4c5276d6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1299,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "a5d38ffd_ae83f19f",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "777167ef_c562ba25",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -135,6 +261,24 @@
       "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7e6ee31_29398957",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1335,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "777167ef_c562ba25",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "ab159c55_55cbcdea",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "f145e06a_6c98f2e6",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7d7e1f7_195cbb8a",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -169,6 +331,24 @@
       "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5c9e844_462f0dce",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1366,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "c7d7e1f7_195cbb8a",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "d1b7c144_64f4d6c1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1378,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "67065327_94e21f76",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e3effe94_a3d5ea18",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -206,6 +404,24 @@
     },
     {
       "key": {
+        "uuid": "76fe7f3f_e2aad4e4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1387,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "It has no return value and does not need to be asserted",
+      "parentUuid": "e3effe94_a3d5ea18",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cc02f57a_8120a87f",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
@@ -220,6 +436,24 @@
       "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a535af77_ff5ae4c1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1411,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T02:39:16Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "cc02f57a_8120a87f",
+      "revId": "1eeee67f4e115e70ddb6ad62b1446fa6ff6f48a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
