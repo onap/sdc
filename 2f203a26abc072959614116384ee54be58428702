@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56235c66_7c0ea257",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-15T17:42:02Z",
+      "side": 1,
+      "message": "all new TCs should be developed using Junit 5, please migrate to.",
+      "range": {
+        "startLine": 132,
+        "startChar": 4,
+        "endLine": 168,
+        "endChar": 15
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
