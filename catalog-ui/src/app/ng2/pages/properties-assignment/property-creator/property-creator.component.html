@@ -34,7 +34,7 @@
         <div class="i-sdc-form-item">
             <label class="i-sdc-form-label">Description</label>
             <textarea  class="i-sdc-form-textarea"
-                       [pattern]="commentValidationPattern"
+                       [pattern]="validation.commentValidationPattern"
                        name="propertyDescription"
                        [(ngModel)]="propertyModel.description"
                        [ngModelOptions]="{ debounce: 200 }"

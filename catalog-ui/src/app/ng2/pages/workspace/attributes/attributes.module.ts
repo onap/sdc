@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SdcUiComponentsModule } from 'onap-ui-angular';
 import { GlobalPipesModule } from '../../../pipes/global-pipes.module';
-import { AttributesComponent } from './attributes.component';
+import { AttributesComponent } from '../../../../view-models/workspace/tabs/attributes/attributes.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 import { AttributeModalComponent } from './attribute-modal.component';
