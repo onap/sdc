@@ -3,13 +3,14 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications copyright (c) 2021 Nokia
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +21,18 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class ManifestCreatorNamingConventionImplTest extends ManifestCreatorNamingConventionImpl {
 
@@ -37,13 +41,70 @@ public class ManifestCreatorNamingConventionImplTest extends ManifestCreatorNami
     private static final String ARTIFACT_3 = "cloudtech_aws_configtemplate.zip";
     private static final String ARTIFACT_4 = "k8s_charts.zip";
     private static final String ARTIFACT_5 = "cloudtech_openstack_configtemplate.zip";
+    public static final String PMDICT_YAML = "pmdict.yaml";
+
 
     @Test
-    public void testIsCloudSpecificArtifact() {
+    void name() {
+    }
+
+    @Test
+    void testIsCloudSpecificArtifact() {
         assertTrue(isCloudSpecificArtifact(ARTIFACT_1));
         assertTrue(isCloudSpecificArtifact(ARTIFACT_2));
         assertTrue(isCloudSpecificArtifact(ARTIFACT_3));
         assertFalse(isCloudSpecificArtifact(ARTIFACT_4));
         assertFalse(isCloudSpecificArtifact(ARTIFACT_5));
+    }
+
+    @Test
+    void shouldMapPmDictionaryTypeFromExistingManifestToPmDictionaryTypeInNewManifest() {
+        // given
+        VspDetails vspDetails = new VspDetails();
+        FilesDataStructure fileDataStructure = new FilesDataStructure();
+        fileDataStructure.setArtifacts(List.of(PMDICT_YAML));
+        ManifestContent existingManifest = prepareManifestWithPmDictFileWithType(FileData.Type.PM_DICTIONARY);
+
+        // when
+        Optional<ManifestContent> newManifest = new ManifestCreatorNamingConventionImpl()
+                .createManifestFromExisting(vspDetails, fileDataStructure, existingManifest);
+
+        // then
+        assertTrue(newManifest.isPresent());
+        assertTrue(newManifest.get()
+                .getData()
+                .stream()
+                .allMatch(fd -> fd.getType().equals(FileData.Type.PM_DICTIONARY) &&
+                        fd.getFile().equals(PMDICT_YAML)));
+    }
+
+    @Test
+    void shouldMapPmDictionaryWithOtherTypeFromExistingManifestToOtherTypeInNewManifest() {
+        // given
+        VspDetails vspDetails = new VspDetails();
+        FilesDataStructure fileDataStructure = new FilesDataStructure();
+        fileDataStructure.setArtifacts(List.of(PMDICT_YAML));
+        ManifestContent existingManifest = prepareManifestWithPmDictFileWithType(FileData.Type.OTHER);
+
+        // when
+        Optional<ManifestContent> newManifest = new ManifestCreatorNamingConventionImpl()
+                .createManifestFromExisting(vspDetails, fileDataStructure, existingManifest);
+
+        // then
+        assertTrue(newManifest.isPresent());
+        assertTrue(newManifest.get()
+                .getData()
+                .stream()
+                .allMatch(fd -> fd.getType().equals(FileData.Type.OTHER) &&
+                        fd.getFile().equals(PMDICT_YAML)));
+    }
+
+    private ManifestContent prepareManifestWithPmDictFileWithType(FileData.Type fileType) {
+        ManifestContent existingManifest = new ManifestContent();
+        FileData fileData = new FileData();
+        fileData.setFile(PMDICT_YAML);
+        fileData.setType(fileType);
+        existingManifest.setData(List.of(fileData));
+        return existingManifest;
     }
 }

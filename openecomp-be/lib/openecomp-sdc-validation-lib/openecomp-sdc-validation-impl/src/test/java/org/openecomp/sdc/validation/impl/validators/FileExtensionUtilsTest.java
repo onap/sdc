@@ -39,22 +39,6 @@ class FileExtensionUtilsTest {
         ".properties"
     );
 
-    private static final Set<String> VALID_PM_DICTIONARY_EXTENSIONS = Set.of(
-        "pmdict.yml",
-        "pmdict.yaml",
-        "pm_dict.yml",
-        "pm_dict.yaml",
-        "pmdictionary.yml",
-        "pmdictionary.yaml",
-        "pm_dictionary.yml",
-        "pm_dictionary.yaml"
-    );
-    private static final Set<String> INVALID_PM_DICTIONARY_EXTENSIONS = Set.of(
-        "pmdict.txt",
-        "pmdict.java",
-        "pm.yml"
-    );
-
     private static final Set<String> TEST_FILE_PREFIXES = Set.of(
         "test",
         "test_file"
@@ -72,22 +56,6 @@ class FileExtensionUtilsTest {
     void shouldNotMatchImproperYamlExtensions() {
         final boolean allInvalidFilesNotMatched = constructTestFilenamesWithExtensions(INVALID_YAML_EXTENSIONS)
             .noneMatch(FileExtensionUtils::isYaml);
-
-        assertTrue(allInvalidFilesNotMatched);
-    }
-
-    @Test
-    void shouldMatchProperPmDictionaryExtensions() {
-        final boolean allValidFilesMatched = constructTestFilenamesWithExtensions(VALID_PM_DICTIONARY_EXTENSIONS)
-            .allMatch(FileExtensionUtils::isPmDictionary);
-
-        assertTrue(allValidFilesMatched);
-    }
-
-    @Test
-    void shouldNotMatchImproperPmDictionaryExtensions() {
-        final boolean allInvalidFilesNotMatched = constructTestFilenamesWithExtensions(INVALID_PM_DICTIONARY_EXTENSIONS)
-            .noneMatch(FileExtensionUtils::isPmDictionary);
 
         assertTrue(allInvalidFilesNotMatched);
     }
