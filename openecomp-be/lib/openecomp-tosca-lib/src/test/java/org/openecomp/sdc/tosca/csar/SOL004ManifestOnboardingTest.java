@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modification Copyright (C) 2021 Nokia.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -410,6 +412,81 @@ public class SOL004ManifestOnboardingTest {
             .invoke(manifest, "attribute     :       : a value ::: test test:   ");
         assertThat("Value should be present", value.isPresent(), is(true));
         assertThat("Value should be as expected", value.get(), equalTo(": a value ::: test test:"));
+    }
+
+    @Test
+    public void testSuccessfulSignedManifestWithIndividualSignature() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/signedWithIndividualSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, true);
+        }
+    }
+
+    @Test
+    public void testSuccessfulUnsignedManifestWithIndividualSignaturee() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/unsignedWithIndividualSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, false);
+        }
+    }
+
+    @Test
+    public void testSuccessfulSignedManifestWithIndividualSignatureAndHash() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/signedWithIndividualSignatureAndHash.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, true);
+        }
+    }
+
+    @Test
+    public void testSuccessfulSignedManifestWithIndividualSignatureAndCommonCert() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/signedWithIndividualSignatureCommonCert.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, true);
+        }
+    }
+
+    @Test
+    public void testEmptyIndividualSignature() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/individualSignature/signedWithEmptyIndividualSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            final List<String> expectedErrorList = List.of(
+                buildErrorMessage(
+                    8, "Signature:", Messages.MANIFEST_EXPECTED_SIGNATURE_VALUE
+                ));
+            assertInvalidManifest(expectedErrorList);
+        }
+    }
+
+    @Test
+    public void testEmptyIndividualCertificate() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/individualSignature/signedWithEmptyIndividualCertificate.mf")) {
+            manifest.parse(manifestAsStream);
+            final List<String> expectedErrorList = List.of(
+                buildErrorMessage(
+                    9, "Certificate:", Messages.MANIFEST_EXPECTED_CERTIFICATE_VALUE
+                ));
+            assertInvalidManifest(expectedErrorList);
+        }
+    }
+
+    @Test
+    public void testOnlyIndividualCertificateNoSignature() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/individualSignature/signedWithIndividualCertificateNoSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            final List<String> expectedErrorList = List.of(
+                buildErrorMessage(
+                    8, "Certificate: TOSCA-Metadata/TOSCA.cert", Messages.MANIFEST_EXPECTED_SIGNATURE_BEFORE_CERTIFICATE
+                ));
+            assertInvalidManifest(expectedErrorList);
+        }
     }
 
     private void assertValidManifest(final int expectedMetadataSize, final int expectedSourcesSize,
