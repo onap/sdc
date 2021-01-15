@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5ff38b3e_faaab7bb",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T06:31:09Z",
+      "side": 1,
+      "message": "This was previously developed by China Mobile, and then our colleagues made a mistake. Now we want to change it back",
+      "parentUuid": "663bfbf1_62afab5b",
+      "revId": "29b9cabf93315c6403612d89dccf240cd5371c34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b949ec6_973812af",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "1cc90e82_05740be9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T06:31:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b949ec6_973812af",
+      "revId": "29b9cabf93315c6403612d89dccf240cd5371c34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2f4422d8_e7dd78c5",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 5
@@ -50,6 +86,24 @@
       "revId": "29b9cabf93315c6403612d89dccf240cd5371c34",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14c21057_ce43c7e6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 793,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T06:31:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f4422d8_e7dd78c5",
+      "revId": "29b9cabf93315c6403612d89dccf240cd5371c34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

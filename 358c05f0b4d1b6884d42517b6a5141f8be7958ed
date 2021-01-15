@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c8dc57fe_d2215239",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 7561
+      },
+      "writtenOn": "2021-01-15T06:31:09Z",
+      "side": 1,
+      "message": "Because some object mock failed during the test, this exception handling was added, and now it has been cancelled",
+      "parentUuid": "bdf4939b_9a48612d",
+      "range": {
+        "startLine": 1564,
+        "startChar": 12,
+        "endLine": 1564,
+        "endChar": 17
+      },
+      "revId": "358c05f0b4d1b6884d42517b6a5141f8be7958ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57bccca3_234e6a0c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 3
