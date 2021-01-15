@@ -42,6 +42,10 @@ public class AttributeDefinition extends AttributeDataDefinition implements IOpe
         toscaPresentation = null;
     }
 
+    public AttributeDefinition(final AttributeDataDefinition attributeDataDefinition) {
+        super(attributeDataDefinition);
+    }
+
     public AttributeDefinition(final AttributeDefinition attributeDefinition) {
         this.type = attributeDefinition.getType();
         this.description = attributeDefinition.getDescription();
