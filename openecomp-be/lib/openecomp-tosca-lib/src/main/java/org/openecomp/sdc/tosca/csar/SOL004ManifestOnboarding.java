@@ -1,6 +1,7 @@
 /*-
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation.
+ *  Modification Copyright (C) 2021 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -275,7 +276,9 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             return;
         }
         sources.add(sourcePath);
+        readNextNonEmptyLine();
         readAlgorithmEntry(sourcePath);
+        readSignatureEntry(sourcePath);
     }
 
     /**
@@ -285,7 +288,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
      * @param sourcePath the source path related to the algorithm entry.
      */
     private void readAlgorithmEntry(final String sourcePath) {
-        Optional<String> currentLine = readNextNonEmptyLine();
+        Optional<String> currentLine =  getCurrentLine();
         if (!currentLine.isPresent()) {
             return;
         }
@@ -321,6 +324,51 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             return;
         }
         sourceAndChecksumMap.put(sourcePath, new AlgorithmDigest(algorithmType, hash));
+        readNextNonEmptyLine();
+    }
+
+    /**
+     * Processes entries  {@link ManifestTokenType#SIGNATURE} and {@link ManifestTokenType#CERTIFICATE} of a {@link
+     * ManifestTokenType#SOURCE} entry.
+     *
+     * @param sourcePath the source path related to the algorithm entry.
+     */
+    private void readSignatureEntry(final String sourcePath) {
+        Optional<String> currentLine =  getCurrentLine();
+        if (!currentLine.isPresent()) {
+            return;
+        }
+        final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
+        if (manifestTokenType == ManifestTokenType.CERTIFICATE) {
+            reportError(Messages.MANIFEST_EXPECTED_SIGNATURE_BEFORE_CERTIFICATE);
+            continueToProcess = false;
+            return;
+        }
+        if (manifestTokenType != ManifestTokenType.SIGNATURE) {
+            return;
+        }
+        final String signatureLine = currentLine.get();
+        final String signatureFile = readEntryValue(signatureLine).orElse(null);
+        if (signatureFile == null) {
+            reportError(Messages.MANIFEST_EXPECTED_SIGNATURE_VALUE);
+            continueToProcess = false;
+            return;
+        }
+
+        currentLine = readNextNonEmptyLine();
+        if (!currentLine.isPresent() || detectLineEntry().orElse(null) != ManifestTokenType.CERTIFICATE) {
+            sourceAndSignatureMap.put(sourcePath, new SignatureData(signatureFile, null));
+            return;
+        }
+
+        final String certLine = currentLine.get();
+        final String certFile = readEntryValue(certLine).orElse(null);
+        if (certFile == null) {
+            reportError(Messages.MANIFEST_EXPECTED_CERTIFICATE_VALUE);
+            continueToProcess = false;
+            return;
+        }
+        sourceAndSignatureMap.put(sourcePath, new SignatureData(signatureFile, certFile));
         readNextNonEmptyLine();
     }
 

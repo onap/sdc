@@ -1,6 +1,7 @@
 /*
  * Copyright © 2016-2017 European Support Limited
  * Modification Copyright (C) 2019 Nordix Foundation.
+ * Modification Copyright (C) 2021 Nokia.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +47,7 @@ abstract class AbstractOnboardingManifest implements Manifest {
     protected List<String> sources;
     protected Map<String, List<String>> nonManoSources;
     protected Map<String, AlgorithmDigest> sourceAndChecksumMap = new HashMap<>();
+    protected Map<String, SignatureData> sourceAndSignatureMap = new HashMap<>();
     protected String cmsSignature;
     protected List<String> errors;
     protected boolean continueToProcess;
