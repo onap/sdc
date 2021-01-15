@@ -23,16 +23,6 @@ import java.util.Set;
 
 class FileExtensionUtils {
 
-    private static final Set<String> VALID_PM_DICTIONARY_EXTENSIONS = Set.of(
-        "pmdict.yml",
-        "pmdict.yaml",
-        "pm_dict.yml",
-        "pm_dict.yaml",
-        "pmdictionary.yml",
-        "pmdictionary.yaml",
-        "pm_dictionary.yml",
-        "pm_dictionary.yaml"
-    );
     private static final Set<String> VALID_YAML_EXTENSIONS = Set.of(
         ".yaml",
         ".yml",
@@ -40,16 +30,9 @@ class FileExtensionUtils {
     );
 
     static boolean isYaml(String fileName) {
-        return isValidExt(fileName, VALID_YAML_EXTENSIONS);
-    }
-
-    static boolean isPmDictionary(String fileName) {
-        return isValidExt(fileName, VALID_PM_DICTIONARY_EXTENSIONS);
-    }
-
-    private static boolean isValidExt(String fileName, Set<String> validExtensions) {
         String fileNameLower = fileName.toLowerCase();
-        return validExtensions.stream()
+        return FileExtensionUtils.VALID_YAML_EXTENSIONS.stream()
             .anyMatch(fileNameLower::endsWith);
     }
+
 }

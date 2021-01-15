@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2020 Nokia. All rights reserved.
+ * Copyright (C) 2021 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.validation.impl.validators;
 
+import org.junit.jupiter.api.Test;
 import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.validation.Validator;
+import org.openecomp.sdc.validation.util.ValidationTestUtil;
 
-/**
- * Stub required for class creation in test scope
- */
-public class PmDictionaryValidator implements Validator {
+import java.util.Set;
 
-    @Override
-    public void validate(GlobalValidationContext globalContext) {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class GlobalContextUtilTest {
+    private static final String TEST_MANIFEST_PATH = "/org/openecomp/validation/validators/global_context_util/";
+
+    @Test
+    void shouldReturnOnlyFilesWithPmDictionaryType() {
+        // given
+        GlobalValidationContext globalContext = ValidationTestUtil.createGlobalContextFromPath(TEST_MANIFEST_PATH);
+
+        // when
+        Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
+
+        // then
+        assertEquals(1, pmDictionaryFiles.size());
     }
+
 }

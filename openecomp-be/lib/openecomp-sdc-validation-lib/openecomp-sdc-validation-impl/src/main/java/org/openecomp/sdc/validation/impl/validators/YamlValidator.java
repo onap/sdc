@@ -1,6 +1,6 @@
 /*
  * Copyright © 2016-2017 European Support Limited
- * Copyright © 2020 Nokia
+ * Copyright © 2020-2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class YamlValidator implements Validator {
   private static final ErrorMessageCode ERROR_CODE_YML_1 = new ErrorMessageCode("YML1");
@@ -37,9 +38,11 @@ public class YamlValidator implements Validator {
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
+    Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
+
     Collection<String> files = globalContext.files(
         (fileName, globalValidationContext) -> FileExtensionUtils.isYaml(fileName)
-            && !FileExtensionUtils.isPmDictionary(fileName));
+            && !pmDictionaryFiles.contains(fileName));
 
     files.forEach(fileName -> validate(fileName, globalContext));
   }

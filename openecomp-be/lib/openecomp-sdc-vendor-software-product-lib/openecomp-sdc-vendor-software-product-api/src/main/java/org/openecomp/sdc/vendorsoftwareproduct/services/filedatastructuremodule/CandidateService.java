@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modifications copyright (c) 2021 Nokia
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule;
@@ -79,6 +81,8 @@ public interface CandidateService {
                                            AnalyzedZipHeatFiles analyzedZipHeatFiles);
 
   String createManifest(VspDetails vspDetails, FilesDataStructure structure);
+
+  String createManifestFromExisting(VspDetails vspDetails, FilesDataStructure structure, ManifestContent existingManifest);
 
   Optional<List<ErrorMessage>> validateFileDataStructure(FilesDataStructure filesDataStructure);
 
