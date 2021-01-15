@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc7baace_9e1b90ef",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T13:36:23Z",
+      "side": 1,
+      "message": "set of certs can be generalized to Collection\u003cX509CertificateHolder\u003e and then can be define before this \"if\", in line 162:\nfinal X509Certificate cert;\nCollection\u003cX509CertificateHolder\u003e certs;\nif (packageCert \u003d\u003d null) {",
+      "range": {
+        "startLine": 171,
+        "startChar": 16,
+        "endLine": 171,
+        "endChar": 82
+      },
+      "revId": "2256197b562d68aec1a4756dba0f34d59b969032",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d837179_994501bc",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-01-15T13:36:23Z",
+      "side": 1,
+      "message": "Please, instead of returning null return Optional\u003cX509Certificate\u003e, then it will be possible to replace null checking in lines 173 and 165 with something like:\ncert \u003d readSignCert(certs, firstSigner).orElseThrow(new SecurityManagerException(...));",
+      "range": {
+        "startLine": 198,
+        "startChar": 16,
+        "endLine": 198,
+        "endChar": 30
+      },
+      "revId": "2256197b562d68aec1a4756dba0f34d59b969032",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
