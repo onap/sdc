@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "e3652fcb_4487f814",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-16T12:19:43Z",
+      "side": 1,
+      "message": "Collection.isEmpty() should be used to test for emptiness",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 125,
+        "endChar": 56
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7b6b08d_294d1939",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-16T12:19:43Z",
+      "side": 1,
+      "message": "used? remove if not.",
+      "range": {
+        "startLine": 246,
+        "startChar": 3,
+        "endLine": 248,
+        "endChar": 5
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4236fb92_bbcdab1f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-16T12:19:43Z",
+      "side": 1,
+      "message": "log properly and/or throw dedicated exception",
+      "range": {
+        "startLine": 254,
+        "startChar": 12,
+        "endLine": 254,
+        "endChar": 42
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "56235c66_7c0ea257",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
         "patchSetId": 6
