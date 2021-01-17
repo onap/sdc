@@ -6,36 +6,50 @@ const devConfig = require('./tools/getDevConfig');
 let devPort = process.env.PORT || devConfig.port;
 
 module.exports = function(server) {
-    let cookieRules = devConfig.proxyConfig.cookieReplaceRules;
-    let cookies = devConfig.proxyConfig.cookies;
+    console.log('');
     console.log('---------------------');
+    console.log('---------------------');
+    console.log('---------------------');
+    console.log(
+        'Local URL: http://localhost:' + devPort + '/sdc1/#!/onboardVendor'
+    );
+    console.log('---------------------');
+    console.log('---------------------');
+    console.log('---------------------');
+    console.log('Starting dev server with role: ' + devConfig.env.role);
+    let userType = devConfig.userTypes[devConfig.env.role];
 
     let proxyConfigDefaults = {
         changeOrigin: true,
         secure: false,
+        logLevel: 'debug',
         onProxyRes: (proxyRes, req, res) => {
-            let setCookie = proxyRes.headers['set-cookie'];
-            if (setCookie) {
-                cookieRules.forEach(function(rule) {
-                    setCookie[0] = setCookie[0].replace(
-                        rule.replace,
-                        rule.with
-                    );
-                });
-            }
+            res.cookie(
+                devConfig.cookie.userIdSuffix,
+                req.headers[devConfig.cookie.userIdSuffix] || userType.userId
+            );
+            res.cookie(
+                devConfig.cookie.userEmail,
+                req.headers[devConfig.cookie.userEmail] || userType.email
+            );
+            res.cookie(
+                devConfig.cookie.userFirstName,
+                req.headers[devConfig.cookie.userFirstName] ||
+                userType.firstName
+            );
+            res.cookie(
+                devConfig.cookie.userLastName,
+                req.headers[devConfig.cookie.userLastName] || userType.lastName
+            );
             if (
-                proxyRes.statusCode === 302 &&
-                proxyRes.headers.location.indexOf(devConfig.proxyConfig.login) >
-                    -1
+                proxyRes &&
+                proxyRes.headers &&
+                proxyRes.headers.location &&
+                proxyRes.headers.location.indexOf('login') > -1
             ) {
                 proxyRes.headers.location = `http://localhost:${devPort}/${
                     devConfig.proxyConfig.redirectionPath
-                }`;
-                let myCookies = [];
-                for (let cookie in cookies) {
-                    myCookies.push(cookie + '=' + cookies[cookie]);
-                }
-                res.setHeader('Set-Cookie', myCookies);
+                    }`;
             }
         }
     };
@@ -45,15 +59,17 @@ module.exports = function(server) {
             devConfig.proxyConfig.urlReplaceRules.forEach(function(rule) {
                 if (req.url.indexOf(rule.url) > -1) {
                     req.url = req.url.replace(rule.replace, rule.with);
+                    next();
                 }
             });
             devConfig.proxyConfig.jsReplaceRules.forEach(function(rule) {
                 let regex = new RegExp('^(.*)' + rule.replace);
                 let match = req.url.match(regex);
-                let newUrl = match && match[1] + rule.with + '.js';
+                let newUrl = match && match[1] + rule.with;
                 if (newUrl) {
                     console.log(`REWRITING URL: ${req.url} -> ${newUrl}`);
                     req.url = newUrl;
+                    next();
                 }
             });
             next();
@@ -80,32 +96,39 @@ module.exports = function(server) {
         config: devConfig.proxyConfig.catalogProxy
     });
     proxies.forEach(function(p) {
+        console.log(
+            'adding: ' + p.target + ' with rewrite: ' + p.config.rewrite
+        );
         middlewares.push(
             proxy(
                 p.config.proxy,
                 Object.assign({}, proxyConfigDefaults, {
                     target: p.target,
+                    loglevel: 'debug',
                     pathRewrite: p.config.rewrite
                 })
             )
         );
     });
 
-    let websocketTarget = devConfig.proxyCatalogTarget;
-    if (devConfig.proxyWebsocketTarget) {
-        websocketTarget = devConfig.proxyWebsocketTarget;
+    if (devConfig.proxyConfig.websocketProxy.enabled) {
+        let websocketTarget = devConfig.proxyCatalogTarget;
+        if (devConfig.proxyWebsocketTarget) {
+            websocketTarget = devConfig.proxyWebsocketTarget;
+        }
+        console.log('Websocket proxy set to : ' + websocketTarget);
+        console.log('---------------------');
+        var wsProxy = proxy(
+            devConfig.proxyConfig.websocketProxy.proxy,
+            Object.assign({}, proxyConfigDefaults, {
+                target: websocketTarget,
+                ws: true
+            })
+        );
+        middlewares.push(wsProxy);
+        server.use(middlewares);
+        server.on('upgrade', wsProxy.upgrade);
+    } else {
+        server.use(middlewares);
     }
-    console.log('Websocket proxy set to : ' + websocketTarget);
-    console.log('---------------------');
-    var wsProxy = proxy(
-        devConfig.proxyConfig.websocketProxy.proxy,
-        Object.assign({}, proxyConfigDefaults, {
-            target: websocketTarget,
-            ws: true
-        })
-    );
-    middlewares.push(wsProxy);
-
-    server.use(middlewares);
-    server.on('upgrade', wsProxy.upgrade);
 };

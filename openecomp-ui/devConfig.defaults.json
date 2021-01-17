@@ -3,24 +3,81 @@
   "proxyCatalogTarget": null,
   "proxyWebsocketTarget": null,
   "proxyTarget": null,
-  "proxyConfig": {
-    "cookies": null,
-    "cookiesReplaceRules": [],
-    "urlReplaceRules": [],
-    "jsReplaceRules": [],
-    "appContextPath": null,
-    "login": null,
-    "redirectionPath": null,
-    "onboardingProxy": {
-      "rewrite": null,
-      "proxy": []
+  "cookie": {
+    "junctionName": "IV_JCT",
+    "prefix": "AMWEBJCT!",
+    "userIdSuffix": "USER_ID",
+    "userFirstName": "HTTP_CSP_FIRSTNAME",
+    "userLastName": "HTTP_CSP_LASTNAME",
+    "userEmail": "HTTP_CSP_EMAIL",
+    "xEcompRequestId": " X-ECOMP-RequestID",
+    "portalCookie": "EPService"
+  },
+  "env": {
+    "role": "designer"
+  },
+  "userTypes": {
+    "admin": {
+      "userId": "jh0003",
+      "email": "mail@gmail.com",
+      "firstName": "Jimmy",
+      "lastName": "Hendrix",
+      "xEcompRequestId": "ccccc"
     },
-    "catalogProxy": {
-      "rewrite": null,
-      "proxy": []
+    "designer": {
+      "userId": "cs0008",
+      "email": "designer@sdc.com",
+      "firstName": "Carlos",
+      "lastName": "Santana",
+      "xEcompRequestId": "ccccc"
+    }
+  },
+  "proxyConfig" : {
+    "urlReplaceRules" : [
+      {
+        "url" : "/proxy-designer1",
+        "replace" : "/proxy-designer1",
+        "with" : ""
+      },
+      {
+        "url" : "/onboarding/resources",
+        "replace" : "/onboarding",
+        "with" : ""
+      }
+    ],
+    "jsReplaceRules" : [
+      {
+        "replace" : "/onboarding/punch-outs_en.js",
+        "with" : "/onboarding/punch-outs.js"
+      }
+    ],
+    "appContextPath" : "/onboarding",
+    "redirectionPath" : "sdc1#/onboardVendor",
+    "onboardingProxy" : {
+      "rewrite" : {
+        "/sdc1/feProxy/onboarding-api": "/onboarding-api"
+      },
+      "proxy" : [
+        "/api",
+        "/onboarding-api",
+        "/sdc1/feProxy/onboarding-api"
+      ]
     },
-    "websocketProxy": {
-      "proxy": []
+    "catalogProxy" : {
+      "rewrite" : {
+        "/sdc1/feProxy/onboarding-api": "/sdc1/feProxy/onboarding-api",
+        "/onboarding-api": "/sdc1/feProxy/onboarding-api"
+      },
+      "proxy" : [
+        "/sdc1",
+        "/onboarding-api",
+        "/scripts",
+        "/styles"
+      ]
+    },
+    "websocketProxy" : {
+      "proxy" : ["/notification-api"],
+      "enabled" : false
     }
   }
 }
