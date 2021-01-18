@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "68902041_35f5356d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/BasicAuthenticationFilter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-01-18T09:40:11Z",
+      "side": 1,
+      "message": "could be\nprivate static final Logger log \u003d LoggerFactory.getLogger(BasicAuthenticationFilter.getClass());",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 89
+      },
+      "revId": "534c571ef74845dbb8d74fd8b6ceabf1f146009a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a860b22c_8d8d019a",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/BasicAuthenticationFilter.java",
         "patchSetId": 8
