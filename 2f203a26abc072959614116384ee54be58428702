@@ -25,6 +25,23 @@
     },
     {
       "key": {
+        "uuid": "8d7c4297_689c6e66",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-18T05:53:07Z",
+      "side": 1,
+      "message": "Might want to move this one down ? It looks common to both branches",
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e7b6b08d_294d1939",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
         "patchSetId": 6
