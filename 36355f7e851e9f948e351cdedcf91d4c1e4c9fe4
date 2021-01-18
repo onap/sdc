@@ -22,6 +22,30 @@
       "revId": "36355f7e851e9f948e351cdedcf91d4c1e4c9fe4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f02958f2_5151e2c3",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/ManifestCreatorNamingConventionImplTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3771
+      },
+      "writtenOn": "2021-01-18T15:59:03Z",
+      "side": 1,
+      "message": "Sorry, I have no idea what it is  :P I removed that",
+      "parentUuid": "94c124ed_d043d9b3",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 49,
+        "endChar": 5
+      },
+      "revId": "36355f7e851e9f948e351cdedcf91d4c1e4c9fe4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
