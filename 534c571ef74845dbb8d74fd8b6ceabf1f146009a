@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f3d2786_f8b799a3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/BasicAuthenticationFilter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-18T08:34:58Z",
+      "side": 1,
+      "message": "It\u0027s not necessary to cast",
+      "range": {
+        "startLine": 50,
+        "startChar": 30,
+        "endLine": 50,
+        "endChar": 36
+      },
+      "revId": "534c571ef74845dbb8d74fd8b6ceabf1f146009a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a860b22c_8d8d019a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/BasicAuthenticationFilter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-18T08:34:58Z",
+      "side": 1,
+      "message": "Is it used ?",
+      "revId": "534c571ef74845dbb8d74fd8b6ceabf1f146009a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
