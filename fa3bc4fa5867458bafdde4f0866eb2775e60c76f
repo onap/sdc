@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1048979b_6020e2f5",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestTokenType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-18T05:57:55Z",
+      "side": 1,
+      "message": "Not really important, but I see all other values being just lower case",
+      "revId": "fa3bc4fa5867458bafdde4f0866eb2775e60c76f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "292ecf21_e3ca38fc",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/test/java/org/openecomp/sdc/tosca/csar/SOL004ManifestOnboardingTest.java",
         "patchSetId": 1
