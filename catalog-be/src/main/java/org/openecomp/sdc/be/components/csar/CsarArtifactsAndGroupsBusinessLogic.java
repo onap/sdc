@@ -1002,7 +1002,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> createOrUpdateCsarArtifactFromJson(
-            Component resource, User user, Map<String, Object> json, ArtifactOperationInfo operation) {
+            Component component, User user, Map<String, Object> json, ArtifactOperationInfo operation) {
 
         String jsonStr = gson.toJson(json);
         ArtifactDefinition artifactDefinitionFromJson = RepresentationUtils.convertJsonToArtifactDefinition(jsonStr,
@@ -1011,9 +1011,9 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<ArtifactDefinition, Operation> result;
         try {
              result = artifactsBusinessLogic.handleLoadedArtifact(
-                    resource, user, operation, false, true, ComponentTypeEnum.RESOURCE, artifactDefinitionFromJson);
+                     component, user, operation, false, true, component.getComponentType(), artifactDefinitionFromJson);
         } catch (ComponentException e) {
-            log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, ComponentTypeEnum.RESOURCE, resource.getName());
+            log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, component.getComponentType(), component.getName());
             return Either.right(componentsUtils.getResponseFormat(e));
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
