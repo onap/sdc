@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "af5d3580_41d60a38",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2021-01-18T09:04:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e3652fcb_4487f814",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 125,
+        "endChar": 56
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d7c4297_689c6e66",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
         "patchSetId": 6
@@ -39,6 +63,24 @@
       "revId": "2f203a26abc072959614116384ee54be58428702",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca369da4_428e4013",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2021-01-18T09:04:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d7c4297_689c6e66",
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "35af5325_96e8f9c3",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2021-01-18T09:04:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7b6b08d_294d1939",
+      "range": {
+        "startLine": 246,
+        "startChar": 3,
+        "endLine": 248,
+        "endChar": 5
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4236fb92_bbcdab1f",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
         "patchSetId": 6
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "6290a2b7_0b4f3c5f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2021-01-18T09:04:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4236fb92_bbcdab1f",
+      "range": {
+        "startLine": 254,
+        "startChar": 12,
+        "endLine": 254,
+        "endChar": 42
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "56235c66_7c0ea257",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
         "patchSetId": 6
@@ -108,6 +198,30 @@
       "revId": "2f203a26abc072959614116384ee54be58428702",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8e60691_07d7b430",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManagerTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2021-01-18T09:04:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56235c66_7c0ea257",
+      "range": {
+        "startLine": 132,
+        "startChar": 4,
+        "endLine": 168,
+        "endChar": 15
+      },
+      "revId": "2f203a26abc072959614116384ee54be58428702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
