@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Modification Copyright (C) 2021 Nokia.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +39,9 @@ public enum ManifestTokenType {
     PNFD_NAME("pnfd_name"),
     PNFD_PROVIDER("pnfd_provider"),
     PNFD_ARCHIVE_VERSION("pnfd_archive_version"),
-    PNFD_RELEASE_DATE_TIME("pnfd_release_date_time");
+    PNFD_RELEASE_DATE_TIME("pnfd_release_date_time"),
+    SIGNATURE("Signature"),
+    CERTIFICATE("Certificate");
 
     private final String token;
 
