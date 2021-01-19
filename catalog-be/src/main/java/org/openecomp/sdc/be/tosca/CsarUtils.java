@@ -153,7 +153,7 @@ public class CsarUtils {
     public static final String ARTIFACTS = "Artifacts";
     private static final String DEFINITION = "Definitions";
     private static final String DEL_PATTERN = "([/\\\\]+)";
-    private static final String WORD_PATTERN = "\\w\\_\\-\\.\\s]+)";
+    private static final String WORD_PATTERN = "\\w\\_\\@\\-\\.\\s]+)";
     public static final String VALID_ENGLISH_ARTIFACT_NAME = "([" + WORD_PATTERN;
     private static final String VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS = "([\\d" + WORD_PATTERN;
     private static final String ARTIFACT_NAME_UNIQUE_ID = "ArtifactName {}, unique ID {}";

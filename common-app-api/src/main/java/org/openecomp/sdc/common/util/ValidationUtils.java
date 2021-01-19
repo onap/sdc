@@ -99,7 +99,7 @@ public class ValidationUtils {
 			Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
 
 	public static final Pattern COST_PATTERN = Pattern.compile("^[0-9]{1,5}\\.[0-9]{1,3}$");
-	public static final Pattern ARTIFACT_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9 \\-+]+$");
+	public static final Pattern ARTIFACT_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9 \\-@+]+$");
 	public static final Integer ARTIFACT_LABEL_LENGTH = 255;
 	public static final Pattern ARTIFACT_DISPLAY_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
 	public static final Pattern CATEGORY_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
