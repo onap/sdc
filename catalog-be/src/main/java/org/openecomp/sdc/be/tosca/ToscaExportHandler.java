@@ -171,7 +171,7 @@ public class ToscaExportHandler {
         this.interfacesOperationsConverter = interfacesOperationsConverter;
     }
 
-    private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
+    private static final String TOSCA_VERSION = "tosca_simple_yaml_1_3";
     private static final String SERVICE_NODE_TYPE_PREFIX = "org.openecomp.service.";
     private static final String IMPORTS_FILE_KEY = "file";
     private static final String TOSCA_INTERFACE_NAME = "-interface.yml";
