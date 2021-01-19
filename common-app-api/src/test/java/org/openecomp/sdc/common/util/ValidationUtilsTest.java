@@ -902,6 +902,11 @@ final String testArtifactDisplayName="test=notValid=Label";
 	}
 
 	@Test
+	public void checkValidateArtifactLabelReturnsTrueWithAtSymbol() {
+		assertTrue(ValidationUtils.validateArtifactLabel("test@label"));
+	}
+
+	@Test
 	public void checkValidateConsumerNameReturnsTrueIfLabelIsValid() {
 		final String testConsumerName = "testConsumerName";
 
