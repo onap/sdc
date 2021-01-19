@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2020 Nokia. All rights reserved.
+ * Modification Copyright (C) 2021 Nokia.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +30,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validatio
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -59,12 +61,48 @@ class CsarValidationTest {
 
         //then
         assertThat(errorList, is(not(empty())));
-        assertThat(getActualErrorMessage(errorList), is(equalTo(expectedErrorMessage)));
+        assertThat(getActualErrorMessages(errorList).get(0), is(equalTo(expectedErrorMessage)));
         assertThat(getActualErrorLevel(errorList), is(ErrorLevel.ERROR));
     }
 
-    private String getActualErrorMessage(List<ErrorMessage> errorList) {
-        return errorList.get(0).getMessage();
+    @Test
+    void shouldNotReturnErrors_whenPnfCsarContainsIndividualSignatureInManifest() throws OnboardPackageException, IOException {
+        //given
+        FileContentHandler pnfFileContent = CsarLoader.load(
+            "validPnfWithIndividualSignatureCompliantWithSOL004.csar",
+            "/Files/PNFs/validation/individualSignature/validPnfWithIndividualSignatureCompliantWithSOL004.csar"
+        );
+
+        //when
+        Map<String, List<ErrorMessage>> errorsMap = ValidatorFactory.getValidator(pnfFileContent).validateContent(pnfFileContent);
+
+        //then
+        assertThat(errorsMap, is(anEmptyMap()));
+    }
+
+    @Test
+    void shouldReturnErrors_whenPnfCsarContainsIndividualCertificateWithNoSignatureInManifest() throws OnboardPackageException, IOException {
+        //given
+        List<String> expectedErrorMessage = List.of("Expected 'Signature' entry before 'Certificate' entry;\nAt line 9: 'Certificate: Definitions/pnf_main_descriptor.cert'.");
+        FileContentHandler pnfFileContent = CsarLoader.load(
+            "invalidPnfWithIndividualSignatureCompliantWithSOL004.csar",
+            "/Files/PNFs/validation/individualSignature/invalidPnfWithIndividualSignatureCompliantWithSOL004.csar"
+        );
+
+        //when
+        Map<String, List<ErrorMessage>> errorsMap = ValidatorFactory.getValidator(pnfFileContent).validateContent(pnfFileContent);
+        List<ErrorMessage> errorList = errorsMap.get("uploadFile");
+
+        //then
+        assertThat(getActualErrorMessages(errorList), containsInAnyOrder(expectedErrorMessage.toArray()));
+        assertThat(getActualErrorLevel(errorList), is(ErrorLevel.ERROR));
+    }
+
+
+    private List<String> getActualErrorMessages(List<ErrorMessage> errorList) {
+        return errorList.stream()
+            .map((ErrorMessage::getMessage))
+            .collect(Collectors.toUnmodifiableList());
     }
 
     private ErrorLevel getActualErrorLevel(List<ErrorMessage> errorList) {

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modification Copyright (C) 2021 Nokia.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +17,15 @@
 
 package org.openecomp.sdc.tosca.csar;
 
-import static junit.framework.TestCase.assertSame;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -38,16 +38,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.Messages;
 
-public class SOL004ManifestOnboardingTest {
+
+class SOL004ManifestOnboardingTest {
 
     private Manifest manifest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         manifest = new SOL004ManifestOnboarding();
     }
@@ -55,7 +57,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testSuccessfulParsing() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidTosca.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidTosca.mf")) {
             manifest.parse(manifestAsStream);
             assertValidManifest(4, 5, Collections.emptyMap(), ResourceTypeEnum.VF, false);
         }
@@ -77,7 +79,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testBrokenMDParsing() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/InvalidTosca2.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/InvalidTosca2.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(Messages.MANIFEST_INVALID_LINE.formatMessage(9, "vnf_package_version: 1.0"));
@@ -123,7 +125,7 @@ public class SOL004ManifestOnboardingTest {
     }
 
     private String buildErrorMessage(final int lineNumber, final String line, final Messages message,
-                                    final Object... params) {
+                                     final Object... params) {
         return Messages.MANIFEST_ERROR_WITH_LINE.formatMessage(message.formatMessage(params), lineNumber, line);
     }
 
@@ -234,7 +236,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testMetadataWithDuplicatedEntries() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/metadata-duplicated-entries.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/metadata-duplicated-entries.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(
@@ -248,7 +250,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testManifestNonManoKeyWithoutSources() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/non-mano-key-with-no-sources.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/non-mano-key-with-no-sources.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(
@@ -262,7 +264,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testManifestNonManoKeyWithEmptySourceEntry() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/non-mano-key-with-empty-source.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/non-mano-key-with-empty-source.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(
@@ -275,7 +277,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testManifestWithEmptyMetadata() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/empty-metadata.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/empty-metadata.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(buildErrorMessage(2, "", Messages.MANIFEST_NO_METADATA));
@@ -286,7 +288,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testManifestSourceAlgorithmWithoutHash() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-algorithm-without-hash.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-algorithm-without-hash.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(buildErrorMessage(9, "", Messages.MANIFEST_EXPECTED_HASH_ENTRY));
@@ -297,7 +299,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testManifestSourceHashWithoutAlgorithm() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-hash-without-algorithm.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-hash-without-algorithm.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(buildErrorMessage(8, "Hash: 3b119b37da5b76ec7c933168b21cedd8", Messages.MANIFEST_EXPECTED_ALGORITHM_BEFORE_HASH));
@@ -308,7 +310,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testManifestSourceAlgorithmWithoutValue() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-algorithm-without-value.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-algorithm-without-value.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(buildErrorMessage(8, "Algorithm:", Messages.MANIFEST_EXPECTED_ALGORITHM_VALUE));
@@ -319,7 +321,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testManifestSourceHashWithoutValue() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-hash-without-value.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/source-hash-without-value.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(buildErrorMessage(9, "Hash:", Messages.MANIFEST_EXPECTED_HASH_VALUE));
@@ -330,7 +332,7 @@ public class SOL004ManifestOnboardingTest {
     @Test
     public void testEmptyManifest() throws IOException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/empty-manifest.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/empty-manifest.mf")) {
             manifest.parse(manifestAsStream);
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList.add(Messages.MANIFEST_EMPTY.getErrorMessage());
@@ -342,7 +344,7 @@ public class SOL004ManifestOnboardingTest {
     public void testManifestWithDuplicatedCmsSignature()
         throws IOException, NoSuchFieldException, IllegalAccessException {
         try (final InputStream manifestAsStream =
-                getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/signed.mf")) {
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/signed.mf")) {
             //forcing an existing signature
             final Field cmsSignatureField = AbstractOnboardingManifest.class.getDeclaredField("cmsSignature");
             cmsSignatureField.setAccessible(true);
@@ -361,27 +363,27 @@ public class SOL004ManifestOnboardingTest {
         final Method getEntryMethod = AbstractOnboardingManifest.class.getDeclaredMethod("readEntryName", String.class);
         getEntryMethod.setAccessible(true);
         final Optional<String> noEntry = (Optional<String>) getEntryMethod.invoke(manifest, ":");
-        assertThat("Entry should not be present", noEntry.isPresent(), is(false));
+        assertFalse(noEntry.isPresent(), "Entry should not be present");
 
         final Optional<String> blankEntry = (Optional<String>) getEntryMethod.invoke(manifest, "        :");
-        assertThat("Entry should not be present", blankEntry.isPresent(), is(false));
+        assertFalse(blankEntry.isPresent(), "Entry should not be present");
 
         final Optional<String> noColon = (Optional<String>) getEntryMethod.invoke(manifest, "anyKeyWithoutColon   ");
-        assertThat("Entry should not be present", noColon.isPresent(), is(false));
+        assertFalse(noColon.isPresent(), "Entry should not be present");
 
         final Optional<String> blank = (Optional<String>) getEntryMethod.invoke(manifest, "   ");
-        assertThat("Entry should not be present", blank.isPresent(), is(false));
+        assertFalse(blank.isPresent(), "Entry should not be present");
 
         final Optional<String> empty = (Optional<String>) getEntryMethod.invoke(manifest, "");
-        assertThat("Entry should not be present", empty.isPresent(), is(false));
+        assertFalse(empty.isPresent(), "Entry should not be present");
 
         final Optional<String> nul1 = (Optional<String>) getEntryMethod.invoke(manifest, new Object[]{null});
-        assertThat("Entry should not be present", nul1.isPresent(), is(false));
+        assertFalse(nul1.isPresent(), "Entry should not be present");
 
         final Optional<String> entry = (Optional<String>) getEntryMethod
             .invoke(manifest, "      entry to     test     :       : a value ::: test test:   ");
-        assertThat("Entry should be present", entry.isPresent(), is(true));
-        assertThat("Entry should be as expected", entry.get(), equalTo("entry to     test"));
+        assertTrue(entry.isPresent(), "Entry should be present");
+        assertEquals("entry to     test", entry.get(), "Entry should be as expected");
     }
 
     @Test
@@ -389,55 +391,141 @@ public class SOL004ManifestOnboardingTest {
         final Method getValueMethod = AbstractOnboardingManifest.class.getDeclaredMethod("readEntryValue", String.class);
         getValueMethod.setAccessible(true);
         final Optional<String> noValue = (Optional<String>) getValueMethod.invoke(manifest, ":");
-        assertThat("Value should not be present", noValue.isPresent(), is(false));
+        assertFalse(noValue.isPresent(), "Value should not be present");
 
         final Optional<String> blankValue = (Optional<String>) getValueMethod.invoke(manifest, ":          ");
-        assertThat("Value should not be present", blankValue.isPresent(), is(false));
+        assertFalse(blankValue.isPresent(), "Value should not be present");
 
         final Optional<String> noColon = (Optional<String>) getValueMethod.invoke(manifest, "anyKeyWithoutColon   ");
-        assertThat("Value should not be present", noColon.isPresent(), is(false));
+        assertFalse(noColon.isPresent(), "Value should not be present");
 
         final Optional<String> blank = (Optional<String>) getValueMethod.invoke(manifest, "   ");
-        assertThat("Value should not be present", blank.isPresent(), is(false));
+        assertFalse(blank.isPresent(), "Value should not be present");
 
         final Optional<String> empty = (Optional<String>) getValueMethod.invoke(manifest, "");
-        assertThat("Value should not be present", empty.isPresent(), is(false));
+        assertFalse(empty.isPresent(), "Value should not be present");
 
         final Optional<String> nul1 = (Optional<String>) getValueMethod.invoke(manifest, new Object[]{null});
-        assertThat("Value should not be present", nul1.isPresent(), is(false));
+        assertFalse(nul1.isPresent(), "Value should not be present");
 
         final Optional<String> value = (Optional<String>) getValueMethod
             .invoke(manifest, "attribute     :       : a value ::: test test:   ");
-        assertThat("Value should be present", value.isPresent(), is(true));
-        assertThat("Value should be as expected", value.get(), equalTo(": a value ::: test test:"));
+        assertTrue(value.isPresent(), "Value should be present");
+        assertEquals(": a value ::: test test:", value.get(), "Value should be as expected");
+    }
+
+    @Test
+    public void testSuccessfulSignedManifestWithIndividualSignature() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/signedWithIndividualSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, true);
+        }
+    }
+
+    @Test
+    public void testSuccessfulUnsignedManifestWithIndividualSignaturee() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/unsignedWithIndividualSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, false);
+        }
+    }
+
+    @Test
+    public void testSuccessfulSignedManifestWithIndividualSignatureAndHash() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/signedWithIndividualSignatureAndHash.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, true);
+        }
+    }
+
+    @Test
+    public void testSuccessfulSignedManifestWithIndividualSignatureAndCommonCert() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/individualSignature/signedWithIndividualSignatureCommonCert.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, true);
+        }
+    }
+
+    @Test
+    public void testEmptyIndividualSignature() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/individualSignature/signedWithEmptyIndividualSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            final List<String> expectedErrorList = List.of(
+                buildErrorMessage(
+                    8, "Signature:", Messages.MANIFEST_EXPECTED_SIGNATURE_VALUE
+                ));
+            assertInvalidManifest(expectedErrorList);
+        }
+    }
+
+    @Test
+    public void testEmptyIndividualCertificate() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/individualSignature/signedWithEmptyIndividualCertificate.mf")) {
+            manifest.parse(manifestAsStream);
+            final List<String> expectedErrorList = List.of(
+                buildErrorMessage(
+                    9, "Certificate:", Messages.MANIFEST_EXPECTED_CERTIFICATE_VALUE
+                ));
+            assertInvalidManifest(expectedErrorList);
+        }
+    }
+
+    @Test
+    public void testOnlyIndividualCertificateNoSignature() throws IOException {
+        try (final InputStream manifestAsStream =
+                 getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/individualSignature/signedWithIndividualCertificateNoSignature.mf")) {
+            manifest.parse(manifestAsStream);
+            final List<String> expectedErrorList = List.of(
+                buildErrorMessage(
+                    8, "Certificate: TOSCA-Metadata/TOSCA.cert", Messages.MANIFEST_EXPECTED_SIGNATURE_BEFORE_CERTIFICATE
+                ));
+            assertInvalidManifest(expectedErrorList);
+        }
     }
 
     private void assertValidManifest(final int expectedMetadataSize, final int expectedSourcesSize,
                                      final Map<String, Integer> expectedNonManoKeySize,
                                      final ResourceTypeEnum resourceType, final boolean isSigned) {
-        assertThat("Should have no errors", manifest.getErrors(), is(empty()));
-        assertThat("Should be valid", manifest.isValid(), is(true));
-        assertThat("Metadata should have the expected size",
-            manifest.getMetadata().keySet(), hasSize(expectedMetadataSize));
-        assertThat("Sources should have the expected size", manifest.getSources(), hasSize(expectedSourcesSize));
-        assertThat("Non Mano Sources keys should have the expected size",
-            manifest.getNonManoSources().keySet(), hasSize(expectedNonManoKeySize.keySet().size()));
+        assertAll(
+            "manifest should be valid",
+            () -> assertTrue(manifest.getErrors().isEmpty(), "Should have no errors"),
+            () -> assertTrue(manifest.isValid(), "Should be valid"),
+            () -> assertTrue(manifest.getType().isPresent(), "Should have a type"),
+            () -> assertEquals(resourceType, manifest.getType().get(),  "Type should be as expected"),
+            () -> assertEquals(isSigned, manifest.isSigned(), "Signature status should be as expected")
+        );
+        assertAll(
+            "manifest should have expected fields",
+            () -> assertEquals(expectedMetadataSize, manifest.getMetadata().keySet().size(),
+                "Metadata should have the expected size"),
+            () -> assertEquals(expectedSourcesSize, manifest.getSources().size(),
+                "Sources should have the expected size"),
+            () -> assertEquals(expectedNonManoKeySize.keySet().size(), manifest.getNonManoSources().keySet().size(),
+                "Non Mano Sources keys should have the expected size")
+        );
         for (final Entry<String, Integer> nonManoKeyAndSize : expectedNonManoKeySize.entrySet()) {
             final String nonManoKey = nonManoKeyAndSize.getKey();
-            assertThat("Should contain expected Non Mano Sources key",
-                manifest.getNonManoSources().keySet(), hasItem(nonManoKey));
-            assertThat(String.format("Non Mano Sources keys %s should have the expected sources size", nonManoKey),
-                manifest.getNonManoSources().get(nonManoKey).size(), equalTo(nonManoKeyAndSize.getValue()));
+            assertAll(
+                "",
+                () -> assertTrue(manifest.getNonManoSources().containsKey(nonManoKey),
+                    "Should contain expected Non Mano Sources key"),
+                () -> assertEquals(nonManoKeyAndSize.getValue(),manifest.getNonManoSources().get(nonManoKey).size(),
+                    String.format("Non Mano Sources keys %s should have the expected sources size", nonManoKey))
+            );
         }
-        assertThat("Should have a type", manifest.getType().isPresent(), is(true));
-        assertThat("Type should be as expected", manifest.getType().get(), equalTo(resourceType));
-        assertThat("Signature status should be as expected", manifest.isSigned(), is(isSigned));
     }
 
     private void assertInvalidManifest(final List<String> expectedErrorList) {
-        assertThat("Should be invalid", manifest.isValid(), is(false));
-        assertThat("Should have the expected error quantity", manifest.getErrors(), hasSize(expectedErrorList.size()));
-        assertThat("Should have expected errors", manifest.getErrors(),
-            containsInAnyOrder(expectedErrorList.toArray(new String[0])));
+        assertAll(
+            "manifest should be invalid and should contain expected errors",
+            () -> assertFalse(manifest.isValid(), "Should be invalid"),
+            () -> assertArrayEquals(manifest.getErrors().toArray(), expectedErrorList.toArray(), "Should have expected errors")
+        );
     }
 }
