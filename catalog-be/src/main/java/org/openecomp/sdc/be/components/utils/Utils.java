@@ -40,9 +40,8 @@ public class Utils {
         if (existingValues.isEmpty()) {
             return 0;
         }
-        int maxCurrentCounter = 0;
         try {
-            maxCurrentCounter = existingValues.stream()
+            return 1 + existingValues.stream()
                     .map(COUNTER_PATTERN::matcher)
                     .filter(Matcher::find)
                     .map(matcher -> matcher.group(0))
@@ -52,8 +51,7 @@ public class Utils {
         }
         catch (Exception e) {
             Log.warn("Failed in retrieivng counter from existing value: ", e);
-            maxCurrentCounter = random.nextInt(100) + 50;
+            return random.nextInt(100) + 50;
         }
-        return ++maxCurrentCounter;
     }
 }

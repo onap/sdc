@@ -1400,35 +1400,25 @@ public class ComponentsUtils {
             labelOrValue = AdditionalInformationEnum.None;
         }
 
-        ResponseFormat responseFormat = null;
         switch (actionStatus) {
             case COMPONENT_NAME_ALREADY_EXIST:
-                responseFormat = getResponseFormat(actionStatus, "Additional parameter", additionalInfoParameterInfo.getKey());
-                break;
+                return getResponseFormat(actionStatus, "Additional parameter", additionalInfoParameterInfo.getKey());
             case ADDITIONAL_INFORMATION_EXCEEDS_LIMIT:
-                responseFormat = getResponseFormat(actionStatus, labelOrValue.name().toLowerCase(), ValidationUtils.ADDITIONAL_INFORMATION_KEY_MAX_LENGTH.toString());
-                break;
+                return getResponseFormat(actionStatus, labelOrValue.name().toLowerCase(), ValidationUtils.ADDITIONAL_INFORMATION_KEY_MAX_LENGTH.toString());
             case ADDITIONAL_INFORMATION_MAX_NUMBER_REACHED:
-                responseFormat = getResponseFormat(actionStatus, nodeType.name().toLowerCase());
-                break;
+                return getResponseFormat(actionStatus, nodeType.name().toLowerCase());
             case ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+                return getResponseFormat(actionStatus);
             case ADDITIONAL_INFORMATION_KEY_NOT_ALLOWED_CHARACTERS:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+                return getResponseFormat(actionStatus);
             case ADDITIONAL_INFORMATION_VALUE_NOT_ALLOWED_CHARACTERS:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+                return getResponseFormat(actionStatus);
             case ADDITIONAL_INFORMATION_NOT_FOUND:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+                return getResponseFormat(actionStatus);
             default:
-                responseFormat = getResponseFormat(actionStatus);
-                break;
+                return getResponseFormat(actionStatus);
         }
 
-        return responseFormat;
     }
 
     public ResponseFormat getResponseFormatAdditionalProperty(ActionStatus actionStatus) {

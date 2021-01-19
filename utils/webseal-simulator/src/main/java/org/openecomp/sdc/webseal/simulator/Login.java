@@ -53,10 +53,6 @@ public class Login extends HttpServlet {
 		System.out.println("about to build login page");
 		response.setContentType("text/html");
 		PrintWriter writer = response.getWriter();
-		String message = (String) request.getAttribute("message");
-		if (message == null) {
-			message = "";
-		}
 
 		Collection<User> allUsers = Conf.getInstance().getUsers().values();
 		writer.println("<html>");

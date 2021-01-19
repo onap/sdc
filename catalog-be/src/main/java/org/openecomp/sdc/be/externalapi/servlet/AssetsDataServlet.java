@@ -160,7 +160,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             @Parameter(description = "The filter key (resourceType only for resources)",
                     required = false) @QueryParam("resourceType") String resourceType) throws IOException {
 
-        Response response = null;
         ResponseFormat responseFormat = null;
         String query = request.getQueryString();
         String requestURI = request.getRequestURI().endsWith("/")?
@@ -224,8 +223,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
 
-                response = buildOkResponse(responseFormat, result);
-                return response;
+                return buildOkResponse(responseFormat, result);
             }
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Fetch filtered list of assets");
@@ -276,7 +274,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             @Parameter(description = "The requested asset uuid",
                     required = true) @PathParam("uuid") final String uuid) throws IOException {
 
-        Response response = null;
         ResponseFormat responseFormat = null;
         AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_ASSET_METADATA;
         String requestURI = request.getRequestURI();
@@ -323,9 +320,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
                     resourceCommonInfo, requestId, uuid);
 
-            response = buildOkResponse(responseFormat, result);
-            return response;
-
+            return buildOkResponse(responseFormat, result);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Fetch filtered list of assets");
             log.debug("getAssetList: Fetch list of assets failed with exception", e);
@@ -388,7 +383,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 
         String url = request.getRequestURI();
         log.debug("Start handle request of {} {}", request.getMethod(), url);
-        Response response = null;
         ResponseFormat responseFormat = null;
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_TOSCA_MODEL;
@@ -416,8 +410,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
             getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
                     resourceCommonInfo, requestId, uuid);
-            response = buildOkResponse(responseFormat, is, headers);
-            return response;
+            return buildOkResponse(responseFormat, is, headers);
 
         } catch (ComponentException e) {
             responseFormat = e.getResponseFormat();
@@ -425,7 +418,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                     resourceCommonInfo, requestId, uuid);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get asset tosca model");
             log.debug("failed to get asset tosca model", e);
-            response = buildErrorResponse(responseFormat);
+            Response response = buildErrorResponse(responseFormat);
             getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
                     resourceCommonInfo, requestId, uuid);
             return response;

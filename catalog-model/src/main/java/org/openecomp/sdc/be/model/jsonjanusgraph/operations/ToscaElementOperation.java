@@ -134,15 +134,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     public Either<GraphVertex, StorageOperationStatus> markComponentToDelete(GraphVertex componentToDelete) {
-        Either<GraphVertex, StorageOperationStatus> result = null;
-
         Boolean isDeleted = (Boolean) componentToDelete.getMetadataProperty(GraphPropertyEnum.IS_DELETED);
         if (isDeleted != null && isDeleted && !(Boolean) componentToDelete.getMetadataProperty(GraphPropertyEnum.IS_HIGHEST_VERSION)) {
             // component already marked for delete
-            result = Either.left(componentToDelete);
-            return result;
         } else {
-
             componentToDelete.addMetadataProperty(GraphPropertyEnum.IS_DELETED, Boolean.TRUE);
             componentToDelete.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
 
@@ -152,13 +147,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
             if (updateNode.isRight()) {
                 log.debug("Failed to update component {}. status is {}", componentToDelete.getUniqueId(), updateNode.right().value());
                 updateComponent = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateNode.right().value());
-                result = Either.right(updateComponent);
-                return result;
+                return Either.right(updateComponent);
             }
-
-            result = Either.left(componentToDelete);
-            return result;
         }
+        return Either.left(componentToDelete);
     }
 
     /**
@@ -539,6 +531,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return JanusGraphOperationStatus.OK;
     }
 
+    protected StorageOperationStatus assosiateCommonForToscaElement(GraphVertex nodeTypeVertex, ToscaElement toscaElement) {
+        return assosiateCommonForToscaElement(nodeTypeVertex, toscaElement, null);
+    }
+
     protected StorageOperationStatus assosiateCommonForToscaElement(GraphVertex nodeTypeVertex, ToscaElement toscaElement, List<GraphVertex> derivedResources) {
 
         StorageOperationStatus associateUsers = assosiateToUsers(nodeTypeVertex, toscaElement);
@@ -728,8 +724,6 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     protected <T extends ToscaElement> Either<List<T>, StorageOperationStatus> getFollowedComponent(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, ComponentTypeEnum neededType) {
 
-        Either<List<T>, StorageOperationStatus> result = null;
-
         Map<GraphPropertyEnum, Object> props = null;
 
         if (userId != null) {
@@ -794,10 +788,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             }
 
         } // whlile users
-        ;
-        result = Either.left(components);
-        return result;
-
+        return Either.left(components);
     }
 
     private <T extends ToscaElement> List<T> fetchComponents(String userId, Set<LifecycleStateEnum> lifecycleStates, List<GraphVertex> vertices, ComponentTypeEnum neededType, EdgeLabelEnum edgelabel) {

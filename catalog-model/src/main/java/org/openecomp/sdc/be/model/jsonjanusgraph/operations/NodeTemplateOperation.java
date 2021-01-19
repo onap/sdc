@@ -1107,10 +1107,8 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     private void setArtifactPlaceholderCommonFields(String resourceId, User user, ArtifactDataDefinition artifactInfo) {
-        String uniqueId = null;
-
         if (resourceId != null) {
-            uniqueId = UniqueIdBuilder.buildPropertyUniqueId(resourceId.toLowerCase(), artifactInfo.getArtifactLabel().toLowerCase());
+            String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(resourceId.toLowerCase(), artifactInfo.getArtifactLabel().toLowerCase());
             artifactInfo.setUniqueId(uniqueId);
         }
         artifactInfo.setUserIdCreator(user.getUserId());
@@ -1175,9 +1173,7 @@ public class NodeTemplateOperation extends BaseOperation {
             }
         }
         MapListRequirementDataDefinition fullCalculatedReq = new MapListRequirementDataDefinition();
-        status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, VertexTypeEnum.FULLFILLED_REQUIREMENTS, fullCalculatedReq, componentInstance.getUniqueId());
-        return StorageOperationStatus.OK;
-
+        return addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, VertexTypeEnum.FULLFILLED_REQUIREMENTS, fullCalculatedReq, componentInstance.getUniqueId());
     }
 
     public static String createCapPropertyKey(String key, String instanceId) {

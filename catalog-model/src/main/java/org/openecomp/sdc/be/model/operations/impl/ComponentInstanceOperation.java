@@ -103,12 +103,7 @@ public class ComponentInstanceOperation extends AbstractOperation {
                 .getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId);
             if (vertexService.isRight()) {
                 log.debug("failed to fetch vertex of resource instance for id = {}", resourceInstanceId);
-                JanusGraphOperationStatus status = vertexService.right().value();
-                if (status == JanusGraphOperationStatus.NOT_FOUND) {
-                    status = JanusGraphOperationStatus.INVALID_ID;
-                }
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexService.right().value()));
-                return result;
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexService.right().value()));
             }
             Vertex vertex = vertexService.left().value();
 

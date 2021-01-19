@@ -134,18 +134,8 @@ public class RequestsClient extends HttpServlet {
 		try {
 			result = IOUtils.toString(con.getErrorStream());
 			response.append(result);
-
 		} catch (Exception e2) {
-			result = null;
 		}
-		// logger.debug("Response body: {}", response);
-
-		if (response != null) {
-			responseString = response.toString();
-		}
-
-		// Map<String, List<String>> headerFields = con.getHeaderFields();
-		// String responseMessage = con.getResponseMessage();
 
 		con.disconnect();
 		return responseCode;
