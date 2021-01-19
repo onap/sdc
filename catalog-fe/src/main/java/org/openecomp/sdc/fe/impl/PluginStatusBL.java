@@ -110,8 +110,6 @@ public class PluginStatusBL {
 	}
 
     public String getPluginsList() {
-        String result = null;
-
         if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
             log.warn("Configuration of type {} was not found", PluginsConfiguration.class);
             throw new InvalidArgumentException("the plugin configuration was not read successfully.");
@@ -119,9 +117,8 @@ public class PluginStatusBL {
         } else {
             log.debug("The value returned from getConfig is {}", pluginsConfiguration);
 
-            result = gson.toJson(pluginsConfiguration.getPluginsList());
+            return gson.toJson(pluginsConfiguration.getPluginsList());
         }
-        return result;
     }
 
     public String getPluginAvailability(String pluginId) {

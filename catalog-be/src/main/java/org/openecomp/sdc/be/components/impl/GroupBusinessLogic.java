@@ -617,7 +617,6 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesOnGraph(List<GroupDefinition> groups, Component component) {
         List<GroupDefinition> updatedGroups = new ArrayList<>();
-        Either<List<GroupDefinition>, ResponseFormat> result;
 
         for (GroupDefinition group : groups) {
             String groupType = group.getType();
@@ -630,7 +629,6 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                 newGroupNameRes = validateGenerateVfModuleGroupName(component.getSystemName(), group.getDescription(), counter);
                 if (newGroupNameRes.isRight()) {
                     log.debug("Failed to generate new vf module group name. Status is {} ", newGroupNameRes.right().value());
-                    result = Either.right(newGroupNameRes.right().value());
                     break;
                 }
                 newGroupName = newGroupNameRes.left().value();
@@ -641,8 +639,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
         }
 
-        result = Either.left(updatedGroups);
-        return result;
+        return Either.left(updatedGroups);
     }
 
 

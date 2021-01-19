@@ -985,18 +985,16 @@ public class JanusGraphDao {
     public JanusGraphOperationStatus replaceEdgeLabel(Vertex fromVertex, Vertex toVertex, EdgeLabelEnum prevLabel,
         EdgeLabelEnum newLabel) {
 
-        JanusGraphOperationStatus result = null;
         Iterator<Edge> prevEdgeIter = toVertex.edges(Direction.IN, prevLabel.name());
         if (prevEdgeIter == null || !prevEdgeIter.hasNext()) {
             CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG,
                 "Failed to replace edge with label {} to {} between vertices {} and {}", prevLabel, newLabel,
                 fromVertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty()),
                 toVertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty()));
-            result = JanusGraphOperationStatus.NOT_FOUND;
+            return JanusGraphOperationStatus.NOT_FOUND;
         } else {
-            result = replaceEdgeLabel(fromVertex, toVertex, prevEdgeIter.next(), prevLabel, newLabel);
+            return replaceEdgeLabel(fromVertex, toVertex, prevEdgeIter.next(), prevLabel, newLabel);
         }
-        return result;
     }
 
     /**

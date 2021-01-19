@@ -95,24 +95,15 @@ public class DistributionServiceServlet extends BeGenericServlet {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
-        Response response = null;
-        ResponseFormat responseFormat = null;
-
         try {
             Either<DistributionStatusOfServiceListResponce, ResponseFormat> actionResponse = distributionMonitoringLogic.getListOfDistributionServiceStatus(serviceUUID, userId);
 
             if (actionResponse.isRight()) {
-
-                responseFormat = actionResponse.right().value();
-                response = buildErrorResponse(responseFormat);
+                return buildErrorResponse(actionResponse.right().value());
             } else {
-                responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                response = buildOkResponse(responseFormat, actionResponse.left().value());
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 
             }
-
-            return response;
-
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Distribution list for Service");
             log.debug("failed to get service distribution statuses", e);
@@ -138,27 +129,18 @@ public class DistributionServiceServlet extends BeGenericServlet {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
-        Response response = null;
-        ResponseFormat responseFormat = null;
-
         try {
             Either<DistributionStatusListResponse, ResponseFormat> actionResponse = distributionMonitoringLogic.getListOfDistributionStatus(did, userId);
 
             if (actionResponse.isRight()) {
-
-                responseFormat = actionResponse.right().value();
+                ResponseFormat responseFormat = actionResponse.right().value();
                 log.debug("failed to fount statuses for did {} {}", did, responseFormat);
-                response = buildErrorResponse(responseFormat);
+                return buildErrorResponse(responseFormat);
             } else {
-
-                responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 log.debug("success to fount statuses for did {} {}", did, actionResponse.left().value());
-                response = buildOkResponse(responseFormat, actionResponse.left().value());
-
+                return buildOkResponse(responseFormat, actionResponse.left().value());
             }
-
-            return response;
-
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Distribution Status");
             log.debug("failed to get distribution status ", e);

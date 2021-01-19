@@ -1257,8 +1257,6 @@ public class JanusGraphGenericDao {
 	}
 
 	private JanusGraphOperationStatus lockNode(String lockId) {
-		JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
-
 		GraphNodeLock lockNode = new GraphNodeLock(lockId);
 
 		Either<GraphNodeLock, JanusGraphOperationStatus> lockNodeNew = createNode(lockNode, GraphNodeLock.class);
@@ -1271,19 +1269,17 @@ public class JanusGraphGenericDao {
 				JanusGraph tGraph = graph.left().value();
 				Either<JanusGraphVertex, JanusGraphOperationStatus> vertex = getVertexByProperty(lockNode.getUniqueIdKey(), lockNode.getUniqueId());
 				if (vertex.isLeft()) {
-					status = relockNode(lockNode, lockNodeNew, tGraph, vertex);
+					return relockNode(lockNode, lockNodeNew, tGraph, vertex);
 				} else {
-					status = vertex.right().value();
+					return vertex.right().value();
 				}
 			} else {
-				status = graph.right().value();
+				return graph.right().value();
 			}
 		}
-		return status;
 	}
 
 	private JanusGraphOperationStatus relockNode(GraphNodeLock lockNode, Either<GraphNodeLock, JanusGraphOperationStatus> lockNodeNew, JanusGraph tGraph, Either<JanusGraphVertex, JanusGraphOperationStatus> vertex) {
-		JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
 		Long time = vertex.left().value().value(GraphPropertiesDictionary.CREATION_DATE.getProperty());
 		Long lockTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getJanusGraphLockTimeout();
 		if (time + lockTimeout * 1000 < System.currentTimeMillis()) {
@@ -1296,14 +1292,13 @@ public class JanusGraphGenericDao {
 			} else {
 				log.debug("Failed Lock node for {} .  Commit transacton for deleted previous vertex .", lockNode.getUniqueIdKey());
 				janusGraphClient.commit();
-				status = checkLockError(lockNode.getUniqueIdKey(), lockNodeNew);
+				return checkLockError(lockNode.getUniqueIdKey(), lockNodeNew);
 			}
 		} else {
 			log.debug("Failed Lock node for {}  rollback transacton", lockNode.getUniqueIdKey());
 			janusGraphClient.rollback();
-			status = checkLockError(lockNode.getUniqueIdKey(), lockNodeNew);
+			return checkLockError(lockNode.getUniqueIdKey(), lockNodeNew);
 		}
-		return status;
 	}
 
 	public <T extends GraphNode> Either<List<ImmutablePair<T, GraphEdge>>, JanusGraphOperationStatus> getChildrenNodes(String key, String uniqueId, GraphEdgeLabels edgeType, NodeTypeEnum nodeTypeEnum, Class<T> clazz, boolean withEdges) {

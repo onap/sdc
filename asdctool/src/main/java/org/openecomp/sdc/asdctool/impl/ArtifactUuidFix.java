@@ -1088,7 +1088,7 @@ public class ArtifactUuidFix {
 		hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 
 		Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.NODE_TYPE, hasProps);
-		boolean result = validateTosca(vertices, nodeToFix, "RESOURCE_TOSCA_ARTIFACTS");//
+		validateTosca(vertices, nodeToFix, "RESOURCE_TOSCA_ARTIFACTS");//
 
 		hasProps.clear();
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
@@ -1096,16 +1096,14 @@ public class ArtifactUuidFix {
 		hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 
 		vertices = getVerticesToValidate(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps);
-		result = validateTosca(vertices, vfToFix, "VF_TOSCA_ARTIFACTS");
+		validateTosca(vertices, vfToFix, "VF_TOSCA_ARTIFACTS");
 
 		hasProps.clear();
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
 		hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 
 		vertices = getVerticesToValidate(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps);
-		result = validateTosca(vertices, serviceToFix, "SERVICE_TOSCA_ARTIFACTS");
-
-		return result;
+		return validateTosca(vertices, serviceToFix, "SERVICE_TOSCA_ARTIFACTS");
 	}
 
 	public Map<String, List<Component>> getVerticesToValidate(VertexTypeEnum type,

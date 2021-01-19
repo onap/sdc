@@ -181,14 +181,12 @@ public class ModelConverter {
     }
 
     public static VertexTypeEnum getVertexType(String resourceTypeName) {
-        VertexTypeEnum vertexType = null;
         ResourceTypeEnum resourceType = ResourceTypeEnum.getTypeByName(resourceTypeName);
         if (isAtomicComponent(resourceType)) {
-            vertexType = VertexTypeEnum.NODE_TYPE;
+            return VertexTypeEnum.NODE_TYPE;
         } else {
-            vertexType = VertexTypeEnum.TOPOLOGY_TEMPLATE;
+            return VertexTypeEnum.TOPOLOGY_TEMPLATE;
         }
-        return vertexType;
     }
 
 	private static Service convertToService(ToscaElement toscaElement) {

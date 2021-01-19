@@ -527,7 +527,6 @@ public class ElementServlet extends BeGenericServlet {
     public Response getFollowedResourcesServices(@Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
-        Response res = null;
         try {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug(START_HANDLE_REQUEST_OF, url);
@@ -539,13 +538,12 @@ public class ElementServlet extends BeGenericServlet {
                 return buildErrorResponse(followedResourcesServices.right().value());
             }
             Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
-            res = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Followed Resources / Services Categories");
             log.debug("Getting followed resources/services failed with exception", e);
             throw e;
         }
-        return res;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -566,7 +564,6 @@ public class ElementServlet extends BeGenericServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @QueryParam("excludeTypes") List<OriginTypeEnum> excludeTypes) throws IOException {
 
-        Response res = null;
         try {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug(START_HANDLE_REQUEST_OF, url);
@@ -578,14 +575,13 @@ public class ElementServlet extends BeGenericServlet {
                 return buildErrorResponse(catalogData.right().value());
             }
             Object data = RepresentationUtils.toRepresentation(catalogData.left().value());
-            res = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Catalog Components");
             log.debug("Getting catalog components failed with exception", e);
             throw e;
         }
-        return res;
     }
 
     @DELETE
@@ -601,8 +597,6 @@ public class ElementServlet extends BeGenericServlet {
         modifier.setUserId(userId);
         log.debug("modifier id is {}", userId);
 
-        Response response = null;
-
         NodeTypeEnum nodeType = NodeTypeEnum.getByNameIgnoreCase(componentType);
         if (nodeType == null) {
             log.info("componentType is not valid: {}", componentType);
@@ -617,11 +611,9 @@ public class ElementServlet extends BeGenericServlet {
 
             if (cleanResult.isRight()) {
                 log.debug("failed to delete marked components of type {}", nodeType);
-                response = buildErrorResponse(cleanResult.right().value());
-                return response;
+                return buildErrorResponse(cleanResult.right().value());
             }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), cleanResult.left().value());
-            return response;
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), cleanResult.left().value());
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Marked Components");

@@ -177,11 +177,6 @@ public class CapabilityRequirementConverter {
 
     private Object convertInstanceProperty(Map<String, DataTypeDefinition> dataTypes, ComponentInstance componentInstance, ComponentInstanceProperty prop) {
         logger.debug("Convert property {} for instance {}", prop.getName(), componentInstance.getUniqueId());
-        String propertyType = prop.getType();
-        String innerType = null;
-        if (prop.getSchema() != null && prop.getSchema().getProperty() != null) {
-            innerType = prop.getSchema().getProperty().getType();
-        }
         String propValue = prop.getValue() == null ? prop.getDefaultValue() : prop.getValue();
         return propertyConvertor.convertToToscaObject(prop, propValue, dataTypes, false);
     }

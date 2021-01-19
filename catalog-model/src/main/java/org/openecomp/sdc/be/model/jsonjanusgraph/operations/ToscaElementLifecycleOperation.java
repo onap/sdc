@@ -169,14 +169,12 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
      * @return
      */
     public Either<User, StorageOperationStatus> getToscaElementOwner(GraphVertex toscaElement) {
-        Either<User, StorageOperationStatus> result = null;
         Iterator<Vertex> vertices = toscaElement.getVertex().vertices(Direction.IN, EdgeLabelEnum.STATE.name());
         if (vertices == null || !vertices.hasNext()) {
-            result = Either.right(StorageOperationStatus.NOT_FOUND);
+            return Either.right(StorageOperationStatus.NOT_FOUND);
         } else {
-            result = Either.left(convertToUser(vertices.next()));
+            return Either.left(convertToUser(vertices.next()));
         }
-        return result;
     }
 
     /**

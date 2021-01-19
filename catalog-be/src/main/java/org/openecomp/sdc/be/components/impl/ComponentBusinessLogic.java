@@ -442,22 +442,18 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponentsMetadata(boolean isAbstractAbstract, HighestFilterEnum highestFilter, ComponentTypeEnum componentTypeEnum, String internalComponentType, String userId) {
-        ResponseFormat responseFormat = null;
-
         try{
             validateUserExists(userId);
-            Boolean isHighest = isHighest(highestFilter);
             Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade.getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType);
 
             if (nonCheckoutCompResponse.isLeft()) {
                 log.debug("Retrieved Resource successfully.");
                 return Either.left(nonCheckoutCompResponse.left().value());
             }
-            responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value()));
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value())));
         } finally {
             janusGraphDao.commit();
         }
-        return Either.right(responseFormat);
     }
 
     public void setDeploymentArtifactsPlaceHolder(Component component, User user) {

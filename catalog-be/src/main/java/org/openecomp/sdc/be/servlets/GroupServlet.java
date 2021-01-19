@@ -218,14 +218,11 @@ public class GroupServlet extends AbstractValidationsServlet {
         user.setUserId(userId);
         log.debug("modifier id is {}", userId);
 
-        Response response = null;
-
         try {
             Either<GroupDefinition, ResponseFormat> convertResponse = parseToObject(data, () -> GroupDefinition.class);
             if (convertResponse.isRight()) {
                 log.debug("failed to parse group");
-                response = buildErrorResponse(convertResponse.right().value());
-                return response;
+                return buildErrorResponse(convertResponse.right().value());
             }
             GroupDefinition updatedGroup = convertResponse.left().value();
 
@@ -236,8 +233,7 @@ public class GroupServlet extends AbstractValidationsServlet {
 
             if (actionResponse.isRight()) {
                 log.debug("failed to update GroupDefinition");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
 
             GroupDefinition group = actionResponse.left().value();

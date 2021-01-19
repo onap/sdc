@@ -813,7 +813,6 @@ public class ServiceImportBusinessLogic{
             String yamlFileName, CsarInfo csarInfo, Service preparedService,
             NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts, boolean inTransaction, boolean shouldLock) {
 
-        String nodeName = nodeTypeInfoToUpdateArtifacts.getNodeName();
         Service resource = preparedService;
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = nodeTypeInfoToUpdateArtifacts
                 .getNodeTypesArtifactsToHandle();
@@ -1380,7 +1379,6 @@ public class ServiceImportBusinessLogic{
                         TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
             }
         }
-        String innerType = null;
         property = new ComponentInstanceInput(curPropertyDef, value, null);
         String validPropertyVAlue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
         property.setValue(validPropertyVAlue);
@@ -1826,7 +1824,6 @@ public class ServiceImportBusinessLogic{
                         TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
             }
         }
-        String innerType = null;
         property = new ComponentInstanceInput(curPropertyDef, value, null);
         String validPropertyVAlue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
         property.setValue(validPropertyVAlue);
@@ -1918,7 +1915,6 @@ public class ServiceImportBusinessLogic{
                                 TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
                     }
                 }
-                String innerType = null;
                 property = new ComponentInstanceProperty(curPropertyDef, value, null);
 
                 String validatePropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
@@ -2009,7 +2005,6 @@ public class ServiceImportBusinessLogic{
                                 TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
                     }
                 }
-                String innerType = null;
                 property = new ComponentInstanceProperty(curPropertyDef, value, null);
 
                 String validatePropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
