@@ -1089,7 +1089,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		if (propertyDefinition == null) {
 			return false;
 		}
-		boolean isValid = false;
 		String innerType = null;
 		String propertyType = propertyDefinition.getType();
 		ToscaPropertyType type = getType(propertyType);
@@ -1106,18 +1105,17 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 		String value = propertyDefinition.getDefaultValue();
 		if (type != null) {
-			isValid = isValidValue(type, value, innerType, dataTypes);
+			return isValidValue(type, value, innerType, dataTypes);
 		} else {
 			log.trace("The given type {} is not a pre defined one.", propertyType);
 
 			DataTypeDefinition foundDt = dataTypes.get(propertyType);
 			if (foundDt != null) {
-				isValid = isValidComplexValue(foundDt, value, dataTypes);
+				return isValidComplexValue(foundDt, value, dataTypes);
 			} else {
-				isValid = false;
+				return false;
 			}
 		}
-		return isValid;
 	}
 
 	public boolean isPropertyTypeValid(IComplexDefaultValue property) {

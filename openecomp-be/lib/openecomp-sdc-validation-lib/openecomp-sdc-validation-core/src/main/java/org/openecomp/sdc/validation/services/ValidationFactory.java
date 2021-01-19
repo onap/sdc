@@ -66,8 +66,7 @@ public class ValidationFactory {
   }
 
   private static Validator cerateValidatorImpl(ImplementationConfiguration validatorConf) {
-    Validator validator = null;
-    validator =
+    Validator validator =
         CommonMethods.newInstance(validatorConf.getImplementationClass(), Validator.class);
     validator.init(validatorConf.getProperties());
 

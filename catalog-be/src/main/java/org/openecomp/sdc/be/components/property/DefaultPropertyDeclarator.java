@@ -550,18 +550,13 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             String key = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof String && ((String) value).equalsIgnoreCase(inputName) && key.equals(GET_INPUT)) {
-                value = "";
                 lhm1.remove(key);
             } else if (value instanceof Map) {
                 Map<String, Object> subMap = (Map<String, Object>)value;
                 resetInputName(subMap, inputName);
             } else if (value instanceof List && ((List) value).contains(inputName) && key.equals(GET_INPUT)) {
-                value = "";
                 lhm1.remove(key);
-            } else {
-                continue;
             }
-
         }
     }
 

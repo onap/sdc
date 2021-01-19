@@ -94,8 +94,6 @@ public class PortalServlet extends HttpServlet {
 
         // Check if we got header from webseal
         String userId = request.getHeader(Constants.WEBSEAL_USER_ID_HEADER);
-		String firstNameFromCookie = "";
-		String lastNameFromCookie  = "";
         if (null == userId) {
             // Authentication via ecomp portal
             try {
@@ -148,8 +146,8 @@ public class PortalServlet extends HttpServlet {
         if (allHeadersExist) {
             addCookies(response, mutableRequest, getMandatoryHeaders(request));
             addCookies(response, mutableRequest, getOptionalHeaders(request));
-			firstNameFromCookie  = getValueFromCookie(request, Constants.HTTP_CSP_FIRSTNAME );
-			lastNameFromCookie = getValueFromCookie(request, Constants.HTTP_CSP_LASTNAME);
+			getValueFromCookie(request, Constants.HTTP_CSP_FIRSTNAME );
+			getValueFromCookie(request, Constants.HTTP_CSP_LASTNAME);
 
 			//To be fixed
 			//addAuthCookie(response, userId, firstNameFromCookie, lastNameFromCookie);
@@ -162,7 +160,6 @@ public class PortalServlet extends HttpServlet {
 
 	boolean addAuthCookie(HttpServletResponse response, String userId, String firstName, String lastName) throws IOException {
 		boolean isBuildCookieCompleted = true;
-		AuthenticationCookie authenticationCookie = null;
 		Cookie authCookie = null;
 		Configuration.CookieConfig confCookie =
 				ConfigurationManager.getConfigurationManager().getConfiguration().getAuthCookie();
@@ -171,7 +168,7 @@ public class PortalServlet extends HttpServlet {
 
 		String encryptedCookie = "";
 		try {
-			authenticationCookie = new AuthenticationCookie(userId, firstName, lastName);
+            AuthenticationCookie authenticationCookie = new AuthenticationCookie(userId, firstName, lastName);
 			String cookieAsJson = RepresentationUtils.toRepresentation(authenticationCookie);
 			encryptedCookie = org.onap.sdc.security.CipherUtil.encryptPKC(cookieAsJson, confCookie.getSecurityKey());
 		} catch (Exception e) {

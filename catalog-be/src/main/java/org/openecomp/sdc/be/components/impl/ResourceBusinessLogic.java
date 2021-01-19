@@ -902,19 +902,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> findNodeTypeArtifactsToHandle(Resource curNodeType,
 																								   List<ArtifactDefinition> extractedArtifacts) {
 
-		EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
 		try {
 			List<ArtifactDefinition> artifactsToUpload = new ArrayList<>(extractedArtifacts);
 			List<ArtifactDefinition> artifactsToUpdate = new ArrayList<>();
 			List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
 			processExistingNodeTypeArtifacts(extractedArtifacts, artifactsToUpload, artifactsToUpdate,
 					artifactsToDelete, collectExistingArtifacts(curNodeType));
-			nodeTypeArtifactsToHandle = putFoundArtifacts(artifactsToUpload, artifactsToUpdate, artifactsToDelete);
+			return putFoundArtifacts(artifactsToUpload, artifactsToUpdate, artifactsToDelete);
 		} catch (Exception e) {
 			log.debug("Exception occurred when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage(), e);
 			throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
 		}
-		return nodeTypeArtifactsToHandle;
 	}
 
 	private EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> putFoundArtifacts(
@@ -3325,7 +3323,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
 			}
 		}
-		String innerType = null;
 		property = new ComponentInstanceInput(curPropertyDef, value, null);
 
         String validPropertyVAlue = validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
@@ -3445,7 +3442,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 								TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
 					}
 				}
-				String innerType = null;
 				property = new ComponentInstanceProperty(curPropertyDef, value, null);
 
                 String validatePropValue = validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
@@ -4541,26 +4537,22 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	private void processDeploymentResourceArtifacts(User user, Resource resource,
 													Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
-		boolean shouldCreateArtifact = true;
 		Map<String, Object> artifactDetails = (Map<String, Object>) v;
 		Object object = artifactDetails.get(PLACE_HOLDER_RESOURCE_TYPES);
 		if (object != null) {
 			List<String> artifactTypes = (List<String>) object;
 			if (!artifactTypes.contains(resource.getResourceType()
 					.name())) {
-				shouldCreateArtifact = false;
 				return;
 			}
 		} else {
 			log.info("resource types for artifact placeholder {} were not defined. default is all resources", k);
 		}
-		if (shouldCreateArtifact) {
-			if (artifactsBusinessLogic != null) {
-				ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-						resource.getUniqueId(), k, (Map<String, Object>) v, user, ArtifactGroupTypeEnum.DEPLOYMENT);
-				if (artifactDefinition != null && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
-					artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
-				}
+		if (artifactsBusinessLogic != null) {
+			ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(
+					resource.getUniqueId(), k, (Map<String, Object>) v, user, ArtifactGroupTypeEnum.DEPLOYMENT);
+			if (artifactDefinition != null && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
+				artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
 			}
 		}
 	}

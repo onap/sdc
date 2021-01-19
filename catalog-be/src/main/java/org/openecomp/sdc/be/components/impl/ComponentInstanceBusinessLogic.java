@@ -1657,7 +1657,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
         try {
             org.openecomp.sdc.be.model.Component containerComponent = null;
-            Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists = null;
             RequirementCapabilityRelDef foundRelation = null;
 
             validateUserExists(userId);
@@ -2024,12 +2023,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 toscaOperationFacade.getToscaFullElement(foundResourceInstance.getComponentUid());
         if(getComponentRes.isRight()) {
             return componentsUtils.getResponseFormat(getComponentRes.right().value());
-        }
-        String propOwner;
-        if(!PropertiesUtils.isNodeServiceProxy(getComponentRes.left().value())) {
-            propOwner = componentInstanceUniqueId;
-        } else {
-            propOwner = foundResourceInstance.getSourceModelUid();
         }
 
         ResponseFormat actionStatus = updateCapPropOnContainerComponent(property, newValue, containerComponent,

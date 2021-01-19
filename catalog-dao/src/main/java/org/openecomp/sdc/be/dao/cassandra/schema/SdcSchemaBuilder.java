@@ -76,7 +76,6 @@ public class SdcSchemaBuilder {
 	 * @return true if the create operation was successful
 	 */
 	public boolean createSchema() {
-		boolean res = false;
 		try(Cluster cluster = sdcSchemaUtils.createCluster();
 				Session session = cluster.connect()) {
 			log.info("creating Schema for Cassandra.");
@@ -99,12 +98,11 @@ public class SdcSchemaBuilder {
 				Map<String, List<String>> keyspaceMetadate = cassndraMetadata.get(keyspace.getKey());
 				createTables(keyspace.getValue(), keyspaceMetadate, session,metadataTablesStructure.get(keyspace.getKey()));
 			}
-			res = true;
+			return true;
 		} catch (Exception e) {
             log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "creating Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
-            res = false;
+            return false;
         }
-		return res;
 	}
 
 	public boolean deleteSchema() {

@@ -152,14 +152,12 @@ public class ConsumerServlet extends BeGenericServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
         try {
             Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.getConsumer(consumerId, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get consumer");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 
@@ -167,7 +165,6 @@ public class ConsumerServlet extends BeGenericServlet {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Consumer");
             log.debug("get consumer failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         }
     }
 
@@ -184,8 +181,6 @@ public class ConsumerServlet extends BeGenericServlet {
     public Response deleteConsumer(@PathParam("consumerId") final String consumerId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -193,14 +188,12 @@ public class ConsumerServlet extends BeGenericServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
         try {
             Either<ConsumerDefinition, ResponseFormat> actionResponse = businessLogic.deleteConsumer(consumerId, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to delete consumer");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 
@@ -208,7 +201,6 @@ public class ConsumerServlet extends BeGenericServlet {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Consumer");
             log.debug("delete consumer failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         }
     }
 

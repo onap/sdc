@@ -154,7 +154,6 @@ public class AbstractTemplateServlet extends AbstractValidationsServlet {
             @Parameter(description = "The requested asset uuid",
                     required = true) @PathParam("uuid") final String uuid) throws IOException {
 
-        Response response = null;
         ResponseFormat responseFormat = null;
         AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_TEMPLATE_ABSTRACT_STATUS;
         String requestURI = request.getRequestURI();
@@ -202,9 +201,7 @@ public class AbstractTemplateServlet extends AbstractValidationsServlet {
             getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
                     resourceCommonInfo, requestId, uuid);
 
-            response = buildOkResponse(responseFormat, result);
-            return response;
-
+            return buildOkResponse(responseFormat, result);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Fetch abstract status of service");
             log.debug("getServiceAbstractStatus: Fetch abstract status of service with exception", e);

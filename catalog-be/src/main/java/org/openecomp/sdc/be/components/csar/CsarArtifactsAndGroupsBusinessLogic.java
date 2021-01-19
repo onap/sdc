@@ -1693,7 +1693,6 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Component resource, ArtifactDefinition oldArtifact, ArtifactTemplateInfo artifactTemplateInfo,
             List<ArtifactDefinition> updatedArtifacts, List<ArtifactTemplateInfo> updatedRequiredArtifacts) {
 
-        Either<ArtifactDefinition, ResponseFormat> resStatus = null;
         String artifactFileName = artifactTemplateInfo.getFileName();
 
         // check if artifacts already exist
@@ -1705,13 +1704,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     BeEcompErrorManager.getInstance().logInternalDataError(
                             ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                             ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
-                    resStatus = Either.right(componentsUtils.getResponseFormat(
+                    return Either.right(componentsUtils.getResponseFormat(
                             ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
                             artifactTemplateInfo.getType(), updatedArtifact.getArtifactType()));
-                    return resStatus;
                 }
-                resStatus = Either.left(updatedArtifact);
-                return resStatus;
+                return Either.left(updatedArtifact);
             }
 
         }
@@ -1720,8 +1717,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 .getArtifactContent(csarInfo.getCsarUUID(), csarInfo.getCsar(),
                         CsarUtils.ARTIFACTS_PATH + artifactFileName, artifactFileName, componentsUtils);
         if (artifactContententStatus.isRight()) {
-            resStatus = Either.right(artifactContententStatus.right().value());
-            return resStatus;
+            return Either.right(artifactContententStatus.right().value());
         }
 
         Map<String, Object> json = ArtifactUtils.buildJsonForUpdateArtifact(oldArtifact.getUniqueId(), artifactFileName,
@@ -1734,8 +1730,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE));
 
         if (uploadArtifactToService.isRight()) {
-            resStatus = Either.right(uploadArtifactToService.right().value());
-            return resStatus;
+            return Either.right(uploadArtifactToService.right().value());
         }
         ArtifactDefinition previousInfo = uploadArtifactToService.left().value().left().value();
         ArtifactDefinition currentInfo = uploadArtifactToService.left().value().left().value();
@@ -1746,15 +1741,13 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
         if (updateEnvEither.isRight()) {
             log.debug("failed to update parameters to artifact {}", artifactFileName);
-            resStatus = Either.right(updateEnvEither.right().value());
-            return resStatus;
+            return Either.right(updateEnvEither.right().value());
         }
 
         artifactsBusinessLogic.updateGroupForHeat(previousInfo, updateEnvEither.left().value(), resource);
 
         updatedArtifacts.add(updateEnvEither.left().value());
-        resStatus = Either.left(currentInfo);
-        return resStatus;
+        return Either.left(currentInfo);
     }
 
     public Either<Resource, ResponseFormat> deleteVFModules(Resource resource, CsarInfo csarInfo, boolean shouldLock, boolean inTransaction) {

@@ -189,15 +189,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-        Response response = null;
         try {
             Either<Map<String, Boolean>, ResponseFormat> actionResponse =
                     serviceBusinessLogic.validateServiceNameExists(serviceName, userId);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get validate service name");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
         } catch (Exception e) {
@@ -303,7 +301,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-        Response response = null;
         try {
             String serviceIdLower = serviceId.toLowerCase();
             loggerSupportability.log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.STARTED,"Starting to delete service {} by user {} ",serviceIdLower, userId);
@@ -311,12 +308,10 @@ public class ServiceServlet extends AbstractValidationsServlet {
             ResponseFormat actionResponse = businessLogic.deleteService(serviceIdLower, modifier);
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete service");
-                response = buildErrorResponse(actionResponse);
-                return response;
+                return buildErrorResponse(actionResponse);
             }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
             loggerSupportability.log(LoggerSupportabilityActions.DELETE_SERVICE,StatusCode.COMPLETE,"Ended deleting service {} by user {}",serviceIdLower, userId);
-            return response;
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Service");
@@ -338,6 +333,24 @@ public class ServiceServlet extends AbstractValidationsServlet {
     public Response deleteServiceByNameAndVersion(@PathParam("serviceName") final String serviceName,
                                                   @PathParam("version") final String version,
                                                   @Context final HttpServletRequest request) {
+        User modifier = getUser(request);
+
+        try {
+            ResponseFormat actionResponse = serviceBusinessLogic.deleteServiceByNameAndVersion(serviceName, version, modifier);
+
+            if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
+                log.debug("failed to delete service");
+                return buildErrorResponse(actionResponse);
+            }
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Service");
+            log.debug("delete service failed with exception", e);
+            throw e;
+        }
+    }
+
+    private User getUser(HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -346,25 +359,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-
-        Response response = null;
-
-        try {
-            ResponseFormat actionResponse = serviceBusinessLogic.deleteServiceByNameAndVersion(serviceName, version, modifier);
-
-            if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
-                log.debug("failed to delete service");
-                response = buildErrorResponse(actionResponse);
-                return response;
-            }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
-            return response;
-
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Service");
-            log.debug("delete service failed with exception", e);
-            throw e;
-        }
+        return modifier;
     }
 
     @PUT
@@ -389,24 +384,20 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
-
         try {
             String serviceIdLower = serviceId.toLowerCase();
 
             Either<Service, ResponseFormat> convertResponse = parseToService(data, modifier);
             if (convertResponse.isRight()) {
                 log.debug("failed to parse service");
-                response = buildErrorResponse(convertResponse.right().value());
-                return response;
+                return buildErrorResponse(convertResponse.right().value());
             }
             Service updatedService = convertResponse.left().value();
             Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.updateServiceMetadata(serviceIdLower, updatedService, modifier);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to update service");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
 
             Service service = actionResponse.left().value();
@@ -447,7 +438,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
             @Parameter(description = "Group instance object to be Updated", required = true) String data,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws JsonProcessingException {
 
-        Response response = null;
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
 
@@ -474,16 +464,15 @@ public class ServiceServlet extends AbstractValidationsServlet {
                 updatedProperties = actionResponse.left().value();
                 ObjectMapper mapper = new ObjectMapper();
                 String result = mapper.writeValueAsString(updatedProperties);
-                response =  buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
             }
             else{
-                response = buildErrorResponse(actionResponse.right().value());
+                return buildErrorResponse(actionResponse.right().value());
             }
         } catch (Exception e) {
             log.error("Exception occured during update Group Instance property values: {}", e.getMessage(), e);
             throw e;
         }
-        return response;
     }
 
     @GET
@@ -508,7 +497,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
         try {
             String serviceIdLower = serviceId.toLowerCase();
             log.debug("get service with id {}", serviceId);
@@ -516,8 +504,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get service");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
 
             Service service = actionResponse.left().value();
@@ -552,13 +539,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
         try {
             Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.getServiceByNameAndVersion(serviceName, serviceVersion, userId);
 
             if (actionResponse.isRight()) {
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
 
             Service service = actionResponse.left().value();
@@ -594,13 +579,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
         Either<Service, ResponseFormat> distResponse = serviceBusinessLogic.activateDistribution(serviceId, env, modifier, request);
 
         if (distResponse.isRight()) {
             log.debug("failed to activate service distribution");
-            response = buildErrorResponse(distResponse.right().value());
-            return response;
+            return buildErrorResponse(distResponse.right().value());
         }
         Service service = distResponse.left().value();
         Object result = null;
@@ -638,14 +621,12 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
         try {
             Either<Service, ResponseFormat> distResponse = serviceBusinessLogic.markDistributionAsDeployed(serviceId, did, modifier);
 
             if (distResponse.isRight()) {
                 log.debug("failed to mark distribution as deployed");
-                response = buildErrorResponse(distResponse.right().value());
-                return response;
+                return buildErrorResponse(distResponse.right().value());
             }
             Service service = distResponse.left().value();
             Object result = RepresentationUtils.toRepresentation(service);
@@ -674,13 +655,12 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response;
         try {
             Service service = (serviceBusinessLogic.getService(serviceId, modifier)).left().value();
             Either<Service, ResponseFormat> res = serviceBusinessLogic.updateDistributionStatusForActivation(service, modifier, DistributionStatusEnum.DISTRIBUTED);
 
             if (res.isRight()) {
-                response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+                buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), null);
         } catch (Exception e) {
@@ -714,7 +694,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
 
-        Response response = null;
         try {
             String serviceIdLower = serviceId.toLowerCase();
             log.debug("get service components relations with id {}", serviceId);
@@ -722,8 +701,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get service relations data");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
 
             ServiceRelations serviceRelations = actionResponse.left().value();

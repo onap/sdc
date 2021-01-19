@@ -77,8 +77,6 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     public Either<NodeType, StorageOperationStatus> createNodeType(NodeType nodeType) {
 
-        Either<NodeType, StorageOperationStatus> result = null;
-
         nodeType.generateUUID();
 
         nodeType = getResourceMetaDataFromResource(nodeType);
@@ -92,8 +90,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         List<GraphVertex> derivedResources = null;
         Either<List<GraphVertex>, StorageOperationStatus> derivedResourcesResult = findDerivedResources(nodeType);
         if (derivedResourcesResult.isRight()) {
-            result = Either.right(derivedResourcesResult.right().value());
-            return result;
+            return Either.right(derivedResourcesResult.right().value());
         } else {
             derivedResources = derivedResourcesResult.left().value();
         }
@@ -105,65 +102,53 @@ public class NodeTypeOperation extends ToscaElementOperation {
         if (createdVertex.isRight()) {
             JanusGraphOperationStatus status = createdVertex.right().value();
             log.error("Error returned after creating resource data node {}. status returned is ", nodeTypeVertex, status);
-            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-            return result;
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         nodeTypeVertex = createdVertex.left().value();
 
         StorageOperationStatus assosiateCommon = assosiateCommonForToscaElement(nodeTypeVertex, nodeType, derivedResources);
         if (assosiateCommon != StorageOperationStatus.OK) {
-            result = Either.right(assosiateCommon);
-            return result;
+            return Either.right(assosiateCommon);
         }
 
         StorageOperationStatus associateDerived = assosiateToDerived(nodeTypeVertex, derivedResources);
         if (associateDerived != StorageOperationStatus.OK) {
-            result = Either.right(associateDerived);
-            return result;
+            return Either.right(associateDerived);
         }
         StorageOperationStatus associateCategory = assosiateResourceMetadataToCategory(nodeTypeVertex, nodeType);
         if (associateCategory != StorageOperationStatus.OK) {
-            result = Either.right(associateCategory);
-            return result;
+            return Either.right(associateCategory);
         }
 
         StorageOperationStatus associateAttributes = associateAttributesToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateAttributes != StorageOperationStatus.OK) {
-            result = Either.right(associateAttributes);
-            return result;
+            return Either.right(associateAttributes);
         }
 
         StorageOperationStatus associateRequirements = associateRequirementsToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateRequirements != StorageOperationStatus.OK) {
-            result = Either.right(associateRequirements);
-            return result;
+            return Either.right(associateRequirements);
         }
 
         StorageOperationStatus associateCapabilities = associateCapabilitiesToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateCapabilities != StorageOperationStatus.OK) {
-            result = Either.right(associateCapabilities);
-            return result;
+            return Either.right(associateCapabilities);
         }
         StorageOperationStatus associateCapabilitiesProps = associateCapabilitiesPropertiesToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateCapabilitiesProps != StorageOperationStatus.OK) {
-            result = Either.right(associateCapabilitiesProps);
-            return result;
+            return Either.right(associateCapabilitiesProps);
         }
 
         StorageOperationStatus associateInterfaces = associateInterfacesToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateInterfaces != StorageOperationStatus.OK) {
-            result = Either.right(associateInterfaces);
-            return result;
+            return Either.right(associateInterfaces);
         }
 
         StorageOperationStatus addAdditionalInformation = addAdditionalInformationToResource(nodeTypeVertex, nodeType, derivedResources);
         if (addAdditionalInformation != StorageOperationStatus.OK) {
-            result = Either.right(addAdditionalInformation);
-            return result;
+            return Either.right(addAdditionalInformation);
         }
-        result = Either.left(nodeType);
-        return result;
-
+        return Either.left(nodeType);
     }
 
     private StorageOperationStatus associateInterfacesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
