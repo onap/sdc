@@ -289,6 +289,10 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         Boolean isProxy = (Boolean) getToscaPresentationValue(JsonPresentationFields.CI_IS_PROXY);
         return (isProxy != null) ? isProxy : false;
     }
+    
+    public Boolean isServiceSubstitution() {
+        return getOriginType() == OriginTypeEnum.ServiceSubstitution;
+    }
 
     public void setOriginArchived(Boolean originArchived) {
         if (originArchived == null) {

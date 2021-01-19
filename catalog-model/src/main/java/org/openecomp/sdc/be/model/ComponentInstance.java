@@ -70,7 +70,7 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     }
 
     public String getActualComponentUid() {
-        return getIsProxy() ? getSourceModelUid() : getComponentUid();
+        return getIsProxy() || isServiceSubstitution() ? getSourceModelUid() : getComponentUid();
     }
 
     public boolean isArtifactExists(ArtifactGroupTypeEnum groupType, String artifactLabel) {
