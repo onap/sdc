@@ -21,7 +21,6 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
@@ -47,16 +46,15 @@ import java.util.Set;
 @Component("cassandra-health-check")
 public class CassandraHealthCheck {
 
-    private static final Logger log = Logger.getLogger(CassandraHealthCheck.class.getName());
+    private static final Logger log = Logger.getLogger(CassandraHealthCheck.class);
 
-    private String localDataCenterName = null;
+    private String localDataCenterName;
 
-    private Set<String> sdcKeyspaces = new HashSet<>();
+    private final Set<String> sdcKeyspaces = new HashSet<>();
 
     private int HC_FormulaNumber;
 
     private SdcSchemaUtils sdcSchemaUtils;
-    
 
     @PostConstruct
     private void init() {
@@ -77,29 +75,27 @@ public class CassandraHealthCheck {
         String janusGraphCfgFile = ConfigurationManager.getConfigurationManager()
             .getConfiguration().getJanusGraphCfgFile();
         Properties prop = new Properties();
-        InputStream janusGraphProp = null;
-        try {
+
+        try (final InputStream janusGraphProp = new FileInputStream(janusGraphCfgFile)) {
             //load a properties file
-            janusGraphProp = new FileInputStream(janusGraphCfgFile);
             prop.load(janusGraphProp);
             //Add janusgraph keyspace
             String janusGraphKeyspace = prop.getProperty("storage.cassandra.keyspace");
-            if (!GeneralUtility.isEmptyString(janusGraphKeyspace))  {
+            if (!GeneralUtility.isEmptyString(janusGraphKeyspace)) {
                 sdcKeyspaces.add(janusGraphKeyspace);
             }
         } catch (Exception e) {
-            log.error("Failed to open titen.properties file , url is : {}", janusGraphCfgFile, e);
+            log.error("Failed to open janusGraph.properties file , url is : {}", janusGraphCfgFile, e);
         }
 
         log.info("All sdc keyspaces are : {}", sdcKeyspaces);
         sdcSchemaUtils = new SdcSchemaUtils();
         //Calculate the Formula of Health Check
-        Cluster cluster = null;
         try {
 
             log.info("creating cluster for Cassandra Health Check.");
             //Create cluster from nodes in cassandra configuration
-           
+
             Metadata metadata = sdcSchemaUtils.getMetadata();
 
             if (metadata == null) {
@@ -130,7 +126,7 @@ public class CassandraHealthCheck {
                 }
             }
 
-            if (replactionFactorList.size() == 0)  {
+            if (replactionFactorList.isEmpty()) {
                 log.error("Replication factor NOT found in all keyspaces");
                 return;
             }
@@ -138,7 +134,7 @@ public class CassandraHealthCheck {
             int maxReplicationFactor = Collections.max(replactionFactorList);
             log.info("maxReplication Factor is: {}", maxReplicationFactor);
 
-            int localQuorum = maxReplicationFactor/2 + 1;
+            int localQuorum = maxReplicationFactor / 2 + 1;
             log.info("localQuorum is: {}", localQuorum);
 
             HC_FormulaNumber = maxReplicationFactor - localQuorum;
@@ -148,34 +144,26 @@ public class CassandraHealthCheck {
 
         } catch (Exception e) {
             log.error("create cassandra cluster failed with exception.", e);
-        } finally {
-            if (cluster != null) {
-                cluster.close();
-            }
         }
 
     }
-    
- 
-    public boolean getCassandraStatus()  {
+
+    public boolean getCassandraStatus() {
 
         if (GeneralUtility.isEmptyString(localDataCenterName)) {
             log.error("localDataCenter Name in configuration.yaml is missing.");
             return false;
         }
 
-       
-        Session session = null;
-        try {
-            log.info("creating cluster for Cassandra for monitoring.");           
-            
-            session = sdcSchemaUtils.connect();
+        try (final Session session = sdcSchemaUtils.connect()) {
+            log.info("creating cluster for Cassandra for monitoring.");
+
             log.info("The cassandra session is {}", session);
-            if(session == null){
+            if (session == null) {
                 log.error("Failed to connect to cassandra ");
                 return false;
             }
-            
+
             Metadata metadata = sdcSchemaUtils.getMetadata();
 
             if (metadata == null) {
@@ -187,7 +175,7 @@ public class CassandraHealthCheck {
 
             //Count the number of data center nodes that are down
             Long downHostsNumber = metadata.getAllHosts().stream()
-                    .filter(x -> x.getDatacenter().equals(localDataCenterName) && !x.isUp()).count();
+                .filter(x -> x.getDatacenter().equals(localDataCenterName) && !x.isUp()).count();
 
             log.info("The cassandra down nodes number is {}", downHostsNumber);
             return HC_FormulaNumber >= downHostsNumber;
@@ -195,15 +183,9 @@ public class CassandraHealthCheck {
         } catch (Exception e) {
             log.error("create cassandra cluster failed with exception.", e);
             return false;
-        } finally {
-            if (session != null) {
-                log.info("close session for Cassandra for monitoring.");
-                session.close();
-            }
-            
         }
     }
-    
+
     @PreDestroy
     public void closeClient() {
         if (sdcSchemaUtils!= null) {
