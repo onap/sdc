@@ -40,17 +40,15 @@ public class UserOperation {
     }
     
     public ActionStatus updateUserCache(UserOperationEnum operation, String userId, String role){
-       ActionStatus result = ActionStatus.OK;
-       try{
+       try {
             UserMessage message = new UserMessage(operation, userId,role);
             IStatus status = msProducer.pushMessage(message);
-            result = FacadeOperationUtils.convertStatusToActionStatus(status);
+            return FacadeOperationUtils.convertStatusToActionStatus(status);
            
-       }catch(Exception e){
+       } catch(Exception e) {
            log.debug("update user cache - failed to send notification to update user cache {}", e.getMessage());
            return ActionStatus.OK;
        }
-        return result;
     }
     
 

@@ -163,8 +163,7 @@ public class DistributionServlet extends BeGenericServlet {
             log.debug("failed to get ueb serbver list from cofiguration", e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             getComponentsUtils().auditGetUebCluster(instanceId, responseFormat.getStatus().toString(), responseFormat.getFormattedMessage());
-            response = buildErrorResponse(responseFormat);
-            return response;
+            return buildErrorResponse(responseFormat);
         }
 
     }
@@ -267,18 +266,16 @@ public class DistributionServlet extends BeGenericServlet {
             @Parameter(description = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        Response response = null;
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
 
         //TODO check if in use
         validateHeaders(responseWrapper, request, AuditingActionEnum.GET_VALID_ARTIFACT_TYPES);
         if (responseWrapper.isEmpty()) {
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), ArtifactTypeEnum.values());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), ArtifactTypeEnum.values());
         } else {
-            response = responseWrapper.getInnerElement();
+            return responseWrapper.getInnerElement();
         }
-        return response;
     }
 
     /**

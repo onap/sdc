@@ -635,15 +635,13 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     }
 
     private Either<LifeCycleTransitionEnum, ResponseFormat> validateTransitionEnum(final String lifecycleTransition, User user) {
-        LifeCycleTransitionEnum transitionEnum = LifeCycleTransitionEnum.CHECKOUT;
         try {
-            transitionEnum = LifeCycleTransitionEnum.getFromDisplayName(lifecycleTransition);
+            return Either.left(LifeCycleTransitionEnum.getFromDisplayName(lifecycleTransition));
         } catch (IllegalArgumentException e) {
             log.info("state operation is not valid. operations allowed are: {}", LifeCycleTransitionEnum.valuesAsString(), e);
             ResponseFormat error = getComponentsUtils().getInvalidContentErrorAndAudit(user, "", AuditingActionEnum.CHECKOUT_RESOURCE);
             return Either.right(error);
         }
-        return Either.left(transitionEnum);
     }
 
 }

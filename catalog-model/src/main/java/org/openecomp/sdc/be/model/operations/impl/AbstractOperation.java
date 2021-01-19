@@ -228,15 +228,11 @@ public abstract class AbstractOperation {
     }
 
     protected String getValueFromJsonElement(JsonElement jsonElement) {
-        String value = null;
-
         if (jsonElement == null || jsonElement.isJsonNull()) {
-            value = EMPTY_VALUE;
+            return EMPTY_VALUE;
         } else {
-            value = jsonElement.toString();
+            return jsonElement.toString();
         }
-
-        return value;
     }
 
     protected Either<String, JanusGraphOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {

@@ -379,11 +379,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             @Parameter(description = "ComponentIns Inputs Object to be created",
                     required = true) String componentInstInputsMapObj) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("#createListInput: Start handle request of {}", url);
-        Response response = null;
-
         try {
             // get modifier id
             User modifier = new User();
@@ -394,8 +391,7 @@ public class InputsServlet extends AbstractValidationsServlet {
                 parseToComponentInstListInput(componentInstInputsMapObj, modifier);
             if (componentInstInputsMapRes.isRight()) {
                 log.debug("failed to parse componentInstInputsMap");
-                response = buildErrorResponse(componentInstInputsMapRes.right().value());
-                return response;
+                return buildErrorResponse(componentInstInputsMapRes.right().value());
             }
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
@@ -419,8 +415,7 @@ public class InputsServlet extends AbstractValidationsServlet {
             BeEcompErrorManager.getInstance()
                     .logBeRestApiGeneralError("Create list input for service with id: " + componentId);
             log.debug("createListInput failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 

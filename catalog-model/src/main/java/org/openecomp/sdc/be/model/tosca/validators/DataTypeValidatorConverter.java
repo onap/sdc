@@ -241,9 +241,6 @@ public class DataTypeValidatorConverter {
     }
 
     public ImmutablePair<JsonElement, Boolean> validateAndUpdate(String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
-
-        ImmutablePair<JsonElement, Boolean> result = falseResult;
-
         if (value == null || value.isEmpty()) {
             return trueEmptyResult;
         }
@@ -255,9 +252,7 @@ public class DataTypeValidatorConverter {
             return falseResult;
         }
 
-        result = validateAndUpdate(jsonElement, dataTypeDefinition, allDataTypes);
-
-        return result;
+        return validateAndUpdate(jsonElement, dataTypeDefinition, allDataTypes);
     }
 
     private Map<String, PropertyDefinition> getAllProperties(DataTypeDefinition dataTypeDefinition) {
@@ -278,9 +273,6 @@ public class DataTypeValidatorConverter {
     }
 
     public boolean isValid(String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
-
-        boolean result = false;
-
         if (value == null || value.isEmpty()) {
             return true;
         }
@@ -293,9 +285,7 @@ public class DataTypeValidatorConverter {
             return false;
         }
 
-        result = isValid(jsonElement, dataTypeDefinition, allDataTypes);
-
-        return result;
+        return isValid(jsonElement, dataTypeDefinition, allDataTypes);
     }
 
     private boolean isValid(JsonElement jsonElement, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {

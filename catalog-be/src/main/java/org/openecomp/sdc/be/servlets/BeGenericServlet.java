@@ -534,7 +534,6 @@ public class BeGenericServlet extends BasicServlet {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
-        Response response = null;
 
         try {
             BaseBusinessLogic businessLogic = getBlForPropertyDeclaration(typeEnum, context);
@@ -547,8 +546,7 @@ public class BeGenericServlet extends BasicServlet {
             Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(componentInstInputsMapObj, modifier, componentTypeEnum);
             if (componentInstInputsMapRes.isRight()) {
                 log.debug("failed to parse componentInstInputsMap");
-                response = buildErrorResponse(componentInstInputsMapRes.right().value());
-                return response;
+                return buildErrorResponse(componentInstInputsMapRes.right().value());
             }
 
             Either<List<ToscaDataDefinition>, ResponseFormat> propertiesAfterDeclaration = businessLogic
@@ -565,8 +563,7 @@ public class BeGenericServlet extends BasicServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create inputs for service with id: " + componentId);
             log.debug("Properties declaration failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 

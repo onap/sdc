@@ -1358,7 +1358,6 @@ public class ServiceImportParseLogic {
         if (object != null) {
             List<String> artifactTypes = (List<String>) object;
             if (!artifactTypes.contains(resource.getResourceType().name())) {
-                shouldCreateArtifact = false;
                 return;
             }
         } else {

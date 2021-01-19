@@ -188,17 +188,15 @@ public class HealthCheckBusinessLogic {
     }
 
     private HealthCheckInfo getDmaapProducerHealthCheck() {
-        HealthCheckInfo healthCheckInfo = null;
-        if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
+        if (ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()) {
             String appVersion = getAppVersion();
-        dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
-        healthCheckInfo = dmaapProducerHealth.getHealthCheckInfo();
+            dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
+            return dmaapProducerHealth.getHealthCheckInfo();
         } else {
-          log.debug("Dmaap health check disabled");
+            log.debug("Dmaap health check disabled");
             String description = ("Dmaap health check disabled");
-            healthCheckInfo = new HealthCheckInfo(HC_COMPONENT_DMAAP_PRODUCER, DOWN, null, description);
+            return new HealthCheckInfo(HC_COMPONENT_DMAAP_PRODUCER, DOWN, null, description);
         }
-        return healthCheckInfo;
     }
 
     public HealthCheckInfo getJanusGraphHealthCheck() {
