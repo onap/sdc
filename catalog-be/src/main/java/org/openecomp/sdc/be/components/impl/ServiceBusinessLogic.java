@@ -1326,6 +1326,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             validateAndUpdateEcompNaming(currentService, serviceUpdate);
 
             currentService.setEnvironmentContext(serviceUpdate.getEnvironmentContext());
+            currentService.setCategorySpecificMetadata(serviceUpdate.getCategorySpecificMetadata());
             return Either.left(currentService);
 
         } catch (ComponentException exception) {
