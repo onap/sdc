@@ -121,7 +121,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <junit.platform.version>1.6.0</junit.platform.version>
         <junitJupiter.version>5.6.0</junitJupiter.version>
         <assertj.version>3.16.0</assertj.version>
-        <testng.version>7.2.0</testng.version>
+        <testng.version>7.3.0</testng.version>
         <cucumber.version>5.6.0</cucumber.version>
         <bean-matchers.version>0.11</bean-matchers.version>
         <hamcrest.version>2.1</hamcrest.version>
