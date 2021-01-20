@@ -23,6 +23,11 @@ services:
     ETSI_NFV_Network_Service:
       name: "ETSI NFV Network Service"
       icons: ['etsi_nfv_network_service']
+      metadataKeys:
+        etsiVersion:
+          name: "ETSI Version"
+          validValues: [ '3.3.1', '2.7.1', '2.5.1' ]
+          mandatory: true
 resources:
   NetworkLayer23:
     name: "Network L2-3"

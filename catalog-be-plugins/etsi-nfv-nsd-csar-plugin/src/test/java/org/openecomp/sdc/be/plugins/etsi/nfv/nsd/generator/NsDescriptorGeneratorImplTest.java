@@ -63,7 +63,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.yaml.snakeyaml.Yaml;
 
@@ -75,7 +74,7 @@ class NsDescriptorGeneratorImplTest {
     @Mock
     private ToscaExportHandler toscaExportHandler;
 
-    private final ObjectProvider<ToscaTemplateYamlGenerator> toscaTemplateYamlGeneratorProvider = new ObjectProvider<ToscaTemplateYamlGenerator>() {
+    private final ObjectProvider<ToscaTemplateYamlGenerator> toscaTemplateYamlGeneratorProvider = new ObjectProvider<>() {
         @Override
         public ToscaTemplateYamlGenerator getObject(Object... args) {
             return new ToscaTemplateYamlGenerator((ToscaTemplate) args[0]);
@@ -158,13 +157,12 @@ class NsDescriptorGeneratorImplTest {
 		componentToscaTopologyTemplate.setSubstitution_mappings(substitutionMapping);
 
         final ToscaTemplate componentInterfaceToscaTemplate = new ToscaTemplate("");
-        final ToscaNodeType interfaceToscaNodeType = new ToscaNodeType();
-        interfaceToscaNodeType.setProperties(
-            ImmutableMap.of("designer", createToscaProperty("designerValue"),
-                "version", createToscaProperty("versionValue"),
-                "name", createToscaProperty("nameValue"),
-                "invariant_id", createToscaProperty("invariantIdValue"))
-        );
+        final String designerPropertyValue = "designerValue";
+        final String versionPropertyValue = "versionValue";
+        final String namePropertyValue = "nameValue";
+        final String invariantIdPropertyValue = "invariantIdValue";
+        final ToscaNodeType interfaceToscaNodeType = createDefaultInterfaceToscaNodeType(designerPropertyValue,
+            versionPropertyValue, namePropertyValue, invariantIdPropertyValue);
         final String nsNodeTypeName = "nsNodeTypeName";
         componentInterfaceToscaTemplate.setNode_types(ImmutableMap.of(nsNodeTypeName, interfaceToscaNodeType));
 
@@ -184,13 +182,11 @@ class NsDescriptorGeneratorImplTest {
         //when
         final Nsd nsd = nsDescriptorGenerator.generate(component, vnfDescriptorList).orElse(null);
         //then
-        assertThat("Nsd should not be null", nsd, is(notNullValue()));
-        assertThat("Nsd designer should be as expected", nsd.getDesigner(), is("designerValue"));
-        assertThat("Nsd version should be as expected", nsd.getVersion(), is("versionValue"));
-        assertThat("Nsd name should be as expected", nsd.getName(), is("nameValue"));
-        assertThat("Nsd invariantId should be as expected", nsd.getInvariantId(), is("invariantIdValue"));
-        assertThat("Nsd content should not be empty", nsd.getContents(), is(notNullValue()));
-        assertThat("Nsd content should not be empty", nsd.getContents().length, is(greaterThan(0)));
+        assertNotEmpty(nsd);
+        assertThat("Nsd designer should be as expected", nsd.getDesigner(), is(designerPropertyValue));
+        assertThat("Nsd version should be as expected", nsd.getVersion(), is(versionPropertyValue));
+        assertThat("Nsd name should be as expected", nsd.getName(), is(namePropertyValue));
+        assertThat("Nsd invariantId should be as expected", nsd.getInvariantId(), is(invariantIdPropertyValue));
 
         final Map<String, Object> toscaTemplateYaml = readYamlAsMap(nsd.getContents());
         @SuppressWarnings("unchecked")
@@ -220,6 +216,26 @@ class NsDescriptorGeneratorImplTest {
                 (Map<String, Object>) nodeTemplates.get(VNFD_AMF_NODE_NAME);
         assertThat("capabilities should be null",
         		nodeTemplate.get("capabilities"), is(nullValue()));
+    }
+
+    private ToscaNodeType createDefaultInterfaceToscaNodeType(final String designerPropertyValue,
+                                                              final String versionPropertyValue,
+                                                              final String namePropertyValue,
+                                                              final String invariantIdPropertyValue) {
+        final ToscaNodeType interfaceToscaNodeType = new ToscaNodeType();
+        interfaceToscaNodeType.setProperties(
+            ImmutableMap.of("designer", createToscaProperty(designerPropertyValue),
+                "version", createToscaProperty(versionPropertyValue),
+                "name", createToscaProperty(namePropertyValue),
+                "invariant_id", createToscaProperty(invariantIdPropertyValue))
+        );
+        return interfaceToscaNodeType;
+    }
+
+    private void assertNotEmpty(Nsd nsd) {
+        assertThat("Nsd should not be null", nsd, is(notNullValue()));
+        assertThat("Nsd content should not be empty", nsd.getContents(), is(notNullValue()));
+        assertThat("Nsd content should not be empty", nsd.getContents().length, is(greaterThan(0)));
     }
 
     private ToscaProperty createToscaProperty(final String value) {
