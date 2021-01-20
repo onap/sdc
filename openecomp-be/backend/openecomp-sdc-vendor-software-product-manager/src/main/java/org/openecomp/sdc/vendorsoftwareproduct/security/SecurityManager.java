@@ -76,6 +76,7 @@ public class SecurityManager {
     private Set<X509Certificate> trustedCertificates = new HashSet<>();
     private Set<X509Certificate> trustedCertificatesFromPackage = new HashSet<>();
     private File certificateDirectory;
+    private String sdcCertDir;
 
     static {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -84,13 +85,12 @@ public class SecurityManager {
     }
 
     private SecurityManager() {
-        certificateDirectory = this.getcertDirectory(System.getenv("SDC_CERT_DIR"));
     }
 
 
     // Package level constructor use in tests to avoid power mock
     SecurityManager(String sdcCertDir) {
-        certificateDirectory = this.getcertDirectory(sdcCertDir);
+        this.sdcCertDir = sdcCertDir;
     }
 
     public static SecurityManager getInstance() {
@@ -112,6 +112,7 @@ public class SecurityManager {
      * @throws SecurityManagerException
      */
     public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException, FileNotFoundException {
+        certificateDirectory = this.sdcCertDir != null ? this.getcertDirectory(sdcCertDir) : this.getcertDirectory(System.getenv("SDC_CERT_DIR"));
         //if file number in certificate directory changed reload certs
         String[] certFiles = certificateDirectory.list();
         if (certFiles == null) {
