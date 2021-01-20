@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bdba013_691c0363",
+        "filename": "openecomp-ui/proxy-server.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-01-20T15:47:15Z",
+      "side": 1,
+      "message": "I found out, that method next() is apparently called twice (somethimes) and this a reason why ERR_HTTP_HEADERS_SENT error is thrown by the express app.",
+      "revId": "4c8f60dad020ecb18b8fa75ec594fb7229390bb4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
