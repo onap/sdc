@@ -76,14 +76,11 @@
       <version>1.0.2</version>
       <scope>compile</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${log4j.version}</version>
-      <scope>compile</scope>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-logging-api</artifactId>
+      <version>${project.version}</version>
     </dependency>
-
 
   </dependencies>
   <build>

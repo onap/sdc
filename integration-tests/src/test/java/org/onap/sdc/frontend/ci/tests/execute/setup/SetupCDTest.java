@@ -179,7 +179,7 @@ public abstract class SetupCDTest extends DriverFactory {
                     addTrafficFileToReport(result);
                 }
 
-                if (result.getInstanceName().equals(OnboardingFlowsUi.class.getName()) && result.getStatus() == ITestResult.FAILURE) {
+                if (OnboardingFlowsUi.class.getName().equals(result.getInstanceName()) && result.getStatus() == ITestResult.FAILURE) {
                     final String msg = "Onboarding test failed, closing browser";
                     LOGGER.info(msg);
                     getExtendTest().log(Status.INFO, msg);
