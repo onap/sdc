@@ -35,8 +35,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.webseal.simulator.conf.Conf;
 
 import javax.net.ssl.SSLContext;
@@ -75,8 +74,7 @@ public class SdcProxy extends HttpServlet {
     private final String CONFIGURATIONS = "/configurations";
     private static final Set<String> RESERVED_HEADERS = Arrays.stream(ReservedHeaders.values()).map(h -> h.getValue()).collect(Collectors.toSet());
 
-
-    private final static Logger logger = LogManager.getLogger(SdcProxy.class);
+    private static final Logger logger = Logger.getLogger(SdcProxy.class);
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
