@@ -19,7 +19,6 @@
 
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import fj.data.Either;
 import java.util.ArrayList;
@@ -54,19 +53,16 @@ import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 
 @org.springframework.stereotype.Component("nsDescriptorGenerator")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NsDescriptorGeneratorImpl.class);
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
     private static final String NS_TOSCA_TYPE = "tosca.nodes.nfv.NS";
-    private static final List<Map<String, Map<String, String>>> DEFAULT_IMPORTS_ETSI_SOL_NSD =
-        ImmutableList.of(
-            ImmutableMap.of("etsi_nfv_sol001_nsd_2_7_1_types",
-                ImmutableMap.of("file", "etsi_nfv_sol001_nsd_2_7_1_types.yaml")
-            )
-        );
     private static final List<Map<String, Map<String, String>>> DEFAULT_IMPORTS = ConfigurationManager
         .getConfigurationManager().getConfiguration().getDefaultImports();
     private static final List<String> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE = Arrays
@@ -308,7 +304,11 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
 
     private void setDefaultImportsForEtsiSolNsNsd(final ToscaTemplate template,
                                                   final List<VnfDescriptor> vnfDescriptorList) {
-        final List<Map<String, Map<String, String>>> importEntryMap = new ArrayList<>(DEFAULT_IMPORTS_ETSI_SOL_NSD);
+        final List<Map<String, Map<String, String>>> importEntryMap = new ArrayList<>();
+        final Map<String, Map<String, String>> defaultImportEntryMap = generateDefaultImportEntry();
+        if (MapUtils.isNotEmpty(defaultImportEntryMap)) {
+            importEntryMap.add(defaultImportEntryMap);
+        }
         if (CollectionUtils.isNotEmpty(vnfDescriptorList)) {
             for (final VnfDescriptor vnfDescriptor : vnfDescriptorList) {
                 final Map<String, String> vnfImportChildEntry = new HashMap<>();
@@ -320,6 +320,12 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         }
 
         template.setImports(importEntryMap);
+    }
+
+    private Map<String, Map<String, String>> generateDefaultImportEntry() {
+        return ImmutableMap.of("etsi_nfv_sol001_nsd_types",
+            ImmutableMap.of("file", "etsi_nfv_sol001_nsd_types.yaml")
+        );
     }
 
     private ToscaNodeType createEtsiSolNsNodeType(final ToscaNodeType nsNodeType) {

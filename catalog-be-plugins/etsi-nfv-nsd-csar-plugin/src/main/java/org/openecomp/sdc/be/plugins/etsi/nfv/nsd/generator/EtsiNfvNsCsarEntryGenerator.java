@@ -28,6 +28,8 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.EtsiNfvNsdCsarGeneratorFactory;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +42,12 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNfvNsCsarEntryGenerator.class);
     static final String ETSI_NS_COMPONENT_CATEGORY = "ETSI NFV Network Service";
     static final String NSD_FILE_PATH_FORMAT = "Artifacts/%s/%s.csar";
+    static final String ETSI_VERSION_METADATA = "ETSI Version";
 
-    private final EtsiNfvNsdCsarGenerator etsiNfvNsdCsarGenerator;
+    private final EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory;
 
-    public EtsiNfvNsCsarEntryGenerator(final EtsiNfvNsdCsarGenerator etsiNfvNsdCsarGenerator) {
-        this.etsiNfvNsdCsarGenerator = etsiNfvNsdCsarGenerator;
+    public EtsiNfvNsCsarEntryGenerator(final EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory) {
+        this.etsiNfvNsdCsarGeneratorFactory = etsiNfvNsdCsarGeneratorFactory;
     }
 
     /**
@@ -72,6 +75,9 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
 
         final byte[] nsdCsar;
         try {
+            final EtsiVersion etsiVersion = getComponentEtsiVersion(component);
+            final EtsiNfvNsdCsarGenerator etsiNfvNsdCsarGenerator =
+                etsiNfvNsdCsarGeneratorFactory.create(etsiVersion);
             nsdCsar = etsiNfvNsdCsarGenerator.generateNsdCsar(component);
         } catch (final NsdException e) {
             LOGGER.error("Could not create NSD CSAR entry for component '{}'"
@@ -84,6 +90,11 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
         }
 
         return createEntry(component.getNormalizedName(), nsdCsar);
+    }
+
+    private EtsiVersion getComponentEtsiVersion(Component component) {
+        final String etsiVersion = component.getCategorySpecificMetadata().get(ETSI_VERSION_METADATA);
+        return EtsiVersion.convertOrNull(etsiVersion);
     }
 
     private Map<String, byte[]> createEntry(final String csarName, final byte[] nsdCsar) {

@@ -19,46 +19,52 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>catalog-be-plugins</artifactId>
-        <groupId>org.openecomp.sdc</groupId>
-        <version>1.8.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>catalog-be-plugins</artifactId>
+    <groupId>org.openecomp.sdc</groupId>
+    <version>1.8.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>etsi-nfv-nsd-csar-plugin</artifactId>
+  <artifactId>etsi-nfv-nsd-csar-plugin</artifactId>
 
-    <properties>
-        <hamcrest.version>2.2</hamcrest.version>
-    </properties>
+  <properties>
+    <hamcrest.version>2.2</hamcrest.version>
+  </properties>
 
-    <dependencies>
-        <!--catalog-be dependencies-->
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>catalog-be</artifactId>
-            <version>${project.version}</version>
-            <classifier>classes</classifier>
-        </dependency>
+  <dependencies>
+    <!--catalog-be dependencies-->
+    <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>catalog-be</artifactId>
+      <version>${project.version}</version>
+      <classifier>classes</classifier>
+    </dependency>
 
-        <!--test dependencies-->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <!--test dependencies-->
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junitJupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <finalName>etsi-nfv-nsd-csar-plugin</finalName>
-    </build>
+  <build>
+    <finalName>etsi-nfv-nsd-csar-plugin</finalName>
+  </build>
 </project>

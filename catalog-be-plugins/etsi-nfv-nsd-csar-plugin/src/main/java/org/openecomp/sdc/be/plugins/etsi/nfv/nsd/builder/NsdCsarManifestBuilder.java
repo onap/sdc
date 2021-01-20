@@ -22,39 +22,35 @@ package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Builder for the manifest (.mf) file in a NSD CSAR
  */
 public class NsdCsarManifestBuilder {
-    private static final String METADATA = "metadata";
-    private static final String SOURCE = "Source";
+    static final String METADATA = "metadata";
+    static final String SOURCE = "Source";
+    static final String COMPATIBLE_SPECIFICATION_VERSIONS = "compatible_specification_versions";
     private static final String NSD_DESIGNER = "nsd_designer";
     private static final String NSD_FILE_STRUCTURE_VERSION = "nsd_file_structure_version";
-    private static final String NSD_RELEASE_DATE_TIME = "nsd_release_date_time";
+    static final String NSD_RELEASE_DATE_TIME = "nsd_release_date_time";
     private static final String NSD_NAME = "nsd_name";
     private static final String NSD_INVARIANT_ID = "nsd_invariant_id";
-    private static final String ATTRIBUTE_SEPARATOR = ": ";
+    static final String ATTRIBUTE_SEPARATOR = ": ";
     private static final String NEW_LINE = "\n";
     private static final DateTimeFormatter RFC_3339_DATE_TIME_FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
 
-    private final StringBuilder builder;
-    private final StringBuilder metadataBuilder;
-    private final StringBuilder sourceBuilder;
     private final MetadataHeader metadataHeader;
-    private final HashSet<String> sources;
+    private final Set<String> sources;
+    private final Set<String> compatibleSpecificationVersions;
 
     public NsdCsarManifestBuilder() {
-        builder = new StringBuilder();
-        metadataBuilder = new StringBuilder();
-        sourceBuilder = new StringBuilder();
         metadataHeader = new MetadataHeader();
         sources = new LinkedHashSet<>();
-        metadataBuilder.append(METADATA).append(ATTRIBUTE_SEPARATOR)
-            .append(NEW_LINE);
+        compatibleSpecificationVersions = new TreeSet<>();
     }
 
     /**
@@ -122,23 +118,47 @@ public class NsdCsarManifestBuilder {
         return this;
     }
 
+    public NsdCsarManifestBuilder withCompatibleSpecificationVersion(final String version) {
+        this.compatibleSpecificationVersions.add(version);
+        return this;
+    }
+
     /**
      * Builds a string representing the manifest content based on provided values.
      *
      * @return a string representing the manifest content
      */
     public String build() {
+        final StringBuilder metadataBuilder = createMetadataBuilder();
         appendEntry(metadataBuilder, NSD_DESIGNER, metadataHeader.designer);
         appendEntry(metadataBuilder, NSD_INVARIANT_ID, metadataHeader.invariantId);
         appendEntry(metadataBuilder, NSD_NAME, metadataHeader.nsdName);
         appendEntry(metadataBuilder, NSD_RELEASE_DATE_TIME, metadataHeader.nsdReleaseDateTime);
         appendEntry(metadataBuilder, NSD_FILE_STRUCTURE_VERSION, metadataHeader.fileStructureVersion);
+        final StringBuilder sourceBuilder = new StringBuilder();
         sources.forEach(source -> appendEntry(sourceBuilder, SOURCE, source));
 
+        final StringBuilder compatibleSpecificationVersionsBuilder = new StringBuilder();
+        if (!compatibleSpecificationVersions.isEmpty()) {
+            compatibleSpecificationVersionsBuilder.append(COMPATIBLE_SPECIFICATION_VERSIONS)
+                .append(ATTRIBUTE_SEPARATOR)
+                .append(String.join(",", compatibleSpecificationVersions))
+                .append(NEW_LINE);
+        }
+
+        final StringBuilder builder = new StringBuilder();
+
         builder.append(metadataBuilder)
+            .append(compatibleSpecificationVersionsBuilder)
             .append(NEW_LINE)
             .append(sourceBuilder);
         return builder.toString();
+    }
+
+    private StringBuilder createMetadataBuilder() {
+        final StringBuilder metadataBuilder = new StringBuilder();
+        metadataBuilder.append(METADATA).append(ATTRIBUTE_SEPARATOR).append(NEW_LINE);
+        return metadataBuilder;
     }
 
     private String getNowDateTime() {

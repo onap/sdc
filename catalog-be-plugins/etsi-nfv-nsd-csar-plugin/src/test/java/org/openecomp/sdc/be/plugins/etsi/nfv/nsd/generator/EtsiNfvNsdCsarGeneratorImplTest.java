@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
@@ -49,6 +48,9 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.VnfDescriptorException;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.NsDescriptorGeneratorFactory;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.Nsd;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.VnfDescriptor;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
@@ -60,17 +62,23 @@ class EtsiNfvNsdCsarGeneratorImplTest {
     @Mock
     private NsDescriptorGenerator nsDescriptorGeneratorImpl;
     @Mock
+    private NsDescriptorGeneratorFactory nsDescriptorGeneratorFactory;
+    @Mock
     private ArtifactCassandraDao artifactCassandraDao;
-    @InjectMocks
-    private EtsiNfvNsdCsarGeneratorImpl etsiNfvNsdCsarGenerator;
     @Mock
     private Service service;
+
+    private EtsiNfvNsdCsarGeneratorImpl etsiNfvNsdCsarGenerator;
 
     private static final String SERVICE_NORMALIZED_NAME = "normalizedName";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        final EtsiVersion version2_5_1 = EtsiVersion.VERSION_2_5_1;
+        etsiNfvNsdCsarGenerator = new EtsiNfvNsdCsarGeneratorImpl(new NsDescriptorConfig(version2_5_1),
+            vnfDescriptorGenerator, nsDescriptorGeneratorFactory, artifactCassandraDao);
+        when(nsDescriptorGeneratorFactory.create()).thenReturn(nsDescriptorGeneratorImpl);
     }
 
     @Test

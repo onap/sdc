@@ -25,10 +25,12 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_NS_COMPONENT_CATEGORY;
+import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_VERSION_METADATA;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.NSD_FILE_PATH_FORMAT;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ETSI_PACKAGE;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,10 +42,14 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.EtsiNfvNsdCsarGeneratorFactory;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
 
 class EtsiNfvNsCsarEntryGeneratorTest {
 
 
+    @Mock
+    private EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory;
     @Mock
     private EtsiNfvNsdCsarGenerator etsiNfvNsdCsarGenerator;
     @Mock
@@ -53,10 +59,12 @@ class EtsiNfvNsCsarEntryGeneratorTest {
 
     private static final String SERVICE_NORMALIZED_NAME = "normalizedName";
     private static final String CSAR_ENTRY_EMPTY_ASSERT = "Csar Entries should be empty";
+    private static final EtsiVersion nsdVersion = EtsiVersion.VERSION_2_5_1;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(etsiNfvNsdCsarGeneratorFactory.create(nsdVersion)).thenReturn(etsiNfvNsdCsarGenerator);
     }
 
     @Test
@@ -115,6 +123,10 @@ class EtsiNfvNsCsarEntryGeneratorTest {
         when(service.getName()).thenReturn("anyName");
         when(service.getComponentType()).thenReturn(ComponentTypeEnum.SERVICE);
         when(service.getNormalizedName()).thenReturn(SERVICE_NORMALIZED_NAME);
+
+        final Map<String, String> categorySpecificMetadataMap = new HashMap<>();
+        categorySpecificMetadataMap.put(ETSI_VERSION_METADATA, nsdVersion.getVersion());
+        when(service.getCategorySpecificMetadata()).thenReturn(categorySpecificMetadataMap);
 
         final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();

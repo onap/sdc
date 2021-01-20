@@ -24,8 +24,6 @@ import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ONBOARDED_PACKAGE;
 
 import fj.data.Either;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,19 +48,26 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder.NsdCsarManifestBuilder;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder.NsdToscaMetadataBuilder;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.NsDescriptorGeneratorFactory;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorVersionComparator;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.Nsd;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.VnfDescriptor;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
  * Implementation of a ETSI NFV NSD CSAR generator
  */
 @org.springframework.stereotype.Component("etsiNfvNsdCsarGenerator")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNfvNsdCsarGeneratorImpl.class);
@@ -76,14 +81,17 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
     private static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
 
     private final VnfDescriptorGenerator vnfDescriptorGenerator;
-    private final NsDescriptorGenerator nsDescriptorGeneratorImpl;
+    private final NsDescriptorGeneratorFactory nsDescriptorGeneratorFactory;
     private final ArtifactCassandraDao artifactCassandraDao;
+    private final NsDescriptorConfig nsDescriptorConfig;
 
-    public EtsiNfvNsdCsarGeneratorImpl(final VnfDescriptorGenerator vnfDescriptorGenerator,
-                                       final NsDescriptorGenerator nsDescriptorGenerator,
+    public EtsiNfvNsdCsarGeneratorImpl(final NsDescriptorConfig nsDescriptorConfig,
+                                       final VnfDescriptorGenerator vnfDescriptorGenerator,
+                                       final NsDescriptorGeneratorFactory nsDescriptorGeneratorFactory,
                                        final ArtifactCassandraDao artifactCassandraDao) {
+        this.nsDescriptorConfig = nsDescriptorConfig;
         this.vnfDescriptorGenerator = vnfDescriptorGenerator;
-        this.nsDescriptorGeneratorImpl = nsDescriptorGenerator;
+        this.nsDescriptorGeneratorFactory = nsDescriptorGeneratorFactory;
         this.artifactCassandraDao = artifactCassandraDao;
     }
 
@@ -106,17 +114,18 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
             vnfDescriptorList.forEach(vnfPackage -> nsdCsarFiles.putAll(vnfPackage.getDefinitionFiles()));
 
             final String nsdFileName = getNsdFileName(component);
+            final EtsiVersion etsiVersion = nsDescriptorConfig.getNsVersion();
             final Nsd nsd = generateNsd(component, vnfDescriptorList);
             nsdCsarFiles.put(getNsdPath(nsdFileName), nsd.getContents());
             nsdCsarFiles.put(TOSCA_META_PATH, buildToscaMetaContent(nsdFileName).getBytes());
-            addEtsiSolNsdTypes(nsdCsarFiles);
+            addEtsiSolNsdTypes(etsiVersion, nsdCsarFiles);
             for (final String referencedFile : nsd.getArtifactReferences()) {
                 getReferencedArtifact(component, referencedFile).ifPresent(
                     artifactDefinition -> nsdCsarFiles.put(referencedFile, artifactDefinition.getPayloadData())
                 );
             }
             nsdCsarFiles
-                .put(getManifestPath(nsdFileName), getManifestFileContent(nsd, nsdCsarFiles.keySet()).getBytes());
+                .put(getManifestPath(nsdFileName), getManifestFileContent(nsd, etsiVersion, nsdCsarFiles.keySet()).getBytes());
 
             final byte[] csar = buildCsarPackage(nsdCsarFiles);
             LOGGER.debug("Successfully generated NSD CSAR package");
@@ -221,33 +230,40 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
             .findFirst();
     }
 
-    private void addEtsiSolNsdTypes(final Map<String, byte[]> nsdCsarFileMap) {
-        final Path baseFolderPath = Paths.get("etsi-nfv-types");
-        String nsdTypesFilename = "etsi_nfv_sol001_nsd_2_7_1_types.yaml";
+    private void addEtsiSolNsdTypes(final EtsiVersion etsiVersion,
+                                    final Map<String, byte[]> nsdCsarFileMap) {
+        final EtsiVersion currentVersion = etsiVersion == null ?
+            EtsiVersion.getDefaultVersion() : etsiVersion;
+
+        final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         try {
-            final Resource resource =
-                new ClassPathResource(Paths.get(baseFolderPath.toString(), nsdTypesFilename).toString());
-            nsdCsarFileMap.put(DEFINITION + "/" + nsdTypesFilename,
-                IOUtils.toByteArray(resource.getInputStream()));
-        } catch (final IOException exception) {
-            LOGGER.error("Error adding {} to NSD CSAR", nsdTypesFilename, exception);
+            final Resource[] resources =
+                resolver.getResources(String.format("classpath:etsi-nfv-types/%s/*.*", currentVersion.getVersion()));
+            if (resources.length > 0) {
+                for (final Resource resource : resources) {
+                    addToCsarFileMap(resource, nsdCsarFileMap);
+                }
+            }
+        } catch (final IOException e) {
+            LOGGER.error("Could not find types files for the version '{}'", currentVersion.getVersion(), e);
         }
+    }
 
-        String commonTypesFilename = "etsi_nfv_sol001_common_types.yaml";
+    private void addToCsarFileMap(final Resource resource, final Map<String, byte[]> nsdCsarFileMap) {
         try {
-            final Resource resource =
-                new ClassPathResource(Paths.get(baseFolderPath.toString(), commonTypesFilename).toString());
-            nsdCsarFileMap.put(DEFINITION + "/" + commonTypesFilename,
+            nsdCsarFileMap.put(DEFINITION + "/" + resource.getFilename(),
                 IOUtils.toByteArray(resource.getInputStream()));
         } catch (final IOException exception) {
-            LOGGER.error("Error adding {} to NSD CSAR", commonTypesFilename, exception);
+            LOGGER.error("Error adding '{}' to NSD CSAR", resource.getFilename(), exception);
         }
     }
 
     private Nsd generateNsd(final Component component,
                             final List<VnfDescriptor> vnfDescriptorList) throws NsdException {
-        return nsDescriptorGeneratorImpl.generate(component, vnfDescriptorList)
+        final NsDescriptorGenerator nsDescriptorGenerator =
+            nsDescriptorGeneratorFactory.create();
+        return nsDescriptorGenerator.generate(component, vnfDescriptorList)
             .orElseThrow(() ->
                 new NsdException(String
                     .format("Could not generate the Network Service Descriptor for component %s", component.getName()))
@@ -269,7 +285,7 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
         if (artifactDefinition.getPayloadData() == null) {
             final Optional<byte[]> artifactPayload = loadArtifactPayload(artifactDefinition.getEsId());
 
-            if (!artifactPayload.isPresent()) {
+            if (artifactPayload.isEmpty()) {
                 throw new NsdException(String.format("Could not load artifact '%s' payload", filePath));
             }
             artifactDefinition.setPayload(artifactPayload.get());
@@ -307,7 +323,9 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
         return toscaMetadata;
     }
 
-    private String getManifestFileContent(final Nsd nsd, final Set<String> files) {
+    private String getManifestFileContent(final Nsd nsd,
+                                          final EtsiVersion nsdVersion,
+                                          final Set<String> files) {
         LOGGER.debug("Creating NS manifest file content");
 
         final NsdCsarManifestBuilder nsdCsarManifestBuilder = new NsdCsarManifestBuilder();
@@ -317,6 +335,12 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
             .withNowReleaseDateTime()
             .withFileStructureVersion(nsd.getVersion())
             .withSources(files);
+
+        final NsDescriptorVersionComparator nsdVersionComparator = new NsDescriptorVersionComparator();
+
+        if (nsdVersion != null && nsdVersionComparator.compare(nsdVersion, EtsiVersion.VERSION_3_3_1) >= 0) {
+            nsdCsarManifestBuilder.withCompatibleSpecificationVersion(nsdVersion.getVersion());
+        }
 
         final String manifest = nsdCsarManifestBuilder.build();
         LOGGER.debug("Successfully created NS CSAR manifest file content:\n {}", manifest);
