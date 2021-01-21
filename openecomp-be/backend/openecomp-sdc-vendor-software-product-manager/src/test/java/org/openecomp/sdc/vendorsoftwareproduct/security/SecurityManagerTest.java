@@ -86,13 +86,14 @@ public class SecurityManagerTest {
 
     @Test
     public void testGetCertificatesException() throws IOException, SecurityManagerException {
+        File newFile = new File(cerDirPath + "root-certificate.pem");
+        newFile.createNewFile();
         Assertions.assertThrows(SecurityManagerException.class, () -> {
-            File newFile = new File(cerDirPath + "root-certificate.pem");
-            newFile.createNewFile();
             assertEquals(1, securityManager.getTrustedCertificates().size());
-            newFile.delete();
-            assertEquals(0, securityManager.getTrustedCertificates().size());
         });
+        newFile.delete();
+        assertEquals(0, securityManager.getTrustedCertificates().size());
+
     }
 
     @Test
