@@ -139,9 +139,10 @@ const mapValidationDataToTree = (validationData, packageName) => {
                 type: 'heat',
                 header: true,
                 errors: errors,
-                children: heat
-                    ? heat.map(mapHeatData)
-                    : nested ? nested.map(mapHeatData) : []
+                children:
+                    heat && heat.length
+                        ? heat.map(mapHeatData)
+                        : nested ? nested.map(mapHeatData) : []
             },
             ...(artifacts
                 ? [
