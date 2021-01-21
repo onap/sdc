@@ -238,8 +238,12 @@ public class SecurityManager {
         return new File(certDirLocation);
     }
 
-    private X509Certificate loadCertificate(File certFile) throws SecurityManagerException, FileNotFoundException {
-        return loadCertificateFactory(new FileInputStream(certFile));
+    private X509Certificate loadCertificate(File certFile) throws SecurityManagerException  {
+        try (FileInputStream fi = new FileInputStream(certFile)) {
+            return loadCertificateFactory(fi);
+        } catch(IOException e) {
+            throw new SecurityManagerException("Error during loading Certificate from file!", e);
+        }
     }
 
     private X509Certificate loadCertificate(X509CertificateHolder cert) {
