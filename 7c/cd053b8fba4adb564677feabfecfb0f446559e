@@ -1,0 +1,10 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Edyta Krukowska <edyta.krukowska@nokia.com>
+Code-Review+1: Bogumil Zebek <bogumil.zebek@nokia.com>
+Code-Review+1: Bartosz Gardziejewski <bartosz.gardziejewski@nokia.com>
+Code-Review+2: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Submitted-by: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Submitted-at: Thu, 21 Jan 2021 09:51:33 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/117031
+Project: sdc
+Branch: refs/heads/master
