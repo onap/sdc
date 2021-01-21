@@ -82,6 +82,59 @@ describe('HeatValidationActionHelper ActionHelper', () => {
 		expect(store.getState().softwareProduct.softwareProductAttachments.heatValidation.attachmentsTree.children[0].expanded).toBe(false);
 	});
 
+	it('should get values from nested object if heat object is empty', () => {
+		const validationData = {
+			importStructure: {
+				heat: [],
+				nested: [
+					{
+						fileName: 'hot-mog-0108-bs1271.yml',
+						env: {
+							fileName: 'hot-mog-0108-bs1271.env'
+						},
+						errors: [
+							{
+								'level': 'WARNING',
+								'message': 'Port not bind to any NOVA Server, Resource Id [sm02_port_2]'
+							},
+							{
+								'level': 'WARNING',
+								'message': 'Port not bind to any NOVA Server, Resource Id [sm01_port_2]'
+							}
+						]
+					}
+				]
+			}
+		};
+
+		const currentSoftwareProduct = {
+			name: 'VSp',
+			description: 'dfdf',
+			vendorName: 'V1',
+			vendorId: '97B3E2525E0640ACACF87CE6B3753E80',
+			category: 'resourceNewCategory.application l4+',
+			subCategory: 'resourceNewCategory.application l4+.database',
+			id: 'D4774719D085414E9D5642D1ACD59D20',
+			version: '0.10',
+			viewableVersions: ['0.1', '0.2'],
+			status: 'Locked',
+			lockingUser: 'cs0008',
+			validationData
+		};
+
+
+		const store = storeCreator();
+		deepFreeze(store.getState());
+		deepFreeze(currentSoftwareProduct);
+
+		store.dispatch({
+			type:actionTypes.SOFTWARE_PRODUCT_LOADED,
+			response: currentSoftwareProduct
+		});
+
+		expect(store.getState().softwareProduct.softwareProductAttachments.heatValidation.attachmentsTree.children[0].children.length).toBe(1);
+	});
+
 	it('onSelectNode & onUnselectNode function check', () => {
 
 
