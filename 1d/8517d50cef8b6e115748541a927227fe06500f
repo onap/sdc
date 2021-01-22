@@ -1,0 +1,11 @@
+Code-Review+2: Christophe Closset <christophe.closset@intl.att.com>
+Code-Review+1: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Code-Review+1: Jan Malkiewicz <jan.malkiewicz@nokia.com>
+Code-Review+1: Maciej Malewski <maciej.malewski@nokia.com>
+Code-Review+1: Tomasz Pietruszkiewicz <tomasz.pietruszkiewicz@nokia.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Christophe Closset <christophe.closset@intl.att.com>
+Submitted-at: Fri, 22 Jan 2021 12:32:32 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/116934
+Project: sdc
+Branch: refs/heads/master
