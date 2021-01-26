@@ -1,0 +1,138 @@
+<!--
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2021 Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+-->
+
+<div class="attributes-outputs-page">
+
+  <div class="main-content">
+    <div class="left-column">
+      <div class="main-tabs-section">
+        <tabs #attributeOutputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)"
+              [hideIndicationOnTabChange]="true">
+          <tab tabTitle="Attributes">
+            <attributes-table class="attributes-table"
+                              [feAttributesMap]="instanceFeAttributesMap"
+                              [feInstanceNamesMap]="componentInstanceNamesMap"
+                              [selectedAttributeId]="selectedFlatAttribute.path"
+                              [readonly]="isReadonly || resourceIsReadonly"
+                              [isLoading]="loadingAttributes || savingChangedData"
+                              [hasDeclareOption]="true"
+                              (attributeChanged)="dataChanged($event)"
+                              (selectAttributeRow)="selectAttributeRow($event)"
+                              (updateCheckedAttributeCount)="updateCheckedAttributeCount($event)">
+            </attributes-table>
+          </tab>
+
+          <tab tabTitle="Outputs">
+            <ngx-datatable
+                columnMode="flex"
+                [footerHeight]="0"
+                [limit]="50"
+                [headerHeight]="40"
+                [rowHeight]="35"
+                [rows]="outputs">
+              <ngx-datatable-row-detail [rowHeight]="80">
+                <ng-template let-row="row" let-expanded="false"
+                             ngx-datatable-row-detail-template>
+                  <div>{{row.description}}</div>
+                </ng-template>
+              </ngx-datatable-row-detail>
+              <ngx-datatable-column [resizeable]="false" name="Attribute Name" [flexGrow]="2">
+                <ng-template ngx-datatable-cell-template let-row="row" let-expanded="false">
+                  <div class="expand-collapse-cell">
+                    <svg-icon [clickable]="true" class="expand-collapse-icon"
+                              [name]="expanded ? 'caret1-up-o': 'caret1-down-o'"
+                              [mode]="'primary'"
+                              [size]="'medium'"></svg-icon>
+                    <span>{{ row.name }}</span>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [resizeable]="false" name="From Instance" [flexGrow]="1">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{row.type}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [resizeable]="false" name="Type" [flexGrow]="3">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{row._default}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [resizeable]="false" name="Value" [flexGrow]="3">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{row._default}}
+                </ng-template>
+              </ngx-datatable-column>
+
+            </ngx-datatable>
+
+          </tab>
+        </tabs>
+        <div class="header">
+          <button class="tlv-btn blue declare-button" [disabled]="!checkedAttributesCount || isReadonly || hasChangedData" (click)="declareAttributes()" data-tests-id="declare-button declare-output">Declare Output</button>
+        </div>
+      </div>
+    </div>
+    <div class="right-column">
+      <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">
+        <tab tabTitle="Composition">
+          <div class="hierarchy-nav-container">
+            <loader [display]="loadingInstances" [size]="'medium'" [relative]="true"
+                    [loaderDelay]="500"></loader>
+            <div class="hierarchy-header white-sub-header">
+              <span tooltip="{{component.name}}">{{component.name}}</span>
+            </div>
+            <div
+                *ngIf="!instancesNavigationData || instancesNavigationData.length === 0 || isOutputsTabSelected">
+              No data to display
+            </div>
+            <hierarchy-navigation class="hierarchy-nav"
+                                  (updateSelected)="onInstanceSelectedUpdate($event)"
+                                  [displayData]="isOutputsTabSelected ? []: instancesNavigationData"
+                                  [selectedItem]="selectedInstanceData?.uniqueId"
+                                  [displayOptions]="hierarchyInstancesDisplayOptions"></hierarchy-navigation>
+          </div>
+        </tab>
+        <tab tabTitle="Attribute Structure">
+          <div class="hierarchy-nav-container">
+            <div class="hierarchy-header white-sub-header"
+                 [class.selected]="selectedFlatAttribute.path == attributeStructureHeader">
+              <span
+                  tooltip="{{isAttributesTabSelected ? attributeStructureHeader : ''}}">{{isAttributesTabSelected
+                  ? (attributeStructureHeader || "No Property Selected")
+                  : "No Property Selected"}}</span>
+            </div>
+            <div
+                *ngIf="!attributesNavigationData || attributesNavigationData.length === 0 || isOutputsTabSelected ">
+              No data to display
+            </div>
+            <hierarchy-navigation class="hierarchy-nav"
+                                  (updateSelected)="onAttributeSelectedUpdate($event)"
+                                  [displayData]="isOutputsTabSelected ? [] : attributesNavigationData"
+                                  [selectedItem]="selectedFlatAttribute.path"
+                                  [displayOptions]="hierarchyAttributesDisplayOptions"></hierarchy-navigation>
+          </div>
+        </tab>
+      </tabs>
+    </div>
+  </div>
+</div>
