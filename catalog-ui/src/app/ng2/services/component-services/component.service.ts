@@ -43,6 +43,7 @@ import { PolicyInstance } from "../../../models/graph/zones/policy-instance";
 import { ConstraintObject } from "../../components/logic/service-dependencies/service-dependencies.component";
 import { Requirement } from "../../../models/requirement";
 import { Capability } from "../../../models/capability";
+import { OutputBEModel } from "app/models/attributes-outputs/output-be-model";
 
 /*
 PLEASE DO NOT USE THIS SERVICE IN ANGULAR2! Use the topology-template.service instead
@@ -59,7 +60,7 @@ export class ComponentServiceNg2 {
     protected getComponentDataByFieldsName(componentType:string, componentId:string, fields:Array<string>):Observable<ComponentGenericResponse> {
 
         let params: HttpParams = new HttpParams();
-        _.forEach(fields, (field:string):void => {
+        fields.forEach((field:string):void => {
             params = params.append(API_QUERY_PARAMS.INCLUDE, field);
         });
 
@@ -107,6 +108,10 @@ export class ComponentServiceNg2 {
 
     getComponentResourcePropertiesData(component:Component):Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
+    }
+
+    getComponentResourceAttributesData(component:Component):Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
     getComponentResourceInstances(component:Component):Observable<ComponentGenericResponse> {
@@ -208,8 +213,15 @@ export class ComponentServiceNg2 {
         return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes')
             .map((res: any) => {
                 const interfaceMap = {};
-                _.forEach(res, (interf: any) => {
-                    interfaceMap[interf.toscaPresentation.type] = _.keys(interf.toscaPresentation.operations);
+                if (!res) {
+                    return interfaceMap;
+                }
+                Object.keys(res).forEach(interfaceName => {
+                    const interface1 = res[interfaceName];
+                    if (!interface1.toscaPresentation.operations) {
+                        return;
+                    }
+                    interfaceMap[interface1.toscaPresentation.type] = Object.keys(interface1.toscaPresentation.operations);
                 });
                 return interfaceMap;
             });
@@ -297,12 +309,19 @@ export class ComponentServiceNg2 {
         return this.http.post(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/archive', {})
     }
 
-
     deleteInput(component:Component, input:InputBEModel):Observable<InputBEModel> {
 
         return this.http.delete<InputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + input.uniqueId + '/input')
             .map((res) => {
                 return new InputBEModel(res);
+            })
+    }
+
+    deleteOutput(component:Component, output:OutputBEModel):Observable<OutputBEModel> {
+
+        return this.http.delete<OutputBEModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/delete/' + output.uniqueId + '/output')
+            .map((res) => {
+                return new OutputBEModel(res);
             })
     }
 
@@ -314,9 +333,26 @@ export class ComponentServiceNg2 {
             })
     }
 
+    updateComponentOutputs(component:Component, outputs:OutputBEModel[]):Observable<OutputBEModel[]> {
+
+        return this.http.post<OutputBEModel[]>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/update/outputs', outputs)
+            .map((res) => {
+                return res.map((output) => new OutputBEModel(output));
+            })
+    }
+
     filterComponentInstanceProperties(component:Component, filterData:FilterPropertiesAssignmentData):Observable<InstanceBePropertiesMap> {//instance-property-be-map
         let params: HttpParams = new HttpParams();
-        _.forEach(filterData.selectedTypes, (type:string) => {
+        filterData.selectedTypes.forEach((type:string) => {
+            params = params.append('resourceType', type);
+        });
+
+        return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params: params});
+    }
+
+    filterComponentInstanceAttributes(component:Component, filterData:FilterPropertiesAssignmentData):Observable<InstanceBePropertiesMap> {//instance-property-be-map
+        let params: HttpParams = new HttpParams();
+        filterData.selectedTypes.forEach((type:string) => {
             params = params.append('resourceType', type);
         });
 
