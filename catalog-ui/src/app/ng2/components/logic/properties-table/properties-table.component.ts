@@ -81,7 +81,6 @@ export class PropertiesTableComponent implements OnChanges {
 
     // Click on main row (row of propertyFEModel)
     onClickPropertyRow = (property: PropertyFEModel, instanceName: string, event?) => {
-        // event && event.stopPropagation();
         this.selectedPropertyId = property.name;
         const propertyRowSelectedEvent: PropertyRowSelectedEvent = new PropertyRowSelectedEvent(property, instanceName);
         this.selectPropertyRow.emit(propertyRowSelectedEvent);
