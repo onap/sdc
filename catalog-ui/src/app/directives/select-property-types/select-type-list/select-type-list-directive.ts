@@ -23,7 +23,7 @@
  */
 'use strict';
 import {DataTypesService} from "app/services/data-types-service";
-import {SchemaProperty} from "app/models/aschema-property";
+import {SchemaProperty} from "app/models/schema-property";
 import {ValidationUtils, PROPERTY_TYPES} from "app/utils";
 
 export interface ISelectTypeListScope extends ng.IScope {
