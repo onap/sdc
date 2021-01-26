@@ -25,6 +25,8 @@ import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../models/graph/zones/group-instance";
 import { InterfaceModel } from "../models/operation";
+import {AttributeBEModel} from "../models/attributes-outputs/attribute-be-model";
+import {OutputBEModel} from "../models/attributes-outputs/output-be-model";
 
 export class CommonUtils {
 
@@ -32,7 +34,7 @@ export class CommonUtils {
 
         let properties = new Array<PropertyModel>();
         if (propertiesObj) {
-            _.forEach(propertiesObj, (property:PropertyModel):void => {
+            propertiesObj.forEach((property:PropertyModel):void => {
                 if (uniqueId) {
                     property.readonly = property.parentUniqueId != uniqueId;
                 }
@@ -46,7 +48,7 @@ export class CommonUtils {
 
         let attributes = new Array<AttributeModel>();
         if (attributesObj) {
-            _.forEach(attributesObj, (attribute:AttributeModel):void => {
+            attributesObj.forEach((attribute:AttributeModel):void => {
                 if (uniqueId) {
                     attribute.readonly = attribute.parentUniqueId != uniqueId;
                 }
@@ -60,7 +62,7 @@ export class CommonUtils {
 
         let componentInstances = new Array<ResourceInstance>();
         if (componentInstanceObj) {
-            _.forEach(componentInstanceObj, (instance:ResourceInstance):void => {
+            componentInstanceObj.forEach((instance:ResourceInstance):void => {
                 componentInstances.push(ComponentInstanceFactory.createComponentInstance(instance));
             });
         }
@@ -72,7 +74,7 @@ export class CommonUtils {
         let modules = new Array<Module>();
 
         if (moduleArrayObj) {
-            _.forEach(moduleArrayObj, (module:Module):void => {
+            moduleArrayObj.forEach((module:Module):void => {
                 if (module.type === "org.openecomp.groups.VfModule") {
                     modules.push(new Module(module));
                 }
@@ -86,7 +88,7 @@ export class CommonUtils {
         let inputs = new Array<InputBEModel>();
 
         if(inputsObj) {
-            _.forEach(inputsObj, (input: InputBEModel):void => {
+            inputsObj.forEach((input: InputBEModel):void => {
                 inputs.push(new InputBEModel(input));
             })
         }
@@ -94,12 +96,25 @@ export class CommonUtils {
         return inputs;
     }
 
+    static initOutputs(outputsObj: Array<OutputBEModel>): Array<OutputBEModel> {
+
+        let outputs = new Array<OutputBEModel>();
+
+        if(outputsObj) {
+            outputsObj.forEach((output: OutputBEModel):void => {
+                outputs.push(new OutputBEModel(output));
+            })
+        }
+
+        return outputs;
+    }
+
     static initBeProperties(propertiesObj: Array<PropertyBEModel>): Array<PropertyBEModel> {
 
         let properties = new Array<PropertyBEModel>();
 
         if (propertiesObj) {
-            _.forEach(propertiesObj, (property: PropertyBEModel): void => {
+            propertiesObj.forEach((property: PropertyBEModel): void => {
                 properties.push(new PropertyBEModel(property));
             })
         }
@@ -107,10 +122,23 @@ export class CommonUtils {
         return properties;
     }
 
+    static initBeAttributes(attributesObj: Array<AttributeBEModel>): Array<AttributeBEModel> {
+
+        let attributes = new Array<AttributeBEModel>();
+
+        if (attributesObj) {
+            attributesObj.forEach((attribute: AttributeBEModel): void => {
+                attributes.push(new AttributeBEModel(attribute));
+            })
+        }
+
+        return attributes;
+    }
+
     static initComponentInstanceRelations = (componentInstanceRelationsObj:Array<RelationshipModel>):Array<RelationshipModel> => {
         if (componentInstanceRelationsObj) {
              let componentInstancesRelations: Array<RelationshipModel> = [];
-            _.forEach(componentInstanceRelationsObj, (instanceRelation:RelationshipModel):void => {
+            componentInstanceRelationsObj.forEach((instanceRelation:RelationshipModel):void => {
                 componentInstancesRelations.push(new RelationshipModel(instanceRelation));
             });
             return componentInstancesRelations;
@@ -121,7 +149,7 @@ export class CommonUtils {
         let policies = new Array<PolicyInstance>();
 
         if (policiesObj) {
-            _.forEach(policiesObj, (policy: PolicyInstance): void => {
+            policiesObj.forEach((policy: PolicyInstance): void => {
                 policies.push(new PolicyInstance(policy));
             })
         }
@@ -132,7 +160,7 @@ export class CommonUtils {
         let groups = new Array<GroupInstance>();
 
         if(groupsObj) {
-            _.forEach(groupsObj, (group: GroupInstance):void => {
+            groupsObj.forEach((group: GroupInstance):void => {
                 groups.push(new GroupInstance(group));
             });
         }

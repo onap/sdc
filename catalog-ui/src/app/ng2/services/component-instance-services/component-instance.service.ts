@@ -27,6 +27,8 @@ import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { InputBEModel } from '../../../models/properties-inputs/input-be-model';
 import { HttpHelperService } from '../http-hepler.service';
+import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
+import {OutputBEModel} from "../../../models/attributes-outputs/output-be-model";
 
 @Injectable()
 export class ComponentInstanceServiceNg2 {
@@ -52,10 +54,24 @@ export class ComponentInstanceServiceNg2 {
         })
     }
 
+    getComponentInstanceAttributes(component: Component, componentInstanceId: string): Observable<Array<AttributeBEModel>> {
+        return this.http.get<Array<AttributeBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/attributes')
+            .map(res => {
+                return CommonUtils.initBeAttributes(res);
+        })
+    }
+
     getComponentInstanceInputs(component: Component, componentInstance: ComponentInstance): Observable<Array<PropertyBEModel>> {
         return this.http.get<Array<InputBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/inputs')
             .map(res => {
                 return CommonUtils.initInputs(res);
+            })
+    }
+
+    getComponentInstanceOutputs(component: Component, componentInstance: ComponentInstance): Observable<Array<AttributeBEModel>> {
+        return this.http.get<Array<OutputBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/outputs')
+            .map(res => {
+                return CommonUtils.initOutputs(res);
             })
     }
 
@@ -68,7 +84,7 @@ export class ComponentInstanceServiceNg2 {
     };
 
     getArtifactByGroupType = (componentType:string, componentId:string, artifactGroupType:string):Observable<ArtifactGroupModel> => {
-        
+
         return this.http.get<ArtifactGroupModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "/artifactsByType/" + artifactGroupType)
             .map(response => new ArtifactGroupModel(response));
     };
@@ -95,6 +111,18 @@ export class ComponentInstanceServiceNg2 {
                     let newProp = new PropertyModel(resProperty);
                     newProp.resourceInstanceUniqueId = componentInstanceId;
                     return newProp;
+                });
+            });
+    }
+
+    updateInstanceAttributes(componentType:string, componentId:string, componentInstanceId: string, attributes: AttributeBEModel[]) {
+
+        return this.http.post<Array<AttributeModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + componentInstanceId + '/attributes', attributes)
+            .map((res) => {
+                return res.map((resAttribute) => {
+                    let newAttrib = new AttributeModel(resAttribute);
+                    newAttrib.resourceInstanceUniqueId = componentInstanceId;
+                    return newAttrib;
                 });
             });
     }
@@ -135,6 +163,14 @@ export class ComponentInstanceServiceNg2 {
         return this.http.post<Array<PropertyModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/inputs', inputs)
             .map((res) => {
                 return res.map((resInput) => new PropertyBEModel(resInput));
+            });
+    }
+
+    updateInstanceOutputs(component: Component, componentInstanceId: string, outputs: AttributeBEModel[]): Observable<AttributeBEModel[]> {
+
+        return this.http.post<Array<AttributeModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/outputs', outputs)
+            .map((res) => {
+                return res.map((resOutput) => new AttributeBEModel(resOutput));
             });
     }
 
