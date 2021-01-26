@@ -24,7 +24,7 @@
 'use strict';
 import {PropertyModel} from "./properties";
 import {InputPropertyBase} from "./input-property-base";
-import {SchemaPropertyGroupModel} from "./aschema-property";
+import {SchemaPropertyGroupModel} from "./schema-property";
 
 export class InputsGroup {
     constructor(inputsObj?: InputsGroup) {
