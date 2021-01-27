@@ -12,5 +12,6 @@
     "defaultWebsocketPath": "notification-api/ws/notificationHandler",
     "defaultNotificationsWorkerUpdateMillisecond": 10000,
     "showBrowseVNF": true,
-    "allTestScenario": "onap-dublin"
+    "allTestScenario": "onap-dublin",
+    "displayAlertValidationAfterMilisec": 3000
 }
