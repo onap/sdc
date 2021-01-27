@@ -28,15 +28,15 @@ import org.yaml.snakeyaml.nodes.NodeId;
 public class ToscaExtensionYamlUtil extends YamlUtil {
 
     public static final String TOSCA_MODEL_PARAMETER_DEFINITION =
-            "org.onap.sdc.tosca.datatypes.model.ParameterDefinition";
+        "org.onap.sdc.tosca.datatypes.model.ParameterDefinition";
     public static final String TOSCA_MODEL_EXT_PARAMETER_DEFINITION =
-            "org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt";
+        "org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt";
     public static final String TOSCA_MODEL_REQUIREMENT_ASSIGNMENT =
-            "org.onap.sdc.tosca.datatypes.model.RequirementAssignment";
+        "org.onap.sdc.tosca.datatypes.model.RequirementAssignment";
     public static final String TOSCA_MODEL_EXT_REQUIREMENT_ASSIGNMENT =
-            "org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignmentExt";
+        "org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignmentExt";
     public static final String TOSCA_MODEL_SUBSTITUTION_MAPPING =
-            "org.onap.sdc.tosca.datatypes.model.SubstitutionMapping";
+        "org.onap.sdc.tosca.datatypes.model.SubstitutionMapping";
 
     @Override
     public <T> Constructor getConstructor(Class<T> typClass) {

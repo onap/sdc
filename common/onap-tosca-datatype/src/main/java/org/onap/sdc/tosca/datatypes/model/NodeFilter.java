@@ -34,12 +34,12 @@ public class NodeFilter {
         this.capabilities = DataModelNormalizeUtil.getNormalizeCapabilitiesFilter(capabilities);
     }
 
-    public void setProperties(List<Map<String, List<Constraint>>> properties) {
-        this.properties = DataModelNormalizeUtil.getNormalizePropertiesFilter(properties);
-    }
-
     public List<Map<String, List<Constraint>>> getProperties() {
         return properties;
+    }
+
+    public void setProperties(List<Map<String, List<Constraint>>> properties) {
+        this.properties = DataModelNormalizeUtil.getNormalizePropertiesFilter(properties);
     }
 
 

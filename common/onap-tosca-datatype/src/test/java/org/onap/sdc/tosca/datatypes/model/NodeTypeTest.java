@@ -18,6 +18,9 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -25,15 +28,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
-import static org.junit.Assert.assertThat;
-
 
 public class NodeTypeTest {
 
-    private static final String NODE_WITH_INTERFACE = "amdocs.nodes.nodeWithInterface";
     public static final String NORMALIZE_INTERFACE_DEFINITION = "/mock/nodeType/normalizeInterfaceDefinition.yaml";
     public static final String STANDARD_INTERFACE_DEF = "Standard";
+    private static final String NODE_WITH_INTERFACE = "amdocs.nodes.nodeWithInterface";
 
     @Test
     public void getNormalizeInterfacesTest() throws IOException {
@@ -41,9 +41,9 @@ public class NodeTypeTest {
         try (InputStream yamlFile = toscaExtensionYamlUtil.loadYamlFileIs(NORMALIZE_INTERFACE_DEFINITION)) {
 
             ServiceTemplate serviceTemplateFromYaml =
-                    toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+                toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
             Map<String, InterfaceDefinitionType> normalizeInterfacesNoEvent =
-                    serviceTemplateFromYaml.getNode_types().get(NODE_WITH_INTERFACE).getNormalizeInterfaces();
+                serviceTemplateFromYaml.getNode_types().get(NODE_WITH_INTERFACE).getNormalizeInterfaces();
             InterfaceDefinitionType interfaceDefinitionType = chkData(normalizeInterfacesNoEvent);
         }
 

@@ -20,10 +20,9 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import lombok.Data;
-
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class RelationshipType {

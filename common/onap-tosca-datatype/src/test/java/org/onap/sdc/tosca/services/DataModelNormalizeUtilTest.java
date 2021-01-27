@@ -22,11 +22,15 @@
 
 package org.onap.sdc.tosca.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.datatypes.model.CapabilityFilter;
 import org.onap.sdc.tosca.datatypes.model.Constraint;
-import java.util.*;
 
 public class DataModelNormalizeUtilTest {
 

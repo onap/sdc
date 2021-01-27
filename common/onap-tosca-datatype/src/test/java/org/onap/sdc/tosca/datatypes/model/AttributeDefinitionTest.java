@@ -20,12 +20,12 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import org.junit.Test;
-
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
 
 public class AttributeDefinitionTest {
 
@@ -50,10 +50,10 @@ public class AttributeDefinitionTest {
         assertEquals(attributeDefinition.getStatus(), cloned.getStatus());
 
         assertThat(attributeDefinition.getEntry_schema().getConstraints(),
-                is(cloned.getEntry_schema().getConstraints()));
+            is(cloned.getEntry_schema().getConstraints()));
         assertThat(attributeDefinition.getEntry_schema().getDescription(),
-                is(cloned.getEntry_schema().getDescription()));
+            is(cloned.getEntry_schema().getDescription()));
         assertThat(attributeDefinition.getEntry_schema().getType(),
-                is(cloned.getEntry_schema().getType()));
+            is(cloned.getEntry_schema().getType()));
     }
 }

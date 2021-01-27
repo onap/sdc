@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-    package org.onap.sdc.tosca.datatypes.model.heatextend;
-
-import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+package org.onap.sdc.tosca.datatypes.model.heatextend;
 
 import java.util.Map;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
 
-    public class AnnotationType {
+public class AnnotationType {
 
-      private String version;
-      private String description;
-      private Map<String, PropertyDefinition> properties;
+    private String version;
+    private String description;
+    private Map<String, PropertyDefinition> properties;
 
-      public String getVersion() {
+    public String getVersion() {
         return version;
-      }
-
-      public void setVersion(String version) {
-        this.version = version;
-      }
-
-      public String getDescription() {
-        return description;
-      }
-
-      public void setDescription(String description) {
-        this.description = description;
-      }
-
-      public Map<String, PropertyDefinition> getProperties() {
-        return properties;
-      }
-
-      public void setProperties(Map<String, PropertyDefinition> properties) {
-        this.properties = properties;
-      }
-
     }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Map<String, PropertyDefinition> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, PropertyDefinition> properties) {
+        this.properties = properties;
+    }
+
+}

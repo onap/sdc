@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.datatypes.model.Import;
@@ -47,16 +46,16 @@ public class DataModelConvertUtilTest {
         try (FileInputStream fis = new FileInputStream(inputPayload)) {
             serviceTemplate = toscaExtensionYamlUtil.yamlToObject(fis, ServiceTemplate.class);
         }
-        assertNotNull(((Map)serviceTemplate.getImports().get(0)).get("data"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(1)).get("artifacts"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(2)).get("capabilities"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(3)).get("api_interfaces"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(4)).get("api_util_relationships"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(5)).get("common"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(6)).get("api_util"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(7)).get("relationshipsExt"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(8)).get("some_definition_file"));
-        assertNotNull(((Map)serviceTemplate.getImports().get(9)).get("site_index"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(0)).get("data"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(1)).get("artifacts"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(2)).get("capabilities"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(3)).get("api_interfaces"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(4)).get("api_util_relationships"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(5)).get("common"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(6)).get("api_util"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(7)).get("relationshipsExt"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(8)).get("some_definition_file"));
+        assertNotNull(((Map) serviceTemplate.getImports().get(9)).get("site_index"));
     }
 
     @Test

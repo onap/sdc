@@ -35,9 +35,9 @@ public class PropertyDefinitionTest {
         PropertyDefinition propertyDefinitionClone = propertyDefinition.clone();
         Assert.assertEquals(propertyDefinition.getRequired(), propertyDefinitionClone.getRequired());
         Assert.assertEquals(propertyDefinition.getStatus(),
-                propertyDefinitionClone.getStatus());
+            propertyDefinitionClone.getStatus());
         Assert.assertEquals(propertyDefinition.getConstraints().get(0).getEqual(),
-                propertyDefinitionClone.getConstraints().get(0).getEqual());
+            propertyDefinitionClone.getConstraints().get(0).getEqual());
     }
 
 

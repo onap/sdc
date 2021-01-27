@@ -20,12 +20,13 @@
 
 package org.onap.sdc.tosca.datatypes.model.heatextend;
 
-import org.junit.Test;
-
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Test;
+
 public class AnnotationDefinitionTest {
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(AnnotationDefinition.class, hasValidGettersAndSetters());

@@ -18,17 +18,17 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEquals;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCode;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
-
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEquals;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCode;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class TriggerTest {
@@ -93,9 +93,10 @@ public class TriggerTest {
         Object operationAction = ((Map) action).get(OPERATION_ACTION_KEY);
         Assert.assertNotNull(operationAction);
         Assert.assertEquals(true, operationAction instanceof Map);
-        Assert.assertNotNull( ((Map)operationAction).get(IMPLEMENTATION));
+        Assert.assertNotNull(((Map) operationAction).get(IMPLEMENTATION));
 
     }
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(Trigger.class, hasValidGettersAndSetters());

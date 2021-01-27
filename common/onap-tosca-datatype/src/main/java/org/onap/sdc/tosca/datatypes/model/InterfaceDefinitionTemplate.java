@@ -33,10 +33,10 @@ public class InterfaceDefinitionTemplate extends InterfaceDefinition {
 
     public InterfaceDefinitionTemplate(Object toscaInterfaceDefTemplateObj) {
         InterfaceDefinitionTemplate interfaceDefinitionTemplate =
-                (InterfaceDefinitionTemplate) convertObjToInterfaceDefinition(toscaInterfaceDefTemplateObj);
+            (InterfaceDefinitionTemplate) convertObjToInterfaceDefinition(toscaInterfaceDefTemplateObj);
         this.setInputs(DataModelCloneUtil.cloneStringObjectMap(interfaceDefinitionTemplate.getInputs()));
         this.setOperations(
-                DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionTemplate.getOperations()));
+            DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionTemplate.getOperations()));
 
     }
 

@@ -33,7 +33,7 @@ import org.onap.sdc.tosca.services.DataModelCloneUtil;
 public class InterfaceType extends Interface {
 
     protected static final String CONVERT_INTERFACE_TYPE_OBJECT_ERROR =
-            "Could not create InterfaceType from input object, input object -  ";
+        "Could not create InterfaceType from input object, input object -  ";
     private String derived_from;
     private String version;
     private Map<String, String> metadata;
@@ -57,7 +57,7 @@ public class InterfaceType extends Interface {
     protected InterfaceType convertObjToInterfaceType(Object toscaInterfaceTypeObj) {
         try {
             Optional<InterfaceType> interfaceType =
-                    CommonUtil.createObjectUsingSetters(toscaInterfaceTypeObj, this.getClass());
+                CommonUtil.createObjectUsingSetters(toscaInterfaceTypeObj, this.getClass());
             if (interfaceType.isPresent()) {
                 updateInterfaceTypeOperations(CommonUtil.getObjectAsMap(toscaInterfaceTypeObj), interfaceType.get());
                 return interfaceType.get();
@@ -75,9 +75,9 @@ public class InterfaceType extends Interface {
         Set<String> fieldNames = CommonUtil.getClassFieldNames(interfaceType.getClass());
         for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
             Optional<Map.Entry<String, ? extends OperationDefinition>> operationDefinition =
-                    createOperation(entry.getKey(), entry.getValue(), fieldNames, OperationDefinitionType.class);
+                createOperation(entry.getKey(), entry.getValue(), fieldNames, OperationDefinitionType.class);
             operationDefinition
-                    .ifPresent(operation -> interfaceType.addOperation(operation.getKey(), operation.getValue()));
+                .ifPresent(operation -> interfaceType.addOperation(operation.getKey(), operation.getValue()));
         }
     }
 
@@ -101,8 +101,16 @@ public class InterfaceType extends Interface {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Map<String, String> getMetadata() {
         return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 
     public Map<String, PropertyDefinition> getInputs() {
@@ -128,14 +136,6 @@ public class InterfaceType extends Interface {
         this.operations.put(operationName, operationDefinition);
     }
 
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public int hashCode() {
 
@@ -152,8 +152,8 @@ public class InterfaceType extends Interface {
         }
         InterfaceType that = (InterfaceType) o;
         return Objects.equals(derived_from, that.derived_from) && Objects.equals(version, that.version)
-                       && Objects.equals(metadata, that.metadata) && Objects.equals(description, that.description)
-                       && Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
+            && Objects.equals(metadata, that.metadata) && Objects.equals(description, that.description)
+            && Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
     }
 
     public Optional<Object> convertInterfaceTypeToToscaObj() {

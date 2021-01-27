@@ -31,9 +31,9 @@ public class ScalarUnitValidator {
     private static final ScalarUnitValidator scalarUnitValidator = new ScalarUnitValidator();
 
     /**
-     *  Tosca Scalar Unit Types structure.
-     *
-     *  At least positive integers, no single white space, 1 to 3 chars
+     * Tosca Scalar Unit Types structure.
+     * <p>
+     * At least positive integers, no single white space, 1 to 3 chars
      */
     private final Pattern pattern = Pattern.compile("\\d+\\s*[a-zA-Z]{1,3}");
 
@@ -61,7 +61,7 @@ public class ScalarUnitValidator {
     /**
      * Validates if the given String has a Recognized Tosca unit.
      *
-     * @param value String to be validated
+     * @param value     String to be validated
      * @param enumClass Enum that represents a Tosca Scalar Unit Type.
      * @param <E>
      * @return an Enum that represents the Tosca Scalar Unit Type.

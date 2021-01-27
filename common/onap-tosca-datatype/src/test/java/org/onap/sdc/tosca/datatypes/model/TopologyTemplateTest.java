@@ -20,15 +20,16 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import org.junit.Test;
-
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
+
 public class TopologyTemplateTest {
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(TopologyTemplate.class, hasValidGettersAndSetters());

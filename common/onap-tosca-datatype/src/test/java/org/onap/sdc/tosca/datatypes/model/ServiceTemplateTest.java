@@ -19,34 +19,33 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 
-import java.io.IOException;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class ServiceTemplateTest {
 
-    private static final String INTERFACE_NO_OPER = "amdocs.interfaces.interfaceNoOper";
-    private static final String LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
-    private static final String INTERFACE_WITH_OPER = "amdocs.interfaces.interfaceWithOper";
     public static final String NORMALIZE_INTERFACE_TYPE = "/mock/serviceTemplate/normalizeInterfaceType.yaml";
     public static final String NEW_OPER_1 = "newOper1";
     public static final String NEW_OPER_2 = "newOper2";
+    private static final String INTERFACE_NO_OPER = "amdocs.interfaces.interfaceNoOper";
+    private static final String LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
+    private static final String INTERFACE_WITH_OPER = "amdocs.interfaces.interfaceWithOper";
 
     @Test
     public void getNormalizeInterfaceTypesTest() throws IOException {
         ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
         try (InputStream yamlFile = toscaExtensionYamlUtil
-                                            .loadYamlFileIs(NORMALIZE_INTERFACE_TYPE)) {
+            .loadYamlFileIs(NORMALIZE_INTERFACE_TYPE)) {
 
             ServiceTemplate serviceTemplateFromYaml =
-                    toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+                toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
             Map<String, InterfaceType> normalizeInterfaceTypes = serviceTemplateFromYaml.getNormalizeInterfaceTypes();
             Assert.assertNotNull(normalizeInterfaceTypes);
 
@@ -70,6 +69,6 @@ public class ServiceTemplateTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(ServiceTemplate.class,
-                hasValidGettersAndSettersExcluding("imports", "normalizeInterfaceTypes"));
+            hasValidGettersAndSettersExcluding("imports", "normalizeInterfaceTypes"));
     }
 }

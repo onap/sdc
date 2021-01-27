@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.heatextend.AnnotationType;
 import org.onap.sdc.tosca.error.ToscaRuntimeException;

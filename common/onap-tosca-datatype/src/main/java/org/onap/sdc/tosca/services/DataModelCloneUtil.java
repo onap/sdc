@@ -56,7 +56,7 @@ public class DataModelCloneUtil {
      * @return the map
      */
     public static Map<String, PropertyDefinition> clonePropertyDefinitions(
-            Map<String, PropertyDefinition> propertyDefinitions) {
+        Map<String, PropertyDefinition> propertyDefinitions) {
         if (propertyDefinitions == null) {
             return null;
         }
@@ -75,7 +75,7 @@ public class DataModelCloneUtil {
      * @return the map
      */
     public static Map<String, AttributeDefinition> cloneAttributeDefinitions(
-            Map<String, AttributeDefinition> attributeDefinitions) {
+        Map<String, AttributeDefinition> attributeDefinitions) {
 
         if (attributeDefinitions == null) {
             return null;
@@ -83,7 +83,7 @@ public class DataModelCloneUtil {
         Map<String, AttributeDefinition> clonedAttributeDefinitions = new HashMap<>();
         for (Map.Entry<String, AttributeDefinition> attributeDefinitionEntry : attributeDefinitions.entrySet()) {
             clonedAttributeDefinitions
-                    .put(attributeDefinitionEntry.getKey(), attributeDefinitionEntry.getValue().clone());
+                .put(attributeDefinitionEntry.getKey(), attributeDefinitionEntry.getValue().clone());
         }
 
         return clonedAttributeDefinitions;
@@ -109,7 +109,7 @@ public class DataModelCloneUtil {
      * @return the cloned map
      */
     public static Map<String, PropertyDefinition> cloneStringPropertyDefinitionMap(
-            Map<String, PropertyDefinition> stringPropertyDefinitionMap) {
+        Map<String, PropertyDefinition> stringPropertyDefinitionMap) {
         if (Objects.isNull(stringPropertyDefinitionMap)) {
             return null;
         }
@@ -118,7 +118,7 @@ public class DataModelCloneUtil {
         ToscaExtensionYamlUtil toscaExtYamlUtil = new ToscaExtensionYamlUtil();
         for (Map.Entry<String, PropertyDefinition> mapEntry : stringPropertyDefinitionMap.entrySet()) {
             PropertyDefinition propertyDefinition = toscaExtYamlUtil.yamlToObject(
-                    toscaExtYamlUtil.objectToYaml(mapEntry.getValue()), PropertyDefinition.class);
+                toscaExtYamlUtil.objectToYaml(mapEntry.getValue()), PropertyDefinition.class);
             cloneMap.put(mapEntry.getKey(), propertyDefinition.clone());
         }
         return cloneMap;
@@ -131,7 +131,7 @@ public class DataModelCloneUtil {
      * @return the cloned map
      */
     public static <T extends OperationDefinition> Map<String, T> cloneStringOperationDefinitionMap(
-            Map<String, T> input) {
+        Map<String, T> input) {
 
         if (Objects.isNull(input)) {
             return null;

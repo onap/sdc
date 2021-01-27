@@ -60,7 +60,7 @@ public class OperationDefinitionTemplate extends OperationDefinition {
     }
 
     @Override
-    public OperationDefinitionTemplate clone()  {
+    public OperationDefinitionTemplate clone() {
         OperationDefinition operationDefinition = super.clone();
         OperationDefinitionTemplate operationDefinitionTemplate = new OperationDefinitionTemplate();
         operationDefinitionTemplate.setDescription(operationDefinition.getDescription());

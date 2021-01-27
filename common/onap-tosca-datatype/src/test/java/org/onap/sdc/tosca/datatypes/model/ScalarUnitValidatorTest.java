@@ -20,10 +20,15 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.Test;
+
+enum TestEnum {
+    B, KB
+}
 
 public class ScalarUnitValidatorTest {
 
@@ -53,8 +58,4 @@ public class ScalarUnitValidatorTest {
         assertFalse(validator.isValueScalarUnit("null", null));
         assertFalse(validator.isValueScalarUnit(null, null));
     }
-}
-
-enum TestEnum {
-    B, KB
 }

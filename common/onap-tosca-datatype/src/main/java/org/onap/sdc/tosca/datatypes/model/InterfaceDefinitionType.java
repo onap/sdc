@@ -35,11 +35,11 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
 
     public InterfaceDefinitionType(Object toscaInterfaceDefinitionType) {
         InterfaceDefinitionType interfaceDefinitionType =
-                (InterfaceDefinitionType) convertObjToInterfaceDefinition(toscaInterfaceDefinitionType);
+            (InterfaceDefinitionType) convertObjToInterfaceDefinition(toscaInterfaceDefinitionType);
         this.setType(interfaceDefinitionType.getType());
         this.setInputs(DataModelCloneUtil.cloneStringPropertyDefinitionMap(interfaceDefinitionType.getInputs()));
         this.setOperations(
-                DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionType.getOperations()));
+            DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionType.getOperations()));
     }
 
     public String getType() {
@@ -76,8 +76,8 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
         }
         InterfaceDefinitionType that = (InterfaceDefinitionType) o;
         return Objects.equals(type, that.type)
-                && Objects.equals(inputs, that.inputs)
-                && Objects.equals(operations, that.operations);
+            && Objects.equals(inputs, that.inputs)
+            && Objects.equals(operations, that.operations);
     }
 
     @Override

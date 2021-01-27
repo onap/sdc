@@ -20,14 +20,15 @@
 
 package org.onap.sdc.tosca.datatypes.model.extension;
 
-import org.junit.Test;
-
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEqualsExcluding;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCodeExcluding;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Test;
+
 public class RequirementAssignmentExtTest {
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(RequirementAssignmentExt.class, hasValidGettersAndSetters());
@@ -36,12 +37,12 @@ public class RequirementAssignmentExtTest {
     @Test
     public void shouldHaveValidEquals() {
         assertThat(RequirementAssignmentExt.class,
-                hasValidBeanEqualsExcluding("capability", "node", "node_filter", "occurrences", "relationship"));
+            hasValidBeanEqualsExcluding("capability", "node", "node_filter", "occurrences", "relationship"));
     }
 
     @Test
     public void shouldHaveValidHashCode() {
         assertThat(RequirementAssignmentExt.class,
-                hasValidBeanHashCodeExcluding("capability", "node", "node_filter", "occurrences", "relationship"));
+            hasValidBeanHashCodeExcluding("capability", "node", "node_filter", "occurrences", "relationship"));
     }
 }

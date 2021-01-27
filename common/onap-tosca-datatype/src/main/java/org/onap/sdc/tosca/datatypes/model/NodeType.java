@@ -50,6 +50,10 @@ public class NodeType implements Cloneable {
         return capabilities;
     }
 
+    public void setCapabilities(Map<String, CapabilityDefinition> capabilities) {
+        this.capabilities = capabilities;
+    }
+
     public String getDerived_from() {
         return derived_from;
     }
@@ -70,6 +74,10 @@ public class NodeType implements Cloneable {
         return requirements;
     }
 
+    public void setRequirements(List<Map<String, RequirementDefinition>> requirements) {
+        this.requirements = requirements;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -88,6 +96,10 @@ public class NodeType implements Cloneable {
 
     public Map<String, Object> getInterfaces() {
         return interfaces;
+    }
+
+    public void setInterfaces(Map<String, Object> interfaces) {
+        this.interfaces = interfaces;
     }
 
     public Map<String, InterfaceDefinitionType> getNormalizeInterfaces() {
@@ -116,18 +128,6 @@ public class NodeType implements Cloneable {
 
     public void setArtifacts(Map<String, ArtifactDefinition> artifacts) {
         this.artifacts = artifacts;
-    }
-
-    public void setInterfaces(Map<String, Object> interfaces) {
-        this.interfaces = interfaces;
-    }
-
-    public void setRequirements(List<Map<String, RequirementDefinition>> requirements) {
-        this.requirements = requirements;
-    }
-
-    public void setCapabilities(Map<String, CapabilityDefinition> capabilities) {
-        this.capabilities = capabilities;
     }
 
     @Override

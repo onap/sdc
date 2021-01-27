@@ -21,12 +21,13 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
 public class ConstraintTest {
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(Constraint.class, hasValidGettersAndSettersExcluding("in_range"));
@@ -35,7 +36,7 @@ public class ConstraintTest {
     @Test
     public void setInRangeTest() {
         Constraint constraint = new Constraint();
-        Object[] tmpInRange = new Object[] {"str1","str2","str3"};
+        Object[] tmpInRange = new Object[]{"str1", "str2", "str3"};
         constraint.setIn_range(tmpInRange);
         assertEquals(constraint.getIn_range().length, 2);
         assertEquals(constraint.getIn_range()[0], "str1");

@@ -98,7 +98,6 @@ public class DataModelCloneUtilTest {
         originalMap.put(KEY1, operationDefinition1);
         originalMap.put(KEY2, operationDefinition2);
 
-
         Map<String, OperationDefinition> cloneMap = DataModelCloneUtil.cloneStringOperationDefinitionMap(originalMap);
 
         Assert.assertEquals(originalMap.size(), cloneMap.size());
@@ -116,27 +115,25 @@ public class DataModelCloneUtilTest {
     @Test
     public void cloneStringOperationDefinitionTemplateMapsTest() {
         OperationDefinitionTemplate operationDefinitionTemp1 =
-                createOperationDefinitionTemplate(DESC1, PRIMARY1, PARAM1, INPUT_KEY1);
+            createOperationDefinitionTemplate(DESC1, PRIMARY1, PARAM1, INPUT_KEY1);
 
         OperationDefinitionTemplate operationDefinitionTemp2 =
-                createOperationDefinitionTemplate(DESC2, PRIMARY2, PARAM2, INPUT_KEY2);
-
+            createOperationDefinitionTemplate(DESC2, PRIMARY2, PARAM2, INPUT_KEY2);
 
         Map<String, OperationDefinitionTemplate> originalMap = new HashMap<>();
         originalMap.put(KEY1, operationDefinitionTemp1);
         originalMap.put(KEY2, operationDefinitionTemp2);
 
-
         Map<String, OperationDefinitionTemplate> cloneMap =
-                DataModelCloneUtil.cloneStringOperationDefinitionMap(originalMap);
+            DataModelCloneUtil.cloneStringOperationDefinitionMap(originalMap);
 
         Assert.assertEquals(originalMap.size(), cloneMap.size());
         Assert.assertEquals(originalMap.get(KEY1).getDescription(), cloneMap.get(KEY1).getDescription());
         Assert.assertEquals(originalMap.get(KEY2).getDescription(), cloneMap.get(KEY2).getDescription());
         Assert.assertEquals(originalMap.get(KEY1).getImplementation().getPrimary(),
-                cloneMap.get(KEY1).getImplementation().getPrimary());
+            cloneMap.get(KEY1).getImplementation().getPrimary());
         Assert.assertEquals(originalMap.get(KEY2).getInputs().get(INPUT_KEY2).toString(),
-                cloneMap.get(KEY2).getInputs().get(INPUT_KEY2).toString());
+            cloneMap.get(KEY2).getInputs().get(INPUT_KEY2).toString());
 
 
     }
@@ -148,23 +145,23 @@ public class DataModelCloneUtilTest {
 
         OperationDefinitionType operationDefinitionType1 = createOperationDefinitionType(DESC1, PRIMARY1, inputs);
         OperationDefinitionType operationDefinitionType2 =
-                createOperationDefinitionType(DESC2, PRIMARY2, DataModelCloneUtil.clonePropertyDefinitions(inputs));
+            createOperationDefinitionType(DESC2, PRIMARY2, DataModelCloneUtil.clonePropertyDefinitions(inputs));
 
         Map<String, OperationDefinitionType> originalMap = new HashMap<>();
         originalMap.put(KEY1, operationDefinitionType1);
         originalMap.put(KEY2, operationDefinitionType2);
 
         Map<String, OperationDefinitionType> cloneMap =
-                DataModelCloneUtil.cloneStringOperationDefinitionMap(originalMap);
+            DataModelCloneUtil.cloneStringOperationDefinitionMap(originalMap);
 
         Assert.assertEquals(originalMap.size(), cloneMap.size());
         Assert.assertEquals(originalMap.get(KEY1).getDescription(), cloneMap.get(KEY1).getDescription());
         Assert.assertEquals(originalMap.get(KEY2).getDescription(), cloneMap.get(KEY2).getDescription());
         Assert.assertEquals(originalMap.get(KEY1).getImplementation(), cloneMap.get(KEY1).getImplementation());
         Assert.assertEquals(originalMap.get(KEY2).getInputs().get(INPUT_KEY1).getStatus(),
-                cloneMap.get(DataModelCloneUtilTest.KEY2).getInputs().get(INPUT_KEY1).getStatus());
+            cloneMap.get(DataModelCloneUtilTest.KEY2).getInputs().get(INPUT_KEY1).getStatus());
         Assert.assertEquals(originalMap.get(KEY2).getInputs().get(INPUT_KEY1).getConstraints().get(0).getEqual(),
-                cloneMap.get(KEY2).getInputs().get(INPUT_KEY1).getConstraints().get(0).getEqual());
+            cloneMap.get(KEY2).getInputs().get(INPUT_KEY1).getConstraints().get(0).getEqual());
     }
 
     private PropertyDefinition createPropertyDefinition() {
@@ -180,7 +177,7 @@ public class DataModelCloneUtilTest {
     }
 
     private OperationDefinitionTemplate createOperationDefinitionTemplate(String desc, String primary,
-            String inputParameterName, String inputKey) {
+                                                                          String inputParameterName, String inputKey) {
         OperationDefinitionTemplate operationDefinitionTemp = new OperationDefinitionTemplate();
         operationDefinitionTemp.setDescription(desc);
         Implementation implementation = new Implementation();
@@ -195,7 +192,7 @@ public class DataModelCloneUtilTest {
     }
 
     private OperationDefinitionType createOperationDefinitionType(String desc, String implementationValue,
-            Map<String, PropertyDefinition> inputs) {
+                                                                  Map<String, PropertyDefinition> inputs) {
         OperationDefinitionType operationDefinitionType = new OperationDefinitionType();
         operationDefinitionType.setDescription(desc);
         operationDefinitionType.setImplementation(implementationValue);

@@ -18,24 +18,22 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
-
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEqualsExcluding;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCodeExcluding;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
+import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
+
 
 public class NodeTemplateTest {
 
-    private static final String NODE_WITH_INTERFACE = "nodeWithInterface";
     public static final String INTERFACE_KEY = "newInterface";
     public static final String INPUT_KEY = "newInput";
     public static final String INPUT_VAL = "myVal";
@@ -45,15 +43,16 @@ public class NodeTemplateTest {
     public static final String CREATE_OPER = "create";
     public static final String NORMALIZE_INTERFACE_DEFINITION = "/mock/nodeTemplate/normalizeInterfaceDefinition.yaml";
     public static final String INTERFACE_DEFINITION_FOR_UPD_RESULT =
-            "/mock/nodeTemplate/interfaceDefinitionForUpdResult.yaml";
+        "/mock/nodeTemplate/interfaceDefinitionForUpdResult.yaml";
     public static final String INTERFACE_DEFINITION_FOR_UPD = "/mock/nodeTemplate/interfaceDefinitionForUpd.yaml";
+    private static final String NODE_WITH_INTERFACE = "nodeWithInterface";
 
     @Test
     public void getNormalizeInterfacesTest() throws IOException {
         ServiceTemplate serviceTemplateFromYaml =
-                getServiceTemplate(NORMALIZE_INTERFACE_DEFINITION);
+            getServiceTemplate(NORMALIZE_INTERFACE_DEFINITION);
         NodeTemplate nodeTemplate =
-                serviceTemplateFromYaml.getTopology_template().getNode_templates().get(NODE_WITH_INTERFACE);
+            serviceTemplateFromYaml.getTopology_template().getNode_templates().get(NODE_WITH_INTERFACE);
         Map<String, InterfaceDefinitionTemplate> normalizeInterfaces = nodeTemplate.getNormalizeInterfaces();
         chkData(normalizeInterfaces);
 
@@ -65,7 +64,7 @@ public class NodeTemplateTest {
         ServiceTemplate expectedServiceTemplateFromYaml = getServiceTemplate(INTERFACE_DEFINITION_FOR_UPD_RESULT);
         ServiceTemplate serviceTemplateForUpdate = getServiceTemplate(INTERFACE_DEFINITION_FOR_UPD);
         NodeTemplate nodeTemplate =
-                serviceTemplateForUpdate.getTopology_template().getNode_templates().get(NODE_WITH_INTERFACE);
+            serviceTemplateForUpdate.getTopology_template().getNode_templates().get(NODE_WITH_INTERFACE);
         nodeTemplate.addInterface(INTERFACE_KEY, createInterfaceDefinitionTemplate());
 
         String expectedServiceTemplate = toscaExtensionYamlUtil.objectToYaml(expectedServiceTemplateFromYaml);

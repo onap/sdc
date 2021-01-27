@@ -27,6 +27,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class TestModel {
+
     private Integer field1;
     private String field2;
     private TestModelInternalClass testModelInternalClass;
@@ -36,6 +37,7 @@ public class TestModel {
     @Getter
     @NoArgsConstructor
     public static class TestModelInternalClass {
+
         private Integer field1;
         private String field2;
     }

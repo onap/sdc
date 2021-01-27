@@ -29,6 +29,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RequirementAssignmentTest {
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(RequirementAssignment.class, hasValidGettersAndSetters());

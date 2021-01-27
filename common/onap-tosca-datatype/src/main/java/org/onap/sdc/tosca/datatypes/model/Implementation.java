@@ -19,7 +19,6 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
 import java.util.Objects;
-
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 
@@ -54,7 +53,7 @@ public class Implementation implements Cloneable {
         }
         Implementation that = (Implementation) o;
         return Objects.equals(primary, that.primary)
-                && Objects.equals(dependencies, that.dependencies);
+            && Objects.equals(dependencies, that.dependencies);
     }
 
     @Override

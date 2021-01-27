@@ -18,7 +18,6 @@ package org.onap.sdc.tosca.datatypes.model;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Map;
 import java.util.Objects;
@@ -34,31 +33,32 @@ class Interface {
     private static final String OPER = "operations";
 
     Optional<Map.Entry<String, ? extends OperationDefinition>> createOperation(String propertyName,
-            Object operationCandidate, Set<String> fieldNames, Class<? extends OperationDefinition> operationClass) {
+                                                                               Object operationCandidate, Set<String> fieldNames,
+                                                                               Class<? extends OperationDefinition> operationClass) {
         if (!fieldNames.contains(propertyName)) {
             try {
                 Optional<? extends OperationDefinition> operationDefinition =
-                        CommonUtil.createObjectUsingSetters(operationCandidate, operationClass);
+                    CommonUtil.createObjectUsingSetters(operationCandidate, operationClass);
                 Map.Entry<String, ? extends OperationDefinition> operation =
-                        new Map.Entry<String, OperationDefinition>() {
-                            @Override
-                            public String getKey() {
-                                return propertyName;
-                            }
+                    new Map.Entry<String, OperationDefinition>() {
+                        @Override
+                        public String getKey() {
+                            return propertyName;
+                        }
 
-                            @Override
-                            public OperationDefinition getValue() {
-                                if (operationDefinition.isPresent()) {
-                                    return operationDefinition.get();
-                                }
-                                return null;
+                        @Override
+                        public OperationDefinition getValue() {
+                            if (operationDefinition.isPresent()) {
+                                return operationDefinition.get();
                             }
+                            return null;
+                        }
 
-                            @Override
-                            public OperationDefinition setValue(OperationDefinition value) {
-                                return null;
-                            }
-                        };
+                        @Override
+                        public OperationDefinition setValue(OperationDefinition value) {
+                            return null;
+                        }
+                    };
                 return Optional.of(operation);
 
             } catch (Exception exc) {
