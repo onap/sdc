@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum FilterKeyEnum {
-    RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus"), NAME_FRAGMENT("nameFragment");
+    RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS(
+        "distributionStatus"), NAME_FRAGMENT("nameFragment");
 
     private static final int NUMBER_OF_RESOURCES_FILTERED = 3;
     private static final int NUMBER_OF_SERVICES_FILTERED = 4;
@@ -28,10 +29,6 @@ public enum FilterKeyEnum {
 
     FilterKeyEnum(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public static List<String> getAllFilters() {
@@ -51,5 +48,9 @@ public enum FilterKeyEnum {
                 return null;
         }
 
+    }
+
+    public String getName() {
+        return name;
     }
 }

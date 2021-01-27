@@ -28,10 +28,6 @@ public enum InstantiationTypes {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
-
     /**
      * Checks if enum with the given type exists.
      *
@@ -41,6 +37,10 @@ public enum InstantiationTypes {
 
     public static boolean containsName(String type) {
         return Stream.of(InstantiationTypes.values())
-                .anyMatch(instType -> type.equals(instType.getValue()));
+            .anyMatch(instType -> type.equals(instType.getValue()));
+    }
+
+    public String getValue() {
+        return value;
     }
 }

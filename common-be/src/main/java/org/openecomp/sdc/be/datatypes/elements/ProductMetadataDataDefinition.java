@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 
 public class ProductMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
@@ -40,10 +39,10 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
     public ProductMetadataDataDefinition(ProductMetadataDataDefinition other) {
         super(other);
-	}
+    }
 
-	public ProductMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
-		super(extractor);
+    public ProductMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
+        super(extractor);
     }
 
     public Boolean getIsActive() {
@@ -82,7 +81,7 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
     @Override
     public String toString() {
         return "ProductMetadataDataDefinition [fullName=" + fullName + ", contacts=" + contacts + ", isActive="
-                + isActive + "]";
+            + isActive + "]";
     }
 
     @Override

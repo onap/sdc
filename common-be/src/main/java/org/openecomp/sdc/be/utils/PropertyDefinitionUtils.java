@@ -19,14 +19,13 @@
  */
 package org.openecomp.sdc.be.utils;
 
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toList;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class PropertyDefinitionUtils {
 
@@ -37,20 +36,21 @@ public class PropertyDefinitionUtils {
         return toConvert.stream().map(PropertyDataDefinition::new).collect(toList());
     }
 
-    public static Map<String, List<PropertyDataDefinition>> resolveGetInputProperties(Map<String, List<PropertyDataDefinition>> properties) {
+    public static Map<String, List<PropertyDataDefinition>> resolveGetInputProperties(
+        Map<String, List<PropertyDataDefinition>> properties) {
         if (properties == null) {
             return emptyMap();
         }
         return properties.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> filterGetInputProps(entry.getValue())));
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey,
+                entry -> filterGetInputProps(entry.getValue())));
     }
 
     private static <T extends PropertyDataDefinition> List<PropertyDataDefinition> filterGetInputProps(List<T> propDefinitions) {
         return propDefinitions
-                .stream()
-                .filter(PropertyDataDefinition::isGetInputProperty)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(PropertyDataDefinition::isGetInputProperty)
+            .collect(Collectors.toList());
     }
 }

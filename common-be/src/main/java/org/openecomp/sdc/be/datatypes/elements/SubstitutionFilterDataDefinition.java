@@ -38,17 +38,17 @@ public class SubstitutionFilterDataDefinition extends ToscaDataDefinition implem
         this.setCapabilities(substitutionFilterDataDefinition.getCapabilities());
     }
 
-    public void setTosca_id(final Object tosca_id) {
-        setToscaPresentationValue(JsonPresentationFields.TOSCA_ID, tosca_id);
-    }
-
     public Object getTosca_id() {
         return getToscaPresentationValue(JsonPresentationFields.TOSCA_ID);
     }
 
+    public void setTosca_id(final Object tosca_id) {
+        setToscaPresentationValue(JsonPresentationFields.TOSCA_ID, tosca_id);
+    }
+
     public ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> getProperties() {
         return (ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.PROPERTIES);
+            JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> properties) {
@@ -57,7 +57,7 @@ public class SubstitutionFilterDataDefinition extends ToscaDataDefinition implem
 
     public ListDataDefinition<RequirementSubstitutionFilterCapabilityDataDefinition> getCapabilities() {
         return (ListDataDefinition<RequirementSubstitutionFilterCapabilityDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.NODE_FILTER_CAPABILITIES);
+            JsonPresentationFields.NODE_FILTER_CAPABILITIES);
     }
 
     public void setCapabilities(ListDataDefinition<RequirementSubstitutionFilterCapabilityDataDefinition> capabilities) {

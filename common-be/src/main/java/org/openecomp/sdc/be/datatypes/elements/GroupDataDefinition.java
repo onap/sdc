@@ -20,20 +20,20 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static java.util.Collections.emptyMap;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.emptyMap;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 
 public class GroupDataDefinition extends ToscaDataDefinition {
+
     @JsonInclude
     private String typeUid;
     @JsonInclude
@@ -162,6 +162,10 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         return (Map<String, String>) getToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER);
     }
 
+    public void setMembers(Map<String, String> members) {
+        setToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER, members);
+    }
+
     //this is used by GroupCompositionMixin
     public Map<String, String> resolveMembersList() {
         Map<String, String> members = getMembers();
@@ -170,10 +174,6 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         }
         return emptyMap();
 
-    }
-
-    public void setMembers(Map<String, String> members) {
-        setToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER, members);
     }
 
     public List<String> getArtifacts() {
@@ -218,10 +218,13 @@ public class GroupDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "GroupDataDefinition [propertyValueCounter=" + propertyValueCounter + ", toscaPresentation=" + toscaPresentation + ", getName()=" + getName() + ", getUniqueId()=" + getUniqueId() + ", getType()=" + getType() + ", getVersion()="
-                + getVersion() + ", getInvariantUUID()=" + getInvariantUUID() + ", getDescription()=" + getDescription() + ", getPropertyValueCounter()=" + getPropertyValueCounter() + ", getGroupUUID()=" + getGroupUUID() + ", getMembers()="
-                + getMembers() + ", getArtifacts()=" + getArtifacts() + ", getArtifactsUuid()=" + getArtifactsUuid() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-                + super.toString() + "]";
+        return "GroupDataDefinition [propertyValueCounter=" + propertyValueCounter + ", toscaPresentation=" + toscaPresentation
+            + ", getName()=" + getName() + ", getUniqueId()=" + getUniqueId() + ", getType()=" + getType() + ", getVersion()="
+            + getVersion() + ", getInvariantUUID()=" + getInvariantUUID() + ", getDescription()=" + getDescription()
+            + ", getPropertyValueCounter()=" + getPropertyValueCounter() + ", getGroupUUID()=" + getGroupUUID() + ", getMembers()="
+            + getMembers() + ", getArtifacts()=" + getArtifacts() + ", getArtifactsUuid()=" + getArtifactsUuid() + ", getClass()="
+            + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+            + super.toString() + "]";
     }
 
 

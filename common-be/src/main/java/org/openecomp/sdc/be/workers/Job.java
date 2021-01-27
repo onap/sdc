@@ -24,6 +24,7 @@ package org.openecomp.sdc.be.workers;
  * Created by michael on 6/24/2016.
  */
 public abstract class Job<E> {
+
     public abstract E doWork();
 
 }

@@ -117,9 +117,10 @@ public class PolicyTypeDataDefinition extends ToscaTypeDataDefinition {
 
     @Override
     public String toString() {
-        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version=" + version
-                + ", targets=" + targets + ", metadata=" + metadata + ", description=" + description + ", creationTime="
-                + creationTime + ", modificationTime=" + modificationTime + "]";
+        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon()
+            + ", version=" + version
+            + ", targets=" + targets + ", metadata=" + metadata + ", description=" + description + ", creationTime="
+            + creationTime + ", modificationTime=" + modificationTime + "]";
     }
 
     public String getDerivedFrom() {

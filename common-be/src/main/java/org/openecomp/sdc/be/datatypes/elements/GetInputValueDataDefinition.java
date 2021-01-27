@@ -20,9 +20,8 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class GetInputValueDataDefinition extends ToscaDataDefinition {
 
@@ -104,7 +103,8 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "GetInputValueDataDefinition [propName=" + propName + ", inputName=" + inputName + ", indexValue=" + indexValue + ", getInputIndex=" + getInputIndex + ", isList=" + isList + "]";
+        return "GetInputValueDataDefinition [propName=" + propName + ", inputName=" + inputName + ", indexValue=" + indexValue
+            + ", getInputIndex=" + getInputIndex + ", isList=" + isList + "]";
     }
 
     @Override

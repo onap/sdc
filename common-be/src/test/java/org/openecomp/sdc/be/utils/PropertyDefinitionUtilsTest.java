@@ -19,18 +19,17 @@
  */
 package org.openecomp.sdc.be.utils;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import static java.util.Collections.emptyMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.emptyMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class PropertyDefinitionUtilsTest {
 
@@ -77,7 +76,7 @@ public class PropertyDefinitionUtilsTest {
         assertEquals(result.get(THIRD).size(), 0);
     }
 
-    private List<PropertyDataDefinition> createDataDefinitions(){
+    private List<PropertyDataDefinition> createDataDefinitions() {
         ArrayList<PropertyDataDefinition> propertyDataDefinitions = new ArrayList<>();
         PropertyDataDefinition dataDefinition = new PropertyDataDefinition();
         dataDefinition.setUniqueId(UNIQUE_ID);
@@ -91,7 +90,7 @@ public class PropertyDefinitionUtilsTest {
         return propertyDataDefinitions;
     }
 
-    private List<PropertyDataDefinition> createDataDefinitionsWithEmptyGetInputValueDefinition(){
+    private List<PropertyDataDefinition> createDataDefinitionsWithEmptyGetInputValueDefinition() {
         ArrayList<PropertyDataDefinition> propertyDataDefinitions = new ArrayList<>();
         PropertyDataDefinition dataDefinition = new PropertyDataDefinition();
         dataDefinition.setUniqueId(UNIQUE_ID);

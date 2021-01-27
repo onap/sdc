@@ -117,9 +117,10 @@ public class GroupTypeDataDefinition extends ToscaTypeDataDefinition {
 
     @Override
     public String toString() {
-        return "GroupTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version=" + version
-                + ", members=" + members + ", metadata=" + metadata + ", description=" + description + ", creationTime="
-                + creationTime + ", modificationTime=" + modificationTime + "]";
+        return "GroupTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon()
+            + ", version=" + version
+            + ", members=" + members + ", metadata=" + metadata + ", description=" + description + ", creationTime="
+            + creationTime + ", modificationTime=" + modificationTime + "]";
     }
 
     public String getDerivedFrom() {

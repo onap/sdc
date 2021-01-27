@@ -108,7 +108,7 @@ public class GroupingDataDefinition extends ToscaDataDefinition {
     @Override
     public String toString() {
         return "GroupingDataDefinition [name=" + name + ", normalizedName=" + normalizedName + ", uniqueId=" + uniqueId
-                + "]";
+            + "]";
     }
 
 }

@@ -29,6 +29,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 public class GetPolicyValueDataDefinition {
+
     private String policyId;
     private String propertyName;
     private String origPropertyValue;

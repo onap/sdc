@@ -22,36 +22,14 @@ public enum ComponentTypeEnum {
     PRODUCT("Product"),
     SERVICE_INSTANCE("Service Instance");
 
-    private String value;
-
-    ComponentTypeEnum(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     // Those values cannot be another field in enum, because they are needed
     // as constants for Swagger allowedValues param
     public static final String RESOURCE_PARAM_NAME = "resources";
     public static final String SERVICE_PARAM_NAME = "services";
     public static final String PRODUCT_PARAM_NAME = "products";
-
-    public NodeTypeEnum getNodeType() {
-
-        switch (this) {
-            case RESOURCE:
-                return NodeTypeEnum.Resource;
-            case SERVICE:
-                return NodeTypeEnum.Service;
-            case PRODUCT:
-                return NodeTypeEnum.Product;
-            case RESOURCE_INSTANCE:
-                return NodeTypeEnum.ResourceInstance;
-            default:
-                throw new UnsupportedOperationException("No nodeType is defined for: " + this.getValue());
-        }
+    private String value;
+    ComponentTypeEnum(String value) {
+        this.value = value;
     }
 
     public static ComponentTypeEnum findByValue(String value) {
@@ -103,5 +81,25 @@ public enum ComponentTypeEnum {
                 break;
         }
         return ret;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public NodeTypeEnum getNodeType() {
+
+        switch (this) {
+            case RESOURCE:
+                return NodeTypeEnum.Resource;
+            case SERVICE:
+                return NodeTypeEnum.Service;
+            case PRODUCT:
+                return NodeTypeEnum.Product;
+            case RESOURCE_INSTANCE:
+                return NodeTypeEnum.ResourceInstance;
+            default:
+                throw new UnsupportedOperationException("No nodeType is defined for: " + this.getValue());
+        }
     }
 }

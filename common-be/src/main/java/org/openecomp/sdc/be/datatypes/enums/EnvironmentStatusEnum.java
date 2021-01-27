@@ -27,10 +27,6 @@ public enum EnvironmentStatusEnum {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public static EnvironmentStatusEnum getByName(final String name) {
         switch (name) {
             case ("in_progress"):
@@ -42,6 +38,10 @@ public enum EnvironmentStatusEnum {
             default:
                 return UNKNOWN;
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

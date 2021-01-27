@@ -19,14 +19,13 @@
 
 package org.openecomp.sdc.be.csar.pnf;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Represents the Pnf software information non-mano yaml
@@ -43,6 +42,7 @@ public class PnfSoftwareInformation {
 
     /**
      * Adds a {@link PnfSoftwareVersion} instance to the software version set
+     *
      * @param softwareVersion the pnf software version to add
      */
     public void addToSoftwareVersionSet(final PnfSoftwareVersion softwareVersion) {
@@ -51,6 +51,14 @@ public class PnfSoftwareInformation {
 
     public Set<PnfSoftwareVersion> getSoftwareVersionSet() {
         return new LinkedHashSet<>(softwareVersionSet);
+    }
+
+    public boolean isValid() {
+        if (CollectionUtils.isEmpty(softwareVersionSet)) {
+            return false;
+        }
+
+        return softwareVersionSet.stream().allMatch(PnfSoftwareVersion::isValid);
     }
 
     /**
@@ -66,14 +74,6 @@ public class PnfSoftwareInformation {
 
         private final String fieldName;
 
-    }
-
-    public boolean isValid() {
-        if(CollectionUtils.isEmpty(softwareVersionSet)) {
-            return false;
-        }
-
-        return softwareVersionSet.stream().allMatch(PnfSoftwareVersion::isValid);
     }
 
 }

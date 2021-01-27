@@ -96,8 +96,8 @@ public class HeatParameterDataDefinition extends ToscaDataDefinition {
     @Override
     public String toString() {
         return "HeatParameterDataDefinition [uniqueId=" + uniqueId + ", name=" + name + ", type=" + type
-                + ", description=" + description + ", currentValue=" + currentValue + ", defaultValue=" + defaultValue
-                + "]";
+            + ", description=" + description + ", currentValue=" + currentValue + ", defaultValue=" + defaultValue
+            + "]";
     }
 
     @Override

@@ -19,6 +19,11 @@
 
 package org.openecomp.sdc.be.csar.pnf;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation.PnfSoftwareInformationField;
@@ -27,16 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * Handles the parsing of the non-mano software information file.
  */
 public class SoftwareInformationArtifactYamlParser {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SoftwareInformationArtifactYamlParser.class);
 
     private SoftwareInformationArtifactYamlParser() {
@@ -47,8 +47,7 @@ public class SoftwareInformationArtifactYamlParser {
      * Parses the non-mano software information yaml file.
      *
      * @param softwareInformationYamlFileBytes the file byte array
-     * @return an {@code Optional<PnfSoftwareInformation>} if the file was successful parsed, otherwise {@code
-     * Optional.empty()}
+     * @return an {@code Optional<PnfSoftwareInformation>} if the file was successful parsed, otherwise {@code Optional.empty()}
      */
     @SuppressWarnings("unchecked")
     public static Optional<PnfSoftwareInformation> parse(final byte[] softwareInformationYamlFileBytes) {

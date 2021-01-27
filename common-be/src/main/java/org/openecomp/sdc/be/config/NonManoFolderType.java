@@ -22,11 +22,13 @@ import lombok.Data;
 
 @Data
 public class NonManoFolderType {
+
     private String location;
     private String type;
 
     /**
      * Gets the expected folder path
+     *
      * @return
      */
     public String getPath() {

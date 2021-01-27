@@ -19,22 +19,22 @@
 
 package org.openecomp.sdc.be.config;
 
-import lombok.Data;
-
 import java.util.Map;
+import lombok.Data;
 
 /**
  * Represents the non-mano configuration yaml.
  */
 @Data
 public class NonManoConfiguration {
+
     private Map<String, NonManoFolderType> nonManoKeyFolderMapping;
 
     /**
      * Gets the non mano folder type based on the non mano artifact type.
+     *
      * @param nonManoArtifactType the artifact type
-     * @return
-     *  The NonManoType for the artifact type
+     * @return The NonManoType for the artifact type
      */
     public NonManoFolderType getNonManoType(final NonManoArtifactType nonManoArtifactType) {
         return nonManoKeyFolderMapping.get(nonManoArtifactType.getType());

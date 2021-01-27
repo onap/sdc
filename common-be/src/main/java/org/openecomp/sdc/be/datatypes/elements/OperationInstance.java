@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class OperationInstance/* extends Operation*/ {
+
     private OperationImplementation implementation;
     private Map<String, Object> inputs;
 
@@ -50,7 +51,7 @@ public class OperationInstance/* extends Operation*/ {
         }
         OperationInstance that = (OperationInstance) o;
         return Objects.equals(implementation, that.implementation)
-                && Objects.equals(inputs, that.inputs);
+            && Objects.equals(inputs, that.inputs);
     }
 
     @Override

@@ -21,15 +21,27 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class PropertyRule extends ToscaDataDefinition {
 
     private static final String FORCE_ALL = "FORCE_ALL";
     private static final String ALL = "ALL";
     private static final String RULE_ANY_MATCH = ".+";
+    private List<String> rule;
+    private String value;
+
+    public PropertyRule() {
+        super();
+    }
+
+
+    public PropertyRule(List<String> rule, String value) {
+        super();
+        this.rule = rule;
+        this.value = value;
+    }
 
     public static String getForceAll() {
         return FORCE_ALL;
@@ -41,20 +53,6 @@ public class PropertyRule extends ToscaDataDefinition {
 
     public static String getRuleAnyMatch() {
         return RULE_ANY_MATCH;
-    }
-
-
-    private List<String> rule;
-    private String value;
-
-    public PropertyRule() {
-        super();
-    }
-
-    public PropertyRule(List<String> rule, String value) {
-        super();
-        this.rule = rule;
-        this.value = value;
     }
 
     public List<String> getRule() {

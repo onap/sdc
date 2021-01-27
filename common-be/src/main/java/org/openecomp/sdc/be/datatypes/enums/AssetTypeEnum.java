@@ -19,15 +19,6 @@ public enum AssetTypeEnum {
     RESOURCES("resources", "Resource"), SERVICES("services", "Service"), PRODUCTS("products", "Product");
 
     private String value;
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getCorrespondingComponent() {
-        return correspondingComponent;
-    }
-
     private String correspondingComponent;
 
     AssetTypeEnum(String value, String correspondingComponent) {
@@ -44,5 +35,13 @@ public enum AssetTypeEnum {
         }
 
         return ret;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getCorrespondingComponent() {
+        return correspondingComponent;
     }
 }

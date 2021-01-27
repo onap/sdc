@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,37 +24,37 @@ import org.junit.Test;
 
 public class NodeTypeEnumTest {
 
-	private NodeTypeEnum createTestSubject() {
-		return NodeTypeEnum.AdditionalInfoParameters;
-	}
+    private NodeTypeEnum createTestSubject() {
+        return NodeTypeEnum.AdditionalInfoParameters;
+    }
 
-	@Test
-	public void testGetName() throws Exception {
-		NodeTypeEnum testSubject;
-		String result;
+    @Test
+    public void testGetName() throws Exception {
+        NodeTypeEnum testSubject;
+        String result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getName();
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getName();
+    }
 
-	@Test
-	public void testGetByName() throws Exception {
-		String name = "";
-		NodeTypeEnum result;
+    @Test
+    public void testGetByName() throws Exception {
+        String name = "";
+        NodeTypeEnum result;
 
-		// default test
-		result = NodeTypeEnum.getByName(name);
-		result = NodeTypeEnum.getByName(NodeTypeEnum.AdditionalInfoParameters.getName());
-	}
+        // default test
+        result = NodeTypeEnum.getByName(name);
+        result = NodeTypeEnum.getByName(NodeTypeEnum.AdditionalInfoParameters.getName());
+    }
 
-	@Test
-	public void testGetByNameIgnoreCase() throws Exception {
-		String name = "";
-		NodeTypeEnum result;
+    @Test
+    public void testGetByNameIgnoreCase() throws Exception {
+        String name = "";
+        NodeTypeEnum result;
 
-		// default test
-		result = NodeTypeEnum.getByNameIgnoreCase(name);
-		result = NodeTypeEnum.getByNameIgnoreCase(NodeTypeEnum.AdditionalInfoParameters.getName());
-	}
+        // default test
+        result = NodeTypeEnum.getByNameIgnoreCase(name);
+        result = NodeTypeEnum.getByNameIgnoreCase(NodeTypeEnum.AdditionalInfoParameters.getName());
+    }
 }

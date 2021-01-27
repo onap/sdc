@@ -20,20 +20,18 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 /**
  * Maps an object type (e.g. "monitoring", "workflows" etc) to a list of external references.
- *
- * "monitoring" -> { "ref1",  "ref2" },
- * "workflows"  -> { "ref1",  "ref2" }
+ * <p>
+ * "monitoring" -> { "ref1",  "ref2" }, "workflows"  -> { "ref1",  "ref2" }
  */
 public class MapComponentInstanceExternalRefs extends ToscaDataDefinition {
 
@@ -49,12 +47,12 @@ public class MapComponentInstanceExternalRefs extends ToscaDataDefinition {
         return (Map<String, List<String>>) getToscaPresentationValue(JsonPresentationFields.EXTERNAL_REF);
     }
 
-    public List<String> getExternalRefsByObjectType(String objectType) {
-        return ((Map<String, List<String>>) getToscaPresentationValue(JsonPresentationFields.EXTERNAL_REF)).get(objectType);
-    }
-
     public void setComponentInstanceExternalRefs(Map<String, List<String>> componentInstanceExternalRefs) {
         setToscaPresentationValue(JsonPresentationFields.EXTERNAL_REF, componentInstanceExternalRefs);
+    }
+
+    public List<String> getExternalRefsByObjectType(String objectType) {
+        return ((Map<String, List<String>>) getToscaPresentationValue(JsonPresentationFields.EXTERNAL_REF)).get(objectType);
     }
 
     /**

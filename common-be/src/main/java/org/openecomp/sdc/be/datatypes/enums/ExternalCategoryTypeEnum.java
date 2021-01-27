@@ -16,8 +16,7 @@
 package org.openecomp.sdc.be.datatypes.enums;
 
 /**
- * Category Type Enum
- * Any service category to be supported by SDC Ext API can be added here
+ * Category Type Enum Any service category to be supported by SDC Ext API can be added here
  *
  * @author atifhusain
  */
@@ -31,14 +30,6 @@ public enum ExternalCategoryTypeEnum {
     ExternalCategoryTypeEnum(String value, boolean isAtomicType) {
         this.value = value;
         this.isAtomicType = isAtomicType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public boolean isAtomicType() {
-        return isAtomicType;
     }
 
     public static ExternalCategoryTypeEnum getType(String type) {
@@ -104,6 +95,14 @@ public enum ExternalCategoryTypeEnum {
             }
         }
         return false;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public boolean isAtomicType() {
+        return isAtomicType;
     }
 
 }

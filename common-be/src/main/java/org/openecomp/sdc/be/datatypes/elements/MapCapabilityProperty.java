@@ -23,10 +23,10 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.Map;
 
 public class MapCapabilityProperty extends MapDataDefinition<MapPropertiesDataDefinition> {
+
     @JsonCreator
     public MapCapabilityProperty(Map<String, MapPropertiesDataDefinition> mapToscaDataDefinition) {
         super(mapToscaDataDefinition);

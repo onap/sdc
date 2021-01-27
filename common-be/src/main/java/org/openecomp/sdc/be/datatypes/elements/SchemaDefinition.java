@@ -20,10 +20,9 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 /**
  * Schema allows to create new types that can be used along TOSCA definitions.
@@ -52,16 +51,16 @@ public class SchemaDefinition extends ToscaDataDefinition {
         return derivedFrom;
     }
 
-    public void setProperty(PropertyDataDefinition property) {
-        this.property = property;
+    public void setDerivedFrom(String derivedFrom) {
+        this.derivedFrom = derivedFrom;
     }
 
     public PropertyDataDefinition getProperty() {
         return this.property;
     }
 
-    public void setDerivedFrom(String derivedFrom) {
-        this.derivedFrom = derivedFrom;
+    public void setProperty(PropertyDataDefinition property) {
+        this.property = property;
     }
 
     public List<String> getConstraints() {
@@ -139,6 +138,6 @@ public class SchemaDefinition extends ToscaDataDefinition {
     @Override
     public String toString() {
         return "SchemaDefinition [" + "derivedFrom='" + derivedFrom + ", constraints=" + constraints + ", properties="
-                + properties + ", property=" + property + ']';
+            + properties + ", property=" + property + ']';
     }
 }

@@ -21,6 +21,7 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 
 public class OperationInputDefinition extends InputDataDefinition {
+
     private String source;
     private String sourceProperty;
     private String toscaDefaultValue;

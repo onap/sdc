@@ -28,11 +28,11 @@ public enum PortMirroringEnum {
 
     private String value;
 
-    public String getValue() {
-        return value;
-    }
-
     PortMirroringEnum(String value) {
         this.value = value;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

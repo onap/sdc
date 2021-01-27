@@ -32,6 +32,10 @@ public class PnfSoftwareVersion {
     private final String version;
     private final String description;
 
+    public boolean isValid() {
+        return StringUtils.isNotEmpty(version);
+    }
+
     /**
      * Stores the pnf software version yaml fields.
      */
@@ -42,9 +46,5 @@ public class PnfSoftwareVersion {
         PNF_SOFTWARE_VERSION("pnf_software_version");
 
         private final String fieldName;
-    }
-
-    public boolean isValid() {
-        return StringUtils.isNotEmpty(version);
     }
 }

@@ -34,14 +34,25 @@ public enum OriginTypeEnum {
     private String displayValue;
     private String instanceType;
     private ComponentTypeEnum componentType;
-	private boolean isAtomicType;
+    private boolean isAtomicType;
 
     OriginTypeEnum(String value, String displayValue, String instanceType, ComponentTypeEnum componentType, boolean isAtomicType) {
         this.value = value;
         this.displayValue = displayValue;
         this.instanceType = instanceType;
         this.componentType = componentType;
-		this.isAtomicType = isAtomicType;
+        this.isAtomicType = isAtomicType;
+    }
+
+    public static OriginTypeEnum findByValue(String value) {
+        OriginTypeEnum ret = null;
+        for (OriginTypeEnum curr : OriginTypeEnum.values()) {
+            if (curr.getValue().equals(value)) {
+                ret = curr;
+                break;
+            }
+        }
+        return ret;
     }
 
     public String getValue() {
@@ -60,19 +71,8 @@ public enum OriginTypeEnum {
         return componentType;
     }
 
-	public boolean isAtomicType() {
-		return isAtomicType;
-	}
-
-    public static OriginTypeEnum findByValue(String value) {
-        OriginTypeEnum ret = null;
-        for (OriginTypeEnum curr : OriginTypeEnum.values()) {
-            if (curr.getValue().equals(value)) {
-                ret = curr;
-                break;
-            }
-        }
-        return ret;
+    public boolean isAtomicType() {
+        return isAtomicType;
     }
 
 }

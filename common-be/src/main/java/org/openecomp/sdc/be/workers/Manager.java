@@ -21,18 +21,18 @@
 package org.openecomp.sdc.be.workers;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 /**
  * Created by michael on 6/24/2016.
  */
 public class Manager<T extends Job, E> {
+
     private static final int TERMINATION_TIMEAUT = 30;
     private static Logger log = Logger.getLogger(Manager.class.getName());
     private ExecutorService executor;

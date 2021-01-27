@@ -45,8 +45,10 @@ public class MapAttributesDataDefinition extends MapDataDefinition<AttributeData
      */
     public MapAttributesDataDefinition(MapAttributesDataDefinition toBeDeepCopiedMapPropertiesDataDefinition) {
         this.parentName = toBeDeepCopiedMapPropertiesDataDefinition.parentName;
-        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
-        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
+        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
+        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
     }
 
     public MapAttributesDataDefinition() {

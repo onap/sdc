@@ -30,11 +30,20 @@ import org.yaml.snakeyaml.Yaml;
  * Singleton that loads and stores the Non Mano configuration
  */
 public class NonManoConfigurationManager {
+
     private static NonManoConfigurationManager nonManoConfigurationManager = null;
     private NonManoConfiguration nonManoConfiguration;
 
     private NonManoConfigurationManager() {
         loadConfiguration();
+    }
+
+    public static NonManoConfigurationManager getInstance() {
+        if (nonManoConfigurationManager == null) {
+            nonManoConfigurationManager = new NonManoConfigurationManager();
+        }
+
+        return nonManoConfigurationManager;
     }
 
     /**
@@ -52,14 +61,6 @@ public class NonManoConfigurationManager {
             throw new LoadConfigurationException("Could not parse non-mano configuration file 'config/nonManoConfig.yaml' to string", e);
         }
         nonManoConfiguration = convertFromString(data, NonManoConfiguration.class);
-    }
-
-    public static NonManoConfigurationManager getInstance() {
-        if (nonManoConfigurationManager == null) {
-            nonManoConfigurationManager = new NonManoConfigurationManager();
-        }
-
-        return nonManoConfigurationManager;
     }
 
     public NonManoConfiguration getNonManoConfiguration() {

@@ -21,15 +21,14 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaDataDefinition {
 
@@ -78,7 +77,8 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
         Map<String, T> mapByName = listToMapByName(listToscaDataDefinition);
         List<T> otherList = ((ListDataDefinition) other).getListToscaDataDefinition();
         for (T item : otherList) {
-            mapByName.merge((String) item.getToscaPresentationValue(JsonPresentationFields.NAME), item, (thisItem, otherItem) -> thisItem.mergeFunction(otherItem, allowDefaultValueOverride));
+            mapByName.merge((String) item.getToscaPresentationValue(JsonPresentationFields.NAME), item,
+                (thisItem, otherItem) -> thisItem.mergeFunction(otherItem, allowDefaultValueOverride));
         }
         ((ListDataDefinition) other).listToscaDataDefinition = mapByName.values().stream().collect(Collectors.toList());
         return other;
@@ -91,7 +91,8 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
 
     @Override
     public <T extends ToscaDataDefinition> T removeByOwnerId(Set<String> ownerIdList) {
-        List<T> collect1 = (List<T>) listToscaDataDefinition.stream().filter(e -> ownerIdList.contains(e.getOwnerId())).collect(Collectors.toList());
+        List<T> collect1 = (List<T>) listToscaDataDefinition.stream().filter(e -> ownerIdList.contains(e.getOwnerId()))
+            .collect(Collectors.toList());
         ListDataDefinition listDef = new ListDataDefinition(collect1);
 
         listToscaDataDefinition.removeIf(e -> ownerIdList.contains(e.getOwnerId()));
@@ -105,7 +106,8 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
         list.forEach(e -> {
             String nameFromPrev = (String) e.getToscaPresentationValue(JsonPresentationFields.NAME);
             if (nameFromPrev != null) {
-                Optional<T> findAny = (Optional<T>) listToscaDataDefinition.stream().filter(o -> nameFromPrev.equals(e.getToscaPresentationValue(JsonPresentationFields.NAME))).findAny();
+                Optional<T> findAny = (Optional<T>) listToscaDataDefinition.stream()
+                    .filter(o -> nameFromPrev.equals(e.getToscaPresentationValue(JsonPresentationFields.NAME))).findAny();
                 if (findAny.isPresent()) {
                     e.mergeFunction(findAny.get(), allowDefaultValueOverride);
                 }

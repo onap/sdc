@@ -32,10 +32,6 @@ public enum PolicyTargetType {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public static PolicyTargetType getByNameIgnoreCase(String name) {
         for (PolicyTargetType inst : PolicyTargetType.values()) {
             if (inst.getName().equalsIgnoreCase(name)) {
@@ -43,6 +39,10 @@ public enum PolicyTargetType {
             }
         }
         return null;
+    }
+
+    public String getName() {
+        return name;
     }
 }
 

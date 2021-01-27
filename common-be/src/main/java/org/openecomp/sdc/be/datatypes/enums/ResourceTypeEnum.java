@@ -36,7 +36,7 @@ public enum ResourceTypeEnum {
     ServiceProxy("ServiceProxy", true),
     //Generic VFC/VF/PNF/Service Type
     ABSTRACT("Abstract", true),
-	SERVICE("Service"/*(Network Service)"*/,false);
+    SERVICE("Service"/*(Network Service)"*/, false);
 
     private final String value;
     private final boolean isAtomicType;
@@ -44,14 +44,6 @@ public enum ResourceTypeEnum {
     ResourceTypeEnum(final String value, final boolean isAtomicType) {
         this.value = value;
         this.isAtomicType = isAtomicType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public boolean isAtomicType() {
-        return isAtomicType;
     }
 
     public static ResourceTypeEnum getType(final String type) {
@@ -116,6 +108,14 @@ public enum ResourceTypeEnum {
         }
         return Arrays.stream(ResourceTypeEnum.values())
             .anyMatch(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type));
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public boolean isAtomicType() {
+        return isAtomicType;
     }
 
 }

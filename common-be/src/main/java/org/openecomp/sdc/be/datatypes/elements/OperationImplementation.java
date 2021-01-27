@@ -51,7 +51,7 @@ public class OperationImplementation {
         }
         OperationImplementation that = (OperationImplementation) o;
         return Objects.equals(primary, that.primary)
-                && Objects.equals(new HashSet<>(dependencies), new HashSet<>(that.dependencies));
+            && Objects.equals(new HashSet<>(dependencies), new HashSet<>(that.dependencies));
     }
 
     @Override

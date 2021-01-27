@@ -41,7 +41,7 @@ public class RequirementSubstitutionFilterCapabilityDataDefinition extends Tosca
 
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
         return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.PROPERTIES);
+            JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {

@@ -66,10 +66,6 @@ public enum NodeTypeEnum {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public static NodeTypeEnum getByName(String name) {
         for (NodeTypeEnum inst : NodeTypeEnum.values()) {
             if (inst.getName().equals(name)) {
@@ -86,5 +82,9 @@ public enum NodeTypeEnum {
             }
         }
         return null;
+    }
+
+    public String getName() {
+        return name;
     }
 }

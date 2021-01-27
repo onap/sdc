@@ -21,8 +21,8 @@ package org.openecomp.sdc.be.datatypes.enums;
 import lombok.Getter;
 
 public enum MetadataKeyEnum {
-    METADATA_KEYS("metadataKeys"), 
-    NAME("name"), 
+    METADATA_KEYS("metadataKeys"),
+    NAME("name"),
     MANDATORY("mandatory"),
     VALID_VALUES("validValues");
 

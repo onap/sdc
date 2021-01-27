@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,36 +24,36 @@ import org.junit.Test;
 
 public class AssetTypeEnumTest {
 
-	private AssetTypeEnum createTestSubject() {
-		return AssetTypeEnum.PRODUCTS;
-	}
+    private AssetTypeEnum createTestSubject() {
+        return AssetTypeEnum.PRODUCTS;
+    }
 
-	@Test
-	public void testGetValue() throws Exception {
-		AssetTypeEnum testSubject;
-		String result;
+    @Test
+    public void testGetValue() throws Exception {
+        AssetTypeEnum testSubject;
+        String result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getValue();
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getValue();
+    }
 
-	@Test
-	public void testGetCorrespondingComponent() throws Exception {
-		AssetTypeEnum testSubject;
-		String result;
+    @Test
+    public void testGetCorrespondingComponent() throws Exception {
+        AssetTypeEnum testSubject;
+        String result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCorrespondingComponent();
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getCorrespondingComponent();
+    }
 
-	@Test
-	public void testConvertToComponentTypeEnum() throws Exception {
-		String assetType = "products";
-		ComponentTypeEnum result;
+    @Test
+    public void testConvertToComponentTypeEnum() throws Exception {
+        String assetType = "products";
+        ComponentTypeEnum result;
 
-		// default test
-		result = AssetTypeEnum.convertToComponentTypeEnum(assetType);
-	}
+        // default test
+        result = AssetTypeEnum.convertToComponentTypeEnum(assetType);
+    }
 }

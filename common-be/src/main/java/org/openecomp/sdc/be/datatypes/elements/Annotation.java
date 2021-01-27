@@ -25,10 +25,15 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Annotation {
+
     private String name;
     private String type;
     private String description;
     private List<PropertyDataDefinition> properties;
+
+    public static void setAnnotationsName(Map<String, Annotation> annotations) {
+        annotations.forEach((name, annotation) -> annotation.setName(name));
+    }
 
     public String getName() {
         return name;
@@ -60,10 +65,6 @@ public class Annotation {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public static void setAnnotationsName(Map<String, Annotation> annotations) {
-        annotations.forEach((name, annotation) -> annotation.setName(name));
     }
 
     @Override

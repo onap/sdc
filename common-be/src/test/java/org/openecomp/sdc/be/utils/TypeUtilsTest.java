@@ -21,25 +21,18 @@
  */
 package org.openecomp.sdc.be.utils;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.Test;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 
 
 public class TypeUtilsTest {
 
     private static final String ANY_GROUP = "anyGroup";
-
-    private class DummyClass {
-        private String field;
-
-        public void setField(String field) { this.field = field; }
-        public String getField() { return this.field; }
-    }
 
     @Test
     public void testSetFieldShouldConsumeForJSONContainingParam() {
@@ -57,6 +50,19 @@ public class TypeUtilsTest {
         toscaJson.put(ToscaTagNamesEnum.GROUPS.getElementName(), ANY_GROUP);
         TypeUtils.setField(toscaJson, ToscaTagNamesEnum.INPUTS, dummyObject::setField);
         assertNull(dummyObject.getField());
+    }
+
+    private class DummyClass {
+
+        private String field;
+
+        public String getField() {
+            return this.field;
+        }
+
+        public void setField(String field) {
+            this.field = field;
+        }
     }
 
 }

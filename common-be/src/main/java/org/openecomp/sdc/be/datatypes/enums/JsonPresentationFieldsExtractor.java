@@ -148,7 +148,7 @@ public class JsonPresentationFieldsExtractor {
     }
 
     public ResourceTypeEnum getResourceType() {
-        return ResourceTypeEnum.valueOf((String)properties.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation()));
+        return ResourceTypeEnum.valueOf((String) properties.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation()));
     }
 
     public String getToscaResourceName() {

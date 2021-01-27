@@ -20,9 +20,8 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
 
@@ -91,7 +90,7 @@ public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
     @Override
     public String toString() {
         return "AdditionalInfoParameterDataDefinition [uniqueId=" + uniqueId + ", creationTime=" + creationTime
-                + ", modificationTime=" + modificationTime + ", lastCreatedCounter=" + lastCreatedCounter + "]";
+            + ", modificationTime=" + modificationTime + ", lastCreatedCounter=" + lastCreatedCounter + "]";
     }
 
 }

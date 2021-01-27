@@ -108,9 +108,9 @@ public class AnnotationTypeDataDefinition extends ToscaDataDefinition {
     @Override
     public String toString() {
         return getClass().getName() + ": [uniqueId=" + uniqueId + ", type=" + getType()
-                + ", version=" + version + ", highestVersion=" + highestVersion
-                + ", description=" + description
-                + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
+            + ", version=" + version + ", highestVersion=" + highestVersion
+            + ", description=" + description
+            + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
     }
 
 

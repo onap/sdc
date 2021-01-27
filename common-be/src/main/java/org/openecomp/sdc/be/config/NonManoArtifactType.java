@@ -19,11 +19,10 @@
 
 package org.openecomp.sdc.be.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Stores non mano artifact types.
