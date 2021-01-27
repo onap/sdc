@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,6 @@
 
 package org.openecomp.sdc.common.listener;
 
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,92 +27,100 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class AppContextListener implements ServletContextListener {
 
-	private static Logger log = Logger.getLogger(AppContextListener.class.getName());
+    private static Logger log = Logger.getLogger(AppContextListener.class.getName());
 
-	public void contextInitialized(ServletContextEvent context) {
+    public static Map<String, String> getManifestInfo(ServletContext application) {
 
-		log.debug("ServletContextListener initialized ");
+        Map<String, String> result = new HashMap<>();
+        InputStream inputStream = null;
+        try {
 
-		log.debug("After read values from Manifest {}", getManifestInfo(context.getServletContext()));
+            inputStream = application.getResourceAsStream("/META-INF/MANIFEST.MF");
 
-		Map<String, String> manifestAttr = getManifestInfo(context.getServletContext());
+            Manifest manifest = new Manifest(inputStream);
 
-		String appName = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_NAME);
-		String appVersion = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_VERSION);
+            Attributes attr = manifest.getMainAttributes();
+            String name = attr.getValue("Implementation-Title");
+            if (name != null) {
+                result.put(Constants.APPLICATION_NAME, name);
+            }
 
-		ExternalConfiguration.setAppName(appName);
-		ExternalConfiguration.setAppVersion(appVersion);
-		String configHome = System.getProperty(Constants.CONFIG_HOME);
-		ExternalConfiguration.setConfigDir(configHome);
+            String version = attr.getValue("Implementation-Version");
+            if (version != null) {
+                result.put(Constants.APPLICATION_VERSION, version);
+            }
 
-		String appConfigDir = configHome + File.separator + appName;
-		// ChangeListener changeListener = new ChangeListener();
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-				appConfigDir);
+        } catch (IOException e) {
 
-		context.getServletContext().setAttribute(Constants.CONFIGURATION_SOURCE_ATTR, configurationSource);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    log.info("close FileOutputStream failed - {}", e);
+                }
+            }
+        }
 
-		ExternalConfiguration.setConfigurationSource(configurationSource);
+        return result;
 
-		ExternalConfiguration.listenForChanges();
+    }
 
-	}
+    public void contextInitialized(ServletContextEvent context) {
 
-	public void contextDestroyed(ServletContextEvent context) {
+        log.debug("ServletContextListener initialized ");
 
-		log.debug("ServletContextListener destroyed");
-		ExternalConfiguration.stopListenForFileChanges();
-	}
+        log.debug("After read values from Manifest {}", getManifestInfo(context.getServletContext()));
 
-	private String setAndGetAttributeInContext(ServletContextEvent context, Map<String, String> manifestAttr,
-			String attr) {
+        Map<String, String> manifestAttr = getManifestInfo(context.getServletContext());
 
-		String name = manifestAttr.get(attr);
-		if (name != null) {
-			context.getServletContext().setAttribute(attr, name);
-		}
+        String appName = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_NAME);
+        String appVersion = setAndGetAttributeInContext(context, manifestAttr, Constants.APPLICATION_VERSION);
 
-		return name;
-	}
+        ExternalConfiguration.setAppName(appName);
+        ExternalConfiguration.setAppVersion(appVersion);
+        String configHome = System.getProperty(Constants.CONFIG_HOME);
+        ExternalConfiguration.setConfigDir(configHome);
 
-	public static Map<String, String> getManifestInfo(ServletContext application) {
+        String appConfigDir = configHome + File.separator + appName;
+        // ChangeListener changeListener = new ChangeListener();
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
 
-		Map<String, String> result = new HashMap<>();
-		InputStream inputStream = null;
-		try {
+        context.getServletContext().setAttribute(Constants.CONFIGURATION_SOURCE_ATTR, configurationSource);
 
-			inputStream = application.getResourceAsStream("/META-INF/MANIFEST.MF");
+        ExternalConfiguration.setConfigurationSource(configurationSource);
 
-			Manifest manifest = new Manifest(inputStream);
+        ExternalConfiguration.listenForChanges();
 
-			Attributes attr = manifest.getMainAttributes();
-			String name = attr.getValue("Implementation-Title");
-			if (name != null) {
-				result.put(Constants.APPLICATION_NAME, name);
-			}
+    }
 
-			String version = attr.getValue("Implementation-Version");
-			if (version != null) {
-				result.put(Constants.APPLICATION_VERSION, version);
-			}
+    public void contextDestroyed(ServletContextEvent context) {
 
-		} catch (IOException e) {
+        log.debug("ServletContextListener destroyed");
+        ExternalConfiguration.stopListenForFileChanges();
+    }
 
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					log.info("close FileOutputStream failed - {}" , e);
-				}
-			}
-		}
+    private String setAndGetAttributeInContext(ServletContextEvent context, Map<String, String> manifestAttr,
+                                               String attr) {
 
-		return result;
+        String name = manifestAttr.get(attr);
+        if (name != null) {
+            context.getServletContext().setAttribute(attr, name);
+        }
 
-	}
+        return name;
+    }
 
 }

@@ -29,7 +29,8 @@ public enum EcompErrorCode {
         "An Authentication failure occured during access to UEB server. Please check that UEB keys are configured correctly in ASDC BE distribution configuration."),
     E_199("Internal authentication problem. Description: %s"),
 
-    E_200("ASDC Backend probably lost connectivity to either one of the following components: JanusGraph DB, Cassandra, Onboarding, UEB Cluster. Please check the logs for more information."),
+    E_200(
+        "ASDC Backend probably lost connectivity to either one of the following components: JanusGraph DB, Cassandra, Onboarding, UEB Cluster. Please check the logs for more information."),
     E_201("ASDC Backend probably lost connectivity to JanusGraph DB. Please check the logs for more information."),
     E_202("ASDC Backend probably lost connectivity to ElasticSearch. Please check the logs for more information."),
     E_203("ASDC Backend probably lost connectivity to UEB Cluster. Please check the logs for more information.",

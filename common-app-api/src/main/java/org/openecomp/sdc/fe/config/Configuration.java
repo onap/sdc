@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.fe.config;
 
-import org.openecomp.sdc.common.api.BasicConfiguration;
+import static java.lang.String.format;
 
 import java.util.Date;
 import java.util.List;
-
-import static java.lang.String.format;
+import org.openecomp.sdc.common.api.BasicConfiguration;
 
 public class Configuration extends BasicConfiguration {
+
     /**
      * fe FQDN
      */
@@ -278,13 +278,21 @@ public class Configuration extends BasicConfiguration {
     @Override
     public String toString() {
         return new StringBuilder().append(format("backend host: %s%n", beHost))
-                .append(format("backend http port: %s%n", beHttpPort))
-                .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
-                .append(format("backend protocol: %s%n", beProtocol))
-                .append(format("onboarding forward context: %s%n", onboardingForwardContext))
-                .append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
-                .append(format("Connecting to database: %s%n", connection))
-                .append(format("Supported protocols: %s%n", protocols)).toString();
+            .append(format("backend http port: %s%n", beHttpPort))
+            .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
+            .append(format("backend protocol: %s%n", beProtocol))
+            .append(format("onboarding forward context: %s%n", onboardingForwardContext))
+            .append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
+            .append(format("Connecting to database: %s%n", connection))
+            .append(format("Supported protocols: %s%n", protocols)).toString();
+    }
+
+    public List<String> getHealthStatusExclude() {
+        return healthStatusExclude;
+    }
+
+    public void setHealthStatusExclude(List<String> healthStatusExclude) {
+        this.healthStatusExclude = healthStatusExclude;
     }
 
     public static class FeMonitoringConfig {
@@ -323,6 +331,7 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class OnboardingConfig {
+
         String protocolFe = "http";
         String hostFe;
         Integer portFe;
@@ -429,6 +438,7 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class CookieConfig {
+
         String cookieName = "AuthenticationCookie";
         String path = "";
         String domain = "";
@@ -450,7 +460,8 @@ public class Configuration extends BasicConfiguration {
             this.domain = domain;
         }
 
-        public String getSecurityKey() {return securityKey;
+        public String getSecurityKey() {
+            return securityKey;
         }
 
         public void setSecurityKey(String securityKey) {
@@ -467,6 +478,7 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class BasicAuthConfig {
+
         boolean enabled = false;
         String userName = "";
         String userPass = "";
@@ -487,7 +499,8 @@ public class Configuration extends BasicConfiguration {
             this.userName = userName;
         }
 
-        public String getUserPass() {return userPass;
+        public String getUserPass() {
+            return userPass;
         }
 
         public void setUserPass(String userPass) {
@@ -497,61 +510,54 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class CatalogFacadeMsConfig {
+
         String protocol;
         String host;
         Integer port;
         String healthCheckUri;
         String path;
 
-        public void setProtocol(String protocol) {
-            this.protocol = protocol;
-        }
-
-        public void setHost(String host) {
-            this.host = host;
-        }
-
-        public void setPort(Integer port) {
-            this.port = port;
-        }
-
-        public void setHealthCheckUri(String healthCheckUri) {
-            this.healthCheckUri = healthCheckUri;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
         public String getProtocol() {
             return protocol;
+        }
+
+        public void setProtocol(String protocol) {
+            this.protocol = protocol;
         }
 
         public String getHost() {
             return host;
         }
 
+        public void setHost(String host) {
+            this.host = host;
+        }
+
         public Integer getPort() {
             return port;
+        }
+
+        public void setPort(Integer port) {
+            this.port = port;
         }
 
         public String getHealthCheckUri() {
             return healthCheckUri;
         }
 
+        public void setHealthCheckUri(String healthCheckUri) {
+            this.healthCheckUri = healthCheckUri;
+        }
+
         public String getPath() {
             return path;
         }
 
+        public void setPath(String path) {
+            this.path = path;
+        }
 
-    }
 
-    public List<String> getHealthStatusExclude() {
-        return healthStatusExclude;
-    }
-
-    public void setHealthStatusExclude(List<String> healthStatusExclude) {
-        this.healthStatusExclude = healthStatusExclude;
     }
 
 }

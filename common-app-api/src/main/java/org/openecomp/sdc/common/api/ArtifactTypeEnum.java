@@ -29,8 +29,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Represents an artifact type that is used for hard-coded type representation. 
- * All artifacts must be configured in the SDC configuration file.
+ * Represents an artifact type that is used for hard-coded type representation. All artifacts must be configured in the SDC configuration file.
  */
 @Getter
 @AllArgsConstructor

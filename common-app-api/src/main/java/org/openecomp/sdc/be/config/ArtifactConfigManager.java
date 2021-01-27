@@ -55,7 +55,7 @@ public class ArtifactConfigManager {
     /**
      * Find an artifact configuration by artifact type, that supports the artifact category/group and component type.
      *
-     * @param type the artifact type
+     * @param type          the artifact type
      * @param artifactGroup the artifact category/group
      * @param componentType the component type
      * @return the artifact configuration if it matches the provided filter

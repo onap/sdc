@@ -1,15 +1,19 @@
 package org.openecomp.sdc.common.log.interceptors;
 
-import org.apache.http.*;
+import java.io.IOException;
+import java.net.URI;
+import org.apache.http.HttpException;
+import org.apache.http.HttpMessage;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.onap.logging.filter.base.AbstractMetricLogFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
 
-import java.io.IOException;
-import java.net.URI;
-
-public class ApacheClientLogRequestInterceptor extends AbstractMetricLogFilter<HttpRequest, HttpResponse, HttpMessage> implements HttpRequestInterceptor {
+public class ApacheClientLogRequestInterceptor extends AbstractMetricLogFilter<HttpRequest, HttpResponse, HttpMessage> implements
+    HttpRequestInterceptor {
 
     private String previousInvocationId;
 

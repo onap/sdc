@@ -1,15 +1,17 @@
 package org.openecomp.sdc.common.log.interceptors;
 
-import org.apache.http.*;
-import org.apache.http.protocol.HttpContext;
-import org.onap.logging.filter.base.AbstractMetricLogFilter;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
-
 import java.io.IOException;
 import java.net.URI;
+import org.apache.http.HttpException;
+import org.apache.http.HttpMessage;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.protocol.HttpContext;
+import org.onap.logging.filter.base.AbstractMetricLogFilter;
 
-public class ApacheClientLogResponseInterceptor extends AbstractMetricLogFilter<HttpRequest, HttpResponse, HttpMessage> implements HttpResponseInterceptor {
+public class ApacheClientLogResponseInterceptor extends AbstractMetricLogFilter<HttpRequest, HttpResponse, HttpMessage> implements
+    HttpResponseInterceptor {
 
     @Override
     protected void addHeader(HttpMessage httpMessage, String s, String s1) {

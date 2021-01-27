@@ -55,6 +55,7 @@ public class ZipUtils {
 
     /**
      * Checks if the path is a zip slip attempt calling the {@link #checkForZipSlipInRead(Path)} method.
+     *
      * @param zipEntry the zip entry
      * @throws ZipSlipException when a zip slip attempt is detected
      */
@@ -64,8 +65,7 @@ public class ZipUtils {
     }
 
     /**
-     * Checks if the path is a zip slip attempt when you don't have a destination folder eg in memory reading or zip
-     * creation.
+     * Checks if the path is a zip slip attempt when you don't have a destination folder eg in memory reading or zip creation.
      *
      * @param filePath the file path
      * @throws ZipSlipException when a zip slip attempt is detected
@@ -90,10 +90,10 @@ public class ZipUtils {
     /**
      * Checks if the zip entry is a zip slip attempt based on the destination directory.
      *
-     * @param zipEntry the zip entry
+     * @param zipEntry            the zip entry
      * @param targetDirectoryPath the target extraction folder
-     * @throws ZipException when the zip slip was detected as a {@link ZipSlipException}. Also when there was a problem
-     * getting the canonical paths from the zip entry or target directory.
+     * @throws ZipException when the zip slip was detected as a {@link ZipSlipException}. Also when there was a problem getting the canonical paths
+     *                      from the zip entry or target directory.
      */
     public static void checkForZipSlipInExtraction(final ZipEntry zipEntry,
                                                    final Path targetDirectoryPath) throws ZipException {
@@ -132,7 +132,7 @@ public class ZipUtils {
     /**
      * Reads a zip file into memory. Parses the zipFile in byte array and calls {@link #readZip(byte[], boolean)}.
      *
-     * @param zipFile the zip file to read
+     * @param zipFile                 the zip file to read
      * @param hasToIncludeDirectories includes or not the directories found during the zip reading
      * @return a Map representing a pair of file path and file byte array
      * @throws ZipException when there was a problem during the reading process
@@ -147,9 +147,9 @@ public class ZipUtils {
     }
 
     /**
-     * Reads a zip file to a in memory structure formed by the file path and its bytes. The structure can contains only
-     * files or files and directories. If configured to include directories, only empty directories and directories that
-     * contains files will be included. The full directory tree will not be generated, eg:
+     * Reads a zip file to a in memory structure formed by the file path and its bytes. The structure can contains only files or files and
+     * directories. If configured to include directories, only empty directories and directories that contains files will be included. The full
+     * directory tree will not be generated, eg:
      * <pre>
      * \
      * \..\Directory
@@ -157,10 +157,9 @@ public class ZipUtils {
      * \..\..\..\aFile.txt
      * \..\..\EmptyChildDirectory
      * </pre>
-     * The return will include "Directory\ChildDirectory\aFile.txt" and "Directory\EmptyChildDirectory" but not
-     * "Directory" or the root.
+     * The return will include "Directory\ChildDirectory\aFile.txt" and "Directory\EmptyChildDirectory" but not "Directory" or the root.
      *
-     * @param zipFileBytes the zip file byte array to read
+     * @param zipFileBytes            the zip file byte array to read
      * @param hasToIncludeDirectories includes or not the directories found during the zip reading.
      * @return a Map representing a pair of file path and file byte array
      * @throws ZipException when there was a problem during the reading process
@@ -213,7 +212,7 @@ public class ZipUtils {
      */
     private static String normalizeFolder(final String folderPath) {
         final StringBuilder normalizedFolderBuilder = new StringBuilder(folderPath);
-        if(!folderPath.endsWith(File.separator)) {
+        if (!folderPath.endsWith(File.separator)) {
             normalizedFolderBuilder.append(File.separator);
         }
         return normalizedFolderBuilder.toString();
@@ -239,7 +238,7 @@ public class ZipUtils {
     /**
      * Unzips a zip file into an output folder.
      *
-     * @param zipFilePath the zip file path
+     * @param zipFilePath  the zip file path
      * @param outputFolder the output folder path
      * @throws ZipException when there was a problem during the unzip process
      */
@@ -274,7 +273,8 @@ public class ZipUtils {
 
     /**
      * Writes a file from a zipInputStream to a path. Creates the file parent directories if they don't exist.
-     * @param zipInputStream the zip input stream
+     *
+     * @param zipInputStream  the zip input stream
      * @param fileToWritePath the file path to write
      * @throws ZipException when there was a problem during the file creation
      */
@@ -306,7 +306,7 @@ public class ZipUtils {
      * @throws ZipException when there was a problem to create the directories
      */
     private static void createDirectoryIfNotExists(final Path path) throws ZipException {
-        if(path.toFile().exists()) {
+        if (path.toFile().exists()) {
             return;
         }
         try {
@@ -319,7 +319,7 @@ public class ZipUtils {
     /**
      * Zips a directory and its children content.
      *
-     * @param fromPath the directory path to zip
+     * @param fromPath      the directory path to zip
      * @param toZipFilePath the path to the zip file that will be created
      * @throws ZipException when there was a problem during the zip process
      */
@@ -331,7 +331,7 @@ public class ZipUtils {
             throw new ZipException(String.format("Could not create file '%s'", toZipFilePath.toString()), e);
         }
 
-        try(final FileOutputStream fileOutputStream = new FileOutputStream(createdZipFilePath.toFile());
+        try (final FileOutputStream fileOutputStream = new FileOutputStream(createdZipFilePath.toFile());
             final BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
             final ZipOutputStream zipOut = new ZipOutputStream(bos);
             final Stream<Path> walkStream = Files.walk(fromPath)) {
