@@ -8,6 +8,7 @@ import { TranslateService } from '../../../shared/translator/translate.service';
 import { CreateOrUpdateArtifactAction, DeleteArtifactAction } from '../../../store/actions/artifacts.action';
 import { EnvParamsComponent } from '../env-params/env-params.component';
 import { ArtifactFormComponent } from './artifact-form.component';
+import {ModalService} from "../../../services/modal.service";
 
 import {
     CreateInstanceArtifactAction,
@@ -22,6 +23,7 @@ export class ArtifactsService {
                 private modalService: SdcUiServices.ModalService,
                 private topologyTemplateService: TopologyTemplateService,
                 private translateService: TranslateService,
+                private modalAlertservice: ModalService,
                 private store: Store) {
     }
 
@@ -56,8 +58,13 @@ export class ArtifactsService {
         const onOkPressed = () => {
             const updatedArtifact = modalInstance.innerModalContent.instance.artifact;
             this.serviceLoader.activate();
+            this.modalAlertservice.openDelayedAlertModal('Please be patient', 'Large files processing may take up even several minutes.', 'Cancel');
             this.dispatchArtifactAction(componentId, componentType, updatedArtifact, artifactType, instanceId, resourceType)
-                    .subscribe().add(() => this.serviceLoader.deactivate());
+                .subscribe().add(() => {
+                this.serviceLoader.deactivate();
+                this.modalAlertservice._shouldDisplayDelayedAlertModal = false;
+                this.modalAlertservice.closeCurrentModal();
+            });
         };
 
         const addOrUpdateArtifactModalConfig = {
@@ -116,7 +123,7 @@ export class ArtifactsService {
             const updatedArtifact = modalInstance.innerModalContent.instance.artifact;
             this.serviceLoader.activate();
             this.dispatchArtifactAction(componentId, componentType, updatedArtifact, ArtifactType.DEPLOYMENT, instanceId)
-                    .subscribe().add(() => this.serviceLoader.deactivate());
+                .subscribe().add(() => this.serviceLoader.deactivate());
         };
 
         const envParamsModal = {
@@ -160,7 +167,7 @@ export class ArtifactsService {
         const onOkPressed: Function = () => {
             this.serviceLoader.activate();
             this.store.dispatch((instanceId) ? new DeleteInstanceArtifactAction(artifactObject) : new DeleteArtifactAction(artifactObject))
-                    .subscribe().add(() => this.serviceLoader.deactivate());
+                .subscribe().add(() => this.serviceLoader.deactivate());
         };
 
         const title = this.translateService.translate('ARTIFACT_VIEW_DELETE_MODAL_TITLE');

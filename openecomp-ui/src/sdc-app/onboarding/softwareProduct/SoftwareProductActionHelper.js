@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications copyright (c) 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +52,11 @@ import {
     versionStatus
 } from 'sdc-app/common/helpers/ItemsHelperConstants.js';
 
+let shouldDisplayTimingValidationInfo = true;
+let alertValidationTiming = Configuration.get(
+    'displayAlertValidationAfterMilisec'
+);
+
 function getLicensingData(licensingData = {}) {
     const { licenseAgreement, featureGroups } = licensingData;
     const newlicenseAgreement = getValue(licenseAgreement);
@@ -61,6 +67,33 @@ function getLicensingData(licensingData = {}) {
               featureGroups: newfeatureGroups
           }
         : undefined;
+}
+
+function getTimingInfoWarning() {
+    return {
+        type: modalActionTypes.GLOBAL_MODAL_WARNING,
+        data: {
+            title: 'Please be patient',
+            msg: 'Large files processing may take up even several minutes.',
+            cancelButtonText: i18n('Cancel')
+        }
+    };
+}
+
+function displayTimingValidationInfo(dispatch) {
+    shouldDisplayTimingValidationInfo = true;
+    setTimeout(function() {
+        if (shouldDisplayTimingValidationInfo) {
+            dispatch(getTimingInfoWarning());
+        }
+    }, alertValidationTiming);
+}
+
+function closeTimingValidationInfo(dispatch) {
+    shouldDisplayTimingValidationInfo = false;
+    dispatch({
+        type: modalActionTypes.GLOBAL_MODAL_CLOSE
+    });
 }
 
 function baseUrl() {
@@ -345,6 +378,7 @@ const SoftwareProductActionHelper = {
     },
 
     processAndValidateHeatCandidate(dispatch, { softwareProductId, version }) {
+        displayTimingValidationInfo(dispatch);
         return validateHeatCandidate(softwareProductId, version).then(
             response => {
                 if (response.status === 'Success') {
@@ -362,6 +396,7 @@ const SoftwareProductActionHelper = {
                         version
                     });
                 }
+                closeTimingValidationInfo(dispatch);
             }
         );
     },
@@ -374,7 +409,7 @@ const SoftwareProductActionHelper = {
             type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
             payload: {}
         });
-
+        displayTimingValidationInfo(dispatch);
         Promise.resolve()
             .then(() => uploadFile(softwareProductId, formData, version))
             .then(response => {
@@ -410,20 +445,25 @@ const SoftwareProductActionHelper = {
                             });
                             break;
                     }
+                    closeTimingValidationInfo(dispatch);
                 } else {
                     throw new Error(parseUploadErrorMsg(response.errors));
                 }
             })
             .catch(error => {
-                dispatch({
-                    type: modalActionTypes.GLOBAL_MODAL_ERROR,
-                    data: {
-                        title: failedNotificationTitle,
-                        msg:
-                            error.message ||
-                            (error.responseJSON && error.responseJSON.message)
-                    }
-                });
+                dispatch(
+                    {
+                        type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                        data: {
+                            title: failedNotificationTitle,
+                            msg:
+                                error.message ||
+                                (error.responseJSON &&
+                                    error.responseJSON.message)
+                        }
+                    },
+                    closeTimingValidationInfo(dispatch)
+                );
             });
     },
 
