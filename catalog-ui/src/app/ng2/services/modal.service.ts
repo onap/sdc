@@ -7,7 +7,7 @@ import {MultiStepsWizardComponent} from "../components/ui/multi-steps-wizard/mul
 import {ModalComponent} from "../components/ui/modal/modal.component";
 import {WizardHeaderBaseComponent} from "app/ng2/components/ui/multi-steps-wizard/multi-steps-wizard-header-base.component";
 import { DynamicComponentService } from 'app/ng2/services/dynamic-component.service';
-
+import { getSdcConfig } from "../config/sdc-config.config.factory";
 
 @Injectable()
 export class ModalService {
@@ -16,12 +16,24 @@ export class ModalService {
 
     constructor(private dynamicComponentService: DynamicComponentService) { }
 
-    
+    public _shouldDisplayDelayedAlertModal: boolean = true;
+
     /* Shortcut method to open an alert modal with title, message, and close button that simply closes the modal. */
     public openAlertModal(title: string, message: string, closeButtonText?:string) {
         let closeButton: ButtonModel = new ButtonModel(closeButtonText || 'Close', 'grey', this.closeCurrentModal);
         let modalModel: ModalModel = new ModalModel('sm', title, message, [closeButton], 'alert');
         this.createCustomModal(modalModel).instance.open();
+    }
+
+    public openDelayedAlertModal(title: string, message: string,
+                                 closeButtonText?:string) {
+        const timeDelay : number = getSdcConfig().displayAlertValidationAfterMilisec;
+        setTimeout(() => {
+            if(this._shouldDisplayDelayedAlertModal) {
+                this.openAlertModal(title, message, closeButtonText);
+            }
+        }, timeDelay);
+        this._shouldDisplayDelayedAlertModal = true;
     }
 
     public openErrorModal = (closeButtonText?: string, errorMessage?: string):void => {
@@ -38,7 +50,7 @@ export class ModalService {
      * @param actionButtonText Blue call to action button
      * @param actionButtonCallback function to invoke when button is clicked
      * @param cancelButtonText text for close/cancel button
-     */    
+     */
     public createActionModal = (title: string, message: string, actionButtonText: string, actionButtonCallback: Function, cancelButtonText: string): ComponentRef<ModalComponent> => {
         let actionButton: ButtonModel = new ButtonModel(actionButtonText, 'blue', actionButtonCallback);
         let cancelButton: ButtonModel = new ButtonModel(cancelButtonText, 'grey', this.closeCurrentModal);
@@ -81,7 +93,7 @@ export class ModalService {
         return wizardInstance;
     }
 
-    
+
     public closeCurrentModal = () => {
         if (!this.currentModal) return;
         this.currentModal.instance.close();
@@ -106,5 +118,3 @@ export class ModalService {
 
 
 }
-
-
