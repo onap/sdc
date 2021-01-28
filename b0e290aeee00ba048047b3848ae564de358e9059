@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16ac3982_a8ce133b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 7439
+      },
+      "writtenOn": "2021-01-28T06:24:15Z",
+      "side": 1,
+      "message": "use arrow function",
+      "revId": "b0e290aeee00ba048047b3848ae564de358e9059",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
