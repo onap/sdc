@@ -1,4 +1,3 @@
-
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -27,6 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_NS_COMPONENT_CATEGORY;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_VERSION_METADATA;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.NSD_FILE_PATH_FORMAT;
+import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.UNSIGNED_CSAR_EXTENSION;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ETSI_PACKAGE;
 
 import java.util.ArrayList;
@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.EtsiNfvNsdCsarGeneratorFactory;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.NsdCsar;
 
 class EtsiNfvNsCsarEntryGeneratorTest {
 
@@ -68,12 +69,14 @@ class EtsiNfvNsCsarEntryGeneratorTest {
     @Test
     void successfullyEntryGenerationTest() throws NsdException {
         mockServiceComponent();
-        final byte[] expectedNsdCsar = new byte[5];
-        when(etsiNfvNsdCsarGenerator.generateNsdCsar(service)).thenReturn(expectedNsdCsar);
+        final NsdCsar nsdCsar = new NsdCsar(SERVICE_NORMALIZED_NAME);
+        nsdCsar.setCsarPackage(new byte[5]);
+        when(etsiNfvNsdCsarGenerator.generateNsdCsar(service)).thenReturn(nsdCsar);
         final Map<String, byte[]> entryMap = etsiNfvNsCsarEntryGenerator.generateCsarEntries(service);
         assertThat("Csar Entries should contain only one entry", entryMap.size(), is(1));
         assertThat("Csar Entries should contain the expected entry", entryMap,
-            hasEntry(String.format(NSD_FILE_PATH_FORMAT, ETSI_PACKAGE, SERVICE_NORMALIZED_NAME), expectedNsdCsar));
+            hasEntry(String.format(NSD_FILE_PATH_FORMAT, ETSI_PACKAGE, SERVICE_NORMALIZED_NAME, UNSIGNED_CSAR_EXTENSION),
+                nsdCsar.getCsarPackage()));
     }
 
     @Test

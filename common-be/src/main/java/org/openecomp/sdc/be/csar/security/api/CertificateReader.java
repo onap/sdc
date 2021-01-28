@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,22 +16,19 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.NsdCsar;
+package org.openecomp.sdc.be.csar.security.api;
 
-/**
- * Generator for a ETSI NFV NSD CSAR
- */
-public interface EtsiNfvNsdCsarGenerator {
+import java.io.File;
+import java.security.cert.Certificate;
+
+public interface CertificateReader {
 
     /**
-     * Generates the ETSI NFV Network Service Descriptor based on a SERVICE SDC component.
+     * Reads a certificate file.
      *
-     * @param component the service component
-     * @return the CSAR package content
+     * @param certFile the certificate file
+     * @return the read certificate
      */
-    NsdCsar generateNsdCsar(Component component) throws NsdException;
+    Certificate loadCertificate(File certFile);
 }

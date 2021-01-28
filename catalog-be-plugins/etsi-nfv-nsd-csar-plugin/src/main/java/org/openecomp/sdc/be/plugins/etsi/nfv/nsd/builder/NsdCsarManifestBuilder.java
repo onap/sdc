@@ -1,4 +1,3 @@
- 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -25,6 +24,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Builder for the manifest (.mf) file in a NSD CSAR
@@ -45,6 +45,7 @@ public class NsdCsarManifestBuilder {
     private final MetadataHeader metadataHeader;
     private final Set<String> sources;
     private final Set<String> compatibleSpecificationVersions;
+    private String signature;
 
     public NsdCsarManifestBuilder() {
         metadataHeader = new MetadataHeader();
@@ -122,6 +123,13 @@ public class NsdCsarManifestBuilder {
         return this;
     }
 
+    public NsdCsarManifestBuilder withSignature(final String signature) {
+        if (signature != null) {
+            this.signature = signature.trim();
+        }
+        return this;
+    }
+
     /**
      * Builds a string representing the manifest content based on provided values.
      *
@@ -142,7 +150,14 @@ public class NsdCsarManifestBuilder {
                 .append(String.join(",", compatibleSpecificationVersions)).append(NEW_LINE);
         }
         final StringBuilder builder = new StringBuilder();
-        builder.append(metadataBuilder).append(compatibleSpecificationVersionsBuilder).append(NEW_LINE).append(sourceBuilder);
+
+        builder.append(metadataBuilder)
+            .append(compatibleSpecificationVersionsBuilder)
+            .append(NEW_LINE)
+            .append(sourceBuilder);
+        if (StringUtils.isNotBlank(signature)) {
+            builder.append(signature);
+        }
         return builder.toString();
     }
 

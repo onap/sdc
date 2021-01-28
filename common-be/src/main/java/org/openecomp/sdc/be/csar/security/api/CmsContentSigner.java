@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,22 +16,17 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.NsdCsar;
+package org.openecomp.sdc.be.csar.security.api;
 
-/**
- * Generator for a ETSI NFV NSD CSAR
- */
-public interface EtsiNfvNsdCsarGenerator {
+import java.security.Key;
+import java.security.cert.Certificate;
+import org.openecomp.sdc.be.csar.security.exception.CmsSignatureException;
 
-    /**
-     * Generates the ETSI NFV Network Service Descriptor based on a SERVICE SDC component.
-     *
-     * @param component the service component
-     * @return the CSAR package content
-     */
-    NsdCsar generateNsdCsar(Component component) throws NsdException;
+public interface CmsContentSigner {
+
+    byte[] signData(byte[] data, Certificate signingCertificate, Key signingKey)
+        throws CmsSignatureException;
+
+    String formatToPemSignature(byte[] signedData) throws CmsSignatureException;
 }
