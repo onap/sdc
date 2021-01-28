@@ -531,7 +531,7 @@ limitations under the License.
                                 <volumes>
                                     <bind>
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
-                                        <volume>${project.basedir}/src/test/resources/cert:/var/lib/jetty/onap/cert
+                                        <volume>${project.basedir}/src/test/resources/cert/onboarding-be:/var/lib/jetty/onap/cert
                                         </volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
                                     </bind>
@@ -572,12 +572,15 @@ limitations under the License.
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4000
                                         -Xmx1536m -Xms1536m</JAVA_OPTIONS>
+                                    <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
+                                    <SDC_NSD_CERT_NAME>nsdCert</SDC_NSD_CERT_NAME>
                                 </env>
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
                                     <bind>
                                         <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
+                                        <volume>${project.basedir}/src/test/resources/cert/catalog-be:/var/lib/jetty/onap/cert</volume>
                                     </bind>
                                 </volumes>
                                 <wait>

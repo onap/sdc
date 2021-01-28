@@ -1,4 +1,3 @@
- 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -25,6 +24,7 @@ import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsdCsarGenerat
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.VnfDescriptorGenerator;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.security.NsdCsarEtsiOption2Signer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -35,20 +35,24 @@ public class EtsiNfvNsdCsarGeneratorFactory {
     private final NsDescriptorGeneratorFactory nsDescriptorGeneratorFactory;
     private final ArtifactCassandraDao artifactCassandraDao;
     private final ObjectProvider<EtsiNfvNsdCsarGeneratorImpl> etsiNfvNsdCsarGeneratorObjectProvider;
+    private final NsdCsarEtsiOption2Signer nsdCsarEtsiOption2Signer;
 
     public EtsiNfvNsdCsarGeneratorFactory(final VnfDescriptorGenerator vnfDescriptorGenerator,
                                           final NsDescriptorGeneratorFactory nsDescriptorGeneratorFactory,
                                           final ArtifactCassandraDao artifactCassandraDao,
-                                          final ObjectProvider<EtsiNfvNsdCsarGeneratorImpl> etsiNfvNsdCsarGeneratorObjectProvider) {
+                                          final ObjectProvider<EtsiNfvNsdCsarGeneratorImpl> etsiNfvNsdCsarGeneratorObjectProvider,
+                                          final NsdCsarEtsiOption2Signer nsdCsarEtsiOption2Signer) {
         this.vnfDescriptorGenerator = vnfDescriptorGenerator;
         this.nsDescriptorGeneratorFactory = nsDescriptorGeneratorFactory;
         this.artifactCassandraDao = artifactCassandraDao;
         this.etsiNfvNsdCsarGeneratorObjectProvider = etsiNfvNsdCsarGeneratorObjectProvider;
+        this.nsdCsarEtsiOption2Signer = nsdCsarEtsiOption2Signer;
     }
 
     public EtsiNfvNsdCsarGenerator create(final EtsiVersion version) {
         final NsDescriptorConfig nsDescriptorConfig = new NsDescriptorConfig(version);
         return etsiNfvNsdCsarGeneratorObjectProvider
-            .getObject(nsDescriptorConfig, vnfDescriptorGenerator, nsDescriptorGeneratorFactory, artifactCassandraDao);
+            .getObject(nsDescriptorConfig, vnfDescriptorGenerator, nsDescriptorGeneratorFactory, artifactCassandraDao
+                , nsdCsarEtsiOption2Signer);
     }
 }
