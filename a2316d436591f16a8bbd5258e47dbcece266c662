@@ -1,0 +1,299 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ccd253b7_786e0c6d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "Dead code should be removed not commented to make it easier to read",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51884b22_342a4fb2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "I overlooked it before, but why god with public here ? And static btw ?",
+      "range": {
+        "startLine": 130,
+        "startChar": 11,
+        "endLine": 130,
+        "endChar": 17
+      },
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c42f3069_da5a0aa3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "it should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b63ffbb_2932cd2f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "it should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "056da88d_6e7c1509",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "I don\u0027t get, you are declaring a variable that you set to null just to pass it to a function ? Might as well pass null.. ?",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed9c9220_865f5193",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented (sometimes it is, sometimes it isn\u0027t.. ?)",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4183da6_46a8cd8c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented (sometimes it is, sometimes it isn\u0027t.. ?)",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed4f5a47_4bd717a8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented (sometimes it is, sometimes it isn\u0027t.. ?)",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a7cf46e_c46fd612",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1457,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented (sometimes it is, sometimes it isn\u0027t.. ?)",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dff093c8_b6d8ebf3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1469,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82408310_5118c0c0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1490,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d9ac57b_f4ee76c4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1613,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f0b2594_5af81e4c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1711,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "561a1da0_f31bdcc1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1965,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a5af77a_77b820a8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a7521c4_20817c33",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 739,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2ba6f92_6be16d1b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 747,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-28T16:51:09Z",
+      "side": 1,
+      "message": "It should be indented",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
