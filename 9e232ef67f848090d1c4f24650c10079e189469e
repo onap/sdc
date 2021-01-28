@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fdaf15d1_38445c85",
+        "filename": "catalog-ui/src/app/ng2/components/forms/artifacts-form/artifacts.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2021-01-28T22:00:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e18feece_c5f11131",
+      "range": {
+        "startLine": 61,
+        "startChar": 79,
+        "endLine": 61,
+        "endChar": 135
+      },
+      "revId": "9e232ef67f848090d1c4f24650c10079e189469e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c12960ed_b9b3d87c",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "9e232ef67f848090d1c4f24650c10079e189469e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d4df3c7_66e3edee",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2021-01-28T22:00:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c12960ed_b9b3d87c",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 76
+      },
+      "revId": "9e232ef67f848090d1c4f24650c10079e189469e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
