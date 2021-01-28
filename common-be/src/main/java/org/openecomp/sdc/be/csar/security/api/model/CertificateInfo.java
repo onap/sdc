@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,22 +16,31 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.NsdCsar;
+package org.openecomp.sdc.be.csar.security.api.model;
 
-/**
- * Generator for a ETSI NFV NSD CSAR
- */
-public interface EtsiNfvNsdCsarGenerator {
+import java.io.File;
+import java.security.Key;
+import java.security.cert.Certificate;
+
+public interface CertificateInfo {
+
+    String getName();
+
+    File getCertificateFile();
+
+    Certificate getCertificate();
+
+    File getPrivateKeyFile();
+
+    Key getPrivateKey();
 
     /**
-     * Generates the ETSI NFV Network Service Descriptor based on a SERVICE SDC component.
+     * Check if the certificate is valid.
      *
-     * @param component the service component
-     * @return the CSAR package content
+     * @return {@code true} if the certificate is valid. {@code false} otherwise.
+     * @throws UnsupportedOperationException when the certificate is not supported
      */
-    NsdCsar generateNsdCsar(Component component) throws NsdException;
+    boolean isValid();
+
 }

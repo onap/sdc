@@ -1,4 +1,3 @@
-
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -23,12 +22,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_NS_COMPONENT_CATEGORY;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ONBOARDED_PACKAGE;
 
 import fj.data.Either;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.csar.security.model.CertificateInfoImpl;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -52,7 +56,10 @@ import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.NsDescriptorGeneratorFa
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.Nsd;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.NsdCsar;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.VnfDescriptor;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.security.NsdCsarEtsiOption2Signer;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.security.exception.NsdSignatureException;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 
 class EtsiNfvNsdCsarGeneratorImplTest {
@@ -67,6 +74,8 @@ class EtsiNfvNsdCsarGeneratorImplTest {
     @Mock
     private ArtifactCassandraDao artifactCassandraDao;
     @Mock
+    private NsdCsarEtsiOption2Signer nsdCsarEtsiOption2Signer;
+    @Mock
     private Service service;
     private EtsiNfvNsdCsarGeneratorImpl etsiNfvNsdCsarGenerator;
 
@@ -74,8 +83,8 @@ class EtsiNfvNsdCsarGeneratorImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         final EtsiVersion version2_5_1 = EtsiVersion.VERSION_2_5_1;
-        etsiNfvNsdCsarGenerator = new EtsiNfvNsdCsarGeneratorImpl(new NsDescriptorConfig(version2_5_1), vnfDescriptorGenerator,
-            nsDescriptorGeneratorFactory, artifactCassandraDao);
+        etsiNfvNsdCsarGenerator = new EtsiNfvNsdCsarGeneratorImpl(new NsDescriptorConfig(version2_5_1),
+            vnfDescriptorGenerator, nsDescriptorGeneratorFactory, artifactCassandraDao, nsdCsarEtsiOption2Signer);
         when(nsDescriptorGeneratorFactory.create()).thenReturn(nsDescriptorGeneratorImpl);
     }
 
@@ -83,8 +92,29 @@ class EtsiNfvNsdCsarGeneratorImplTest {
     void generateNsdCsarSuccessfulTest() throws VnfDescriptorException, NsdException {
         mockServiceComponent();
         mockServiceComponentArtifacts();
-        final byte[] nsdCsar = etsiNfvNsdCsarGenerator.generateNsdCsar(service);
-        assertThat("", nsdCsar, is(notNullValue()));
+        final NsdCsar nsdCsar = etsiNfvNsdCsarGenerator.generateNsdCsar(service);
+        assertThat("The NSD CSAR should not be null", nsdCsar, is(notNullValue()));
+        assertThat("The NSD CSAR should not be signed", nsdCsar.isSigned(), is(false));
+        assertThat("The NSD CSAR content should not be null", nsdCsar.getCsarPackage(), is(notNullValue()));
+    }
+
+    @Test
+    void generateSignedNsdCsarSuccessfulTest() throws VnfDescriptorException, NsdException, NsdSignatureException {
+        mockServiceComponent();
+        mockServiceComponentArtifacts();
+        when(nsdCsarEtsiOption2Signer.isCertificateConfigured()).thenReturn(true);
+        final String path = getClass().getClassLoader().getResource("aFile.txt").getPath();
+        System.out.println(path);
+        final CertificateInfoImpl certificateInfo = new CertificateInfoImpl(new File(path), null);
+        when(nsdCsarEtsiOption2Signer.getSigningCertificate()).thenReturn(Optional.of(certificateInfo));
+        when(nsdCsarEtsiOption2Signer.sign(any(byte[].class))).thenReturn("signedCsar".getBytes(StandardCharsets.UTF_8));
+        final NsdCsar nsdCsar = etsiNfvNsdCsarGenerator.generateNsdCsar(service);
+        verify(nsdCsarEtsiOption2Signer).signArtifacts(any(NsdCsar.class));
+        assertThat("The NSD CSAR should not be null", nsdCsar, is(notNullValue()));
+        assertThat("The NSD CSAR should be signed", nsdCsar.isSigned(), is(true));
+        assertThat("The NSD CSAR content should not be null", nsdCsar.getCsarPackage(), is(notNullValue()));
+        assertThat("The NSD CSAR name should be as expected", nsdCsar.getFileName(), is(SERVICE_NORMALIZED_NAME));
+        assertThat("The NSD CSAR name should be as expected", nsdCsar.isEmpty(), is(false));
     }
 
     @Test()
@@ -103,6 +133,7 @@ class EtsiNfvNsdCsarGeneratorImplTest {
         final Nsd nsd = new Nsd();
         when(vnfDescriptorGenerator.generate(componentInstance1Name, instanceArtifact1)).thenReturn(Optional.of(vnfDescriptor1));
         when(nsDescriptorGeneratorImpl.generate(service, vnfDescriptorList)).thenReturn(Optional.of(nsd));
+
         final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();
         nsComponentCategoryDefinition.setName(ETSI_NS_COMPONENT_CATEGORY);

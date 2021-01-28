@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,22 +16,12 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.NsdCsar;
+package org.openecomp.sdc.be.csar.security.exception;
 
-/**
- * Generator for a ETSI NFV NSD CSAR
- */
-public interface EtsiNfvNsdCsarGenerator {
+public class UnsupportedKeyFormatException extends RuntimeException {
 
-    /**
-     * Generates the ETSI NFV Network Service Descriptor based on a SERVICE SDC component.
-     *
-     * @param component the service component
-     * @return the CSAR package content
-     */
-    NsdCsar generateNsdCsar(Component component) throws NsdException;
+    public UnsupportedKeyFormatException(final String message) {
+        super(message);
+    }
 }

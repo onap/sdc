@@ -1,4 +1,3 @@
-
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -43,6 +42,10 @@ class NsdCsarManifestBuilderTest {
         nsdCsarManifestBuilder.withFileStructureVersion("fileStructureVersion");
         nsdCsarManifestBuilder.withCompatibleSpecificationVersion("1.0.0");
         nsdCsarManifestBuilder.withCompatibleSpecificationVersion("1.0.1");
+        final String signature = "-----BEGIN CMS-----\n"
+            + "12d08j19d981928129dj129j1\n"
+            + "-----END CMS-----";
+        nsdCsarManifestBuilder.withSignature(signature);
         final List<String> sourceList = new ArrayList<>();
         final String source1 = "Definitions/aSource1.yaml";
         sourceList.add(source1);
@@ -53,9 +56,16 @@ class NsdCsarManifestBuilderTest {
         assertSource(manifest, source1);
         assertSource(manifest, source2);
         assertCompatibleSpecificationVersions(manifest, "1.0.0,1.0.1");
-        final String expectedManifest = "metadata: \n" + "nsd_designer: designer\n" + "nsd_invariant_id: invariantId\n" + "nsd_name: name\n"
-            + "nsd_file_structure_version: fileStructureVersion\n" + "compatible_specification_versions: 1.0.0,1.0.1\n" + "\n"
-            + "Source: Definitions/aSource1.yaml\n" + "Source: Definitions/aSource2.yaml\n" + "";
+        final String expectedManifest = "metadata: \n"
+            + "nsd_designer: designer\n"
+            + "nsd_invariant_id: invariantId\n"
+            + "nsd_name: name\n"
+            + "nsd_file_structure_version: fileStructureVersion\n"
+            + "compatible_specification_versions: 1.0.0,1.0.1\n"
+            + "\n"
+            + "Source: Definitions/aSource1.yaml\n"
+            + "Source: Definitions/aSource2.yaml\n"
+            + signature;
         assertEquals(expectedManifest, manifest);
     }
 
