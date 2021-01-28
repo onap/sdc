@@ -16,6 +16,24 @@
       "revId": "b0e290aeee00ba048047b3848ae564de358e9059",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d9ca3f0_3ccf08bf",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 6751
+      },
+      "writtenOn": "2021-01-28T09:51:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "16ac3982_a8ce133b",
+      "revId": "b0e290aeee00ba048047b3848ae564de358e9059",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
