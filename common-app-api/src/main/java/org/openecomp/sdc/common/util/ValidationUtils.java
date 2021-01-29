@@ -83,6 +83,7 @@ public class ValidationUtils {
 
 	public static final Pattern CLEAN_FILENAME_PATTERN = Pattern.compile("[\\x00-\\x1f\\x80-\\x9f\\x5c/<?>\\*:|\"/]+");
 
+	public static final Pattern YANG_MODULE_3GPP_PATTERN = Pattern.compile("^(_3gpp).*$");
 	public static final Pattern DASH_PATTERN = Pattern.compile("[-]+");
 	public static final Pattern UNDERSCORE_PATTERN = Pattern.compile("[_]+");
 	public static final Pattern PLUS_PATTERN = Pattern.compile("[+]+");
@@ -465,7 +466,8 @@ public class ValidationUtils {
 		str = normaliseWhitespace(str);
 		str = SPACE_PATTERN.matcher(str).replaceAll("-");
 		str = DASH_PATTERN.matcher(str).replaceAll("-");
-		str = StringUtils.strip(str, "-_ .");
+		if (!YANG_MODULE_3GPP_PATTERN.matcher(str).matches())
+		    str = StringUtils.strip(str, "-_ .");
 
 		return str;
 	}
