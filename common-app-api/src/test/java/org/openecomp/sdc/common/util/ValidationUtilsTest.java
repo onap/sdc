@@ -724,6 +724,24 @@ public class ValidationUtilsTest {
 	}
 
 	@Test
+	public void validateNormalizeFileNameFor3gppYangModule() {
+	    final String testName = "_3gpptestfile";
+
+	    String result = ValidationUtils.normalizeFileName(testName);
+
+	    assertEquals(result, testName);
+	}
+
+	@Test
+	public void validateNormalizeFileNameStripLeadingUnderscore() {
+	    final String testName = "_testfile";
+
+	    String result = ValidationUtils.normalizeFileName(testName);
+
+	    assertEquals(result, "testfile");
+	}
+
+	@Test
 	public void checkValidateUrlReturnsTrueIfURLIsValid() {
 		final String testUrl = "http://test.co/valid/url/";
 
