@@ -189,6 +189,24 @@
     },
     {
       "key": {
+        "uuid": "89376860_fdd72d79",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-01-29T08:35:38Z",
+      "side": 1,
+      "message": "I\u0027m pretty sure it\u0027s null :) Empty data would be an empty map. But those are just tests..",
+      "parentUuid": "c199dcf9_035eb946",
+      "revId": "a2316d436591f16a8bbd5258e47dbcece266c662",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ed9c9220_865f5193",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 7
