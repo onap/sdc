@@ -58,7 +58,7 @@ export class ArtifactsService {
         const onOkPressed = () => {
             const updatedArtifact = modalInstance.innerModalContent.instance.artifact;
             this.serviceLoader.activate();
-            this.modalAlertservice.openDelayedAlertModal('Please be patient', 'Large files processing may take up to several minutes.', 'Cancel');
+            this.modalAlertservice.openDelayedAlertModal('Please be patient', 'Large files processing may take up to several minutes.', 'OK');
             this.dispatchArtifactAction(componentId, componentType, updatedArtifact, artifactType, instanceId, resourceType)
                 .subscribe().add(() => {
                 this.serviceLoader.deactivate();

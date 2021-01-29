@@ -75,7 +75,7 @@ function getTimingInfoWarning() {
         data: {
             title: 'Please be patient',
             msg: 'Large files processing may take up to several minutes.',
-            cancelButtonText: i18n('Cancel')
+            cancelButtonText: 'OK'
         }
     };
 }

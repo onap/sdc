@@ -430,7 +430,7 @@ const SDC_CONFIG = {
 
 		]
 	},
-	"displayAlertValidationAfterMilisec": 3000
+	"displayAlertValidationAfterMilisec": 10000
 };
 
 module.exports = SDC_CONFIG;

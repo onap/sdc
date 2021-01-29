@@ -13,5 +13,5 @@
     "defaultNotificationsWorkerUpdateMillisecond": 10000,
     "showBrowseVNF": true,
     "allTestScenario": "onap-dublin",
-    "displayAlertValidationAfterMilisec": 3000
+    "displayAlertValidationAfterMilisec": 10000
 }
