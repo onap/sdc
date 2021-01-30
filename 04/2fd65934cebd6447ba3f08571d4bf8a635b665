@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Pawel Kasperkiewicz <pawel.kasperkiewicz@nokia.com>
+Code-Review+1: Tomasz Kogut <tomasz.kogut@nokia.com>
+Code-Review+2: Christophe Closset <christophe.closset@intl.att.com>
+Submitted-by: Christophe Closset <christophe.closset@intl.att.com>
+Submitted-at: Sat, 30 Jan 2021 09:20:10 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/117233
+Project: sdc
+Branch: refs/heads/master
