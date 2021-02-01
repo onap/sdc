@@ -103,7 +103,8 @@ public class FeProxyServlet extends SSLProxyServlet {
 	{
 		Configuration config = getConfiguration(clientRequest);
 		if (config == null) {
-			log.error("failed to retrieve configuration.");
+			log.error("Failed to retrieve configuration. Adding proxy header failed.");
+			return;
 		}
 		BasicAuthConfig basicAuth = config.getBasicAuth();
 		if (basicAuth.getEnabled()) {
