@@ -25,7 +25,6 @@ import fj.data.Either;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -51,11 +50,9 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
@@ -661,6 +658,12 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
+        if (!componentParametersView.isIgnoreComponentInstancesAttributes()) {
+            status = setComponentInstancesAttributesFromGraph(componentV, toscaElement);
+            if (status != JanusGraphOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+            }
+        }
         if (!componentParametersView.isIgnoreCapabilities()) {
             status = setCapabilitiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
@@ -742,7 +745,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
         }
 
-        if (!componentParametersView.isIgnoreForwardingPath()) {
+        if (!componentParametersView.isIgnoreServicePath()) {
             status = setForwardingGraphPropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
@@ -955,6 +958,18 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 return result.right().value();
             }
+        }
+        return JanusGraphOperationStatus.OK;
+    }
+
+    private JanusGraphOperationStatus setComponentInstancesAttributesFromGraph(final GraphVertex componentV,
+                                                                               final TopologyTemplate topologyTemplate) {
+        final Either<Map<String, MapAttributesDataDefinition>, JanusGraphOperationStatus> result =
+            getDataFromGraph(componentV, EdgeLabelEnum.INST_ATTRIBUTES);
+        if (result.isLeft()) {
+            topologyTemplate.setInstAttributes(result.left().value());
+        } else if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+            return result.right().value();
         }
         return JanusGraphOperationStatus.OK;
     }
