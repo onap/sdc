@@ -34,6 +34,7 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapComponentInstanceExternalRefs;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
@@ -69,7 +70,7 @@ public enum VertexTypeEnum {
 	USER						("user",						null),
 	INPUTS						("inputs",					PropertyDataDefinition.class),
 	GROUPS						("groups",					GroupDataDefinition.class),
-	INST_ATTRIBUTES				("instAttributes",			MapPropertiesDataDefinition.class),
+	INST_ATTRIBUTES				("instAttributes",			MapAttributesDataDefinition.class),
 	INST_PROPERTIES				("instProperties",			MapPropertiesDataDefinition.class),
 	INST_INPUTS					("instInputs",				MapPropertiesDataDefinition.class),
 	INST_GROUPS					("instGroups",				MapGroupsDataDefinition.class),

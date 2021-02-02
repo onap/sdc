@@ -21,17 +21,25 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ComponentParametersView {
 
     private boolean ignoreUsers = false;
     private boolean ignoreGroups = false;
     private boolean ignoreComponentInstances = false;
     private boolean ignoreComponentInstancesProperties = false;
+    private boolean ignoreComponentInstancesAttributes = false;
     private boolean ignoreProperties = false;
+    private boolean ignoreAttributes = false;
     private boolean ignoreCapabilities = false;
     private boolean ignoreRequirements = false;
     private boolean ignoreCategories = false;
@@ -42,10 +50,10 @@ public class ComponentParametersView {
     private boolean ignoreInterfaceInstances = false;
     private boolean ignoreComponentInstancesInterfaces = false;
     private boolean ignoreDerivedFrom = false;
-    private boolean ignoreAttributesFrom = false;
-    private boolean ignoreComponentInstancesAttributesFrom = false;
     private boolean ignoreInputs = false;
+    private boolean ignoreOutputs = false;
     private boolean ignoreComponentInstancesInputs = false;
+    private boolean ignoreComponentInstancesOutputs = false;
     private boolean ignoreCapabiltyProperties = false;
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
@@ -53,9 +61,6 @@ public class ComponentParametersView {
     private boolean ignoreNodeFilter = false;
     private boolean ignoreSubstitutionFilter = false;
     private boolean ignoreDataType = false;
-
-    public ComponentParametersView() {
-    }
 
     public ComponentParametersView(boolean setAllToIgnore) {
         this();
@@ -74,6 +79,9 @@ public class ComponentParametersView {
                     break;
                 case INPUTS:
                     this.setIgnoreInputs(false);
+                    break;
+                case OUTPUTS:
+                    this.setIgnoreOutputs(false);
                     break;
                 case USERS:
                     this.setIgnoreUsers(false);
@@ -133,11 +141,11 @@ public class ComponentParametersView {
                     this.setIgnoreDerivedFrom(false);
                     break;
                 case ATTRIBUTES:
-                    this.setIgnoreAttributesFrom(false);
+                    this.setIgnoreAttributes(false);
                     break;
                 case COMPONENT_INSTANCES_ATTRIBUTES:
                     this.setIgnoreComponentInstances(false);
-                    this.setIgnoreComponentInstancesAttributesFrom(false);
+                    this.setIgnoreComponentInstancesAttributes(false);
                     break;
                 case COMPONENT_INSTANCE_INPUTS:
                     this.setIgnoreComponentInstances(false);
@@ -147,7 +155,7 @@ public class ComponentParametersView {
                     this.setIgnoreCapabiltyProperties(false);
                     break;
                 case FORWARDING_PATHS:
-                    this.setIgnoreForwardingPath(false);
+                    this.setIgnoreServicePath(false);
                     break;
                 case POLICIES:
                 case NON_EXCLUDED_POLICIES:
@@ -178,7 +186,6 @@ public class ComponentParametersView {
     ///////////////////////////////////////////////////////////////
     // When adding new member, please update the filter method.
     ///////////////////////////////////////////////////////////////
-
     public Component filter(Component component, ComponentTypeEnum componentType) {
 
         if (ignoreUsers) {
@@ -199,6 +206,9 @@ public class ComponentParametersView {
         }
         if (ignoreProperties && componentType == ComponentTypeEnum.RESOURCE) {
             ((Resource) component).setProperties(null);
+        }
+        if (ignoreAttributes) {
+            component.setAttributes(null);
         }
         if (ignoreCapabilities) {
             component.setCapabilities(null);
@@ -221,8 +231,8 @@ public class ComponentParametersView {
             component.setDeploymentArtifacts(null);
             component.setToscaArtifacts(null);
         }
-        if (ignoreNodeFilterRequirements){
-          component.setNodeFilterComponents(null);
+        if (ignoreNodeFilterRequirements) {
+            component.setNodeFilterComponents(null);
         }
         if (ignoreInterfaces && ignoreInterfaceInstances &&
             componentType == ComponentTypeEnum.RESOURCE) {
@@ -231,39 +241,34 @@ public class ComponentParametersView {
         if (ignoreDerivedFrom && componentType == ComponentTypeEnum.RESOURCE) {
             ((Resource) component).setDerivedFrom(null);
         }
-        if (ignoreAttributesFrom && componentType == ComponentTypeEnum.RESOURCE) {
-            ((Resource) component).setAttributes(null);
-        }
-        if (ignoreComponentInstancesAttributesFrom) {
+        if (ignoreComponentInstancesAttributes) {
             component.setComponentInstancesAttributes(null);
         }
         if (ignoreInputs) {
             component.setInputs(null);
         }
+        if (ignoreOutputs) {
+            component.setOutputs(null);
+        }
         if (ignoreComponentInstancesInputs) {
             component.setComponentInstancesInputs(null);
+        }
+        if (ignoreComponentInstancesOutputs) {
+            component.setComponentInstancesOutputs(null);
         }
         if (ignoreServicePath && componentType == ComponentTypeEnum.SERVICE) {
             ((Service) component).setForwardingPaths(null);
         }
-        if (ignoreNodeFilter){
+        if (ignoreNodeFilter) {
             component.setNodeFilterComponents(null);
         }
-        if (ignoreSubstitutionFilter){
+        if (ignoreSubstitutionFilter) {
             component.setSubstitutionFilterComponents(null);
         }
         if (ignoreDataType) {
             component.setDataTypes(null);
         }
         return component;
-    }
-
-    public boolean isIgnoreNodeFilterRequirements() {
-        return ignoreNodeFilterRequirements;
-    }
-
-    public void setIgnoreNodeFilterRequirements(boolean ignoreNodeFilter) {
-        this.ignoreNodeFilterRequirements = ignoreNodeFilter;
     }
 
     public void disableAll() {
@@ -273,6 +278,7 @@ public class ComponentParametersView {
         ignoreComponentInstances = true;
         ignoreComponentInstancesProperties = true;
         ignoreProperties = true;
+        ignoreAttributes = true;
         ignoreCapabilities = true;
         ignoreRequirements = true;
         ignoreCategories = true;
@@ -282,10 +288,11 @@ public class ComponentParametersView {
         ignoreInterfaces = true;
         ignoreInterfaceInstances = true;
         ignoreDerivedFrom = true;
-        ignoreAttributesFrom = true;
         ignoreInputs = true;
-        ignoreComponentInstancesAttributesFrom = true;
+        ignoreOutputs = true;
+        ignoreComponentInstancesAttributes = true;
         ignoreComponentInstancesInputs = true;
+        ignoreComponentInstancesOutputs = true;
         ignoreCapabiltyProperties = true;
         ignoreServicePath = true;
         ignoreNodeFilterRequirements = true;
@@ -294,200 +301,12 @@ public class ComponentParametersView {
         ignoreDataType = true;
     }
 
-    public boolean isIgnoreGroups() {
-        return ignoreGroups;
-    }
-
     public void setIgnoreGroups(boolean ignoreGroups) {
         this.ignoreGroups = ignoreGroups;
         if (!ignoreGroups) {
             this.ignoreCapabiltyProperties = ignoreGroups;
             this.ignoreCapabilities = ignoreGroups;
         }
-    }
-
-    public boolean isIgnoreComponentInstances() {
-        return ignoreComponentInstances;
-    }
-
-    public void setIgnoreComponentInstances(boolean ignoreComponentInstances) {
-        this.ignoreComponentInstances = ignoreComponentInstances;
-    }
-
-    public boolean isIgnoreProperties() {
-        return ignoreProperties;
-    }
-
-    public void setIgnoreProperties(boolean ignoreProperties) {
-        this.ignoreProperties = ignoreProperties;
-    }
-
-    public boolean isIgnoreCapabilities() {
-        return ignoreCapabilities;
-    }
-
-    public void setIgnoreCapabilities(boolean ignoreCapabilities) {
-        this.ignoreCapabilities = ignoreCapabilities;
-    }
-
-    public boolean isIgnoreRequirements() {
-        return ignoreRequirements;
-    }
-
-    public void setIgnoreRequirements(boolean ignoreRequirements) {
-        this.ignoreRequirements = ignoreRequirements;
-    }
-
-    public boolean isIgnoreCategories() {
-        return ignoreCategories;
-    }
-
-    public void setIgnoreCategories(boolean ignoreCategories) {
-        this.ignoreCategories = ignoreCategories;
-    }
-
-    public boolean isIgnoreAllVersions() {
-        return ignoreAllVersions;
-    }
-
-    public void setIgnoreAllVersions(boolean ignoreAllVersions) {
-        this.ignoreAllVersions = ignoreAllVersions;
-    }
-
-    public boolean isIgnoreAdditionalInformation() {
-        return ignoreAdditionalInformation;
-    }
-
-    private void setIgnoreAdditionalInformation(boolean ignoreAdditionalInformation) {
-        this.ignoreAdditionalInformation = ignoreAdditionalInformation;
-    }
-
-    public boolean isIgnoreArtifacts() {
-        return ignoreArtifacts;
-    }
-
-    public void setIgnoreArtifacts(boolean ignoreArtifacts) {
-        this.ignoreArtifacts = ignoreArtifacts;
-    }
-
-    public boolean isIgnoreComponentInstancesProperties() {
-        return ignoreComponentInstancesProperties;
-    }
-
-    public void setIgnoreComponentInstancesProperties(boolean ignoreComponentInstancesProperties) {
-        this.ignoreComponentInstancesProperties = ignoreComponentInstancesProperties;
-    }
-
-    public boolean isIgnoreComponentInstancesInputs() {
-        return ignoreComponentInstancesInputs;
-    }
-
-    public void setIgnoreComponentInstancesInputs(boolean ignoreComponentInstancesInputs) {
-        this.ignoreComponentInstancesInputs = ignoreComponentInstancesInputs;
-    }
-
-    public boolean isIgnoreInterfaces() {
-        return ignoreInterfaces;
-    }
-
-    public void setIgnoreInterfaces(boolean ignoreInterfaces) {
-        this.ignoreInterfaces = ignoreInterfaces;
-    }
-
-    public boolean isIgnoreComponentInstancesInterfaces() {
-        return ignoreComponentInstancesInterfaces;
-    }
-
-    public void setIgnoreComponentInstancesInterfaces(boolean ignoreComponentInstancesInterfaces) {
-        this.ignoreComponentInstancesInterfaces = ignoreComponentInstancesInterfaces;
-    }
-
-    public boolean isIgnoreAttributesFrom() {
-        return ignoreAttributesFrom;
-    }
-
-    public void setIgnoreAttributesFrom(boolean ignoreAttributesFrom) {
-        this.ignoreAttributesFrom = ignoreAttributesFrom;
-    }
-
-    public boolean isIgnoreComponentInstancesAttributesFrom() {
-        return ignoreComponentInstancesAttributesFrom;
-    }
-
-    private void setIgnoreComponentInstancesAttributesFrom(boolean ignoreComponentInstancesAttributesFrom) {
-        this.ignoreComponentInstancesAttributesFrom = ignoreComponentInstancesAttributesFrom;
-    }
-
-    public boolean isIgnoreDerivedFrom() {
-        return ignoreDerivedFrom;
-    }
-
-    private void setIgnoreDerivedFrom(boolean ignoreDerivedFrom) {
-        this.ignoreDerivedFrom = ignoreDerivedFrom;
-    }
-
-    public boolean isIgnoreUsers() {
-        return ignoreUsers;
-    }
-
-    public void setIgnoreUsers(boolean ignoreUsers) {
-        this.ignoreUsers = ignoreUsers;
-    }
-
-    public boolean isIgnoreInputs() {
-        return ignoreInputs;
-    }
-
-    public void setIgnoreInputs(boolean ignoreInputs) {
-        this.ignoreInputs = ignoreInputs;
-    }
-
-    public boolean isIgnoreCapabiltyProperties() {
-        return ignoreCapabiltyProperties;
-    }
-
-    public void setIgnoreCapabiltyProperties(boolean ignoreCapabiltyProperties) {
-        this.ignoreCapabiltyProperties = ignoreCapabiltyProperties;
-    }
-
-    public boolean isIgnoreForwardingPath() {
-        return ignoreServicePath;
-    }
-
-    public void setIgnoreForwardingPath(boolean ignoreServicePath) {
-        this.ignoreServicePath = ignoreServicePath;
-    }
-
-    public boolean isIgnorePolicies() {
-        return ignorePolicies;
-    }
-
-    public void setIgnorePolicies(boolean ignorePolicies) {
-        this.ignorePolicies = ignorePolicies;
-    }
-
-    public boolean isIgnoreNodeFilter() {
-        return ignoreNodeFilter;
-    }
-
-    public void setIgnoreNodeFilter(boolean ignoreNodeFilter) {
-        this.ignoreNodeFilter = ignoreNodeFilter;
-    }
-
-    public boolean isIgnoreSubstitutionFilter() {
-        return ignoreSubstitutionFilter;
-    }
-
-    public void setIgnoreSubstitutionFilter(boolean ignoreSubstitutionFilter) {
-        this.ignoreSubstitutionFilter = ignoreSubstitutionFilter;
-    }
-
-    public boolean isIgnoreDataType() {
-        return ignoreDataType;
-    }
-
-    public void setIgnoreDataType(boolean ignoreDataType) {
-        this.ignoreDataType = ignoreDataType;
     }
 
     public JsonParseFlagEnum detectParseFlag() {
@@ -499,4 +318,5 @@ public class ComponentParametersView {
         }
         return parseFlag;
     }
+
 }
