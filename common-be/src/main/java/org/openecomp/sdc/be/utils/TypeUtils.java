@@ -46,7 +46,7 @@ public class TypeUtils {
         DERIVED_FROM("derived_from"), IS_PASSWORD("is_password"),
         // Properties
         PROPERTIES("properties"), TYPE("type"), STATUS("status"),
-        ENTRY_SCHEMA("entry_schema"), REQUIRED("required"), DESCRIPTION("description"),
+        KEY_SCHEMA("key_schema"), ENTRY_SCHEMA("entry_schema"), REQUIRED("required"), DESCRIPTION("description"),
         DEFAULT_VALUE("default"), VALUE("value"), CONSTRAINTS("constraints"),
         DEFAULT("default"),
         // Group Types

@@ -104,6 +104,7 @@ import org.openecomp.sdc.be.tosca.builder.ToscaRelationshipBuilder;
 import org.openecomp.sdc.be.tosca.model.CapabilityFilter;
 import org.openecomp.sdc.be.tosca.model.NodeFilter;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
+import org.openecomp.sdc.be.tosca.model.ToscaAttribute;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaDataType;
 import org.openecomp.sdc.be.tosca.model.ToscaGroupTemplate;
@@ -742,6 +743,11 @@ public class ToscaExportHandler {
             .addInterfaceDefinitionElement(component, toscaNodeType, dataTypes, isAssociatedComponent);
         addInputsToProperties(dataTypes, inputDef, mergedProperties);
 
+        final Map<String, ToscaAttribute> toscaAttributeMap =
+            convertToToscaAttributes(component.getAttributes(), dataTypes);
+        if (!toscaAttributeMap.isEmpty()) {
+            toscaNodeType.setAttributes(toscaAttributeMap);
+        }
         if (CollectionUtils.isNotEmpty(component.getProperties())) {
             List<PropertyDefinition> properties = component.getProperties();
             Map<String, ToscaProperty> convertedProperties = properties.stream()
@@ -782,6 +788,16 @@ public class ToscaExportHandler {
 
         // Extracted to method for code reuse
         return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
+    }
+
+    private Map<String, ToscaAttribute> convertToToscaAttributes(final List<AttributeDefinition> attributeList,
+                                                                 final Map<String, DataTypeDefinition> dataTypes) {
+        if (CollectionUtils.isEmpty(attributeList)) {
+            return Collections.emptyMap();
+        }
+        return attributeList.stream()
+            .collect(Collectors.toMap(AttributeDefinition::getName,
+                property -> new AttributeConverter(dataTypes).convert(property)));
     }
 
     private Either<ToscaTemplate, ToscaError> convertReqCapAndTypeName(Map<String, Component> componentsCache,
@@ -1071,29 +1087,7 @@ public class ToscaExportHandler {
                 : NATIVE_ROOT;
             toscaNodeType.setDerived_from(derivedFrom);
         }
-        if (component instanceof Resource) {
-            final List<AttributeDefinition> attributes = ((Resource) component).getAttributes();
-            if (CollectionUtils.isNotEmpty(attributes)) {
-                final Map<String, Object> attributeDataDefinitionMap = new HashMap<>();
-                attributes.forEach(attributeDataDefinition ->
-                    buildAttributeData(attributeDataDefinition, attributeDataDefinitionMap));
-
-                toscaNodeType.setAttributes(attributeDataDefinitionMap);
-            }
-        }
         return toscaNodeType;
-    }
-
-    private void buildAttributeData(final AttributeDefinition originalAttributeDefinition,
-                                    final Map<String, Object> attributeDataDefinitionMap) {
-
-        attributeDataDefinitionMap.put(originalAttributeDefinition.getName(),
-            new ObjectMapper().convertValue(new org.onap.sdc.tosca.datatypes.model.AttributeDefinition(
-                originalAttributeDefinition.getType(),
-                originalAttributeDefinition.getDescription(),
-                originalAttributeDefinition.get_default(),
-                originalAttributeDefinition.getStatus(),
-                originalAttributeDefinition.getEntry_schema()), Object.class));
     }
 
     private Either<Map<String, Object>, ToscaError> createProxyInterfaceTypes(Component container) {
@@ -1701,10 +1695,20 @@ public class ToscaExportHandler {
         CustomRepresenter() {
             super();
             this.representers.put(ToscaPropertyAssignment.class, new RepresentToscaPropertyAssignment());
+            this.representers.put(ToscaAttribute.class, new RepresentToscaAttribute());
             // null representer is exceptional and it is stored as an instance
             // variable.
             this.nullRepresenter = new RepresentNull();
 
+        }
+
+        private class RepresentToscaAttribute implements Represent {
+
+            @Override
+            public Node representData(Object data) {
+                final ToscaAttribute toscaAttribute = (ToscaAttribute) data;
+                return represent(toscaAttribute.asToscaMap());
+            }
         }
 
         private class RepresentToscaPropertyAssignment implements Represent {

@@ -44,7 +44,7 @@ import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueConverter;
-import org.openecomp.sdc.be.tosca.model.EntrySchema;
+import org.openecomp.sdc.be.tosca.model.ToscaSchemaDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -86,10 +86,10 @@ public class PropertyConvertor {
         log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
         SchemaDefinition schema = property.getSchema();
         if (schema != null && schema.getProperty() != null && schema.getProperty().getType() != null && !schema.getProperty().getType().isEmpty()) {
-            EntrySchema eschema = new EntrySchema();
-            eschema.setType(schema.getProperty().getType());
-            eschema.setDescription(schema.getProperty().getDescription());
-            prop.setEntry_schema(eschema);
+            final ToscaSchemaDefinition toscaSchemaDefinition = new ToscaSchemaDefinition();
+            toscaSchemaDefinition.setType(schema.getProperty().getType());
+            toscaSchemaDefinition.setDescription(schema.getProperty().getDescription());
+            prop.setEntry_schema(toscaSchemaDefinition);
         }
         String defaultValue = property.getDefaultValue();
         if(Objects.isNull(defaultValue)) {
