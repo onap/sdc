@@ -122,7 +122,7 @@ public class ForwardPathMigration implements Migration {
             componentParametersView.setIgnoreComponentInstances(false);
             componentParametersView.setIgnoreCapabilities(false);
             componentParametersView.setIgnoreRequirements(false);
-            componentParametersView.setIgnoreForwardingPath(false);
+            componentParametersView.setIgnoreServicePath(false);
             Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade
                 .getToscaElement(container.getUniqueId(), componentParametersView);
             if (toscaElement.isRight()) {
