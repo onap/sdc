@@ -86,6 +86,7 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -1004,6 +1005,30 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), componentInstancePropertiesById);
     }
 
+    @GET
+    @Path("/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/attributes")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get component instance attributes", method = "GET",
+            summary = "Returns component instance attributes", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Attributes found"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Component/Component Instance - not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getInstanceAttributesById(@PathParam("containerComponentType") final String containerComponentType,
+            @PathParam("containerComponentId") final String containerComponentId,
+            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
+
+        final String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug(GET_START_HANDLE_REQUEST_OF, url);
+
+        final List<ComponentInstanceAttribute> componentInstanceAttributesById = componentInstanceBusinessLogic
+            .getComponentInstanceAttributesById(containerComponentType, containerComponentId, componentInstanceUniqueId, userId);
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), componentInstanceAttributesById);
+    }
+
     // US330353
     @GET
     @Path("/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/capability/{capabilityType}/capabilityName/{capabilityName}/ownerId/{ownerId}/properties")
@@ -1385,6 +1410,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         return convertStatus.left().value();
     }
 
+    @Override
     public <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
         try {
             log.trace("convert json to object. json=\n {}", data);
@@ -1673,7 +1699,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         ReplaceVNFInfo replaceVNFInfo = convertResponse.left().value();
         String serviceUniqueId = replaceVNFInfo.getServiceUniqueId();
         String abstractResourceUniqueId = replaceVNFInfo.getAbstractResourceUniqueId();
-        
+
         ComponentInstance componentInstance = replaceVNFInfo.getRealVNFComponentInstance();
         log.debug("replaceVNF:get ReplaceVNFInfo,serviceUniqueId:{},abstractResourceUniqueId:{}",
                 serviceUniqueId,abstractResourceUniqueId);
@@ -1681,7 +1707,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             /**
              * delete vnf
              */
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug("replaceVNF:Unsupported component type {}", containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));

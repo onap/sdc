@@ -28,9 +28,10 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
 @Getter
 @Setter
-public class ComponentInstanceAttribute extends AttributeDefinition implements IComponentInstanceConnectedElement, IAttributeInputCommon {
+public class ComponentInstanceAttribute extends AttributeDefinition implements IComponentInstanceConnectedElement, IAttributeOutputCommon {
 
     public ComponentInstanceAttribute(final AttributeDataDefinition value) {
+        super(value);
     }
     public ComponentInstanceAttribute() {
         super();

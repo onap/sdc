@@ -20,11 +20,20 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
+@Getter
+@Setter
 public class AttributeDataDefinition extends ToscaDataDefinition implements Serializable {
+
+    private List<GetOutputValueDataDefinition> getOutputValues;
+    private String outputId;
+    private String value;
 
     public AttributeDataDefinition() {
     }

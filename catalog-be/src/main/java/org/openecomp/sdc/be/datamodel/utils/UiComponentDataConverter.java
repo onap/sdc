@@ -138,6 +138,9 @@ public class UiComponentDataConverter {
             case PROPERTIES:
                 setProperties(dataTransfer, component);
                 break;
+            case ATTRIBUTES:
+                setAttributes(dataTransfer, component);
+                break;
             case INTERFACES:
                 setInterfaces(dataTransfer, component);
                 break;
@@ -308,6 +311,14 @@ public class UiComponentDataConverter {
         }
     }
 
+    private void setAttributes(final UiComponentDataTransfer dataTransfer, final Component component) {
+        if (component.getAttributes() == null) {
+            dataTransfer.setAttributes(new ArrayList<>());
+        } else {
+            dataTransfer.setAttributes(component.getAttributes());
+        }
+    }
+
     private void setInterfaces(UiComponentDataTransfer dataTransfer, Component component) {
         if (component.getInterfaces() == null) {
             dataTransfer.setInterfaces(new HashMap<>());
@@ -385,7 +396,7 @@ public class UiComponentDataConverter {
                         final SubstitutionFilterConverter substitutionFilterConverter = new SubstitutionFilterConverter();
                         final Map<String, UINodeFilter> filterUiMap = new HashMap<>();
                         filterUiMap.put(resource.getUniqueId(),
-                                substitutionFilterConverter.convertToUi(resource.getSubstitutionFilter()));
+                            substitutionFilterConverter.convertToUi(resource.getSubstitutionFilter()));
                         dataTransfer.setSubstitutionFilterForTopologyTemplate(filterUiMap);
                     }
                     break;
