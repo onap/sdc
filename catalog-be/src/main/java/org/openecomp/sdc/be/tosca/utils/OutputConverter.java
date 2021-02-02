@@ -27,6 +27,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.tosca.AttributeConverter;
+import org.openecomp.sdc.be.tosca.exception.ToscaConversionException;
 import org.openecomp.sdc.be.tosca.model.ToscaAttribute;
 import org.openecomp.sdc.be.tosca.model.ToscaOutput;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
@@ -45,17 +46,17 @@ public class OutputConverter {
     }
 
     public Map<String, ToscaProperty> convert(final List<OutputDefinition> outputDefinitionList,
-                                              final Map<String, DataTypeDefinition> dataTypes) {
+                                              final Map<String, DataTypeDefinition> dataTypes) throws ToscaConversionException {
         final AttributeConverter attributeConverter = this.attributeConverterProvider.getObject(dataTypes);
         final Map<String, ToscaProperty> outputMap = new HashMap<>();
         if (CollectionUtils.isEmpty(outputDefinitionList)) {
             return Collections.emptyMap();
         }
-        outputDefinitionList.forEach(outputDefinition -> {
+        for (final OutputDefinition outputDefinition : outputDefinitionList) {
             final ToscaAttribute toscaAttribute = attributeConverter.convert(outputDefinition);
             final ToscaProperty toscaProperty = new ToscaOutput(toscaAttribute);
             outputMap.put(outputDefinition.getName(), toscaProperty);
-        });
+        }
         return outputMap;
     }
 }
