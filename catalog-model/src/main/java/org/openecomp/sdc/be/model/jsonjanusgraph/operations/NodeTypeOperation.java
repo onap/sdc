@@ -544,6 +544,11 @@ public class NodeTypeOperation extends ToscaElementOperation {
             ToscaDataDefinition.mergeDataMaps(attributesAll, attributes);
         }
         if (!attributesAll.isEmpty()) {
+            log.debug("Creating vertex for attributes {}:{}", nodeType.getName(), nodeType.getUniqueId());
+            attributesAll.forEach((s, attributeDataDefinition) -> {
+                log.debug("Attribute {}:{}", s, attributeDataDefinition.getUniqueId());
+            });
+
             Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.ATTRIBUTES, EdgeLabelEnum.ATTRIBUTES, attributesAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();

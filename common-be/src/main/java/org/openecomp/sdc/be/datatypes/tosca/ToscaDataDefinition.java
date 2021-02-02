@@ -23,15 +23,13 @@ package org.openecomp.sdc.be.datatypes.tosca;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import fj.data.Either;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 public abstract class ToscaDataDefinition {
 
@@ -138,5 +136,4 @@ public abstract class ToscaDataDefinition {
         return false;
     }
 
-    public void setSchema(final SchemaDefinition schemaDef){};
 }
