@@ -40,6 +40,6 @@ public class ToscaNodeType {
     private Map<String, ToscaCapability> capabilities;
 
     private List<Map<String, ToscaRequirement>> requirements;
-    private Map<String, Object> attributes;
+    private Map<String, ToscaAttribute> attributes;
 
 }

@@ -44,7 +44,7 @@ public class ToscaProperty {
     private Boolean required;
     @Getter
     @Setter
-    private EntrySchema entry_schema;
+    private ToscaSchemaDefinition entry_schema;
     @Getter
     @Setter
     private List<ToscaPropertyConstraint> constraints;

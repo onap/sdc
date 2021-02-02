@@ -19,10 +19,12 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.collections.CollectionUtils;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -32,7 +34,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 @NoArgsConstructor
 public class AttributeDataDefinition extends ToscaDataDefinition {
 
-    private List<GetOutputValueDataDefinition> getOutputValues;
+    private transient List<GetOutputValueDataDefinition> getOutputValues;
     private String outputId;
     private String value;
     private String outputPath;
@@ -51,11 +53,15 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
         this.setValue(attributeDataDefinition.getValue());
         this.setStatus(attributeDataDefinition.getStatus());
         this.setEntry_schema(attributeDataDefinition.getEntry_schema());
-        this.setSchema(attributeDataDefinition.getSchema());
         this.setOutputPath(attributeDataDefinition.getOutputPath());
         this.setInstanceUniqueId(attributeDataDefinition.getInstanceUniqueId());
         this.setAttributeId(attributeDataDefinition.getAttributeId());
         this.setParentUniqueId(attributeDataDefinition.getParentUniqueId());
+        this.setOutputId(attributeDataDefinition.getOutputId());
+        if (CollectionUtils.isNotEmpty(attributeDataDefinition.getGetOutputValues())) {
+            this.getOutputValues = new ArrayList<>(attributeDataDefinition.getGetOutputValues());
+        }
+
     }
 
     public String getUniqueId() {
@@ -89,11 +95,6 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
-    @Override
-    public void setType(final String type) {
-        setToscaPresentationValue(JsonPresentationFields.TYPE, type);
-    }
-
     public String getDescription() {
         return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
     }
@@ -119,15 +120,15 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
     }
 
     public EntrySchema getEntry_schema() {
-        return (EntrySchema) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
+        return (EntrySchema) getToscaPresentationValue(JsonPresentationFields.ENTRY_SCHEMA);
     }
 
     public void setEntry_schema(final EntrySchema entrySchema) {
-        setToscaPresentationValue(JsonPresentationFields.SCHEMA, entrySchema);
+        setToscaPresentationValue(JsonPresentationFields.ENTRY_SCHEMA, entrySchema);
     }
 
     public SchemaDefinition getSchema() {
-        return (SchemaDefinition) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
+        return null;
     }
 
     public String getParentUniqueId() {

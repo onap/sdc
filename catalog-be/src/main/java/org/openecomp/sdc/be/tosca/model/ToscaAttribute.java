@@ -19,9 +19,12 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 
 /**
  * Represents a TOSCA Attribute Definition (see TOSCA 1.3, Section 3.6.12 Attribute definition)
@@ -42,6 +45,12 @@ public class ToscaAttribute {
     private String description;
     @Getter
     @Setter
+    private ToscaSchemaDefinition keySchema;
+    @Getter
+    @Setter
+    private ToscaSchemaDefinition entrySchema;
+    @Getter
+    @Setter
     private String status;
 
     public Object getDefault() {
@@ -50,6 +59,35 @@ public class ToscaAttribute {
 
     public void setDefault(final Object defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    /**
+     * Converts this object to Map, ignoring null fields. The entries of the map are based on the TOSCA Attribute Definition.
+     *
+     * @return a Map representing the TOSCA Attribute Definition.
+     */
+    public Map<String, Object> asToscaMap() {
+        final Map<String, Object> toscaAttributeAsMap = new LinkedHashMap<>();
+        if (getType() != null) {
+            toscaAttributeAsMap.put(ToscaTagNamesEnum.TYPE.getElementName(), getType());
+        }
+        if (getDescription() != null) {
+            toscaAttributeAsMap.put(ToscaTagNamesEnum.DESCRIPTION.getElementName(), getDescription());
+        }
+        if (getKeySchema() != null) {
+            toscaAttributeAsMap.put(ToscaTagNamesEnum.KEY_SCHEMA.getElementName(), getKeySchema());
+        }
+        if (getEntrySchema() != null) {
+            toscaAttributeAsMap.put(ToscaTagNamesEnum.ENTRY_SCHEMA.getElementName(), getEntrySchema());
+        }
+        if (getDefault() != null) {
+            toscaAttributeAsMap.put(ToscaTagNamesEnum.DEFAULT.getElementName(), getDefault());
+        }
+        if (getStatus() != null) {
+            toscaAttributeAsMap.put(ToscaTagNamesEnum.STATUS.getElementName(), getStatus());
+        }
+
+        return toscaAttributeAsMap;
     }
 
 }

@@ -19,55 +19,40 @@
  */
 package org.openecomp.sdc.be.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.onap.sdc.tosca.datatypes.model.EntrySchema;
+import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 
-@Getter
-@Setter
-@ToString
+@NoArgsConstructor
 public class AttributeDefinition extends AttributeDataDefinition implements IOperationParameter, IComplexDefaultValue {
-
-    // All names are according to TOSCA spec from
-    // https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/os/TOSCA-Simple-Profile-YAML-v1.3-os.html#DEFN_ELEMENT_ATTRIBUTE_DEFN
-    private String type;
-    private String description;
-    private Object _default;
-    private String status;
-    private EntrySchema entry_schema;
-
-    public AttributeDefinition() {
-        toscaPresentation = null;
-    }
 
     public AttributeDefinition(final AttributeDataDefinition attributeDataDefinition) {
         super(attributeDataDefinition);
     }
 
-    public AttributeDefinition(final AttributeDefinition attributeDefinition) {
-        super(attributeDefinition);
-        this.type = attributeDefinition.getType();
-        this.description = attributeDefinition.getDescription();
-        this._default = attributeDefinition.get_default();
-        this.status = attributeDefinition.getStatus();
-        this.entry_schema = attributeDefinition.getEntry_schema();
-        this.toscaPresentation = attributeDefinition.toscaPresentation;
-    }
-
     @Override
     public String getDefaultValue() {
-        return _default == null ? null : String.valueOf(_default);
+        return get_default() == null ? null : String.valueOf(get_default());
     }
 
     @Override
     public void setDefaultValue(final String value) {
-        this._default = value;
+        set_default(value);
     }
 
     @Override
     public boolean isDefinition() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "AttributeDefinition{" +
+            "name=" + getName() +
+            "uniqueId=" + getUniqueId() +
+            "ownerId=" + getOwnerId() +
+            "type=" + getType() +
+            "description=" + getDescription() +
+            "default=" + getDefaultValue() +
+            '}';
     }
 }
