@@ -21,15 +21,12 @@
 
   <name>openecomp-nosqldb-core</name>
   <artifactId>openecomp-nosqldb-core</artifactId>
-  <groupId>org.openecomp.sdc.core</groupId>
 
   <parent>
-    <artifactId>openecomp-sdc-lib</artifactId>
-    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>openecomp-nosqldb-lib</artifactId>
+    <groupId>org.openecomp.sdc.core</groupId>
     <version>1.8.1-SNAPSHOT</version>
-    <relativePath>../../..</relativePath>
   </parent>
-
 
   <dependencies>
     <dependency>
@@ -39,13 +36,14 @@
     </dependency>
     <dependency>
       <groupId>org.openecomp.sdc.core</groupId>
-      <artifactId>openecomp-nosqldb-api</artifactId>
+      <artifactId>openecomp-session-lib</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openecomp.sdc.core</groupId>
-      <artifactId>openecomp-session-lib</artifactId>
+      <artifactId>openecomp-nosqldb-api</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

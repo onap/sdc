@@ -24,7 +24,7 @@ import java.util.List;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-public interface IAttributeInputCommon {
+public interface IAttributeOutputCommon {
 
     String getType();
     ToscaDataDefinition getSchema();

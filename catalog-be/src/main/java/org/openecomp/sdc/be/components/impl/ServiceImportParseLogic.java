@@ -2260,7 +2260,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    public void associateInstAttributeToComponentToInstances(String yamlName, Resource resource, Map<String, List<AttributeDataDefinition>> instAttributes) {
+    public void associateInstAttributeToComponentToInstances(String yamlName, Resource resource, Map<String, List<AttributeDefinition>> instAttributes) {
 
         StorageOperationStatus addArtToInst;
         addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,
@@ -2375,7 +2375,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    public void associateInstAttributeToComponentToInstances(String yamlName, Service resource, Map<String, List<AttributeDataDefinition>> instAttributes) {
+    public void associateInstAttributeToComponentToInstances(String yamlName, Service resource, Map<String, List<AttributeDefinition>> instAttributes) {
         StorageOperationStatus addArtToInst;
 
         addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,

@@ -25,7 +25,6 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -43,7 +42,7 @@ public class UiResourceDataTransfer extends UiComponentDataTransfer {
 
     private List<PropertyDefinition> properties;
 
-    private List<AttributeDataDefinition> attributes;
+    private List<AttributeDefinition> attributes;
 
     private Map<String, InterfaceDefinition> interfaces;
 
