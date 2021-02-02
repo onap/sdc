@@ -1265,8 +1265,6 @@ class ComponentInstanceBusinessLogicTest {
         ComponentInstanceAttribute attribute = new ComponentInstanceAttribute();
         attribute.setType("string");
         attribute.setUniqueId("testCreateOrUpdateAttributeValueForCopyPaste");
-        SchemaDefinition def = Mockito.mock(SchemaDefinition.class);
-        attribute.setSchema(def);
         LifecycleStateEnum oldLifeCycleState = service.getLifecycleState();
         String oldLastUpdatedUserId = service.getLastUpdaterUserId();
         service.setLastUpdaterUserId(USER_ID);

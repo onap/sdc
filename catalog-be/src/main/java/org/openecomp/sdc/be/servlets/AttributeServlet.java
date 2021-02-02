@@ -130,7 +130,8 @@ public class AttributeServlet extends AbstractValidationsServlet {
 
             if (errorWrapper.isEmpty()) {
                 AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-                Either<AttributeDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributeDataDefinition, userId);
+                Either<AttributeDefinition, ResponseFormat> createAttribute = businessLogic.
+                    createAttribute(resourceId, attributeDataDefinition, userId);
                 if (createAttribute.isRight()) {
                     errorWrapper.setInnerElement(createAttribute.right().value());
                 } else {
@@ -280,27 +281,6 @@ public class AttributeServlet extends AbstractValidationsServlet {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Attribute");
             log.debug("delete attribute failed with exception", e);
             throw e;
-        }
-    }
-
-    private void buildAttributeFromString(String data, Wrapper<AttributeDataDefinition> attributesWrapper,
-                                          Wrapper<ResponseFormat> errorWrapper) {
-        try {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            final AttributeDataDefinition attribute = gson.fromJson(data, AttributeDataDefinition.class);
-            if (attribute == null) {
-                log.info(ATTRIBUTE_CONTENT_IS_INVALID, data);
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
-                errorWrapper.setInnerElement(responseFormat);
-            } else {
-                attributesWrapper.setInnerElement(attribute);
-            }
-
-        } catch (Exception e) {
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
-            errorWrapper.setInnerElement(responseFormat);
-            log.debug(ATTRIBUTE_CONTENT_IS_INVALID, data, e);
-            log.info(ATTRIBUTE_CONTENT_IS_INVALID, data);
         }
     }
 

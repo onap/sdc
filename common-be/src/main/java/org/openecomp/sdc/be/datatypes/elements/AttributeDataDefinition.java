@@ -48,7 +48,6 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         this.set_default(attributeDataDefinition.get_default());
         this.setStatus(attributeDataDefinition.getStatus());
         this.setEntry_schema(attributeDataDefinition.getEntry_schema());
-        this.setSchema(attributeDataDefinition.getSchema());
     }
 
     public String getUniqueId() {
@@ -111,15 +110,15 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
     }
 
     public EntrySchema getEntry_schema() {
-        return (EntrySchema) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
+        return (EntrySchema) getToscaPresentationValue(JsonPresentationFields.ENTRY_SCHEMA);
     }
 
-    public void setEntry_schema(EntrySchema entrySchema) {
-        setToscaPresentationValue(JsonPresentationFields.SCHEMA, entrySchema);
+    public void setEntry_schema(final EntrySchema entrySchema) {
+        setToscaPresentationValue(JsonPresentationFields.ENTRY_SCHEMA, entrySchema);
     }
 
     public SchemaDefinition getSchema() {
-        return (SchemaDefinition) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
+        return null;
     }
 
 }

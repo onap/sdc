@@ -38,6 +38,7 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -93,11 +94,12 @@ public class JanusGraphDao {
                 return Either.left(graphVertex);
 
             } catch (Exception e) {
-                logger.debug("Failed to create Node for ID [{}]", graphVertex.getUniqueId(), e);
+                logger.error(EcompLoggerErrorCode.DATA_ERROR, "JanusGraphDao",
+                    "Failed to create Node for ID '{}'", (Object) graphVertex.getUniqueId(), e);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            logger.debug("Failed to create vertex for ID [{}]  {}", graphVertex.getUniqueId(), graph.right().value());
+            logger.debug("Failed to create vertex for ID '{}' {}", graphVertex.getUniqueId(), graph.right().value());
             return Either.right(graph.right().value());
         }
     }
@@ -329,7 +331,8 @@ public class JanusGraphDao {
             setEdgeProperties(edge, properties);
             status = JanusGraphOperationStatus.OK;
         } catch (IOException e) {
-            logger.debug("Failed to set properties on edge  properties [{}]", properties, e);
+            logger.error(EcompLoggerErrorCode.DATA_ERROR, "JanusGraphDao",
+                "Failed to set properties on edge  properties [{}]", properties, e);
             status = JanusGraphOperationStatus.GENERAL_ERROR;
         }
         return status;
