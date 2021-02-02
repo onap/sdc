@@ -60,7 +60,6 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -68,6 +67,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -111,6 +111,7 @@ public class ResourceImportManager {
 
     private AuditingManager auditingManager;
     private ResourceBusinessLogic resourceBusinessLogic;
+
     public ServiceBusinessLogic getServiceBusinessLogic() {
         return serviceBusinessLogic;
     }
@@ -243,7 +244,7 @@ public class ResourceImportManager {
                 componentsUtils
                     .getResponseFormat(((ComponentException) e).getActionStatus(), ((ComponentException) e).getParams())
                 :
-                ((ComponentException) e).getResponseFormat();
+                    ((ComponentException) e).getResponseFormat();
         }
         return null;
     }
@@ -686,8 +687,8 @@ public class ResourceImportManager {
                 log.debug("Couldn't check whether imported resource capability derives from its parent's capability");
                 throw new ByActionStatusComponentException(
                     componentsUtils.convertFromStorageResponse(capabilityTypeDerivedFrom
-                    .right()
-                    .value()));
+                        .right()
+                        .value()));
             }
             return capabilityTypeDerivedFrom.left().value();
         }
@@ -712,7 +713,7 @@ public class ResourceImportManager {
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES.getElementName())) {
                 capabilityDefinition.setValidSourceTypes(
                     (List<String>) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES
-                    .getElementName()));
+                        .getElementName()));
             }
             // ValidSourceTypes
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName())) {
@@ -830,10 +831,10 @@ public class ResourceImportManager {
         calculateResourceIsAbstract(resource, categories);
     }
 
-    private List<AttributeDataDefinition> getAttributes(final String payloadData) {
+    private List<AttributeDefinition> getAttributes(final String payloadData) {
         final Map<String, Object> mappedToscaTemplate = decodePayload(payloadData);
 
-        final List<AttributeDataDefinition> attributeDataDefinitionList = new ArrayList<>();
+        final List<AttributeDefinition> attributeDataDefinitionList = new ArrayList<>();
 
         final Either<Map<String, Object>, ResultStatusEnum> firstToscaMapElement = ImportUtils
             .findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.ATTRIBUTES);
@@ -851,7 +852,7 @@ public class ResourceImportManager {
 
                 final Map<String, Object> attributeMap = (Map<String, Object>) value;
 
-                final AttributeDataDefinition attributeDefinition = new AttributeDataDefinition();
+                final AttributeDefinition attributeDefinition = new AttributeDefinition();
                 attributeDefinition.setName(key);
 
                 setField(attributeMap, ToscaTagNamesEnum.DESCRIPTION, attributeDefinition::setDescription);
@@ -861,7 +862,7 @@ public class ResourceImportManager {
                 setField(attributeMap, ToscaTagNamesEnum.ENTRY_SCHEMA, attributeDefinition::setSchema);
                 attributeDataDefinitionList.add(attributeDefinition);
             } else {
-                final AttributeDataDefinition attributeDefinition = new AttributeDataDefinition();
+                final AttributeDefinition attributeDefinition = new AttributeDefinition();
                 attributeDefinition.setName(key);
                 attributeDataDefinitionList.add(attributeDefinition);
             }
