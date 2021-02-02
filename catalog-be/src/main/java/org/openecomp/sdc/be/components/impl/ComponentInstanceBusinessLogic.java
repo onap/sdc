@@ -658,6 +658,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         filter.setIgnoreRequirements(false);
         filter.setIgnoreInterfaces(false);
         filter.setIgnoreProperties(false);
+        filter.setIgnoreAttributes(false);
         filter.setIgnoreInputs(false);
         Either<Component, StorageOperationStatus> serviceRes =
                 toscaOperationFacade.getToscaElement(resourceInstance.getComponentUid(), filter);
@@ -674,6 +675,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             serviceInterfaces.forEach(resourceInstance::addInterface);
         }
         resourceInstance.setProperties(PropertiesUtils.getProperties(service));
+        resourceInstance.setAttributes(service.getAttributes());
 
         final List<InputDefinition> serviceInputs = service.getInputs();
         resourceInstance.setInputs(serviceInputs);
@@ -1441,7 +1443,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private Collection<ForwardingPathDataDefinition> getForwardingPathDataDefinitions(String containerComponentId) {
         ComponentParametersView filter = new ComponentParametersView(true);
-        filter.setIgnoreForwardingPath(false);
+        filter.setIgnoreServicePath(false);
         Either<Service, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade
                 .getToscaElement(containerComponentId, filter);
         return forwardingPathOrigin.left().value().getForwardingPaths().values();
@@ -2510,7 +2512,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private ComponentParametersView getComponentParametersViewForForwardingPath() {
         ComponentParametersView componentParametersView = new ComponentParametersView();
         componentParametersView.setIgnoreCapabiltyProperties(false);
-        componentParametersView.setIgnoreForwardingPath(false);
+        componentParametersView.setIgnoreServicePath(false);
         return componentParametersView;
     }
 
@@ -2698,16 +2700,52 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 instanceProperties = new ArrayList<>();
             }
             return instanceProperties;
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             failed = true;
             throw e;
-        }finally {
+        } finally {
             unlockComponent(failed, containerComponent);
         }
     }
 
-    protected void validateIncrementCounter(String resourceInstanceId, GraphPropertiesDictionary counterType, Wrapper<Integer> instaceCounterWrapper, Wrapper<ResponseFormat> errorWrapper) {
-        Either<Integer, StorageOperationStatus> counterRes = componentInstanceOperation.increaseAndGetResourceInstanceSpecificCounter(resourceInstanceId, counterType, true);
+    public List<ComponentInstanceAttribute> getComponentInstanceAttributesById(final String containerComponentTypeParam,
+                                                                               final String containerComponentId,
+                                                                               final String componentInstanceUniqueId,
+                                                                               final String userId) {
+        Component containerComponent = null;
+
+        boolean failed = false;
+        try {
+            validateUserExists(userId);
+            validateComponentType(containerComponentTypeParam);
+
+            final Either<Component, StorageOperationStatus> validateContainerComponentExists =
+                toscaOperationFacade.getToscaElement(containerComponentId);
+            if (validateContainerComponentExists.isRight()) {
+                throw new ByActionStatusComponentException(
+                    componentsUtils.convertFromStorageResponse(validateContainerComponentExists.right().value()));
+            }
+            containerComponent = validateContainerComponentExists.left().value();
+
+            if (getResourceInstanceById(containerComponent, componentInstanceUniqueId).isRight()) {
+                throw new ByActionStatusComponentException(
+                    ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId);
+            }
+
+            return containerComponent.getComponentInstancesAttributes().getOrDefault(componentInstanceUniqueId, new ArrayList<>());
+        } catch (final ComponentException e) {
+            failed = true;
+            throw e;
+        } finally {
+            unlockComponent(failed, containerComponent);
+        }
+    }
+
+    protected void validateIncrementCounter(String resourceInstanceId, GraphPropertiesDictionary counterType,
+                                            Wrapper<Integer> instaceCounterWrapper,
+                                            Wrapper<ResponseFormat> errorWrapper) {
+        Either<Integer, StorageOperationStatus> counterRes = componentInstanceOperation
+            .increaseAndGetResourceInstanceSpecificCounter(resourceInstanceId, counterType, true);
 
         if (counterRes.isRight()) {
             log.debug("increase And Get {} failed resource instance {}", counterType, resourceInstanceId);
