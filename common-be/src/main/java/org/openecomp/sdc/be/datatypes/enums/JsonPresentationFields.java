@@ -119,6 +119,7 @@ public enum JsonPresentationFields {
     PROPERTIES("properties", null),
     PROPERTY("property", null),
     SCHEMA("schema", null),
+    ENTRY_SCHEMA("entry_schema", null),
     VALUE("value", null),
     PARENT_UNIQUE_ID("parentUniqueId", null),
 

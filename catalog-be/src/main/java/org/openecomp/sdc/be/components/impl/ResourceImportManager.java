@@ -353,6 +353,7 @@ public class ResourceImportManager {
             }
             setCapabilities(toscaJson, resource, parentResource);
             setProperties(toscaJson, resource);
+            setAttributes(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
             setInterfaceLifecycle(toscaJson, resource);
         } else {
@@ -535,6 +536,42 @@ public class ResourceImportManager {
                 .right()
                 .value(), JsonPresentationFields.PROPERTY));
         }
+    }
+
+    private void setAttributes(final Map<String, Object> originalToscaJsonMap, final Resource resource) {
+        final Map<String, Object> toscaJsonMap = new HashMap<>(originalToscaJsonMap);
+        ImportUtils.removeElementFromJsonMap(toscaJsonMap, "capabilities");
+        final Either<Map<String, AttributeDefinition>, ResultStatusEnum> getAttributeEither = ImportUtils
+            .getAttributes(toscaJsonMap);
+
+        if (getAttributeEither.isRight()) {
+            final ResultStatusEnum resultStatus = getAttributeEither.right().value();
+            if (resultStatus == ResultStatusEnum.ELEMENT_NOT_FOUND) {
+                return;
+            }
+            throw new ByActionStatusComponentException(
+                componentsUtils.convertFromResultStatusEnum(resultStatus, JsonPresentationFields.ATTRIBUTES));
+        }
+
+        final List<AttributeDefinition> attributeDefinitionList = new ArrayList<>();
+        final Map<String, AttributeDefinition> attributeMap = getAttributeEither.left().value();
+        if (MapUtils.isEmpty(attributeMap)) {
+            return;
+        }
+        for (final Entry<String, AttributeDefinition> entry : attributeMap.entrySet()) {
+            final String name = entry.getKey();
+            if (!PROPERTY_NAME_PATTERN_IGNORE_LENGTH.matcher(name).matches()) {
+                log.debug("Detected attribute with invalid name '{}' during resource '{}' import. ",
+                    name, resource.getName());
+                throw new ByActionStatusComponentException(componentsUtils
+                    .convertFromResultStatusEnum(ResultStatusEnum.INVALID_ATTRIBUTE_NAME,
+                        JsonPresentationFields.ATTRIBUTES));
+            }
+            final AttributeDefinition attributeDefinition = entry.getValue();
+            attributeDefinition.setName(name);
+            attributeDefinitionList.add(attributeDefinition);
+        }
+        resource.setAttributes(attributeDefinitionList);
     }
 
     private Resource setDerivedFrom(Map<String, Object> toscaJson, Resource resource) {
@@ -831,50 +868,10 @@ public class ResourceImportManager {
         final String payloadData = resourceMetaData.getPayloadData();
         if (payloadData != null) {
             resource.setToscaVersion(getToscaVersion(payloadData));
-            resource.setAttributes(getAttributes(payloadData));
         }
 
         final List<CategoryDefinition> categories = resourceMetaData.getCategories();
         calculateResourceIsAbstract(resource, categories);
-    }
-
-    private List<AttributeDefinition> getAttributes(final String payloadData) {
-        final Map<String, Object> mappedToscaTemplate = decodePayload(payloadData);
-
-        final List<AttributeDefinition> attributeDataDefinitionList = new ArrayList<>();
-
-        final Either<Map<String, Object>, ResultStatusEnum> firstToscaMapElement = ImportUtils
-            .findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.ATTRIBUTES);
-        if (firstToscaMapElement.isRight()) {
-            return attributeDataDefinitionList;
-        }
-        final Map<String, Object> attributes = firstToscaMapElement.left().value();
-
-        final Iterator<Entry<String, Object>> propertiesNameValue = attributes.entrySet().iterator();
-        while (propertiesNameValue.hasNext()) {
-            final Entry<String, Object> attributeNameValue = propertiesNameValue.next();
-            final Object value = attributeNameValue.getValue();
-            final String key = attributeNameValue.getKey();
-            if (value instanceof Map) {
-
-                final Map<String, Object> attributeMap = (Map<String, Object>) value;
-
-                final AttributeDefinition attributeDefinition = new AttributeDefinition();
-                attributeDefinition.setName(key);
-
-                setField(attributeMap, ToscaTagNamesEnum.DESCRIPTION, attributeDefinition::setDescription);
-                setField(attributeMap, ToscaTagNamesEnum.TYPE, attributeDefinition::setType);
-                setField(attributeMap, ToscaTagNamesEnum.DEFAULT_VALUE, attributeDefinition::set_default);
-                setField(attributeMap, ToscaTagNamesEnum.STATUS, attributeDefinition::setStatus);
-                setField(attributeMap, ToscaTagNamesEnum.ENTRY_SCHEMA, attributeDefinition::setSchema);
-                attributeDataDefinitionList.add(attributeDefinition);
-            } else {
-                final AttributeDefinition attributeDefinition = new AttributeDefinition();
-                attributeDefinition.setName(key);
-                attributeDataDefinitionList.add(attributeDefinition);
-            }
-        }
-        return attributeDataDefinitionList;
     }
 
     private Map<String, Object> decodePayload(final String payloadData) {

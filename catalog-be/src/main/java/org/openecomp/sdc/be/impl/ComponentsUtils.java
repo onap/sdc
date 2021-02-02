@@ -1384,6 +1384,9 @@ public class ComponentsUtils {
             case MISSING_ENTRY_SCHEMA_TYPE:
                 responseEnum = ActionStatus.INVALID_PROPERTY;
                 break;
+            case INVALID_ATTRIBUTE_NAME:
+                responseEnum = ActionStatus.INVALID_ATTRIBUTE;
+                break;
             default:
                 responseEnum = ActionStatus.GENERAL_ERROR;
                 break;
