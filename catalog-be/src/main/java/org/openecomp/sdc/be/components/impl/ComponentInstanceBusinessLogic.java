@@ -363,7 +363,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             return createComponent(needLock, containerComponent,origComponent, resourceInstance, user);
 
     }
-    
+
     private Component getOrigComponentForServiceProxy(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance resourceInstance) {
         Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
         if (isServiceProxyOrigin(serviceProxyOrigin)) {
@@ -378,14 +378,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateOriginAndResourceInstanceTypes(containerComponent, origComponent, OriginTypeEnum.ServiceProxy);
         return origComponent;
     }
-    
+
     private Component getOrigComponentForServiceSubstitution(ComponentInstance resourceInstance) {
         final Either<Component, StorageOperationStatus> getServiceResult = toscaOperationFacade.getToscaFullElement(resourceInstance.getComponentUid());
         if (getServiceResult.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
         }
         final Component service = getServiceResult.left().value();
-        
+
         final Either<Component, StorageOperationStatus> getServiceDerivedFromTypeResult = toscaOperationFacade.getLatestByToscaResourceName(service.getDerivedFromGenericType());
         if (getServiceDerivedFromTypeResult.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
@@ -658,6 +658,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         filter.setIgnoreRequirements(false);
         filter.setIgnoreInterfaces(false);
         filter.setIgnoreProperties(false);
+        filter.setIgnoreAttributes(false);
         filter.setIgnoreInputs(false);
         Either<Component, StorageOperationStatus> serviceRes =
                 toscaOperationFacade.getToscaElement(resourceInstance.getComponentUid(), filter);
@@ -674,6 +675,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             serviceInterfaces.forEach(resourceInstance::addInterface);
         }
         resourceInstance.setProperties(PropertiesUtils.getProperties(service));
+        resourceInstance.setAttributes(service.getAttributes());
 
         final List<InputDefinition> serviceInputs = service.getInputs();
         resourceInstance.setInputs(serviceInputs);
@@ -683,17 +685,17 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         resourceInstance.setSourceModelUid(service.getUniqueId());
         resourceInstance.setComponentUid(origComponent.getUniqueId());
         resourceInstance.setComponentVersion(service.getVersion());
-        
+
         switch(resourceInstance.getOriginType()) {
         case ServiceProxy:
         	return fillProxyInstanceData(resourceInstance, origComponent, service);
         case ServiceSubstitution:
         	return fillServiceSubstitutableNodeTypeData(resourceInstance, service);
-        default: 
+        default:
         	return StorageOperationStatus.OK;
         }
     }
-    
+
     private StorageOperationStatus fillProxyInstanceData(final ComponentInstance resourceInstance, final Component origComponent, final Component service) {
         final String name = ValidationUtils.normalizeComponentInstanceName(service.getName()) + ToscaOperationFacade.PROXY_SUFFIX;
         final String toscaResourceName = ((Resource) origComponent).getToscaResourceName();
@@ -707,7 +709,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         resourceInstance.setDescription("A Proxy for Service " + service.getName());
         return StorageOperationStatus.OK;
     }
-    
+
     private StorageOperationStatus fillServiceSubstitutableNodeTypeData(final ComponentInstance resourceInstance, final Component service) {
       	resourceInstance.setToscaComponentName("org.openecomp.service." + ValidationUtils.convertToSystemName(service.getName()));
         resourceInstance.setName(ValidationUtils.normalizeComponentInstanceName(service.getName()));
@@ -1288,7 +1290,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         return componentInstance;
     }
-	
+
 	 /**
      * Try to modify the delete and return two cases
      *
@@ -1441,7 +1443,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private Collection<ForwardingPathDataDefinition> getForwardingPathDataDefinitions(String containerComponentId) {
         ComponentParametersView filter = new ComponentParametersView(true);
-        filter.setIgnoreForwardingPath(false);
+        filter.setIgnoreServicePath(false);
         Either<Service, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade
                 .getToscaElement(containerComponentId, filter);
         return forwardingPathOrigin.left().value().getForwardingPaths().values();
@@ -2510,7 +2512,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private ComponentParametersView getComponentParametersViewForForwardingPath() {
         ComponentParametersView componentParametersView = new ComponentParametersView();
         componentParametersView.setIgnoreCapabiltyProperties(false);
-        componentParametersView.setIgnoreForwardingPath(false);
+        componentParametersView.setIgnoreServicePath(false);
         return componentParametersView;
     }
 
@@ -2602,14 +2604,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 	                	throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
 	                }
                 	final Component service = getServiceResult.left().value();
-                	
+
                 	final Either<Component, StorageOperationStatus> getServiceDerivedFromTypeResult = toscaOperationFacade.getLatestByToscaResourceName(service.getDerivedFromGenericType());
 	                if (getServiceDerivedFromTypeResult.isRight()) {
 	                	throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
 	                }
 
                     origComponent = getServiceDerivedFromTypeResult.left().value();
-	
+
                     final StorageOperationStatus fillProxyRes = fillInstanceData(newComponentInstance, origComponent);
                     if (isFillProxyRes(fillProxyRes)) {
                         throw new ByActionStatusComponentException(
@@ -2698,16 +2700,54 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 instanceProperties = new ArrayList<>();
             }
             return instanceProperties;
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             failed = true;
             throw e;
-        }finally {
+        } finally {
             unlockComponent(failed, containerComponent);
         }
     }
 
-    protected void validateIncrementCounter(String resourceInstanceId, GraphPropertiesDictionary counterType, Wrapper<Integer> instaceCounterWrapper, Wrapper<ResponseFormat> errorWrapper) {
-        Either<Integer, StorageOperationStatus> counterRes = componentInstanceOperation.increaseAndGetResourceInstanceSpecificCounter(resourceInstanceId, counterType, true);
+    public List<ComponentInstanceAttribute> getComponentInstanceAttributesById(final String containerComponentTypeParam,
+                                                                               final String containerComponentId,
+                                                                               final String componentInstanceUniqueId,
+                                                                               final String userId) {
+        Component containerComponent = null;
+
+        boolean failed = false;
+        try {
+            validateUserExists(userId);
+            validateComponentType(containerComponentTypeParam);
+
+            final Either<Component, StorageOperationStatus> validateContainerComponentExists =
+                toscaOperationFacade.getToscaElement(containerComponentId);
+            if (validateContainerComponentExists.isRight()) {
+                throw new ByActionStatusComponentException(
+                    componentsUtils.convertFromStorageResponse(validateContainerComponentExists.right().value()));
+            }
+            containerComponent = validateContainerComponentExists.left().value();
+
+            if (getResourceInstanceById(containerComponent, componentInstanceUniqueId).isRight()) {
+                throw new ByActionStatusComponentException(
+                    ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId);
+            }
+
+            final Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes = containerComponent.getComponentInstancesAttributes();
+            return componentInstancesAttributes == null ? new ArrayList<>()
+                : componentInstancesAttributes.getOrDefault(componentInstanceUniqueId, new ArrayList<>());
+        } catch (final ComponentException e) {
+            failed = true;
+            throw e;
+        } finally {
+            unlockComponent(failed, containerComponent);
+        }
+    }
+
+    protected void validateIncrementCounter(String resourceInstanceId, GraphPropertiesDictionary counterType,
+                                            Wrapper<Integer> instaceCounterWrapper,
+                                            Wrapper<ResponseFormat> errorWrapper) {
+        Either<Integer, StorageOperationStatus> counterRes = componentInstanceOperation
+            .increaseAndGetResourceInstanceSpecificCounter(resourceInstanceId, counterType, true);
 
         if (counterRes.isRight()) {
             log.debug("increase And Get {} failed resource instance {}", counterType, resourceInstanceId);
@@ -2889,10 +2929,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
     }
-    
+
     public Either<RequirementDefinition, ResponseFormat> updateInstanceRequirement(ComponentTypeEnum componentTypeEnum, String containerComponentId, String componentInstanceUniqueId, String capabilityType, String capabilityName,
             RequirementDefinition requirementDef, String userId) {
-        
+
         Either<RequirementDefinition, ResponseFormat> resultOp = null;
 
         validateUserExists(userId);
@@ -2922,7 +2962,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             log.debug("Failed to lock component {}", containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
-        
+
         try {
             StorageOperationStatus updateRequirementStatus = toscaOperationFacade.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDef);
             if (updateRequirementStatus != StorageOperationStatus.OK) {
@@ -2947,7 +2987,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             // unlock resource
             graphLockOperation.unlockComponent(containerComponentId, componentTypeEnum.getNodeType());
-        }  
+        }
     }
 
     public Either<List<ComponentInstanceProperty>, ResponseFormat> updateInstanceCapabilityProperties(ComponentTypeEnum componentTypeEnum, String containerComponentId, String componentInstanceUniqueId, String capabilityType, String capabilityName,

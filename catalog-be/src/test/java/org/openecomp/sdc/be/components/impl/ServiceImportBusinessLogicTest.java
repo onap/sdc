@@ -52,7 +52,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -784,7 +783,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List< AttributeDataDefinition >> instAttributes = new HashMap<>();
+        Map<String, List< AttributeDefinition >> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         originCompMap.put("componentUid",originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -811,7 +810,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List< AttributeDataDefinition >> instAttributes = new HashMap<>();
+        Map<String, List< AttributeDefinition >> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         originCompMap.put("componentUid",originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1144,7 +1143,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List< AttributeDataDefinition >> instAttributes = new HashMap<>();
+        Map<String, List< AttributeDefinition >> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         originCompMap.put("componentUid",originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1171,7 +1170,7 @@ public class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicB
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-        Map<String, List< AttributeDataDefinition >> instAttributes = new HashMap<>();
+        Map<String, List< AttributeDefinition >> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         originCompMap.put("componentUid",originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
