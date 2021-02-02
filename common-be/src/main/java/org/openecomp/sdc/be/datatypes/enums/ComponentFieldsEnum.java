@@ -24,6 +24,7 @@ public enum ComponentFieldsEnum {
 
     PROPERTIES("properties"),
     INPUTS("inputs"),
+    OUTPUTS("outputs"),
     USERS("users"),
     GROUPS("groups"),
     NON_EXCLUDED_GROUPS("nonExcludedGroups"),

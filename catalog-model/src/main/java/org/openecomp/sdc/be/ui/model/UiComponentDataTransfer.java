@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
@@ -78,6 +79,7 @@ public class UiComponentDataTransfer {
     private Map<String, UINodeFilter> nodeFilterforNode;
     private Map<String, UINodeFilter> substitutionFilterForTopologyTemplate;
     private List<PropertyDefinition> properties;
+    private List<AttributeDefinition> attributes;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
 
     public UiComponentDataTransfer() {

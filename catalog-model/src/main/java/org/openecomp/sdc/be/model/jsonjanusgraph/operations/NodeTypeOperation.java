@@ -210,7 +210,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
             }
         }
 
-        if (!componentParametersView.isIgnoreAttributesFrom()) {
+        if (!componentParametersView.isIgnoreAttributes()) {
             status = setResourceAttributesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));

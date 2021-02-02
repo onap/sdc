@@ -94,7 +94,6 @@ import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
@@ -2632,7 +2631,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
 		Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
 		Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-		Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
+        Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
 		List<RequirementCapabilityRelDef> relations = new ArrayList<>();
 		Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
@@ -2693,7 +2692,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 											Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String,
 											List<ComponentInstanceProperty>> instProperties, Map<String,
 											List<ComponentInstanceInput>> instInputs,
-											Map<String, List<AttributeDataDefinition>> instAttributes) {
+											Map<String, List<AttributeDefinition>> instAttributes) {
 		Optional<ComponentInstance> foundInstance = findInstance(oldResource, instance);
 		if (foundInstance.isPresent()) {
 			if (MapUtils.isNotEmpty(foundInstance.get().getCapabilities())) {
@@ -2749,7 +2748,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private void associateInstAttributeToComponentToInstances(String yamlName, Resource resource,
-															  Map<String, List<AttributeDataDefinition>> instAttributes) {
+															  Map<String, List<AttributeDefinition>> instAttributes) {
 		StorageOperationStatus addArtToInst;
 		addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,
 			resource);
@@ -2905,7 +2904,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 										  Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
 										  Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts,
 										  Map<String, Map<String, ArtifactDefinition>> instArtifacts,
-										  Map<String, List<AttributeDataDefinition>> instAttributes,
+										  Map<String, List<AttributeDefinition>> instAttributes,
 										  Map<String, Resource> originCompMap,
 										  Map<String, List<ComponentInstanceInput>> instInputs,
 										  UploadComponentInstanceInfo uploadComponentInstanceInfo) {

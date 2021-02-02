@@ -54,7 +54,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -76,6 +75,7 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.exception.ToscaExportException;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
@@ -403,10 +403,10 @@ public class ToscaExportHandler {
 
     private void convertSubstitutionMappingFilter(final Component component,
                                                   final SubstitutionMapping substitutionMapping) {
-        if(component.getSubstitutionFilter() != null
-                && (component.getSubstitutionFilter().getProperties()).getListToscaDataDefinition() != null) {
+        if (component.getSubstitutionFilter() != null
+            && (component.getSubstitutionFilter().getProperties()).getListToscaDataDefinition() != null) {
             substitutionMapping
-                    .setSubstitution_filter(convertToSubstitutionFilterComponent(component.getSubstitutionFilter()));
+                .setSubstitution_filter(convertToSubstitutionFilterComponent(component.getSubstitutionFilter()));
         }
     }
 
@@ -584,7 +584,8 @@ public class ToscaExportHandler {
                                    final ComponentInstance componentInstance,
                                    final Component fetchedComponent) {
         componentCache.put(fetchedComponent.getUniqueId(), fetchedComponent);
-        if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
+        if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy
+            || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
             final Either<Component, StorageOperationStatus> sourceService = toscaOperationFacade
                 .getToscaFullElement(componentInstance.getSourceModelUid());
             if (sourceService.isRight() && (log.isDebugEnabled())) {
@@ -1071,7 +1072,7 @@ public class ToscaExportHandler {
             toscaNodeType.setDerived_from(derivedFrom);
         }
         if (component instanceof Resource) {
-            final List<AttributeDataDefinition> attributes = ((Resource) component).getAttributes();
+            final List<AttributeDefinition> attributes = ((Resource) component).getAttributes();
             if (CollectionUtils.isNotEmpty(attributes)) {
                 final Map<String, Object> attributeDataDefinitionMap = new HashMap<>();
                 attributes.forEach(attributeDataDefinition ->
@@ -1083,16 +1084,16 @@ public class ToscaExportHandler {
         return toscaNodeType;
     }
 
-    private void buildAttributeData(final AttributeDataDefinition originalAttributeDataDefinition,
+    private void buildAttributeData(final AttributeDefinition originalAttributeDefinition,
                                     final Map<String, Object> attributeDataDefinitionMap) {
 
-        attributeDataDefinitionMap.put(originalAttributeDataDefinition.getName(),
-            new ObjectMapper().convertValue(new AttributeDefinition(
-                originalAttributeDataDefinition.getType(),
-                originalAttributeDataDefinition.getDescription(),
-                originalAttributeDataDefinition.get_default(),
-                originalAttributeDataDefinition.getStatus(),
-                originalAttributeDataDefinition.getEntry_schema()), Object.class));
+        attributeDataDefinitionMap.put(originalAttributeDefinition.getName(),
+            new ObjectMapper().convertValue(new org.onap.sdc.tosca.datatypes.model.AttributeDefinition(
+                originalAttributeDefinition.getType(),
+                originalAttributeDefinition.getDescription(),
+                originalAttributeDefinition.get_default(),
+                originalAttributeDefinition.getStatus(),
+                originalAttributeDefinition.getEntry_schema()), Object.class));
     }
 
     private Either<Map<String, Object>, ToscaError> createProxyInterfaceTypes(Component container) {
@@ -1206,19 +1207,21 @@ public class ToscaExportHandler {
     }
 
     private void createServiceSubstitutionNodeTypes(final Map<String, Component> componentCache,
-            final Component container, final ToscaTemplate toscaNode) {
+                                                    final Component container, final ToscaTemplate toscaNode) {
         final List<ComponentInstance> componentInstances = container.getComponentInstances();
 
         if (CollectionUtils.isEmpty(componentInstances)) {
             return;
         }
         final List<ComponentInstance> serviceSubstitutionInstanceList = componentInstances.stream()
-               .filter(p -> p.getOriginType().name().equals(OriginTypeEnum.ServiceSubstitution.name()))
-               .collect(Collectors.toList());
+            .filter(p -> p.getOriginType().name().equals(OriginTypeEnum.ServiceSubstitution.name()))
+            .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(serviceSubstitutionInstanceList)) {
             for (ComponentInstance inst : serviceSubstitutionInstanceList) {
-                final Map<String, ToscaNodeType> nodeTypes = toscaNode.getNode_types() == null ? new HashMap<>() : toscaNode.getNode_types();
-                convertInterfaceNodeType(new HashMap<>(), componentCache.get(inst.getSourceModelUid()), toscaNode, nodeTypes, true);
+                final Map<String, ToscaNodeType> nodeTypes =
+                    toscaNode.getNode_types() == null ? new HashMap<>() : toscaNode.getNode_types();
+                convertInterfaceNodeType(new HashMap<>(), componentCache.get(inst.getSourceModelUid()), toscaNode,
+                    nodeTypes, true);
             }
         }
     }
@@ -1576,7 +1579,7 @@ public class ToscaExportHandler {
         NodeFilter nodeFilter = new NodeFilter();
 
         ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> origProperties =
-                substitutionFilterDataDefinition.getProperties();
+            substitutionFilterDataDefinition.getProperties();
         List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
 
         copySubstitutionFilterProperties(origProperties, propertiesCopy);
@@ -1658,7 +1661,8 @@ public class ToscaExportHandler {
         for (final RequirementSubstitutionFilterPropertyDataDefinition propertyDataDefinition : origProperties
             .getListToscaDataDefinition()) {
             for (final String propertyInfoEntry : propertyDataDefinition.getConstraints()) {
-                final Map<String, List<Object>> propertyValObj = new YamlUtil().yamlToObject(propertyInfoEntry, Map.class);
+                final Map<String, List<Object>> propertyValObj = new YamlUtil()
+                    .yamlToObject(propertyInfoEntry, Map.class);
                 final String propertyName = propertyDataDefinition.getName();
                 if (propertyMapCopy.containsKey(propertyName)) {
                     addPropertyConstraintValueToList(propertyName, propertyValObj, propertyMapCopy.get(propertyName));
@@ -1887,7 +1891,7 @@ public class ToscaExportHandler {
             return Collections.emptyMap();
         }
         return component.getOutputs().stream()
-            .map(PropertyDataDefinition::getName)
+            .map(AttributeDataDefinition::getName)
             .collect(
                 Collectors.toMap(
                     outputName -> outputName,

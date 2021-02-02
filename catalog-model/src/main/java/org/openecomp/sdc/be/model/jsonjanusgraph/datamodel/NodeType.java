@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 
 @Getter
@@ -38,6 +37,5 @@ public class NodeType extends ToscaElement {
     private List<String> derivedFrom;
     private List<String> derivedList;
     private Map<String, String> derivedFromMapOfIdToName;
-    private Map<String, AttributeDataDefinition> attributes;
     private Map<String, InterfaceDataDefinition> interfaceArtifacts;
 }
