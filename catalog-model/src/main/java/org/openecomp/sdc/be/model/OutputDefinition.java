@@ -19,15 +19,15 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 
-public class OutputDefinition extends PropertyDefinition {
+public class OutputDefinition extends AttributeDefinition {
 
-    public OutputDefinition(final PropertyDataDefinition propertyDataDefinition) {
+    public OutputDefinition(final AttributeDataDefinition propertyDataDefinition) {
         super(propertyDataDefinition);
     }
 
-    public OutputDefinition(PropertyDefinition propertyDefinition) {
+    public OutputDefinition(AttributeDefinition propertyDefinition) {
         super(propertyDefinition);
     }
 

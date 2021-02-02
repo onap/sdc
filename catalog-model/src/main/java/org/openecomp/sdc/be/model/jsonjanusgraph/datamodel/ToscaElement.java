@@ -28,6 +28,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
@@ -54,6 +55,7 @@ public abstract class ToscaElement {
     private Map<String, ArtifactDataDefinition> deploymentArtifacts;
     private Map<String, AdditionalInfoParameterDataDefinition> additionalInformation;
     private Map<String, PropertyDataDefinition> properties;
+    private Map<String, AttributeDataDefinition> attributes;
     private Map<String, ListCapabilityDataDefinition> capabilities;
     private Map<String, MapPropertiesDataDefinition> capabilitiesProperties;
     private Map<String, ListRequirementDataDefinition> requirements;
@@ -67,7 +69,7 @@ public abstract class ToscaElement {
     private Map<String, String> allVersions;
     private String toscaVersion;
 
-    public ToscaElement(ToscaElementTypeEnum toscaType){
+    protected ToscaElement(ToscaElementTypeEnum toscaType){
         this.toscaType = toscaType;
     }
 
@@ -207,7 +209,7 @@ public abstract class ToscaElement {
     public Long getArchiveTime() {
         Object archiveTime = getMetadataValue(JsonPresentationFields.ARCHIVE_TIME);
         if (archiveTime instanceof Integer){
-            return new Long((Integer)getMetadataValue(JsonPresentationFields.ARCHIVE_TIME));
+            return Long.valueOf((Integer)getMetadataValue(JsonPresentationFields.ARCHIVE_TIME));
         }
         return (Long)archiveTime;
     }
