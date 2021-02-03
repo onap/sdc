@@ -832,4 +832,13 @@ limitations under the License.
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>all-for-integration-tests-only</id>
+            <properties>
+                <surefire.skip.tests>true</surefire.skip.tests>
+                <skipTest>false</skipTest>
+            </properties>
+        </profile>
+    </profiles>
 </project>

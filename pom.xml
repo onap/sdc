@@ -168,6 +168,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <!-- Surefire parameters  -->
         <surefire.forkCount>1C</surefire.forkCount>
         <surefire.reuseForks>true</surefire.reuseForks>
+        <surefire.skip.tests>false</surefire.skip.tests>
 
         <docker.api.version>1.35</docker.api.version>
     </properties>
@@ -522,6 +523,7 @@ Modifications copyright (c) 2018-2019 Nokia
                     <forkCount>${surefire.forkCount}</forkCount>
                     <reuseForks>${surefire.reuseForks}</reuseForks>
                     <parallel>methods</parallel>
+                    <skip>${surefire.skip.tests}</skip>
                 </configuration>
             </plugin>
             <plugin>
@@ -567,6 +569,29 @@ Modifications copyright (c) 2018-2019 Nokia
             </activation>
             <properties>
                 <checkstyle.skip>true</checkstyle.skip>
+            </properties>
+            <modules>
+                <module>onboarding</module>
+                <module>common-app-logging</module>
+                <module>common-app-api</module>
+                <module>common-be</module>
+                <module>catalog-dao</module>
+                <module>catalog-model</module>
+                <module>catalog-be</module>
+                <module>catalog-be-plugins</module>
+                <module>asdctool</module>
+                <module>catalog-ui</module>
+                <module>catalog-fe</module>
+                <module>sdc-os-chef</module>
+                <module>utils/webseal-simulator</module>
+                <module>integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>all-for-integration-tests-only</id>
+            <properties>
+                <checkstyle.skip>true</checkstyle.skip>
+                <surefire.skip.tests>true</surefire.skip.tests>
             </properties>
             <modules>
                 <module>onboarding</module>
