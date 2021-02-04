@@ -16,7 +16,7 @@ if node['basic_auth']
   basic_auth_user = node['basic_auth']['user_name']
   basic_auth_pass = node['basic_auth']['user_pass']
   if basic_auth_enabled
-    basic_auth_config = "--header " + Base64.encode64(basic_auth_user + ":" + basic_auth_pass)
+    basic_auth_config = "--header " + Base64.strict_encode64(basic_auth_user + ":" + basic_auth_pass)
   else
     # set default user configuration file
     basic_auth_config = ""
