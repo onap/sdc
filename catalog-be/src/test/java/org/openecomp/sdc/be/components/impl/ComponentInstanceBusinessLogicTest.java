@@ -1169,7 +1169,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(StorageOperationStatus.OK);
         
         result = testSubject.updateInstanceRequirement(componentTypeEnum, containerComponentId,
-            componentInstanceUniqueId, capabilityType, capabilityName, requirementDef, userId);
+            componentInstanceUniqueId, requirementDef, userId);
         assertEquals(requirementDef, result.left().value());
 
     }

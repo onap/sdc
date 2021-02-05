@@ -47,11 +47,13 @@ public class AttributeDefinition extends AttributeDataDefinition implements IOpe
     }
 
     public AttributeDefinition(final AttributeDefinition attributeDefinition) {
+        super(attributeDefinition);
         this.type = attributeDefinition.getType();
         this.description = attributeDefinition.getDescription();
         this._default = attributeDefinition.get_default();
         this.status = attributeDefinition.getStatus();
         this.entry_schema = attributeDefinition.getEntry_schema();
+        this.toscaPresentation = attributeDefinition.toscaPresentation;
     }
 
     @Override
