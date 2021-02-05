@@ -86,14 +86,10 @@ public class DataTypeImportManager {
                     return Either.right(responseFormat);
                 }
             } else {
-                // if it is not a scalar data type and it derives from abstract
-                // data type, we should reject the request.
                 if (!ToscaPropertyType.isScalarType(dataTypeName) && isAbstract(derivedDataType)) {
-                    log.debug("Data type {} which derived from abstract data type must have at least one property", dataType.getName());
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormatByDataType(ActionStatus.DATA_TYPE_NOR_PROPERTIES_NEITHER_DERIVED_FROM, dataType, null);
-                    return Either.right(responseFormat);
+                    log.warn("Creating data type {} which derived from abstract data type with no properties", dataType.getName());
                 }
-            }
+            } 
         } else {
             // properties tag cannot be empty
             if (properties.isEmpty()) {

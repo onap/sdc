@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.dao.jsongraph;
 
 import org.janusgraph.core.*;
+import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -461,6 +462,12 @@ public class JanusGraphDao {
     }
 
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(VertexTypeEnum type, Map<GraphPropertyEnum, Object> props, Map<GraphPropertyEnum, Object> hasNotProps, JsonParseFlagEnum parseFlag) {
+        return getByCriteria(type, props, hasNotProps, null, parseFlag);
+    }
+    
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type,
+            final Map<GraphPropertyEnum, Object> hasProps, final Map<GraphPropertyEnum, Object> hasNotProps,
+            final Map<String, Entry<JanusGraphPredicate, Object>> predicates, final JsonParseFlagEnum parseFlag) {
         Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (graph.isLeft()) {
             try {
@@ -471,8 +478,8 @@ public class JanusGraphDao {
                     query = query.has(GraphPropertyEnum.LABEL.getProperty(), type.getName());
                 }
 
-                if (props != null && !props.isEmpty()) {
-                    for (Map.Entry<GraphPropertyEnum, Object> entry : props.entrySet()) {
+                if (hasProps != null && !hasProps.isEmpty()) {
+                    for (Map.Entry<GraphPropertyEnum, Object> entry : hasProps.entrySet()) {
                         query = query.has(entry.getKey().getProperty(), entry.getValue());
                     }
                 }
@@ -485,40 +492,36 @@ public class JanusGraphDao {
                         }
                     }
                 }
+                if (predicates != null && !predicates.isEmpty()) {
+                    for (Map.Entry<String, Entry<JanusGraphPredicate, Object>> entry : predicates.entrySet()) {
+                        JanusGraphPredicate predicate = entry.getValue().getKey();
+                        Object object = entry.getValue().getValue();
+                        query = query.has(entry.getKey(), predicate, object);
+                    }
+                }
                 Iterable<JanusGraphVertex> vertices = query.vertices();
-                if (vertices == null) {
+                if (vertices == null || !vertices.iterator().hasNext()) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
 
-                Iterator<JanusGraphVertex> iterator = vertices.iterator();
                 List<GraphVertex> result = new ArrayList<>();
-
-                while (iterator.hasNext()) {
-                    JanusGraphVertex vertex = iterator.next();
-
-                    Map<GraphPropertyEnum, Object> newProp = getVertexProperties(vertex);
-                    GraphVertex graphVertex = createAndFill(vertex, parseFlag);
-
-                    result.add(graphVertex);
-                }
+                vertices.forEach(vertex -> result.add(createAndFill(vertex, parseFlag)));
+                
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Number of fetced nodes in graph for criteria : from type = {} and properties = {} is {}", type, props, result.size());
-                }
-                if (result.size() == 0) {
-                    return Either.right(JanusGraphOperationStatus.NOT_FOUND);
+                    logger.debug("Number of fetched nodes in graph for criteria : from type '{}' and properties '{}' is '{}'", type, hasProps, result.size());
                 }
 
                 return Either.left(result);
             } catch (Exception e) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
+                    logger.debug("Failed to get by criteria for type '{}' and properties '{}'", type, hasProps, e);
                 }
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
 
         } else {
             if (logger.isDebugEnabled()) {
-                logger.debug("Failed  get by  criteria for type ={} and properties = {} error : {}", type, props, graph.right().value());
+                logger.debug("Failed to get by criteria for type '{}' and properties '{}'. Error : '{}'", type, hasProps, graph.right().value());
             }
             return Either.right(graph.right().value());
         }

@@ -13,14 +13,13 @@ node_types:
           description: Human readable description of the VDU
           required: true
         boot_order:
-          type: list # explicit index (boot index) not necessary, contrary to IFA011 
-          description: References a node template name from which a valid boot device is created 
+          type: boolean
+          description: It indicates whether the order of the virtual_storage requirements is used as the boot index (the first requirement represents the lowest index and defines highest boot priority).
+          default: false
           required: false
-          entry_schema:
-            type: string
         nfvi_constraints:
-          type: list
-          description: Describes constraints on the NFVI for the VNFC instance(s) created from this VDU
+          type: map
+          description: Describes constraints on the NFVI for the VNFC instance(s) created from this VDU. This property is reserved for future use in the present document.
           required: false
           entry_schema:
             type: string
@@ -45,8 +44,8 @@ node_types:
           description: Defines information related to a SwImage artifact used by this Vdu.Compute node
           required: false # property is required when the node template has an associated artifact of type tosca.artifacts.nfv.SwImage and not required otherwise
         boot_data:
-          type: string 
-          description: Contains a string or a URL to a file contained in the VNF package used to customize a virtualised compute resource at boot time. The bootData may contain variable parts that are replaced by deployment specific values before being sent to the VIM. 
+          type: tosca.datatypes.nfv.BootData 
+          description: Contains the information used to customize a virtualised compute resource at boot time. The bootData may contain variable parts that are replaced by deployment specific values before being sent to the VIM.
           required: false
         inject_files: #Introduced from Beijing release, used for vCPE usecase, outside the scope of SOL001 v2.5.1
           type: tosca.datatypes.nfv.injectFile
