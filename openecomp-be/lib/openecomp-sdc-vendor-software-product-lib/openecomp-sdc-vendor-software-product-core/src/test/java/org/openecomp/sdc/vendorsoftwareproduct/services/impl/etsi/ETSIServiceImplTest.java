@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +58,8 @@ import org.openecomp.sdc.be.config.NonManoConfiguration;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.yaml.snakeyaml.Yaml;
+
+import com.vdurmont.semver4j.Semver;
 
 public class ETSIServiceImplTest {
 
@@ -289,6 +293,14 @@ public class ETSIServiceImplTest {
             containsString(file1Path.toString()));
         assertThat("Descriptor should contain reference to file", serviceTemplatesAsYaml,
             containsString(file2Path.toString()));
+    }
+
+    @Test
+    public void extractETSIPackageVersionTest() {
+        final List<String> versions = Arrays.asList("2.6.1", "2.7.1", "1.1.1", "3.3.1", "3.1.1", "1.1.2", "2.2.1");
+        assertThat(versions.stream().map(Semver::new).max((v1, v2) -> v1.compareTo(v2))
+                .orElse(new Semver(ETSI_VERSION_2_6_1)),
+                is(new Semver("3.3.1")));
     }
 
     private <T> T convert(final String fullFileName, final Class<T> className) throws IOException {

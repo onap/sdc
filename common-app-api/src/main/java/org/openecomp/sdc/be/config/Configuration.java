@@ -634,7 +634,6 @@ public class Configuration extends BasicConfiguration {
         this.gabConfig = gabConfig;
     }
 
-
     public static class CookieConfig {
         String securityKey = "";
         long maxSessionTimeOut = 600*1000;
