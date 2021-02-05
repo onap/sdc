@@ -21,17 +21,29 @@
 
 package org.openecomp.sdc.tosca.csar;
 
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_7_1;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA_LIMIT_VERSION_3;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_VNF_METADATA_LIMIT_VERSION_3;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.COMPATIBLE_SPECIFICATION_VERSIONS;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.common.errors.Messages;
+
+import com.vdurmont.semver4j.Semver;
 
 /**
  * Processes a SOL004 Manifest.
  */
 public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
+
+    private int maxAllowedMetaEntries;
 
     @Override
     protected void processMetadata() {
@@ -51,7 +63,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             final String metadataLine = currentLine.get();
             final String metadataEntry = readEntryName(metadataLine).orElse(null);
             if (!isMetadataEntry(metadataEntry)) {
-                if (metadata.size() < MAX_ALLOWED_MANIFEST_META_ENTRIES) {
+                if (metadata.size() < getMaxAllowedManifestMetaEntries()) {
                     reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, metadataLine);
                     continueToProcess = false;
                     return;
@@ -225,12 +237,11 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             reportError(Messages.MANIFEST_NO_METADATA);
             return false;
         }
-
-        final Entry<String, String> firstManifestEntry = metadata.entrySet().iterator().next();
-        final ManifestTokenType firstManifestEntryTokenType =
-            ManifestTokenType.parse(firstManifestEntry.getKey()).orElse(null);
+        String key = metadata.keySet().stream().filter(k -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(k))
+                .findFirst().orElse(null);
+        final ManifestTokenType firstManifestEntryTokenType = ManifestTokenType.parse(key).orElse(null);
         if (firstManifestEntryTokenType == null) {
-            reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, firstManifestEntry.getKey());
+            reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, key);
             return false;
         }
         for (final Entry<String, String> manifestEntry : metadata.entrySet()) {
@@ -247,8 +258,8 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             }
         }
 
-        if (metadata.entrySet().size() != MAX_ALLOWED_MANIFEST_META_ENTRIES) {
-            reportError(Messages.MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT, MAX_ALLOWED_MANIFEST_META_ENTRIES);
+        if (metadata.entrySet().size() != getMaxAllowedManifestMetaEntries()) {
+            reportError(Messages.MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT, getMaxAllowedManifestMetaEntries());
             return false;
         }
 
@@ -372,4 +383,25 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
         readNextNonEmptyLine();
     }
 
+    private int getMaxAllowedManifestMetaEntries() {
+        if (maxAllowedMetaEntries == 0) {
+            boolean isVersion3 = metadata.containsKey(COMPATIBLE_SPECIFICATION_VERSIONS.getToken())
+                && !getHighestCompatibleVersion().isLowerThan(ETSI_VERSION_2_7_1);
+            //Both PNF and VNF share attribute COMPATIBLE_SPECIFICATION_VERSIONS
+            if (isVersion3)
+                maxAllowedMetaEntries = metadata.keySet().stream()
+                    .anyMatch(k -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(k)
+                            && isMetadataEntry(k) && ManifestTokenType.parse(k).get().isMetadataPnfEntry())
+                    ? MANIFEST_PNF_METADATA_LIMIT_VERSION_3 : MANIFEST_VNF_METADATA_LIMIT_VERSION_3;
+            else
+                maxAllowedMetaEntries = MAX_ALLOWED_MANIFEST_META_ENTRIES;
+        }
+        return maxAllowedMetaEntries;
+    }
+
+    private Semver getHighestCompatibleVersion() {
+        return Arrays.asList(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(","))
+                .stream().map(Semver::new).max((v1, v2) -> v1.compareTo(v2))
+                .orElse(new Semver(ETSI_VERSION_2_6_1));
+    }
 }

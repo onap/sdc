@@ -30,6 +30,11 @@
   </parent>
 
   <dependencies>
+      <dependency>
+      <groupId>com.vdurmont</groupId>
+      <artifactId>semver4j</artifactId>
+      <version>2.0.1</version>
+    </dependency>
     <dependency>
       <groupId>org.onap.sdc.common</groupId>
       <artifactId>onap-tosca-datatype</artifactId>

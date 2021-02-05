@@ -24,21 +24,25 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.ARTIFACTS_FOLDER;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.COMPATIBLE_SPECIFICATION_VERSIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_CHANGE_LOG;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.YamlUtil;
@@ -54,6 +58,8 @@ import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+
+import com.vdurmont.semver4j.Semver;
 
 public class ETSIServiceImpl implements ETSIService {
 
@@ -200,6 +206,22 @@ public class ETSIServiceImpl implements ETSIService {
         return metaDataEntries.containsKey(ENTRY_DEFINITIONS.getName()) && metaDataEntries
             .containsKey(ETSI_ENTRY_MANIFEST.getName())
             && metaDataEntries.containsKey(ETSI_ENTRY_CHANGE_LOG.getName());
+    }
+
+    @Override
+    public Semver getHighestCompatibleSpecificationVersion(final FileContentHandler handler) {
+        try {
+            Map<String, String> metadata = getManifest(handler).getMetadata();
+            if (metadata.containsKey(COMPATIBLE_SPECIFICATION_VERSIONS.getToken())) {
+                return Arrays.asList(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(","))
+                        .stream().map(Semver::new).max((v1, v2) -> v1.compareTo(v2))
+                        .orElse(new Semver(ETSI_VERSION_2_6_1));
+            }
+        } catch (Exception ex) {
+            LOGGER.error("An error occurred while getting highest compatible version from manifest file", ex);
+        }
+        return new Semver(ETSI_VERSION_2_6_1);
+
     }
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {

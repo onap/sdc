@@ -39,7 +39,6 @@ import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEP
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_ARCHIVE_VERSION;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_NAME;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_RELEASE_DATE_TIME;
-import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_PACKAGE_VERSION;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_PRODUCT_NAME;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_PROVIDER_ID;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.VNF_RELEASE_DATE_TIME;
@@ -69,6 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,27 +83,65 @@ import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException
 
 public class SOL004MetaDirectoryValidatorTest {
 
-    private SOL004MetaDirectoryValidator sol004MetaDirectoryValidator;
-    private OnboardingPackageContentHandler handler;
-    private StringBuilder metaFileBuilder;
+    private static int MANIFEST_DEFINITION_ERROR_COUNT = 1;
+
+    protected SOL004MetaDirectoryValidator sol004MetaDirectoryValidator;
+    protected OnboardingPackageContentHandler handler;
+    protected StringBuilder metaFileBuilder;
 
     @Before
     public void setUp() {
-        sol004MetaDirectoryValidator = new SOL004MetaDirectoryValidator();
+        sol004MetaDirectoryValidator = getSOL004MetaDirectoryValidator();
         handler = new OnboardingPackageContentHandler();
-        metaFileBuilder = new StringBuilder()
-                .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
-                .append(CSAR_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
-                .append(CREATED_BY_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
-                .append(ENTRY_DEFINITIONS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" ").append(TOSCA_DEFINITION_FILEPATH).append("\n")
-                .append(ETSI_ENTRY_MANIFEST.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" ").append(TOSCA_MANIFEST_FILEPATH).append("\n")
-                .append(ETSI_ENTRY_CHANGE_LOG.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" ").append(TOSCA_CHANGELOG_FILEPATH).append("\n");
+        metaFileBuilder = getMetaFileBuilder();
+    }
+
+    protected SOL004MetaDirectoryValidator getSOL004MetaDirectoryValidator() {
+        return new SOL004MetaDirectoryValidator();
+    }
+
+    protected SOL004MetaDirectoryValidator getSol004WithSecurity(SecurityManager securityManagerMock) {
+        return new SOL004MetaDirectoryValidator(securityManagerMock);
+    }
+
+    protected StringBuilder getMetaFileBuilder() {
+        return new StringBuilder()
+        .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
+        .append(CSAR_VERSION_ENTRY.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
+        .append(CREATED_BY_ENTRY.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
+        .append(ENTRY_DEFINITIONS.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" ").append(TOSCA_DEFINITION_FILEPATH).append("\n")
+        .append(ETSI_ENTRY_MANIFEST.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" ").append(TOSCA_MANIFEST_FILEPATH).append("\n")
+        .append(ETSI_ENTRY_CHANGE_LOG.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" ").append(TOSCA_CHANGELOG_FILEPATH).append("\n");
+    }
+
+    protected ManifestBuilder getPnfManifestSampleBuilder() {
+        return new ManifestBuilder()
+            .withMetaData(PNFD_NAME.getToken(), "myPnf")
+            .withMetaData(ManifestTokenType.PNFD_PROVIDER.getToken(), "ACME")
+            .withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0")
+            .withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
+    }
+
+    protected ManifestBuilder getVnfManifestSampleBuilder() {
+        return new ManifestBuilder()
+            .withMetaData(ManifestTokenType.VNF_PRODUCT_NAME.getToken(), "RadioNode")
+            .withMetaData(ManifestTokenType.VNF_PROVIDER_ID.getToken(), "ACME")
+            .withMetaData(ManifestTokenType.VNF_PACKAGE_VERSION.getToken(), "1.0")
+            .withMetaData(ManifestTokenType.VNF_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
+    }
+
+    /**
+     * ETSI Version 2.7.1 below contains one Definition File reference
+     * ETSI Version 2.7.1 onwards contains two possible Definition File reference
+     */
+    protected int getManifestDefintionErrorCount() {
+        return MANIFEST_DEFINITION_ERROR_COUNT;
     }
 
     @Test
@@ -153,6 +191,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
+
         assertEquals(0, errors.size());
     }
 
@@ -220,7 +259,7 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
         assertThat("Total of errors should be as expected", errors.size(), is(1));
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
-        assertThat("Total of errors messages should be as expected", errorMessages.size(), is(3));
+        assertThat("Total of errors messages should be as expected", errorMessages.size(), is((2 + getManifestDefintionErrorCount())));
     }
 
 
@@ -310,7 +349,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifest.getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("", errors, 1);
+        assertExpectedErrors("", errors, getManifestDefintionErrorCount());
     }
 
     /**
@@ -340,7 +379,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest referenced import file missing", errors, 1);
+        assertExpectedErrors("Manifest referenced import file missing", errors, getManifestDefintionErrorCount());
     }
 
     @Test
@@ -422,7 +461,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Reference with invalid YAML format", errors, 1);
+        assertExpectedErrors("Reference with invalid YAML format", errors, getManifestDefintionErrorCount());
     }
 
     @Test
@@ -503,7 +542,7 @@ public class SOL004MetaDirectoryValidatorTest {
     }
 
     @Test
-    public void testGivenManifestAndDefinitionFile_withSameNames_thenNoErrorReturned() {
+    public void testGivenManifestAndDefinitionFile_withSameNames_thenNoErrorReturned()  {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -823,9 +862,10 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
-        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
-                , Messages.MISSING_IMPORT_FILE.formatMessage("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml"))
-        );
+        for (int i =0;i < getManifestDefintionErrorCount();i++)
+            expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+                    , Messages.MISSING_IMPORT_FILE.formatMessage("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml"))
+                    );
 
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
@@ -861,9 +901,10 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
-        expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
+        for (int i =0;i < getManifestDefintionErrorCount();i++)
+            expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
                 , Messages.INVALID_IMPORT_STATEMENT.formatMessage(definitionImportOne, "null"))
-        );
+         );
 
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
@@ -939,7 +980,7 @@ public class SOL004MetaDirectoryValidatorTest {
                 " in 'reader', line 2, column 7:\n" +
                 "    {}\n" +
                 "      ^\n")
-        );
+            );
 
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
                 .validateContent(handler);
@@ -982,7 +1023,7 @@ public class SOL004MetaDirectoryValidatorTest {
         );
 
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
-                .validateContent(handler);
+            .validateContent(handler);
 
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
@@ -1173,7 +1214,7 @@ public class SOL004MetaDirectoryValidatorTest {
 
         final SecurityManager securityManagerMock = mock(SecurityManager.class);
         when(securityManagerMock.verifySignedData(any(), any(), any())).thenReturn(true);
-        sol004MetaDirectoryValidator = new SOL004MetaDirectoryValidator(securityManagerMock);
+        sol004MetaDirectoryValidator = getSol004WithSecurity(securityManagerMock);
 
         //when
         Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
@@ -1181,7 +1222,7 @@ public class SOL004MetaDirectoryValidatorTest {
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), Collections.emptyList());
 
         //given
-        sol004MetaDirectoryValidator = new SOL004MetaDirectoryValidator(securityManagerMock);
+        sol004MetaDirectoryValidator = getSol004WithSecurity(securityManagerMock);
         when(securityManagerMock.verifySignedData(any(), any(), any())).thenReturn(false);
 
         //when
@@ -1195,7 +1236,7 @@ public class SOL004MetaDirectoryValidatorTest {
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
 
         //given
-        sol004MetaDirectoryValidator = new SOL004MetaDirectoryValidator(securityManagerMock);
+        sol004MetaDirectoryValidator = getSol004WithSecurity(securityManagerMock);
         when(securityManagerMock.verifySignedData(any(), any(), any()))
                 .thenThrow(new SecurityManagerException("SecurityManagerException"));
         //when
@@ -1204,16 +1245,31 @@ public class SOL004MetaDirectoryValidatorTest {
         //then
         expectedErrorList = new ArrayList<>();
         expectedErrorList.add(
-                new ErrorMessage(ErrorLevel.ERROR,
-                        Messages.ARTIFACT_SIGNATURE_VALIDATION_ERROR.formatMessage(fakeArtifactCmsPath,
-                                fakeArtifactPath, fakeCertificatePath, "SecurityManagerException")
-                )
+            new ErrorMessage(ErrorLevel.ERROR,
+                Messages.ARTIFACT_SIGNATURE_VALIDATION_ERROR.formatMessage(fakeArtifactCmsPath,
+                    fakeArtifactPath, fakeCertificatePath, "SecurityManagerException")
+            )
         );
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
 
+    protected void assertExpectedErrors(List<ErrorMessage> actualErrorList, final List<ErrorMessage> expectedErrorList) {
+        if (actualErrorList == null) {
+            actualErrorList = new ArrayList<>();
+        }
 
-    private void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors, final int expectedErrors) {
+        printErrorMessages(actualErrorList);
+
+        assertThat("The actual error list should have the same size as the expected error list " + actualErrorList.toString() 
+                , actualErrorList, hasSize(expectedErrorList.size())
+        );
+
+        assertThat("The actual error and expected error lists should be the same"
+                , actualErrorList, containsInAnyOrder(expectedErrorList.toArray(new ErrorMessage[0]))
+        );
+    }
+
+    protected void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors, final int expectedErrors){
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         printErrorMessages(errorMessages);
         if (expectedErrors > 0) {
@@ -1229,38 +1285,6 @@ public class SOL004MetaDirectoryValidatorTest {
                     System.out.println(String.format("%s: %s", errorMessage.getLevel(), errorMessage.getMessage()))
             );
         }
-    }
-
-    private ManifestBuilder getPnfManifestSampleBuilder() {
-        return new ManifestBuilder()
-                .withMetaData(PNFD_NAME.getToken(), "myPnf")
-                .withMetaData(ManifestTokenType.PNFD_PROVIDER.getToken(), "ACME")
-                .withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0")
-                .withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
-    }
-
-    private ManifestBuilder getVnfManifestSampleBuilder() {
-        return new ManifestBuilder()
-                .withMetaData(VNF_PRODUCT_NAME.getToken(), "RadioNode")
-                .withMetaData(VNF_PROVIDER_ID.getToken(), "ACME")
-                .withMetaData(VNF_PACKAGE_VERSION.getToken(), "1.0")
-                .withMetaData(VNF_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
-    }
-
-    private void assertExpectedErrors(List<ErrorMessage> actualErrorList, final List<ErrorMessage> expectedErrorList) {
-        if (actualErrorList == null) {
-            actualErrorList = new ArrayList<>();
-        }
-
-        printErrorMessages(actualErrorList);
-
-        assertThat("The actual error list should have the same size as the expected error list"
-                , actualErrorList, hasSize(expectedErrorList.size())
-        );
-
-        assertThat("The actual error and expected error lists should be the same"
-                , actualErrorList, containsInAnyOrder(expectedErrorList.toArray(new ErrorMessage[0]))
-        );
     }
 
 }

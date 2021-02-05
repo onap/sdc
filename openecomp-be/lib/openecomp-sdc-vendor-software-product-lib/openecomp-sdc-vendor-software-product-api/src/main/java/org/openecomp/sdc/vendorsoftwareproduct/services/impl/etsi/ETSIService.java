@@ -24,10 +24,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
+
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+
+import com.vdurmont.semver4j.Semver;
 
 
 public interface ETSIService {
@@ -67,18 +70,26 @@ public interface ETSIService {
     Manifest getManifest(FileContentHandler handler) throws IOException;
 
     /**
-     * Determmines the type of resource that the CSAR represents
+     * Determines the type of resource that the CSAR represents
      * @param handler contains csar artifacts
      * @throws IOException when TOSCA.meta file or manifest file is invalid
      */
     ResourceTypeEnum getResourceType(FileContentHandler handler) throws IOException;
 
     /**
-     * Determmines the type of resource that the CSAR represents
+     * Determines the type of resource that the CSAR represents
      * @param manifest contains manifest content
      * @throws IOException when TOSCA.meta file or manifest file is invalid
      */
     ResourceTypeEnum getResourceType(Manifest manifest) throws IOException;
 
     Path getOriginalManifestPath(final FileContentHandler handler) throws IOException;
+
+
+    /**
+     * Determines the highest compatible specification version based on ETSI manifest file
+     * @param handler contains csar artifacts
+     * @return Semver representing highest compatible specification version
+     */
+    Semver getHighestCompatibleSpecificationVersion(final FileContentHandler handler);
 }

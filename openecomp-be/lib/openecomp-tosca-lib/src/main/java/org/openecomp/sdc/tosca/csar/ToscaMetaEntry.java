@@ -38,7 +38,8 @@ public enum ToscaMetaEntry {
     ETSI_ENTRY_CHANGE_LOG("ETSI-Entry-Change-Log"),
     ETSI_ENTRY_TESTS("ETSI-Entry-Tests"),
     ETSI_ENTRY_LICENSES("ETSI-Entry-Licenses"),
-    ETSI_ENTRY_CERTIFICATE("ETSI-Entry-Certificate");
+    ETSI_ENTRY_CERTIFICATE("ETSI-Entry-Certificate"),
+    OTHER_DEFINITIONS("Other-Definitions");
 
     private final String name;
 

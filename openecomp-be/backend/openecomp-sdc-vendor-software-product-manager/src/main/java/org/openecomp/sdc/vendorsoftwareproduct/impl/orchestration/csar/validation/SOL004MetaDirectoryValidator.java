@@ -55,8 +55,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
-
 import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.impl.ToscaDefinitionImportHandler;
@@ -257,13 +258,12 @@ class SOL004MetaDirectoryValidator implements Validator {
                 validateCertificate(value);
                 break;
             default:
-                reportError(ErrorLevel.ERROR, Messages.METADATA_UNSUPPORTED_ENTRY.formatMessage(key));
-                LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), key);
+                handleOtherEntry(entry);
                 break;
         }
     }
 
-    private void validateOtherEntries(final Map.Entry entry) {
+    private void validateOtherEntries(final Map.Entry<String, String> entry) {
         final String manifestFile = toscaMetadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName());
         if (verifyFileExists(contentHandler.getFileList(), manifestFile)) {
             final Manifest onboardingManifest = new SOL004ManifestOnboarding();
@@ -299,7 +299,7 @@ class SOL004MetaDirectoryValidator implements Validator {
                 || CSAR_VERSION_1_0.equals(version));
     }
 
-    private void validateDefinitionFile(final String filePath) {
+    protected void validateDefinitionFile(final String filePath) {
         final Set<String> existingFiles = contentHandler.getFileList();
 
         if (verifyFileExists(existingFiles, filePath)) {
@@ -341,19 +341,15 @@ class SOL004MetaDirectoryValidator implements Validator {
     }
 
     private void verifyManifestMetadata(final Map<String, String> metadata) {
-        if (metadata.size() != MANIFEST_METADATA_LIMIT) {
+        if (!validMetaLimit(metadata)) {
             reportError(ErrorLevel.ERROR,
                     String.format(Messages.MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT.getErrorMessage(),
                             MANIFEST_METADATA_LIMIT));
         }
-        if (isPnfMetadata(metadata)) {
-            handleMetadataEntries(metadata, MANIFEST_PNF_METADATA);
-        } else {
-            handleMetadataEntries(metadata, MANIFEST_VNF_METADATA);
-        }
+        handleMetadataEntries(metadata);
     }
 
-    private boolean isPnfMetadata(final Map<String, String> metadata) {
+    protected boolean isPnfMetadata(final Map<String, String> metadata) {
         final String firstMetadataDefinition = metadata.keySet().iterator().next();
         final String expectedMetadataType =
                 firstMetadataDefinition.contains(TOSCA_TYPE_PNF) ? TOSCA_TYPE_PNF : TOSCA_TYPE_VNF;
@@ -365,12 +361,12 @@ class SOL004MetaDirectoryValidator implements Validator {
         return TOSCA_TYPE_PNF.equals(expectedMetadataType);
     }
 
-    private void handleMetadataEntries(final Map<String, String> metadata, final Set<String> manifestMetadata) {
-        manifestMetadata.stream()
+    private void handleMetadataEntries(final Map<String, String> metadata) {
+        getManifestMetadata(metadata).stream()
                 .filter(requiredEntry -> !metadata.containsKey(requiredEntry))
                 .forEach(requiredEntry ->
                         reportError(ErrorLevel.ERROR,
-                                String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredEntry)));
+                            String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredEntry)));
     }
 
     /**
@@ -524,8 +520,21 @@ class SOL004MetaDirectoryValidator implements Validator {
         }
     }
 
-    private void reportError(final ErrorLevel errorLevel, final String errorMessage) {
+    protected void reportError(final ErrorLevel errorLevel, final String errorMessage) {
         errorsByFile.add(new ErrorMessage(errorLevel, errorMessage));
+    }
+
+    protected boolean validMetaLimit(Map<String, String> metadata) {
+        return metadata.size() == MANIFEST_METADATA_LIMIT;
+    }
+
+    protected ImmutableSet<String> getManifestMetadata(final Map<String, String> metadata) {
+        return isPnfMetadata(metadata) ? MANIFEST_PNF_METADATA : MANIFEST_VNF_METADATA;
+    }
+
+    protected void handleOtherEntry(final Map.Entry<String, String> entry) {
+        reportError(ErrorLevel.ERROR, Messages.METADATA_UNSUPPORTED_ENTRY.formatMessage(entry.getKey()));
+        LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), entry.getKey());
     }
 
     private Map<String, List<ErrorMessage>> getAnyValidationErrors() {
