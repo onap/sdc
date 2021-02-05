@@ -34,11 +34,11 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class GetOutputValueDataDefinition extends ToscaDataDefinition {
 
     private String attribName;
-    private String inputName;
-    private String inputId;
+    private String outputName;
+    private String outputId;
     private Integer indexValue;
     private GetOutputValueDataDefinition getOutputIndex;
-    private boolean isList = false;
+    private boolean isList;
 
     public GetOutputValueDataDefinition() {
         super();
@@ -50,8 +50,8 @@ public class GetOutputValueDataDefinition extends ToscaDataDefinition {
 
     public GetOutputValueDataDefinition(GetOutputValueDataDefinition p) {
         this.setAttribName(p.getAttribName());
-        this.setInputName(p.getInputName());
-        this.setInputId(p.getInputId());
+        this.setOutputName(p.getOutputName());
+        this.setOutputId(p.getOutputId());
         this.setIndexValue(p.getIndexValue());
         this.setGetOutputIndex(p.getGetOutputIndex());
         this.setList(p.isList());

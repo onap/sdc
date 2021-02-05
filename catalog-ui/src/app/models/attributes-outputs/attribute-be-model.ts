@@ -34,7 +34,6 @@ export class AttributeBEModel {
 
   constraints: any[];
   defaultValue: string;
-  definition: boolean;
   description: string;
   fromDerived: boolean;
   getOutputValues: AttributeOutputDetail[];
@@ -69,7 +68,6 @@ export class AttributeBEModel {
       this.type = attribute.type;
       this.uniqueId = attribute.uniqueId;
       this.value = attribute.value;
-      this.definition = attribute.definition;
       this.getOutputValues = attribute.getOutputValues;
       this.parentAttributeType = attribute.parentAttributeType;
       this.subAttributeOutputPath = attribute.subAttributeOutputPath;

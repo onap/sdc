@@ -91,6 +91,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -99,6 +100,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -1245,6 +1247,36 @@ public class ToscaOperationFacade {
 
     }
 
+    public Either<List<OutputDefinition>, StorageOperationStatus> addOutputsToComponent(Map<String, OutputDefinition> outputs,
+                                                                                        String componentId) {
+
+        Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao
+            .getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            log.debug(COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVertexEither.right().value()));
+
+        }
+
+        GraphVertex vertex = getVertexEither.left().value();
+        Map<String, AttributeDefinition> outputsMap = outputs.entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> new AttributeDefinition(e.getValue())));
+
+        StorageOperationStatus status = topologyTemplateOperation
+            .addToscaDataToToscaElement(vertex, EdgeLabelEnum.OUTPUTS, VertexTypeEnum.OUTPUTS, outputsMap, JsonPresentationFields.NAME);
+
+        if (StorageOperationStatus.OK == status) {
+            log.debug(COMPONENT_CREATED_SUCCESSFULLY);
+            List<OutputDefinition> outputsResList = null;
+            if (outputsMap != null && !outputsMap.isEmpty()) {
+                outputsResList = outputsMap.values().stream().map(OutputDefinition::new).collect(Collectors.toList());
+            }
+            return Either.left(outputsResList);
+        }
+        return Either.right(status);
+
+    }
+
     /**
      * Add data types into a Component.
      *
@@ -1252,7 +1284,8 @@ public class ToscaOperationFacade {
      * @param componentId unique ID of Component.
      * @return list of data types.
      */
-    public Either<List<DataTypeDefinition>, StorageOperationStatus> addDataTypesToComponent(Map<String, DataTypeDefinition> dataTypes, String componentId) {
+    public Either<List<DataTypeDefinition>, StorageOperationStatus> addDataTypesToComponent(Map<String, DataTypeDefinition> dataTypes,
+                                                                                            String componentId) {
 
         log.trace("#addDataTypesToComponent - enter, componentId={}", componentId);
 
@@ -1511,7 +1544,38 @@ public class ToscaOperationFacade {
         return Either.left(instProperties);
     }
 
-    public Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addComponentInstancePropertiesToComponent(Component containerComponent, Map<String, List<ComponentInstanceProperty>> instProperties) {
+    public Either<Map<String, List<ComponentInstanceOutput>>, StorageOperationStatus> addComponentInstanceOutputsToComponent(
+        Component containerComponent, Map<String, List<ComponentInstanceOutput>> instProperties) {
+        requireNonNull(instProperties);
+        StorageOperationStatus status;
+        for (final Entry<String, List<ComponentInstanceOutput>> entry : instProperties.entrySet()) {
+            final List<ComponentInstanceOutput> props = entry.getValue();
+            final String componentInstanceId = entry.getKey();
+            if (!isEmpty(props)) {
+                for (final ComponentInstanceOutput property : props) {
+                    final List<ComponentInstanceOutput> componentInstancesInputs
+                        = containerComponent.getComponentInstancesOutputs().get(componentInstanceId);
+                    final Optional<ComponentInstanceOutput> instanceProperty = componentInstancesInputs.stream()
+                        .filter(p -> p.getName().equals(property.getName())).findAny();
+                    if (instanceProperty.isPresent()) {
+                        status = updateComponentInstanceOutput(containerComponent, componentInstanceId, property);
+                    } else {
+                        status = addComponentInstanceOutput(containerComponent, componentInstanceId, property);
+                    }
+                    if (status != StorageOperationStatus.OK) {
+                        log.debug("Failed to update instance input {} for instance {} error {} ", property, componentInstanceId, status);
+                        return Either.right(status);
+                    } else {
+                        log.trace("instance input {} for instance {} updated", property, componentInstanceId);
+                    }
+                }
+            }
+        }
+        return Either.left(instProperties);
+    }
+
+    public Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addComponentInstancePropertiesToComponent(
+        Component containerComponent, Map<String, List<ComponentInstanceProperty>> instProperties) {
         requireNonNull(instProperties);
         for (Entry<String, List<ComponentInstanceProperty>> entry : instProperties.entrySet()) {
             List<ComponentInstanceProperty> props = entry.getValue();
@@ -1520,7 +1584,7 @@ public class ToscaOperationFacade {
                 containerComponent.getComponentInstancesProperties().get(componentInstanceId);
             Map<String, List<CapabilityDefinition>> containerComponentCapabilities = containerComponent.getCapabilities();
 
-            if(isEmpty(props)) {
+            if (isEmpty(props)) {
                 continue;
             }
             for (ComponentInstanceProperty property : props) {
@@ -1528,15 +1592,38 @@ public class ToscaOperationFacade {
                 String propertyParentUniqueId = property.getParentUniqueId();
                 Optional<CapabilityDefinition>
                         capPropDefinition = getPropertyCapability(propertyParentUniqueId, containerComponent);
-                if(capPropDefinition.isPresent() && MapUtils.isNotEmpty(containerComponentCapabilities)) {
+                if (capPropDefinition.isPresent() && MapUtils.isNotEmpty(containerComponentCapabilities)) {
                     status = populateAndUpdateInstanceCapProperty(containerComponent, componentInstanceId,
-                            containerComponentCapabilities, property, capPropDefinition.get());
+                        containerComponentCapabilities, property, capPropDefinition.get());
                 }
-                if(status == null) {
+                if (status == null) {
                     status = updateOrAddComponentInstanceProperty(containerComponent, componentInstanceId,
                         originalComponentInstProps, property);
                 }
-                if(status != StorageOperationStatus.OK) {
+                if (status != StorageOperationStatus.OK) {
+                    return Either.right(status);
+                }
+            }
+        }
+        return Either.left(instProperties);
+    }
+
+    public Either<Map<String, List<ComponentInstanceAttribute>>, StorageOperationStatus> addComponentInstanceAttributesToComponent(
+        final Component containerComponent, final Map<String, List<ComponentInstanceAttribute>> instProperties) {
+        requireNonNull(instProperties);
+        for (final Entry<String, List<ComponentInstanceAttribute>> entry : instProperties.entrySet()) {
+            final List<ComponentInstanceAttribute> props = entry.getValue();
+            if (isEmpty(props)) {
+                continue;
+            }
+            final String componentInstanceId = entry.getKey();
+            final List<ComponentInstanceAttribute> originalComponentInstProps =
+                containerComponent.getComponentInstancesAttributes().get(componentInstanceId);
+
+            for (final ComponentInstanceAttribute property : props) {
+                final StorageOperationStatus status = updateOrAddComponentInstanceAttribute(
+                    containerComponent, componentInstanceId, originalComponentInstProps, property);
+                if (status != StorageOperationStatus.OK) {
                     return Either.right(status);
                 }
             }
@@ -1549,7 +1636,7 @@ public class ToscaOperationFacade {
                                                                         ComponentInstanceProperty property,
                                                                         CapabilityDefinition capabilityDefinition) {
         List<CapabilityDefinition> capabilityDefinitions = containerComponentCapabilities.get(capabilityDefinition.getType());
-        if(CollectionUtils.isEmpty(capabilityDefinitions)) {
+        if (CollectionUtils.isEmpty(capabilityDefinitions)) {
             return null;
         }
         Optional<CapabilityDefinition> capDefToGetProp = capabilityDefinitions.stream()
@@ -1578,13 +1665,13 @@ public class ToscaOperationFacade {
     }
 
     private StorageOperationStatus updateOrAddComponentInstanceProperty(Component containerComponent,
-        String componentInstanceId, List<ComponentInstanceProperty> originalComponentInstProps,
-        ComponentInstanceProperty property)
-    {
+                                                                        String componentInstanceId,
+                                                                        List<ComponentInstanceProperty> originalComponentInstProps,
+                                                                        ComponentInstanceProperty property) {
         StorageOperationStatus status;
         // check if the property already exists or not
         Optional<ComponentInstanceProperty> instanceProperty = originalComponentInstProps.stream()
-                .filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
+            .filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
         if (instanceProperty.isPresent()) {
             status = updateComponentInstanceProperty(containerComponent, componentInstanceId, property);
         } else {
@@ -1597,15 +1684,35 @@ public class ToscaOperationFacade {
         return status;
     }
 
-    public StorageOperationStatus updateInstanceCapabilityProperty(Component containerComponent, String componentInstanceId,
+    private StorageOperationStatus updateOrAddComponentInstanceAttribute(Component containerComponent,
+                                                                         String componentInstanceId,
+                                                                         List<ComponentInstanceAttribute> originalComponentInstProps,
+                                                                         ComponentInstanceAttribute property) {
+        StorageOperationStatus status;
+        // check if the property already exists or not
+        Optional<ComponentInstanceAttribute> instanceProperty = originalComponentInstProps.stream()
+            .filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
+        if (instanceProperty.isPresent()) {
+            status = updateComponentInstanceAttribute(containerComponent, componentInstanceId, property);
+        } else {
+            status = addComponentInstanceAttribute(containerComponent, componentInstanceId, property);
+        }
+        if (status != StorageOperationStatus.OK) {
+            log.debug("Failed to update instance property {} for instance {} error {} ",
+                property, componentInstanceId, status);
+        }
+        return status;
+    }
+
+        public StorageOperationStatus updateInstanceCapabilityProperty(Component containerComponent, String componentInstanceId,
                                                                    ComponentInstanceProperty property,
                                                                    CapabilityDefinition capabilityDefinition) {
         Optional<ComponentInstance> fetchedCIOptional = containerComponent.getComponentInstanceById(componentInstanceId);
-        if(!fetchedCIOptional.isPresent()) {
+        if (!fetchedCIOptional.isPresent()) {
             return StorageOperationStatus.GENERAL_ERROR;
         }
         Either<Component, StorageOperationStatus> getComponentRes =
-                getToscaFullElement(fetchedCIOptional.get().getComponentUid());
+            getToscaFullElement(fetchedCIOptional.get().getComponentUid());
         if(getComponentRes.isRight()) {
             return StorageOperationStatus.GENERAL_ERROR;
         }
@@ -2034,12 +2141,7 @@ public class ToscaOperationFacade {
             log.debug("failed to get vertex from graph with property normalizedName: {}", normalizedName);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexEither.right().value()));
         }
-        List<GraphVertex> vertexList = vertexEither.isLeft() ? vertexEither.left().value() : null;
-        if (vertexList != null && !vertexList.isEmpty()) {
-            return Either.left(false);
-        } else {
-            return Either.left(true);
-        }
+        return Either.left(CollectionUtils.isEmpty(vertexEither.isLeft() ? vertexEither.left().value() : null));
     }
 
     private void fillNodeTypePropsMap(final Map<GraphPropertyEnum, Object> hasProps,
@@ -2650,6 +2752,10 @@ public class ToscaOperationFacade {
         return getToscaElementOperation(resource).deleteToscaDataElement(resource.getUniqueId(), EdgeLabelEnum.INPUTS, VertexTypeEnum.INPUTS, inputName, JsonPresentationFields.NAME);
     }
 
+    public StorageOperationStatus deleteOutputOfResource(final Component resource, final String outputName) {
+        return getToscaElementOperation(resource).deleteToscaDataElement(resource.getUniqueId(), EdgeLabelEnum.OUTPUTS, VertexTypeEnum.OUTPUTS, outputName, JsonPresentationFields.NAME);
+    }
+
     /**
      * Deletes a data type from a component.
      * @param component the container which has the data type
@@ -2682,21 +2788,60 @@ public class ToscaOperationFacade {
             }
 		}
 		if (result == null) {
-			Optional<PropertyDefinition> newProperty = (getUpdatedComponentRes.left().value())
-					.getProperties().stream().filter(p -> p.getName().equals(newPropertyDefinition.getName())).findAny();
-			if (newProperty.isPresent()) {
-				result = Either.left(newProperty.get());
-			} else {
+            Optional<PropertyDefinition> newProperty = (getUpdatedComponentRes.left().value())
+                .getProperties().stream().filter(p -> p.getName().equals(newPropertyDefinition.getName())).findAny();
+            if (newProperty.isPresent()) {
+                result = Either.left(newProperty.get());
+            } else {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                     FAILED_TO_FIND_RECENTLY_ADDED_PROPERTY_ON_THE_RESOURCE_STATUS_IS, newPropertyDefinition.getName(),
                     component.getUniqueId(), StorageOperationStatus.NOT_FOUND);
                 result = Either.right(StorageOperationStatus.NOT_FOUND);
             }
-		}
-		return result;
-	}
+        }
+        return result;
+    }
 
-    public Either<AttributeDefinition, StorageOperationStatus> addAttributeOfResource(Component component, AttributeDefinition newAttributeDef) {
+    public Either<AttributeDefinition, StorageOperationStatus> updateAttributeOfComponent(Component component,
+                                                                                          AttributeDefinition newPropertyDefinition) {
+
+        Either<Component, StorageOperationStatus> getUpdatedComponentRes = null;
+        Either<AttributeDefinition, StorageOperationStatus> result = null;
+        StorageOperationStatus status = getToscaElementOperation(component)
+            .updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.ATTRIBUTES, VertexTypeEnum.ATTRIBUTES,
+                newPropertyDefinition, JsonPresentationFields.NAME);
+        if (status != StorageOperationStatus.OK) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_ADD_THE_PROPERTY_TO_THE_RESOURCE_STATUS_IS,
+                newPropertyDefinition.getName(), component.getName(), status);
+            result = Either.right(status);
+        }
+        if (result == null) {
+            ComponentParametersView filter = new ComponentParametersView(true);
+            filter.setIgnoreProperties(false);
+            getUpdatedComponentRes = getToscaElement(component.getUniqueId(), filter);
+            if (getUpdatedComponentRes.isRight()) {
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_UPDATED_RESOURCE_STATUS_IS,
+                    component.getUniqueId(), getUpdatedComponentRes.right().value());
+                result = Either.right(status);
+            }
+        }
+        if (result == null) {
+            Optional<AttributeDefinition> newProperty = (getUpdatedComponentRes.left().value())
+                .getAttributes().stream().filter(p -> p.getName().equals(newPropertyDefinition.getName())).findAny();
+            if (newProperty.isPresent()) {
+                result = Either.left(newProperty.get());
+            } else {
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                    FAILED_TO_FIND_RECENTLY_ADDED_PROPERTY_ON_THE_RESOURCE_STATUS_IS, newPropertyDefinition.getName(),
+                    component.getUniqueId(), StorageOperationStatus.NOT_FOUND);
+                result = Either.right(StorageOperationStatus.NOT_FOUND);
+            }
+        }
+        return result;
+    }
+
+    public Either<AttributeDefinition, StorageOperationStatus> addAttributeOfResource(Component component,
+                                                                                      AttributeDefinition newAttributeDef) {
 
         Either<Component, StorageOperationStatus> getUpdatedComponentRes = null;
         Either<AttributeDefinition, StorageOperationStatus> result = null;
@@ -2706,7 +2851,9 @@ public class ToscaOperationFacade {
             newAttributeDef.setOwnerId(component.getUniqueId());
         }
 
-        StorageOperationStatus status = getToscaElementOperation(component).addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.ATTRIBUTES, VertexTypeEnum.ATTRIBUTES, newAttributeDef, JsonPresentationFields.NAME);
+        StorageOperationStatus status = getToscaElementOperation(component)
+            .addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.ATTRIBUTES, VertexTypeEnum.ATTRIBUTES, newAttributeDef,
+                JsonPresentationFields.NAME);
         if (status != StorageOperationStatus.OK) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_ADD_THE_PROPERTY_TO_THE_RESOURCE_STATUS_IS, newAttributeDef.getName(), component.getName(), status);
             result = Either.right(status);
@@ -2847,29 +2994,56 @@ public class ToscaOperationFacade {
         return nodeTemplateOperation.updateComponentInstanceProperties(containerComponent, componentInstanceId, properties);
     }
 
+    public StorageOperationStatus updateComponentInstanceAttributes(final Component containerComponent,
+                                                                    final String componentInstanceId,
+                                                                    final List<ComponentInstanceAttribute> attributes) {
+        return nodeTemplateOperation.updateComponentInstanceAttributes(containerComponent, componentInstanceId, attributes);
+    }
 
-    public StorageOperationStatus addComponentInstanceProperty(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property) {
+    public StorageOperationStatus addComponentInstanceProperty(Component containerComponent, String componentInstanceId,
+                                                               ComponentInstanceProperty property) {
         return nodeTemplateOperation.addComponentInstanceProperty(containerComponent, componentInstanceId, property);
     }
 
-    public StorageOperationStatus updateComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceAttribute property){
-        return nodeTemplateOperation.updateComponentInstanceAttribute(containerComponent, componentInstanceId, property);
+    public StorageOperationStatus updateComponentInstanceAttribute(final Component containerComponent,
+                                                                   final String componentInstanceId,
+                                                                   final ComponentInstanceAttribute attribute) {
+        return nodeTemplateOperation.updateComponentInstanceAttribute(containerComponent, componentInstanceId, attribute);
     }
 
-    public StorageOperationStatus addComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceAttribute attribute){
+    public StorageOperationStatus addComponentInstanceAttribute(Component containerComponent, String componentInstanceId,
+                                                                ComponentInstanceAttribute attribute) {
         return nodeTemplateOperation.addComponentInstanceAttribute(containerComponent, componentInstanceId, attribute);
     }
 
-    public StorageOperationStatus updateComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
+    public StorageOperationStatus updateComponentInstanceInput(Component containerComponent, String componentInstanceId,
+                                                               ComponentInstanceInput property) {
         return nodeTemplateOperation.updateComponentInstanceInput(containerComponent, componentInstanceId, property);
     }
 
-    public StorageOperationStatus updateComponentInstanceInputs(Component containerComponent, String componentInstanceId, List<ComponentInstanceInput> instanceInputs) {
+    public StorageOperationStatus updateComponentInstanceOutput(Component containerComponent, String componentInstanceId,
+                                                                ComponentInstanceOutput property) {
+        return nodeTemplateOperation.updateComponentInstanceOutput(containerComponent, componentInstanceId, property);
+    }
+
+    public StorageOperationStatus updateComponentInstanceInputs(Component containerComponent, String componentInstanceId,
+                                                                List<ComponentInstanceInput> instanceInputs) {
         return nodeTemplateOperation.updateComponentInstanceInputs(containerComponent, componentInstanceId, instanceInputs);
     }
 
-    public StorageOperationStatus addComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
+    public StorageOperationStatus updateComponentInstanceOutputs(Component containerComponent, String componentInstanceId,
+                                                                 List<ComponentInstanceOutput> instanceInputs) {
+        return nodeTemplateOperation.updateComponentInstanceOutputs(containerComponent, componentInstanceId, instanceInputs);
+    }
+
+    public StorageOperationStatus addComponentInstanceInput(Component containerComponent, String componentInstanceId,
+                                                            ComponentInstanceInput property) {
         return nodeTemplateOperation.addComponentInstanceInput(containerComponent, componentInstanceId, property);
+    }
+
+    public StorageOperationStatus addComponentInstanceOutput(Component containerComponent, String componentInstanceId,
+                                                             ComponentInstanceOutput property) {
+        return nodeTemplateOperation.addComponentInstanceOutput(containerComponent, componentInstanceId, property);
     }
 
     public void setNodeTypeOperation(NodeTypeOperation nodeTypeOperation) {
@@ -2880,17 +3054,24 @@ public class ToscaOperationFacade {
         this.topologyTemplateOperation = topologyTemplateOperation;
     }
 
-    public StorageOperationStatus deleteComponentInstanceInputsFromTopologyTemplate(Component containerComponent, List<InputDefinition> inputsToDelete) {
-        return topologyTemplateOperation.deleteToscaDataElements(containerComponent.getUniqueId(), EdgeLabelEnum.INPUTS, inputsToDelete.stream().map(PropertyDataDefinition::getName).collect(Collectors.toList()));
+    public StorageOperationStatus deleteComponentInstanceInputsFromTopologyTemplate(Component containerComponent,
+                                                                                    List<InputDefinition> inputsToDelete) {
+        return topologyTemplateOperation.deleteToscaDataElements(containerComponent.getUniqueId(), EdgeLabelEnum.INPUTS,
+            inputsToDelete.stream().map(PropertyDataDefinition::getName).collect(Collectors.toList()));
     }
 
-    public StorageOperationStatus updateComponentInstanceCapabiltyProperty(Component containerComponent, String componentInstanceUniqueId, String capabilityPropertyKey, ComponentInstanceProperty property) {
-        return nodeTemplateOperation.updateComponentInstanceCapabilityProperty(containerComponent, componentInstanceUniqueId, capabilityPropertyKey, property);
+    public StorageOperationStatus updateComponentInstanceCapabiltyProperty(Component containerComponent, String componentInstanceUniqueId,
+                                                                           String capabilityPropertyKey,
+                                                                           ComponentInstanceProperty property) {
+        return nodeTemplateOperation
+            .updateComponentInstanceCapabilityProperty(containerComponent, componentInstanceUniqueId, capabilityPropertyKey, property);
     }
 
-    public StorageOperationStatus updateComponentInstanceCapabilityProperties(Component containerComponent, String componentInstanceUniqueId) {
+    public StorageOperationStatus updateComponentInstanceCapabilityProperties(Component containerComponent,
+                                                                              String componentInstanceUniqueId) {
         return convertComponentInstanceProperties(containerComponent, componentInstanceUniqueId)
-                .map(instanceCapProps -> topologyTemplateOperation.updateComponentInstanceCapabilityProperties(containerComponent, componentInstanceUniqueId, instanceCapProps))
+            .map(instanceCapProps -> topologyTemplateOperation
+                .updateComponentInstanceCapabilityProperties(containerComponent, componentInstanceUniqueId, instanceCapProps))
                 .orElse(StorageOperationStatus.NOT_FOUND);
     }
     

@@ -62,8 +62,8 @@ import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -197,7 +197,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private static final String DELETE_RESOURCE = "Delete Resource";
 	private static final String IN_RESOURCE = "  in resource {} ";
 	private static final String PLACE_HOLDER_RESOURCE_TYPES = "validForResourceTypes";
-	public static final String INITIAL_VERSION = "0.1";
+	private static final String INITIAL_VERSION = "0.1";
 	private static final Logger log = Logger.getLogger(ResourceBusinessLogic.class);
 	private static final String CERTIFICATION_ON_IMPORT = "certification on import";
 	private static final String CREATE_RESOURCE = "Create Resource";
@@ -208,59 +208,68 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
 	private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
 
-
 	private IInterfaceLifecycleOperation interfaceTypeOperation;
 	private LifecycleBusinessLogic lifecycleBusinessLogic;
 
 	private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 	private final ResourceImportManager resourceImportManager;
 	private final InputsBusinessLogic inputsBusinessLogic;
+	private final OutputsBusinessLogic outputsBusinessLogic;
 	private final CompositionBusinessLogic compositionBusinessLogic;
 	private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
-    private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
-    private final MergeInstanceUtils mergeInstanceUtils;
-    private final UiComponentDataConverter uiComponentDataConverter;
-    private final CsarBusinessLogic csarBusinessLogic;
-    private final PropertyBusinessLogic propertyBusinessLogic;
+	private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
+	private final MergeInstanceUtils mergeInstanceUtils;
+	private final UiComponentDataConverter uiComponentDataConverter;
+	private final CsarBusinessLogic csarBusinessLogic;
+	private final PropertyBusinessLogic propertyBusinessLogic;
 	private final PolicyBusinessLogic policyBusinessLogic;
 
 	@Autowired
-    public ResourceBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        GroupBusinessLogic groupBusinessLogic,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ArtifactsBusinessLogic artifactsBusinessLogic,
-        ComponentInstanceBusinessLogic componentInstanceBusinessLogic, @Lazy ResourceImportManager resourceImportManager,
-        InputsBusinessLogic inputsBusinessLogic, CompositionBusinessLogic compositionBusinessLogic,
-        ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
-        CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic, MergeInstanceUtils mergeInstanceUtils,
-        UiComponentDataConverter uiComponentDataConverter, CsarBusinessLogic csarBusinessLogic,
-        ArtifactsOperations artifactToscaOperation, PropertyBusinessLogic propertyBusinessLogic,
-	 	ComponentContactIdValidator componentContactIdValidator,
-		ComponentNameValidator componentNameValidator, ComponentTagsValidator componentTagsValidator,
-	 	ComponentValidator componentValidator,
-	 	ComponentIconValidator componentIconValidator,
-	 	ComponentProjectCodeValidator componentProjectCodeValidator,
-	 	ComponentDescriptionValidator componentDescriptionValidator, PolicyBusinessLogic policyBusinessLogic) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation,
-				componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
-				componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
-        this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
-        this.resourceImportManager = resourceImportManager;
-        this.inputsBusinessLogic = inputsBusinessLogic;
-        this.compositionBusinessLogic = compositionBusinessLogic;
-        this.resourceDataMergeBusinessLogic = resourceDataMergeBusinessLogic;
-        this.csarArtifactsAndGroupsBusinessLogic = csarArtifactsAndGroupsBusinessLogic;
-        this.mergeInstanceUtils = mergeInstanceUtils;
-        this.uiComponentDataConverter = uiComponentDataConverter;
-        this.csarBusinessLogic = csarBusinessLogic;
-        this.propertyBusinessLogic = propertyBusinessLogic;
+	public ResourceBusinessLogic(final IElementOperation elementDao,
+								 final IGroupOperation groupOperation,
+								 final IGroupInstanceOperation groupInstanceOperation,
+								 final IGroupTypeOperation groupTypeOperation,
+								 final GroupBusinessLogic groupBusinessLogic,
+								 final InterfaceOperation interfaceOperation,
+								 final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+								 final ArtifactsBusinessLogic artifactsBusinessLogic,
+								 final ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
+								 final @Lazy ResourceImportManager resourceImportManager,
+								 final InputsBusinessLogic inputsBusinessLogic,
+								 final OutputsBusinessLogic outputsBusinessLogic,
+								 final CompositionBusinessLogic compositionBusinessLogic,
+								 final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
+								 final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic,
+								 final MergeInstanceUtils mergeInstanceUtils,
+								 final UiComponentDataConverter uiComponentDataConverter,
+								 final CsarBusinessLogic csarBusinessLogic,
+								 final ArtifactsOperations artifactToscaOperation,
+								 final PropertyBusinessLogic propertyBusinessLogic,
+								 final ComponentContactIdValidator componentContactIdValidator,
+								 final ComponentNameValidator componentNameValidator,
+								 final ComponentTagsValidator componentTagsValidator,
+								 final ComponentValidator componentValidator,
+								 final ComponentIconValidator componentIconValidator,
+								 final ComponentProjectCodeValidator componentProjectCodeValidator,
+								 final ComponentDescriptionValidator componentDescriptionValidator,
+								 final PolicyBusinessLogic policyBusinessLogic) {
+		super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
+			interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator,
+			componentNameValidator, componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator,
+			componentDescriptionValidator);
+		this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
+		this.resourceImportManager = resourceImportManager;
+		this.inputsBusinessLogic = inputsBusinessLogic;
+		this.outputsBusinessLogic = outputsBusinessLogic;
+		this.compositionBusinessLogic = compositionBusinessLogic;
+		this.resourceDataMergeBusinessLogic = resourceDataMergeBusinessLogic;
+		this.csarArtifactsAndGroupsBusinessLogic = csarArtifactsAndGroupsBusinessLogic;
+		this.mergeInstanceUtils = mergeInstanceUtils;
+		this.uiComponentDataConverter = uiComponentDataConverter;
+		this.csarBusinessLogic = csarBusinessLogic;
+		this.propertyBusinessLogic = propertyBusinessLogic;
 		this.policyBusinessLogic = policyBusinessLogic;
-    }
+	}
 
 	@Autowired
 	private ICapabilityTypeOperation capabilityTypeOperation;
@@ -304,6 +313,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	@Autowired
+	@Override
 	public void setUserAdmin(UserBusinessLogic userAdmin) {
 		this.userAdmin = userAdmin;
 	}
@@ -313,6 +323,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	@Autowired
+	@Override
 	public void setComponentsUtils(ComponentsUtils componentsUtils) {
 		this.componentsUtils = componentsUtils;
 	}
@@ -330,6 +341,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
     @Autowired
+	@Override
     public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
         this.applicationDataTypeCache = applicationDataTypeCache;
     }
@@ -6026,16 +6038,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId,
 																								   List<String> dataParamsToReturn) {
 
-		ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
-		Either<Resource, StorageOperationStatus> resourceResultEither =
-				toscaOperationFacade.getToscaElement(resourceId,
-				paramsToRetuen);
+		ComponentParametersView paramsToReturn = new ComponentParametersView(dataParamsToReturn);
+		Either<Resource, StorageOperationStatus> resourceResultEither = toscaOperationFacade.getToscaElement(resourceId, paramsToReturn);
 
 		if (resourceResultEither.isRight()) {
 			if (resourceResultEither.right().value() == StorageOperationStatus.NOT_FOUND) {
 				log.debug("Failed to found resource with id {} ", resourceId);
 				Either
-						.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
+					.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 			}
 
 			log.debug("failed to get resource by id {} with filters {}", resourceId, dataParamsToReturn);

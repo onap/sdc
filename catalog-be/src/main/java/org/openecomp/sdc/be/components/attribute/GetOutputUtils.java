@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.datatypes.enums;
+package org.openecomp.sdc.be.components.attribute;
 
-public enum DeclarationTypeEnum {
-    INPUT,
-    OUTPUT,
-    POLICY
+import org.openecomp.sdc.be.datatypes.elements.GetOutputValueDataDefinition;
+
+public class GetOutputUtils {
+
+    private GetOutputUtils() {
+    }
+
+    public static boolean isGetOutputValueForOutput(GetOutputValueDataDefinition outputData, String outputId) {
+        return outputData.getOutputId().equals(outputId)
+            || (outputData.getGetOutputIndex() != null && outputData.getGetOutputIndex().getOutputId().equals(outputId));
+    }
 }

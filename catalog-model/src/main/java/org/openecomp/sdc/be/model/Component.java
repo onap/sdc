@@ -349,6 +349,10 @@ public abstract class Component implements PropertiesOwner {
         return componentInstancesProperties == null ? emptyMap() : componentInstancesProperties;
     }
 
+    public Map<String, List<ComponentInstanceAttribute>> safeGetComponentInstancesAttributes() {
+        return componentInstancesAttributes == null ? emptyMap() : componentInstancesAttributes;
+    }
+
     public Map<String, List<ComponentInstanceProperty>> safeGetUiComponentInstancesProperties() {
         return componentInstancesProperties == null ? emptyMap() : findUiComponentInstancesProperties();
     }
