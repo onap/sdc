@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -35,6 +36,7 @@ import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -404,6 +406,39 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
         }
 
         return Either.left(status.left().value().getAttributes());
+    }
+
+    public boolean isAttributeUsedByOperation(Component component,
+                                              AttributeDefinition propertyDefinitionEntry) {
+        // TODO - do we need this one
+        return false;
+
+//        // Component's own interfaces
+//        Map<String, InterfaceDefinition> interfaces = component.getInterfaces();
+//        if(MapUtils.isNotEmpty(interfaces)){
+//            for(Map.Entry<String, InterfaceDefinition> interfaceEntry : interfaces.entrySet()) {
+//                if (isPropertyExistInOperationInterface(propertyDefinitionEntry, interfaceEntry.getValue())) {
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        // Component's child's component interfaces
+//        if(isPropertyUsedInCIInterfaces(component.getComponentInstancesInterfaces(), propertyDefinitionEntry)){
+//            return true;
+//        }
+//
+//        // Component's parent's component interfaces
+//        Either<List<Component>, StorageOperationStatus> componentList = toscaOperationFacade.getParentComponents(component.getUniqueId());
+//        if(componentList.isLeft()){
+//            for (Component parentComponent : componentList.left().value()) {
+//                if(isPropertyUsedInCIInterfaces(parentComponent.getComponentInstancesInterfaces(), propertyDefinitionEntry)){
+//                    return true;
+//                }
+//            }
+//        }
+//
+//        return false;
     }
 
 

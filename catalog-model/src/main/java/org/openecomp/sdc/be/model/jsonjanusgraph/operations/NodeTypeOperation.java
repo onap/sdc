@@ -932,6 +932,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         case ARTIFACTS:
         case GROUPS:
         case INPUTS:
+        case OUTPUTS:
             return true;
         default:
             return false;
