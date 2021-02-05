@@ -55,6 +55,7 @@ import org.springframework.core.annotation.Order;
         "org.openecomp.sdc.be.components.merge",
         "org.openecomp.sdc.be.components.csar",
         "org.openecomp.sdc.be.components.property",
+        "org.openecomp.sdc.be.components.attribute",
         "org.openecomp.sdc.be.datamodel.utils",
         "org.openecomp.sdc.be.components.upgrade",
         "org.openecomp.sdc.be.externalapi.servlet",
