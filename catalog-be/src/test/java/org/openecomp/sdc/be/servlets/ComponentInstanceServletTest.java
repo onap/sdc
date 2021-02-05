@@ -498,7 +498,7 @@ class ComponentInstanceServletTest extends JerseyTest {
                 eq(AuditingActionEnum.GET_TOSCA_MODEL), eq(ComponentTypeEnum.SERVICE)))
             .thenReturn(Either.left(requirementDefinition));
         when(componentInstanceBusinessLogic.updateInstanceRequirement(ComponentTypeEnum.SERVICE,
-            componentId, componentInstanceId, capabilityType, requirementName, requirementDefinition, USER_ID))
+                componentId, componentInstanceId, requirementDefinition, USER_ID))
             .thenReturn(Either.left(requirementDefinition));
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
