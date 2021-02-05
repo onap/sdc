@@ -4,7 +4,7 @@ import sys
 
 from sdcBePy.common.normative.toscaTypes import process_and_create_normative_types
 from sdcBePy.tosca.main import get_args, usage
-from sdcBePy.tosca.models.normativeTypesList import get_normative, get_heat, get_nfv, get_onap, get_sol
+from sdcBePy.tosca.models.normativeTypesList import get_normative, get_heat, get_nfv, get_nfv_2_7_1, get_nfv_3_3_1, get_nfv_4_1_1, get_onap, get_sol
 
 
 def run(candidate, exit_on_success=True):
@@ -37,6 +37,17 @@ def run_import_nfv():
     nfv_candidate = get_nfv()
     run(nfv_candidate)
 
+def run_import_nfv_2_7_1():
+    nfv_candidate = get_nfv_3_3_1()
+    run(nfv_candidate)
+
+def run_import_nfv_3_3_1():
+    nfv_candidate = get_nfv_3_3_1()
+    run(nfv_candidate)
+
+def run_import_nfv_4_1_1():
+    nfv_candidate = get_nfv_3_3_1()
+    run(nfv_candidate)
 
 def run_import_onap():
     onap_candidate = get_onap()

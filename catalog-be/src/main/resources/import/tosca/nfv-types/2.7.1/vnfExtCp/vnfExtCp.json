@@ -1,0 +1,17 @@
+{
+	"payloadName": "vnfExtCp.yml",
+	"contactId": "jh0003",
+	"name": "VNF External CP",
+	"description": "VNF External CP",
+	"resourceIconPath": "network",
+	"resourceType": "CP",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+        "vendorName": "ETSI",
+	"vendorRelease": "2.7.1",
+	"tags": ["VNF External CP"]
+}

@@ -93,6 +93,7 @@ import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
@@ -3427,24 +3428,24 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 				PropertyDefinition curPropertyDef = currPropertiesMap.get(propName);
 				ComponentInstanceProperty property = null;
-
+				
 				String value = null;
 				List<GetInputValueDataDefinition> getInputs = null;
 				boolean isValidate = true;
 				if (propertyInfo.getValue() != null) {
-					getInputs = propertyInfo.getGet_input();
-					isValidate = getInputs == null || getInputs.isEmpty();
-					if (isValidate) {
-						value = getPropertyJsonStringValue(propertyInfo.getValue(), curPropertyDef.getType());
-					} else {
-						value = getPropertyJsonStringValue(propertyInfo.getValue(),
-								TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
-					}
-				}
+				    getInputs = propertyInfo.getGet_input();
+				    isValidate = getInputs == null || getInputs.isEmpty();
+				    if (isValidate) {
+				        value = getPropertyJsonStringValue(propertyInfo.getValue(), curPropertyDef.getType());
+				        } else {
+				            value = getPropertyJsonStringValue(propertyInfo.getValue(),
+				                            TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
+				        }
+				    }
 				property = new ComponentInstanceProperty(curPropertyDef, value, null);
 
                 String validatePropValue = validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
-				property.setValue(validatePropValue);
+                property.setValue(validatePropValue);
 
 				if (getInputs != null && !getInputs.isEmpty()) {
 					List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
@@ -3706,7 +3707,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					.getToscaResourceName());
 		}
 		Resource refResource = validateResourceInstanceBeforeCreate(yamlName, uploadComponentInstanceInfo,
-				existingnodeTypeMap);
+				existingnodeTypeMap, resource);
 
 		ComponentInstance componentInstance = new ComponentInstance();
 		componentInstance.setComponentUid(refResource.getUniqueId());
@@ -3796,7 +3797,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Resource validateResourceInstanceBeforeCreate(String yamlName,
-														  UploadComponentInstanceInfo uploadComponentInstanceInfo, Map<String, Resource> nodeNamespaceMap) {
+			UploadComponentInstanceInfo uploadComponentInstanceInfo, Map<String, Resource> nodeNamespaceMap, Resource resource) {
 
 		log.debug(
 				"validateResourceInstanceBeforeCreate - going to validate resource instance with name {} and type {} before create",
@@ -3806,10 +3807,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			refResource = nodeNamespaceMap.get(uploadComponentInstanceInfo.getType());
 		} else {
 			Either<Resource, StorageOperationStatus> findResourceEither = toscaOperationFacade
-					.getLatestCertifiedNodeTypeByToscaResourceName(uploadComponentInstanceInfo.getType());
+					.getByToscaResourceNameMatchingVendorRelease(uploadComponentInstanceInfo.getType(), 
+					        ((ResourceMetadataDataDefinition)resource.getComponentMetadataDefinition().getMetadataDataDefinition()).getVendorRelease());
 			if (findResourceEither.isRight()) {
 				log.debug(
-						"validateResourceInstanceBeforeCreate - not found lates version for resource instance with name {} and type {}",
+						"validateResourceInstanceBeforeCreate - not found latest version for resource instance with name {} and type {}",
 						uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 				throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(findResourceEither.right().value()));
 			}
@@ -4139,7 +4141,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			if (derivedFromResource.getComponentType() == ComponentTypeEnum.RESOURCE) {
 				Resource parentResource = (Resource) derivedFromResource;
 				if (!(parentResource.isAbstract() && (ResourceTypeEnum.VFC == parentResource.getResourceType() || ResourceTypeEnum.ABSTRACT == parentResource.getResourceType())) &&
-						parentResource.getResourceType() != updatedResourceType) {
+						parentResource.getResourceType() != updatedResourceType && oldResource.getResourceType() != updatedResourceType) {
 					BeEcompErrorManager.getInstance()
 							.logInternalDataError("mergeOldResourceMetadataWithNew", "resource type of the resource does not match to derived from resource type",
 									ErrorSeverity.ERROR);

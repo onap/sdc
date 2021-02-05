@@ -48,9 +48,8 @@ public class ByToscaNameDerivedNodeTypeResolver implements DerivedNodeTypeResolv
         propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, parentResource);
-        propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
 
         return janusGraphDao
-            .getByCriteria(VertexTypeEnum.NODE_TYPE, propertiesToMatch, JsonParseFlagEnum.NoParse);
+            .getByCriteria(VertexTypeEnum.NODE_TYPE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
     }
 }
