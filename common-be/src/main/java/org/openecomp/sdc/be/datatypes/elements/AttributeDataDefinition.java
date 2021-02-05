@@ -19,9 +19,9 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.io.Serializable;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -29,14 +29,15 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @Getter
 @Setter
-public class AttributeDataDefinition extends ToscaDataDefinition implements Serializable {
+@NoArgsConstructor
+public class AttributeDataDefinition extends ToscaDataDefinition {
 
     private List<GetOutputValueDataDefinition> getOutputValues;
     private String outputId;
     private String value;
-
-    public AttributeDataDefinition() {
-    }
+    private String outputPath;
+    private String instanceUniqueId;
+    private String attributeId;
 
     public AttributeDataDefinition(final AttributeDataDefinition attributeDataDefinition) {
         super();
@@ -46,16 +47,20 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         this.setType(attributeDataDefinition.getType());
         this.setDescription(attributeDataDefinition.getDescription());
         this.set_default(attributeDataDefinition.get_default());
+        this.setValue(attributeDataDefinition.getValue());
         this.setStatus(attributeDataDefinition.getStatus());
         this.setEntry_schema(attributeDataDefinition.getEntry_schema());
         this.setSchema(attributeDataDefinition.getSchema());
+        this.setOutputPath(attributeDataDefinition.getOutputPath());
+        this.setInstanceUniqueId(attributeDataDefinition.getInstanceUniqueId());
+        this.setAttributeId(attributeDataDefinition.getAttributeId());
     }
 
     public String getUniqueId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
     }
 
-    public void setUniqueId(String uniqueId) {
+    public void setUniqueId(final String uniqueId) {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
     }
 
@@ -65,7 +70,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
     }
 
     @Override
-    public void setOwnerId(String ownerId) {
+    public void setOwnerId(final String ownerId) {
         setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
     }
 
@@ -73,7 +78,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         setToscaPresentationValue(JsonPresentationFields.NAME, name);
     }
 
@@ -82,7 +87,8 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
-    public void setType(String type) {
+    @Override
+    public void setType(final String type) {
         setToscaPresentationValue(JsonPresentationFields.TYPE, type);
     }
 
@@ -90,7 +96,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
     }
 
@@ -98,7 +104,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         return getToscaPresentationValue(JsonPresentationFields.DEFAULT);
     }
 
-    public void set_default(Object _default) {
+    public void set_default(final Object _default) {
         setToscaPresentationValue(JsonPresentationFields.DEFAULT, _default);
     }
 
@@ -106,7 +112,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         return (String) getToscaPresentationValue(JsonPresentationFields.STATUS);
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         setToscaPresentationValue(JsonPresentationFields.STATUS, status);
     }
 
@@ -114,12 +120,16 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
         return (EntrySchema) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
     }
 
-    public void setEntry_schema(EntrySchema entrySchema) {
+    public void setEntry_schema(final EntrySchema entrySchema) {
         setToscaPresentationValue(JsonPresentationFields.SCHEMA, entrySchema);
     }
 
     public SchemaDefinition getSchema() {
         return (SchemaDefinition) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
+    }
+
+    public String getParentUniqueId() {
+        return getOwnerId();
     }
 
 }

@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 
-@org.springframework.stereotype.Component
+@org.springframework.stereotype.Component("propertyDeclarationOrchestrator")
 public class PropertyDeclarationOrchestrator {
 
     private static final Logger log = Logger.getLogger(PropertyDeclarationOrchestrator.class);

@@ -94,6 +94,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
@@ -102,6 +103,7 @@ import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.MapInterfaceInstanceDataDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
@@ -204,6 +206,8 @@ public class ModelConverter {
 
         convertInputs(topologyTemplate, service);
 
+        convertOutputs(topologyTemplate, service);
+
         convertProperties(topologyTemplate, service);
 
         convertPolicies(topologyTemplate, service);
@@ -282,6 +286,7 @@ public class ModelConverter {
             convertComponentInstances(topologyTemplate, resource);
             convertRelations(topologyTemplate, resource);
             convertInputs(topologyTemplate, resource);
+            convertOutputs(topologyTemplate, resource);
             convertGroups(topologyTemplate, resource);
             setCapabilitiesToComponentAndGroups(topologyTemplate, resource);
             convertPolicies(topologyTemplate, resource);
@@ -354,6 +359,8 @@ public class ModelConverter {
             setComponentInstancesPropertiesToComponent(topologyTemplate, component);
 
             setComponentInstancesInputsToComponent(topologyTemplate, component);
+
+            setComponentInstancesOutputsToComponent(topologyTemplate, component);
 
             setComponentInstancesToComponent(topologyTemplate, component);
 
@@ -1347,6 +1354,18 @@ public class ModelConverter {
         }
     }
 
+    private static void convertOutputs(final TopologyTemplate topologyTemplate, final Component component) {
+        final Map<String, AttributeDataDefinition> outputsMap = topologyTemplate.getOutputs();
+        if (MapUtils.isEmpty(outputsMap)) {
+            return;
+        }
+        final List<OutputDefinition> outputList = outputsMap.values()
+            .stream()
+            .map(OutputDefinition::new)
+            .collect(Collectors.toList());
+        component.setOutputs(outputList);
+    }
+
     private static void convertProperties(Component component, TopologyTemplate topologyTemplate) {
         List<PropertyDefinition> propertiesList = component.getProperties();
         if (propertiesList != null && !propertiesList.isEmpty()) {
@@ -1570,6 +1589,21 @@ public class ModelConverter {
                 }
             }
             component.setComponentInstancesInputs(inputs);
+        }
+    }
+
+    private static void setComponentInstancesOutputsToComponent(final TopologyTemplate topologyTemplate, final Component component) {
+        if (topologyTemplate.getInstOutputs() != null) {
+            final Map<String, List<ComponentInstanceOutput>> outputs = new HashMap<>();
+            for (final Entry<String, MapAttributesDataDefinition> entry : topologyTemplate.getInstOutputs().entrySet()) {
+                if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+                    final String key = entry.getKey();
+                    final List<ComponentInstanceOutput> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream()
+                        .map(e -> new ComponentInstanceOutput(e.getValue())).collect(Collectors.toList());
+                    outputs.put(key, componentInstanceAttributes);
+                }
+            }
+            component.setComponentInstancesOutputs(outputs);
         }
     }
 

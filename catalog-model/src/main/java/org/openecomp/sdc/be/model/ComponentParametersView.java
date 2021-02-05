@@ -151,6 +151,10 @@ public class ComponentParametersView {
                     this.setIgnoreComponentInstances(false);
                     this.setIgnoreComponentInstancesInputs(false);
                     break;
+                case COMPONENT_INSTANCE_OUTPUTS:
+                    this.setIgnoreComponentInstances(false);
+                    this.setIgnoreComponentInstancesOutputs(false);
+                    break;
                 case INSTANCE_CAPABILTY_PROPERTIES:
                     this.setIgnoreCapabiltyProperties(false);
                     break;

@@ -31,9 +31,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
@@ -48,7 +46,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstListInput;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -69,7 +66,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -88,8 +84,8 @@ import java.util.List;
 import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Tags({@Tag(name = "SDC Internal APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDC Internal APIs")
+@Server(url = "/sdc2/rest")
 @Path("/v1/catalog")
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
@@ -151,7 +147,6 @@ public class InputsServlet extends AbstractValidationsServlet {
 
             log.debug("Start handle request of updateComponentInputs. Received inputs are {}", inputsToUpdate);
 
-            ServletContext context = request.getSession().getServletContext();
             ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(containerComponentType);
 
             if (businessLogic == null) {
@@ -177,7 +172,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         }
     }
 
-
     @GET
     @Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{originComponentUid}/inputs")
     @Operation(description = "Get Inputs only", method = "GET", summary = "Returns Inputs list", responses = {
@@ -190,10 +184,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             @PathParam("originComponentUid") final String originComponentUid, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        Response response;
 
         try {
             Either<List<ComponentInstanceInput>, ResponseFormat> inputsResponse = inputsBusinessLogic.getComponentInstanceInputs(userId, componentId, instanceId);
@@ -223,10 +215,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             @PathParam("inputId") final String inputId, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        Response response = null;
 
         try {
             Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = inputsBusinessLogic
@@ -256,10 +246,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        Response response;
         try {
             Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes =
                     inputsBusinessLogic.getInputsForComponentInput(userId, componentId, inputId);
@@ -289,10 +277,8 @@ public class InputsServlet extends AbstractValidationsServlet {
             @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        Response response;
 
         try {
             Either<InputDefinition, ResponseFormat> inputsRes =
@@ -310,10 +296,6 @@ public class InputsServlet extends AbstractValidationsServlet {
             log.debug("getInputsForComponentInput failed with exception", e);
             throw e;
         }
-    }
-
-    private Either<ComponentInstInputsMap, ResponseFormat> parseToComponentInstanceMap(String serviceJson, User user) {
-        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(serviceJson, user, ComponentInstInputsMap.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
     }
 
     private Either<ComponentInstListInput, ResponseFormat> parseToComponentInstListInput(String json, User user) {
@@ -433,7 +415,6 @@ public class InputsServlet extends AbstractValidationsServlet {
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @Parameter(description = "Service Input to be deleted", required = true) String componentInstInputsMapObj) {
 
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         loggerSupportability.log(LoggerSupportabilityActions.DELETE_INPUTS, StatusCode.STARTED,"Starting to delete Inputs for component {} ",componentId + " by " +  userId );
@@ -513,7 +494,6 @@ public class InputsServlet extends AbstractValidationsServlet {
             @PathParam("componentId") final String componentId,
             @Context final HttpServletRequest request
     ) {
-        ServletContext context = request.getSession().getServletContext();
         ComponentsUtils componentsUtils = getComponentsUtils();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getDataType) Start handle request of {}", url);
@@ -558,10 +538,9 @@ public class InputsServlet extends AbstractValidationsServlet {
             @PathParam("dataTypeName") final String dataTypeName,
             @Context final HttpServletRequest request
     ) {
-        ServletContext context = request.getSession().getServletContext();
         ComponentsUtils componentsUtils = getComponentsUtils();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         Response response;
 
         try {
