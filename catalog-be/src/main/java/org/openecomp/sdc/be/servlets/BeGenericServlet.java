@@ -42,12 +42,11 @@ import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.OutputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
-import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RequirementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
@@ -242,31 +241,17 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
     }
 
-    <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(businessLogicClassGen.get());
+    <T> T getClassFromWebAppContext(final ServletContext context, final Supplier<Class<T>> businessLogicClassGen) {
+        return getWebAppContext(context).getBean(businessLogicClassGen.get());
     }
 
-    GroupBusinessLogic getGroupBL(ServletContext context) {
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(GroupBusinessLogic.class);
-    }
-
-    protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ComponentInstanceBusinessLogic.class);
+    protected ComponentInstanceBusinessLogic getComponentInstanceBL(final ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ComponentInstanceBusinessLogic.class);
     }
 
     protected ComponentsUtils getComponentsUtils() {
-        ServletContext context = this.servletRequest.getSession().getServletContext();
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ComponentsUtils.class);
+        final ServletContext context = this.servletRequest.getSession().getServletContext();
+        return getClassFromWebAppContext(context, () -> ComponentsUtils.class);
     }
 
     /**
@@ -288,8 +273,6 @@ public class BeGenericServlet extends BasicServlet {
     protected String getContentDispositionValue(String artifactFileName) {
         return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
     }
-
-
 
     protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
         ComponentBusinessLogic businessLogic;
@@ -451,10 +434,8 @@ public class BeGenericServlet extends BasicServlet {
         if (either.isRight()) {
             return new JSONObject();
         }
-        String value = either.left().value();
         try {
-            JSONObject root = (JSONObject) new JSONParser().parse(value);
-            return root;
+            return  (JSONObject) new JSONParser().parse(either.left().value());
         } catch (ParseException e) {
             log.info("failed to convert input to json");
             log.error("failed to convert to json", e);
@@ -506,53 +487,55 @@ public class BeGenericServlet extends BasicServlet {
 
     }
 
-    protected PropertyBusinessLogic getPropertyBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
-        return propertytBl;
+    private OutputsBusinessLogic getOutputBL(final ServletContext context) {
+        return getClassFromWebAppContext(context, () -> OutputsBusinessLogic.class);
     }
 
-    protected InputsBusinessLogic getInputBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(InputsBusinessLogic.class);
+    private InputsBusinessLogic getInputBL(final ServletContext context) {
+        return getClassFromWebAppContext(context, () -> InputsBusinessLogic.class);
     }
 
-    protected PolicyBusinessLogic getPolicyBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(PolicyBusinessLogic.class);
+    private PolicyBusinessLogic getPolicyBL(final ServletContext context) {
+        return getClassFromWebAppContext(context, () -> PolicyBusinessLogic.class);
     }
 
-    protected Either<ComponentInstInputsMap, ResponseFormat> parseToComponentInstanceMap(String componentJson, User user, ComponentTypeEnum componentType) {
-        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(componentJson, user, ComponentInstInputsMap.class, AuditingActionEnum.CREATE_RESOURCE, componentType);
+    private WebApplicationContext getWebAppContext(final ServletContext context) {
+        return ((WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).getWebAppContext(context);
+    }
+
+    protected <T> Either<T, ResponseFormat> parseToComponentInstanceMap(final String componentJson,
+                                                                        final User user,
+                                                                        final ComponentTypeEnum componentType,
+                                                                        final Class<T> clazz) {
+        return getComponentsUtils()
+            .convertJsonToObjectUsingObjectMapper(componentJson, user, clazz, AuditingActionEnum.CREATE_RESOURCE, componentType);
     }
 
     protected Response declareProperties(String userId, String componentId, String componentType,
-            String componentInstInputsMapObj, DeclarationTypeEnum typeEnum, HttpServletRequest request) {
+                                         String componentInstInputsMapObj, DeclarationTypeEnum typeEnum, HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
 
         try {
-            BaseBusinessLogic businessLogic = getBlForPropertyDeclaration(typeEnum, context);
+            BaseBusinessLogic businessLogic = getBlForDeclaration(typeEnum, context);
 
             // get modifier id
             User modifier = new User();
             modifier.setUserId(userId);
             log.debug("modifier id is {}", userId);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(componentInstInputsMapObj, modifier, componentTypeEnum);
+            Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(
+                componentInstInputsMapObj, modifier, componentTypeEnum, ComponentInstInputsMap.class);
             if (componentInstInputsMapRes.isRight()) {
                 log.debug("failed to parse componentInstInputsMap");
                 return buildErrorResponse(componentInstInputsMapRes.right().value());
             }
 
             Either<List<ToscaDataDefinition>, ResponseFormat> propertiesAfterDeclaration = businessLogic
-                                                                               .declareProperties(userId, componentId,
-                                                                                       componentTypeEnum,
-                                                                                       componentInstInputsMapRes.left().value());
+                .declareProperties(userId, componentId,
+                    componentTypeEnum,
+                    componentInstInputsMapRes.left().value());
             if (propertiesAfterDeclaration.isRight()) {
                 log.debug("failed to create inputs  for service: {}", componentId);
                 return buildErrorResponse(propertiesAfterDeclaration.right().value());
@@ -567,13 +550,18 @@ public class BeGenericServlet extends BasicServlet {
         }
     }
 
-    public BaseBusinessLogic getBlForPropertyDeclaration(DeclarationTypeEnum typeEnum,
-                                                          ServletContext context) {
-        if(typeEnum.equals(DeclarationTypeEnum.POLICY)) {
-            return getPolicyBL(context);
+    public BaseBusinessLogic getBlForDeclaration(final DeclarationTypeEnum typeEnum,
+                                                 final ServletContext context) {
+        switch (typeEnum) {
+            case OUTPUT:
+                return getOutputBL(context);
+            case POLICY:
+                return getPolicyBL(context);
+            case INPUT:
+                return getInputBL(context);
+            default:
+                throw new IllegalArgumentException("Invalid DeclarationTypeEnum");
         }
-
-        return getInputBL(context);
     }
 
     protected Either<Map<String, InputDefinition>, ActionStatus> getInputModel(String componentId, String data) {

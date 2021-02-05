@@ -40,6 +40,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -70,6 +71,7 @@ public class UiComponentDataTransfer {
     private List<PolicyDefinition> policies;
     private Map<String, List<RequirementDefinition>> requirements;
     private List<InputDefinition> inputs;
+    private List<OutputDefinition> outputs;
     private List<GroupDefinition> groups;
     private Map<String, InterfaceDefinition> interfaces;
 
@@ -81,8 +83,5 @@ public class UiComponentDataTransfer {
     private List<PropertyDefinition> properties;
     private List<AttributeDefinition> attributes;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
-
-    public UiComponentDataTransfer() {
-    }
 
 }
