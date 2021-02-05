@@ -39,7 +39,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.Path;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -471,7 +470,7 @@ public class ComponentInstanceServletTest extends JerseyTest {
         when(componentsUtils.convertJsonToObjectUsingObjectMapper(eq(requirementJson), any(User.class), eq(RequirementDefinition.class),
                 eq(AuditingActionEnum.GET_TOSCA_MODEL), eq(ComponentTypeEnum.SERVICE))).thenReturn(Either.left(requirementDefinition));
         when(componentInstanceBusinessLogic.updateInstanceRequirement(ComponentTypeEnum.SERVICE,
-                componentId, componentInstanceId, capabilityType, requirementName, requirementDefinition, USER_ID))
+                componentId, componentInstanceId, requirementDefinition, USER_ID))
                 .thenReturn(Either.left(requirementDefinition));
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
