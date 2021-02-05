@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.dao.jsongraph;
 
 import org.janusgraph.core.*;
+import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -483,6 +484,79 @@ public class JanusGraphDao {
                         } else {
                             query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
                         }
+                    }
+                }
+                Iterable<JanusGraphVertex> vertices = query.vertices();
+                if (vertices == null) {
+                    return Either.right(JanusGraphOperationStatus.NOT_FOUND);
+                }
+
+                Iterator<JanusGraphVertex> iterator = vertices.iterator();
+                List<GraphVertex> result = new ArrayList<>();
+
+                while (iterator.hasNext()) {
+                    JanusGraphVertex vertex = iterator.next();
+
+                    Map<GraphPropertyEnum, Object> newProp = getVertexProperties(vertex);
+                    GraphVertex graphVertex = createAndFill(vertex, parseFlag);
+
+                    result.add(graphVertex);
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Number of fetced nodes in graph for criteria : from type = {} and properties = {} is {}", type, props, result.size());
+                }
+                if (result.size() == 0) {
+                    return Either.right(JanusGraphOperationStatus.NOT_FOUND);
+                }
+
+                return Either.left(result);
+            } catch (Exception e) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
+                }
+                return Either.right(JanusGraphClient.handleJanusGraphException(e));
+            }
+
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Failed  get by  criteria for type ={} and properties = {} error : {}", type, props, graph.right().value());
+            }
+            return Either.right(graph.right().value());
+        }
+    }
+    
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(VertexTypeEnum type, Map<GraphPropertyEnum, Object> props, Map<GraphPropertyEnum, Object> hasNotProps, Map<String, Entry<JanusGraphPredicate, Object>> predicates, JsonParseFlagEnum parseFlag) {
+        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
+        if (graph.isLeft()) {
+            try {
+                JanusGraph tGraph = graph.left().value();
+
+                JanusGraphQuery<? extends JanusGraphQuery> query = tGraph.query();
+                if (type != null) {
+                    query = query.has(GraphPropertyEnum.LABEL.getProperty(), type.getName());
+                }
+
+                if (props != null && !props.isEmpty()) {
+                    for (Map.Entry<GraphPropertyEnum, Object> entry : props.entrySet()) {
+                        query = query.has(entry.getKey().getProperty(), entry.getValue());
+                    }
+                }
+                if (hasNotProps != null && !hasNotProps.isEmpty()) {
+                    for (Map.Entry<GraphPropertyEnum, Object> entry : hasNotProps.entrySet()) {
+                        if (entry.getValue() instanceof List) {
+                            buildMultipleNegateQueryFromList(entry, query);
+                        } else {
+                            query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
+                        }
+                    }
+                }
+                if (predicates != null && !predicates.isEmpty()) {
+                    JanusGraphPredicate predicate = null;
+                    Object object = null;
+                    for (Map.Entry<String, Entry<JanusGraphPredicate, Object>> entry : predicates.entrySet()) {
+                        predicate = entry.getValue().getKey();
+                        object = entry.getValue().getValue();
+                        query = query.has(entry.getKey(), predicate, object);
                     }
                 }
                 Iterable<JanusGraphVertex> vertices = query.vertices();

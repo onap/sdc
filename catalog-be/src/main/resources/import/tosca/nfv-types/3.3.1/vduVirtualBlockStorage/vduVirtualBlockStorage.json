@@ -1,0 +1,17 @@
+{
+	"payloadName": "vduVirtualBlockStorage.yml",
+	"contactId": "jh0003",
+	"name": "VDU VirtualBlockStorage",
+	"description": "VDU VirtualBlockStorage",
+	"resourceIconPath": "objectStorage",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+        "vendorName": "ETSI",
+	"vendorRelease": "3.3.1",
+	"tags": ["VDU VirtualBlockStorage"]
+}

@@ -1,0 +1,17 @@
+{
+	"payloadName": "VNF.yml",
+	"contactId": "jh0003",
+	"name": "VNF",
+	"description": "VNF",
+	"resourceIconPath": "compute",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+        "vendorName": "ETSI",
+	"vendorRelease": "3.3.1",
+	"tags": ["VNF"]
+}

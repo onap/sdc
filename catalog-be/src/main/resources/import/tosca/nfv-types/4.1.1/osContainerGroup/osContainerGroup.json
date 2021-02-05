@@ -1,0 +1,17 @@
+{
+	"payloadName": "osContainerGroup.yml",
+	"contactId": "jh0003",
+	"name": "osContainerGroup",
+	"description": "osContainerGroup",
+	"resourceIconPath": "compute",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+        "vendorName": "ETSI",
+        "vendorRelease": "4.1.1",
+	"tags": ["osContainerGroup"]
+}
