@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
@@ -721,6 +722,14 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
 
         }
+
+        if (!componentParametersView.isIgnoreOutputs()) {
+            final JanusGraphOperationStatus storageStatus = setOutputsFromGraph(componentV, toscaElement);
+            if (storageStatus != JanusGraphOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
+            }
+        }
+
         if (!componentParametersView.isIgnoreProperties()) {
             status = setPropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
@@ -1125,6 +1134,20 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         } else {
             if (capabilitiesResult.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 return capabilitiesResult.right().value();
+            }
+        }
+        return JanusGraphOperationStatus.OK;
+    }
+
+    private JanusGraphOperationStatus setOutputsFromGraph(final GraphVertex componentV,
+                                                          final TopologyTemplate toscaElement) {
+        final Either<Map<String, AttributeDataDefinition>, JanusGraphOperationStatus> result =
+            getDataFromGraph(componentV, EdgeLabelEnum.OUTPUTS);
+        if (result.isLeft()) {
+            toscaElement.setOutputs(result.left().value());
+        } else {
+            if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+                return result.right().value();
             }
         }
         return JanusGraphOperationStatus.OK;
