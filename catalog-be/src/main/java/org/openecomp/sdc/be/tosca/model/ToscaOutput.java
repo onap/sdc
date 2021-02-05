@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,30 +17,16 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.model;
+package org.openecomp.sdc.be.tosca.model;
 
-import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+public class ToscaOutput extends ToscaProperty {
 
-@Getter
-@Setter
-@NoArgsConstructor
-public class OutputDefinition extends AttributeDefinition {
-    private List<ComponentInstanceAttribute> attributes;
-
-    public OutputDefinition(final AttributeDataDefinition attributeDataDefinition) {
-        super(attributeDataDefinition);
-    }
-
-    public OutputDefinition(AttributeDefinition propertyDefinition) {
-        super(propertyDefinition);
-    }
-
-    public OutputDefinition(final OutputDefinition outputDefinition) {
-        super(outputDefinition);
+    public ToscaOutput(final ToscaAttribute toscaAttribute) {
+        this.setDescription(toscaAttribute.getDescription());
+        this.setType(toscaAttribute.getType());
+        this.setDefaultp(toscaAttribute.getDefault());
+        this.setDescription(toscaAttribute.getStatus());
+        this.setValue(toscaAttribute.getValue());
     }
 
 }

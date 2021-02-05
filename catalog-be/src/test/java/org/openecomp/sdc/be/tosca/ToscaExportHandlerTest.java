@@ -113,6 +113,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplateArtifact;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
+import org.openecomp.sdc.be.tosca.utils.OutputConverter;
 
 public class ToscaExportHandlerTest extends BeConfDependentTest {
 
@@ -138,6 +139,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
     @Mock
     private InputConverter inputConverter;
+
+    @Mock
+    private OutputConverter outputConverter;
 
     @Mock
     private GroupExportParser groupExportParser;
@@ -426,8 +430,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(inputConverter.convertInputs(any(List.class), any(Map.class))).thenReturn(new HashMap<>());
 
-        when(groupExportParser.getGroups(component))
-            .thenReturn(null);
+        when(groupExportParser.getGroups(component)).thenReturn(null);
 
         // test component contains group
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
