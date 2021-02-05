@@ -142,52 +142,52 @@ public class ResourceBusinessLogicTest {
 	private static final String GENERIC_CR_NAME = "org.openecomp.resource.abstract.nodes.CR";
 	private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
 
-	final ServletContext servletContext = Mockito.mock(ServletContext.class);
+	private final ServletContext servletContext = Mockito.mock(ServletContext.class);
 	IElementOperation mockElementDao;
-	JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
-	UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-	ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-	NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
-	NodeTemplateOperation nodeTemplateOperation = Mockito.mock(NodeTemplateOperation.class);
-	TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
-	final LifecycleBusinessLogic lifecycleBl = Mockito.mock(LifecycleBusinessLogic.class);
-	final CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
-	final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
-	final PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
-	final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
-	WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-	UserValidations userValidations = Mockito.mock(UserValidations.class);
-	WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-	IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
-	ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
-	IElementOperation elementDao = new ElementOperationMock();
+	private final JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
+	private final UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
+	private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
+	private final NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
+	private final NodeTemplateOperation nodeTemplateOperation = Mockito.mock(NodeTemplateOperation.class);
+	private final TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
+	private final LifecycleBusinessLogic lifecycleBl = Mockito.mock(LifecycleBusinessLogic.class);
+	private final CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
+	private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
+	private final PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
+	private final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+	private final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
+	private final UserValidations userValidations = Mockito.mock(UserValidations.class);
+	private final WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
+	private final IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
+	private final ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
+	private final IElementOperation elementDao = new ElementOperationMock();
 
-	CsarUtils csarUtils = Mockito.mock(CsarUtils.class);
-	UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
-	IGroupOperation groupOperation = Mockito.mock(IGroupOperation.class);
-	IGroupInstanceOperation groupInstanceOperation = Mockito.mock(IGroupInstanceOperation.class);
-	IGroupTypeOperation groupTypeOperation = Mockito.mock(IGroupTypeOperation.class);
-	GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
-	InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
-	ArtifactsOperations artifactToscaOperation = Mockito.mock(ArtifactsOperations.class);
-	private PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
-	ArtifactsResolver artifactsResolver = Mockito.mock(ArtifactsResolver.class);
-	InterfaceLifecycleOperation interfaceLifecycleTypeOperation = Mockito.mock(InterfaceLifecycleOperation.class);
-	ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-	ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
-	InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
-	CompositionBusinessLogic compositionBusinessLogic = Mockito.mock(CompositionBusinessLogic.class);
-	ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic = Mockito.mock(ResourceDataMergeBusinessLogic.class);
-	CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito.mock(CsarArtifactsAndGroupsBusinessLogic.class);
-	MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
-	UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-	ToscaExportHandler toscaExportHandler = Mockito.mock(ToscaExportHandler.class);
-	PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
-
+	private final CsarUtils csarUtils = Mockito.mock(CsarUtils.class);
+	private final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
+	private final IGroupOperation groupOperation = Mockito.mock(IGroupOperation.class);
+	private final IGroupInstanceOperation groupInstanceOperation = Mockito.mock(IGroupInstanceOperation.class);
+	private final IGroupTypeOperation groupTypeOperation = Mockito.mock(IGroupTypeOperation.class);
+	private final GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
+	private final InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
+	private final ArtifactsOperations artifactToscaOperation = Mockito.mock(ArtifactsOperations.class);
+	private final PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
+	private final ArtifactsResolver artifactsResolver = Mockito.mock(ArtifactsResolver.class);
+	private final InterfaceLifecycleOperation interfaceLifecycleTypeOperation = Mockito.mock(InterfaceLifecycleOperation.class);
+	private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+	private final ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
+	private final InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
+	private final OutputsBusinessLogic outputsBusinessLogic = Mockito.mock(OutputsBusinessLogic.class);
+	private final CompositionBusinessLogic compositionBusinessLogic = Mockito.mock(CompositionBusinessLogic.class);
+	private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic = Mockito.mock(ResourceDataMergeBusinessLogic.class);
+	private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito.mock(CsarArtifactsAndGroupsBusinessLogic.class);
+	private final MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
+	private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+	private final ToscaExportHandler toscaExportHandler = Mockito.mock(ToscaExportHandler.class);
+	private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
 
 	@InjectMocks
 	ResponseFormatManager responseManager = null;
-	GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
+	private final GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
 	User user = null;
 	Resource resourceResponse = null;
 	Resource genericVF = null;
@@ -285,7 +285,7 @@ public class ResourceBusinessLogicTest {
 		artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
 		bl = new ResourceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
 				interfaceOperation, interfaceLifecycleTypeOperation, artifactManager, componentInstanceBusinessLogic,
-				resourceImportManager, inputsBusinessLogic, compositionBusinessLogic, resourceDataMergeBusinessLogic,
+				resourceImportManager, inputsBusinessLogic, outputsBusinessLogic, compositionBusinessLogic, resourceDataMergeBusinessLogic,
 				csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
 				artifactToscaOperation, propertyBusinessLogic, componentContactIdValidator, componentNameValidator,
 				componentTagsValidator, componentValidator,	componentIconValidator, componentProjectCodeValidator,

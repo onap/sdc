@@ -25,6 +25,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,6 +84,9 @@ public class UiComponentDataConverter {
         switch (field) {
             case INPUTS:
                 setInputs(dataTransfer, component);
+                break;
+            case OUTPUTS:
+                setOutputs(dataTransfer, component);
                 break;
             case COMPONENT_INSTANCE_RELATION:
                 setComponentInstanceRelation(dataTransfer, component);
@@ -210,6 +214,10 @@ public class UiComponentDataConverter {
         } else {
             dataTransfer.setInputs(component.getInputs());
         }
+    }
+
+    private void setOutputs(final UiComponentDataTransfer dataTransfer, final Component component) {
+        dataTransfer.setOutputs(component.getOutputs() == null ? Collections.emptyList() : component.getOutputs());
     }
 
     private void setComponentInstanceInputs(UiComponentDataTransfer dataTransfer, Component component) {
@@ -374,11 +382,6 @@ public class UiComponentDataConverter {
                 case DERIVED_FROM:
                     setDerivedFrom(resource, dataTransfer);
                     break;
-
-                case ATTRIBUTES:
-                    setAttributes(resource, dataTransfer);
-                    break;
-
                 case ADDITIONAL_INFORMATION:
                     setAdditionalInfo(resource, dataTransfer);
                     break;
@@ -424,14 +427,6 @@ public class UiComponentDataConverter {
             dataTransfer.setDerivedFrom(new ArrayList<>());
         } else {
             dataTransfer.setDerivedFrom(resource.getDerivedFrom());
-        }
-    }
-
-    private void setAttributes(Resource resource, UiResourceDataTransfer dataTransfer) {
-        if (resource.getAttributes() == null) {
-            dataTransfer.setAttributes(new ArrayList<>());
-        } else {
-            dataTransfer.setAttributes(resource.getAttributes());
         }
     }
 

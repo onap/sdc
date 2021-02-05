@@ -25,11 +25,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
 import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
@@ -48,11 +56,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 @org.springframework.stereotype.Component("outputsBusinessLogic")
 public class OutputsBusinessLogic extends BaseBusinessLogic {
 
+    private static final String CREATE_OUTPUT = "CreateOutput";
+
     private static final Logger log = Logger.getLogger(OutputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_ERROR = "Failed to found component {}, error: {}";
+    private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
+    private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(OutputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID = "Failed to found component instance outputs componentInstanceId: {}";
     private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR = "Failed to found component instance outputs {}, error: {}";
+
+    private final AttributeDeclarationOrchestrator attributeDeclarationOrchestrator;
 
     @Autowired
     public OutputsBusinessLogic(final IElementOperation elementDao,
@@ -61,9 +75,11 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                                 final IGroupTypeOperation groupTypeOperation,
                                 final InterfaceOperation interfaceOperation,
                                 final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                final AttributeDeclarationOrchestrator attributeDeclarationOrchestrator,
                                 final ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
+        this.attributeDeclarationOrchestrator = attributeDeclarationOrchestrator;
     }
 
     public Either<List<ComponentInstanceOutput>, ResponseFormat> getComponentInstanceOutputs(final String userId,
@@ -78,7 +94,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         filters.setIgnoreComponentInstancesOutputs(false);
 
         final Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
-        if (getComponentEither.isRight()) {
+        if(getComponentEither.isRight()){
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
@@ -97,6 +113,167 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             .orElse(Collections.emptyMap());
 
         return Either.left(ciOutputs.getOrDefault(componentInstanceId, Collections.emptyList()));
+    }
+
+    @Override
+    public Either<List<OutputDefinition>, ResponseFormat> declareAttributes(final String userId,
+                                                                            final String componentId,
+                                                                            final ComponentTypeEnum componentTypeEnum,
+                                                                            final ComponentInstOutputsMap componentInstOutputsMap) {
+
+        return createMultipleOutputs(userId, componentId, componentTypeEnum, componentInstOutputsMap, true, false);
+    }
+
+    public Either<List<OutputDefinition>, ResponseFormat> createMultipleOutputs(final String userId,
+                                                                                final String componentId,
+                                                                                final ComponentTypeEnum componentType,
+                                                                                final ComponentInstOutputsMap componentInstOutputsMapUi,
+                                                                                final boolean shouldLockComp,
+                                                                                final boolean inTransaction) {
+
+        Either<List<OutputDefinition>, ResponseFormat> result = null;
+        org.openecomp.sdc.be.model.Component component = null;
+
+        try {
+            validateUserExists(userId);
+
+            component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
+
+            result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi)
+                .left()
+                .bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate))
+                .right()
+                .map(componentsUtils::getResponseFormat);
+            return result;
+
+        } catch (final ByResponseFormatComponentException e) {
+            log.error("#createMultipleOutputs: Exception thrown: ", e);
+            result = Either.right(e.getResponseFormat());
+            return result;
+        } finally {
+
+            if (!inTransaction) {
+                if (result == null || result.isRight()) {
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+                    janusGraphDao.rollback();
+                } else {
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+                    janusGraphDao.commit();
+                }
+            }
+            // unlock resource
+            if (shouldLockComp && component != null) {
+                graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
+            }
+
+        }
+    }
+
+    private org.openecomp.sdc.be.model.Component getAndValidateComponentForCreate(final String userId,
+                                                                                  final String componentId,
+                                                                                  final ComponentTypeEnum componentType,
+                                                                                  final boolean shouldLockComp) {
+        final ComponentParametersView componentParametersView = getBaseComponentParametersView();
+        final org.openecomp.sdc.be.model.Component component = validateComponentExists(componentId, componentType, componentParametersView);
+        if (shouldLockComp) {
+            // lock the component
+            lockComponent(component, CREATE_OUTPUT);
+        }
+        validateCanWorkOnComponent(component, userId);
+        return component;
+    }
+
+    private Either<List<OutputDefinition>, StorageOperationStatus> prepareOutputsForCreation(final String userId,
+                                                                                             final String cmptId,
+                                                                                             final List<OutputDefinition> outputsToCreate) {
+        final Map<String, OutputDefinition> outputsToPersist = MapUtil.toMap(outputsToCreate, OutputDefinition::getName);
+        assignOwnerIdToOutputs(userId, outputsToPersist);
+
+        return toscaOperationFacade.addOutputsToComponent(outputsToPersist, cmptId)
+            .left()
+            .map(persistedOutputs -> outputsToCreate);
+    }
+
+    private void assignOwnerIdToOutputs(final String userId, final Map<String, OutputDefinition> outputsToCreate) {
+        outputsToCreate.values().forEach(outputDefinition -> outputDefinition.setOwnerId(userId));
+    }
+
+    private ComponentParametersView getBaseComponentParametersView() {
+        final ComponentParametersView componentParametersView = new ComponentParametersView();
+        componentParametersView.disableAll();
+        componentParametersView.setIgnoreOutputs(false);
+        componentParametersView.setIgnoreAttributes(false);
+        componentParametersView.setIgnoreComponentInstances(false);
+        componentParametersView.setIgnoreComponentInstancesOutputs(false);
+        componentParametersView.setIgnoreComponentInstancesAttributes(false);
+        componentParametersView.setIgnoreUsers(false);
+        return componentParametersView;
+    }
+
+    /**
+     * Delete output from component
+     *
+     * @param componentId
+     * @param userId
+     * @param outputId
+     * @return
+     */
+    public OutputDefinition deleteOutput(final String componentId, final String userId, final String outputId) {
+
+        Either<OutputDefinition, ResponseFormat> deleteEither = null;
+        if (log.isDebugEnabled()) {
+            log.debug("Going to delete output id: {}", outputId);
+        }
+
+        validateUserExists(userId);
+
+        final ComponentParametersView componentParametersView = getBaseComponentParametersView();
+        componentParametersView.setIgnoreAttributes(false);
+
+        final Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither =
+            toscaOperationFacade.getToscaElement(componentId, componentParametersView);
+        if (componentEither.isRight()) {
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(componentEither.right().value()));
+        }
+        final org.openecomp.sdc.be.model.Component component = componentEither.left().value();
+
+        // Validate outputId is child of the component
+        final Optional<OutputDefinition> optionalOutput = component.getOutputs().stream().
+            // filter by ID
+                filter(output -> output.getUniqueId().equals(outputId)).
+            // Get the output
+                findAny();
+        if (!optionalOutput.isPresent()) {
+            throw new ByActionStatusComponentException(ActionStatus.OUTPUT_IS_NOT_CHILD_OF_COMPONENT, outputId, componentId);
+        }
+
+        final OutputDefinition outputForDelete = optionalOutput.get();
+
+        // Lock component
+        lockComponent(componentId, component, "deleteOutput");
+        // Delete output operations
+        boolean failed = false;
+        try {
+            final StorageOperationStatus status =
+                toscaOperationFacade.deleteOutputOfResource(component, outputForDelete.getName());
+            if (status != StorageOperationStatus.OK) {
+                log.debug("Component id: {} delete output id: {} failed", componentId, outputId);
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status), component.getName());
+            }
+
+            final StorageOperationStatus storageOperationStatus =
+                attributeDeclarationOrchestrator.unDeclareAttributesAsOutputs(component, outputForDelete);
+            if (storageOperationStatus != StorageOperationStatus.OK) {
+                log.debug("Component id: {} update attributes declared as output for outputId: {} failed", componentId, outputId);
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(storageOperationStatus), component.getName());
+            }
+            return outputForDelete;
+        } catch (final ComponentException e) {
+            failed = true;
+            throw e;
+        } finally {
+            unlockComponent(failed, component);
+        }
     }
 
 }

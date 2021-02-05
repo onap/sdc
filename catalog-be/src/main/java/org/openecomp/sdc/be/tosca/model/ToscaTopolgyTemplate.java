@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,8 @@ public class ToscaTopolgyTemplate {
     @Setter
     private Map<String, ToscaProperty> inputs;
     @Setter
+    private Map<String, ToscaProperty> outputs;
+    @Setter
     private Map<String, ToscaNodeTemplate> node_templates;
     private Map<String, ToscaGroupTemplate> groups;
     private Map<String, ToscaPolicyTemplate> policies;
@@ -40,16 +42,16 @@ public class ToscaTopolgyTemplate {
     private Map<String, ToscaRelationshipTemplate> relationshipTemplates;
 
     public void addGroups(Map<String, ToscaGroupTemplate> groups) {
-        if ( this.groups == null ){
+        if (this.groups == null) {
             this.groups = new HashMap<>();
         }
         this.groups.putAll(groups);
     }
 
-	public void addPolicies(Map<String, ToscaPolicyTemplate> policiesMap) {
-		if ( this.policies == null ){
+    public void addPolicies(Map<String, ToscaPolicyTemplate> policiesMap) {
+        if (this.policies == null) {
             this.policies = new HashMap<>();
         }
-        this.policies.putAll(policiesMap);		
-	}
+        this.policies.putAll(policiesMap);
+    }
 }

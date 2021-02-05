@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.components.attribute.GetOutputUtils.isGetOutputValueForOutput;
 import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyCapabilityOfChildInstance;
 
@@ -38,7 +39,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -61,11 +61,11 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetOutputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
@@ -84,6 +84,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -100,6 +101,7 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -148,6 +150,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
     private static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
     private static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
+    private static final String CANNOT_ATTACH_RESOURCE_INSTANCES_TO_CONTAINER_RESOURCE_OF_TYPE = "Cannot attach resource instances to container resource of type {}";
+    private static final String SERVICE_PROXY = "serviceProxy";
+    private static final String ASSOCIATE_RI_TO_RI = "associateRIToRI";
 
     private ComponentInstanceOperation componentInstanceOperation;
     private ArtifactsBusinessLogic artifactBusinessLogic;
@@ -184,26 +189,27 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     @Autowired
     private ContainerInstanceTypesData containerInstanceTypesData;
 
-    public ComponentInstance createComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
+    public ComponentInstance createComponentInstance(String containerComponentParam, String containerComponentId, String userId,
+                                                     ComponentInstance resourceInstance) {
         return createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, true);
     }
 
-    public List<ComponentInstanceProperty> getComponentInstancePropertiesByInputId(org.openecomp.sdc.be.model.Component component, String inputId){
+    public List<ComponentInstanceProperty> getComponentInstancePropertiesByInputId(org.openecomp.sdc.be.model.Component component,
+                                                                                   String inputId) {
         List<ComponentInstanceProperty> resList = new ArrayList<>();
         Map<String, List<ComponentInstanceProperty>> ciPropertiesMap = component.getComponentInstancesProperties();
-        if(ciPropertiesMap != null && !ciPropertiesMap.isEmpty()){
-            ciPropertiesMap.forEach(new BiConsumer<String, List<ComponentInstanceProperty>>() {
-                @Override
-                public void accept(String s, List<ComponentInstanceProperty> ciPropList) {
-                    String ciName = "";
-                    Optional<ComponentInstance> ciOp = component.getComponentInstances().stream().filter(ci ->ci.getUniqueId().equals(s)).findAny();
-                    if(ciOp.isPresent())
-                        ciName = ciOp.get().getName();
-                    if (ciPropList != null && !ciPropList.isEmpty()) {
-                        for(ComponentInstanceProperty prop: ciPropList){
-                            List<GetInputValueDataDefinition> inputsValues = prop.getGetInputValues();
-                            addCompInstanceProperty(s, ciName, prop, inputsValues, inputId, resList);
-                        }
+        if (ciPropertiesMap != null && !ciPropertiesMap.isEmpty()) {
+            ciPropertiesMap.forEach((s, ciPropList) -> {
+                String ciName = "";
+                Optional<ComponentInstance> ciOp = component.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(s))
+                    .findAny();
+                if (ciOp.isPresent()) {
+                    ciName = ciOp.get().getName();
+                }
+                if (ciPropList != null && !ciPropList.isEmpty()) {
+                    for (ComponentInstanceProperty prop : ciPropList) {
+                        List<GetInputValueDataDefinition> inputsValues = prop.getGetInputValues();
+                        addCompInstanceProperty(s, ciName, prop, inputsValues, inputId, resList);
                     }
                 }
             });
@@ -212,13 +218,55 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private void addCompInstanceProperty(String s, String ciName, ComponentInstanceProperty prop, List<GetInputValueDataDefinition> inputsValues, String inputId, List<ComponentInstanceProperty> resList) {
-        if(inputsValues != null && !inputsValues.isEmpty()){
-            for(GetInputValueDataDefinition inputData: inputsValues){
-                if(isGetInputValueForInput(inputData, inputId)){
+    public List<ComponentInstanceAttribute> getComponentInstanceAttributesByOutputId(final org.openecomp.sdc.be.model.Component component,
+                                                                                     final String outputId) {
+        final List<ComponentInstanceAttribute> resList = new ArrayList<>();
+        final Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes = component.getComponentInstancesAttributes();
+        if (org.apache.commons.collections4.MapUtils.isNotEmpty(componentInstancesAttributes)) {
+            componentInstancesAttributes.forEach((s, componentInstanceAttributeList) -> {
+                String ciName = "";
+                final Optional<ComponentInstance> ciOp = component.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(s)).findAny();
+                if (ciOp.isPresent()) {
+                    ciName = ciOp.get().getName();
+                }
+                if (componentInstanceAttributeList != null && !componentInstanceAttributeList.isEmpty()) {
+                    for (final ComponentInstanceAttribute compInstanceAttribute : componentInstanceAttributeList) {
+                        List<GetOutputValueDataDefinition> outputValues = compInstanceAttribute.getGetOutputValues();
+                        addCompInstanceAttribute(s, ciName, compInstanceAttribute, outputValues, outputId, resList);
+                    }
+                }
+            });
+        }
+        return resList;
+
+    }
+
+    private void addCompInstanceProperty(String s, String ciName, ComponentInstanceProperty prop, List<GetInputValueDataDefinition> inputsValues,
+                                         String inputId, List<ComponentInstanceProperty> resList) {
+        if (inputsValues != null && !inputsValues.isEmpty()) {
+            for (GetInputValueDataDefinition inputData : inputsValues) {
+                if (isGetInputValueForInput(inputData, inputId)) {
                     prop.setComponentInstanceId(s);
                     prop.setComponentInstanceName(ciName);
                     resList.add(prop);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void addCompInstanceAttribute(final String s,
+                                          final String ciName,
+                                          final ComponentInstanceAttribute attribute,
+                                          final List<GetOutputValueDataDefinition> outputsValues,
+                                          final String outputId,
+                                          final List<ComponentInstanceAttribute> resList) {
+        if (outputsValues != null && !outputsValues.isEmpty()) {
+            for (final GetOutputValueDataDefinition outputData : outputsValues) {
+                if (isGetOutputValueForOutput(outputData, outputId)) {
+                    attribute.setComponentInstanceId(s);
+                    attribute.setComponentInstanceName(ciName);
+                    resList.add(attribute);
                     break;
                 }
             }
@@ -230,10 +278,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Optional<ComponentInstanceProperty> propertyCandidate = getComponentInstancePropertyByPolicy(component, policy);
 
-        if(propertyCandidate.isPresent()) {
+        if (propertyCandidate.isPresent()) {
             ComponentInstanceProperty componentInstanceProperty = propertyCandidate.get();
             Optional<GetPolicyValueDataDefinition> getPolicyCandidate =
-                    getGetPolicyValueDataDefinition(policy, componentInstanceProperty);
+                getGetPolicyValueDataDefinition(policy, componentInstanceProperty);
 
             getPolicyCandidate.ifPresent(getPolicyValue ->
                 updateComponentInstancePropertyAfterUndeclaration(componentInstanceProperty, getPolicyValue, policy));
@@ -290,20 +338,19 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             org.openecomp.sdc.be.model.Component component, String inputId) {
         List<ComponentInstanceInput> resList = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> ciInputsMap = component.getComponentInstancesInputs();
-        if(ciInputsMap != null && !ciInputsMap.isEmpty()){
-            ciInputsMap.forEach(new BiConsumer<String, List<ComponentInstanceInput>>() {
-                @Override
-                public void accept(String s, List<ComponentInstanceInput> ciPropList) {
-                    String ciName = "";
-                    Optional<ComponentInstance> ciOp = component.getComponentInstances().stream().filter(ci ->ci.getUniqueId().equals(s)).findAny();
-                    if(ciOp.isPresent())
-                        ciName = ciOp.get().getName();
-                    if (ciPropList != null && !ciPropList.isEmpty()) {
-                        for(ComponentInstanceInput prop: ciPropList){
-                            List<GetInputValueDataDefinition> inputsValues = prop.getGetInputValues();
-                            addCompInstanceInput(s, ciName, prop, inputsValues, inputId, resList);
+        if (ciInputsMap != null && !ciInputsMap.isEmpty()) {
+            ciInputsMap.forEach((s, ciPropList) -> {
+                String ciName = "";
+                Optional<ComponentInstance> ciOp = component.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(s))
+                    .findAny();
+                if (ciOp.isPresent()) {
+                    ciName = ciOp.get().getName();
+                }
+                if (ciPropList != null && !ciPropList.isEmpty()) {
+                    for (ComponentInstanceInput prop : ciPropList) {
+                        List<GetInputValueDataDefinition> inputsValues = prop.getGetInputValues();
+                        addCompInstanceInput(s, ciName, prop, inputsValues, inputId, resList);
 
-                        }
                     }
                 }
             });
@@ -312,10 +359,53 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private void addCompInstanceInput(String s, String ciName, ComponentInstanceInput prop, List<GetInputValueDataDefinition> inputsValues, String inputId, List<ComponentInstanceInput> resList) {
-        if(inputsValues != null && !inputsValues.isEmpty()){
-            for(GetInputValueDataDefinition inputData: inputsValues){
-                if(isGetInputValueForInput(inputData, inputId)){
+    public List<ComponentInstanceOutput> getComponentInstanceOutputsByOutputId(final org.openecomp.sdc.be.model.Component component,
+                                                                               final String outputId) {
+        final List<ComponentInstanceOutput> resList = new ArrayList<>();
+        final Map<String, List<ComponentInstanceOutput>> ciInputsMap = component.getComponentInstancesOutputs();
+        if (ciInputsMap != null && !ciInputsMap.isEmpty()) {
+            ciInputsMap.forEach((s, ciPropList) -> {
+                String ciName = "";
+                final Optional<ComponentInstance> ciOp = component.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(s)).findAny();
+                if (ciOp.isPresent()) {
+                    ciName = ciOp.get().getName();
+                }
+                if (ciPropList != null && !ciPropList.isEmpty()) {
+                    for (final ComponentInstanceOutput prop : ciPropList) {
+                        final List<GetOutputValueDataDefinition> outputValues = prop.getGetOutputValues();
+                        addCompInstanceOutput(s, ciName, prop, outputValues, outputId, resList);
+
+                    }
+                }
+            });
+        }
+        return resList;
+
+    }
+
+    private void addCompInstanceInput(String s, String ciName, ComponentInstanceInput prop, List<GetInputValueDataDefinition> inputsValues,
+                                      String inputId, List<ComponentInstanceInput> resList) {
+        if (inputsValues != null && !inputsValues.isEmpty()) {
+            for (GetInputValueDataDefinition inputData : inputsValues) {
+                if (isGetInputValueForInput(inputData, inputId)) {
+                    prop.setComponentInstanceId(s);
+                    prop.setComponentInstanceName(ciName);
+                    resList.add(prop);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void addCompInstanceOutput(final String s,
+                                       final String ciName,
+                                       final ComponentInstanceOutput prop,
+                                       final List<GetOutputValueDataDefinition> outputsValues,
+                                       final String outputId,
+                                       final List<ComponentInstanceOutput> resList) {
+        if (outputsValues != null && !outputsValues.isEmpty()) {
+            for (final GetOutputValueDataDefinition outputData : outputsValues) {
+                if (isGetOutputValueForOutput(outputData, outputId)) {
                     prop.setComponentInstanceId(s);
                     prop.setComponentInstanceName(ciName);
                     resList.add(prop);
@@ -337,7 +427,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         if (ModelConverter.isAtomicComponent(containerComponent)) {
             if (log.isDebugEnabled()) {
-                log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
+                log.debug(CANNOT_ATTACH_RESOURCE_INSTANCES_TO_CONTAINER_RESOURCE_OF_TYPE, containerComponent.assetType());
             }
             throw new ByActionStatusComponentException(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType());
         }
@@ -365,7 +455,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private Component getOrigComponentForServiceProxy(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance resourceInstance) {
-        Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
+        Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName(SERVICE_PROXY);
         if (isServiceProxyOrigin(serviceProxyOrigin)) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
         }
@@ -406,10 +496,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         boolean failed = false;
         try {
 
-            ComponentInstance lockComponent = isNeedLock(needLock, containerComponent);
-            if (lockComponent != null) {
-                return lockComponent;
-            }
+            lockIfNeed(needLock, containerComponent);
+
             log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
             return createComponentInstanceOnGraph(containerComponent, origComponent, resourceInstance, user);
         }catch (ComponentException e){
@@ -432,12 +520,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     public Either<ComponentInstance, ResponseFormat> createRealComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
         log.debug("enter createRealComponentInstance");
-        return createRealComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, false, true);
+        return createRealComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, true);
     }
+
     /**
      * Try using either to make a judgment
      *
-     * @param inTransaction
      * @param needLock
      * @param containerComponentParam
      * @param containerComponentId
@@ -445,7 +533,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
      * @param resourceInstance
      * @return
      */
-    public Either<ComponentInstance, ResponseFormat> createRealComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance, boolean inTransaction, boolean needLock) {
+    public Either<ComponentInstance, ResponseFormat> createRealComponentInstance(String containerComponentParam,
+                                                                                 String containerComponentId, String userId,
+                                                                                 ComponentInstance resourceInstance,
+                                                                                 boolean needLock) {
 
         log.debug("enter createRealComponentInstance");
         Component origComponent = null;
@@ -461,7 +552,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             log.debug("enter createRealComponentInstance,validate user json success");
             if (ModelConverter.isAtomicComponent(containerComponent)) {
-                log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
+                log.debug(CANNOT_ATTACH_RESOURCE_INSTANCES_TO_CONTAINER_RESOURCE_OF_TYPE, containerComponent.assetType());
                 throw new ByActionStatusComponentException(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType());
             }
 
@@ -475,7 +566,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (originType == OriginTypeEnum.ServiceProxy) {
 
                     log.debug("enter createRealComponentInstance,originType equals ServiceProxy");
-                    Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
+                    Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName(SERVICE_PROXY);
                     if (isServiceProxyOrigin(serviceProxyOrigin)) {
                         throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
                     }
@@ -509,10 +600,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         boolean failed = false;
         try {
 
-            ComponentInstance lockComponent = isNeedLock(needLock, containerComponent);
-            if (lockComponent != null) {
-                return Either.left(lockComponent);
-            }
+            lockIfNeed(needLock, containerComponent);
+
             log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
             return createRealComponentInstanceOnGraph(containerComponent, origComponent, resourceInstance, user);
         } catch (ComponentException e) {
@@ -525,7 +614,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<ComponentInstance, ResponseFormat> createRealComponentInstanceOnGraph(org.openecomp.sdc.be.model.Component containerComponent, Component originComponent, ComponentInstance componentInstance, User user) {
-        Either<ComponentInstance, ResponseFormat> resultOp;
         log.debug("enter createRealComponentInstanceOnGraph");
 
         Either<ImmutablePair<Component, String>, StorageOperationStatus> result = toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, originComponent, componentInstance, false, user);
@@ -635,11 +723,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ComponentInstance isNeedLock(boolean needLock, Component containerComponent) {
+    private void lockIfNeed(boolean needLock, Component containerComponent) {
         if (needLock) {
             lockComponent(containerComponent, "createComponentInstance");
         }
-        return null;
     }
 
     private boolean isServiceProxyOrigin(Either<Component, StorageOperationStatus> serviceProxyOrigin) {
@@ -732,7 +819,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         org.openecomp.sdc.be.model.Component containerComponent = validateComponentExists(containerComponentId, containerComponentType, null);
 
         if (ModelConverter.isAtomicComponent(containerComponent)) {
-            log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
+            log.debug(CANNOT_ATTACH_RESOURCE_INSTANCES_TO_CONTAINER_RESOURCE_OF_TYPE, containerComponent.assetType());
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType()));
         }
 
@@ -792,7 +879,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private ComponentInstance createComponentInstanceOnGraph(org.openecomp.sdc.be.model.Component containerComponent, Component originComponent, ComponentInstance componentInstance, User user) {
-        Either<ComponentInstance, ResponseFormat> resultOp;
 
         Either<ImmutablePair<Component, String>, StorageOperationStatus> result = toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, originComponent, componentInstance, false, user);
 
@@ -818,7 +904,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
   public boolean isCloudSpecificArtifact(String artifact) {
       if (artifact.contains(CLOUD_SPECIFIC_FIXED_KEY_WORD)) {
           for (int i = 0; i < CLOUD_SPECIFIC_KEY_WORDS.length; i++) {
-              if (Arrays.stream(CLOUD_SPECIFIC_KEY_WORDS[i]).noneMatch(str -> artifact.contains(str))) {
+              if (Arrays.stream(CLOUD_SPECIFIC_KEY_WORDS[i]).noneMatch(artifact::contains)) {
                   return false;
               }
           }
@@ -827,7 +913,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
           return false;
       }
   }
-
 
     /**
      * addResourceInstanceArtifacts - add artifacts (HEAT_ENV) to resource instance The instance artifacts are generated from the resource's artifacts
@@ -891,7 +976,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 }
             }
             groupInstancesArtifacts.forEach((k,v) -> v.addAll(listOfCloudSpecificArts));
-            filteredGroups.forEach(g ->  listOfCloudSpecificArts.forEach((e) -> {
+            filteredGroups.forEach(g -> listOfCloudSpecificArts.forEach(e -> {
                 g.getArtifactsUuid().add(e.getArtifactUUID());
                 g.getArtifacts().add(e.getUniqueId());
             }));
@@ -960,7 +1045,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<ComponentInstance, ResponseFormat> updateComponentInstanceMetadata(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId, ComponentInstance componentInstance) {
-        return updateComponentInstanceMetadata(containerComponentParam, containerComponentId, componentInstanceId, userId, componentInstance, false, true);
+        return updateComponentInstanceMetadata(containerComponentParam, containerComponentId, componentInstanceId, userId, componentInstance, true);
     }
 
     public Either<ComponentInstance, ResponseFormat> updateComponentInstanceMetadata(
@@ -969,7 +1054,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         final String componentInstanceId,
         final String userId,
         ComponentInstance componentInstance,
-        final boolean inTransaction,
         boolean needLock) {
 
         validateUserExists(userId);
@@ -1191,8 +1275,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                                                          final String oldInstanceName) {
 
         Map<String, CINodeFilterDataDefinition> renamedNodesFilter =
-                ServiceFilterUtils.getRenamedNodesFilter((Service) containerComponent,
-                        oldInstanceName, newInstanceName);
+            ServiceFilterUtils.getRenamedNodesFilter(containerComponent, oldInstanceName, newInstanceName);
         for( Entry<String, CINodeFilterDataDefinition> entry :  renamedNodesFilter.entrySet()){
             Either<CINodeFilterDataDefinition, StorageOperationStatus>
                     renameEither = nodeFilterOperation.updateNodeFilter(
@@ -1313,22 +1396,25 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ComponentInstance deletedRelatedInst;
         try {
             if (containerComponent instanceof Service) {
-                ComponentInstance componentInstance = containerComponent.getComponentInstanceById(componentInstanceId).get();
-                Either<String, StorageOperationStatus> deleteServiceFilterEither =
-                    nodeFilterOperation.deleteNodeFilter((Service) containerComponent, componentInstanceId);
-                if (deleteServiceFilterEither.isRight()) {
-                    log.debug("enter deleteAbstractComponentInstance:deleteServiceFilterEither is right, filed");
-                    ActionStatus status = componentsUtils.convertFromStorageResponse(deleteServiceFilterEither.right().value(),
+                final Optional<ComponentInstance> componentInstanceById = containerComponent.getComponentInstanceById(componentInstanceId);
+                if (componentInstanceById.isPresent()) {
+                    ComponentInstance componentInstance = componentInstanceById.get();
+                    Either<String, StorageOperationStatus> deleteServiceFilterEither =
+                        nodeFilterOperation.deleteNodeFilter(containerComponent, componentInstanceId);
+                    if (deleteServiceFilterEither.isRight()) {
+                        log.debug("enter deleteAbstractComponentInstance:deleteServiceFilterEither is right, filed");
+                        ActionStatus status = componentsUtils.convertFromStorageResponse(deleteServiceFilterEither.right().value(),
                             containerComponentType);
-                    janusGraphDao.rollback();
-                   return Either.right(componentsUtils.getResponseFormat(status, componentInstance.getName()));
-                }
-                Either<ComponentInstance, ResponseFormat> resultOp = deleteNodeFiltersFromComponentInstance((Service) containerComponent,
+                        janusGraphDao.rollback();
+                        return Either.right(componentsUtils.getResponseFormat(status, componentInstance.getName()));
+                    }
+                    Either<ComponentInstance, ResponseFormat> resultOp = deleteNodeFiltersFromComponentInstance(containerComponent,
                         componentInstance, ComponentTypeEnum.SERVICE, userId);
-                if (resultOp.isRight()) {
-                    log.debug("enter deleteAbstractComponentInstance:resultOp is right, filed");
-                    janusGraphDao.rollback();
-                    return resultOp;
+                    if (resultOp.isRight()) {
+                        log.debug("enter deleteAbstractComponentInstance:resultOp is right, filed");
+                        janusGraphDao.rollback();
+                        return resultOp;
+                    }
                 }
             }
             log.debug("enter deleteAbstractComponentInstance:");
@@ -1378,11 +1464,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
                 }
                 final ComponentInstance componentInstanceToBeUpdated = componentInstanceById.get();
-                final List<String> directives = componentInstanceToBeUpdated.getDirectives();
+
                 componentInstanceToBeUpdated.setDirectives(Collections.emptyList());
                 final Either<ComponentInstance, ResponseFormat> componentInstanceResponseFormatEither =
                     updateComponentInstanceMetadata(containerComponentType.getValue(), component.getUniqueId(),
-                        componentInstanceToBeUpdated.getUniqueId(), userId, componentInstanceToBeUpdated, true, false);
+                        componentInstanceToBeUpdated.getUniqueId(), userId, componentInstanceToBeUpdated, false);
                 if (componentInstanceResponseFormatEither.isRight()) {
                     return componentInstanceResponseFormatEither;
                 }
@@ -1391,8 +1477,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(componentInstance);
     }
 
-
-
     private Set<String> getComponentFiltersRelatedToComponentInstance(String containerComponentId,
                                                                       ComponentInstance componentInstance) {
         ComponentParametersView filter = new ComponentParametersView(true);
@@ -1400,11 +1484,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Component, StorageOperationStatus> componentFilterOrigin =
                 toscaOperationFacade.getToscaElement(containerComponentId, filter);
         final Component component = componentFilterOrigin.left().value();
-        final Set<String> nodesFiltersToBeDeleted = ComponentsUtils.getNodesFiltersToBeDeleted(component,
-                componentInstance);
-        return nodesFiltersToBeDeleted;
+        return ComponentsUtils.getNodesFiltersToBeDeleted(component, componentInstance);
     }
-
 
     ComponentInstance deleteForwardingPathsRelatedTobeDeletedComponentInstance(String containerComponentId,
                                                                                ComponentTypeEnum containerComponentType, ComponentInstance componentInstance) {
@@ -1457,7 +1538,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                 .equalsIgnoreCase(componentInstanceId));
     }
 
-
     private ComponentInstance deleteComponentInstance(Component containerComponent, String componentInstanceId, ComponentTypeEnum containerComponentType) {
         Either<ImmutablePair<Component, String>, StorageOperationStatus> deleteRes = toscaOperationFacade.deleteComponentInstanceFromTopologyTemplate(containerComponent, componentInstanceId);
         if (deleteRes.isRight()) {
@@ -1506,14 +1586,15 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     public RequirementCapabilityRelDef associateRIToRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum) {
-        return associateRIToRI(componentId, userId, requirementDef, componentTypeEnum, false, true);
+        return associateRIToRI(componentId, userId, requirementDef, componentTypeEnum, true);
     }
 
-    public RequirementCapabilityRelDef associateRIToRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum, boolean inTransaction, boolean needLock) {
+    public RequirementCapabilityRelDef associateRIToRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef,
+                                                       ComponentTypeEnum componentTypeEnum, boolean needLock) {
 
         validateUserExists(userId);
 
-        RequirementCapabilityRelDef requirementCapabilityRelDef = null;
+        RequirementCapabilityRelDef requirementCapabilityRelDef;
 
         org.openecomp.sdc.be.model.Component containerComponent = validateComponentExists(componentId, componentTypeEnum, null);
 
@@ -1521,7 +1602,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         boolean failed = false;
         try {
             if (needLock) {
-                lockComponent(containerComponent, "associateRIToRI");
+                lockComponent(containerComponent, ASSOCIATE_RI_TO_RI);
             }
             requirementCapabilityRelDef = associateRIToRIOnGraph(containerComponent, requirementDef);
         }catch (ComponentException e){
@@ -1542,9 +1623,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         if (result.isLeft()) {
             log.debug(ENTITY_ON_GRAPH_IS_CREATED);
-            RequirementCapabilityRelDef requirementCapabilityRelDef = result.left().value();
-            return requirementCapabilityRelDef;
-
+            return result.left().value();
         } else {
             log.debug("Failed to associate node: {} with node {}", requirementDef.getFromNode(), requirementDef.getToNode());
             String fromNameOrId = "";
@@ -1587,7 +1666,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         boolean failed = false;
         List<RequirementCapabilityRelDef> delOkResult = new ArrayList<>();
         try {
-            lockComponent(containerComponent, "associateRIToRI");
+            lockComponent(containerComponent, ASSOCIATE_RI_TO_RI);
             for (RequirementCapabilityRelDef requirementDef : requirementDefList) {
                 RequirementCapabilityRelDef requirementCapabilityRelDef = dissociateRIFromRI(
                         componentId, userId, requirementDef, containerComponent.getComponentType());
@@ -1602,17 +1681,15 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return delOkResult;
     }
 
-
     public RequirementCapabilityRelDef dissociateRIFromRI(String componentId, String userId, RequirementCapabilityRelDef requirementDef, ComponentTypeEnum componentTypeEnum) {
         validateUserExists(userId);
 
-        Either<RequirementCapabilityRelDef, ResponseFormat> resultOp = null;
         org.openecomp.sdc.be.model.Component containerComponent = validateComponentExists(componentId, componentTypeEnum, null);
 
         validateCanWorkOnComponent(containerComponent, userId);
         boolean failed = false;
         try {
-            lockComponent(containerComponent, "associateRIToRI");
+            lockComponent(containerComponent, ASSOCIATE_RI_TO_RI);
             log.debug(TRY_TO_CREATE_ENTRY_ON_GRAPH);
             Either<RequirementCapabilityRelDef, StorageOperationStatus> result = toscaOperationFacade.dissociateResourceInstances(componentId, requirementDef);
             if (result.isLeft()) {
@@ -1685,7 +1762,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private RequirementCapabilityRelDef findRelation(String relationId, List<RequirementCapabilityRelDef> requirementCapabilityRelations) {
         for(RequirementCapabilityRelDef relationship : requirementCapabilityRelations){
-            if(relationship.getRelationships().stream().filter(r -> r.getRelation().getId().equals(relationId)).findFirst().isPresent()){
+            if (relationship.getRelationships().stream().anyMatch(r -> r.getRelation().getId().equals(relationId))) {
                 return relationship;
             }
         }
@@ -1697,32 +1774,41 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         RelationshipInfo relationshipInfo = foundRelation.resolveSingleRelationship().getRelation();
         String instanceId = foundRelation.getFromNode();
         Optional<RequirementDefinition> foundRequirement;
-        Optional<ComponentInstance> instance = containerComponent.getComponentInstances().stream().filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
-        if(!instance.isPresent()){
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, instanceId, "instance", containerComponent.getComponentType().getValue(), containerComponent.getName());
+        Optional<ComponentInstance> instance = containerComponent.getComponentInstances().stream()
+            .filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
+        if (!instance.isPresent()) {
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, instanceId, "instance",
+                    containerComponent.getComponentType().getValue(), containerComponent.getName());
             log.debug("Component instance with id {} was not found on the component", instanceId, containerComponent.getUniqueId());
             result = Either.right(responseFormat);
         }
-        if(result == null){
-            for(List<RequirementDefinition> requirements : instance.get().getRequirements().values()){
-                foundRequirement = requirements.stream().filter(r -> isBelongingCalcRequirement(relationshipInfo, r, containerComponent.getLifecycleState())).findFirst();
-                if(foundRequirement.isPresent()){
+        if (result == null && instance.isPresent()) {
+            for (List<RequirementDefinition> requirements : instance.get().getRequirements().values()) {
+                foundRequirement = requirements.stream()
+                    .filter(r -> isBelongingCalcRequirement(relationshipInfo, r, containerComponent.getLifecycleState())).findFirst();
+                if (foundRequirement.isPresent()) {
                     foundRelation.resolveSingleRelationship().setRequirement(foundRequirement.get());
                     result = Either.left(foundRelation);
                 }
             }
         }
-        if(result == null){
-            Either<RequirementDataDefinition, StorageOperationStatus> getfulfilledRequirementRes = toscaOperationFacade.getFulfilledRequirementByRelation(containerComponent.getUniqueId(), instanceId, foundRelation, this::isBelongingFullRequirement);
-            if(getfulfilledRequirementRes.isRight()){
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.REQUIREMENT_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, relationshipInfo.getRequirement(), instanceId, containerComponent.getUniqueId());
-                log.debug("Requirement {} of instance {} was not found on the container {}. ", relationshipInfo.getCapability(), instanceId, containerComponent.getUniqueId());
+        if (result == null) {
+            Either<RequirementDataDefinition, StorageOperationStatus> getfulfilledRequirementRes = toscaOperationFacade
+                .getFulfilledRequirementByRelation(containerComponent.getUniqueId(), instanceId, foundRelation,
+                    this::isBelongingFullRequirement);
+            if (getfulfilledRequirementRes.isRight()) {
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.REQUIREMENT_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, relationshipInfo.getRequirement(),
+                        instanceId, containerComponent.getUniqueId());
+                log.debug("Requirement {} of instance {} was not found on the container {}. ", relationshipInfo.getCapability(), instanceId,
+                    containerComponent.getUniqueId());
                 result = Either.right(responseFormat);
             } else {
                 foundRelation.resolveSingleRelationship().setRequirement(getfulfilledRequirementRes.left().value());
             }
         }
-        if(result == null){
+        if (result == null) {
             result = Either.left(foundRelation);
         }
         return result;
@@ -1745,27 +1831,35 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         RelationshipInfo relationshipInfo = foundRelation.resolveSingleRelationship().getRelation();
         String instanceId = foundRelation.getToNode();
         Optional<CapabilityDefinition> foundCapability;
-        Optional<ComponentInstance> instance = containerComponent.getComponentInstances().stream().filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
-        if(!instance.isPresent()){
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, instanceId, "instance", containerComponent.getComponentType().getValue(), containerComponent.getName());
+        Optional<ComponentInstance> instance = containerComponent.getComponentInstances().stream()
+            .filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
+        if (!instance.isPresent()) {
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, instanceId, "instance",
+                    containerComponent.getComponentType().getValue(), containerComponent.getName());
             log.debug("Component instance with id {} was not found on the component", instanceId, containerComponent.getUniqueId());
             result = Either.right(responseFormat);
         }
-        if(result == null){
-            for(List<CapabilityDefinition> capabilities : instance.get().getCapabilities().values()){
-                foundCapability = capabilities.stream().filter(c -> isBelongingCalcCapability(relationshipInfo, c, containerComponent.getLifecycleState())).findFirst();
-                if(foundCapability.isPresent()){
+        if (result == null && instance.isPresent()) {
+            for (List<CapabilityDefinition> capabilities : instance.get().getCapabilities().values()) {
+                foundCapability = capabilities.stream()
+                    .filter(c -> isBelongingCalcCapability(relationshipInfo, c, containerComponent.getLifecycleState())).findFirst();
+                if (foundCapability.isPresent()) {
                     foundRelation.resolveSingleRelationship().setCapability(foundCapability.get());
                     result = Either.left(foundRelation);
                 }
             }
         }
-        if(result == null){
+        if (result == null) {
             Either<CapabilityDataDefinition, StorageOperationStatus> getfulfilledRequirementRes =
-                    toscaOperationFacade.getFulfilledCapabilityByRelation(containerComponent.getUniqueId(), instanceId, foundRelation, this::isBelongingFullCapability);
-            if(getfulfilledRequirementRes.isRight()){
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, relationshipInfo.getCapability(), instanceId, containerComponent.getUniqueId());
-                log.debug("Capability {} of instance {} was not found on the container {}. ", relationshipInfo.getCapability(), instanceId, containerComponent.getUniqueId());
+                toscaOperationFacade.getFulfilledCapabilityByRelation(containerComponent.getUniqueId(), instanceId, foundRelation,
+                    this::isBelongingFullCapability);
+            if (getfulfilledRequirementRes.isRight()) {
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, relationshipInfo.getCapability(),
+                        instanceId, containerComponent.getUniqueId());
+                log.debug("Capability {} of instance {} was not found on the container {}. ", relationshipInfo.getCapability(), instanceId,
+                    containerComponent.getUniqueId());
                 result = Either.right(responseFormat);
             } else {
                 foundRelation.resolveSingleRelationship().setCapability(getfulfilledRequirementRes.left().value());
@@ -2001,8 +2095,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return instanceProperty.get();
     }
 
-
-
     private ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property,
                                                                         String newValue, Component containerComponent, ComponentInstance foundResourceInstance,
                                                                         String capabilityType, String capabilityName) {
@@ -2042,11 +2134,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                                              String capabilityType, String capabilityName,
                                                              String componentInstanceUniqueId) {
         Map<String, List<CapabilityDefinition>> capabilities =
-                Optional.ofNullable(foundResourceInstance.getCapabilities()).orElse(Collections.emptyMap());
+            Optional.ofNullable(foundResourceInstance.getCapabilities()).orElse(Collections.emptyMap());
         List<CapabilityDefinition> capPerType =
-                Optional.ofNullable(capabilities.get(capabilityType)).orElse(Collections.EMPTY_LIST);
+            Optional.ofNullable(capabilities.get(capabilityType)).orElse(Collections.emptyList());
         Optional<CapabilityDefinition> cap =
-                capPerType.stream().filter(c -> c.getName().equals(capabilityName)).findAny();
+            capPerType.stream().filter(c -> c.getName().equals(capabilityName)).findAny();
         if (cap.isPresent()) {
             List<ComponentInstanceProperty> capProperties = cap.get().getProperties();
             if (capProperties != null) {
@@ -2583,7 +2675,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (originType == OriginTypeEnum.ServiceProxy) {
                     newComponentInstance.setOriginType(originType);
                     Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade
-                        .getLatestByName("serviceProxy");
+                        .getLatestByName(SERVICE_PROXY);
                     if (isServiceProxyOrigin(serviceProxyOrigin)) {
                         throw new ByActionStatusComponentException(
                             componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
@@ -2627,12 +2719,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newComponentInstance.setPosY(resResourceInfo.getPosY());
                 newComponentInstance.setDescription(resResourceInfo.getDescription());
 
-                ComponentInstance updatedComponentInstance = createComponentInstanceOnGraph(containerComponent,
-                    origComponent, newComponentInstance, user);
+                ComponentInstance updatedComponentInstance =
+                    createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
                 dataHolder.setCurrInstanceNode(origComponent);
-                Component mergeStatusEither = compInstMergeDataBL
-                    .mergeComponentUserOrigData(user, dataHolder, containerComponent, containerComponentId,
-                        newComponentInstance.getUniqueId());
+                compInstMergeDataBL
+                    .mergeComponentUserOrigData(user, dataHolder, containerComponent, containerComponentId, newComponentInstance.getUniqueId());
 
                 ActionStatus postChangeVersionResult = onChangeInstanceOperationOrchestrator
                     .doPostChangeVersionOperations(containerComponent, currentResourceInstance, newComponentInstance);
@@ -2642,8 +2733,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
                 ComponentParametersView filter = new ComponentParametersView(true);
                 filter.setIgnoreComponentInstances(false);
-                Either<Component, StorageOperationStatus> updatedComponentRes = toscaOperationFacade
-                    .getToscaElement(containerComponentId, filter);
+                Either<Component, StorageOperationStatus> updatedComponentRes = toscaOperationFacade.getToscaElement(containerComponentId, filter);
                 if (updatedComponentRes.isRight()) {
                     StorageOperationStatus storageOperationStatus = updatedComponentRes.right().value();
                     ActionStatus actionStatus = componentsUtils
@@ -2803,20 +2893,19 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private Either<ComponentInstance, StorageOperationStatus> getResourceInstanceById(Component containerComponent, String instanceId) {
 
-        Either<ComponentInstance, StorageOperationStatus> result = null;
+        Either<ComponentInstance, StorageOperationStatus> result = Either.right(StorageOperationStatus.NOT_FOUND);
         List<ComponentInstance> instances = containerComponent.getComponentInstances();
-        Optional<ComponentInstance> foundInstance = null;
-        if (CollectionUtils.isEmpty(instances)) {
-            result = Either.right(StorageOperationStatus.NOT_FOUND);
-        }
-        if (result == null) {
-            foundInstance = instances.stream().filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
-            if (!foundInstance.isPresent()) {
-                result = Either.right(StorageOperationStatus.NOT_FOUND);
+        Optional<ComponentInstance> foundInstance = Optional.empty();
+        if (!CollectionUtils.isEmpty(instances)) {
+            if (result.isRight()) {
+                foundInstance = instances.stream().filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
+                if (!foundInstance.isPresent()) {
+                    result = Either.right(StorageOperationStatus.NOT_FOUND);
+                }
             }
-        }
-        if (result == null) {
-            result = Either.left(foundInstance.get());
+            if (result.isRight() && foundInstance.isPresent()) {
+                result = Either.left(foundInstance.get());
+            }
         }
         return result;
     }
@@ -2891,13 +2980,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             validateUserExists(userId);
             validateComponentType(containerComponentType);
             containerComponent = toscaOperationFacade.getToscaFullElement(containerComponentId).left().on(this::componentException);
-            ComponentInstance resourceInstanceStatus = getResourceInstanceById(containerComponent, componentInstanceUniqueId).left().on(this::componentInstanceException);
-            resultOp = findCapabilityOfInstance(containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, ownerId, resourceInstanceStatus.getCapabilities());
-        } catch(StorageException e){
+            ComponentInstance resourceInstanceStatus = getResourceInstanceById(containerComponent, componentInstanceUniqueId).left()
+                .on(this::componentInstanceException);
+            resultOp = findCapabilityOfInstance(containerComponentId, componentInstanceUniqueId, capabilityType, capabilityName, ownerId,
+                resourceInstanceStatus.getCapabilities());
+        } catch (StorageException | ComponentException e) {
             unlockRollbackWithException(containerComponent, e);
-        } catch (ComponentException e) {
-            unlockRollbackWithException(containerComponent, e);
-        } catch (Exception e){
+        } catch (Exception e) {
             unlockRollbackWithException(containerComponent, new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR));
         }
         unlockWithCommit(containerComponent);
@@ -2930,7 +3019,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<RequirementDefinition, ResponseFormat> updateInstanceRequirement(ComponentTypeEnum componentTypeEnum, String containerComponentId, String componentInstanceUniqueId, String capabilityType, String capabilityName,
+    public Either<RequirementDefinition, ResponseFormat> updateInstanceRequirement(ComponentTypeEnum componentTypeEnum, String containerComponentId,
+                                                                                   String componentInstanceUniqueId,
             RequirementDefinition requirementDef, String userId) {
 
         Either<RequirementDefinition, ResponseFormat> resultOp = null;
@@ -3084,18 +3174,15 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         } catch (ComponentException e) {
             failed = true;
-            throw e;
+            // on failure of the create instance unlock the resource and rollback the transaction.
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS));
         } finally {
 
             // on failure of the create instance unlock the resource and rollback the transaction.
-            if (null == actionResponse || failed) {
-                janusGraphDao.rollback();
-                log.error("Failed to copy the component instance to the canvas");
+            if (null == actionResponse) {
+                log.error(FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS);
 
                 unlockComponent(failed, origComponent);
-
-                return Either.right(componentsUtils.getResponseFormat(
-                        ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
             }
         }
 
@@ -3103,11 +3190,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         try {
             ComponentInstance destComponentInstance = actionResponse;
-            log.debug("destComponentInstance's data is {}", destComponentInstance.toString());
+            log.debug("destComponentInstance's data is {}", destComponentInstance);
 
-
-            resultOp = deepCopyComponentInstance(
-                    origComponent, containerComponentId, componentInstanceId, destComponentInstance, userId);
+            resultOp = deepCopyComponentInstance(origComponent, containerComponentId, componentInstanceId, destComponentInstance, userId);
 
             resultMap.put("componentInstance", destComponentInstance);
         } finally {
@@ -3117,16 +3202,18 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 unlockComponent(true, origComponent);
                 janusGraphDao.rollback();
                 log.error("Failed to deep copy component instance");
-                return Either.right(componentsUtils.getResponseFormat(
-                        ActionStatus.USER_DEFINED, "Failed to deep copy the component instance to the canvas"));
             } else {
                 unlockComponent(false, origComponent);
                 janusGraphDao.commit();
                 log.debug("Success trasaction commit");
             }
         }
+        if (resultOp == null || resultOp.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, "Failed to deep copy the component instance to the canvas"));
+        } else {
+            return Either.left(resultMap);
+        }
 
-        return Either.left(resultMap);
     }
 
     private Either<String, ResponseFormat> deepCopyComponentInstance(
@@ -3136,14 +3223,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Component, StorageOperationStatus> getDestComponent = toscaOperationFacade.getToscaElement(containerComponentId);
         if (getDestComponent.isRight()) {
             log.error("Failed to get the dest component information");
-            return Either.right(componentsUtils.getResponseFormat(
-                    ActionStatus.USER_DEFINED, "Failed to copy the component instance to the canvas"));
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.USER_DEFINED, FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS));
         }
 
         Component destComponent = getDestComponent.left().value();
 
         Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs = copyComponentInstanceWithPropertiesAndInputs(
-                sourceComponent, destComponent, sourceComponentInstanceId, destComponentInstance, userId);
+            sourceComponent, destComponent, sourceComponentInstanceId, destComponentInstance);
         if (copyComponentInstanceWithPropertiesAndInputs.isRight()) {
             log.error("Failed to copy component instance with properties and inputs as part of deep copy");
             return Either.right(componentsUtils.getResponseFormat(
@@ -3161,13 +3247,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs(
-            Component sourceComponent, Component destComponent, String sourceComponentInstanceId,
-            ComponentInstance destComponentInstance, String userId) {
+        Component sourceComponent, Component destComponent, String sourceComponentInstanceId,
+        ComponentInstance destComponentInstance) {
         log.debug("start to copy ComponentInstance with properties and inputs");
 
         List<ComponentInstanceProperty> sourcePropList = null;
         if (sourceComponent.getComponentInstancesProperties() != null
-                && sourceComponent.getComponentInstancesProperties().get(sourceComponentInstanceId) != null) {
+            && sourceComponent.getComponentInstancesProperties().get(sourceComponentInstanceId) != null) {
             sourcePropList = sourceComponent.getComponentInstancesProperties().get(sourceComponentInstanceId);
             log.debug("sourcePropList");
         }
@@ -3192,32 +3278,33 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                         continue;
                     }
                     log.debug("now set property");
-                    if (sourceProp.getGetInputValues() == null && !StringUtils.isEmpty(sourceProp.getValue())
-                            && (destProp.getValue() == null || !destProp.getValue().equals(sourceProp.getValue()))) {
+                    final List<GetInputValueDataDefinition> getInputValues = sourceProp.getGetInputValues();
+                    if (getInputValues == null && !StringUtils.isEmpty(sourceProp.getValue())
+                        && (destProp.getValue() == null || !destProp.getValue().equals(sourceProp.getValue()))) {
                         log.debug("Now starting to copy the property {} in value {}", destPropertyName, sourceProp.getValue());
 
                         destProp.setValue(sourceProp.getValue());
                         Either<String, ResponseFormat> updatePropertyValueEither = updateComponentInstanceProperty(
-                                destComponent.getUniqueId(), destComponentInstanceId, destProp);
+                            destComponent.getUniqueId(), destComponentInstanceId, destProp);
                         if (updatePropertyValueEither.isRight()) {
                             log.error("Failed to copy the property {}", destPropertyName);
                             return Either.right(componentsUtils.getResponseFormat(
-                                    ActionStatus.INVALID_CONTENT_PARAM, "Failed to paste component instance to the canvas, property copy"));
+                                ActionStatus.INVALID_CONTENT_PARAM, "Failed to paste component instance to the canvas, property copy"));
                         }
                         break;
                     }
 
                     log.debug("Now start to update inputs");
 
-                    if (sourceProp.getGetInputValues() != null) {
-                        if (sourceProp.getGetInputValues().size() < 1) {
+                    if (getInputValues != null) {
+                        if (getInputValues.isEmpty()) {
                             log.debug("property is return from input, set by man");
                             break;
                         }
                         log.debug("Now starting to copy the {} property", destPropertyName);
 
                         Either<String, ResponseFormat> getSourceInputDefaultValue = getInputListDefaultValue(
-                                sourceComponent, sourceProp.getGetInputValues().get(0).getInputId());
+                            sourceComponent, getInputValues.get(0).getInputId());
                         if (getSourceInputDefaultValue.isRight()) {
                             return Either.right(getSourceInputDefaultValue.right().value());
                         }
@@ -3451,7 +3538,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             lockComponent(containerComponent, "batchDeleteComponentInstance");
             for (String eachInstanceId : componentInstanceIdList) {
                 Either<ComponentInstance, ResponseFormat> actionResponse = batchDeleteComponentInstance(
-                        containerComponent, containerComponentType, componentId, eachInstanceId);
+                    containerComponent, containerComponentType, eachInstanceId);
                 log.debug("batchDeleteResourceInstances actionResponse is {}", actionResponse);
                 if (actionResponse.isRight()) {
                     log.error("Failed to delete ComponentInstance [{}]", eachInstanceId);
@@ -3471,13 +3558,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private Either<ComponentInstance, ResponseFormat> batchDeleteComponentInstance(Component containerComponent,
                                                                                    String containerComponentType,
-                                                                                   String containerComponentId,
                                                                                    String componentInstanceId) {
 
         ComponentInstance resultOp;
         final ComponentTypeEnum containerComponentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
 
-        boolean failed = false;
         try {
             resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentTypeEnum);
             log.info("Successfully deleted instance with id {}", componentInstanceId);
