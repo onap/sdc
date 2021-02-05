@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,30 +17,39 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.model;
+package org.openecomp.sdc.be.tosca.model;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 
-@Getter
-@Setter
+/**
+ * Represents a TOSCA Attribute Definition (see TOSCA 1.3, Section 3.6.12 Attribute definition)
+ */
 @NoArgsConstructor
-public class OutputDefinition extends AttributeDefinition {
-    private List<ComponentInstanceAttribute> attributes;
+public class ToscaAttribute {
 
-    public OutputDefinition(final AttributeDataDefinition attributeDataDefinition) {
-        super(attributeDataDefinition);
+    //should be default, but it is a reserved word in Java
+    private Object defaultValue;
+    @Getter
+    @Setter
+    private Object value;
+    @Getter
+    @Setter
+    private String type;
+    @Getter
+    @Setter
+    private String description;
+    @Getter
+    @Setter
+    private String status;
+
+    public Object getDefault() {
+        return defaultValue;
     }
 
-    public OutputDefinition(AttributeDefinition propertyDefinition) {
-        super(propertyDefinition);
-    }
-
-    public OutputDefinition(final OutputDefinition outputDefinition) {
-        super(outputDefinition);
+    public void setDefault(final Object defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
 }

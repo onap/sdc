@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 import fj.data.Either;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +34,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
@@ -82,7 +82,25 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RelationshipImpl;
+import org.openecomp.sdc.be.model.RelationshipInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
@@ -233,37 +251,40 @@ public class NodeTemplateOperation extends BaseOperation {
             addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, allCalculatedCap, componentInstance.getUniqueId());
 
             /******** capability property ****************************/
-            status = deleteToscaDataDeepElementsBlockOfToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, componentInstanceData.getUniqueId());
+            status = deleteToscaDataDeepElementsBlockOfToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES,
+                VertexTypeEnum.CALCULATED_CAP_PROPERTIES, componentInstanceData.getUniqueId());
             if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove calculated capabilty properties for instance {} in container {}. error {] ", componentInstanceData.getUniqueId(), updatedContainer.getUniqueId(), status);
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                    "Failed to remove calculated capabilty properties for instance {} in container {}. error {] ",
+                    componentInstanceData.getUniqueId(), updatedContainer.getUniqueId(), status);
                 return Either.right(status);
             }
 
-            MapCapabilityProperty allCalculatedCapProp = calcCapProp == null || !calcCapProp.containsKey(componentInstanceData.getUniqueId()) ? new MapCapabilityProperty() : calcCapProp.get(componentInstanceData.getUniqueId());
+            MapCapabilityProperty allCalculatedCapProp =
+                calcCapProp == null || !calcCapProp.containsKey(componentInstanceData.getUniqueId()) ? new MapCapabilityProperty()
+                    : calcCapProp.get(componentInstanceData.getUniqueId());
 
-            additionalCap.forEach(new BiConsumer<String, List<CapabilityDefinition>>() {
-                @Override
-                public void accept(String s, List<CapabilityDefinition> caps) {
-                    if (caps != null && !caps.isEmpty()) {
-                        MapPropertiesDataDefinition dataToCreate;
-                        for (CapabilityDefinition cap : caps) {
-                            dataToCreate = new MapPropertiesDataDefinition();
-                            List<ComponentInstanceProperty> capPrps = cap.getProperties();
-                            if (capPrps != null) {
-                                for (ComponentInstanceProperty cip : capPrps) {
-                                    dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
-                                }
-                                StringBuilder sb = new StringBuilder(componentInstance.getUniqueId());
-                                sb.append(ModelConverter.CAP_PROP_DELIM);
-                                sb.append(cap.getOwnerId());
-                                sb.append(ModelConverter.CAP_PROP_DELIM).append(s).append(ModelConverter.CAP_PROP_DELIM).append(cap.getName());
-                                allCalculatedCapProp.put(sb.toString(), dataToCreate);
+            additionalCap.forEach((s, caps) -> {
+                if (caps != null && !caps.isEmpty()) {
+                    MapPropertiesDataDefinition dataToCreate;
+                    for (CapabilityDefinition cap : caps) {
+                        dataToCreate = new MapPropertiesDataDefinition();
+                        List<ComponentInstanceProperty> capPrps = cap.getProperties();
+                        if (capPrps != null) {
+                            for (ComponentInstanceProperty cip : capPrps) {
+                                dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
                             }
+                            StringBuilder sb = new StringBuilder(componentInstance.getUniqueId());
+                            sb.append(ModelConverter.CAP_PROP_DELIM);
+                            sb.append(cap.getOwnerId());
+                            sb.append(ModelConverter.CAP_PROP_DELIM).append(s).append(ModelConverter.CAP_PROP_DELIM).append(cap.getName());
+                            allCalculatedCapProp.put(sb.toString(), dataToCreate);
                         }
                     }
                 }
             });
-            addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, allCalculatedCapProp, componentInstance.getUniqueId());
+            addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES,
+                VertexTypeEnum.CALCULATED_CAP_PROPERTIES, allCalculatedCapProp, componentInstance.getUniqueId());
         }
 
         /******** Requirements property ****************************/
@@ -1294,8 +1315,7 @@ public class NodeTemplateOperation extends BaseOperation {
     private Boolean isUniqueInstanceName(TopologyTemplate container, String instanceName) {
         Boolean isUniqueName = true;
         try {
-            isUniqueName = !container.getComponentInstances().values().stream().anyMatch(ci -> ci.getName() != null && ci.getName().equals(instanceName));
-
+            isUniqueName = container.getComponentInstances().values().stream().noneMatch(ci -> ci.getName() != null && ci.getName().equals(instanceName));
         } catch (Exception e) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during fetching component instance with name {} from component container {}. {} ", instanceName, container.getName(), e.getMessage());
         }
@@ -2134,10 +2154,8 @@ public class NodeTemplateOperation extends BaseOperation {
         if (!validateInstanceNames(componentInstanceTMap)) {
             throw new StorageException(StorageOperationStatus.INCONSISTENCY);
         }
-        if (!allowDeleted) {
-            if (!validateDeletedResources(componentInstanceTMap)) {
-                throw new StorageException(StorageOperationStatus.INCONSISTENCY);
-            }
+        if (!allowDeleted && !validateDeletedResources(componentInstanceTMap)) {
+            throw new StorageException(StorageOperationStatus.INCONSISTENCY);
         }
         instancesJsonData = convertToComponentInstanceDataDefinition(componentInstanceTMap, containerId, isUpdateCsar);
 
@@ -2313,32 +2331,53 @@ public class NodeTemplateOperation extends BaseOperation {
     public StorageOperationStatus addComponentInstanceProperty(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property) {
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add(componentInstanceId);
-        return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
+        return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES,
+            property, pathKeys, JsonPresentationFields.NAME);
     }
 
-    public StorageOperationStatus updateComponentInstanceProperties(Component containerComponent, String componentInstanceId, List<ComponentInstanceProperty> properties) {
+    public StorageOperationStatus updateComponentInstanceProperties(Component containerComponent, String componentInstanceId,
+                                                                    List<ComponentInstanceProperty> properties) {
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add(componentInstanceId);
-        return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, properties, pathKeys, JsonPresentationFields.NAME);
+        return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES,
+            VertexTypeEnum.INST_PROPERTIES, properties, pathKeys, JsonPresentationFields.NAME);
     }
 
-    public StorageOperationStatus updateComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceAttribute property){
+    public StorageOperationStatus updateComponentInstanceAttributes(final Component containerComponent,
+                                                                    final String componentInstanceId,
+                                                                    final List<ComponentInstanceAttribute> attributes) {
+        final List<String> pathKeys = Arrays.asList(componentInstanceId);
+        return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_ATTRIBUTES,
+            VertexTypeEnum.INST_ATTRIBUTES, attributes, pathKeys, JsonPresentationFields.NAME);
+    }
+
+    public StorageOperationStatus updateComponentInstanceAttribute(final Component containerComponent,
+                                                                   final String componentInstanceId,
+                                                                   final ComponentInstanceAttribute attribute) {
+        final List<String> pathKeys = Arrays.asList(componentInstanceId);
+        return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_ATTRIBUTES,
+            VertexTypeEnum.INST_ATTRIBUTES, attribute, pathKeys, JsonPresentationFields.NAME);
+    }
+
+    public StorageOperationStatus addComponentInstanceAttribute(Component containerComponent, String componentInstanceId,
+                                                                ComponentInstanceAttribute attribute) {
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add(componentInstanceId);
-        return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES, property, pathKeys, JsonPresentationFields.NAME);
+        return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES,
+            attribute, pathKeys, JsonPresentationFields.NAME);
     }
 
-    public StorageOperationStatus addComponentInstanceAttribute(Component containerComponent, String componentInstanceId, ComponentInstanceAttribute attribute){
-        List<String> pathKeys = new ArrayList<>();
-        pathKeys.add(componentInstanceId);
-        return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES, attribute, pathKeys, JsonPresentationFields.NAME);
-    }
-
-    public StorageOperationStatus updateComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
-
+    public StorageOperationStatus updateComponentInstanceInput(Component containerComponent, String componentInstanceId,
+                                                               ComponentInstanceInput property) {
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add(componentInstanceId);
         return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, property, pathKeys, JsonPresentationFields.NAME);
+    }
+
+    public StorageOperationStatus updateComponentInstanceOutput(Component containerComponent, String componentInstanceId, ComponentInstanceOutput property) {
+        List<String> pathKeys = new ArrayList<>();
+        pathKeys.add(componentInstanceId);
+        return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_OUTPUTS, VertexTypeEnum.INST_OUTPUTS, property, pathKeys, JsonPresentationFields.NAME);
     }
 
     public StorageOperationStatus updateComponentInstanceInputs(Component containerComponent, String componentInstanceId, List<ComponentInstanceInput> properties) {
@@ -2347,10 +2386,22 @@ public class NodeTemplateOperation extends BaseOperation {
         return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, properties, pathKeys, JsonPresentationFields.NAME);
     }
 
+    public StorageOperationStatus updateComponentInstanceOutputs(Component containerComponent, String componentInstanceId, List<ComponentInstanceOutput> properties) {
+        List<String> pathKeys = new ArrayList<>();
+        pathKeys.add(componentInstanceId);
+        return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_OUTPUTS, VertexTypeEnum.INST_OUTPUTS, properties, pathKeys, JsonPresentationFields.NAME);
+    }
+
     public StorageOperationStatus addComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add(componentInstanceId);
         return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, property, pathKeys, JsonPresentationFields.NAME);
+    }
+
+    public StorageOperationStatus addComponentInstanceOutput(Component containerComponent, String componentInstanceId, ComponentInstanceOutput property) {
+        List<String> pathKeys = new ArrayList<>(){};
+        pathKeys.add(componentInstanceId);
+        return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_OUTPUTS, VertexTypeEnum.INST_OUTPUTS, property, pathKeys, JsonPresentationFields.NAME);
     }
 
     public StorageOperationStatus createInstanceEdge(GraphVertex metadataVertex, ComponentInstanceDataDefinition componentInstance) {

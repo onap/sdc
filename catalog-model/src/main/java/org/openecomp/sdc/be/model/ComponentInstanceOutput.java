@@ -22,12 +22,16 @@ package org.openecomp.sdc.be.model;
 
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
 public class ComponentInstanceOutput extends OutputDefinition implements IComponentInstanceConnectedElement, IAttributeOutputCommon {
 
     /**
@@ -35,21 +39,25 @@ public class ComponentInstanceOutput extends OutputDefinition implements ICompon
      */
     private String valueUniqueUid;
 
-    private List<String> path = null;
+    private List<String> path;
 
-    private List<PropertyRule> rules = null;
+    private List<PropertyRule> rules;
     private String componentInstanceName;
     private String componentInstanceId;
 
-    public ComponentInstanceOutput(AttributeDataDefinition curPropertyDef, String outputId, String value,
-                                   String valueUniqueUid) {
+    public ComponentInstanceOutput(final AttributeDataDefinition curPropertyDef,
+                                   final String outputId,
+                                   final String value,
+                                   final String valueUniqueUid) {
         super(curPropertyDef);
         setOutputId(outputId);
         setValue(value);
         this.valueUniqueUid = valueUniqueUid;
     }
 
-    public ComponentInstanceOutput(OutputDefinition pd, String value, String valueUniqueUid) {
+    public ComponentInstanceOutput(final OutputDefinition pd,
+                                   final String value,
+                                   final String valueUniqueUid) {
         super(pd);
 
         setValue(value);
@@ -60,14 +68,8 @@ public class ComponentInstanceOutput extends OutputDefinition implements ICompon
         super(attributeDataDefinition);
         if (attributeDataDefinition.getGetOutputValues() != null && !attributeDataDefinition.getGetOutputValues()
             .isEmpty()) {
-            setOutputId(attributeDataDefinition.getGetOutputValues().get(0).getInputId());
+            setOutputId(attributeDataDefinition.getGetOutputValues().get(0).getOutputId());
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ComponentInstanceOutput [ " + super.toString() + " , value=" + getValue() + ", valueUniqueUid = "
-            + valueUniqueUid + " , rules=" + rules + " , path=" + path + " ]";
     }
 
 }
