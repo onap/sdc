@@ -20,15 +20,16 @@ limitations under the License.
 Modifications copyright (c) 2018 Nokia
 ================================================================================
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-  <context:annotation-config />
-  <aop:aspectj-autoproxy proxy-target-class="true" />
+  <context:annotation-config/>
+  <aop:aspectj-autoproxy proxy-target-class="true"/>
 
   <context:component-scan
     base-package="org.openecomp.sdc.be.dao.impl,
@@ -36,10 +37,11 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.model.operations.impl,
 		org.openecomp.sdc.be.model.cache,
 		org.openecomp.sdc.be.dao.janusgraph,
-		org.openecomp.sdc.be.user, 
+		org.openecomp.sdc.be.user,
 		org.openecomp.sdc.be.impl,
 		org.openecomp.sdc.be.auditing.impl,
 		org.openecomp.sdc.be.components.impl,
+    org.openecomp.sdc.be.components.attribute,
 		org.openecomp.sdc.be.components.merge,
 		org.openecomp.sdc.be.components.property,
 		org.openecomp.sdc.be.components.distribution.engine,
@@ -56,29 +58,31 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.datamodel.utils,
 		org.openecomp.sdc.be.model.utils,
 		org.openecomp.sdc.be.dao.jsongraph">
-		
-   </context:component-scan>
+
+  </context:component-scan>
   <bean id="tosca-operation-facade" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathToscaOperationFacade" />
   <bean id="janusgraph-client" class="org.openecomp.sdc.be.components.path.beans.InMemoryJanusGraphClient" />
-  <bean id="lifecycleBusinessLogic" class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic" />
-  <bean id="userBusinessLogicExt" class="org.openecomp.sdc.be.user.UserBusinessLogicExt" />
+  <bean id="lifecycleBusinessLogic" class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic"/>
+  <bean id="userBusinessLogicExt" class="org.openecomp.sdc.be.user.UserBusinessLogicExt"/>
   <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter" />
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
   <bean id="cassandra-client" class="org.openecomp.sdc.be.components.path.beans.CassandraClientMock" />
-  <bean id="audit-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.AuditCassandraDaoMock" />
-  <bean id="artifact-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ArtifactCassandraDaoMock" />
+  <bean id="audit-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.AuditCassandraDaoMock"/>
+  <bean id="artifact-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ArtifactCassandraDaoMock"/>
   <bean id="operational-environment-dao" class="org.openecomp.sdc.be.components.path.beans.EnvironmentCassandraDaoMock"/>
-  <bean id="sdc-schema-files-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.SdcSchemaFilesCassandraDaoMock" />
+  <bean id="sdc-schema-files-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.SdcSchemaFilesCassandraDaoMock"/>
   <bean id="distributionEngine" class="org.openecomp.sdc.be.components.path.beans.DistributionEngineMock"/>
-  <bean id="forwardingPathValidator" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock" />
+  <bean id="forwardingPathValidator" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock"/>
   <bean id="dataTypeValidatorConverter" class="org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter" />
   <bean id="sdcSchemaUtils" class="org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils" />
-  <bean id="dmaapProducer" class="org.openecomp.sdc.be.catalog.impl.DmaapProducer" />
+  <bean id="dmaapProducer" class="org.openecomp.sdc.be.catalog.impl.DmaapProducer"/>
   <bean id="catalogOperation" class="org.openecomp.sdc.be.facade.operations.CatalogOperation" />
-  <bean id="userOperation" class="org.openecomp.sdc.be.facade.operations.UserOperation" />
-  <bean id="dmaapProducerHealth" class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth" />
-  <bean id="feature_toggle_dao" class="org.openecomp.sdc.be.components.path.beans.FeatureToggleDaoMock" />
-  <bean name="httpClient" class="org.apache.http.impl.client.HttpClients" factory-method="createDefault" >
-  </bean>
+  <bean id="userOperation" class="org.openecomp.sdc.be.facade.operations.UserOperation"/>
+  <bean id="dmaapProducerHealth" class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth"/>
+  <bean id="feature_toggle_dao" class="org.openecomp.sdc.be.components.path.beans.FeatureToggleDaoMock"/>
+  <bean name="httpClient" class="org.apache.http.impl.client.HttpClients" factory-method="createDefault" />
+  <bean class="org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator"/>
+  <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceOutputAttributeDeclarator"/>
+  <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceAttributeDeclarator"/>
 
 </beans>
