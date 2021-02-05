@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -130,7 +131,7 @@ public abstract class BaseBusinessLogic {
 
     DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
-    public BaseBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
+    protected BaseBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
         IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
         InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
         this.elementDao = elementDao;
@@ -350,7 +351,7 @@ public abstract class BaseBusinessLogic {
         String innerType = getInnerType(property);
         // Specific Update Logic
         Either<Object, Boolean> isValid =
-                propertyOperation.validateAndUpdatePropertyValue(propertyType, (String) property.getValue(), true,
+                propertyOperation.validateAndUpdatePropertyValue(propertyType, property.getValue(), true,
                         innerType, allDataTypes);
         String newValue = property.getValue();
         if (isValid.isRight()) {
@@ -389,7 +390,7 @@ public abstract class BaseBusinessLogic {
     public void validateCanWorkOnComponent(Component component, String userId) {
         ActionStatus actionStatus = ActionStatus.RESTRICTED_OPERATION;
         // verify resource is not archived
-        if (component.isArchived() == true){
+        if (Boolean.TRUE.equals(component.isArchived())){
             actionStatus = ActionStatus.COMPONENT_IS_ARCHIVED;
             throw new ByActionStatusComponentException(actionStatus, component.getName());
         }
@@ -420,7 +421,6 @@ public abstract class BaseBusinessLogic {
 
     }
 
-
     ComponentTypeEnum getComponentTypeByParentComponentType(ComponentTypeEnum parentComponentType) {
         switch (parentComponentType) {
             case SERVICE:
@@ -433,8 +433,6 @@ public abstract class BaseBusinessLogic {
         }
         return null;
     }
-
-
 
     protected Map<String, DataTypeDefinition> getAllDataTypes(ApplicationDataTypeCache applicationDataTypeCache) {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
@@ -463,7 +461,7 @@ public abstract class BaseBusinessLogic {
         if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
             ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, dataTypes);
             innerType = propertyInnerTypeValid.getLeft();
-            if (!propertyInnerTypeValid.getRight()) {
+            if (Boolean.FALSE.equals(propertyInnerTypeValid.getRight())) {
                 log.info("Invalid inner type for property '{}' type '{}', dataTypeCount '{}'", property.getName(), property.getType(), dataTypes.size());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
                 return Either.right(responseFormat);
@@ -699,9 +697,17 @@ public abstract class BaseBusinessLogic {
         throw new ByActionStatusComponentException(actionStatus, params);
     }
 
-    public  <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareProperties(String userId, String componentId,
-                                                                                              ComponentTypeEnum componentTypeEnum, ComponentInstInputsMap componentInstInputsMap) {
+    public  <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareProperties(final String userId,
+                                                                                              final String componentId,
+                                                                                              final ComponentTypeEnum componentTypeEnum,
+                                                                                              final ComponentInstInputsMap componentInstInputsMap) {
+        return Either.left(new ArrayList<>());
+    }
 
+    public  <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareAttributes(final String userId,
+                                                                                              final String componentId,
+                                                                                              final ComponentTypeEnum componentTypeEnum,
+                                                                                              final ComponentInstOutputsMap componentInstOutputsMap) {
         return Either.left(new ArrayList<>());
     }
 

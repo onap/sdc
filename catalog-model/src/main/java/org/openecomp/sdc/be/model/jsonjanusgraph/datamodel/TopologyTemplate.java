@@ -26,10 +26,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
@@ -59,7 +59,9 @@ public class TopologyTemplate extends ToscaElement {
     }
 
     private Map<String, PropertyDataDefinition> inputs;
+    private Map<String, AttributeDataDefinition> outputs;
     private Map<String, MapPropertiesDataDefinition> instInputs;
+    private Map<String, MapAttributesDataDefinition> instOutputs;
     private Map<String, ? extends ToscaDataDefinition> heatParameters;
     private Map<String, MapAttributesDataDefinition> instAttributes;
     private Map<String, MapPropertiesDataDefinition> instProperties;
