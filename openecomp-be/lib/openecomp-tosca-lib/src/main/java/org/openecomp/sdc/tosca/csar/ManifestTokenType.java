@@ -36,12 +36,17 @@ public enum ManifestTokenType {
     VNF_PROVIDER_ID("vnf_provider_id"),
     VNF_PACKAGE_VERSION("vnf_package_version"),
     VNF_RELEASE_DATE_TIME("vnf_release_date_time"),
+    VNF_SOFTWARE_VERSION("vnf_software_version"),
+    VNFM_INFO("vnfm_info"),
+    VNFD_ID("vnfd_id"),
     PNFD_NAME("pnfd_name"),
     PNFD_PROVIDER("pnfd_provider"),
     PNFD_ARCHIVE_VERSION("pnfd_archive_version"),
     PNFD_RELEASE_DATE_TIME("pnfd_release_date_time"),
     SIGNATURE("Signature"),
-    CERTIFICATE("Certificate");
+    CERTIFICATE("Certificate"),
+    COMPATIBLE_SPECIFICATION_VERSIONS("compatible_specification_versions");
+
 
     private final String token;
 
@@ -67,6 +72,10 @@ public enum ManifestTokenType {
             case VNF_PROVIDER_ID:
             case VNF_PACKAGE_VERSION:
             case VNF_RELEASE_DATE_TIME:
+            case VNFD_ID:
+            case VNFM_INFO:
+            case VNF_SOFTWARE_VERSION:
+            case COMPATIBLE_SPECIFICATION_VERSIONS:
                 return true;
             default:
                 return false;
@@ -79,6 +88,7 @@ public enum ManifestTokenType {
             case PNFD_PROVIDER:
             case PNFD_ARCHIVE_VERSION:
             case PNFD_RELEASE_DATE_TIME:
+            case COMPATIBLE_SPECIFICATION_VERSIONS:
                 return true;
             default:
                 return false;

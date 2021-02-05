@@ -489,6 +489,29 @@ class SOL004ManifestOnboardingTest {
         }
     }
 
+    @Test
+    public void testSuccessfulParsingWithCompatibleSpecficationVersion() throws IOException {
+        try (final InputStream manifestAsStream =
+            getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidToscaVersion3.mf")) {
+            manifest.parse(manifestAsStream);
+            assertValidManifest(8, 5, Collections.emptyMap(), ResourceTypeEnum.VF, false);
+        }
+    }
+
+    @Test
+    public void testFailedParsingWithCompatibleSpecficationVersion() throws IOException {
+        try (final InputStream manifestAsStream =
+            getClass().getResourceAsStream("/vspmanager.csar/manifest/InvalidToscaVersion3.mf")) {
+            manifest.parse(manifestAsStream);
+            final List<String> errorList = Collections.singletonList(
+                    Messages.MANIFEST_ERROR_WITH_LINE.formatMessage(
+                        Messages.MANIFEST_METADATA_INVALID_ENTRY1.formatMessage("vnf_test: 1.0"),
+                        4, "vnf_test: 1.0")
+                );
+                assertInvalidManifest(errorList);
+        }
+    }
+
     private void assertValidManifest(final int expectedMetadataSize, final int expectedSourcesSize,
                                      final Map<String, Integer> expectedNonManoKeySize,
                                      final ResourceTypeEnum resourceType, final boolean isSigned) {
