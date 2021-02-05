@@ -9,12 +9,13 @@ from sdcBePy.tosca.main import parse_and_create_proxy
 from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, \
     get_normative_element_with_metadata_list
 from sdcBePy.tosca.models.normativeToUpdateList import TypesToUpdate, get_heat_and_normative_to_update_list, \
-    get_nfv_onap_sol_to_update_list
+    get_onap_sol_to_update_list, get_nfv_to_update_list
 
 
 def main(sdc_be_proxy):
     update_version = True
-    update_onap_version = False
+    update_onap_version = False 
+    update_nfv_version = True
 
     # use to run script form this dir (not like the command)
     # base_file_location = os.getcwd() + "/../../../../import/tosca/"
@@ -28,8 +29,11 @@ def main(sdc_be_proxy):
     heat_and_normative_list = get_heat_and_normative_to_update_list(all_types, base_file_location)
     process_type_list(heat_and_normative_list, sdc_be_proxy, update_version)
 
-    nfv_onap_sol_list = get_nfv_onap_sol_to_update_list(all_types, base_file_location)
-    process_type_list(nfv_onap_sol_list, sdc_be_proxy, update_onap_version)
+    onap_sol_list = get_onap_sol_to_update_list(all_types, base_file_location)
+    process_type_list(onap_sol_list, sdc_be_proxy, update_onap_version)
+
+    nfv_list = get_nfv_to_update_list(all_types, base_file_location)
+    process_type_list(nfv_list, sdc_be_proxy, update_nfv_version)
 
     logger.log("Updating end ->", "All normatives updated successfully!")
     print_and_exit(0, None)

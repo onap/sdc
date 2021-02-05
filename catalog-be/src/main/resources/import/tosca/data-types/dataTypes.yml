@@ -2108,7 +2108,7 @@ tosca.datatypes.nfv.L2ProtocolData:
       required: false
       constraints:
         - greater_than: 0
-    segmentation_id:  #Introduced from Beijing release, only used for vCPE usecase, outside the scope of SOL001 v2.5.1
+    segmentation_id: #Introduced from Beijing release, only used for vCPE usecase, outside the scope of SOL001 v2.5.1
       type: integer
       required: false
     physical_network:  #Introduced from Beijing release, only used for vCPE usecase, outside the scope of SOL001 v2.5.1
@@ -2332,6 +2332,12 @@ tosca.datatypes.nfv.VnfProfile:
       required: true
       constraints:
         - greater_or_equal: 0
+    service_availability_level:
+      type: integer
+      description: If present, specifies the service availability level for the VNF instance created from this profile. 
+      required: false 
+      constraints:
+        - greater_or_equal: 1
 tosca.datatypes.nfv.UriAuthority:
   derived_from: tosca.datatypes.Root
   description: information that corresponds to the authority component of a URI as specified in IETF RFC 3986 [8]
@@ -2399,7 +2405,7 @@ tosca.datatypes.nfv.VirtualLinkMonitoringParameter:
       description: Identifies a performance metric derived from those defined in ETSI GS NFV-IFA 027.The packetOutgoingVirtualLink and packetIncomingVirtualLink metrics shall be obtained by aggregation the PacketOutgoing and PacketIncoming measurements defined in clause 7.1 of GS NFV-IFA 027 of all virtual link ports attached to the virtual link to which the metrics apply.
       required: true
       constraints:
-         - valid_values: [ packet_outgoing_virtual_link, packet_incoming_virtual_link ]
+         - valid_values: [ packet_outgoing_virtual_link, packet_incoming_virtual_link, byte_incoming, byte_outgoing, packet_incoming, packet_outgoing ]
     collection_period:
       type: scalar-unit.time
       description: Describes the recommended periodicity at which to collect the performance information.
@@ -2419,7 +2425,7 @@ tosca.datatypes.nfv.VnfcMonitoringParameter:
       description: Identifies the performance metric, according to ETSI GS NFV-IFA 027.
       required: true
       constraints:
-        - valid_values: [ v_cpu_usage_mean_vnf, v_cpu_usage_peak_vnf, v_memory_usage_mean_vnf, v_memory_usage_peak_vnf, v_disk_usage_mean_vnf, v_disk_usage_peak_vnf, byte_incoming_vnf_int_cp, byte_outgoing_vnf_int_cp, packet_incoming_vnf_int_cp, packet_outgoing_vnf_int_cp ]
+        - valid_values: [ v_cpu_usage_mean_vnf, v_cpu_usage_peak_vnf, v_memory_usage_mean_vnf, v_memory_usage_peak_vnf, v_disk_usage_mean_vnf, v_disk_usage_peak_vnf, byte_incoming_vnf_int_cp, byte_outgoing_vnf_int_cp, packet_incoming_vnf_int_cp, packet_outgoing_vnf_int_cp, v_cpu_usage_mean, v_cpu_usage_peak, v_memory_usage_mean, v_memory_usage_peak, v_disk_usage_mean, v_disk_usage_peak, v_net_byte_incoming, v_net_byte_outgoing, v_net_packet_incoming, v_net_packet_outgoing, usage_mean_vStorage, usage_peak_vStorage ]
     collection_period:
       type: scalar-unit.time
       description: Describes the recommended periodicity at which to collect the performance information.
@@ -2453,6 +2459,21 @@ tosca.datatypes.nfv.VnfMonitoringParameter:
       required: false
       constraints:
         - greater_than: 0 s
+tosca.datatypes.nfv.VnfChangeCurrentPackageOperationConfiguration:
+    derived_from: tosca.datatypes.Root
+    description: represents information that affect the invocation of the change current VNF Package operation.
+    # This data type definition is reserved for future use in the present document.
+    # properties:
+tosca.datatypes.nfv.VnfCreateSnapshotOperationConfiguration:
+    derived_from: tosca.datatypes.Root
+    description: represents information that affect the invocation of the CreateVnfSnapshot operation 
+    # This data type definition is reserved for future use in the present document.
+    # properties:
+tosca.datatypes.nfv.VnfRevertToSnapshotOperationConfiguration:
+    derived_from: tosca.datatypes.Root
+    description: represents information that affect the invocation of the RevertToVnfSnapshot operation 
+    # This data type definition is reserved for future use in the present document.
+    # properties:
 tosca.datatypes.nfv.VnfLcmOperationsConfiguration:
   derived_from: tosca.datatypes.Root
   description: Represents information to configure lifecycle management operations
@@ -2489,6 +2510,18 @@ tosca.datatypes.nfv.VnfLcmOperationsConfiguration:
       type:   tosca.datatypes.nfv.VnfChangeExtConnectivityOperationConfiguration
       description: Configuration parameters for the changeExtVnfConnectivityOpConfig operation
       required: false
+    change_current_package:
+      type:   tosca.datatypes.nfv.VnfChangeCurrentPackageOperationConfiguration
+      description: Configuration parameters for the ChangeCurrentVnfPackage operation
+      required: false
+    create_snapshot:
+      type:   tosca.datatypes.nfv.VnfCreateSnapshotOperationConfiguration
+      description: Configuration parameters for the CreateVnfSnapshot operation
+      required: false
+    revert_to_snapsot:
+      type:   tosca.datatypes.nfv.VnfRevertToSnapshotOperationConfiguration
+      description: Configuration parameters for the RevertToVnfSnapshot operation
+      required: false
 tosca.datatypes.nfv.CpProtocolData:
   derived_from: tosca.datatypes.Root
   description: Describes and associates the protocol layer that a CP uses together with other protocol and connection point information
@@ -2512,7 +2545,35 @@ tosca.datatypes.nfv.VnfAdditionalConfigurableProperties:
   properties:
     description:
       type: string
+    is_writable_anytime:
+      type: boolean
+      description: It specifies whether these additional configurable properties are writeable (TRUE) at anytime (i.e. prior to / at instantiation time as well as after instantiation).or (FALSE) only prior to / at instantiation time. If this property is not present, the additional configurable properties are writable anytime
       required: false
+tosca.datatypes.nfv.VnfmInterfaceInfo:
+  derived_from: tosca.datatypes.Root
+  description: describes information enabling the VNF instance to access the NFV-MANO interfaces produced by the VNFM
+  properties:
+    interface_name: 
+      type: string 
+      description: Identifies an interface produced by the VNFM. 
+      required: true 
+      constraints: 
+        - valid_values: [ vnf_lcm, vnf_pm, vnf_fm ] 
+    details: 
+      type: tosca.datatypes.nfv.InterfaceDetails 
+      description: Provide additional data to access the interface endpoint 
+      required: false  
+    credentials: 
+      type: map
+      description: Provides credential enabling access to the interface
+      required: false
+      entry_schema:
+        type: string
+tosca.datatypes.nfv.OauthServerInfo:
+  derived_from: tosca.datatypes.Root
+  description: information to enable discovery of the authorization server
+  #properties: FFS
+  #This data type definition is reserved for future use in the present document
 tosca.datatypes.nfv.VnfConfigurableProperties:
   derived_from: tosca.datatypes.Root
   description: indicates configuration properties for a given VNF (e.g. related to auto scaling and auto healing).
@@ -2524,6 +2585,18 @@ tosca.datatypes.nfv.VnfConfigurableProperties:
     is_autoheal_enabled:
       type: boolean
       description: It permits to enable (TRUE)/disable (FALSE) the auto-healing functionality. If the properties is not present for configuring, then VNF property is not supported
+      required: false
+    vnfm_interface_info:
+      type: tosca.datatypes.nfv.VnfmInterfaceInfo
+      description: Contains information enabling access to the NFV-MANO interfaces produced by the VNFM (e.g. URIs and credentials). If the property is not present, then configuring this VNF property is not supported.
+      required: false
+    vnfm_oauth_server_info:
+      type: tosca.datatypes.nfv.OauthServerInfo
+      description: Contains information to enable discovery of the authorization server protecting access to VNFM interfaces. If the property is not present, then configuring this VNF property is not supported.
+      required: false
+    vnf_oauth_server_info:
+      type: tosca.datatypes.nfv.OauthServerInfo
+      description: Contains information to enable discovery of the authorization server to validate the access tokens provided by the VNFM when the VNFM accesses the VNF interfaces, if that functionality (token introspection) is supported by the authorization server. If the property is not present, then configuring this VNF property is not supported.
       required: false
     additional_configurable_properties:
       description: It provides VNF specific configurable properties that can be modified using the ModifyVnfInfo operation
@@ -2543,7 +2616,6 @@ tosca.datatypes.nfv.VnfInfoModifiableAttributesExtensions:
 tosca.datatypes.nfv.VnfInfoModifiableAttributesMetadata:
   derived_from: tosca.datatypes.Root
   description: is an empty base type for deriving data types for describing VNF-specific metadata
-  # below description properties added as optional, since atleast one property required to define a dataType in SDC
   properties:
     description:
       type: string
@@ -2626,6 +2698,21 @@ tosca.datatypes.nfv.VirtualBlockStorageData:
       description: Indicates if the storage support RDMA
       required: false
       default: false
+tosca.datatypes.nfv.ChecksumData:
+   derived_from: tosca.datatypes.Root
+   description: Describes information about the result of performing a checksum operation over some arbitrary data 
+   properties:
+     algorithm:
+       type: string
+       description: Describes the algorithm used to obtain the checksum value
+       required: true
+       constraints:
+         - valid_values: [sha-224, sha-256, sha-384, sha-512 ]
+     hash:
+       type: string
+       description: Contains the result of applying the algorithm indicated by the algorithm property to the data to which this ChecksumData refers 
+       required: true
+
 tosca.datatypes.nfv.SwImageData:
   derived_from: tosca.datatypes.Root
   description: describes information  related to a software image artifact
@@ -2638,9 +2725,13 @@ tosca.datatypes.nfv.SwImageData:
       type: string
       description: Version of this software image
       required: true
+    provider:
+      type: string
+      description: Provider of this software image
+      required: false
     checksum:
       type: string
-      description:  Checksum of the software image file
+      description:  Checksum of the software image file 
       required: true
     container_format:
       type: string
@@ -2741,6 +2832,133 @@ tosca.datatypes.nfv.NsProfile:
       description: Identifies the applicable network service DF within the scope of the NSD.
       required: true
 
+tosca.datatypes.nfv.MciopProfile:
+  derived_from: tosca.datatypes.Root
+  description: describes a profile for instantiating VNFs of a particular NS DF according to a specific VNFD and VNF DF.
+  properties:
+    mciopId:
+      type: string
+      description: dentifies the MCIOP in the VNF package.
+      required: true
+    deploymentOrder:
+      type: integer
+      description: Indicates the order in which this MCIOP shall be deployed in relation to other MCIOPs.  A lower value specifies an earlier deployment.
+      required: false
+      constraints:
+        - greater_or_equal: 0
+    affinityOrAntiAffinityGroupId:
+      type: list
+      description: List of VDUs which are associated to this MCIOP and which are deployed using this MCIOP
+      required: false
+      entry_schema:
+        type: string
+    associatedVdu:
+      type: list
+      description: List of VDUs which are associated to this MCIOP and which are deployed using this MCIOP
+      required: false
+      entry_schema:
+        type: string
+tosca.datatypes.nfv.BootDataVimSpecificProperties:
+  derived_from: tosca.datatypes.Root
+  description: describes the VIM specific information used for selecting VIM specific capabilities when setting the boot data.
+  properties:
+    vim_type:
+      type: string 
+      description: Discriminator for the different types of the VIM information.
+      required: false
+    properties:
+      type: map
+      description: Properties used for selecting VIM specific capabilities when setting the boot data
+      entry_schema:
+        type: string
+      required: true
+tosca.datatypes.nfv.KvpData:
+  derived_from: tosca.datatypes.Root
+  description: describes a set of key-value pairs information used to customize a virtualised compute resource at boot time by using only key-value pairs data.
+  properties:
+    data:
+      type: map
+      description: A map of strings that contains a set of key-value pairs that describes the information for configuring the virtualised compute resource.
+      required: false
+      entry_schema:
+        type: string
+tosca.datatypes.nfv.ContentOrFileData:
+  derived_from: tosca.datatypes.Root
+  description: describes a string content or a file information used to customize a virtualised compute resource at boot time by using string content or file.
+  properties:
+    data:
+      type: map
+      description: A map of strings that contains a set of key-value pairs that carries the dynamic deployment values which used to replace the corresponding variable parts in the file as identify by a URL as described in source_path. Shall be present if "source_path" is present and shall be absent otherwise..
+      required: false
+      entry_schema:
+        type: string
+    content:
+      type: string
+      description: The string information used to customize a virtualised compute resource at boot time.
+      required: false
+    source_path:
+      type: string
+      description: The URL to a file contained in the VNF package used to customize a virtualised compute resource. The content shall comply with IETF RFC 3986 [8].
+      required: false
+    destination_path:
+      type: string
+      description: The URL address when inject a file into the virtualised compute resource. The content shall comply with IETF RFC 3986 [8].
+      required: false
+tosca.datatypes.nfv.BootData:
+  derived_from: tosca.datatypes.Root
+  description: describes the information used to customize a virtualised compute resource at boot time.
+  properties:
+    vim_specific_properties:
+      type: tosca.datatypes.nfv.BootDataVimSpecificProperties
+      description: Properties used for selecting VIM specific capabilities when setting the boot data.
+      required: false
+    kvp_data:
+      type: tosca.datatypes.nfv.KvpData
+      description: A set of key-value pairs for configuring a virtual compute resource.
+      required: false
+    content_or_file_data:
+      type: tosca.datatypes.nfv.ContentOrFileData
+      description: A string content or a file for configuring a virtual compute resource. 
+      required: false
+tosca.datatypes.nfv.ServicePortData:
+  derived_from: tosca.datatypes.Root
+  description: describes the service identifying port properties exposed by the VirtualCp
+  properties:
+    name:
+      type: string
+      description: The name of the port exposed by the VirtualCp.
+      required: true
+    protocol:
+      type: string
+      description: The L4 protocol for this port exposed by the VirtualCp.
+      constraints:
+        - valid_values: 
+          - TCP
+          - UDP
+          - SCTP
+    port:
+      type: integer
+      description: The L4 port number exposed by the VirtualCp.
+      required: true
+    portConfigurable:
+      type: boolean
+      description: Specifies whether the port attribute value is allowed to be configurable.
+      required: true
+tosca.datatypes.nfv.AdditionalServiceData:
+  derived_from: tosca.datatypes.Root
+  description: describes the additional service data of the VirtualCp used to expose properties of the VirtualCp to NFV-MANO.
+  properties:
+    portData:
+      type: list
+      description: Service port numbers exposed by the VirtualCp.
+      required: false
+      entry_schema:
+        type: tosca.datatypes.nfv.ServicePortData
+    serviceData:
+      type: string
+      description: Service matching information exposed by the VirtualCp.
+      required: false
+      
 ##### Partner service domain datatypes ######
 
 onap.datatypes.partner.access_details:

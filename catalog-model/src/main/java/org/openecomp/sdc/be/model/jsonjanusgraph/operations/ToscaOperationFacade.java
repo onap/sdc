@@ -23,7 +23,9 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
+import static org.janusgraph.core.attribute.Contain.NOT_IN;
+import static org.janusgraph.core.attribute.Text.REGEX;
+import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -55,6 +58,7 @@ import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
@@ -75,6 +79,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -113,11 +118,14 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.utils.GroupUtils;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
+import org.openecomp.sdc.be.resources.data.GroupTypeData;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
 
 
 @org.springframework.stereotype.Component("tosca-operation-facade")
@@ -416,6 +424,87 @@ public class ToscaOperationFacade {
 
         return getLatestCertifiedByToscaResourceName(toscaResourceName, VertexTypeEnum.NODE_TYPE, JsonParseFlagEnum.ParseMetadata);
     }
+        
+    public Either<Resource, StorageOperationStatus> getByToscaResourceNameMatchingVendorRelease(final String toscaResourceName, final String vendorVersion) {
+
+        return getByToscaResourceNameMatchingVendorRelease(toscaResourceName, VertexTypeEnum.NODE_TYPE, JsonParseFlagEnum.ParseMetadata, vendorVersion);
+    }
+    
+    public Either<Resource, StorageOperationStatus> getByToscaResourceNameMatchingVendorRelease(String toscaResourceName,
+        VertexTypeEnum vertexType, JsonParseFlagEnum parseFlag, String vendorRelease) {
+
+            Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+            props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
+            props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+            
+            Map<String, Entry<JanusGraphPredicate,  Object>> predicateCriteria = getVendorVersionPredicate(vendorRelease);
+
+            Either<List<GraphVertex>, JanusGraphOperationStatus> getLatestRes = janusGraphDao
+                .getByCriteria(vertexType, props, null, predicateCriteria, parseFlag);
+            
+            if(getLatestRes.isRight() || CollectionUtils.isEmpty(getLatestRes.left().value())) {
+                getLatestRes = janusGraphDao.getByCriteria(vertexType, props, parseFlag);
+            }
+
+            return getLatestRes
+                .right().map(
+                    status -> {
+                        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch {} with name {}. status={} ",
+                            vertexType, toscaResourceName, status);
+                        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
+                    }
+                )
+                .left().bind(
+                    resources -> {
+                        double version = 0.0;
+                        GraphVertex highestResource = null;
+                        for (GraphVertex resource : resources) {
+                            double resourceVersion = Double
+                                .parseDouble((String) resource.getJsonMetadataField(JsonPresentationFields.VERSION));
+                            if (resourceVersion > version && isValidForVendorRelease(resource, vendorRelease)) {
+                                version = resourceVersion;
+                                highestResource = resource;
+                            }
+                        }
+                        if (highestResource != null) {
+                            return getToscaFullElement(highestResource.getUniqueId());
+                        } else {
+                            log.debug("The vertex with the highest version could not be found for {}", toscaResourceName);
+                            return Either.right(StorageOperationStatus.GENERAL_ERROR);
+                        }
+                    }
+                );
+    }
+     
+     private Map<String, Entry<JanusGraphPredicate, Object>> getVendorVersionPredicate(final String vendorRelease) {
+         Map<String, Entry<JanusGraphPredicate,  Object>> predicateCriteria = new HashMap<>();
+         if (vendorRelease != null && vendorRelease != "1.0") {
+             String[] vendorReleaseElements = vendorRelease.split("\\.");
+             if (vendorReleaseElements.length > 0) {
+                 String regex = ".*\"vendorRelease\":\"";
+                 for (int i = 0; i <vendorReleaseElements.length; i++) {
+                     regex += vendorReleaseElements[i];
+                     regex += i < vendorReleaseElements.length -1 ? "\\." : "\".*";
+                 }
+                 predicateCriteria.put("metadata", new HashMap.SimpleEntry<>(REGEX, regex));
+             }
+         } 
+         return predicateCriteria;
+     }
+     
+     private boolean isValidForVendorRelease(final GraphVertex resource, final String vendorRelease) {
+         if (!vendorRelease.equals("1.0")) {
+             try {
+                 Semver resourceSemVer = new Semver((String)resource.getJsonMetadataField(JsonPresentationFields.VENDOR_RELEASE), SemverType.NPM);
+                 Semver packageSemVer = new Semver(vendorRelease, SemverType.NPM);
+                 return !resourceSemVer.isGreaterThan(packageSemVer); 
+             } catch (Exception exception) {
+                 log.debug("Error in comparing vendor release", exception);
+                 return true;
+             }
+         }
+         return true;
+     }
 
     public Either<Resource, StorageOperationStatus> getLatestCertifiedByToscaResourceName(String toscaResourceName,
         VertexTypeEnum vertexType, JsonParseFlagEnum parseFlag) {
@@ -780,6 +869,30 @@ public class ToscaOperationFacade {
             log.debug("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
             result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             return result;
+        }
+        return getToscaElementByOperation(getResourceRes.left().value().get(0));
+    }
+    
+    public <T extends Component> Either<T, StorageOperationStatus> getComponentByNameAndVendorRelease(
+            final ComponentTypeEnum componentType, final String name, final String vendorRelease,
+            final JsonParseFlagEnum parseFlag) {
+
+        Map<GraphPropertyEnum, Object> hasProperties = new EnumMap<>(GraphPropertyEnum.class);
+        Map<GraphPropertyEnum, Object> hasNotProperties = new EnumMap<>(GraphPropertyEnum.class);
+
+        hasProperties.put(GraphPropertyEnum.NAME, name);
+        hasNotProperties.put(GraphPropertyEnum.IS_DELETED, true);
+        if (componentType != null) {
+            hasProperties.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
+        }
+        Map<String, Entry<JanusGraphPredicate,  Object>> predicateCriteria = getVendorVersionPredicate(vendorRelease);
+
+        Either<List<GraphVertex>, JanusGraphOperationStatus> getResourceRes = janusGraphDao
+            .getByCriteria(null, hasProperties, hasNotProperties, predicateCriteria, parseFlag);
+        if (getResourceRes.isRight()) {
+            JanusGraphOperationStatus status = getResourceRes.right().value();
+            log.debug("failed to find resource with name {}, version {}. Status is {} ", name, predicateCriteria, status);
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         return getToscaElementByOperation(getResourceRes.left().value().get(0));
     }

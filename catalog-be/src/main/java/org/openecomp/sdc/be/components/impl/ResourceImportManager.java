@@ -60,6 +60,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -195,12 +196,18 @@ public class ResourceImportManager {
 
             populateResourceFromYaml(resourceYml, resource);
 
-            Boolean isValidResource = validationFunction.apply(resource);
+            validationFunction.apply(resource);
             if (!createNewVersion) {
                 Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade
                     .getLatestByName(resource.getName());
                 if (latestByName.isLeft()) {
                     throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
+                        resource.getName());
+                }
+            } else {
+                final Either<Resource, StorageOperationStatus> component = toscaOperationFacade.getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(), resource.getVendorRelease(), JsonParseFlagEnum.ParseAll);
+                if (component.isLeft()) {
+                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST,
                         resource.getName());
                 }
             }

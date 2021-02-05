@@ -29,6 +29,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import fj.data.Either;
 import java.io.IOException;
@@ -55,9 +57,13 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -66,6 +72,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -102,7 +109,7 @@ public class ResourceImportManagerTest {
         importManager.setResponseFormatManager(responseFormatManager);
         importManager.setResourceBusinessLogic(resourceBusinessLogic);
         importManager.setToscaOperationFacade(toscaOperationFacade);
-
+        
         String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         final ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
@@ -115,6 +122,8 @@ public class ResourceImportManagerTest {
     @Before
     public void beforeTest() {
         Mockito.reset(auditingManager, responseFormatManager, resourceBusinessLogic, userAdmin);
+        Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
+        when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(), any(JsonParseFlagEnum.class))).thenReturn(notFound);
     }
 
     @Test
@@ -273,9 +282,37 @@ public class ResourceImportManagerTest {
 		interfaceDefinition.setOperations(operations );
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
 		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
-
+		
         ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
         assertNull(createResource.left.getInterfaces());
+    }
+    
+    @Test
+    public void testResourceCreationFailedVendorReleaseAlreadyExists() throws IOException {
+        UploadResourceInfo resourceMD = createDummyResourceMD();
+
+        User user = new User();
+        user.setUserId(resourceMD.getContactId());
+        user.setRole("ADMIN");
+        user.setFirstName("Jhon");
+        user.setLastName("Doh");
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+
+        setResourceBusinessLogicMock();
+
+        Either<Component, StorageOperationStatus> notFound = Either.left(Mockito.mock(Resource.class));
+        when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(), any(JsonParseFlagEnum.class))).thenReturn(notFound);
+        
+        String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
+        
+        ComponentException errorInfoFromTest = null;
+        try {
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        }catch (ComponentException e){
+            errorInfoFromTest = e;
+        }
+        assertNotNull(errorInfoFromTest);
+        assertEquals(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST, errorInfoFromTest.getActionStatus());
     }
 
     private void setResourceBusinessLogicMock() {

@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,8 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
+import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
 
 @org.springframework.stereotype.Component("node-type-operation")
 public class NodeTypeOperation extends ToscaElementOperation {
@@ -602,7 +605,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
                         return Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
                     } else {
                         if (resources.size() > 1) {
-                            return handleMultipleParent(parentResource, derivedResources, resources);
+                            return handleMultipleParent(parentResource, derivedResources, resources, (String)nodeType.getMetadataValue(JsonPresentationFields.VENDOR_RELEASE));
                         } else {
                             GraphVertex parentResourceData = resources.get(0);
                             derivedResources.add(parentResourceData);
@@ -616,10 +619,11 @@ public class NodeTypeOperation extends ToscaElementOperation {
         return Either.left(derivedResources);
     }
 
-    Either<List<GraphVertex>, StorageOperationStatus> handleMultipleParent(String parentResource, List<GraphVertex> derivedResource, List<GraphVertex> fetchedDerivedResources) {
+    Either<List<GraphVertex>, StorageOperationStatus> handleMultipleParent(String parentResource, List<GraphVertex> derivedResource, List<GraphVertex> fetchedDerivedResources, String vendorRelease) {
 
         Either<List<GraphVertex>, StorageOperationStatus> result = Either.left(derivedResource);
         try {
+            fetchedDerivedResources.removeIf(graphVertex -> !isValidForVendorRelease(graphVertex, vendorRelease));
             fetchedDerivedResources.sort((d1, d2) -> {
                 return new Double(Double.parseDouble((String) d1.getMetadataProperty(GraphPropertyEnum.VERSION))).compareTo(Double.parseDouble((String) d2.getMetadataProperty(GraphPropertyEnum.VERSION)));
             });
@@ -637,6 +641,20 @@ public class NodeTypeOperation extends ToscaElementOperation {
             result = Either.right(StorageOperationStatus.GENERAL_ERROR);
         }
         return result;
+    }
+    
+    private boolean isValidForVendorRelease(final GraphVertex resource, final String vendorRelease) {
+        if (vendorRelease != null && !vendorRelease.equals("1.0")) {
+            try {
+                Semver resourceSemVer = new Semver((String)resource.getJsonMetadataField(JsonPresentationFields.VENDOR_RELEASE), SemverType.NPM);
+                Semver packageSemVer = new Semver(vendorRelease, SemverType.NPM);
+                return !resourceSemVer.isGreaterThan(packageSemVer); 
+            } catch (Exception exception) {
+                log.debug("Error in comparing vendor release", exception);
+                return false;
+            }
+        }
+        return true;
     }
 
     private StorageOperationStatus fixMultipleParent(List<GraphVertex> fetchedDerivedResources) {
