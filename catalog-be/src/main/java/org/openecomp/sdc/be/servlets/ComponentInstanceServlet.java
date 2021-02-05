@@ -133,6 +133,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     private static final Type PROPERTY_CONSTRAINT_TYPE = new TypeToken<PropertyConstraint>() {}.getType();
     private static final Gson gsonDeserializer = new GsonBuilder().registerTypeAdapter(PROPERTY_CONSTRAINT_TYPE, new PropertyConstraintDeserialiser()).create();
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ComponentInstanceServlet.class.getName());
+    private static final String SERVICES = "services";
 
     private final GroupBusinessLogic groupBL;
     private final ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic;
@@ -1136,13 +1137,13 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "404", description = "Component/Component Instance/Requirement - not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateInstanceRequirement(
-            @PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("containerComponentId") final String containerComponentId,
-            @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
+        @PathParam("containerComponentType") final String containerComponentType,
+        @PathParam("containerComponentId") final String containerComponentId,
+        @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
             @PathParam("capabilityType") final String capabilityType,
-            @PathParam("requirementName") final String requirementName,
-            @Parameter(description = "Instance capabilty requirement to update", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        @PathParam("requirementName") final String requirementName,
+        @Parameter(description = "Instance capabilty requirement to update", required = true) String data,
+        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_INSTANCE_REQUIREMENT, StatusCode.STARTED,"Starting to update requirement {} in component instance {} by {}", requirementName, componentInstanceUniqueId, userId );
@@ -1163,7 +1164,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
             RequirementDefinition requirementDef = mappedRequirementDataEither.left().value();
             
-            Either<RequirementDefinition, ResponseFormat> response = componentInstanceBusinessLogic.updateInstanceRequirement(componentTypeEnum, containerComponentId, componentInstanceUniqueId, capabilityType, requirementName, requirementDef, userId);
+            Either<RequirementDefinition, ResponseFormat> response = componentInstanceBusinessLogic.updateInstanceRequirement(componentTypeEnum, containerComponentId, componentInstanceUniqueId,
+                requirementDef, userId);
             
             if (response.isRight()) {
                 return buildErrorResponse(response.right().value());
@@ -1495,7 +1497,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         log.info("Start to copy component instance");
 
         String userId = request.getHeader(Constants.USER_ID_HEADER);
-        final String CNTAINER_CMPT_TYPE = "services";
+        final String CNTAINER_CMPT_TYPE = SERVICES;
 
         try {
             ComponentInstance inputComponentInstance = RepresentationUtils.fromRepresentation(data, ComponentInstance.class);
@@ -1503,7 +1505,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(CNTAINER_CMPT_TYPE);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, componentTypeEnum);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, "services"));
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, SERVICES));
             }
             Either<Map<String, ComponentInstance>, ResponseFormat> copyComponentInstance = componentInstanceBusinessLogic.copyComponentInstance(
                     inputComponentInstance, containerComponentId, componentInstanceId, userId);
@@ -1695,7 +1697,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
         log.debug("replaceVNF:get ReplaceVNFInfo success");
 
-        String containerComponentType = "services";
+        String containerComponentType = SERVICES;
         ReplaceVNFInfo replaceVNFInfo = convertResponse.left().value();
         String serviceUniqueId = replaceVNFInfo.getServiceUniqueId();
         String abstractResourceUniqueId = replaceVNFInfo.getAbstractResourceUniqueId();
