@@ -1,0 +1,54 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  tosca.nodes.nfv.Vdu.osContainer:
+    derived_from: tosca.nodes.Root
+    description: Describes the resources of a single container within a VDU 
+    properties:
+      name: 
+        type: string
+        description: Human readable name of the Container
+        required: true
+      description:
+        type: string
+        description: Human readable description of the Container
+        required: true
+      logical_node:
+        type: map
+        description: Describes the logical node requirements
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.LogicalNodeData
+      requested_additional_capabilities:
+        type: map
+        description: Describes additional capabilities to host this container
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.RequestedAdditionalCapability
+      requestedCpuResources:
+        type: integer
+        required: false
+        description: Number of milli-Cpus
+      cpuResourcesLimit:
+        type: integer
+        required: false
+        description: Limit (Max) Number of milli-Cpus
+      requestedMemoryResources:
+        type: scalar-unit.size
+        required: false
+        description: Amount of Memory requested
+      memoryResourcesLimit:
+        type: scalar-unit.size
+        required: false
+        description: Limit (Max) Memory
+      requestedEphemeralStorageResources:
+        type: scalar-unit.size
+        required: false
+        description: Amount of Ephemeral Storage Requested
+      ephemeralStorageResourcesLimit:
+        type: scalar-unit.size
+        required: false
+        description: Limit on Ephemeral Storage
+    capabilities:
+      containerGroupable:
+        type: tosca.capabilities.nfv.ContainerGroupable
+        occurrences: [ 1, UNBOUNDED ]

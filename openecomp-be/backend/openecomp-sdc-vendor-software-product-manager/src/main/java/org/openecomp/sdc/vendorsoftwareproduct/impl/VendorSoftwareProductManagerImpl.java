@@ -615,6 +615,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             final Optional<Map<String, Path>> fromToMovedPaths = etsiService.moveNonManoFileToArtifactFolder(handler);
             fromToMovedPaths.ifPresent(it -> etsiService.updateMainDescriptorPaths(toscaServiceModel, it));
             packageInfo.setResourceType(etsiService.getResourceType(manifest).name());
+            packageInfo.setVendorRelease(etsiService.getHighestCompatibleSpecificationVersion(handler).getOriginalValue());
         }
         packageInfo.setTranslatedFile(
                 ByteBuffer.wrap(toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));

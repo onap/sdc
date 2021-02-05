@@ -6,6 +6,9 @@ def get_normative_type_candidate_list(base_file_location):
         get_normative(base_file_location),
         get_heat(base_file_location),
         get_nfv(base_file_location),
+        get_nfv_2_7_1(base_file_location),
+        get_nfv_3_3_1(base_file_location),
+        get_nfv_4_1_1(base_file_location),
         get_onap(base_file_location),
         get_sol(base_file_location)
     ]
@@ -110,7 +113,26 @@ def get_nfv(base_file_location="/"):
                                    "PonUni",
                                    "OltNni",
                                    "OntNni"])
+                                   
+def get_nfv_2_7_1(base_file_location="/"):
+    return NormativeTypeCandidate(base_file_location + "nfv-types/2.7.1/",
+                                  ["vduCompute",
+                                   "vduVirtualFileStorage",
+                                   "vnfExtCp",
+                                   "vduCp",
+                                   "vipCp"])
 
+def get_nfv_3_3_1(base_file_location="/"):
+    return NormativeTypeCandidate(base_file_location + "nfv-types/3.3.1/",
+                                  ["vduVirtualBlockStorage",
+                                   "VNF"])
+
+def get_nfv_4_1_1(base_file_location="/"):
+    return NormativeTypeCandidate(base_file_location + "nfv-types/4.1.1/",
+                                  ["VNF",
+                                   "osContainer",
+                                   "osContainerGroup",
+                                   "virtualCp"])
 
 def get_onap(base_file_location="/"):
     return NormativeTypeCandidate(base_file_location + "onap-types/",

@@ -60,6 +60,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -201,6 +202,12 @@ public class ResourceImportManager {
                     .getLatestByName(resource.getName());
                 if (latestByName.isLeft()) {
                     throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
+                        resource.getName());
+                }
+            } else {
+                Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(), resource.getVendorRelease(), JsonParseFlagEnum.ParseAll);
+                if (latestByName.isLeft()) {
+                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST,
                         resource.getName());
                 }
             }

@@ -114,10 +114,7 @@ def _results_ok(results, response_codes):
 
 
 def _get_response_code(update_version):
-    response_codes = [200, 201]
-    if update_version is False:
-        response_codes.append(409)
-
+    response_codes = [200, 201, 409]
     return response_codes
 
 

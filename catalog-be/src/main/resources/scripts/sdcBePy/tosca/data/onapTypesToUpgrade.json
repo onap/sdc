@@ -4,6 +4,23 @@
     "NS",
     "NsVirtualLink"
   ],
+  "nfv_2_7_1": [
+    "vduCompute",
+    "vduVirtualFileStorage",
+    "vnfExtCp",
+    "vduCp",
+    "vipCp"
+  ],
+  "nfv_3_3_1": [
+    "VNF",
+    "vduVirtualBlockStorage"
+  ],
+  "nfv_4_1_1": [
+    "VNF",
+    "osContainer",
+    "osContainerGroup",
+    "virtualCp"
+  ],
   "onap": [
   ],
   "sol":[
