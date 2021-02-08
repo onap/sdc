@@ -23,7 +23,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validati
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_7_1;
 
 import java.io.IOException;
-
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
@@ -43,13 +42,15 @@ public class ValidatorFactory {
      */
     public static Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
         final ETSIService etsiService = new ETSIServiceImpl(null);
-        if (etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
-            if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler)
-                    .isLowerThan(ETSI_VERSION_2_7_1)){
-                return new SOL004Version3MetaDirectoryValidator();
-            }
-            return new SOL004MetaDirectoryValidator();
+        if (!etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
+            return new ONAPCsarValidator();
         }
-        return new ONAPCsarValidator();
+        if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler).isLowerThan(ETSI_VERSION_2_7_1)){
+            if (etsiService.hasCnfEnhancements(fileContentHandler)) {
+                return new SOL004Version4MetaDirectoryValidator();
+            }
+            return new SOL004Version3MetaDirectoryValidator();
+        }
+        return new SOL004MetaDirectoryValidator();
     }
 }

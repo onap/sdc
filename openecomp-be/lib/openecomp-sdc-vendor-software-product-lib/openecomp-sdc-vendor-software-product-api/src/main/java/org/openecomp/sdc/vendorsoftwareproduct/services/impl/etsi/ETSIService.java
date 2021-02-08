@@ -92,4 +92,10 @@ public interface ETSIService {
      * @return Semver representing highest compatible specification version
      */
     Semver getHighestCompatibleSpecificationVersion(final FileContentHandler handler);
+
+    /**
+     * Verifies if SOL004 3.3.1 manifest file has onap_cnf_helm non mano entry
+     * @return true if manifest files has onap_cnf_helm non mano entry
+     */
+    boolean hasCnfEnhancements(final FileContentHandler fileContentHandler) throws IOException;
 }
