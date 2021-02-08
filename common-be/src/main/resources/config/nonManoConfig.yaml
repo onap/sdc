@@ -20,3 +20,6 @@ nonManoKeyFolderMapping:
   onap_pnf_sw_information:
     location: PNF_SW_INFORMATION
     type: Informational
+  onap_cnf_helm:
+    location:
+    type:
