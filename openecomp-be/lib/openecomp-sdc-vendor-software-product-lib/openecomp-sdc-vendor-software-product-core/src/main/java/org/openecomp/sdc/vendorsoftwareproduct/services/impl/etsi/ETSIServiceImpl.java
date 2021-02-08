@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ARTIFACTS_FOLDER;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
@@ -29,8 +30,8 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_CHANGE_LOG;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
 
+import com.vdurmont.semver4j.Semver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -42,11 +43,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.be.config.NonManoArtifactType;
 import org.openecomp.sdc.be.config.NonManoConfiguration;
 import org.openecomp.sdc.be.config.NonManoConfigurationManager;
 import org.openecomp.sdc.be.config.NonManoFolderType;
@@ -58,8 +59,6 @@ import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-
-import com.vdurmont.semver4j.Semver;
 
 public class ETSIServiceImpl implements ETSIService {
 
@@ -83,15 +82,7 @@ public class ETSIServiceImpl implements ETSIService {
 
     @Override
     public Optional<Map<String, Path>> moveNonManoFileToArtifactFolder(final FileContentHandler handler) throws IOException {
-        final Manifest manifest;
-        try {
-            manifest = getManifest(handler);
-        } catch (final IOException ex) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("An error occurred while getting the manifest file", ex);
-            }
-            throw ex;
-        }
+        final Manifest manifest = loadManifest(handler);
         final Path originalManifestPath;
         try {
             originalManifestPath = getOriginalManifestPath(handler);
@@ -222,6 +213,27 @@ public class ETSIServiceImpl implements ETSIService {
         }
         return new Semver(ETSI_VERSION_2_6_1);
 
+    }
+
+    @Override
+    public boolean hasCnfEnhancements(final FileContentHandler fileContentHandler) throws IOException {
+        final Manifest manifest = loadManifest(fileContentHandler);
+        return manifest.getNonManoSources().entrySet().stream()
+            .filter(manifestNonManoSourceEntry ->  NonManoArtifactType.ONAP_CNF_HELM.getType()
+                .equalsIgnoreCase(manifestNonManoSourceEntry.getKey())).findFirst().isPresent();
+    }
+
+    private Manifest loadManifest(final FileContentHandler handler) throws IOException {
+        final Manifest manifest;
+        try {
+            manifest = getManifest(handler);
+        } catch (final IOException ex) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("An error occurred while getting the manifest file", ex);
+            }
+            throw ex;
+        }
+        return manifest;
     }
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {

@@ -19,6 +19,7 @@
 package org.openecomp.sdc.be.config;
 
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 
 @Data
 public class NonManoFolderType {
@@ -31,5 +32,10 @@ public class NonManoFolderType {
      */
     public String getPath() {
         return String.format("Artifacts/%s/%s", type, location);
+    }
+
+
+    public boolean isValid() {
+        return StringUtils.isNotBlank(location) && StringUtils.isNotBlank(type);
     }
 }
