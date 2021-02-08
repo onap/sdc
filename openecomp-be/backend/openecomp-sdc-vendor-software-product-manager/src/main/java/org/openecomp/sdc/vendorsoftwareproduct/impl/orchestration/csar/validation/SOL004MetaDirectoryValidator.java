@@ -23,6 +23,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_CNF_HELM;
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_SW_INFORMATION;
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_VES_EVENTS;
@@ -81,6 +82,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackage
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.exception.MissingCertificateException;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.utils.FileExtractor;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.utils.InternalFilesFilter;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.utils.ValidatorUtils;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions.InvalidManifestMetadataException;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
@@ -102,6 +104,7 @@ class SOL004MetaDirectoryValidator implements Validator {
     private Set<String> folderList;
     private ToscaMetadata toscaMetadata;
     private final InternalFilesFilter internalFilesFilter = new InternalFilesFilter();
+    protected final ValidatorUtils validatorUtils = new ValidatorUtils();
 
     public SOL004MetaDirectoryValidator() {
         securityManager = SecurityManager.getInstance();
@@ -122,7 +125,7 @@ class SOL004MetaDirectoryValidator implements Validator {
         if (packageHasCertificate()) {
             verifySignedFiles();
         }
-        validatePMDictionaryContentsAgainstSchema();
+        validatePmDictionaryContentsAgainstSchema();
         return Collections.unmodifiableMap(getAnyValidationErrors());
     }
 
@@ -390,6 +393,8 @@ class SOL004MetaDirectoryValidator implements Validator {
                 internalNonManoFileList.forEach(this::validateYaml);
             } else if (nonManoArtifactType == ONAP_SW_INFORMATION) {
                 validateSoftwareInformationNonManoArtifact(files);
+            } else if (nonManoArtifactType == ONAP_CNF_HELM) {
+                validateOnapCnfHelmNonManoEntry(files);
             }
         });
 
@@ -546,7 +551,7 @@ class SOL004MetaDirectoryValidator implements Validator {
         return errors;
     }
 
-    private void validatePMDictionaryContentsAgainstSchema() {
+    private void validatePmDictionaryContentsAgainstSchema() {
         final Stream<byte[]> pmDictionaryFiles = new FileExtractor(getEtsiEntryManifestPath(), contentHandler)
             .findFiles(ONAP_PM_DICTIONARY);
         new PMDictionaryValidator()
@@ -555,5 +560,23 @@ class SOL004MetaDirectoryValidator implements Validator {
 
     private String getEtsiEntryManifestPath() {
         return toscaMetadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName());
+    }
+
+    /**
+     * Validates if onap_cnf_helm non_mano type points to a file
+     * @param files
+     */
+    private void validateOnapCnfHelmNonManoEntry(final List<String> files) {
+        if (CollectionUtils.isEmpty(files)) {
+            reportError(ErrorLevel.ERROR, Messages.EMPTY_ONAP_CNF_HELM_NON_MANO_ERROR.getErrorMessage());
+            return;
+        }
+        if (files.size() != 1) {
+            final String formattedFileList = files.stream()
+                .map(filePath -> String.format("'%s'", filePath))
+                .collect(Collectors.joining(", "));
+            reportError(ErrorLevel.ERROR,
+                Messages.UNIQUE_ONAP_CNF_HELM_NON_MANO_ERROR.formatMessage(formattedFileList));
+        }
     }
 }

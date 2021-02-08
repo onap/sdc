@@ -26,8 +26,8 @@ import static org.openecomp.sdc.be.test.util.TestResourcesHandler.getResourceByt
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -38,7 +38,7 @@ public class ONAPCsarValidatorTest {
     private ONAPCsarValidator onapCsarValidator;
     private FileContentHandler contentHandler;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException{
         onapCsarValidator = new ONAPCsarValidator();
         contentHandler = new FileContentHandler();

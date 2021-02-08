@@ -61,7 +61,7 @@ public class SOL004Version3MetaDirectoryValidatorTest extends SOL004MetaDirector
     }
 
     @Override
-    protected int getManifestDefintionErrorCount() {
+    protected int getManifestDefinitionErrorCount() {
         return MANIFEST_DEFINITION_ERROR_COUNT_VERSION_3;
     }
 }
