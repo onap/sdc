@@ -1,0 +1,3 @@
+description: "ONAP CNF Helm Test Sample"
+provider: "Ericsson"
+version: "1.0"

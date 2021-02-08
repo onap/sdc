@@ -19,9 +19,13 @@
 
 package org.openecomp.sdc.be.config;
 
+import java.util.Collections;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import lombok.Data;
 
 import java.util.Map;
+import org.apache.commons.collections.MapUtils;
 
 /**
  * Represents the non-mano configuration yaml.
@@ -38,5 +42,15 @@ public class NonManoConfiguration {
      */
     public NonManoFolderType getNonManoType(final NonManoArtifactType nonManoArtifactType) {
         return nonManoKeyFolderMapping.get(nonManoArtifactType.getType());
+    }
+
+    public Map<String, NonManoFolderType> getNonManoKeyFolderMapping() {
+        if (MapUtils.isEmpty(nonManoKeyFolderMapping)) {
+            return Collections.emptyMap();
+        }
+
+        return nonManoKeyFolderMapping.entrySet().stream()
+            .filter(entry -> entry.getValue().isValid())
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 }

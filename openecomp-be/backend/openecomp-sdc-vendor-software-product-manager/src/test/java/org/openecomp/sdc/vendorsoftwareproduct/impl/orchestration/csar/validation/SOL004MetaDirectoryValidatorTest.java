@@ -61,6 +61,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.va
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_MANIFEST_FILEPATH;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,10 +69,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -89,7 +89,7 @@ public class SOL004MetaDirectoryValidatorTest {
     protected OnboardingPackageContentHandler handler;
     protected StringBuilder metaFileBuilder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         sol004MetaDirectoryValidator = getSOL004MetaDirectoryValidator();
         handler = new OnboardingPackageContentHandler();
@@ -140,7 +140,7 @@ public class SOL004MetaDirectoryValidatorTest {
      * ETSI Version 2.7.1 below contains one Definition File reference
      * ETSI Version 2.7.1 onwards contains two possible Definition File reference
      */
-    protected int getManifestDefintionErrorCount() {
+    protected int getManifestDefinitionErrorCount() {
         return MANIFEST_DEFINITION_ERROR_COUNT;
     }
 
@@ -259,7 +259,7 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
         assertThat("Total of errors should be as expected", errors.size(), is(1));
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
-        assertThat("Total of errors messages should be as expected", errorMessages.size(), is((2 + getManifestDefintionErrorCount())));
+        assertThat("Total of errors messages should be as expected", errorMessages.size(), is((2 + getManifestDefinitionErrorCount())));
     }
 
 
@@ -349,7 +349,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifest.getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("", errors, getManifestDefintionErrorCount());
+        assertExpectedErrors("", errors, getManifestDefinitionErrorCount());
     }
 
     /**
@@ -379,7 +379,7 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest referenced import file missing", errors, getManifestDefintionErrorCount());
+        assertExpectedErrors("Manifest referenced import file missing", errors, getManifestDefinitionErrorCount());
     }
 
     @Test
@@ -461,11 +461,11 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Reference with invalid YAML format", errors, getManifestDefintionErrorCount());
+        assertExpectedErrors("Reference with invalid YAML format", errors, getManifestDefinitionErrorCount());
     }
 
     @Test
-    public void testGivenManifestFile_withValidSourceAndNonManoSources_thenNoErrorIsReturned() {
+    public void testGivenManifestFile_withValidSourceAndNonManoSources_thenNoErrorIsReturned() throws IOException {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -498,7 +498,7 @@ public class SOL004MetaDirectoryValidatorTest {
      * Manifest with non existent source files should return error.
      */
     @Test
-    public void testGivenManifestFile_withNonExistentSourceFile_thenErrorIsReturned() {
+    public void testGivenManifestFile_withNonExistentSourceFile_thenErrorIsReturned() throws IOException {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         //non existent reference
         manifestBuilder.withSource("Artifacts/Deployment/Events/RadioNode_pnf_v1.yaml");
@@ -862,7 +862,7 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
-        for (int i =0;i < getManifestDefintionErrorCount();i++)
+        for (int i =0;i < getManifestDefinitionErrorCount();i++)
             expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
                     , Messages.MISSING_IMPORT_FILE.formatMessage("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml"))
                     );
@@ -901,7 +901,7 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
-        for (int i =0;i < getManifestDefintionErrorCount();i++)
+        for (int i =0;i < getManifestDefinitionErrorCount();i++)
             expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
                 , Messages.INVALID_IMPORT_STATEMENT.formatMessage(definitionImportOne, "null"))
          );

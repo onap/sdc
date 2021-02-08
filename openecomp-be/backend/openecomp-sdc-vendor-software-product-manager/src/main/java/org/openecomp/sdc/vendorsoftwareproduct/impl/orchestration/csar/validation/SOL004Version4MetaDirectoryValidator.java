@@ -37,27 +37,18 @@ import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 
 /**
  * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure
- * as defined in ETSI GS NFV-SOL 004 v3.3.1.
+ * as defined in ETSI GS NFV-SOL 004 v3.3.1 with CNF Enhancements from ETSI GS NFV-SOL 004 v4.1.1
  */
-class SOL004Version3MetaDirectoryValidator extends SOL004MetaDirectoryValidator {
+class SOL004Version4MetaDirectoryValidator extends SOL004MetaDirectoryValidator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SOL004Version3MetaDirectoryValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOL004Version4MetaDirectoryValidator.class);
 
-    public SOL004Version3MetaDirectoryValidator() {
+    public SOL004Version4MetaDirectoryValidator() {
         super();
     }
 
-    SOL004Version3MetaDirectoryValidator(final SecurityManager securityManager) {
+    SOL004Version4MetaDirectoryValidator(final SecurityManager securityManager) {
         super(securityManager);
-    }
-
-    @Override
-    protected void handleOtherEntry(final Map.Entry<String, String> entry) {
-        if (!ToscaMetaEntry.OTHER_DEFINITIONS.getName().equals(entry.getKey())) {
-            reportError(ErrorLevel.ERROR, Messages.METADATA_UNSUPPORTED_ENTRY.formatMessage(entry.getKey()));
-            LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), entry.getKey());
-        } else
-            validateDefinitionFile(entry.getValue());
     }
 
     @Override
@@ -73,8 +64,19 @@ class SOL004Version3MetaDirectoryValidator extends SOL004MetaDirectoryValidator 
 
     @Override
     protected boolean isPnfMetadata(final Map<String, String> metadata) {
-        List<String> keys = metadata.keySet().stream().collect(Collectors.toList());
+        final List<String> keys = metadata.keySet().stream().collect(Collectors.toList());
         //Both VNF and PNF share this attribute
         return validatorUtils.isPnfMetadata(keys);
     }
+
+    @Override
+    protected void handleOtherEntry(final Map.Entry<String, String> entry) {
+        if (!ToscaMetaEntry.OTHER_DEFINITIONS.getName().equals(entry.getKey())) {
+            reportError(ErrorLevel.ERROR, Messages.METADATA_UNSUPPORTED_ENTRY.formatMessage(entry.getKey()));
+            LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), entry.getKey());
+        } else {
+            validateDefinitionFile(entry.getValue());
+        }
+    }
+
 }
