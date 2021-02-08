@@ -37,7 +37,8 @@ public enum NonManoArtifactType {
     ONAP_ANSIBLE_PLAYBOOKS("onap_ansible_playbooks"),
     ONAP_SCRIPTS("onap_scripts"),
     ONAP_OTHERS("onap_others"),
-    ONAP_SW_INFORMATION("onap_pnf_sw_information");
+    ONAP_SW_INFORMATION("onap_pnf_sw_information"),
+    ONAP_CNF_HELM("onap_cnf_helm");
 
     private final String type;
 

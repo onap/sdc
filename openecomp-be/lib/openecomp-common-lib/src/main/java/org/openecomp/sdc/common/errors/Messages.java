@@ -88,6 +88,10 @@ public enum Messages {
     INCORRECT_SW_INFORMATION_NON_MANO_ERROR(
         "Incorrect software information non-mano artifact. The software version information is missing "
             + "or it has one or more incorrect software version entries: '%s'"),
+    EMPTY_ONAP_CNF_HELM_NON_MANO_ERROR(
+        "Non-mano onap_cnf_helm artifact was declared in the manifest, but not provided"),
+    UNIQUE_ONAP_CNF_HELM_NON_MANO_ERROR("Only one onap_cnf_helm non-mano artifact is allowed. "
+        + "Found %s."),
     FAILED_TO_VALIDATE_METADATA("Failed to validate metadata file"),
     ARTIFACT_INVALID_SIGNATURE("Invalid signature '%s' provided for artifact '%s'"),
     ARTIFACT_SIGNATURE_VALIDATION_ERROR(
