@@ -21,7 +21,10 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -37,11 +40,6 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class ComponentInstanceInputPropertyDeceleratorTest {
 
@@ -65,7 +63,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		ComponentInstanceInput result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "createDeclaredProperty", prop);
+		result = testSubject.createDeclaredProperty(prop);
 	}
 
 	@Test
@@ -82,7 +80,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 				Mockito.any(Map.class))).thenReturn(Either.left(new Resource()));
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "updatePropertiesValues", component, cmptInstanceId, properties);
+		result = testSubject.updatePropertiesValues(component, cmptInstanceId, properties);
 	}
 
 	@Test
@@ -92,7 +90,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		Optional<ComponentInstance> result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "resolvePropertiesOwner", component, propertiesOwnerId);
+		result = testSubject.resolvePropertiesOwner(component, propertiesOwnerId);
 	}
 
 	@Test
@@ -102,8 +100,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		InputDefinition input = null;
 
 		// default test
-		Deencapsulation.invoke(testSubject, "addPropertiesListToInput", new ComponentInstanceInput(),
-				new InputDefinition());
+		testSubject.addPropertiesListToInput(new ComponentInstanceInput(), new InputDefinition());
 	}
 
 	@Test

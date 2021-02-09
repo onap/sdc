@@ -35,12 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,7 +51,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import mockit.Deencapsulation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -88,6 +87,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.ComponentCache.CacheEntry;
+import org.openecomp.sdc.be.tosca.CsarUtils.CsarDefinition;
 import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -245,7 +245,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, false);
+			testSubject.populateZip(component, getFromCS, zip, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -277,7 +277,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, false);
+			testSubject.populateZip(component, getFromCS, zip, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -348,7 +348,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.left(Mockito.any(ArtifactDefinition.class)));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
+			testSubject.populateZip(component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -397,7 +397,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.left(toscaTemplate));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
+			testSubject.populateZip(component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -447,7 +447,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.left(toscaTemplate));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
+			testSubject.populateZip(component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -500,7 +500,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
+			testSubject.populateZip(component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -533,7 +533,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
 				.thenReturn(Either.left(componentRI));
 
-		Deencapsulation.invoke(testSubject, "addInnerComponentsToCache", componentCache, childComponent);
+		testSubject.addInnerComponentsToCache(componentCache, childComponent);
 
 		io.vavr.collection.List<CacheEntry> expected = io.vavr.collection.List.of(entry("esId","artifactName",componentRI));
 		assertEquals(expected, componentCache.all().toList());
@@ -582,7 +582,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
-			Either<ZipOutputStream, ResponseFormat> output = Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName, false);
+			Either<ZipOutputStream, ResponseFormat> output = testSubject.writeComponentInterface(new Resource(), zip, fileName, false);
 
 			assertNotNull(output);
 			assertTrue(output.isLeft());
@@ -597,7 +597,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
-		Either<byte[], ActionStatus> output = Deencapsulation.invoke(testSubject, "getEntryData", cassandraId, childComponent);
+		Either<byte[], ActionStatus> output = testSubject.getEntryData(cassandraId, childComponent);
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -611,7 +611,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
 				.thenReturn(Either.left(filesData));
 
-		Either<byte[], ResponseFormat> output = Deencapsulation.invoke(testSubject, "getLatestSchemaFilesFromCassandra");
+		Either<byte[], ResponseFormat> output = testSubject.getLatestSchemaFilesFromCassandra();
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -639,7 +639,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
 		artifacts.put("key", new ArrayList<>());
 
-		Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
+		testSubject.addExtractedVfcArtifact(extractedVfcArtifact, artifacts);
 
 		assertEquals(1, artifacts.get("key").size());
 	}
@@ -651,7 +651,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
 		artifacts.put("key1", new ArrayList<>());
 
-		Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
+		testSubject.addExtractedVfcArtifact(extractedVfcArtifact, artifacts);
 
 		assertEquals(0, artifacts.get("key1").size());
 		assertEquals(1, artifacts.get("key").size());
@@ -666,7 +666,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Entry<String, byte[]> entry = map.entrySet().iterator().next();
 
 		Optional<ImmutablePair<String, ArtifactDefinition>> output =
-			Deencapsulation.invoke(testSubject, "extractVfcArtifact", entry, new HashMap<>());
+			testSubject.extractVfcArtifact(entry, new HashMap<>());
 
 		if(output.isPresent()) {
 			assertEquals("to", output.get().left);
@@ -677,7 +677,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 	@Test
 	public void testDetectArtifactGroupTypeWithExceptionBeingCaught() {
-		Either<ArtifactGroupTypeEnum, Boolean> output = Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", Map.class);
+		Either<ArtifactGroupTypeEnum, Boolean> output = testSubject.detectArtifactGroupType("type", Collections.emptyMap());
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -689,7 +689,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
 
 		collectedWarningMessages.put("Warning - unrecognized artifact group type {} was received.", new HashSet<>());
-		Either<ArtifactGroupTypeEnum, Boolean> output = Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", collectedWarningMessages);
+		Either<ArtifactGroupTypeEnum, Boolean> output = testSubject.detectArtifactGroupType("type", collectedWarningMessages);
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -809,7 +809,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
 				Either.right(StorageOperationStatus.BAD_REQUEST));
 
-		Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+		Either<CsarDefinition, ResponseFormat> output = testSubject.collectComponentCsarDefinition(component);
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -847,7 +847,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
 				Either.left(fetchedComponent), Either.right(StorageOperationStatus.BAD_REQUEST));
 
-		Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+		Either<CsarDefinition, ResponseFormat> output = testSubject.collectComponentCsarDefinition(component);
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -887,7 +887,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
 				Either.left(fetchedComponent));
 
-		Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+		Either<CsarDefinition, ResponseFormat> output = testSubject.collectComponentCsarDefinition(component);
 
 		assertNotNull(output);
 		assertTrue(output.isLeft());
@@ -945,8 +945,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 			final byte[] data = Files.readAllBytes(path);
 			try (final ByteArrayOutputStream out = new ByteArrayOutputStream();
 				final ZipOutputStream zip = new ZipOutputStream(out);) {
-				Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra",
-					zip, data, nodesFromPackage);
+				testSubject.addSchemaFilesFromCassandra(zip, data, nodesFromPackage);
 				zip.putNextEntry(new ZipEntry("Definitions/nodes.yml"));
 				zip.finish();
 			}
@@ -965,8 +964,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		final Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
 		dependencies.add(triple);
 		final List<String> expectedResult = Arrays.asList("tosca.nodes.Container.Application");
-		final List<String> result = Deencapsulation.invoke(testSubject,
-			"findNonRootNodesFromPackage", dependencies);
+		final List<String> result = testSubject.findNonRootNodesFromPackage(dependencies);
 		assertTrue(CollectionUtils.isNotEmpty(result));
 		assertEquals(expectedResult, result);
 	}

@@ -124,7 +124,7 @@ public class PolicyUtils {
         return policyDefinition;
     }
 
-    private static int extractNextPolicyCounterFromUniqueId(String uniqueId) {
+    static int extractNextPolicyCounterFromUniqueId(String uniqueId) {
         int counter = 0;
         if (isNotEmpty(uniqueId)) {
             counter = extractNextPolicyCounter(uniqueId, uniqueId.lastIndexOf(Constants.POLICY_UID_POSTFIX));
@@ -132,7 +132,7 @@ public class PolicyUtils {
         return counter;
     }
 
-    private static int extractNextPolicyCounterFromName(String policyName) {
+    static int extractNextPolicyCounterFromName(String policyName) {
         int counter = 0;
         if (isNotEmpty(policyName)) {
             counter = extractNextPolicyCounter(policyName, policyName.length());
@@ -140,7 +140,7 @@ public class PolicyUtils {
         return counter;
     }
 
-    private static int extractNextPolicyCounter(String policyName, int endIndex) {
+    static int extractNextPolicyCounter(String policyName, int endIndex) {
         int counter = 0;
         try {
             int beginIndex = policyName.lastIndexOf(GROUP_POLICY_NAME_DELIMETER) + GROUP_POLICY_NAME_DELIMETER.length();
@@ -153,11 +153,11 @@ public class PolicyUtils {
         return counter;
     }
 
-    private static Either<PolicyDefinition, ActionStatus> validateUpdateMutablePolicyFields(PolicyDefinition recievedPolicy, PolicyDefinition validPolicy, Map<String, PolicyDefinition> policies) {
+    static Either<PolicyDefinition, ActionStatus> validateUpdateMutablePolicyFields(PolicyDefinition recievedPolicy, PolicyDefinition validPolicy, Map<String, PolicyDefinition> policies) {
         return validateUpdatePolicyName(recievedPolicy, validPolicy, policies);
     }
 
-    private static void validateImmutablePolicyFields(PolicyDefinition receivedPolicy, PolicyDefinition validPolicy) {
+    static void validateImmutablePolicyFields(PolicyDefinition receivedPolicy, PolicyDefinition validPolicy) {
         logImmutableFieldUpdateWarning(receivedPolicy.getUniqueId(), validPolicy.getUniqueId(), JsonPresentationFields.UNIQUE_ID);
         logImmutableFieldUpdateWarning(receivedPolicy.getComponentName(), validPolicy.getComponentName(), JsonPresentationFields.CI_COMPONENT_NAME);
         logImmutableFieldUpdateWarning(receivedPolicy.getDerivedFrom(), validPolicy.getDerivedFrom(), JsonPresentationFields.DERIVED_FROM);
@@ -171,7 +171,7 @@ public class PolicyUtils {
         logImmutableFieldUpdateWarning(receivedPolicy.getIsFromCsar().toString(), validPolicy.getIsFromCsar().toString(), JsonPresentationFields.IS_FROM_CSAR);
     }
 
-    private static boolean isUpdatedField(String oldField, String newField) {
+    static boolean isUpdatedField(String oldField, String newField) {
         boolean isUpdatedField = false;
         if (isEmpty(oldField) && isNotEmpty(newField)) {
             isUpdatedField = true;
@@ -182,13 +182,13 @@ public class PolicyUtils {
         return isUpdatedField;
     }
 
-    private static void logImmutableFieldUpdateWarning(String oldValue, String newValue, JsonPresentationFields field) {
+    static void logImmutableFieldUpdateWarning(String oldValue, String newValue, JsonPresentationFields field) {
         if (isUpdatedField(oldValue, newValue)) {
             log.warn("#logImmutableFieldUpdateWarning - Update of the field {} of a policy not allowed. The change will be ignored. The old value is {} , the new value is {}. ", field, oldValue, newValue);
         }
     }
 
-    private static Either<PolicyDefinition, ActionStatus> validateUpdatePolicyName(PolicyDefinition receivedPolicy, PolicyDefinition validPolicy, Map<String, PolicyDefinition> policies) {
+    static Either<PolicyDefinition, ActionStatus> validateUpdatePolicyName(PolicyDefinition receivedPolicy, PolicyDefinition validPolicy, Map<String, PolicyDefinition> policies) {
         Either<PolicyDefinition, ActionStatus> result = null;
         Optional<PolicyDefinition> sameNamePolicy = Optional.empty();
         if (isEmpty(receivedPolicy.getName()) || !ValidationUtils.POLICY_NAME_PATTERN.matcher(receivedPolicy
