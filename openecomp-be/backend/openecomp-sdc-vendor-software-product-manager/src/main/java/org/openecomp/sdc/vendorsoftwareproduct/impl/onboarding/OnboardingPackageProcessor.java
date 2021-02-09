@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nokia
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding;
 
+import static org.openecomp.sdc.common.errors.Messages.COULD_NOT_READ_MANIFEST_FILE;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_EMPTY_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_INVALID_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_INVALID_EXTENSION;
@@ -47,6 +49,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.common.utils.CommonUtil;
@@ -56,6 +59,7 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
@@ -69,12 +73,14 @@ public class OnboardingPackageProcessor {
     private final String packageFileName;
     private final byte[] packageFileContent;
     private FileContentHandler onboardPackageContentHandler;
-    private Set<ErrorMessage> errorMessageSet = new HashSet<>();
-    private OnboardPackageInfo onboardPackageInfo;
+    private final Set<ErrorMessage> errorMessageSet = new HashSet<>();
+    private final OnboardPackageInfo onboardPackageInfo;
+    private final CnfPackageValidator cnfPackageValidator;
 
     public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent) {
         this.packageFileName = packageFileName;
         this.packageFileContent = packageFileContent;
+        this.cnfPackageValidator = new CnfPackageValidator();
         onboardPackageInfo = processPackage();
     }
 
@@ -109,7 +115,9 @@ public class OnboardingPackageProcessor {
                     ByteBuffer.wrap(packageFileContent), new OnboardingPackageContentHandler(onboardPackageContentHandler));
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.CSAR);
             } else if (packageExtension.equalsIgnoreCase(ZIP_EXTENSION)) {
-                addDummyHeat();
+                ManifestContent manifest = getManifest();
+                validateHemlPackage(manifest);
+                addDummyHeat(manifest);
                 final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
                     ByteBuffer.wrap(packageFileContent), onboardPackageContentHandler);
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
@@ -120,12 +128,36 @@ public class OnboardingPackageProcessor {
         return null;
     }
 
-    private void addDummyHeat() {
+    private void validateHemlPackage(ManifestContent manifest) {
+        ManifestAnalyzer analyzer = new ManifestAnalyzer(manifest);
+        if (shouldValidateHelmPackage(analyzer)) {
+            List<String> messages = cnfPackageValidator.validateHelmPackage(analyzer.getHelmEntries());
+            messages.forEach(message -> reportError(ErrorLevel.ERROR, message));
+        }
+    }
+
+    boolean shouldValidateHelmPackage(ManifestAnalyzer analyzer) {
+        return analyzer.hasHelmEntries() && !analyzer.hasHeatEntries();
+    }
+
+    private ManifestContent getManifest() {
+        ManifestContent manifest;
+        try (InputStream zipFileManifest = onboardPackageContentHandler
+            .getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            manifest = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+
+        } catch (Exception e) {
+            final String message = COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName);
+            LOGGER.error(message, e);
+            throw new SdcRuntimeException(message);
+        }
+        return manifest;
+    }
+
+    private void addDummyHeat(ManifestContent manifestContent) {
         // temporary fix for adding dummy base
         List<FileData> newfiledata = new ArrayList<>();
-        try (InputStream zipFileManifest = onboardPackageContentHandler.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
-            ManifestContent manifestContent =
-                    JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+        try {
             for (FileData fileData : manifestContent.getData()) {
                 if (Objects.nonNull(fileData.getType()) &&
                         fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {

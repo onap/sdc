@@ -33,6 +33,7 @@ public enum Messages {
     PACKAGE_PROCESS_INTERNAL_PACKAGE_ERROR("Could not process internal package '%s'"),
     PACKAGE_INVALID_ERROR("Invalid package content '%s'"),
     PACKAGE_MISSING_INTERNAL_PACKAGE("Missing expected internal package"),
+    COULD_NOT_READ_MANIFEST_FILE("Could not read manifest file: %s [%s]"),
     INVALID_ZIP_FILE("Invalid zip file"),
     INVALID_CSAR_FILE("Invalid csar file"),
     CSAR_FILE_NOT_FOUND("Each CSAR file must contain %s file."),
