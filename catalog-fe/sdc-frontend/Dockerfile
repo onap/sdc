@@ -1,4 +1,4 @@
-FROM jetty:9.4.31-jre11-slim
+FROM jetty:10.0.0-jre11-slim
 
 USER root
 

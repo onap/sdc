@@ -130,7 +130,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
         shutdownExecutor();
     }
 
-    private void shutdownExecutor() {
+    void shutdownExecutor() {
         if (scheduledPollingService == null)
             return;
 
@@ -153,7 +153,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
         }
     }
 
-    private Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAllDataTypesFromGraph() {
+    Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAllDataTypesFromGraph() {
 
         return propertyOperation
                 .getAllDataTypes();
@@ -266,7 +266,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
     }
 
-    private boolean compareDataTypes(Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime,
+    boolean compareDataTypes(Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime,
             Map<String, ImmutablePair<Long, Long>> currentDataTypeToModificationTime) {
         if (dataTypeNameToModificationTime.size() != currentDataTypeToModificationTime.size()) {
             return true;
@@ -306,7 +306,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
         return false;
     }
 
-    private void replaceAllData() {
+    void replaceAllData() {
 
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = propertyOperation
                 .getAllDataTypes();

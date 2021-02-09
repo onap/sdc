@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,73 +20,71 @@
 
 package org.openecomp.sdc.be.components.scheduledtasks;
 
-import mockit.Deencapsulation;
+import java.util.concurrent.ExecutorService;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 
-import java.util.concurrent.ExecutorService;
+public class AsdcComponentsCleanerTaskTest extends BeConfDependentTest {
 
-public class AsdcComponentsCleanerTaskTest extends BeConfDependentTest{
+    private AsdcComponentsCleanerTask createTestSubject() {
+        return new AsdcComponentsCleanerTask();
+    }
 
-	private AsdcComponentsCleanerTask createTestSubject() {
-		return new AsdcComponentsCleanerTask();
-	}
+    @Test
+    public void testInit() throws Exception {
+        AsdcComponentsCleanerTask testSubject;
 
-	@Test
-	public void testInit() throws Exception {
-		AsdcComponentsCleanerTask testSubject;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.init();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.init();
-	}
+    @Test
+    public void testDestroy() throws Exception {
+        AsdcComponentsCleanerTask testSubject;
 
-	@Test
-	public void testDestroy() throws Exception {
-		AsdcComponentsCleanerTask testSubject;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.destroy();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.destroy();
-	}
+    @Test
+    public void testStartTask() throws Exception {
+        AsdcComponentsCleanerTask testSubject;
 
-	@Test
-	public void testStartTask() throws Exception {
-		AsdcComponentsCleanerTask testSubject;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.startTask();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.startTask();
-	}
+    @Test
+    public void testStopTask() throws Exception {
+        AsdcComponentsCleanerTask testSubject;
 
-	@Test
-	public void testStopTask() throws Exception {
-		AsdcComponentsCleanerTask testSubject;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.stopTask();
+        testSubject.init();
+        testSubject.startTask();
+        testSubject.stopTask();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "stopTask");
-		testSubject.init();
-		testSubject.startTask();
-		Deencapsulation.invoke(testSubject, "stopTask");
-	}
+    @Test
+    public void testRun() throws Exception {
+        AsdcComponentsCleanerTask testSubject;
 
-	@Test
-	public void testRun() throws Exception {
-		AsdcComponentsCleanerTask testSubject;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.run();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.run();
-	}
+    @Test
+    public void testGetExecutorService() throws Exception {
+        AsdcComponentsCleanerTask testSubject;
+        ExecutorService result;
 
-	@Test
-	public void testGetExecutorService() throws Exception {
-		AsdcComponentsCleanerTask testSubject;
-		ExecutorService result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getExecutorService();
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getExecutorService();
+    }
 }

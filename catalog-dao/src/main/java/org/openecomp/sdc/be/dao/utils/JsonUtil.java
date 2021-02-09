@@ -38,7 +38,8 @@ import java.util.Map;
  * Simple utility for JSon processing.
  */
 public final class JsonUtil {
-	private static ObjectMapper getOneObjectMapper() {
+
+	static ObjectMapper getOneObjectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

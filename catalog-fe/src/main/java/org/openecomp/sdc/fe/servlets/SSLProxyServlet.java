@@ -21,6 +21,8 @@
 package org.openecomp.sdc.fe.servlets;
 
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.dynamic.HttpClientTransportDynamic;
+import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.openecomp.sdc.common.api.Constants;
@@ -46,17 +48,20 @@ public abstract class SSLProxyServlet extends ProxyServlet {
         HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
         setTimeout(TIMEOUT);
         client.setIdleTimeout(TIMEOUT);
-        client.setStopTimeout(TIMEOUT);
+        client.setConnectTimeout(TIMEOUT);
 
         return client;
     }
 
     private HttpClient getSecureHttpClient() throws ServletException {
         // Instantiate and configure the SslContextFactory
-        SslContextFactory sslContextFactory = new SslContextFactory(true);
+        SslContextFactory.Client sslContextFactory = new SslContextFactory.Client.Client(true);
+
+        ClientConnector clientConnector = new ClientConnector();
+        clientConnector.setSslContextFactory(sslContextFactory);
 
         // Instantiate HttpClient with the SslContextFactory
-        HttpClient httpClient = new HttpClient(sslContextFactory);
+        HttpClient httpClient = new HttpClient(new HttpClientTransportDynamic(clientConnector));
 
         // Configure HttpClient, for example:
         httpClient.setFollowRedirects(false);
