@@ -26,8 +26,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class ServiceUtilsTest {
 
@@ -39,7 +39,7 @@ public class ServiceUtilsTest {
     public void shouldCreateObjectUsingSetters() throws Exception {
         TestModel testModel = getTestModel();
         Optional<TestModel> objectUsingSetters = ServiceUtils.createObjectUsingSetters(testModel, TestModel.class);
-        assertNotEquals(objectUsingSetters.orElseThrow(() -> new Exception(INVALID_MODEL)), testModel);
+        assertFalse((objectUsingSetters.orElseThrow(() -> new Exception(INVALID_MODEL))).equals(testModel));
         assertEquals(objectUsingSetters.orElseThrow(() -> new Exception(INVALID_MODEL)).getProp(), testModel.getProp());
     }
 

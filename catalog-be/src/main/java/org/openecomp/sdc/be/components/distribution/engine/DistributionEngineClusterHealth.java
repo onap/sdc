@@ -49,23 +49,23 @@ public class DistributionEngineClusterHealth {
     protected static String UEB_HEALTH_LOG_CONTEXT = "ueb.healthcheck";
 
     //TODO use LoggerMetric instead
-    private static final Logger healthLogger = Logger.getLogger(UEB_HEALTH_LOG_CONTEXT);
+    static final Logger healthLogger = Logger.getLogger(UEB_HEALTH_LOG_CONTEXT);
 
-    private static final String UEB_HEALTH_CHECK_STR = "uebHealthCheck";
+    static final String UEB_HEALTH_CHECK_STR = "uebHealthCheck";
 
     boolean lastHealthState = false;
 
     Object lockOject = new Object();
 
-    private long reconnectInterval = 5;
+    long reconnectInterval = 5;
 
-    private long healthCheckReadTimeout = 20;
+    long healthCheckReadTimeout = 20;
 
-    private static final Logger logger = Logger.getLogger(DistributionEngineClusterHealth.class.getName());
+    static final Logger logger = Logger.getLogger(DistributionEngineClusterHealth.class.getName());
 
-    private List<String> uebServers = null;
+    List<String> uebServers = null;
 
-    private String publicApiKey = null;
+    String publicApiKey = null;
 
     public enum HealthCheckInfoResult {
 
@@ -75,7 +75,7 @@ public class DistributionEngineClusterHealth {
         DISABLED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription())),
         UNKNOWN(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UNKNOWN, null, ClusterStatusDescription.UNKNOWN.getDescription()));
 
-        private HealthCheckInfo healthCheckInfo;
+        HealthCheckInfo healthCheckInfo;
 
         HealthCheckInfoResult(HealthCheckInfo healthCheckInfo) {
             this.healthCheckInfo = healthCheckInfo;
@@ -87,11 +87,11 @@ public class DistributionEngineClusterHealth {
 
     }
 
-    private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
+    HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
 
-    private Map<String, AtomicBoolean> envNamePerStatus = null;
+    Map<String, AtomicBoolean> envNamePerStatus = null;
 
-    private ScheduledFuture<?> scheduledFuture = null;
+    ScheduledFuture<?> scheduledFuture = null;
 
     ScheduledExecutorService healthCheckScheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
         @Override
@@ -106,7 +106,7 @@ public class DistributionEngineClusterHealth {
 
         OK("OK"), UNAVAILABLE("U-EB cluster is not available"), NOT_CONFIGURED("U-EB cluster is not configured"), DISABLED("DE is disabled in configuration"), UNKNOWN("U-EB cluster is currently unknown (try again in few minutes)");
 
-        private String desc;
+        String desc;
 
         ClusterStatusDescription(String desc) {
             this.desc = desc;
@@ -176,7 +176,7 @@ public class DistributionEngineClusterHealth {
          * verify that at least one environment is up.
          *
          */
-        private boolean verifyAtLeastOneEnvIsUp() {
+        boolean verifyAtLeastOneEnvIsUp() {
 
             boolean healthStatus = false;
 
@@ -211,7 +211,7 @@ public class DistributionEngineClusterHealth {
          *
          * @return
          */
-        private boolean queryUeb() {
+        boolean queryUeb() {
 
             Boolean result = false;
             int retryNumber = 1;
@@ -308,7 +308,7 @@ public class DistributionEngineClusterHealth {
         startHealthCheckTask(envNamePerStatus, true);
     }
 
-    private void logAlarm(boolean lastHealthState) {
+    void logAlarm(boolean lastHealthState) {
         if (lastHealthState) {
             BeEcompErrorManager.getInstance().logBeHealthCheckUebClusterRecovery(UEB_HEALTH_CHECK_STR);
         } else {

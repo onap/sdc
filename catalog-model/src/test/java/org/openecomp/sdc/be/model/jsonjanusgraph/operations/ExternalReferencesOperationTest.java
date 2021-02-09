@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
  * Created by yavivi on 26/01/2018.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@ContextConfiguration("classpath*:application-context-test.xml")
 public class ExternalReferencesOperationTest extends ModelTestBase {
 
     private static final String COMPONENT_ID = "ci-MyComponentName";
