@@ -1,37 +1,36 @@
 /*
-
  * Copyright (c) 2018 AT&T Intellectual Property.
-
+ * Copyright (c) 2021 Nokia
  *
-
  * Licensed under the Apache License, Version 2.0 (the "License");
-
  * you may not use this file except in compliance with the License.
-
  * You may obtain a copy of the License at
-
  *
-
  *     http://www.apache.org/licenses/LICENSE-2.0
-
  *
-
  * Unless required by applicable law or agreed to in writing, software
-
  * distributed under the License is distributed on an "AS IS" BASIS,
-
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
  * See the License for the specific language governing permissions and
-
  * limitations under the License.
-
  */
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.Arrays;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -43,7 +42,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.openecomp.sdc.be.components.impl.*;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
@@ -68,22 +71,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 public class AbstractTemplateServletTest extends JerseyTest {
 
     private static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
@@ -105,8 +92,6 @@ public class AbstractTemplateServletTest extends JerseyTest {
     private static final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
     private static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
     private static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    private static String serviceVertexUuid;
-
 
     @BeforeClass
     public static void setup() {
@@ -171,14 +156,22 @@ public class AbstractTemplateServletTest extends JerseyTest {
             return ret;
         });
     }
+
     @Test
     public void createVfcmtHappyScenario() {
         final JSONObject createRequest = buildCreateJsonRequest();
-        Response response = target().path("/v1/catalog/abstract").request(MediaType.APPLICATION_JSON).header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId").header(Constants.USER_ID_HEADER, "mockAttID")
-                .post(Entity.json(createRequest.toJSONString()), Response.class);
+
+        Response response = target()
+            .path("/v1/catalog/abstract")
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId")
+            .header(Constants.USER_ID_HEADER, "mockAttID")
+            .post(Entity.json(createRequest.toJSONString()), Response.class);
+
         assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
     }
+
     private static final String BASIC_CREATE_REQUEST = "{\r\n" +
             "  \"name\": \"VFCMT_1\",\r\n" +
             "  \"description\": \"VFCMT Description\",\r\n" +
@@ -193,11 +186,10 @@ public class AbstractTemplateServletTest extends JerseyTest {
             "  \"icon\" : \"defaulticon\",\r\n" +
             "  \"contactId\": \"cs0008\"\r\n" +
             "}";
-    private JSONObject buildCreateJsonRequest() {
 
+    private JSONObject buildCreateJsonRequest() {
         JSONParser parser = new JSONParser();
         return (JSONObject) FunctionalInterfaces.swallowException( () -> parser.parse(BASIC_CREATE_REQUEST));
-
     }
 
     @Override
@@ -205,7 +197,7 @@ public class AbstractTemplateServletTest extends JerseyTest {
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig()
-                .register(new CrudExternalServlet(userBusinessLogic, componentInstanceBusinessLogic,componentsUtils,servletUtils,resourceImportManager, elementBusinessLogic, assetMetadataConverter, lifecycleBusinessLogic, resourceBusinessLogic, serviceBusinessLogic))
+                .register(createMockServlet())
                 .register(new AbstractBinder() {
 
                     @Override
@@ -214,6 +206,20 @@ public class AbstractTemplateServletTest extends JerseyTest {
                     }
                 })
                 .property("contextConfig", context);
+    }
+
+    private CrudExternalServlet createMockServlet() {
+        return new CrudExternalServlet(
+            userBusinessLogic,
+            componentInstanceBusinessLogic,
+            componentsUtils,
+            servletUtils,
+            resourceImportManager,
+            elementBusinessLogic,
+            assetMetadataConverter,
+            lifecycleBusinessLogic,
+            resourceBusinessLogic,
+            serviceBusinessLogic);
     }
 
 }
