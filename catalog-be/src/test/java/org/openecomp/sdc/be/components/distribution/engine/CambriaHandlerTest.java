@@ -29,7 +29,6 @@ import com.att.nsa.cambria.client.CambriaClientBuilders.TopicManagerBuilder;
 import com.att.nsa.cambria.client.CambriaConsumer;
 import com.att.nsa.cambria.client.CambriaIdentityManager;
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -119,11 +118,10 @@ public class CambriaHandlerTest extends BeConfDependentTest {
 	public void testProcessMessageException() throws Exception {
 		CambriaHandler testSubject;
 		String message = "";
-		Integer result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "processMessageException", new Object[] { message });
+		testSubject.processMessageException(message);
 	}
 
 	@Test
@@ -132,11 +130,10 @@ public class CambriaHandlerTest extends BeConfDependentTest {
 		String patternStr = "";
 		String message = "";
 		int groupIndex = 0;
-		Integer result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "checkPattern", new Object[] { patternStr, message, groupIndex });
+		testSubject.checkPattern(patternStr, message, groupIndex);
 	}
 
 	@Test
@@ -155,25 +152,24 @@ public class CambriaHandlerTest extends BeConfDependentTest {
 	public void testProcessError() throws Exception {
 		CambriaHandler testSubject;
 		Exception e = null;
-		CambriaErrorResponse result;
 
 		// default test
 		testSubject = createTestSubject();
 
 		e = new Exception("HTTP Status 999");
-		result = Deencapsulation.invoke(testSubject, "processError", e);
+		testSubject.processError(e);
 
 		e = new Exception("HTTP Status 401");
-		result = Deencapsulation.invoke(testSubject, "processError", e);
+		testSubject.processError(e);
 
 		e = new Exception("HTTP Status 409");
-		result = Deencapsulation.invoke(testSubject, "processError", e);
+		testSubject.processError(e);
 
 		e = new Exception("HTTP Status 500");
-		result = Deencapsulation.invoke(testSubject, "processError", e);
+		testSubject.processError(e);
 
 		e = new Exception("mock", new Throwable(new Throwable("mock")));
-		result = Deencapsulation.invoke(testSubject, "processError", e);
+		testSubject.processError(e);
 	}
 
 	@Test
@@ -187,7 +183,7 @@ public class CambriaHandlerTest extends BeConfDependentTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "writeErrorToLog", cambriaErrorResponse, "mock", "mock");
+		testSubject.writeErrorToLog(cambriaErrorResponse, "mock", "mock");
 	}
 
 	@Test
@@ -348,7 +344,7 @@ public class CambriaHandlerTest extends BeConfDependentTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "buildCambriaClient", client);
+		testSubject.buildCambriaClient(client);
 	}
 
 }

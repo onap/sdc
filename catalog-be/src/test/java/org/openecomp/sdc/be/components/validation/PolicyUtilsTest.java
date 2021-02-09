@@ -17,8 +17,13 @@
 
 package org.openecomp.sdc.be.components.validation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.utils.ComponentInstancePropertyBuilder;
@@ -37,184 +42,176 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+public class PolicyUtilsTest extends BeConfDependentTest {
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+    private static final String PROP_NAME = "propertyName";
+    private static final String COMP_ID = "compId";
+    private static final String appConfigDir = "src/test/resources/config/catalog-be";
+    private static final String EXPECTED_SERVICE_POLICY_TYPE = "a.b.c";
+    private static final String EXPECTED_RESOURCE_POLICY_TYPE = "c.d.e";
+    private static final String POLICY_ID_1 = "policyId1";
+    private static final String POLICY_ID_2 = "policyId2";
+    private static final String POLICY_NAME = "policyName";
 
-public class PolicyUtilsTest extends BeConfDependentTest{
+    @Test
+    public void testGetNextPolicyCounter() throws Exception {
+        Map<String, PolicyDefinition> policies = null;
+        int result;
 
-	private static final String PROP_NAME = "propertyName";
-	private static final String COMP_ID = "compId";
-	private static final String appConfigDir = "src/test/resources/config/catalog-be";
-	private static final String EXPECTED_SERVICE_POLICY_TYPE = "a.b.c";
-	private static final String EXPECTED_RESOURCE_POLICY_TYPE = "c.d.e";
-	private static final String POLICY_ID_1 = "policyId1";
-	private static final String POLICY_ID_2 = "policyId2";
-	private static final String POLICY_NAME = "policyName";
+        // default test
+        result = PolicyUtils.getNextPolicyCounter(policies);
+    }
 
-	@Test
-	public void testGetNextPolicyCounter() throws Exception {
-		Map<String, PolicyDefinition> policies = null;
-		int result;
+    @Test
+    public void testValidatePolicyFields() throws Exception {
+        PolicyDefinition recievedPolicy = new PolicyDefinition();
+        PolicyDefinition validPolicy = new PolicyDefinition();
+        Map<String, PolicyDefinition> policies = null;
+        Either<PolicyDefinition, ActionStatus> result;
 
-		// default test
-		result = PolicyUtils.getNextPolicyCounter(policies);
-	}
+        // default test
+        result = PolicyUtils.validatePolicyFields(recievedPolicy, validPolicy, policies);
+    }
 
-	@Test
-	public void testValidatePolicyFields() throws Exception {
-		PolicyDefinition recievedPolicy = new PolicyDefinition();
-		PolicyDefinition validPolicy = new PolicyDefinition();
-		Map<String, PolicyDefinition> policies = null;
-		Either<PolicyDefinition, ActionStatus> result;
+    @Test
+    public void testValidatePolicyFieldsOneEmptyField() {
+        PolicyDefinition receivedPolicy = new PolicyDefinition();
+        PolicyDefinition validPolicy = new PolicyDefinition();
 
-		// default test
-		result = PolicyUtils.validatePolicyFields(recievedPolicy, validPolicy, policies);
-	}
+        receivedPolicy.setName(POLICY_NAME);
+        receivedPolicy.setUniqueId(null);
+        validPolicy.setUniqueId(POLICY_ID_2);
 
-	@Test
-	public void testValidatePolicyFieldsOneEmptyField() {
-		PolicyDefinition receivedPolicy = new PolicyDefinition();
-		PolicyDefinition validPolicy = new PolicyDefinition();
+        Either<PolicyDefinition, ActionStatus> policyEither =
+            PolicyUtils.validatePolicyFields(receivedPolicy, validPolicy, null);
 
-		receivedPolicy.setName(POLICY_NAME);
-		receivedPolicy.setUniqueId(null);
-		validPolicy.setUniqueId(POLICY_ID_2);
+        assertTrue(policyEither.isLeft());
+        assertEquals(validPolicy, policyEither.left().value());
+    }
 
-		Either<PolicyDefinition, ActionStatus> policyEither =
-				PolicyUtils.validatePolicyFields(receivedPolicy, validPolicy, null);
+    @Test
+    public void testValidatePolicyFieldsUpdateUniqueId() {
+        PolicyDefinition receivedPolicy = new PolicyDefinition();
+        PolicyDefinition validPolicy = new PolicyDefinition();
 
-		assertTrue(policyEither.isLeft());
-		assertEquals(validPolicy, policyEither.left().value());
-	}
+        receivedPolicy.setName(POLICY_NAME);
+        receivedPolicy.setUniqueId(POLICY_ID_1);
+        validPolicy.setUniqueId(POLICY_ID_2);
 
-	@Test
-	public void testValidatePolicyFieldsUpdateUniqueId() {
-		PolicyDefinition receivedPolicy = new PolicyDefinition();
-		PolicyDefinition validPolicy = new PolicyDefinition();
+        Either<PolicyDefinition, ActionStatus> policyEither =
+            PolicyUtils.validatePolicyFields(receivedPolicy, validPolicy, null);
 
-		receivedPolicy.setName(POLICY_NAME);
-		receivedPolicy.setUniqueId(POLICY_ID_1);
-		validPolicy.setUniqueId(POLICY_ID_2);
+        assertTrue(policyEither.isLeft());
+        assertEquals(validPolicy, policyEither.left().value());
+    }
 
-		Either<PolicyDefinition, ActionStatus> policyEither =
-				PolicyUtils.validatePolicyFields(receivedPolicy, validPolicy, null);
+    @Test
+    public void testGetExcludedPolicyTypesByComponent() throws Exception {
+        Component component = new Resource();
+        Set<String> result;
 
-		assertTrue(policyEither.isLeft());
-		assertEquals(validPolicy, policyEither.left().value());
-	}
+        // default test
+        result = PolicyUtils.getExcludedPolicyTypesByComponent(component);
+        component = new Service();
+        result = PolicyUtils.getExcludedPolicyTypesByComponent(component);
+    }
 
-	@Test
-	public void testGetExcludedPolicyTypesByComponent() throws Exception {
-		Component component = new Resource();
-		Set<String> result;
+    @Test
+    public void testGetExcludedPoliciesWithServiceComponent() {
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
+        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
-		// default test
-		result = PolicyUtils.getExcludedPolicyTypesByComponent(component);
-		component = new Service();
-		result = PolicyUtils.getExcludedPolicyTypesByComponent(component);
-	}
+        Service service = new ServiceBuilder().setUniqueId(COMP_ID).build();
 
-	@Test
-	public void testGetExcludedPoliciesWithServiceComponent() {
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+        Set<String> policyTypes = PolicyUtils.getExcludedPolicyTypesByComponent(service);
+        validateExtractedPolicies(policyTypes, EXPECTED_SERVICE_POLICY_TYPE);
+    }
 
-		Service service = new ServiceBuilder().setUniqueId(COMP_ID).build();
+    @Test
+    public void testGetExcludedPoliciesWithResourceComponent() {
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
+        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
-		Set<String> policyTypes = PolicyUtils.getExcludedPolicyTypesByComponent(service);
-		validateExtractedPolicies(policyTypes, EXPECTED_SERVICE_POLICY_TYPE);
-	}
+        Resource resource = new ResourceBuilder().setUniqueId(COMP_ID).build();
 
-	@Test
-	public void testGetExcludedPoliciesWithResourceComponent() {
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+        Set<String> policyTypes = PolicyUtils.getExcludedPolicyTypesByComponent(resource);
+        validateExtractedPolicies(policyTypes, EXPECTED_RESOURCE_POLICY_TYPE);
+    }
 
-		Resource resource = new ResourceBuilder().setUniqueId(COMP_ID).build();
+    @Test
+    public void testExtractNextPolicyCounterFromUniqueId() throws Exception {
+        String uniqueId = "";
+        int result;
 
-		Set<String> policyTypes = PolicyUtils.getExcludedPolicyTypesByComponent(resource);
-		validateExtractedPolicies(policyTypes, EXPECTED_RESOURCE_POLICY_TYPE);
-	}
+        // default test
+        result = PolicyUtils.extractNextPolicyCounterFromUniqueId(uniqueId);
+    }
 
-	@Test
-	public void testExtractNextPolicyCounterFromUniqueId() throws Exception {
-		String uniqueId = "";
-		int result;
+    @Test
+    public void testExtractNextPolicyCounterFromName() throws Exception {
+        String policyName = "";
+        int result;
 
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounterFromUniqueId",
-				new Object[] { uniqueId });
-	}
+        // default test
+        result = PolicyUtils.extractNextPolicyCounterFromName(
+            policyName);
+    }
 
-	@Test
-	public void testExtractNextPolicyCounterFromName() throws Exception {
-		String policyName = "";
-		int result;
+    @Test
+    public void testExtractNextPolicyCounter() throws Exception {
+        String policyName = "";
+        int endIndex = 0;
+        int result;
 
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounterFromName",
-				new Object[] { policyName });
-	}
+        // default test
+        result = PolicyUtils.extractNextPolicyCounter(
+            policyName, endIndex);
+    }
 
-	@Test
-	public void testExtractNextPolicyCounter() throws Exception {
-		String policyName = "";
-		int endIndex = 0;
-		int result;
+    @Test
+    public void testValidateImmutablePolicyFields() throws Exception {
+        PolicyDefinition receivedPolicy = new PolicyDefinition();
+        PolicyDefinition validPolicy = new PolicyDefinition();
 
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounter",
-				new Object[] { policyName, endIndex });
-	}
+        // default test
+        PolicyUtils.validateImmutablePolicyFields(receivedPolicy, validPolicy);
+    }
 
-	@Test
-	public void testValidateImmutablePolicyFields() throws Exception {
-		PolicyDefinition receivedPolicy = new PolicyDefinition();
-		PolicyDefinition validPolicy = new PolicyDefinition();
+    @Test
+    public void testIsUpdatedField() throws Exception {
+        String oldField = "";
+        String newField = "";
+        boolean result;
 
-		// default test
-		Deencapsulation.invoke(PolicyUtils.class, "validateImmutablePolicyFields",
-				receivedPolicy, validPolicy);
-	}
+        // default test
+        result = PolicyUtils.isUpdatedField(oldField, newField);
+    }
 
-	@Test
-	public void testIsUpdatedField() throws Exception {
-		String oldField = "";
-		String newField = "";
-		boolean result;
+    @Test
+    public void testLogImmutableFieldUpdateWarning() throws Exception {
+        String oldValue = "";
+        String newValue = "";
+        JsonPresentationFields field = null;
 
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "isUpdatedField", new Object[] { oldField, newField });
-	}
+        // default test
+        PolicyUtils.logImmutableFieldUpdateWarning(oldValue, newValue, field);
+    }
 
-	@Test
-	public void testLogImmutableFieldUpdateWarning() throws Exception {
-		String oldValue = "";
-		String newValue = "";
-		JsonPresentationFields field = null;
+    @Test
+    public void testGetDeclaredPolicyDefinition() {
+        ComponentInstanceProperty property = new ComponentInstancePropertyBuilder().setName(PROP_NAME).build();
+        PolicyDefinition policy = PolicyUtils.getDeclaredPolicyDefinition(COMP_ID, property);
 
-		// default test
-		Deencapsulation.invoke(PolicyUtils.class, "logImmutableFieldUpdateWarning",
-				new Object[] { oldValue, newValue, JsonPresentationFields.class });
-	}
+        assertTrue(Objects.nonNull(policy));
+        assertEquals(UniqueIdBuilder.buildPolicyUniqueId(COMP_ID, PROP_NAME), policy.getUniqueId());
+        assertEquals(COMP_ID, policy.getInstanceUniqueId());
+    }
 
-	@Test
-	public void testGetDeclaredPolicyDefinition() {
-		ComponentInstanceProperty property = new ComponentInstancePropertyBuilder().setName(PROP_NAME).build();
-		PolicyDefinition policy = PolicyUtils.getDeclaredPolicyDefinition(COMP_ID, property);
-
-		assertTrue(Objects.nonNull(policy));
-		assertEquals(UniqueIdBuilder.buildPolicyUniqueId(COMP_ID, PROP_NAME), policy.getUniqueId());
-		assertEquals(COMP_ID, policy.getInstanceUniqueId());
-	}
-
-	private void validateExtractedPolicies(Set<String> policyTypes, String expectedType) {
-		assertTrue(org.apache.commons.collections.CollectionUtils.isNotEmpty(policyTypes));
-		assertEquals(1, policyTypes.size());
-		assertEquals(expectedType, policyTypes.iterator().next());
-	}
+    private void validateExtractedPolicies(Set<String> policyTypes, String expectedType) {
+        assertTrue(org.apache.commons.collections.CollectionUtils.isNotEmpty(policyTypes));
+        assertEquals(1, policyTypes.size());
+        assertEquals(expectedType, policyTypes.iterator().next());
+    }
 }

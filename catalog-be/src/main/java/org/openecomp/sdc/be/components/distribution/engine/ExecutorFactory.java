@@ -51,7 +51,7 @@ public class ExecutorFactory {
         return Executors.newSingleThreadScheduledExecutor(threadFactory);
     }
 
-    private ThreadFactory createThreadFactory(String name, UncaughtExceptionHandler exceptionHandler) {
+    ThreadFactory createThreadFactory(String name, UncaughtExceptionHandler exceptionHandler) {
         String nameFormat = name + "-%d";
         return new ThreadFactoryBuilder()
                 .setThreadFactory(Executors.defaultThreadFactory())

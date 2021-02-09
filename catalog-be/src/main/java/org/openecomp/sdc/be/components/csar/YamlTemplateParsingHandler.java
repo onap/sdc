@@ -109,17 +109,17 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.VALID_SOURC
 @Component
 public class YamlTemplateParsingHandler {
 
-    private static final Pattern propertyValuePattern = Pattern.compile("[ ]*\\{[ ]*(str_replace=|token=|get_property=|concat=|get_attribute=)+");
-    private static final int SUB_MAPPING_CAPABILITY_OWNER_NAME_IDX = 0;
-    private static final int SUB_MAPPING_CAPABILITY_NAME_IDX = 1;
-    private static final Logger log = Logger.getLogger(YamlTemplateParsingHandler.class);
+     static final Pattern propertyValuePattern = Pattern.compile("[ ]*\\{[ ]*(str_replace=|token=|get_property=|concat=|get_attribute=)+");
+     static final int SUB_MAPPING_CAPABILITY_OWNER_NAME_IDX = 0;
+     static final int SUB_MAPPING_CAPABILITY_NAME_IDX = 1;
+     static final Logger log = Logger.getLogger(YamlTemplateParsingHandler.class);
 
 
-    private Gson gson = new Gson();
-    private JanusGraphDao janusGraphDao;
-    private GroupTypeBusinessLogic groupTypeBusinessLogic;
-    private AnnotationBusinessLogic annotationBusinessLogic;
-    private PolicyTypeBusinessLogic policyTypeBusinessLogic;
+     Gson gson = new Gson();
+     JanusGraphDao janusGraphDao;
+     GroupTypeBusinessLogic groupTypeBusinessLogic;
+     AnnotationBusinessLogic annotationBusinessLogic;
+     PolicyTypeBusinessLogic policyTypeBusinessLogic;
 
     public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao, GroupTypeBusinessLogic groupTypeBusinessLogic,
             AnnotationBusinessLogic annotationBusinessLogic, PolicyTypeBusinessLogic policyTypeBusinessLogic) {
@@ -148,7 +148,7 @@ public class YamlTemplateParsingHandler {
         return parsedToscaYamlInfo;
     }
 
-    private Map<String, Object> getMappedToscaTemplate(String fileName, String resourceYml, Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
+     Map<String, Object> getMappedToscaTemplate(String fileName, String resourceYml, Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
         Map<String, Object> mappedToscaTemplate;
         if (isNodeExist(nodeTypesInfo, nodeName)) {
             mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
@@ -158,7 +158,7 @@ public class YamlTemplateParsingHandler {
         return mappedToscaTemplate;
     }
 
-    private Map<String, Object> loadYaml(String fileName, String resourceYml) {
+     Map<String, Object> loadYaml(String fileName, String resourceYml) {
         Map<String, Object> mappedToscaTemplate = null;
         try {
             mappedToscaTemplate = loadYamlAsStrictMap(resourceYml);
@@ -169,11 +169,11 @@ public class YamlTemplateParsingHandler {
         return mappedToscaTemplate;
     }
 
-    private boolean isNodeExist(Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
+     boolean isNodeExist(Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
         return nodeTypesInfo != null && nodeName != null && nodeTypesInfo.containsKey(nodeName);
     }
 
-    private Map<String, InputDefinition> getInputs(Map<String, Object> toscaJson) {
+     Map<String, InputDefinition> getInputs(Map<String, Object> toscaJson) {
         Map<String, InputDefinition> inputs = ImportUtils.getInputs(toscaJson, annotationBusinessLogic.getAnnotationTypeOperations())
                 .left()
                 .on(err -> new HashMap<>());
@@ -181,7 +181,7 @@ public class YamlTemplateParsingHandler {
         return inputs;
     }
 
-    private Map<String, PolicyDefinition> getPolicies(String fileName, Map<String, Object> toscaJson) {
+     Map<String, PolicyDefinition> getPolicies(String fileName, Map<String, Object> toscaJson) {
 
         Map<String, Object> foundPolicies = findFirstToscaMapElement(toscaJson, POLICIES)
                                                   .left()
@@ -197,7 +197,7 @@ public class YamlTemplateParsingHandler {
         return Collections.emptyMap();
     }
 
-    private PolicyDefinition createPolicy(Map.Entry<String, Object> policyNameValue) {
+     PolicyDefinition createPolicy(Map.Entry<String, Object> policyNameValue) {
         PolicyDefinition emptyPolicyDef = new PolicyDefinition();
         String policyName = policyNameValue.getKey();
         emptyPolicyDef.setName(policyName);
@@ -215,12 +215,12 @@ public class YamlTemplateParsingHandler {
         return emptyPolicyDef;
     }
 
-    private Map<String, Object> logPoliciesNotFound(String fileName) {
+     Map<String, Object> logPoliciesNotFound(String fileName) {
         log.debug("#logPoliciesNotFound - Policies were not found in the yaml template {}.", fileName);
         return Collections.emptyMap();
     }
 
-    private void validateAndFillPolicy(PolicyDefinition emptyPolicyDefinition, Map<String, Object> policyTemplateJsonMap) {
+     void validateAndFillPolicy(PolicyDefinition emptyPolicyDefinition, Map<String, Object> policyTemplateJsonMap) {
         String policyTypeName = (String) policyTemplateJsonMap.get(TYPE.getElementName());
         if(StringUtils.isEmpty(policyTypeName)){
             log.debug("#validateAndFillPolicy - The 'type' member is not found under policy {}", emptyPolicyDefinition.getName());
@@ -234,7 +234,7 @@ public class YamlTemplateParsingHandler {
         emptyPolicyDefinition.setProperties(validateFillPolicyProperties(policyTypeDefinition, policyTemplateJsonMap));
     }
 
-    private PolicyTypeDefinition validateGetPolicyTypeDefinition(String policyType) {
+     PolicyTypeDefinition validateGetPolicyTypeDefinition(String policyType) {
         PolicyTypeDefinition policyTypeDefinition = policyTypeBusinessLogic.getLatestPolicyTypeByType(policyType);
         if (policyTypeDefinition == null) {
             log.debug("#validateAndFillPolicy - The policy type {} not found", policyType);
@@ -243,7 +243,7 @@ public class YamlTemplateParsingHandler {
         return policyTypeDefinition;
     }
 
-    private List<PropertyDataDefinition> validateFillPolicyProperties(PolicyTypeDefinition policyTypeDefinition,
+     List<PropertyDataDefinition> validateFillPolicyProperties(PolicyTypeDefinition policyTypeDefinition,
             Map<String, Object> policyTemplateJsonMap) {
         if (MapUtils.isEmpty(policyTemplateJsonMap) || Objects.isNull(policyTypeDefinition)) {
             return Collections.emptyList();
@@ -265,7 +265,7 @@ public class YamlTemplateParsingHandler {
         return propertyDataDefinitionList;
     }
 
-    private PropertyDataDefinition setPropertyValue(Map<String, Object> propertiesMap, PropertyDataDefinition srcPropertyDataDefinition) {
+     PropertyDataDefinition setPropertyValue(Map<String, Object> propertiesMap, PropertyDataDefinition srcPropertyDataDefinition) {
         PropertyDataDefinition newPropertyDef = new PropertyDataDefinition(srcPropertyDataDefinition);
         String propertyName = newPropertyDef.getName();
         if (Objects.nonNull(propertiesMap.get(propertyName))) {
@@ -275,7 +275,7 @@ public class YamlTemplateParsingHandler {
         return newPropertyDef;
     }
 
-    private Map<PolicyTargetType, List<String>> validateFillPolicyTargets(Map<String, Object> policyTemplateJson) {
+     Map<PolicyTargetType, List<String>> validateFillPolicyTargets(Map<String, Object> policyTemplateJson) {
         Map<PolicyTargetType, List<String>> targets = new EnumMap<>(PolicyTargetType.class);
         if (policyTemplateJson.containsKey(TARGETS.getElementName())
                     && policyTemplateJson.get(TARGETS.getElementName()) instanceof List ) {
@@ -285,7 +285,7 @@ public class YamlTemplateParsingHandler {
         return targets;
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(String yamlName, Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames) {
+     Map<String, UploadComponentInstanceInfo> getInstances(String yamlName, Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames) {
 
         Map<String, Object> nodeTemlates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES)
                 .left()
@@ -294,7 +294,7 @@ public class YamlTemplateParsingHandler {
         return getInstances(toscaJson, createdNodesToscaResourceNames, nodeTemlates);
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames, Map<String, Object> nodeTemlates) {
+     Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames, Map<String, Object> nodeTemlates) {
         Map<String, UploadComponentInstanceInfo> moduleComponentInstances;
         Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
         moduleComponentInstances = nodeTemlates.entrySet()
@@ -304,7 +304,7 @@ public class YamlTemplateParsingHandler {
         return moduleComponentInstances;
     }
 
-    private Map<String, Object> getSubstitutionMappings(Map<String, Object> toscaJson) {
+     Map<String, Object> getSubstitutionMappings(Map<String, Object> toscaJson) {
         Map<String, Object> substitutionMappings = null;
         Either<Map<String, Object>, ResultStatusEnum> eitherSubstitutionMappings = findFirstToscaMapElement(toscaJson, SUBSTITUTION_MAPPINGS);
         if (eitherSubstitutionMappings.isLeft()) {
@@ -314,7 +314,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, GroupDefinition> getGroups(String fileName, Map<String, Object> toscaJson) {
+     Map<String, GroupDefinition> getGroups(String fileName, Map<String, Object> toscaJson) {
 
         Map<String, Object> foundGroups = findFirstToscaMapElement(toscaJson, GROUPS)
                 .left()
@@ -336,7 +336,7 @@ public class YamlTemplateParsingHandler {
         return new HashMap<>();
     }
 
-    private boolean matcheKey(Map<String, Object> foundGroups){
+     boolean matcheKey(Map<String, Object> foundGroups){
         if (foundGroups!=null && !foundGroups.isEmpty()) {
             for (Map.Entry<String, Object> stringObjectEntry : foundGroups.entrySet()) {
                 String key = stringObjectEntry.getKey();
@@ -350,12 +350,12 @@ public class YamlTemplateParsingHandler {
         return false;
     }
 
-    private Map<String, Object> logGroupsNotFound(String fileName) {
+     Map<String, Object> logGroupsNotFound(String fileName) {
         log.debug("#logGroupsNotFound - Groups were not found in the yaml template {}.", fileName);
         return new HashMap<>();
     }
 
-    private void updateCapabilitiesNames(GroupDefinition group, Map<String, String> capabilityNames) {
+     void updateCapabilitiesNames(GroupDefinition group, Map<String, String> capabilityNames) {
         if (MapUtils.isNotEmpty(group.getCapabilities())) {
             group.getCapabilities().values()
                     .stream()
@@ -365,17 +365,17 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private Map<String, String> getNamesToUpdate(String name, Map<String, List<String>> pair) {
+     Map<String, String> getNamesToUpdate(String name, Map<String, List<String>> pair) {
         return pair.entrySet().stream()
                 .filter(e -> e.getValue().get(SUB_MAPPING_CAPABILITY_OWNER_NAME_IDX).equalsIgnoreCase(name))
                 .collect(Collectors.toMap(e -> e.getValue().get(SUB_MAPPING_CAPABILITY_NAME_IDX), Map.Entry::getKey,  (n1 ,n2) -> n1));
     }
 
-    private boolean capabilitiesSubstitutionMappingsExist(Map<String, Object> substitutionMappings) {
+     boolean capabilitiesSubstitutionMappingsExist(Map<String, Object> substitutionMappings) {
         return substitutionMappings != null && substitutionMappings.containsKey(CAPABILITIES.getElementName());
     }
 
-    private GroupDefinition createGroup(Map.Entry<String, Object> groupNameValue) {
+     GroupDefinition createGroup(Map.Entry<String, Object> groupNameValue) {
         GroupDefinition group = new GroupDefinition();
         group.setName(groupNameValue.getKey());
         try {
@@ -394,18 +394,18 @@ public class YamlTemplateParsingHandler {
         return group;
     }
 
-    private Map<String, CapabilityDefinition> addCapabilities(Map<String, CapabilityDefinition> cap, Map<String, CapabilityDefinition> otherCap) {
+     Map<String, CapabilityDefinition> addCapabilities(Map<String, CapabilityDefinition> cap, Map<String, CapabilityDefinition> otherCap) {
         cap.putAll(otherCap);
         return cap;
     }
 
-    private Map<String, CapabilityDefinition> addCapability(CapabilityDefinition cap) {
+     Map<String, CapabilityDefinition> addCapability(CapabilityDefinition cap) {
         Map<String, CapabilityDefinition> map = Maps.newHashMap();
         map.put(cap.getName(), cap);
         return map;
     }
 
-    private void setMembers(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
+     void setMembers(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
         if (groupTemplateJsonMap.containsKey(MEMBERS.getElementName())) {
             Object members = groupTemplateJsonMap.get(MEMBERS.getElementName());
             if (members != null) {
@@ -419,14 +419,14 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void setMembersFromList(GroupDefinition groupInfo, List<?> membersAsList) {
+     void setMembersFromList(GroupDefinition groupInfo, List<?> membersAsList) {
         groupInfo.setMembers(membersAsList
                 .stream()
                 .collect(Collectors.toMap(Object::toString, member -> "")));
     }
 
     @SuppressWarnings("unchecked")
-    private void validateUpdateGroupProperties(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
+     void validateUpdateGroupProperties(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
         if (groupTemplateJsonMap.containsKey(PROPERTIES.getElementName())) {
             Object propertiesElement = groupTemplateJsonMap.get(PROPERTIES.getElementName());
             if (propertiesElement instanceof Map){
@@ -435,14 +435,14 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void mergeGroupProperties(GroupDefinition groupInfo, Map<String, Object> parsedProperties) {
+     void mergeGroupProperties(GroupDefinition groupInfo, Map<String, Object> parsedProperties) {
         if(CollectionUtils.isNotEmpty(groupInfo.getProperties())){
             validateGroupProperties(parsedProperties, groupInfo);
             groupInfo.getProperties().forEach(p -> mergeGroupProperty(p, parsedProperties));
         }
     }
 
-    private void mergeGroupProperty(PropertyDataDefinition property, Map<String, Object> parsedProperties) {
+     void mergeGroupProperty(PropertyDataDefinition property, Map<String, Object> parsedProperties) {
         if(parsedProperties.containsKey(property.getName())){
             Object propValue = parsedProperties.get(property.getName());
             if (valueNotContainsPattern(propertyValuePattern, propValue)) {
@@ -451,7 +451,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void setPropertyValueAndGetInputsValues(PropertyDataDefinition property, Object propValue) {
+     void setPropertyValueAndGetInputsValues(PropertyDataDefinition property, Object propValue) {
         if(propValue != null){
             UploadPropInfo uploadPropInfo = buildProperty(property.getName(), propValue);
             property.setValue(convertPropertyValue(ToscaPropertyType.isValidType(property.getType()), uploadPropInfo.getValue()));
@@ -459,7 +459,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private String convertPropertyValue(ToscaPropertyType type, Object value) {
+     String convertPropertyValue(ToscaPropertyType type, Object value) {
         String convertedValue = null;
         if (value != null) {
             if (type == null || value instanceof Map || value instanceof List) {
@@ -471,14 +471,14 @@ public class YamlTemplateParsingHandler {
         return convertedValue;
     }
 
-    private void setDescription(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
+     void setDescription(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
         if (groupTemplateJsonMap.containsKey(DESCRIPTION.getElementName())) {
             groupInfo.setDescription(
                     (String) groupTemplateJsonMap.get(DESCRIPTION.getElementName()));
         }
     }
 
-    private void validateAndFillGroup(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
+     void validateAndFillGroup(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
         String type = (String) groupTemplateJsonMap.get(TYPE.getElementName());
         if(StringUtils.isEmpty(type)){
             log.debug("#validateAndFillGroup - The 'type' member is not found under group {}", groupInfo.getName());
@@ -497,7 +497,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private void validateUpdateGroupCapabilities(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
+     void validateUpdateGroupCapabilities(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
 
         if (groupTemplateJsonMap.containsKey(CAPABILITIES.getElementName())) {
             Object capabilities = groupTemplateJsonMap.get(CAPABILITIES.getElementName());
@@ -517,12 +517,12 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void validateUpdateCapabilities(GroupDefinition groupInfo, Map<String, Map<String, CapabilityDefinition>> capabilityInfo) {
+     void validateUpdateCapabilities(GroupDefinition groupInfo, Map<String, Map<String, CapabilityDefinition>> capabilityInfo) {
         validateGroupCapabilities(groupInfo, capabilityInfo);
         groupInfo.updateCapabilitiesProperties(capabilityInfo);
     }
 
-    private void validateGroupCapabilities(GroupDefinition group, Map<String, Map<String, CapabilityDefinition>> parsedCapabilities) {
+     void validateGroupCapabilities(GroupDefinition group, Map<String, Map<String, CapabilityDefinition>> parsedCapabilities) {
         if (MapUtils.isNotEmpty(parsedCapabilities)) {
             if (MapUtils.isEmpty(group.getCapabilities())) {
                 failOnMissingCapabilityTypes(group, Lists.newArrayList(parsedCapabilities.keySet()));
@@ -535,7 +535,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void validateCapabilities(GroupDefinition group, List<CapabilityDefinition> capabilities, Map<String, CapabilityDefinition> parsedCapabilities) {
+     void validateCapabilities(GroupDefinition group, List<CapabilityDefinition> capabilities, Map<String, CapabilityDefinition> parsedCapabilities) {
         List<String> allowedCapNames = capabilities.stream().map(CapabilityDefinition::getName).distinct().collect(toList());
         List<String> missingCapNames = parsedCapabilities.keySet().stream().filter(c -> !allowedCapNames.contains(c)).collect(toList());
         if (CollectionUtils.isNotEmpty(missingCapNames)) {
@@ -544,11 +544,11 @@ public class YamlTemplateParsingHandler {
         validateCapabilitiesProperties(capabilities, parsedCapabilities);
     }
 
-    private void validateCapabilitiesProperties(List<CapabilityDefinition> capabilities, Map<String, CapabilityDefinition> parsedCapabilities) {
+     void validateCapabilitiesProperties(List<CapabilityDefinition> capabilities, Map<String, CapabilityDefinition> parsedCapabilities) {
         capabilities.forEach(c -> validateCapabilityProperties(c, parsedCapabilities.get(c.getName())));
     }
 
-    private void validateCapabilityProperties(CapabilityDefinition capability, CapabilityDefinition parsedCapability) {
+     void validateCapabilityProperties(CapabilityDefinition capability, CapabilityDefinition parsedCapability) {
         if(parsedCapability != null && parsedCapability.getProperties() != null){
             List<String> parsedPropertiesNames = parsedCapability.getProperties()
                 .stream()
@@ -557,14 +557,14 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void  validateGroupProperties(Map<String, Object> parsedProperties, GroupDefinition groupInfo) {
+     void  validateGroupProperties(Map<String, Object> parsedProperties, GroupDefinition groupInfo) {
         List<String> parsedPropertiesNames = parsedProperties.entrySet()
                         .stream()
                         .map(Map.Entry::getKey).collect(toList());
         validateProperties(groupInfo.getProperties().stream().map(PropertyDataDefinition::getName).collect(toList()), parsedPropertiesNames, ActionStatus.GROUP_PROPERTY_NOT_FOUND, groupInfo.getName(), groupInfo.getType());
     }
 
-    private void validateProperties(List<String> validProperties, List<String> parsedProperties, ActionStatus actionStatus, String name, String type) {
+     void validateProperties(List<String> validProperties, List<String> parsedProperties, ActionStatus actionStatus, String name, String type) {
         if (CollectionUtils.isNotEmpty(parsedProperties)) {
             verifyMissingProperties(actionStatus, name, type, parsedProperties
                     .stream()
@@ -573,7 +573,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void verifyMissingProperties(ActionStatus actionStatus, String name, String type, List<String> missingProperties) {
+     void verifyMissingProperties(ActionStatus actionStatus, String name, String type, List<String> missingProperties) {
         if (CollectionUtils.isNotEmpty(missingProperties)) {
             log.debug("#validateProperties - Failed to validate properties. The properties {} are missing on {} of the type {}. ", missingProperties.toString(), name, type);
             rollbackWithException(actionStatus, missingProperties.toString(), missingProperties.toString(), name, type);
@@ -581,7 +581,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private CapabilityDefinition buildGroupCapability(GroupDefinition groupInfo, Object capObject) {
+     CapabilityDefinition buildGroupCapability(GroupDefinition groupInfo, Object capObject) {
         if (!(capObject instanceof Map)) {
             log.debug("#convertToGroupCapability - Failed to import the capability {}. ", capObject);
             rollbackWithException(ActionStatus.INVALID_YAML);
@@ -590,7 +590,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private CapabilityDefinition buildGroupCapability(GroupDefinition groupInfo, Map.Entry<String, Object> capEntry) {
+     CapabilityDefinition buildGroupCapability(GroupDefinition groupInfo, Map.Entry<String, Object> capEntry) {
         CapabilityDefinition capability = new CapabilityDefinition();
         capability.setOwnerType(CapabilityDataDefinition.OwnerType.GROUP);
         capability.setName(capEntry.getKey());
@@ -616,7 +616,7 @@ public class YamlTemplateParsingHandler {
         return capability;
     }
 
-    private ComponentInstanceProperty convertToProperty(Map.Entry<String, Object> e) {
+     ComponentInstanceProperty convertToProperty(Map.Entry<String, Object> e) {
         ComponentInstanceProperty property = new ComponentInstanceProperty();
         property.setName(e.getKey());
         property.setValue((String) e.getValue());
@@ -624,7 +624,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadComponentInstanceInfo buildModuleComponentInstanceInfo(
+     UploadComponentInstanceInfo buildModuleComponentInstanceInfo(
             Map.Entry<String, Object> nodeTemplateJsonEntry, Map<String, Object> substitutionMappings,
             Map<String, String> createdNodesToscaResourceNames) {
 
@@ -656,7 +656,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private void setSubstitutions(Map<String, Object> substitutionMappings, UploadComponentInstanceInfo nodeTemplateInfo) {
+     void setSubstitutions(Map<String, Object> substitutionMappings, UploadComponentInstanceInfo nodeTemplateInfo) {
         if (substitutionMappings != null) {
             if (substitutionMappings.containsKey(CAPABILITIES.getElementName())) {
                 nodeTemplateInfo.setCapabilitiesNamesToUpdate(getNamesToUpdate(nodeTemplateInfo.getName(), (Map<String, List<String>>) substitutionMappings
@@ -670,7 +670,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void updateProperties(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+     void updateProperties(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(PROPERTIES.getElementName())) {
             Map<String, List<UploadPropInfo>> properties = buildPropModuleFromYaml(nodeTemplateJsonMap);
             if (!properties.isEmpty()) {
@@ -679,7 +679,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void setCapabilities(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+     void setCapabilities(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(CAPABILITIES.getElementName())) {
             Map<String, List<UploadCapInfo>> eitherCapRes = createCapModuleFromYaml(nodeTemplateJsonMap);
             if (!eitherCapRes.isEmpty()) {
@@ -688,7 +688,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void setArtifacts(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+     void setArtifacts(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(ARTIFACTS.getElementName())) {
             Map<String, Map<String, UploadArtifactInfo>> eitherArtifactsRes = createArtifactsModuleFromYaml(nodeTemplateJsonMap);
             if (!eitherArtifactsRes.isEmpty()) {
@@ -697,7 +697,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void setRequirements(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+     void setRequirements(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(REQUIREMENTS.getElementName())) {
             Map<String, List<UploadReqInfo>> regResponse = createReqModuleFromYaml(nodeTemplateJsonMap);
             if (!regResponse.isEmpty()) {
@@ -706,7 +706,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void setToscaResourceType(Map<String, String> createdNodesToscaResourceNames,
+     void setToscaResourceType(Map<String, String> createdNodesToscaResourceNames,
                                       UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(TYPE.getElementName())) {
             String toscaResourceType = (String) nodeTemplateJsonMap.get(TYPE.getElementName());
@@ -717,14 +717,14 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void setDirectives(UploadComponentInstanceInfo nodeTemplateInfo,
+     void setDirectives(UploadComponentInstanceInfo nodeTemplateInfo,
             Map<String, Object> nodeTemplateJsonMap) {
         List<String> directives =
                 (List<String>) nodeTemplateJsonMap.get(TypeUtils.ToscaTagNamesEnum.DIRECTIVES.getElementName());
         nodeTemplateInfo.setDirectives(directives);
     }
 
-    private void setNodeFilter(UploadComponentInstanceInfo nodeTemplateInfo,
+     void setNodeFilter(UploadComponentInstanceInfo nodeTemplateInfo,
             Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_FILTER.getElementName())) {
             nodeTemplateInfo.setUploadNodeFilterInfo(
@@ -734,7 +734,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, List<UploadReqInfo>> createReqModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+     Map<String, List<UploadReqInfo>> createReqModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
         Map<String, List<UploadReqInfo>> moduleRequirements = new HashMap<>();
         Either<List<Object>, ResultStatusEnum> requirementsListRes =
                 findFirstToscaListElement(nodeTemplateJsonMap, REQUIREMENTS);
@@ -759,7 +759,7 @@ public class YamlTemplateParsingHandler {
         return moduleRequirements;
     }
 
-    private void addModuleNodeTemplateReq(Map<String, List<UploadReqInfo>> moduleRequirements, Object requirementJson, String requirementName) {
+     void addModuleNodeTemplateReq(Map<String, List<UploadReqInfo>> moduleRequirements, Object requirementJson, String requirementName) {
 
         UploadReqInfo requirement = buildModuleNodeTemplateReg(requirementJson);
         requirement.setName(requirementName);
@@ -773,7 +773,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Map<String, UploadArtifactInfo>> createArtifactsModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+     Map<String, Map<String, UploadArtifactInfo>> createArtifactsModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
         Map<String, Map<String, UploadArtifactInfo>> moduleArtifacts = new HashMap<>();
         Either<List<Object>, ResultStatusEnum> ArtifactsListRes =
                 findFirstToscaListElement(nodeTemplateJsonMap, ARTIFACTS);
@@ -797,7 +797,7 @@ public class YamlTemplateParsingHandler {
         return moduleArtifacts;
     }
 
-    private void addModuleNodeTemplateArtifacts(Map<String, Map<String, UploadArtifactInfo>> moduleArtifacts, Object artifactJson, String artifactName) {
+     void addModuleNodeTemplateArtifacts(Map<String, Map<String, UploadArtifactInfo>> moduleArtifacts, Object artifactJson, String artifactName) {
 
         UploadArtifactInfo artifact = buildModuleNodeTemplateArtifact(artifactJson);
         artifact.setName(artifactName);
@@ -811,7 +811,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadArtifactInfo buildModuleNodeTemplateArtifact(Object artifactObject) {
+     UploadArtifactInfo buildModuleNodeTemplateArtifact(Object artifactObject) {
         UploadArtifactInfo artifactTemplateInfo = new UploadArtifactInfo();
         if (artifactObject instanceof Map) {
             fillArtifact(artifactTemplateInfo, (Map<String, Object>) artifactObject);
@@ -819,7 +819,7 @@ public class YamlTemplateParsingHandler {
         return artifactTemplateInfo;
     }
 
-    private void fillArtifact(UploadArtifactInfo artifactTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+     void fillArtifact(UploadArtifactInfo artifactTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(TYPE.getElementName())) {
             artifactTemplateInfo.setType((String) nodeTemplateJsonMap.get(TYPE.getElementName()));
         }
@@ -830,7 +830,7 @@ public class YamlTemplateParsingHandler {
 
 
     @SuppressWarnings("unchecked")
-    private Map<String, List<UploadCapInfo>> createCapModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+     Map<String, List<UploadCapInfo>> createCapModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
         Map<String, List<UploadCapInfo>> moduleCap = new HashMap<>();
         Either<List<Object>, ResultStatusEnum> capabilitiesListRes =
                 findFirstToscaListElement(nodeTemplateJsonMap, CAPABILITIES);
@@ -854,7 +854,7 @@ public class YamlTemplateParsingHandler {
         return moduleCap;
     }
 
-    private void addModuleNodeTemplateCap(Map<String, List<UploadCapInfo>> moduleCap, Object capJson, String key) {
+     void addModuleNodeTemplateCap(Map<String, List<UploadCapInfo>> moduleCap, Object capJson, String key) {
 
         UploadCapInfo capabilityDef = buildModuleNodeTemplateCap(capJson);
         capabilityDef.setKey(key);
@@ -868,7 +868,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadCapInfo buildModuleNodeTemplateCap(Object capObject) {
+     UploadCapInfo buildModuleNodeTemplateCap(Object capObject) {
         UploadCapInfo capTemplateInfo = new UploadCapInfo();
 
         if (capObject instanceof String) {
@@ -880,7 +880,7 @@ public class YamlTemplateParsingHandler {
         return capTemplateInfo;
     }
 
-    private void fillCapability(UploadCapInfo capTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+     void fillCapability(UploadCapInfo capTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(NODE.getElementName())) {
             capTemplateInfo.setNode((String) nodeTemplateJsonMap.get(NODE.getElementName()));
         }
@@ -905,7 +905,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadReqInfo buildModuleNodeTemplateReg(Object regObject) {
+     UploadReqInfo buildModuleNodeTemplateReg(Object regObject) {
 
         UploadReqInfo regTemplateInfo = new UploadReqInfo();
         if (regObject instanceof String) {
@@ -924,7 +924,7 @@ public class YamlTemplateParsingHandler {
         return regTemplateInfo;
     }
 
-    private Map<String, List<UploadPropInfo>> buildPropModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+     Map<String, List<UploadPropInfo>> buildPropModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
 
         Map<String, List<UploadPropInfo>> moduleProp = new HashMap<>();
         Either<Map<String, Object>, ResultStatusEnum> toscaProperties =
@@ -940,7 +940,7 @@ public class YamlTemplateParsingHandler {
         return moduleProp;
     }
 
-    private void addProperty(Map<String, List<UploadPropInfo>> moduleProp, Map.Entry<String, Object> jsonPropObj) {
+     void addProperty(Map<String, List<UploadPropInfo>> moduleProp, Map.Entry<String, Object> jsonPropObj) {
         UploadPropInfo propertyDef = buildProperty(jsonPropObj.getKey(), jsonPropObj.getValue());
         if (moduleProp.containsKey(propertyDef.getName())) {
             moduleProp.get(propertyDef.getName()).add(propertyDef);
@@ -952,7 +952,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadPropInfo buildProperty(String propName, Object propValue) {
+     UploadPropInfo buildProperty(String propName, Object propValue) {
 
         UploadPropInfo propertyDef = new UploadPropInfo();
         propertyDef.setValue(propValue);
@@ -992,13 +992,13 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean containsGetInput(Object propValue) {
+     boolean containsGetInput(Object propValue) {
         return ((Map<String, Object>) propValue).containsKey(GET_INPUT.getElementName())
                 || ImportUtils.containsGetInput(propValue);
     }
 
     @SuppressWarnings("unchecked")
-    private void fillInputsListRecursively(UploadPropInfo propertyDef, List<Object> propValueList) {
+     void fillInputsListRecursively(UploadPropInfo propertyDef, List<Object> propValueList) {
         for (Object objValue : propValueList) {
 
             if (objValue instanceof Map) {
@@ -1017,7 +1017,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private void findAndFillInputsListRecursively(UploadPropInfo propertyDef, Map<String, Object> objMap,
+     void findAndFillInputsListRecursively(UploadPropInfo propertyDef, Map<String, Object> objMap,
                                                   Set<String> keys) {
         for (String key : keys) {
             Object value = objMap.get(key);
@@ -1030,7 +1030,7 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void fillInputRecursively(String propName, Map<String, Object> propValue, UploadPropInfo propertyDef) {
+     void fillInputRecursively(String propName, Map<String, Object> propValue, UploadPropInfo propertyDef) {
 
         if (propValue.containsKey(GET_INPUT.getElementName())) {
             Object getInput = propValue.get(GET_INPUT.getElementName());
@@ -1056,7 +1056,7 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private void findAndFillInputRecursively(Map<String, Object> propValue, UploadPropInfo propertyDef) {
+     void findAndFillInputRecursively(Map<String, Object> propValue, UploadPropInfo propertyDef) {
         for (String propName : propValue.keySet()) {
             Object value = propValue.get(propName);
             if (value instanceof Map) {
@@ -1068,14 +1068,14 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void fillInputsRecursively(UploadPropInfo propertyDef, String propName, List<Object> inputs) {
+     void fillInputsRecursively(UploadPropInfo propertyDef, String propName, List<Object> inputs) {
         inputs.stream()
                 .filter(o -> o instanceof Map)
                 .forEach(o -> fillInputRecursively(propName, (Map<String, Object>)o, propertyDef));
     }
 
     @SuppressWarnings("unchecked")
-    private void fillInput(String propName, Object getInput, GetInputValueDataDefinition getInputInfo) {
+     void fillInput(String propName, Object getInput, GetInputValueDataDefinition getInputInfo) {
         List<Object> getInputList = (List<Object>) getInput;
         getInputInfo.setPropName(propName);
         getInputInfo.setInputName((String) getInputList.get(0));
@@ -1099,33 +1099,33 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private boolean valueNotContainsPattern(Pattern pattern, Object propValue) {
+     boolean valueNotContainsPattern(Pattern pattern, Object propValue) {
         return propValue == null || !pattern.matcher(propValue.toString()).find();
     }
 
-    private Map<String, Object> failIfNoNodeTemplates(String fileName) {
+     Map<String, Object> failIfNoNodeTemplates(String fileName) {
         janusGraphDao.rollback();
         throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, fileName);
     }
 
-    private Object failIfNotTopologyTemplate(String fileName) {
+     Object failIfNotTopologyTemplate(String fileName) {
         janusGraphDao.rollback();
         throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, fileName);
     }
 
-    private void rollbackWithException(ActionStatus actionStatus, String... params) {
+     void rollbackWithException(ActionStatus actionStatus, String... params) {
         janusGraphDao.rollback();
         throw new ByActionStatusComponentException(actionStatus, params);
     }
 
-    private void failOnMissingCapabilityTypes(GroupDefinition groupDefinition, List<String> missingCapTypes) {
+     void failOnMissingCapabilityTypes(GroupDefinition groupDefinition, List<String> missingCapTypes) {
         log.debug("#failOnMissingCapabilityTypes - Failed to validate the capabilities of the group {}. The capability types {} are missing on the group type {}. ", groupDefinition.getName(), missingCapTypes.toString(), groupDefinition.getType());
         if(CollectionUtils.isNotEmpty(missingCapTypes)) {
             rollbackWithException(ActionStatus.MISSING_CAPABILITY_TYPE, missingCapTypes.toString());
         }
     }
 
-    private void failOnMissingCapabilityNames(GroupDefinition groupDefinition, List<String> missingCapNames) {
+     void failOnMissingCapabilityNames(GroupDefinition groupDefinition, List<String> missingCapNames) {
         log.debug("#failOnMissingCapabilityNames - Failed to validate the capabilities of the group {}. The capabilities with the names {} are missing on the group type {}. ", groupDefinition.getName(), missingCapNames.toString(), groupDefinition.getType());
         rollbackWithException(ActionStatus.MISSING_CAPABILITIES, missingCapNames.toString(), CapabilityDataDefinition.OwnerType.GROUP.getValue(), groupDefinition.getName());
     }

@@ -423,6 +423,12 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
+            <exclusions>
+                <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>compile</scope>
 
         </dependency>
@@ -546,10 +552,23 @@
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
+            <artifactId>jetty-http</artifactId>
             <version>${jetty.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>${jetty.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                 <exclusion>
+                     <groupId>org.eclipse.jetty</groupId>
+                     <artifactId>jetty-http</artifactId>
+                 </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- System metrics -->
         <dependency>
             <groupId>org.fusesource</groupId>
@@ -647,6 +666,16 @@
             <artifactId>jetty-webapp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-servlet</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -134,27 +134,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 @org.springframework.stereotype.Component
 public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
-    private static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class);
-    private static final String VF_MODULE = "org.openecomp.groups.VfModule";
-    private static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
-    private static final String CLOUD_SPECIFIC_FIXED_KEY_WORD = "cloudtech";
-    private static final String[][] CLOUD_SPECIFIC_KEY_WORDS = {{"k8s", "azure", "aws"}, /* cloud specific technology */
+     static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class);
+     static final String VF_MODULE = "org.openecomp.groups.VfModule";
+     static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
+     static final String CLOUD_SPECIFIC_FIXED_KEY_WORD = "cloudtech";
+     static final String[][] CLOUD_SPECIFIC_KEY_WORDS = {{"k8s", "azure", "aws"}, /* cloud specific technology */
                                                                 {"charts", "day0", "configtemplate"} /*cloud specific sub type*/};
-    private static final String FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE = "Failed to create entry on graph for component instance {}";
-    private static final String ENTITY_ON_GRAPH_IS_CREATED = "Entity on graph is created.";
-    private static final String INVALID_COMPONENT_TYPE = "invalid component type";
-    private static final String FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID = "Failed to retrieve component, component id {}";
-    private static final String FAILED_TO_LOCK_SERVICE = "Failed to lock service {}";
-    private static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
-    private static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
-    private static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
+     static final String FAILED_TO_CREATE_ENTRY_ON_GRAPH_FOR_COMPONENT_INSTANCE = "Failed to create entry on graph for component instance {}";
+     static final String ENTITY_ON_GRAPH_IS_CREATED = "Entity on graph is created.";
+     static final String INVALID_COMPONENT_TYPE = "invalid component type";
+     static final String FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID = "Failed to retrieve component, component id {}";
+     static final String FAILED_TO_LOCK_SERVICE = "Failed to lock service {}";
+     static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
+     static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
+     static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
 
-    private ComponentInstanceOperation componentInstanceOperation;
-    private ArtifactsBusinessLogic artifactBusinessLogic;
-    private ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
-    private ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
-    private ForwardingPathOperation forwardingPathOperation;
-    private NodeFilterOperation nodeFilterOperation;
+     ComponentInstanceOperation componentInstanceOperation;
+     ArtifactsBusinessLogic artifactBusinessLogic;
+     ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
+     ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
+     ForwardingPathOperation forwardingPathOperation;
+     NodeFilterOperation nodeFilterOperation;
 
     @Autowired
     public ComponentInstanceBusinessLogic(IElementOperation elementDao,
@@ -179,10 +179,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     @Autowired
-    private CompositionBusinessLogic compositionBusinessLogic;
+     CompositionBusinessLogic compositionBusinessLogic;
 
     @Autowired
-    private ContainerInstanceTypesData containerInstanceTypesData;
+     ContainerInstanceTypesData containerInstanceTypesData;
 
     public ComponentInstance createComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
         return createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, true);
@@ -212,7 +212,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private void addCompInstanceProperty(String s, String ciName, ComponentInstanceProperty prop, List<GetInputValueDataDefinition> inputsValues, String inputId, List<ComponentInstanceProperty> resList) {
+     void addCompInstanceProperty(String s, String ciName, ComponentInstanceProperty prop, List<GetInputValueDataDefinition> inputsValues, String inputId, List<ComponentInstanceProperty> resList) {
         if(inputsValues != null && !inputsValues.isEmpty()){
             for(GetInputValueDataDefinition inputData: inputsValues){
                 if(isGetInputValueForInput(inputData, inputId)){
@@ -244,7 +244,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private void updateComponentInstancePropertyAfterUndeclaration(ComponentInstanceProperty componentInstanceProperty,
+     void updateComponentInstancePropertyAfterUndeclaration(ComponentInstanceProperty componentInstanceProperty,
             GetPolicyValueDataDefinition getPolicyValue, PolicyDefinition policyDefinition) {
         componentInstanceProperty.setValue(getPolicyValue.getOrigPropertyValue());
         List<GetPolicyValueDataDefinition> getPolicyValues = componentInstanceProperty.getGetPolicyValues();
@@ -255,7 +255,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Optional<GetPolicyValueDataDefinition> getGetPolicyValueDataDefinition(PolicyDefinition policy,
+     Optional<GetPolicyValueDataDefinition> getGetPolicyValueDataDefinition(PolicyDefinition policy,
             ComponentInstanceProperty componentInstanceProperty) {
         List<GetPolicyValueDataDefinition> getPolicyValues = policy.getGetPolicyValues();
         return getPolicyValues.stream()
@@ -266,7 +266,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                                                             .findAny();
     }
 
-    private Optional<ComponentInstanceProperty> getComponentInstancePropertyByPolicy(Component component,
+     Optional<ComponentInstanceProperty> getComponentInstancePropertyByPolicy(Component component,
             PolicyDefinition policy) {
         Map<String, List<ComponentInstanceProperty>> componentInstancesProperties =
                 component.getComponentInstancesProperties();
@@ -312,7 +312,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private void addCompInstanceInput(String s, String ciName, ComponentInstanceInput prop, List<GetInputValueDataDefinition> inputsValues, String inputId, List<ComponentInstanceInput> resList) {
+     void addCompInstanceInput(String s, String ciName, ComponentInstanceInput prop, List<GetInputValueDataDefinition> inputsValues, String inputId, List<ComponentInstanceInput> resList) {
         if(inputsValues != null && !inputsValues.isEmpty()){
             for(GetInputValueDataDefinition inputData: inputsValues){
                 if(isGetInputValueForInput(inputData, inputId)){
@@ -364,7 +364,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
     
-    private Component getOrigComponentForServiceProxy(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance resourceInstance) {
+     Component getOrigComponentForServiceProxy(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance resourceInstance) {
         Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
         if (isServiceProxyOrigin(serviceProxyOrigin)) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
@@ -379,7 +379,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return origComponent;
     }
     
-    private Component getOrigComponentForServiceSubstitution(ComponentInstance resourceInstance) {
+     Component getOrigComponentForServiceSubstitution(ComponentInstance resourceInstance) {
         final Either<Component, StorageOperationStatus> getServiceResult = toscaOperationFacade.getToscaFullElement(resourceInstance.getComponentUid());
         if (getServiceResult.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
@@ -401,7 +401,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return origComponent;
     }
 
-    private ComponentInstance createComponent(boolean needLock, Component containerComponent, Component origComponent, ComponentInstance resourceInstance, User user) {
+     ComponentInstance createComponent(boolean needLock, Component containerComponent, Component origComponent, ComponentInstance resourceInstance, User user) {
 
         boolean failed = false;
         try {
@@ -503,7 +503,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ComponentInstance, ResponseFormat> createRealComponent(boolean needLock, Component containerComponent, Component origComponent, ComponentInstance resourceInstance, User user) {
+     Either<ComponentInstance, ResponseFormat> createRealComponent(boolean needLock, Component containerComponent, Component origComponent, ComponentInstance resourceInstance, User user) {
 
         log.debug("enter createRealComponent");
         boolean failed = false;
@@ -524,7 +524,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ComponentInstance, ResponseFormat> createRealComponentInstanceOnGraph(org.openecomp.sdc.be.model.Component containerComponent, Component originComponent, ComponentInstance componentInstance, User user) {
+     Either<ComponentInstance, ResponseFormat> createRealComponentInstanceOnGraph(org.openecomp.sdc.be.model.Component containerComponent, Component originComponent, ComponentInstance componentInstance, User user) {
         Either<ComponentInstance, ResponseFormat> resultOp;
         log.debug("enter createRealComponentInstanceOnGraph");
 
@@ -553,12 +553,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(updatedInstanceOptional.get());
     }
 
-    private void overrideFields(Component origComponent, ComponentInstance resourceInstance) {
+     void overrideFields(Component origComponent, ComponentInstance resourceInstance) {
         resourceInstance.setComponentVersion(origComponent.getVersion());
         resourceInstance.setIcon(origComponent.getIcon());
     }
 
-    private void validateInstanceName(ComponentInstance resourceInstance) {
+     void validateInstanceName(ComponentInstance resourceInstance) {
 
         String resourceInstanceName = resourceInstance.getName();
         if (StringUtils.isEmpty(resourceInstanceName)) {
@@ -577,14 +577,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateResourceInstanceState(Component containerComponent, Component origComponent) {
+     void validateResourceInstanceState(Component containerComponent, Component origComponent) {
         if (origComponent.getLifecycleState() == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT){
             throw new ByActionStatusComponentException(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE,
                     containerComponent.getComponentType().getValue(), origComponent.getLifecycleState().toString());
         }
     }
 
-    private void validateOriginAndResourceInstanceTypes(final Component containerComponent,
+     void validateOriginAndResourceInstanceTypes(final Component containerComponent,
                                                         final Component origComponent,
                                                         final OriginTypeEnum originType) {
         final ResourceTypeEnum resourceType = getResourceTypeEnumFromOriginComponent(origComponent);
@@ -592,7 +592,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         validateOriginComponentIsValidForContainer(containerComponent, resourceType);
     }
 
-    private void validateOriginComponentIsValidForContainer(Component containerComponent, ResourceTypeEnum resourceType) {
+     void validateOriginComponentIsValidForContainer(Component containerComponent, ResourceTypeEnum resourceType) {
         switch (containerComponent.getComponentType()) {
             case SERVICE:
                 if (!containerInstanceTypesData.isAllowedForServiceComponent(resourceType)) {
@@ -612,7 +612,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateOriginType(OriginTypeEnum originType, ResourceTypeEnum resourceType) {
+     void validateOriginType(OriginTypeEnum originType, ResourceTypeEnum resourceType) {
         ResourceTypeEnum convertedOriginType;
         try {
             convertedOriginType = ResourceTypeEnum.getTypeIgnoreCase(originType.name());
@@ -624,7 +624,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (resourceType != convertedOriginType)  throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
     }
 
-    private ResourceTypeEnum getResourceTypeEnumFromOriginComponent(final Component origComponent) {
+     ResourceTypeEnum getResourceTypeEnumFromOriginComponent(final Component origComponent) {
         switch (origComponent.getComponentType()) {
             case SERVICE:
                 return ResourceTypeEnum.ServiceProxy;
@@ -635,14 +635,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ComponentInstance isNeedLock(boolean needLock, Component containerComponent) {
+     ComponentInstance isNeedLock(boolean needLock, Component containerComponent) {
         if (needLock) {
             lockComponent(containerComponent, "createComponentInstance");
         }
         return null;
     }
 
-    private boolean isServiceProxyOrigin(Either<Component, StorageOperationStatus> serviceProxyOrigin) {
+     boolean isServiceProxyOrigin(Either<Component, StorageOperationStatus> serviceProxyOrigin) {
         if (serviceProxyOrigin.isRight()) {
             log.debug("Failed to fetch normative service proxy resource by tosca name, error {}", serviceProxyOrigin.right().value());
             return true;
@@ -650,7 +650,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return false;
     }
 
-    private StorageOperationStatus fillInstanceData(ComponentInstance resourceInstance, Component origComponent) {
+     StorageOperationStatus fillInstanceData(ComponentInstance resourceInstance, Component origComponent) {
         final ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnoreCapabilities(false);
         filter.setIgnoreCapabiltyProperties(false);
@@ -694,7 +694,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
     
-    private StorageOperationStatus fillProxyInstanceData(final ComponentInstance resourceInstance, final Component origComponent, final Component service) {
+     StorageOperationStatus fillProxyInstanceData(final ComponentInstance resourceInstance, final Component origComponent, final Component service) {
         final String name = ValidationUtils.normalizeComponentInstanceName(service.getName()) + ToscaOperationFacade.PROXY_SUFFIX;
         final String toscaResourceName = ((Resource) origComponent).getToscaResourceName();
         final int lastIndexOf = toscaResourceName.lastIndexOf('.');
@@ -708,7 +708,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return StorageOperationStatus.OK;
     }
     
-    private StorageOperationStatus fillServiceSubstitutableNodeTypeData(final ComponentInstance resourceInstance, final Component service) {
+     StorageOperationStatus fillServiceSubstitutableNodeTypeData(final ComponentInstance resourceInstance, final Component service) {
       	resourceInstance.setToscaComponentName("org.openecomp.service." + ValidationUtils.convertToSystemName(service.getName()));
         resourceInstance.setName(ValidationUtils.normalizeComponentInstanceName(service.getName()));
         resourceInstance.setIsProxy(false);
@@ -772,15 +772,15 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Component getOriginComponentFromComponentInstance(ComponentInstance componentInstance) {
+     Component getOriginComponentFromComponentInstance(ComponentInstance componentInstance) {
         return getOriginComponentFromComponentInstance(componentInstance.getName(), componentInstance.getComponentUid());
     }
 
-    private Component getInstanceOriginNode(ComponentInstance componentInstance) {
+     Component getInstanceOriginNode(ComponentInstance componentInstance) {
         return getOriginComponentFromComponentInstance(componentInstance.getName(), componentInstance.getActualComponentUid());
     }
 
-    private Component getOriginComponentFromComponentInstance(String componentInstanceName, String origComponetId) {
+     Component getOriginComponentFromComponentInstance(String componentInstanceName, String origComponetId) {
         Either<Component, StorageOperationStatus> eitherComponent = toscaOperationFacade.getToscaFullElement(origComponetId);
         if (eitherComponent.isRight()) {
             log.debug("Failed to get origin component with id {} for component instance {} ", origComponetId, componentInstanceName);
@@ -789,7 +789,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return eitherComponent.left().value();
     }
 
-    private ComponentInstance createComponentInstanceOnGraph(org.openecomp.sdc.be.model.Component containerComponent, Component originComponent, ComponentInstance componentInstance, User user) {
+     ComponentInstance createComponentInstanceOnGraph(org.openecomp.sdc.be.model.Component containerComponent, Component originComponent, ComponentInstance componentInstance, User user) {
         Either<ComponentInstance, ResponseFormat> resultOp;
 
         Either<ImmutablePair<Component, String>, StorageOperationStatus> result = toscaOperationFacade.addComponentInstanceToTopologyTemplate(containerComponent, originComponent, componentInstance, false, user);
@@ -917,7 +917,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return ActionStatus.OK;
     }
 
-    private void fillInstanceArtifactMap(Map<String, List<ArtifactDefinition>> groupInstancesArtifacts, ArtifactDefinition artifactDefinition, GroupDefinition groupInstance) {
+     void fillInstanceArtifactMap(Map<String, List<ArtifactDefinition>> groupInstancesArtifacts, ArtifactDefinition artifactDefinition, GroupDefinition groupInstance) {
         List<ArtifactDefinition> artifactsUid;
         if (groupInstancesArtifacts.containsKey(groupInstance.getUniqueId())) {
             artifactsUid = groupInstancesArtifacts.get(groupInstance.getUniqueId());
@@ -928,7 +928,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         groupInstancesArtifacts.put(groupInstance.getUniqueId(), artifactsUid);
     }
 
-    private ActionStatus setResourceArtifactsOnResourceInstance(ComponentInstance resourceInstance) {
+     ActionStatus setResourceArtifactsOnResourceInstance(ComponentInstance resourceInstance) {
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getResourceDeploymentArtifacts =
                 artifactBusinessLogic.getArtifacts(resourceInstance.getComponentUid(), NodeTypeEnum.Resource, ArtifactGroupTypeEnum.DEPLOYMENT, null);
 
@@ -1087,11 +1087,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean validateParent(org.openecomp.sdc.be.model.Component containerComponent, String nodeTemplateId) {
+     boolean validateParent(org.openecomp.sdc.be.model.Component containerComponent, String nodeTemplateId) {
         return containerComponent.getComponentInstances().stream().anyMatch(p -> p.getUniqueId().equals(nodeTemplateId));
     }
 
-    private ComponentTypeEnum getComponentType(ComponentTypeEnum containerComponentType) {
+     ComponentTypeEnum getComponentType(ComponentTypeEnum containerComponentType) {
         if (ComponentTypeEnum.PRODUCT == containerComponentType) {
             return ComponentTypeEnum.SERVICE_INSTANCE;
         } else {
@@ -1099,7 +1099,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ComponentInstance updateComponentInstanceMetadata(Component containerComponent, ComponentTypeEnum containerComponentType, org.openecomp.sdc.be.model.Component origComponent, String componentInstanceId,
+     ComponentInstance updateComponentInstanceMetadata(Component containerComponent, ComponentTypeEnum containerComponentType, org.openecomp.sdc.be.model.Component origComponent, String componentInstanceId,
                                                               ComponentInstance componentInstance) {
 
         Optional<ComponentInstance> componentInstanceOptional;
@@ -1169,7 +1169,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return componentInstanceOptional.get();
     }
 
-    private void updateForwardingPathDefinition(Component containerComponent, ComponentInstance componentInstance, String oldComponentName) {
+     void updateForwardingPathDefinition(Component containerComponent, ComponentInstance componentInstance, String oldComponentName) {
         Collection<ForwardingPathDataDefinition> forwardingPathDataDefinitions = getForwardingPathDataDefinitions(containerComponent.getUniqueId());
         Set<ForwardingPathDataDefinition> updated = new ForwardingPathUtils()
                 .updateComponentInstanceName(forwardingPathDataDefinitions, oldComponentName,
@@ -1214,7 +1214,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
      *            old Group Instance Name
      **/
     // modify group names
-    private String getNewGroupName(String oldPrefix, String newNormailzedPrefix, String qualifiedGroupInstanceName) {
+     String getNewGroupName(String oldPrefix, String newNormailzedPrefix, String qualifiedGroupInstanceName) {
         if (qualifiedGroupInstanceName == null) {
             log.info("CANNOT change group name ");
             return null;
@@ -1224,7 +1224,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return qualifiedGroupInstanceName;
     }
 
-    private ComponentInstance updateComponentInstanceMetadata(ComponentInstance oldComponentInstance, ComponentInstance newComponentInstance) {
+     ComponentInstance updateComponentInstanceMetadata(ComponentInstance oldComponentInstance, ComponentInstance newComponentInstance) {
         oldComponentInstance.setName(newComponentInstance.getName());
         oldComponentInstance.setModificationTime(System.currentTimeMillis());
         oldComponentInstance.setCustomizationUUID(UUID.randomUUID().toString());
@@ -1391,7 +1391,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
 
 
-    private Set<String> getComponentFiltersRelatedToComponentInstance(String containerComponentId,
+     Set<String> getComponentFiltersRelatedToComponentInstance(String containerComponentId,
                                                                       ComponentInstance componentInstance) {
         ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnoreComponentInstances(false);
@@ -1415,7 +1415,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return componentInstance;
     }
 
-    private void deleteForwardingPaths(String serviceId,  List<String> pathIdsToDelete){
+     void deleteForwardingPaths(String serviceId,  List<String> pathIdsToDelete){
 
         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
         if(storageStatus.isRight()) {
@@ -1429,7 +1429,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private List<String> getForwardingPathsRelatedToComponentInstance(String containerComponentId, String componentInstanceId){
+     List<String> getForwardingPathsRelatedToComponentInstance(String containerComponentId, String componentInstanceId){
         Collection<ForwardingPathDataDefinition> allPaths = getForwardingPathDataDefinitions(containerComponentId);
         List<String> pathIDsToBeDeleted = new ArrayList<>();
 
@@ -1439,7 +1439,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return pathIDsToBeDeleted;
     }
 
-    private Collection<ForwardingPathDataDefinition> getForwardingPathDataDefinitions(String containerComponentId) {
+     Collection<ForwardingPathDataDefinition> getForwardingPathDataDefinitions(String containerComponentId) {
         ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnoreForwardingPath(false);
         Either<Service, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade
@@ -1447,7 +1447,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return forwardingPathOrigin.left().value().getForwardingPaths().values();
     }
 
-    private boolean isPathRelatedToComponent(ForwardingPathDataDefinition pathDataDefinition,
+     boolean isPathRelatedToComponent(ForwardingPathDataDefinition pathDataDefinition,
                                              String componentInstanceId){
         return pathDataDefinition.getPathElements().getListToscaDataDefinition()
                 .stream().anyMatch(elementDataDefinition -> elementDataDefinition.getFromNode().equalsIgnoreCase(componentInstanceId) ||
@@ -1456,7 +1456,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
 
-    private ComponentInstance deleteComponentInstance(Component containerComponent, String componentInstanceId, ComponentTypeEnum containerComponentType) {
+     ComponentInstance deleteComponentInstance(Component containerComponent, String componentInstanceId, ComponentTypeEnum containerComponentType) {
         Either<ImmutablePair<Component, String>, StorageOperationStatus> deleteRes = toscaOperationFacade.deleteComponentInstanceFromTopologyTemplate(containerComponent, componentInstanceId);
         if (deleteRes.isRight()) {
             log.debug("Failed to delete entry on graph for resourceInstance {}", componentInstanceId);
@@ -1480,7 +1480,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return deletedInstance;
     }
 
-    private ComponentInstance findAndRemoveComponentInstanceFromContainerComponent(String componentInstanceId, Component containerComponent) {
+     ComponentInstance findAndRemoveComponentInstanceFromContainerComponent(String componentInstanceId, Component containerComponent) {
         ComponentInstance foundInstance = null;
         for (ComponentInstance instance : containerComponent.getComponentInstances()) {
             if (instance.getUniqueId().equals(componentInstanceId)) {
@@ -1493,13 +1493,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return foundInstance;
     }
 
-    private void findAndRemoveComponentInstanceRelations(String componentInstanceId, Component containerComponent) {
+     void findAndRemoveComponentInstanceRelations(String componentInstanceId, Component containerComponent) {
         if(CollectionUtils.isNotEmpty(containerComponent.getComponentInstancesRelations())){
             containerComponent.setComponentInstancesRelations(containerComponent.getComponentInstancesRelations().stream().filter(r -> isNotBelongingRelation(componentInstanceId, r)).collect(Collectors.toList()));
         }
     }
 
-    private boolean isNotBelongingRelation(String componentInstanceId, RequirementCapabilityRelDef relation) {
+     boolean isNotBelongingRelation(String componentInstanceId, RequirementCapabilityRelDef relation) {
         return !relation.getToNode().equals(componentInstanceId) && !relation.getFromNode().equals(componentInstanceId);
     }
 
@@ -1681,7 +1681,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return resultOp;
     }
 
-    private RequirementCapabilityRelDef findRelation(String relationId, List<RequirementCapabilityRelDef> requirementCapabilityRelations) {
+     RequirementCapabilityRelDef findRelation(String relationId, List<RequirementCapabilityRelDef> requirementCapabilityRelations) {
         for(RequirementCapabilityRelDef relationship : requirementCapabilityRelations){
             if(relationship.getRelationships().stream().filter(r -> r.getRelation().getId().equals(relationId)).findFirst().isPresent()){
                 return relationship;
@@ -1690,7 +1690,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return null;
     }
 
-    private Either<RequirementCapabilityRelDef, ResponseFormat> setRelatedRequirement(RequirementCapabilityRelDef foundRelation, Component containerComponent) {
+     Either<RequirementCapabilityRelDef, ResponseFormat> setRelatedRequirement(RequirementCapabilityRelDef foundRelation, Component containerComponent) {
         Either<RequirementCapabilityRelDef, ResponseFormat> result = null;
         RelationshipInfo relationshipInfo = foundRelation.resolveSingleRelationship().getRelation();
         String instanceId = foundRelation.getFromNode();
@@ -1726,19 +1726,19 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private boolean isBelongingFullRequirement(RelationshipInfo relationshipInfo, RequirementDataDefinition req) {
+     boolean isBelongingFullRequirement(RelationshipInfo relationshipInfo, RequirementDataDefinition req) {
         return  req.getName().equals(relationshipInfo.getRequirement()) &&
                 req.getUniqueId().equals(relationshipInfo.getRequirementUid()) &&
                 req.getOwnerId().equals(relationshipInfo.getRequirementOwnerId());
     }
 
-    private boolean isBelongingCalcRequirement(RelationshipInfo relationshipInfo, RequirementDataDefinition req, LifecycleStateEnum state) {
+     boolean isBelongingCalcRequirement(RelationshipInfo relationshipInfo, RequirementDataDefinition req, LifecycleStateEnum state) {
         return  nameMatches(relationshipInfo.getRequirement(), req.getName(), req.getPreviousName(), state) &&
                 req.getUniqueId().equals(relationshipInfo.getRequirementUid()) &&
                 req.getOwnerId().equals(relationshipInfo.getRequirementOwnerId());
     }
 
-    private Either<RequirementCapabilityRelDef, ResponseFormat> setRelatedCapability(RequirementCapabilityRelDef foundRelation, Component containerComponent) {
+     Either<RequirementCapabilityRelDef, ResponseFormat> setRelatedCapability(RequirementCapabilityRelDef foundRelation, Component containerComponent) {
         Either<RequirementCapabilityRelDef, ResponseFormat> result = null;
         RelationshipInfo relationshipInfo = foundRelation.resolveSingleRelationship().getRelation();
         String instanceId = foundRelation.getToNode();
@@ -1775,25 +1775,25 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private boolean isBelongingFullCapability(RelationshipInfo relationshipInfo, CapabilityDataDefinition cap) {
+     boolean isBelongingFullCapability(RelationshipInfo relationshipInfo, CapabilityDataDefinition cap) {
         return     cap.getName().equals(relationshipInfo.getCapability()) &&
                 cap.getUniqueId().equals(relationshipInfo.getCapabilityUid()) &&
                 cap.getOwnerId().equals(relationshipInfo.getCapabilityOwnerId());
     }
 
-    private boolean isBelongingCalcCapability(RelationshipInfo relationshipInfo, CapabilityDataDefinition cap, LifecycleStateEnum state) {
+     boolean isBelongingCalcCapability(RelationshipInfo relationshipInfo, CapabilityDataDefinition cap, LifecycleStateEnum state) {
         return  nameMatches(relationshipInfo.getCapability(), cap.getName(), cap.getPreviousName(), state) &&
                 cap.getUniqueId().equals(relationshipInfo.getCapabilityUid()) &&
                 cap.getOwnerId().equals(relationshipInfo.getCapabilityOwnerId());
     }
 
-    private boolean nameMatches(String nameFromRelationship, String currName, String previousName, LifecycleStateEnum state) {
+     boolean nameMatches(String nameFromRelationship, String currName, String previousName, LifecycleStateEnum state) {
         return state == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT ?
                 currName.equals(nameFromRelationship):
                 previousName!= null && previousName.equals(nameFromRelationship);
     }
 
-    private Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValue(ComponentInstanceProperty attribute, String resourceInstanceId) {
+     Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValue(ComponentInstanceProperty attribute, String resourceInstanceId) {
         Either<ComponentInstanceProperty, StorageOperationStatus> eitherAttribute = componentInstanceOperation.updateAttributeValueInResourceInstance(attribute, resourceInstanceId, true);
         Either<ComponentInstanceProperty, ResponseFormat> result;
         if (eitherAttribute.isLeft()) {
@@ -1813,7 +1813,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private Either<ComponentInstanceProperty, ResponseFormat> createAttributeValue(ComponentInstanceProperty attribute, String resourceInstanceId) {
+     Either<ComponentInstanceProperty, ResponseFormat> createAttributeValue(ComponentInstanceProperty attribute, String resourceInstanceId) {
 
         Either<ComponentInstanceProperty, ResponseFormat> result;
 
@@ -1984,13 +1984,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateMandatoryFields(PropertyDataDefinition property) {
+     void validateMandatoryFields(PropertyDataDefinition property) {
         if (StringUtils.isEmpty(property.getName())) {
             throw new ByActionStatusComponentException (ActionStatus.MISSING_PROPERTY_NAME);
         }
     }
 
-    private ComponentInstanceProperty validatePropertyExistsOnComponent(ComponentInstanceProperty property, Component containerComponent, ComponentInstance foundResourceInstance) {
+     ComponentInstanceProperty validatePropertyExistsOnComponent(ComponentInstanceProperty property, Component containerComponent, ComponentInstance foundResourceInstance) {
         List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties().get(foundResourceInstance.getUniqueId());
         Optional<ComponentInstanceProperty> instanceProperty = instanceProperties.stream().filter(p -> p.getName().equals(property.getName())).findAny();
         if (!instanceProperty.isPresent()) {
@@ -2001,7 +2001,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
 
 
-    private ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property,
+     ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property,
                                                                         String newValue, Component containerComponent, ComponentInstance foundResourceInstance,
                                                                         String capabilityType, String capabilityName) {
         String componentInstanceUniqueId = foundResourceInstance.getUniqueId();
@@ -2014,7 +2014,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
 
-    private ResponseFormat updateCapabilityPropFromUpdateInstProp(ComponentInstanceProperty property,
+     ResponseFormat updateCapabilityPropFromUpdateInstProp(ComponentInstanceProperty property,
                                                                   String newValue, Component containerComponent,
                                                                   ComponentInstance foundResourceInstance,
                                                                   String capabilityType, String capabilityName) {
@@ -2034,7 +2034,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
 
-    private ResponseFormat updateCapPropOnContainerComponent(ComponentInstanceProperty property, String newValue,
+     ResponseFormat updateCapPropOnContainerComponent(ComponentInstanceProperty property, String newValue,
                                                              Component containerComponent,
                                                              ComponentInstance foundResourceInstance,
                                                              String capabilityType, String capabilityName,
@@ -2073,7 +2073,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return null;
     }
 
-    private ResponseFormat updatePropertyOnContainerComponent(ComponentInstanceProperty instanceProperty, String newValue, Component containerComponent, ComponentInstance foundResourceInstance) {
+     ResponseFormat updatePropertyOnContainerComponent(ComponentInstanceProperty instanceProperty, String newValue, Component containerComponent, ComponentInstance foundResourceInstance) {
         StorageOperationStatus status;
         instanceProperty.setValue(newValue);
         status = toscaOperationFacade.updateComponentInstanceProperty(containerComponent, foundResourceInstance.getUniqueId(), instanceProperty);
@@ -2085,7 +2085,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
 
-    private <T extends PropertyDefinition> Either<String,ResponseFormat> validatePropertyObjectValue(T property, String newValue, boolean isInput) {
+     <T extends PropertyDefinition> Either<String,ResponseFormat> validatePropertyObjectValue(T property, String newValue, boolean isInput) {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
         if (allDataTypesEither.isRight()) {
             JanusGraphOperationStatus status = allDataTypesEither.right().value();
@@ -2115,7 +2115,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(newValue);
     }
 
-    private <T extends PropertyDefinition> boolean validateAndUpdateRules(T property, boolean isInput, Map<String, DataTypeDefinition> allDataTypes, String innerType, String propertyType) {
+     <T extends PropertyDefinition> boolean validateAndUpdateRules(T property, boolean isInput, Map<String, DataTypeDefinition> allDataTypes, String innerType, String propertyType) {
         if (!isInput) {
             ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, ((ComponentInstanceProperty) property).getRules(), innerType, allDataTypes, true);
             if (pair.getRight() != null && !pair.getRight()) {
@@ -2126,7 +2126,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return false;
     }
 
-    private <T extends PropertyDefinition> Either<String,ResponseFormat> updatePropertyObjectValue(T property, boolean isInput) {
+     <T extends PropertyDefinition> Either<String,ResponseFormat> updatePropertyObjectValue(T property, boolean isInput) {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
         if (allDataTypesEither.isRight()) {
             JanusGraphOperationStatus status = allDataTypesEither.right().value();
@@ -2177,7 +2177,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(newValue);
     }
 
-    private ResponseFormat updateInputOnContainerComponent(ComponentInstanceInput input, String newValue, Component containerComponent, ComponentInstance foundResourceInstance) {
+     ResponseFormat updateInputOnContainerComponent(ComponentInstanceInput input, String newValue, Component containerComponent, ComponentInstance foundResourceInstance) {
         StorageOperationStatus status;
         input.setValue(newValue);
         status = toscaOperationFacade.updateComponentInstanceInput(containerComponent, foundResourceInstance.getUniqueId(), input);
@@ -2265,7 +2265,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private ComponentInstanceInput validateInputExistsOnComponent(ComponentInstanceInput input, Component containerComponent, ComponentInstance foundResourceInstance) {
+     ComponentInstanceInput validateInputExistsOnComponent(ComponentInstanceInput input, Component containerComponent, ComponentInstance foundResourceInstance) {
         List<ComponentInstanceInput> instanceProperties = containerComponent.getComponentInstancesInputs().get(foundResourceInstance.getUniqueId());
         Optional<ComponentInstanceInput> instanceInput = instanceProperties.stream().filter(p -> p.getName().equals(input.getName())).findAny();
         if (!instanceInput.isPresent()) {
@@ -2424,7 +2424,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private Component getAndValidateOriginComponentOfComponentInstance(Component containerComponent, ComponentInstance componentInstance) {
+     Component getAndValidateOriginComponentOfComponentInstance(Component containerComponent, ComponentInstance componentInstance) {
 
         ComponentTypeEnum componentType = getComponentTypeByParentComponentType(containerComponent.getComponentType());
         Component component;
@@ -2495,7 +2495,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return resultOp;
     }
 
-    private Set<String> getForwardingPaths(Component containerComponent, ComponentInstance currentResourceInstance,
+     Set<String> getForwardingPaths(Component containerComponent, ComponentInstance currentResourceInstance,
                                            Component updatedContainerComponent) {
         DataForMergeHolder dataForMergeHolder=new DataForMergeHolder();
         dataForMergeHolder.setOrigComponentInstId(currentResourceInstance.getName());
@@ -2507,7 +2507,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 getForwardingPathsToBeDeletedOnVersionChange(service,dataForMergeHolder,updatedContainerComponent);
     }
 
-    private ComponentParametersView getComponentParametersViewForForwardingPath() {
+     ComponentParametersView getComponentParametersViewForForwardingPath() {
         ComponentParametersView componentParametersView = new ComponentParametersView();
         componentParametersView.setIgnoreCapabiltyProperties(false);
         componentParametersView.setIgnoreForwardingPath(false);
@@ -2665,7 +2665,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean isFillProxyRes(StorageOperationStatus fillProxyRes) {
+     boolean isFillProxyRes(StorageOperationStatus fillProxyRes) {
         if (fillProxyRes != StorageOperationStatus.OK) {
             log.debug("Failed to fill service proxy resource data with data from service, error {}", fillProxyRes);
             return true;
@@ -2757,11 +2757,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(new ComponentInstance());
     }
 
-    private Boolean validateInstanceNameUniquenessUponUpdate(Component containerComponent, ComponentInstance oldComponentInstance, String newInstanceName) {
+     Boolean validateInstanceNameUniquenessUponUpdate(Component containerComponent, ComponentInstance oldComponentInstance, String newInstanceName) {
         return ComponentValidations.validateNameIsUniqueInComponent(oldComponentInstance.getName(), newInstanceName, containerComponent);
     }
 
-    private Either<ComponentInstance, StorageOperationStatus> getResourceInstanceById(Component containerComponent, String instanceId) {
+     Either<ComponentInstance, StorageOperationStatus> getResourceInstanceById(Component containerComponent, String instanceId) {
 
         Either<ComponentInstance, StorageOperationStatus> result = null;
         List<ComponentInstance> instances = containerComponent.getComponentInstances();
@@ -2781,7 +2781,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private ComponentInstance buildComponentInstance(ComponentInstance resourceInstanceForUpdate, ComponentInstance origInstanceForUpdate) {
+     ComponentInstance buildComponentInstance(ComponentInstance resourceInstanceForUpdate, ComponentInstance origInstanceForUpdate) {
 
         Long creationDate = origInstanceForUpdate.getCreationTime();
 
@@ -2864,7 +2864,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return resultOp;
     }
 
-    private List<ComponentInstanceProperty> findCapabilityOfInstance( String componentId, String instanceId, String capabilityType, String capabilityName, String ownerId, Map<String, List<CapabilityDefinition>> instanceCapabilities) {
+     List<ComponentInstanceProperty> findCapabilityOfInstance( String componentId, String instanceId, String capabilityType, String capabilityName, String ownerId, Map<String, List<CapabilityDefinition>> instanceCapabilities) {
         CapabilityDefinition foundCapability;
         if (MapUtils.isNotEmpty(instanceCapabilities)) {
             List<CapabilityDefinition> capabilitiesPerType = instanceCapabilities.get(capabilityType);
@@ -2879,7 +2879,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return fetchComponentInstanceCapabilityProperties(componentId, instanceId, capabilityType, capabilityName, ownerId);
     }
 
-    private List<ComponentInstanceProperty> fetchComponentInstanceCapabilityProperties(String componentId, String instanceId, String capabilityType, String capabilityName, String ownerId) {
+     List<ComponentInstanceProperty> fetchComponentInstanceCapabilityProperties(String componentId, String instanceId, String capabilityType, String capabilityName, String ownerId) {
         try {
             return toscaOperationFacade.getComponentInstanceCapabilityProperties(componentId, instanceId, capabilityName, capabilityType, ownerId)
                     .left()
@@ -3089,7 +3089,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(resultMap);
     }
 
-    private Either<String, ResponseFormat> deepCopyComponentInstance(
+     Either<String, ResponseFormat> deepCopyComponentInstance(
             Component sourceComponent, String containerComponentId, String sourceComponentInstanceId,
             ComponentInstance destComponentInstance, String userId) {
 
@@ -3120,7 +3120,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(COPY_COMPONENT_INSTANCE_OK);
     }
 
-    private Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs(
+     Either<String, ResponseFormat> copyComponentInstanceWithPropertiesAndInputs(
             Component sourceComponent, Component destComponent, String sourceComponentInstanceId,
             ComponentInstance destComponentInstance, String userId) {
         log.debug("start to copy ComponentInstance with properties and inputs");
@@ -3189,7 +3189,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(COPY_COMPONENT_INSTANCE_OK);
     }
 
-    private Either<String, ResponseFormat> copyComponentInstanceWithAttributes(Component sourceComponent,
+     Either<String, ResponseFormat> copyComponentInstanceWithAttributes(Component sourceComponent,
                                                                                Component destComponent,
                                                                                String sourceComponentInstanceId,
                                                                                ComponentInstance destComponentInstance,
@@ -3245,7 +3245,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(COPY_COMPONENT_INSTANCE_OK);
     }
 
-    private Either<ComponentInstanceAttribute, ResponseFormat> createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum componentTypeEnum,
+     Either<ComponentInstanceAttribute, ResponseFormat> createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum componentTypeEnum,
                                                                                                        String componentId,
                                                                                                        String resourceInstanceId,
                                                                                                        ComponentInstanceAttribute attribute,
@@ -3337,7 +3337,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return resultOp;
     }
 
-    private Either<String, ResponseFormat> updateComponentInstanceProperty(String containerComponentId,
+     Either<String, ResponseFormat> updateComponentInstanceProperty(String containerComponentId,
                                                                            String componentInstanceId,
                                                                            ComponentInstanceProperty property) {
         Either<String, ResponseFormat> resultOp;
@@ -3372,7 +3372,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left("Update OK");
     }
 
-    private Either<String, ResponseFormat> getInputListDefaultValue(Component component, String inputId) {
+     Either<String, ResponseFormat> getInputListDefaultValue(Component component, String inputId) {
         List<InputDefinition> inputList = component.getInputs();
         for (InputDefinition input : inputList) {
             if (input.getUniqueId().equals(inputId)) {
@@ -3429,7 +3429,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ComponentInstance, ResponseFormat> batchDeleteComponentInstance(Component containerComponent,
+     Either<ComponentInstance, ResponseFormat> batchDeleteComponentInstance(Component containerComponent,
                                                                                    String containerComponentType,
                                                                                    String containerComponentId,
                                                                                    String componentInstanceId) {

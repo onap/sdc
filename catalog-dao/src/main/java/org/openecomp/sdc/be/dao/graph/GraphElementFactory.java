@@ -67,7 +67,7 @@ public class GraphElementFactory {
 		return element;
 	}
 
-	private static GraphNode createNode(String label, Map<String, Object> properties) {
+	static GraphNode createNode(String label, Map<String, Object> properties) {
 		GraphNode element = null;
 		NodeTypeEnum type = NodeTypeEnum.getByName(label);
 		if (type != null) {
@@ -104,7 +104,7 @@ public class GraphElementFactory {
 		return element;
 	}
 
-	private static <T extends GraphNode> T createNode(String label, Map<String, Object> properties, Class<T> clazz) {
+	static <T extends GraphNode> T createNode(String label, Map<String, Object> properties, Class<T> clazz) {
 		T element = null;
 		NodeTypeEnum type = NodeTypeEnum.getByName(label);
 		if (type != null) {

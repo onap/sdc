@@ -20,7 +20,15 @@
 
 package org.openecomp.sdc.be.components.property;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.be.model.utils.ComponentUtilities.getInputAnnotations;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
@@ -37,22 +45,13 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.openecomp.sdc.be.model.utils.ComponentUtilities.getInputAnnotations;
-
 @org.springframework.stereotype.Component
 public class ComponentInstanceInputPropertyDeclarator extends DefaultPropertyDeclarator<ComponentInstance, ComponentInstanceInput> {
 
-    private static final Logger log = Logger.getLogger(ComponentInstanceInputPropertyDeclarator.class);
-    private final ToscaOperationFacade toscaOperationFacade;
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    private final ExceptionUtils exceptionUtils;
+     static final Logger log = Logger.getLogger(ComponentInstanceInputPropertyDeclarator.class);
+     final ToscaOperationFacade toscaOperationFacade;
+     final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+     final ExceptionUtils exceptionUtils;
 
     public ComponentInstanceInputPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation, ToscaOperationFacade toscaOperationFacade, ComponentInstanceBusinessLogic componentInstanceBusinessLogic, ExceptionUtils exceptionUtils) {
         super(componentsUtils, propertyOperation);
@@ -117,20 +116,20 @@ public class ComponentInstanceInputPropertyDeclarator extends DefaultPropertyDec
         return inputFromProperty;
     }
 
-    private void enrichInputWithAnnotations(PropertyDataDefinition prop, InputDefinition inputFromProperty, Component propertiesOwnerNodeType) {
+     void enrichInputWithAnnotations(PropertyDataDefinition prop, InputDefinition inputFromProperty, Component propertiesOwnerNodeType) {
         List<Annotation> inputAnnotations = getInputAnnotations(propertiesOwnerNodeType, prop.getName());
         if(!isEmpty(inputAnnotations)){
             inputFromProperty.setAnnotations(inputAnnotations);
         }
     }
 
-    private Component getInstanceOriginType(ComponentInstance propertiesOwner) {
+     Component getInstanceOriginType(ComponentInstance propertiesOwner) {
         return toscaOperationFacade.getToscaElement(propertiesOwner.getActualComponentUid(), getFilterComponentInputs())
                     .left()
                     .on(err -> exceptionUtils.rollBackAndThrow(err, propertiesOwner.getActualComponentUid()));
     }
 
-    private ComponentParametersView getFilterComponentInputs() {
+     ComponentParametersView getFilterComponentInputs() {
         ComponentParametersView filterInputs = new ComponentParametersView(true);
         filterInputs.setIgnoreInputs(false);
         return filterInputs;

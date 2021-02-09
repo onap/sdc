@@ -18,9 +18,22 @@
  * ============LICENSE_END=================================================
  */
 
-package org.openecomp.sdc.be.components.impl.utils;
+package org.openecomp.sdc.be.components.csar;
 
-import mockit.Deencapsulation;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
@@ -31,8 +44,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.csar.CsarInfo;
-import org.openecomp.sdc.be.components.csar.YamlTemplateParsingHandler;
 import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
@@ -53,22 +64,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
 
 @RunWith(MockitoJUnitRunner.class)
 public class YamlTemplateParsingHandlerTest {
@@ -171,13 +167,13 @@ public class YamlTemplateParsingHandlerTest {
         nodeMap.put("name","test_name");
         nodeMap.put("type","test_type");
         nodeTemplateJsonMap.put(ARTIFACTS.getElementName(), nodeMap);
-        Deencapsulation.invoke(testSubject, "setArtifacts", nodeTemplateInfo, nodeTemplateJsonMap);
+        testSubject.setArtifacts(nodeTemplateInfo, nodeTemplateJsonMap);
         assertNotNull(nodeTemplateInfo.getArtifacts());
     }
 
     @Test
     public void testCreateArtifactsModuleFromYaml() {
-        Map<String, Map<String, Map<String, String>>> nodeTemplateJsonMap = new HashMap<>();
+        Map<String, Object> nodeTemplateJsonMap = new HashMap<>();
         Map<String, Map<String,String>> map0 = new HashMap<>();
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
@@ -185,7 +181,7 @@ public class YamlTemplateParsingHandlerTest {
         map0.put("test_art", map1);
         nodeTemplateJsonMap.put(ARTIFACTS.getElementName(), map0);
         Map<String, Map<String, UploadArtifactInfo>> result;
-        result = Deencapsulation.invoke(testSubject, "createArtifactsModuleFromYaml", nodeTemplateJsonMap);
+        result = testSubject.createArtifactsModuleFromYaml(nodeTemplateJsonMap);
         Assert.assertTrue(MapUtils.isNotEmpty(result));
         Assert.assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
         Assert.assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
@@ -198,7 +194,7 @@ public class YamlTemplateParsingHandlerTest {
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
-        Deencapsulation.invoke(testSubject, "addModuleNodeTemplateArtifacts", result, map1, "test_art");
+        testSubject.addModuleNodeTemplateArtifacts(result, map1, "test_art");
         Assert.assertTrue(MapUtils.isNotEmpty(result));
         Assert.assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
         Assert.assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
@@ -211,7 +207,7 @@ public class YamlTemplateParsingHandlerTest {
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result;
-        result = Deencapsulation.invoke(testSubject, "buildModuleNodeTemplateArtifact", map1);
+        result = testSubject.buildModuleNodeTemplateArtifact(map1);
         assertNotNull(result);
         Assert.assertEquals("test_file", result.getFile());
         Assert.assertEquals("test_type", result.getType());
@@ -219,11 +215,11 @@ public class YamlTemplateParsingHandlerTest {
 
     @Test
     public void testFillArtifact() {
-        Map<String, String> map1 = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result = new UploadArtifactInfo();
-        Deencapsulation.invoke(testSubject, "fillArtifact", result, map1);
+        testSubject.fillArtifact(result, map1);
         assertNotNull(result);
         Assert.assertEquals("test_file", result.getFile());
         Assert.assertEquals("test_type", result.getType());

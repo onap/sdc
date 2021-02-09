@@ -23,18 +23,21 @@ package org.openecomp.sdc.be.dao.jsongraph;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.graphdb.types.system.BaseLabel;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
@@ -48,6 +51,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+@RunWith(MockitoJUnitRunner.class)
 public class JanusGraphDaoMockTest {
 
 	@InjectMocks
@@ -56,10 +60,6 @@ public class JanusGraphDaoMockTest {
 	@Mock
 	JanusGraphClient janusGraphClient;
 
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-	}
 
 	@Test
 	public void testCommit() throws Exception {
@@ -144,7 +144,6 @@ public class JanusGraphDaoMockTest {
 	@Test
 	public void testGetFirstFoundVertex() throws Exception {
 		Iterable<JanusGraphVertex> vertices = Mockito.mock(Iterable.class);
-		Either<GraphVertex, JanusGraphOperationStatus> result;
 
 		Iterator<JanusGraphVertex> value = Mockito.mock(Iterator.class);
 		Mockito.when(vertices.iterator()).thenReturn(value);
@@ -153,22 +152,20 @@ public class JanusGraphDaoMockTest {
 		Mockito.when(value.next()).thenReturn(value2);
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getFirstFoundVertex", JsonParseFlagEnum.NoParse, vertices);
+		testSubject.getFirstFoundVertex(JsonParseFlagEnum.NoParse, vertices);
 	}
 
 	@Test
 	public void testGetFirstFoundVertexNotFound() throws Exception {
 		Iterable<JanusGraphVertex> vertices = Mockito.mock(Iterable.class);
-		Either<GraphVertex, JanusGraphOperationStatus> result;
 
 		Iterator<JanusGraphVertex> value = Mockito.mock(Iterator.class);
 		Mockito.when(vertices.iterator()).thenReturn(value);
 		Mockito.when(value.hasNext()).thenReturn(false);
 		JanusGraphVertex value2 = Mockito.mock(JanusGraphVertex.class);
-		Mockito.when(value.next()).thenReturn(value2);
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getFirstFoundVertex", JsonParseFlagEnum.NoParse, vertices);
+		testSubject.getFirstFoundVertex(JsonParseFlagEnum.NoParse, vertices);
 	}
 
 	@Test
@@ -181,12 +178,11 @@ public class JanusGraphDaoMockTest {
 		Either<JanusGraph, JanusGraphOperationStatus> value = Either.left(tg);
 		// default test
 		JanusGraphVertex value2 = Mockito.mock(JanusGraphVertex.class);
-		Mockito.when(tg.addVertex()).thenReturn(value2);
 		Mockito.when(janusGraphClient.getGraph()).thenReturn(value);
 
 		// test 1
 		result = testSubject.getVertexById(id, JsonParseFlagEnum.NoParse);
-		// Assert.assertEquals(null, result);
+		Assert.assertNotNull(result);
 	}
 
 	@Test
@@ -203,7 +199,7 @@ public class JanusGraphDaoMockTest {
 
 		// test 1
 		result = testSubject.getVertexById(id, JsonParseFlagEnum.NoParse);
-		// Assert.assertEquals(null, result);
+		Assert.assertNotNull(result);
 	}
 
 	@Test
@@ -220,12 +216,10 @@ public class JanusGraphDaoMockTest {
 	public void testCreateAndFill() throws Exception {
 
 		JanusGraphVertex vertex = Mockito.mock(JanusGraphVertex.class);
-		JsonParseFlagEnum parseFlag = null;
-		GraphVertex result;
 
 		// default test
 
-		result = Deencapsulation.invoke(testSubject, "createAndFill", vertex, JsonParseFlagEnum.NoParse);
+		testSubject.createAndFill(vertex, JsonParseFlagEnum.NoParse);
 	}
 
 	@Test
@@ -234,7 +228,6 @@ public class JanusGraphDaoMockTest {
 		GraphVertex graphVertex = new GraphVertex();
 		JanusGraphVertex vertex = Mockito.mock(JanusGraphVertex.class);
 		graphVertex.setVertex(vertex);
-		JsonParseFlagEnum parseFlag = null;
 
 		// default test
 
@@ -282,7 +275,6 @@ public class JanusGraphDaoMockTest {
 		JanusGraph tg = Mockito.mock(JanusGraph.class);
 		Either<JanusGraph, JanusGraphOperationStatus> value = Either.left(tg);
 		JanusGraphVertex value2 = Mockito.mock(JanusGraphVertex.class);
-		Mockito.when(tg.addVertex()).thenReturn(value2);
 		Mockito.when(janusGraphClient.getGraph()).thenReturn(value);
 		
 		// default test
@@ -379,17 +371,12 @@ public class JanusGraphDaoMockTest {
 	public void testGetAdjacentVerticies() throws Exception {
 
 		Vertex parentVertex = null;
-		EdgeLabelEnum edgeLabel = null;
-		JsonParseFlagEnum parseFlag = null;
-		Direction direction = null;
-		Either<List<Vertex>, JanusGraphOperationStatus> result;
 
 		Either<JanusGraph, JanusGraphOperationStatus> value = Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
 		JanusGraphVertex value2 = Mockito.mock(JanusGraphVertex.class);
 		Mockito.when(janusGraphClient.getGraph()).thenReturn(value);
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getAdjacentVertices",
-				new Object[] { Vertex.class, EdgeLabelEnum.class, JsonParseFlagEnum.class, Direction.class });
+		testSubject.getAdjacentVertices(parentVertex, EdgeLabelEnum.ARTIFACTS, JsonParseFlagEnum.ParseAll, Direction.BOTH );
 	}
 
 	@Test
@@ -424,14 +411,10 @@ public class JanusGraphDaoMockTest {
 
 		GraphVertex fromVertex = new GraphVertex();
 		GraphVertex toVertex = new GraphVertex();
-		Either<Edge, JanusGraphOperationStatus> result;
 
-		Either<JanusGraph, JanusGraphOperationStatus> value = Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
-		JanusGraphVertex value2 = Mockito.mock(JanusGraphVertex.class);
-		Mockito.when(janusGraphClient.getGraph()).thenReturn(value);
-		
+
 		// default test
-		result = testSubject.deleteEdge(fromVertex, toVertex, EdgeLabelEnum.ADDITIONAL_INFORMATION);
+		testSubject.deleteEdge(fromVertex, toVertex, EdgeLabelEnum.ADDITIONAL_INFORMATION);
 	}
 
 	@Test
@@ -546,7 +529,6 @@ public class JanusGraphDaoMockTest {
 		Mockito.when(mockiter.hasNext()).thenReturn(true, false);
 		Mockito.when(mockiter.next()).thenReturn(nextmock);
 		Vertex secondVertex = Mockito.mock(Vertex.class);
-		Mockito.when(nextmock.outVertex()).thenReturn(secondVertex);
 		Mockito.when(nextmock.inVertex()).thenReturn(secondVertex);
 		Iterator<Edge> restOfEdges = Mockito.mock(Iterator.class);
 		Mockito.when(secondVertex.edges(Mockito.any(), Mockito.any())).thenReturn(restOfEdges);
@@ -571,7 +553,6 @@ public class JanusGraphDaoMockTest {
 		Mockito.when(mockiter.next()).thenReturn(nextmock);
 		Vertex secondVertex = Mockito.mock(Vertex.class);
 		Mockito.when(nextmock.outVertex()).thenReturn(secondVertex);
-		Mockito.when(nextmock.inVertex()).thenReturn(secondVertex);
 		Iterator<Edge> restOfEdges = Mockito.mock(Iterator.class);
 		Mockito.when(secondVertex.edges(Mockito.any(), Mockito.any())).thenReturn(restOfEdges);
 		Mockito.when(restOfEdges.hasNext()).thenReturn(false);

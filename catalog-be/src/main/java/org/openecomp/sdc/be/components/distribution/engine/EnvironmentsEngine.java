@@ -75,26 +75,26 @@ import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.runMet
 @Service
 public class EnvironmentsEngine implements INotificationHandler {
 
-    private static final String MESSAGE_BUS = "MessageBus";
-    private static final String UNKNOWN = "Unknown";
-    private static final Logger log = Logger.getLogger(EnvironmentsEngine.class.getName());
-    private static final String LOG_PARTNER_NAME = "SDC.BE";
-    private ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
+     static final String MESSAGE_BUS = "MessageBus";
+     static final String UNKNOWN = "Unknown";
+     static final Logger log = Logger.getLogger(EnvironmentsEngine.class.getName());
+     static final String LOG_PARTNER_NAME = "SDC.BE";
+     ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
 
-    private Map<String, OperationalEnvironmentEntry> environments = new HashMap<>();
-    private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-    private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
-    private Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
+     Map<String, OperationalEnvironmentEntry> environments = new HashMap<>();
+     Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+     Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
+     Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
 
-    private final DmaapConsumer dmaapConsumer;
-    private final OperationalEnvironmentDao operationalEnvironmentDao;
-    private final DME2EndpointIteratorCreator epIterCreator;
-    private final AaiRequestHandler aaiRequestHandler;
-    private final ComponentsUtils componentUtils;
-    private final CambriaHandler cambriaHandler;
-    private final DistributionEngineClusterHealth distributionEngineClusterHealth;
-    private final DistributionCompleteReporter distributionCompleteReporter;
-    private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
+     final DmaapConsumer dmaapConsumer;
+     final OperationalEnvironmentDao operationalEnvironmentDao;
+     final DME2EndpointIteratorCreator epIterCreator;
+     final AaiRequestHandler aaiRequestHandler;
+     final ComponentsUtils componentUtils;
+     final CambriaHandler cambriaHandler;
+     final DistributionEngineClusterHealth distributionEngineClusterHealth;
+     final DistributionCompleteReporter distributionCompleteReporter;
+     static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
 
     public EnvironmentsEngine(DmaapConsumer dmaapConsumer, OperationalEnvironmentDao operationalEnvironmentDao, DME2EndpointIteratorCreator epIterCreator, AaiRequestHandler aaiRequestHandler, ComponentsUtils componentUtils, CambriaHandler cambriaHandler, DistributionEngineClusterHealth distributionEngineClusterHealth, DistributionCompleteReporter distributionCompleteReporter) {
         this.dmaapConsumer = dmaapConsumer;
@@ -127,7 +127,7 @@ public class EnvironmentsEngine implements INotificationHandler {
         }
     }
 
-    private void initDmeGlobalConfig() {
+     void initDmeGlobalConfig() {
         DmaapConsumerConfiguration dmaapConsumerParams = ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration();
         if (dmaapConsumerParams == null) {
             log.warn("cannot read dmaap configuration file,DME might not be initialized properly");
@@ -160,7 +160,7 @@ public class EnvironmentsEngine implements INotificationHandler {
      * @param envNamePerPollingTask
      * @param opEnvEntry
      */
-    private void connectUebTopic(OperationalEnvironmentEntry opEnvEntry, AtomicBoolean status,
+     void connectUebTopic(OperationalEnvironmentEntry opEnvEntry, AtomicBoolean status,
                                  Map<String, DistributionEngineInitTask> envNamePerInitTask,
                                  Map<String, DistributionEnginePollingTask> envNamePerPollingTask) {
 
@@ -253,7 +253,7 @@ public class EnvironmentsEngine implements INotificationHandler {
         return errorWrapper.isEmpty();
     }
 
-    private void validateNotification(Wrapper<Boolean> errorWrapper, IDmaapNotificationData notificationData,
+     void validateNotification(Wrapper<Boolean> errorWrapper, IDmaapNotificationData notificationData,
                                       IDmaapAuditNotificationData auditNotificationData) {
         // Check OperationaEnvironmentType
         if (errorWrapper.isEmpty()) {
@@ -304,7 +304,7 @@ public class EnvironmentsEngine implements INotificationHandler {
         }
     }
 
-    private void saveEntryWithFailedStatus(Wrapper<Boolean> errorWrapper, OperationalEnvironmentEntry opEnvEntry) {
+     void saveEntryWithFailedStatus(Wrapper<Boolean> errorWrapper, OperationalEnvironmentEntry opEnvEntry) {
         log.debug("handle message - save OperationalEnvironment Failed Status");
         opEnvEntry.setStatus(EnvironmentStatusEnum.FAILED);
         saveOpEnvEntry(errorWrapper, opEnvEntry);
@@ -428,7 +428,7 @@ public class EnvironmentsEngine implements INotificationHandler {
     }
 
 
-    private void saveOpEnvEntry(Wrapper<Boolean> errorWrapper, OperationalEnvironmentEntry entry) {
+     void saveOpEnvEntry(Wrapper<Boolean> errorWrapper, OperationalEnvironmentEntry entry) {
         entry.setLastModified(new Date(System.currentTimeMillis()));
         CassandraOperationStatus saveStaus = operationalEnvironmentDao.save(entry);
         if (saveStaus != CassandraOperationStatus.OK) {
@@ -457,18 +457,18 @@ public class EnvironmentsEngine implements INotificationHandler {
         return uebHosts;
     }
 
-    private String map2OpEnvKey(OperationalEnvironmentEntry entry) {
+     String map2OpEnvKey(OperationalEnvironmentEntry entry) {
         return String.format("%s.%s.%s", entry.getTenant(), entry.getEcompWorkloadContext(), MESSAGE_BUS);
     }
 
-    private Map<String, OperationalEnvironmentEntry> populateEnvironments() {
+     Map<String, OperationalEnvironmentEntry> populateEnvironments() {
         Map<String, OperationalEnvironmentEntry> envs = getEnvironmentsFromDb();
         OperationalEnvironmentEntry confEntry = readEnvFromConfig();
         envs.put(confEntry.getEnvironmentId(), confEntry);
         return envs;
     }
 
-    private OperationalEnvironmentEntry readEnvFromConfig() {
+     OperationalEnvironmentEntry readEnvFromConfig() {
         OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
         DistributionEngineConfiguration distributionEngineConfiguration = configurationManager
                 .getDistributionEngineConfiguration();
@@ -491,7 +491,7 @@ public class EnvironmentsEngine implements INotificationHandler {
         return entry;
     }
 
-    private Map<String, OperationalEnvironmentEntry> getEnvironmentsFromDb() {
+     Map<String, OperationalEnvironmentEntry> getEnvironmentsFromDb() {
         Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> opEnvResult = operationalEnvironmentDao
                 .getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED);
 
