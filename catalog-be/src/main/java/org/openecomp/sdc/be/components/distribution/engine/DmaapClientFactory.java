@@ -67,7 +67,7 @@ public class DmaapClientFactory {
         return producer;
     }
 
-    private Properties buildProperties(DmaapConsumerConfiguration parameters) throws GeneralSecurityException, IOException {
+    Properties buildProperties(DmaapConsumerConfiguration parameters) throws GeneralSecurityException, IOException {
         Properties props = new Properties();
         Either<String,String> passkey = SecurityUtil.INSTANCE.decrypt(parameters.getCredential().getPassword() );
         if (passkey.isRight()){
@@ -120,7 +120,7 @@ public class DmaapClientFactory {
         return props;
     }
 
-    private Properties buildProducerProperties(DmaapProducerConfiguration parameters) throws GeneralSecurityException, IOException { 
+    Properties buildProducerProperties(DmaapProducerConfiguration parameters) throws GeneralSecurityException, IOException {
         logger.info("The DmaapProducerConfiguration is {} ", parameters);
         Properties props = new Properties();
         Either<String,String> passkey = SecurityUtil.INSTANCE.decrypt(parameters.getCredential().getPassword() );
@@ -175,7 +175,7 @@ public class DmaapClientFactory {
         return props;
     }
 
-    private void ensureFileExists(String filePath) throws IOException {
+    void ensureFileExists(String filePath) throws IOException {
         File file = new File(filePath);
         if(file.createNewFile()) {
             logger.info("The file {} has been created on the disk", file.getAbsolutePath());

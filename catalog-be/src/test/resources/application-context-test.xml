@@ -23,10 +23,52 @@
   <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth"/>
   <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducer"/>
   <bean class="org.openecomp.sdc.be.impl.ServletUtils"/>
+
   <bean id="componentUtils" class="org.mockito.Mockito" factory-method="mock">
     <constructor-arg value="org.openecomp.sdc.be.impl.ComponentsUtils" />
   </bean>
   <bean id="userAdmin" class="org.mockito.Mockito" factory-method="mock">
     <constructor-arg value="org.openecomp.sdc.be.user.UserBusinessLogic" />
   </bean>
+  <bean id="componentInstanceBusinessLogic" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic" />
+  </bean>
+  <bean id="servletUtils" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.impl.ServletUtils" />
+  </bean>
+  <bean id="resourceImportManager" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.components.impl.ResourceImportManager" />
+  </bean>
+  <bean id="elementBusinessLogic" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.components.impl.ElementBusinessLogic" />
+  </bean>
+  <bean id="assetMetadataConverter" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter" />
+  </bean>
+  <bean id="lifecycleBusinessLogic" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic" />
+  </bean>
+  <bean id="resourceBusinessLogic" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.components.impl.ResourceBusinessLogic" />
+  </bean>
+  <bean id="serviceBusinessLogic" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.components.impl.ServiceBusinessLogic" />
+  </bean>
+  <bean id="compositionBusinessLogic" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.components.impl.CompositionBusinessLogic" />
+  </bean>
+
+  <bean class="org.openecomp.sdc.be.externalapi.servlet.CrudExternalServlet">
+    <constructor-arg ref="userAdmin" />
+    <constructor-arg ref="componentInstanceBusinessLogic" />
+    <constructor-arg ref="componentUtils"/>
+    <constructor-arg ref="servletUtils" />
+    <constructor-arg ref="resourceImportManager" />
+    <constructor-arg ref="elementBusinessLogic" />
+    <constructor-arg ref="assetMetadataConverter" />
+    <constructor-arg ref="lifecycleBusinessLogic" />
+    <constructor-arg ref="resourceBusinessLogic" />
+    <constructor-arg ref="serviceBusinessLogic" />
+  </bean>
+
 </beans>

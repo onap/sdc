@@ -42,30 +42,30 @@ import java.util.concurrent.TimeUnit;
 public class DistributionEnginePollingTask implements Runnable {
 
     public static final String DISTRIBUTION_STATUS_POLLING = "distributionEngineStatusPolling";
-    private static final String PARTNER_NAME = "UNKNOWN";
+    static final String PARTNER_NAME = "UNKNOWN";
 
-    private String topicName;
-    private ComponentsUtils componentUtils;
-    private int fetchTimeoutInSec = 15;
-    private int pollingIntervalInSec;
-    private String consumerId;
-    private String consumerGroup;
+    String topicName;
+    ComponentsUtils componentUtils;
+    int fetchTimeoutInSec = 15;
+    int pollingIntervalInSec;
+    String consumerId;
+    String consumerGroup;
 
-    private CambriaHandler cambriaHandler = new CambriaHandler();
-    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private DistributionCompleteReporter distributionCompleteReporter;
+    CambriaHandler cambriaHandler = new CambriaHandler();
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    DistributionCompleteReporter distributionCompleteReporter;
 
-    private ScheduledExecutorService scheduledPollingService = Executors.newScheduledThreadPool(1, new BasicThreadFactory.Builder().namingPattern("TopicPollingThread-%d").build());
+    ScheduledExecutorService scheduledPollingService = Executors.newScheduledThreadPool(1, new BasicThreadFactory.Builder().namingPattern("TopicPollingThread-%d").build());
 
-    private static final Logger logger = Logger.getLogger(DistributionEnginePollingTask.class.getName());
-    private static LoggerSdcAudit audit = new LoggerSdcAudit(DistributionEnginePollingTask.class);
+    static final Logger logger = Logger.getLogger(DistributionEnginePollingTask.class.getName());
+    static LoggerSdcAudit audit = new LoggerSdcAudit(DistributionEnginePollingTask.class);
 
     ScheduledFuture<?> scheduledFuture = null;
-    private CambriaConsumer cambriaConsumer = null;
+    CambriaConsumer cambriaConsumer = null;
 
-    private DistributionEngineClusterHealth distributionEngineClusterHealth = null;
+    DistributionEngineClusterHealth distributionEngineClusterHealth = null;
 
-    private OperationalEnvironmentEntry environmentEntry;
+    OperationalEnvironmentEntry environmentEntry;
 
     public DistributionEnginePollingTask(DistributionEngineConfiguration distributionEngineConfiguration, DistributionCompleteReporter distributionCompleteReporter, ComponentsUtils componentUtils, DistributionEngineClusterHealth distributionEngineClusterHealth, OperationalEnvironmentEntry environmentEntry) {
 
@@ -172,7 +172,7 @@ public class DistributionEnginePollingTask implements Runnable {
 
     }
 
-    private void handleDistributionNotificationMsg(DistributionStatusNotification notification, LoggerSdcAudit audit) {
+    void handleDistributionNotificationMsg(DistributionStatusNotification notification, LoggerSdcAudit audit) {
         componentUtils.auditDistributionStatusNotification(notification.getDistributionID(),
                 notification.getConsumerID(), topicName, notification.getArtifactURL(),
                 String.valueOf(notification.getTimestamp()), notification.getStatus().name(),
@@ -182,7 +182,7 @@ public class DistributionEnginePollingTask implements Runnable {
         }
     }
 
-    private void shutdownExecutor() {
+    void shutdownExecutor() {
         if (scheduledPollingService == null)
             return;
 

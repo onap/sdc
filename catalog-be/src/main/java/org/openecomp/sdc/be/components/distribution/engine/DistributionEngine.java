@@ -51,27 +51,27 @@ import java.util.regex.Pattern;
 @Component("distributionEngine")
 public class DistributionEngine implements IDistributionEngine {
 
-    private static final Logger logger = Logger.getLogger(DistributionEngine.class.getName());
-    private static final Pattern FQDN_PATTERN = Pattern.compile("^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*(:[0-9]{2,4})*$", Pattern.CASE_INSENSITIVE);
+     static final Logger logger = Logger.getLogger(DistributionEngine.class.getName());
+     static final Pattern FQDN_PATTERN = Pattern.compile("^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*(:[0-9]{2,4})*$", Pattern.CASE_INSENSITIVE);
 
     @Autowired
-    private EnvironmentsEngine environmentsEngine;
+     EnvironmentsEngine environmentsEngine;
 
     @Resource
-    private DistributionNotificationSender distributionNotificationSender;
+     DistributionNotificationSender distributionNotificationSender;
 
     @Resource
-    private ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
+     ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
 
     @Resource
-    private DistributionEngineClusterHealth distributionEngineClusterHealth;
+     DistributionEngineClusterHealth distributionEngineClusterHealth;
 
     @Resource
-    private ServiceDistributionValidation serviceDistributionValidation;
+     ServiceDistributionValidation serviceDistributionValidation;
 
-    private Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
-    private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
-    private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+     Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
+     Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
+     Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
 
     /**
      * The main method for testing only
@@ -110,7 +110,7 @@ public class DistributionEngine implements IDistributionEngine {
     }
 
     @PostConstruct
-    private void init() {
+     void init() {
         logger.trace("Enter init method of DistributionEngine");
 
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
@@ -192,7 +192,7 @@ public class DistributionEngine implements IDistributionEngine {
         return result;
     }
 
-    private boolean isValidServers(List<String> uebServers, String methodName, String paramName) {
+     boolean isValidServers(List<String> uebServers, String methodName, String paramName) {
 
         if (uebServers == null || uebServers.isEmpty()) {
             BeEcompErrorManager.getInstance().logBeMissingConfigurationError(methodName, paramName);
@@ -214,7 +214,7 @@ public class DistributionEngine implements IDistributionEngine {
         return true;
     }
 
-    private boolean isValidFqdn(String serverFqdn) {
+     boolean isValidFqdn(String serverFqdn) {
 
         try {
             Matcher matcher = FQDN_PATTERN.matcher(serverFqdn);
@@ -226,7 +226,7 @@ public class DistributionEngine implements IDistributionEngine {
         }
     }
 
-    private boolean isValidParam(String paramValue, String methodName, String paramName) {
+     boolean isValidParam(String paramValue, String methodName, String paramName) {
 
         if (StringUtils.isEmpty(paramValue)) {
             BeEcompErrorManager.getInstance().logBeMissingConfigurationError(methodName, paramName);
@@ -235,7 +235,7 @@ public class DistributionEngine implements IDistributionEngine {
         return true;
     }
 
-    private boolean isValidParam(List<String> paramValue, String methodName, String paramName) {
+     boolean isValidParam(List<String> paramValue, String methodName, String paramName) {
 
         if (CollectionUtils.isEmpty(paramValue)) {
             BeEcompErrorManager.getInstance().logBeMissingConfigurationError(methodName, paramName);
@@ -244,7 +244,7 @@ public class DistributionEngine implements IDistributionEngine {
         return true;
     }
 
-    private boolean isValidObject(Object paramValue, String methodName, String paramName) {
+     boolean isValidObject(Object paramValue, String methodName, String paramName) {
 
         if (paramValue == null) {
             BeEcompErrorManager.getInstance().logBeMissingConfigurationError(methodName, paramName);
@@ -254,7 +254,7 @@ public class DistributionEngine implements IDistributionEngine {
 
     }
 
-    private String getEnvironmentErrorDescription(StorageOperationStatus status) {
+     String getEnvironmentErrorDescription(StorageOperationStatus status) {
 
         switch (status) {
         case DISTR_ENVIRONMENT_NOT_AVAILABLE:
@@ -318,7 +318,7 @@ public class DistributionEngine implements IDistributionEngine {
         return notifyServiceStatus;
     }
 
-    private String buildTopicName(String envName) {
+     String buildTopicName(String envName) {
         DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
         String distributionNotifTopicName = deConfiguration.getDistributionNotifTopicName();
         return DistributionEngineInitTask.buildTopicName(distributionNotifTopicName, envName);

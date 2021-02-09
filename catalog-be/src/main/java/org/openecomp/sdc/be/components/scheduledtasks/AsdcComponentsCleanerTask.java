@@ -42,15 +42,15 @@ import java.util.concurrent.TimeUnit;
 @Component("asdcComponentsCleaner")
 public class AsdcComponentsCleanerTask extends AbstractScheduleTaskRunner implements Runnable {
 
-    private static final Logger log = Logger.getLogger(AsdcComponentsCleanerTask.class);
+     static final Logger log = Logger.getLogger(AsdcComponentsCleanerTask.class);
 
     @javax.annotation.Resource
-    private ComponentsCleanBusinessLogic componentsCleanBusinessLogic = null;
+     ComponentsCleanBusinessLogic componentsCleanBusinessLogic = null;
 
-    private List<NodeTypeEnum> componentsToClean;
-    private long cleaningIntervalInMinutes;
+     List<NodeTypeEnum> componentsToClean;
+     long cleaningIntervalInMinutes;
 
-    private ScheduledExecutorService scheduledService = Executors.newScheduledThreadPool(1,
+     ScheduledExecutorService scheduledService = Executors.newScheduledThreadPool(1,
             new BasicThreadFactory.Builder().namingPattern("ComponentsCleanThread-%d").build());
     ScheduledFuture<?> scheduledFuture = null;
 
@@ -117,7 +117,7 @@ public class AsdcComponentsCleanerTask extends AbstractScheduleTaskRunner implem
         }
     }
 
-    private void stopTask() {
+     void stopTask() {
         if (scheduledFuture != null) {
             boolean cancelTaskSuccessfully = scheduledFuture.cancel(true);
             log.debug("Stop cleaning task. result = {}", cancelTaskSuccessfully);
