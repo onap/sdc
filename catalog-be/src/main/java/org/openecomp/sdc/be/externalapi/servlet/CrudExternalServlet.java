@@ -49,6 +49,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -102,6 +103,7 @@ import org.springframework.stereotype.Controller;
 @Tag(name = "SDC External APIs")
 @Server(url = "/sdc")
 @Controller
+@Provider
 public class CrudExternalServlet extends AbstractValidationsServlet {
 
     @Context
