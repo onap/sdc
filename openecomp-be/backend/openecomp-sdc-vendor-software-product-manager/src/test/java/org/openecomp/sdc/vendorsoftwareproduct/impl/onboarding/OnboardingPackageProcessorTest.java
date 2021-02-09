@@ -87,7 +87,10 @@ public class OnboardingPackageProcessorTest {
             {"successfulUpload.csar", getFileBytes("successfulUpload.csar"), Collections.emptySet(),
                 OnboardingTypesEnum.CSAR},
 
-            {"fakeNonSignedZipPackage.zip", getFileBytes("signing/fakeNonSignedZipPackage.zip"), Collections.emptySet(),
+            {"fakeNonSignedZipPackage.zip", getFileBytes("signing/fakeNonSignedZipPackage.zip"), ImmutableSet.of(
+                new ErrorMessage(ErrorLevel.ERROR,
+                    "Could not read manifest file: MANIFEST.json [fakeNonSignedZipPackage.zip]"
+                )),
                 OnboardingTypesEnum.ZIP}
         });
     }
