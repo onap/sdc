@@ -48,7 +48,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <guava.version>18.0</guava.version>
         <janusgraph.version>0.3.1</janusgraph.version>
         <spring.version>4.3.18.RELEASE</spring.version>
-        <jersey-bom.version>2.27</jersey-bom.version>
+        <jersey-bom.version>2.33</jersey-bom.version>
         <netty.version>4.1.48.Final</netty.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
@@ -117,9 +117,9 @@ Modifications copyright (c) 2018-2019 Nokia
         <mockito.version>3.3.3</mockito.version>
         <mockitoJupiter.version>3.3.3</mockitoJupiter.version>
         <jmockit.version>1.35</jmockit.version>
-        <junit.version>4.12</junit.version>
-        <junit.platform.version>1.6.0</junit.platform.version>
-        <junitJupiter.version>5.6.0</junitJupiter.version>
+        <junit.version>4.13.1</junit.version>
+        <junit.platform.version>1.7.1</junit.platform.version>
+        <junitJupiter.version>5.7.0</junitJupiter.version>
         <assertj.version>3.16.0</assertj.version>
         <testng.version>7.3.0</testng.version>
         <cucumber.version>5.6.0</cucumber.version>
