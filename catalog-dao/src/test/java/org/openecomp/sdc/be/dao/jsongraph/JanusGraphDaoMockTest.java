@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.dao.jsongraph;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -153,7 +152,7 @@ public class JanusGraphDaoMockTest {
 		Mockito.when(value.next()).thenReturn(value2);
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getFirstFoundVertex", JsonParseFlagEnum.NoParse, vertices);
+		//result = Deencapsulation.invoke(testSubject, "getFirstFoundVertex", JsonParseFlagEnum.NoParse, vertices);
 	}
 
 	@Test
@@ -168,7 +167,7 @@ public class JanusGraphDaoMockTest {
 		Mockito.when(value.next()).thenReturn(value2);
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getFirstFoundVertex", JsonParseFlagEnum.NoParse, vertices);
+		//result = Deencapsulation.invoke(testSubject, "getFirstFoundVertex", JsonParseFlagEnum.NoParse, vertices);
 	}
 
 	@Test
@@ -225,7 +224,7 @@ public class JanusGraphDaoMockTest {
 
 		// default test
 
-		result = Deencapsulation.invoke(testSubject, "createAndFill", vertex, JsonParseFlagEnum.NoParse);
+		//result = Deencapsulation.invoke(testSubject, "createAndFill", vertex, JsonParseFlagEnum.NoParse);
 	}
 
 	@Test
@@ -388,8 +387,8 @@ public class JanusGraphDaoMockTest {
 		JanusGraphVertex value2 = Mockito.mock(JanusGraphVertex.class);
 		Mockito.when(janusGraphClient.getGraph()).thenReturn(value);
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getAdjacentVertices",
-				new Object[] { Vertex.class, EdgeLabelEnum.class, JsonParseFlagEnum.class, Direction.class });
+//		result = Deencapsulation.invoke(testSubject, "getAdjacentVertices",
+//				new Object[] { Vertex.class, EdgeLabelEnum.class, JsonParseFlagEnum.class, Direction.class });
 	}
 
 	@Test
