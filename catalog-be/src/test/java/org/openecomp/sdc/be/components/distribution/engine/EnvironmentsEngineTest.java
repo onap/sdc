@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -289,8 +288,7 @@ public class EnvironmentsEngineTest {
         IDmaapAuditNotificationData auditNotificationData = Mockito.mock(IDmaapAuditNotificationData.class);
 
         // default test
-        Deencapsulation.invoke(envEngine, "validateNotification", errorWrapper, notificationData,
-                auditNotificationData);
+        envEngine.validateNotification(errorWrapper, notificationData, auditNotificationData);
     }
 
     @Test
@@ -299,7 +297,7 @@ public class EnvironmentsEngineTest {
         OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
 
         // default test
-        Deencapsulation.invoke(envEngine, "saveEntryWithFailedStatus", errorWrapper, opEnvEntry);
+        envEngine.saveEntryWithFailedStatus(errorWrapper, opEnvEntry);
     }
 
     @Test
@@ -308,7 +306,7 @@ public class EnvironmentsEngineTest {
         OperationalEnvironmentEntry opEnvEntry = new OperationalEnvironmentEntry();
 
         // default test
-        Deencapsulation.invoke(envEngine, "retrieveUebAddressesFromAftDme", errorWrapper, opEnvEntry);
+        envEngine.retrieveUebAddressesFromAftDme(errorWrapper, opEnvEntry);
     }
 
     @Test
@@ -318,7 +316,7 @@ public class EnvironmentsEngineTest {
         opEnvEntry.setEnvironmentId("mock");
         Mockito.when(aaiRequestHandler.getOperationalEnvById(Mockito.nullable(String.class))).thenReturn(new HttpResponse<String>("{}", 200));
         // default test
-        Deencapsulation.invoke(envEngine, "retrieveOpEnvInfoFromAAI", new Wrapper<>(), opEnvEntry);
+        envEngine.retrieveOpEnvInfoFromAAI(new Wrapper<>(), opEnvEntry);
     }
 
     @Test
@@ -328,7 +326,7 @@ public class EnvironmentsEngineTest {
         opEnvEntry.setEnvironmentId("mock");
         Mockito.when(aaiRequestHandler.getOperationalEnvById(Mockito.nullable(String.class))).thenReturn(new HttpResponse<String>("{}", 500));
         // default test
-        Deencapsulation.invoke(envEngine, "retrieveOpEnvInfoFromAAI", new Wrapper<>(), opEnvEntry);
+        envEngine.retrieveOpEnvInfoFromAAI(new Wrapper<>(), opEnvEntry);
     }
 
     @Test
@@ -337,8 +335,7 @@ public class EnvironmentsEngineTest {
         Wrapper<OperationalEnvironmentEntry> opEnvEntryWrapper = new Wrapper<>();
         IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
 
-        Deencapsulation.invoke(envEngine, "saveEntryWithInProgressStatus", errorWrapper, opEnvEntryWrapper,
-                notificationData);
+        envEngine.saveEntryWithInProgressStatus(errorWrapper, opEnvEntryWrapper, notificationData);
     }
 
     @Test
@@ -349,7 +346,7 @@ public class EnvironmentsEngineTest {
         Mockito.when(operationalEnvironmentDao.get(Mockito.nullable(String.class)))
                 .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
-        Deencapsulation.invoke(envEngine, "validateState", new Wrapper<>(), notificationData);
+        envEngine.validateState(new Wrapper<>(), notificationData);
     }
 
     @Test
@@ -361,7 +358,7 @@ public class EnvironmentsEngineTest {
         a.setStatus(EnvironmentStatusEnum.IN_PROGRESS.getName());
         Mockito.when(operationalEnvironmentDao.get(Mockito.nullable(String.class))).thenReturn(Either.left(a));
 
-        Deencapsulation.invoke(envEngine, "validateState", new Wrapper<>(), notificationData);
+        envEngine.validateState(new Wrapper<>(), notificationData);
     }
 
     @Test
@@ -370,7 +367,7 @@ public class EnvironmentsEngineTest {
         IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
         Mockito.when(notificationData.getAction()).thenReturn(IDmaapNotificationData.DmaapActionEnum.DELETE);
 
-        Deencapsulation.invoke(envEngine, "validateActionType", errorWrapper, notificationData);
+        envEngine.validateActionType(errorWrapper, notificationData);
     }
 
     @Test
@@ -379,7 +376,7 @@ public class EnvironmentsEngineTest {
         IDmaapNotificationData notificationData = Mockito.mock(IDmaapNotificationData.class);
         Mockito.when(notificationData.getAction()).thenReturn(IDmaapNotificationData.DmaapActionEnum.CREATE);
 
-        Deencapsulation.invoke(envEngine, "validateActionType", errorWrapper, notificationData);
+        envEngine.validateActionType(errorWrapper, notificationData);
     }
 
     @Test
@@ -391,16 +388,14 @@ public class EnvironmentsEngineTest {
         Mockito.when(notificationData.getOperationalEnvironmentType()).thenReturn(IDmaapNotificationData.OperationaEnvironmentTypeEnum.ECOMP);
 
         // default test
-        Deencapsulation.invoke(envEngine, "validateEnvironmentType", errorWrapper, notificationData,
-                auditNotificationData);
+        envEngine.validateEnvironmentType(errorWrapper, notificationData, auditNotificationData);
     }
 
     @Test
     public void testMap2OpEnvKey() throws Exception {
         OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
-        String result;
 
         // default test
-        result = Deencapsulation.invoke(envEngine, "map2OpEnvKey", entry);
+        envEngine.map2OpEnvKey(entry);
     }
 }

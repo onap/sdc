@@ -28,7 +28,7 @@ import static org.openecomp.core.enrichment.types.MonitoringUploadType.*;
 public class ComponentMonitoringUploadInfo {
 
 
-  private Map<MonitoringUploadType, MonitoringArtifactInfo> infoByType = new HashMap<>();
+  Map<MonitoringUploadType, MonitoringArtifactInfo> infoByType = new HashMap<>();
 
   public MonitoringArtifactInfo getSnmpTrap() {
     return infoByType.get(SNMP_TRAP);

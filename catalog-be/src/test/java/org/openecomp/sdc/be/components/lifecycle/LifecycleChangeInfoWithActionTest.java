@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import mockit.Deencapsulation;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class LifecycleChangeInfoWithActionTest {
 
@@ -47,7 +46,7 @@ public class LifecycleChangeInfoWithActionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.setField(testSubject, "action", action);
+		testSubject.action = action;
 		LifecycleChanceActionEnum result = testSubject.getAction();
 		assertThat(result).isEqualTo(action);
 	}
@@ -60,7 +59,7 @@ public class LifecycleChangeInfoWithActionTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setAction(action);
-		LifecycleChanceActionEnum result = Deencapsulation.getField(testSubject, "action");
+		LifecycleChanceActionEnum result = testSubject.action;
 		assertThat(result).isEqualTo(action);
 	}
 }

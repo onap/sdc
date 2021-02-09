@@ -81,13 +81,13 @@ public class AaiRequestHandler {
 
     
 
-    private boolean retryOnException(Exception e) {
+    boolean retryOnException(Exception e) {
         Throwable cause = getCause(e);
         return !(cause instanceof ConnectTimeoutException || cause instanceof ConnectException || cause instanceof SocketTimeoutException);
     }
 
 
-    private Throwable getCause(Exception e) {
+    Throwable getCause(Exception e) {
         if (e instanceof HttpExecuteException) {
             return e.getCause();
         }
@@ -95,7 +95,7 @@ public class AaiRequestHandler {
     }
     
     
-    private Properties createHeaders() {
+    Properties createHeaders() {
         Properties headers = new Properties();
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);

@@ -64,7 +64,7 @@ public class GroupInstance extends GroupInstanceDataDefinition {
         }
     }
 
-    private void removeArtifactsDuplicates() {
+    void removeArtifactsDuplicates() {
         List<String> artifacts = getArtifacts();
         Set<String> artifactsSet = new HashSet<>();
 		
@@ -84,7 +84,7 @@ public class GroupInstance extends GroupInstanceDataDefinition {
 		}
 	}
 
-    private void clearArtifactsUuid() {
+    void clearArtifactsUuid() {
         List<String> artifactsUuid = getArtifactsUuid();
         if(CollectionUtils.isNotEmpty(artifactsUuid)){
             artifactsUuid.clear();
@@ -127,7 +127,7 @@ public class GroupInstance extends GroupInstanceDataDefinition {
         }
     }
 
-    private void addArtifactsIdToCollection(List<String> artifactUuids, ArtifactDefinition artifact) {
+    void addArtifactsIdToCollection(List<String> artifactUuids, ArtifactDefinition artifact) {
         if(!artifactUuids.contains(artifact.getArtifactUUID()) && StringUtils.isNotEmpty(artifact.getArtifactUUID())){
             artifactUuids.add(artifact.getArtifactUUID());
 

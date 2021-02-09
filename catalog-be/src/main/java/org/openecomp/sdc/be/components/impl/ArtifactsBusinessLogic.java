@@ -154,55 +154,55 @@ import org.yaml.snakeyaml.Yaml;
 
 @org.springframework.stereotype.Component("artifactBusinessLogic")
 public class ArtifactsBusinessLogic extends BaseBusinessLogic {
-    private static final String RESOURCE_INSTANCE = "resource instance";
-    private static final String ARTIFACT_TYPE_OTHER = "OTHER";
-    private static final String ARTIFACT_DESCRIPTION = "artifact description";
-    private static final String ARTIFACT_LABEL = "artifact label";
-    private static final String ARTIFACT_URL = "artifact url";
-    private static final String ARTIFACT_NAME = "artifact name";
-    private static final String ARTIFACT_PAYLOAD = "artifact payload";
+     static final String RESOURCE_INSTANCE = "resource instance";
+     static final String ARTIFACT_TYPE_OTHER = "OTHER";
+     static final String ARTIFACT_DESCRIPTION = "artifact description";
+     static final String ARTIFACT_LABEL = "artifact label";
+     static final String ARTIFACT_URL = "artifact url";
+     static final String ARTIFACT_NAME = "artifact name";
+     static final String ARTIFACT_PAYLOAD = "artifact payload";
 
-    private static final String ARTIFACT_PLACEHOLDER_TYPE = "type";
-    private static final String ARTIFACT_PLACEHOLDER_DISPLAY_NAME = "displayName";
-    private static final Object ARTIFACT_PLACEHOLDER_DESCRIPTION = "description";
+     static final String ARTIFACT_PLACEHOLDER_TYPE = "type";
+     static final String ARTIFACT_PLACEHOLDER_DISPLAY_NAME = "displayName";
+     static final Object ARTIFACT_PLACEHOLDER_DESCRIPTION = "description";
 
     public static final String HEAT_ENV_NAME = "heatEnv";
     public static final String HEAT_VF_ENV_NAME = "VfHeatEnv";
     public static final String HEAT_ENV_SUFFIX = "env";
-    private static final String ARTIFACT_PLACEHOLDER_FILE_EXTENSION = "fileExtension";
+     static final String ARTIFACT_PLACEHOLDER_FILE_EXTENSION = "fileExtension";
 
-    private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class.getName());
-    private static final String FAILED_UPDATE_GROUPS = "Failed to update groups of the component {}. ";
-    private static final String FAILED_SAVE_ARTIFACT = "Failed to save the artifact.";
+     static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class.getName());
+     static final String FAILED_UPDATE_GROUPS = "Failed to update groups of the component {}. ";
+     static final String FAILED_SAVE_ARTIFACT = "Failed to save the artifact.";
     public static final String ARTIFACT_ACTION_LOCK = "Artifact action - lock ";
     public static final String FAILED_UPLOAD_ARTIFACT_TO_COMPONENT = "Failed to upload artifact to component with type {} and uuid {}. Status is {}. ";
-    private static final String FAILED_FETCH_COMPONENT = "Could not fetch component with type {} and uuid {}. Status is {}. ";
-    private static final String NULL_PARAMETER = "One of the function parameteres is null";
+     static final String FAILED_FETCH_COMPONENT = "Could not fetch component with type {} and uuid {}. Status is {}. ";
+     static final String NULL_PARAMETER = "One of the function parameteres is null";
     public static final String COMPONENT_INSTANCE_NOT_FOUND = "Component instance {} was not found for component {}";
-    private static final String ROLLBACK = "all changes rollback";
-    private static final String COMMIT = "all changes committed";
-    private static final String UPDATE_ARTIFACT = "Update Artifact";
-    private static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
-    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+     static final String ROLLBACK = "all changes rollback";
+     static final String COMMIT = "all changes committed";
+     static final String UPDATE_ARTIFACT = "Update Artifact";
+     static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
+     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @javax.annotation.Resource
-    private IInterfaceLifecycleOperation interfaceLifecycleOperation;
+     IInterfaceLifecycleOperation interfaceLifecycleOperation;
     @javax.annotation.Resource
-    private UserAdminOperation userOperaton;
+     UserAdminOperation userOperaton;
 
     @javax.annotation.Resource
-    private IElementOperation elementOperation;
+     IElementOperation elementOperation;
 
     @javax.annotation.Resource
-    private IHeatParametersOperation heatParametersOperation;
+     IHeatParametersOperation heatParametersOperation;
 
-    private ArtifactCassandraDao artifactCassandraDao;
-    private ToscaExportHandler toscaExportUtils;
-    private CsarUtils csarUtils;
-    private LifecycleBusinessLogic lifecycleBusinessLogic;
-    private UserBusinessLogic userBusinessLogic;
-    private ArtifactsResolver artifactsResolver;
-    private NodeTemplateOperation nodeTemplateOperation;
+     ArtifactCassandraDao artifactCassandraDao;
+     ToscaExportHandler toscaExportUtils;
+     CsarUtils csarUtils;
+     LifecycleBusinessLogic lifecycleBusinessLogic;
+     UserBusinessLogic userBusinessLogic;
+     ArtifactsResolver artifactsResolver;
+     NodeTemplateOperation nodeTemplateOperation;
 
     @Autowired
     public ArtifactsBusinessLogic(ArtifactCassandraDao artifactCassandraDao, ToscaExportHandler toscaExportUtils,
@@ -339,7 +339,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean artifactGenerationRequired(Component component, ArtifactDefinition artifactInfo) {
+     boolean artifactGenerationRequired(Component component, ArtifactDefinition artifactInfo) {
         boolean needGenerate;
         needGenerate = artifactInfo.getArtifactGroupType() == ArtifactGroupTypeEnum.TOSCA && (component.getLifecycleState() == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN || component
                 .getLifecycleState() == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -349,7 +349,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return needGenerate;
     }
 
-    private boolean isAbstractVfcEmptyCsar(Resource resource, ArtifactDefinition artifactInfo) {
+     boolean isAbstractVfcEmptyCsar(Resource resource, ArtifactDefinition artifactInfo) {
         return resource.isAbstract() && artifactInfo.getArtifactGroupType() == ArtifactGroupTypeEnum.TOSCA && artifactInfo
                 .getArtifactType()
                 .equals(ArtifactTypeEnum.TOSCA_CSAR.getType()) && StringUtils.isEmpty(artifactInfo.getArtifactChecksum());
@@ -378,7 +378,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         });
     }
 
-    private Either<byte[], ComponentException> decodeToscaArtifactPayload(
+     Either<byte[], ComponentException> decodeToscaArtifactPayload(
         Component parent,
         boolean isInCertificationRequest,
         boolean fetchTemplatesFromDB,
@@ -405,7 +405,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ArtifactDefinition, Operation> doAction(String componentId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactId, ArtifactDefinition artifactInfo, String origMd5,
+     Either<ArtifactDefinition, Operation> doAction(String componentId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactId, ArtifactDefinition artifactInfo, String origMd5,
                                                            String originData, String interfaceName, String operationName, AuditingActionEnum auditingAction, User user, Component parent, boolean shouldLock, boolean inTransaction, boolean needUpdateGroup) {
         if (interfaceName != null && operationName != null) {
             interfaceName = interfaceName.toLowerCase();
@@ -450,7 +450,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void lockComponent(ComponentTypeEnum componentType, String artifactId, AuditingActionEnum auditingAction, User user, Component parent) {
+     void lockComponent(ComponentTypeEnum componentType, String artifactId, AuditingActionEnum auditingAction, User user, Component parent) {
         try {
             lockComponent(parent, ARTIFACT_ACTION_LOCK);
         }catch (ComponentException e){
@@ -499,13 +499,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private void validateArtifactType(final ArtifactDefinition artifactInfo) {
+     void validateArtifactType(final ArtifactDefinition artifactInfo) {
         if (!isArtifactSupported(artifactInfo.getArtifactType())) {
             throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactInfo.getArtifactType());
         }
     }
 
-    private void validateArtifactType(final ArtifactDefinition artifactInfo,
+     void validateArtifactType(final ArtifactDefinition artifactInfo,
                                       final ComponentTypeEnum componentType) {
         final ArtifactConfiguration artifactConfiguration =
             loadArtifactTypeConfig(artifactInfo.getArtifactType()).orElse(null);
@@ -533,7 +533,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateArtifactType(final ComponentTypeEnum componentType, final ArtifactGroupTypeEnum groupType,
+     void validateArtifactType(final ComponentTypeEnum componentType, final ArtifactGroupTypeEnum groupType,
                                       final ArtifactConfiguration artifactConfiguration) {
         final boolean supportComponentType =
             CollectionUtils.isNotEmpty(artifactConfiguration.getComponentTypes()) &&
@@ -555,7 +555,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean isArtifactSupported(final String artifactType) {
+     boolean isArtifactSupported(final String artifactType) {
         final Configuration configuration = ConfigurationManager.getConfigurationManager().getConfiguration();
         final List<ArtifactConfiguration> artifactConfigurationList = configuration.getArtifacts();
         if (CollectionUtils.isEmpty(artifactConfigurationList)) {
@@ -622,7 +622,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return ActionStatus.OK;
     }
 
-    private ActionStatus updateGroupInstance(ArtifactDefinition artifactInfo, ArtifactDefinition artAfterUpdate, Component parent, String parentId) {
+     ActionStatus updateGroupInstance(ArtifactDefinition artifactInfo, ArtifactDefinition artAfterUpdate, Component parent, String parentId) {
         List<GroupInstance> updatedGroupInstances = new ArrayList<>();
         List<GroupInstance> groupInstances = null;
         Optional<ComponentInstance> componentInstOp = parent.getComponentInstances()
@@ -688,7 +688,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ArtifactDefinition, Operation> handleUpdateHeatWithHeatEnvParams(String componentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction,
+     Either<ArtifactDefinition, Operation> handleUpdateHeatWithHeatEnvParams(String componentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction,
                                                                                     ComponentTypeEnum componentType, Component parent, String originData, String origMd5, ArtifactOperationInfo operation,
                                                                                     boolean needToUpdateGroup) {
         Either<ArtifactDefinition, StorageOperationStatus> artifactHeatRes = artifactToscaOperation.getArtifactById(componentId, artifactInfo
@@ -705,7 +705,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updateHeatParams(componentId, artifactInfo, auditingAction, parent, componentType, currHeatArtifact, needToUpdateGroup);
     }
 
-    private void handleLockingAndCommit(Component parent, boolean shouldLock, boolean inTransaction, boolean actionSucceeded) {
+     void handleLockingAndCommit(Component parent, boolean shouldLock, boolean inTransaction, boolean actionSucceeded) {
         if (actionSucceeded) {
             log.debug(COMMIT);
             if (!inTransaction) {
@@ -845,7 +845,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private ArtifactDefinition getArtifactIfBelongsToComponent(String componentId, ComponentTypeEnum componentType, String artifactId, Component component) {
+     ArtifactDefinition getArtifactIfBelongsToComponent(String componentId, ComponentTypeEnum componentType, String artifactId, Component component) {
         // check artifact existence
         Either<ArtifactDefinition, StorageOperationStatus> artifactResult = artifactToscaOperation.getArtifactById(componentId, artifactId,
                 componentType, component.getUniqueId());
@@ -871,13 +871,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return artifactResult.left().value();
     }
 
-    private Either<ArtifactDefinition, Operation> handleCreate(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, AuditingActionEnum auditingAction, User user, ComponentTypeEnum componentType,
+     Either<ArtifactDefinition, Operation> handleCreate(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, AuditingActionEnum auditingAction, User user, ComponentTypeEnum componentType,
                                                                Component parent, String origMd5, String originData, String interfaceType, String operationName) {
         byte[] decodedPayload = validateInput(componentId, artifactInfo, operation, auditingAction, null, user, componentType, parent, origMd5, originData, interfaceType, operationName);
         return createArtifact(parent, componentId, artifactInfo, decodedPayload, componentType, auditingAction, interfaceType, operationName);
     }
 
-    private ArtifactDefinition handleLink(String componentId, ArtifactDefinition artifactInfo, ComponentTypeEnum componentType,
+     ArtifactDefinition handleLink(String componentId, ArtifactDefinition artifactInfo, ComponentTypeEnum componentType,
                                           Component parent) {
         ComponentInstance foundInstance = findComponentInstance(componentId, parent);
         String instanceId = null;
@@ -896,7 +896,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return artifactDefinitionEither.left().value();
     }
 
-    private <T> Either<ArtifactDefinition, T> lockComponentAndUpdateArtifact(
+     <T> Either<ArtifactDefinition, T> lockComponentAndUpdateArtifact(
         String parentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction, String artifactId,
         User user, ComponentTypeEnum componentType, Component parent, byte[] decodedPayload,
         boolean shouldLock, boolean inTransaction) {
@@ -929,13 +929,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private byte[] validateInput(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, AuditingActionEnum auditingAction, String artifactId, User user, ComponentTypeEnum componentType,
+     byte[] validateInput(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, AuditingActionEnum auditingAction, String artifactId, User user, ComponentTypeEnum componentType,
                                  Component parent, String origMd5, String originData, String interfaceType, String operationName) {
         validateMd5(origMd5, originData, artifactInfo.getPayloadData(), operation);
         return getValidPayload(componentId, artifactInfo, operation, auditingAction, artifactId, user, componentType, parent, interfaceType, operationName);
     }
 
-    private byte[] getValidPayload(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, AuditingActionEnum auditingAction,
+     byte[] getValidPayload(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, AuditingActionEnum auditingAction,
                                    String artifactId, User user, ComponentTypeEnum componentType, Component parent, String interfaceType, String operationName) {
         // step 11
         Either<ArtifactDefinition, ResponseFormat> validateResult = validateInput(componentId, artifactInfo, operation, artifactId, user, interfaceType, operationName, componentType, parent);
@@ -980,7 +980,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         handleInternalAuditEvent(auditingActionEnum, component, componentId, user, artifactDefinition, prevArtifactUuid, currentArtifactUuid, responseFormat, componentTypeEnum, resourceInstanceName);
     }
 
-    private void handleInternalAuditEvent(AuditingActionEnum auditingActionEnum, Component component, String componentId, User user, ArtifactDefinition artifactDefinition, String prevArtifactUuid, String currentArtifactUuid, ResponseFormat responseFormat, ComponentTypeEnum componentTypeEnum, String resourceInstanceName) {
+     void handleInternalAuditEvent(AuditingActionEnum auditingActionEnum, Component component, String componentId, User user, ArtifactDefinition artifactDefinition, String prevArtifactUuid, String currentArtifactUuid, ResponseFormat responseFormat, ComponentTypeEnum componentTypeEnum, String resourceInstanceName) {
         switch (componentTypeEnum) {
             case RESOURCE:
                 Resource resource = (Resource) component;
@@ -1031,7 +1031,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private String getResourceInstanceNameFromComponent(Component component, String componentId) {
+     String getResourceInstanceNameFromComponent(Component component, String componentId) {
         ComponentInstance resourceInstance = component.getComponentInstances()
                 .stream()
                 .filter(p -> p.getUniqueId().equals(componentId))
@@ -1044,7 +1044,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return resourceInstanceName;
     }
 
-    private void validateMd5(String origMd5, String originData, byte[] payload, ArtifactOperationInfo operation) {
+     void validateMd5(String origMd5, String originData, byte[] payload, ArtifactOperationInfo operation) {
         if (origMd5 == null) {
             if (operation.isCreateOrLink() && ArrayUtils.isNotEmpty(payload)) {
                 log.debug("Missing md5 header during artifact create");
@@ -1064,7 +1064,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> validateInput(final String componentId,
+     Either<ArtifactDefinition, ResponseFormat> validateInput(final String componentId,
                                                                      final ArtifactDefinition artifactInfo,
                                                                      final ArtifactOperationInfo operation,
                                                                      final String artifactId, final User user,
@@ -1191,7 +1191,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(artifactInfo);
     }
 
-    private Component findComponent(final String componentId) {
+     Component findComponent(final String componentId) {
         Either<? extends Component, StorageOperationStatus> component = toscaOperationFacade.getToscaFullElement(componentId);
         if (component.isRight()) {
             log.debug("Component '{}' not found ", componentId);
@@ -1201,7 +1201,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return component.left().value();
     }
 
-    private void ignoreUnupdateableFieldsInUpdate(final ArtifactOperationInfo operation,
+     void ignoreUnupdateableFieldsInUpdate(final ArtifactOperationInfo operation,
                                                   final ArtifactDefinition artifactInfo,
                                                   final ArtifactDefinition currentArtifactInfo) {
         if (operation.isUpdate()) {
@@ -1211,7 +1211,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ArtifactDefinition findArtifact(final Component parentComponent, final ComponentTypeEnum componentType,
+     ArtifactDefinition findArtifact(final Component parentComponent, final ComponentTypeEnum componentType,
                                             final String parentId, final ArtifactOperationInfo operation,
                                             final String artifactId) {
         ArtifactDefinition foundArtifact = null;
@@ -1229,7 +1229,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return foundArtifact;
     }
 
-    private ArtifactDefinition findArtifact(Component parentComponent, ComponentTypeEnum componentType, String parentId, String artifactId) {
+     ArtifactDefinition findArtifact(Component parentComponent, ComponentTypeEnum componentType, String parentId, String artifactId) {
         ArtifactDefinition foundArtifact;
         if (parentComponent.getUniqueId().equals(parentId)) {
             foundArtifact = artifactsResolver.findArtifactOnComponent(parentComponent, componentType, artifactId);
@@ -1241,7 +1241,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return foundArtifact;
     }
 
-    private void validateInformationalArtifact(final ArtifactDefinition artifactInfo, final Component component) {
+     void validateInformationalArtifact(final ArtifactDefinition artifactInfo, final Component component) {
         final ArtifactGroupTypeEnum groupType = artifactInfo.getArtifactGroupType();
         if (groupType != ArtifactGroupTypeEnum.INFORMATIONAL) {
             return;
@@ -1263,7 +1263,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         validateArtifactExtension(artifactConfiguration, artifactInfo);
     }
 
-    private NodeTypeEnum convertParentType(ComponentTypeEnum componentType) {
+     NodeTypeEnum convertParentType(ComponentTypeEnum componentType) {
         if (componentType == ComponentTypeEnum.RESOURCE) {
             return NodeTypeEnum.Resource;
         }
@@ -1307,7 +1307,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ArtifactDefinition handleDeleteInternal(
+     ArtifactDefinition handleDeleteInternal(
         String parentId, String artifactId,
         ComponentTypeEnum componentType, Component parent
     ) {
@@ -1395,7 +1395,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         });
     }
 
-    private boolean isArtifactOnlyResourceInstanceArtifact(ArtifactDefinition foundArtifact, Component parent, String instanceId) {
+     boolean isArtifactOnlyResourceInstanceArtifact(ArtifactDefinition foundArtifact, Component parent, String instanceId) {
         Optional<ComponentInstance> componentInstanceOpt = parent.getComponentInstanceById(instanceId);
         if (!componentInstanceOpt.isPresent()) {
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, instanceId, "", "", parent.getName());
@@ -1431,7 +1431,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return true;
     }
 
-    private List<GroupDataDefinition> getUpdatedGroups(String artifactId, ArtifactDefinition foundArtifact, List<GroupDefinition> groups) {
+     List<GroupDataDefinition> getUpdatedGroups(String artifactId, ArtifactDefinition foundArtifact, List<GroupDefinition> groups) {
         List<GroupDataDefinition> updatedGroups = new ArrayList<>();
         boolean isUpdated = false;
         if (groups != null) {
@@ -1454,7 +1454,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updatedGroups;
     }
 
-    private List<GroupInstance> getUpdatedGroupInstances(
+     List<GroupInstance> getUpdatedGroupInstances(
         String artifactId, ArtifactDefinition foundArtifact, List<GroupInstance> groupInstances
     ) {
         if (CollectionUtils.isEmpty(groupInstances)) {
@@ -1475,7 +1475,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }).collect(Collectors.toList());
     }
 
-    private ArtifactDataDefinition deleteOrUpdateArtifactOnGraph(Component component, String parentId, String artifactId, NodeTypeEnum parentType, ArtifactDefinition foundArtifact, Boolean cloneIsNeeded) {
+     ArtifactDataDefinition deleteOrUpdateArtifactOnGraph(Component component, String parentId, String artifactId, NodeTypeEnum parentType, ArtifactDefinition foundArtifact, Boolean cloneIsNeeded) {
 
         Either<ArtifactDataDefinition, StorageOperationStatus> result;
         boolean isMandatory = foundArtifact.getMandatory() || foundArtifact.getServiceApi();
@@ -1500,7 +1500,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return result.left().value();
     }
 
-    private Either<ImmutablePair<ArtifactDefinition, ComponentInstance>, ActionStatus> findArtifact(String artifactId, Component fetchedContainerComponent, String parentId, ComponentTypeEnum componentType) {
+     Either<ImmutablePair<ArtifactDefinition, ComponentInstance>, ActionStatus> findArtifact(String artifactId, Component fetchedContainerComponent, String parentId, ComponentTypeEnum componentType) {
 
         Either<ImmutablePair<ArtifactDefinition, ComponentInstance>, ActionStatus> result = null;
         Map<String, ArtifactDefinition> artifacts = new HashMap<>();
@@ -1533,7 +1533,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private void fetchArtifactsFromComponent(String artifactId, Component component, Map<String, ArtifactDefinition> artifacts) {
+     void fetchArtifactsFromComponent(String artifactId, Component component, Map<String, ArtifactDefinition> artifacts) {
         Map<String, ArtifactDefinition> currArtifacts;
         if (!artifacts.containsKey(artifactId) && MapUtils.isNotEmpty(component.getDeploymentArtifacts())) {
             currArtifacts = component.getDeploymentArtifacts()
@@ -1564,7 +1564,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void fetchArtifactsFromInstance(String artifactId, Map<String, ArtifactDefinition> artifacts, ComponentInstance instance) {
+     void fetchArtifactsFromInstance(String artifactId, Map<String, ArtifactDefinition> artifacts, ComponentInstance instance) {
         Map<String, ArtifactDefinition> currArtifacts;
         if (MapUtils.isNotEmpty(instance.getDeploymentArtifacts())) {
             currArtifacts = instance.getDeploymentArtifacts()
@@ -1586,7 +1586,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private StorageOperationStatus convertToStorageOperationStatus(CassandraOperationStatus cassandraStatus) {
+     StorageOperationStatus convertToStorageOperationStatus(CassandraOperationStatus cassandraStatus) {
         StorageOperationStatus result;
         switch (cassandraStatus) {
             case OK:
@@ -1606,7 +1606,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private void resetMandatoryArtifactFields(ArtifactDefinition fetchedArtifact) {
+     void resetMandatoryArtifactFields(ArtifactDefinition fetchedArtifact) {
         if (fetchedArtifact != null) {
             log.debug("Going to reset mandatory artifact {} fields. ", fetchedArtifact.getUniqueId());
             fetchedArtifact.setEsId(null);
@@ -1623,7 +1623,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private StorageOperationStatus generateCustomizationUUIDOnInstance(String componentId, String instanceId, ComponentTypeEnum componentType) {
+     StorageOperationStatus generateCustomizationUUIDOnInstance(String componentId, String instanceId, ComponentTypeEnum componentType) {
         StorageOperationStatus error = StorageOperationStatus.OK;
         if (componentType == ComponentTypeEnum.RESOURCE_INSTANCE) {
             log.debug("Need to re-generate  customization UUID for instance {}", instanceId);
@@ -1632,7 +1632,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return error;
     }
 
-    private ArtifactDefinition handleDownload(String componentId, String artifactId, ComponentTypeEnum componentType,
+     ArtifactDefinition handleDownload(String componentId, String artifactId, ComponentTypeEnum componentType,
                                               Component parent) {
         Either<ArtifactDefinition, StorageOperationStatus> artifactById = artifactToscaOperation.getArtifactById(componentId, artifactId, componentType,
                 parent.getUniqueId());
@@ -1646,7 +1646,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return artifactDefinition;
     }
 
-    private Either<ActionStatus, ResponseFormat> handleArtifactLabel(String componentId, Component parentComponent, ArtifactOperationInfo operation, ArtifactDefinition artifactInfo, String operationName,
+     Either<ActionStatus, ResponseFormat> handleArtifactLabel(String componentId, Component parentComponent, ArtifactOperationInfo operation, ArtifactDefinition artifactInfo, String operationName,
                                                                      ComponentTypeEnum componentType) {
 
         String artifactLabel = artifactInfo.getArtifactLabel();
@@ -1701,7 +1701,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(ActionStatus.OK);
     }
 
-    private boolean validateLabelUniqueness(String componentId, Component parentComponent, String artifactLabel, ComponentTypeEnum componentType) {
+     boolean validateLabelUniqueness(String componentId, Component parentComponent, String artifactLabel, ComponentTypeEnum componentType) {
         boolean isUnique = true;
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifacts;
         if (componentType == ComponentTypeEnum.RESOURCE_INSTANCE) {
@@ -1744,7 +1744,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return true;
     }
 
-    private boolean isUniqueArtifactNameInResourceInterfaces(String componentId, String artifactName, String artifactLabel) {
+     boolean isUniqueArtifactNameInResourceInterfaces(String componentId, String artifactName, String artifactLabel) {
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> allInterfacesOfResource = interfaceLifecycleOperation
                 .getAllInterfacesOfResource(componentId, true, true);
 
@@ -1761,7 +1761,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return true;
     }
 
-    private boolean isUniqueLabelInResourceInterfaces(String componentId, String artifactLabel) {
+     boolean isUniqueLabelInResourceInterfaces(String componentId, String artifactLabel) {
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> allInterfacesOfResource = interfaceLifecycleOperation
                 .getAllInterfacesOfResource(componentId, true, true);
 
@@ -1777,7 +1777,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return true;
     }
 
-    private Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(ComponentTypeEnum componentType, Component parentComponent,
+     Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(ComponentTypeEnum componentType, Component parentComponent,
                                                                                          String componentId, ArtifactGroupTypeEnum artifactGroupType) {
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse;
         if (componentType == ComponentTypeEnum.RESOURCE_INSTANCE) {
@@ -1798,7 +1798,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     // ***************************************************************
 
-    private Either<ArtifactDefinition, Operation> createArtifact(Component parent, String parentId, ArtifactDefinition artifactInfo, byte[] decodedPayload,
+     Either<ArtifactDefinition, Operation> createArtifact(Component parent, String parentId, ArtifactDefinition artifactInfo, byte[] decodedPayload,
                                                                  ComponentTypeEnum componentTypeEnum, AuditingActionEnum auditingActionEnum, String interfaceType, String operationName) {
 
         DAOArtifactData artifactData = createEsArtifactData(artifactInfo, decodedPayload);
@@ -1849,7 +1849,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return operationResult;
     }
 
-    private ComponentInstance findComponentInstance(String componentInstanceId, Component containerComponent) {
+     ComponentInstance findComponentInstance(String componentInstanceId, Component containerComponent) {
         ComponentInstance foundInstance = null;
         if (CollectionUtils.isNotEmpty(containerComponent.getComponentInstances())) {
             foundInstance = containerComponent.getComponentInstances()
@@ -1861,7 +1861,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return foundInstance;
     }
 
-    private void validateDeploymentArtifact(final ArtifactDefinition artifactInfo, final Component component) {
+     void validateDeploymentArtifact(final ArtifactDefinition artifactInfo, final Component component) {
         final ComponentTypeEnum componentType = component.getComponentType();
         if (componentType != ComponentTypeEnum.RESOURCE &&
             componentType != ComponentTypeEnum.SERVICE &&
@@ -1887,7 +1887,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         validateArtifactExtension(artifactConfiguration, artifactInfo);
     }
 
-    private void validateHeatArtifact(final Component parentComponent, final String componentId,
+     void validateHeatArtifact(final Component parentComponent, final String componentId,
                                       final ArtifactDefinition artifactDefinition) {
         final String artifactType = artifactDefinition.getArtifactType();
         final ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.parse(artifactType);
@@ -1909,7 +1909,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void setArtifactTimeout(final ArtifactDefinition newArtifactInfo,
+     void setArtifactTimeout(final ArtifactDefinition newArtifactInfo,
                                     final ArtifactDefinition existingArtifactInfo) {
 
         final String artifactType = newArtifactInfo.getArtifactType();
@@ -1959,7 +1959,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             .findFirst();
     }
 
-    private Either<Boolean, ResponseFormat> extractHeatParameters(ArtifactDefinition artifactInfo) {
+     Either<Boolean, ResponseFormat> extractHeatParameters(ArtifactDefinition artifactInfo) {
         // extract heat parameters
         if (artifactInfo.getPayloadData() != null) {
             String heatDecodedPayload = new String(Base64.decodeBase64(artifactInfo.getPayloadData()));
@@ -2034,7 +2034,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateEnvVsHeat(ArtifactDefinition envArtifact, ArtifactDefinition heatArtifact, byte[] heatPayloadData) {
+     void validateEnvVsHeat(ArtifactDefinition envArtifact, ArtifactDefinition heatArtifact, byte[] heatPayloadData) {
         String envPayload = new String(Base64.decodeBase64(envArtifact.getPayloadData()));
         Map<String, Object> heatEnvToscaJson = (Map<String, Object>) new Yaml().load(envPayload);
         String heatDecodedPayload = new String(Base64.decodeBase64(heatPayloadData));
@@ -2059,7 +2059,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateYaml(ArtifactDefinition artifactInfo) {
+     void validateYaml(ArtifactDefinition artifactInfo) {
         YamlToObjectConverter yamlConverter = new YamlToObjectConverter();
         boolean isYamlValid = yamlConverter.isValidYamlEncoded64(artifactInfo.getPayloadData());
         if (!isYamlValid) {
@@ -2068,7 +2068,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean isValidXml(byte[] xmlToParse) {
+     boolean isValidXml(byte[] xmlToParse) {
         boolean isXmlValid = true;
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -2085,7 +2085,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return isXmlValid;
     }
 
-    private void setFeatures(XMLReader reader) throws SAXNotSupportedException {
+     void setFeatures(XMLReader reader) throws SAXNotSupportedException {
         try {
             reader.setFeature("http://apache.org/xml/features/validation/schema", false);
             reader.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -2095,7 +2095,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateSingleDeploymentArtifactName(final String artifactName, final Component parentComponent) {
+     void validateSingleDeploymentArtifactName(final String artifactName, final Component parentComponent) {
         boolean artifactNameFound = false;
         final Iterator<ArtifactDefinition> parentDeploymentArtifactsItr =
             getDeploymentArtifacts(parentComponent, null).iterator();
@@ -2111,7 +2111,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateHeatExist(String componentId, String parentRiId, Wrapper<ArtifactDefinition> heatArtifactMDWrapper, ArtifactDefinition heatEnvArtifact,
+     void validateHeatExist(String componentId, String parentRiId, Wrapper<ArtifactDefinition> heatArtifactMDWrapper, ArtifactDefinition heatEnvArtifact,
                                    ComponentTypeEnum componentType) {
         final Either<ArtifactDefinition, StorageOperationStatus> res = artifactToscaOperation
             .getHeatArtifactByHeatEnvId(parentRiId, heatEnvArtifact, componentId, componentType);
@@ -2192,7 +2192,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return deploymentArtifacts;
     }
 
-    private void checkCreateFields(User user, ArtifactDefinition artifactInfo, ArtifactGroupTypeEnum type) {
+     void checkCreateFields(User user, ArtifactDefinition artifactInfo, ArtifactGroupTypeEnum type) {
         // on create if null add informational to current
         if (artifactInfo.getArtifactGroupType() == null) {
             artifactInfo.setArtifactGroupType(type);
@@ -2252,7 +2252,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
 
-    private String composeArtifactId(String resourceId, String artifactId, ArtifactDefinition artifactInfo, String interfaceName, String operationName) {
+     String composeArtifactId(String resourceId, String artifactId, ArtifactDefinition artifactInfo, String interfaceName, String operationName) {
         String id = artifactId;
         if (artifactId == null || artifactId.isEmpty()) {
             String uniqueId = null;
@@ -2274,7 +2274,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return id;
     }
 
-    private Either<Boolean, ResponseFormat> validateFirstUpdateHasPayload(ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
+     Either<Boolean, ResponseFormat> validateFirstUpdateHasPayload(ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
         if (currentArtifact.getEsId() == null && (artifactInfo.getPayloadData() == null || artifactInfo.getPayloadData().length == 0)) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, ARTIFACT_PAYLOAD));
         }
@@ -2300,7 +2300,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(true);
     }
 
-    private void validateArtifactTypeNotChanged(ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
+     void validateArtifactTypeNotChanged(ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
         if (StringUtils.isEmpty(artifactInfo.getArtifactType())) {
             log.info("artifact type is missing operation ignored");
             throw new ByActionStatusComponentException(ActionStatus.MISSING_ARTIFACT_TYPE);
@@ -2312,7 +2312,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> validateOrSetArtifactGroupType(ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
+     Either<ArtifactDefinition, ResponseFormat> validateOrSetArtifactGroupType(ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
 
         if (Objects.nonNull(artifactInfo) && Objects.nonNull(currentArtifact)) {
             if (artifactInfo.getArtifactGroupType() == null) {
@@ -2327,7 +2327,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(artifactInfo);
     }
 
-    private void checkAndSetUnUpdatableFields(User user, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact, ArtifactGroupTypeEnum type) {
+     void checkAndSetUnUpdatableFields(User user, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact, ArtifactGroupTypeEnum type) {
 
         // on update if null add informational to current
         if (currentArtifact.getArtifactGroupType() == null && type != null) {
@@ -2433,7 +2433,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void checkAndSetUnupdatableHeatParams(List<HeatParameterDefinition> heatParameters, List<HeatParameterDefinition> currentParameters) {
+     void checkAndSetUnupdatableHeatParams(List<HeatParameterDefinition> heatParameters, List<HeatParameterDefinition> currentParameters) {
 
         Map<String, HeatParameterDefinition> currentParametersMap = getMapOfParameters(currentParameters);
         for (HeatParameterDefinition parameter : heatParameters) {
@@ -2469,7 +2469,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Map<String, HeatParameterDefinition> getMapOfParameters(List<HeatParameterDefinition> currentParameters) {
+     Map<String, HeatParameterDefinition> getMapOfParameters(List<HeatParameterDefinition> currentParameters) {
 
         Map<String, HeatParameterDefinition> currentParamsMap = new HashMap<>();
         for (HeatParameterDefinition param : currentParameters) {
@@ -2478,7 +2478,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return currentParamsMap;
     }
 
-    private Either<Boolean, ResponseFormat> validateAndServiceApiUrl(ArtifactDefinition artifactInfo) {
+     Either<Boolean, ResponseFormat> validateAndServiceApiUrl(ArtifactDefinition artifactInfo) {
         if (!ValidationUtils.validateStringNotEmpty(artifactInfo.getApiUrl())) {
             log.debug("Artifact url cannot be empty.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, ARTIFACT_URL));
@@ -2495,7 +2495,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validateAndCleanDescription(ArtifactDefinition artifactInfo) {
+     Either<Boolean, ResponseFormat> validateAndCleanDescription(ArtifactDefinition artifactInfo) {
         if (artifactInfo.getDescription() == null || artifactInfo.getDescription().isEmpty()) {
             log.debug("Artifact description cannot be empty.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, ARTIFACT_DESCRIPTION));
@@ -2516,7 +2516,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(true);
     }
 
-    private <T> Either<ArtifactDefinition, T> updateArtifactFlow(Component parent, String parentId, String artifactId,
+     <T> Either<ArtifactDefinition, T> updateArtifactFlow(Component parent, String parentId, String artifactId,
         ArtifactDefinition artifactInfo, byte[] decodedPayload,
         ComponentTypeEnum componentType, AuditingActionEnum auditingAction) {
         DAOArtifactData artifactData = createEsArtifactData(artifactInfo, decodedPayload);
@@ -2567,14 +2567,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(artifactDefinition);
     }
 
-    private String updateGeneratedIdInHeatEnv(Component parent, String parentId, String artifactId, ArtifactDefinition artifactInfo, ArtifactDefinition artifactDefinition, NodeTypeEnum parentType) {
+     String updateGeneratedIdInHeatEnv(Component parent, String parentId, String artifactId, ArtifactDefinition artifactInfo, ArtifactDefinition artifactDefinition, NodeTypeEnum parentType) {
         if (NodeTypeEnum.Resource == parentType) {
             return updateGeneratedIdInHeatEnv(parent.getDeploymentArtifacts(), parent, parentId, artifactId, artifactInfo, artifactDefinition, parentType, false);
         }
         return artifactDefinition.getUniqueId();
     }
 
-    private String updateGeneratedIdInHeatEnv(Map<String, ArtifactDefinition> deploymentArtifacts, Component parentComponent, String parentId, String artifactId, ArtifactDefinition artifactInfo, ArtifactDefinition artifactDefinition, NodeTypeEnum parentType, boolean isInstanceArtifact) {
+     String updateGeneratedIdInHeatEnv(Map<String, ArtifactDefinition> deploymentArtifacts, Component parentComponent, String parentId, String artifactId, ArtifactDefinition artifactInfo, ArtifactDefinition artifactDefinition, NodeTypeEnum parentType, boolean isInstanceArtifact) {
         String artifactUniqueId;
         artifactUniqueId = artifactDefinition.getUniqueId();
         String artifactType = artifactInfo.getArtifactType();
@@ -2601,12 +2601,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return artifactUniqueId;
     }
 
-    private String updateGeneratedIdInHeatEnvOnInstance(ComponentInstance parent, Component parentComponent, String artifactId, ArtifactDefinition artifactInfo, ArtifactDefinition artifactDefinition, NodeTypeEnum parentType) {
+     String updateGeneratedIdInHeatEnvOnInstance(ComponentInstance parent, Component parentComponent, String artifactId, ArtifactDefinition artifactInfo, ArtifactDefinition artifactDefinition, NodeTypeEnum parentType) {
         return updateGeneratedIdInHeatEnv(parent.getDeploymentArtifacts(), parentComponent, parent.getUniqueId(),artifactId, artifactInfo, artifactDefinition, parentType, true);
     }
 
     @VisibleForTesting
-    private Either<byte[], ResponseFormat> handlePayload(ArtifactDefinition artifactInfo, boolean isArtifactMetadataUpdate) {
+     Either<byte[], ResponseFormat> handlePayload(ArtifactDefinition artifactInfo, boolean isArtifactMetadataUpdate) {
         log.trace("Starting payload handling");
         byte[] payload = artifactInfo.getPayloadData();
         byte[] decodedPayload = null;
@@ -2666,13 +2666,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(decodedPayload);
     }
 
-    private Optional<ResponseFormat> validateIfPmDictionary(String artifactType, byte[] decodedPayload) {
+     Optional<ResponseFormat> validateIfPmDictionary(String artifactType, byte[] decodedPayload) {
         return new PMDictionaryValidator()
             .validateIfPmDictionary(artifactType, decodedPayload)
             .map(this::preparePmDictionaryResponse);
     }
 
-    private ResponseFormat preparePmDictionaryResponse(String errorMessage) {
+     ResponseFormat preparePmDictionaryResponse(String errorMessage) {
         return componentsUtils.getResponseFormat(ActionStatus.INVALID_PM_DICTIONARY_FILE, errorMessage);
     }
 
@@ -2690,7 +2690,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             });
     }
 
-    private Operation convertToOperation(ArtifactDefinition artifactInfo, String operationName) {
+     Operation convertToOperation(ArtifactDefinition artifactInfo, String operationName) {
         Operation op = new Operation();
         long time = System.currentTimeMillis();
         op.setCreationDate(time);
@@ -2703,7 +2703,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return op;
     }
 
-    private String createInterfaceArtifactNameFromOperation(String operationName, String artifactName) {
+     String createInterfaceArtifactNameFromOperation(String operationName, String artifactName) {
         String newArtifactName = operationName + "_" + artifactName;
         log.trace("converting artifact name {} to {}", artifactName, newArtifactName);
         return newArtifactName;
@@ -2797,7 +2797,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return downloadArtifactEither.getRight();
     }
 
-    private ComponentInstance validateResourceInstance(Service service, String resourceInstanceName) {
+     ComponentInstance validateResourceInstance(Service service, String resourceInstanceName) {
 
         List<ComponentInstance> riList = service.getComponentInstances();
         for (ComponentInstance ri : riList) {
@@ -2808,7 +2808,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         throw new ByActionStatusComponentException(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND, resourceInstanceName);
     }
 
-    private ComponentInstance validateResourceInstanceById(Component component, String resourceInstanceId) {
+     ComponentInstance validateResourceInstanceById(Component component, String resourceInstanceId) {
 
         List<ComponentInstance> riList = component.getComponentInstances();
         for (ComponentInstance ri : riList) {
@@ -2819,7 +2819,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NOT_FOUND, resourceInstanceId);
     }
 
-    private Service validateServiceNameAndVersion(String serviceName, String serviceVersion) {
+     Service validateServiceNameAndVersion(String serviceName, String serviceVersion) {
 
         Either<List<Service>, StorageOperationStatus> serviceListBySystemName = toscaOperationFacade.getBySystemName(ComponentTypeEnum.SERVICE, serviceName);
         if (serviceListBySystemName.isRight()) {
@@ -2851,7 +2851,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return foundService;
     }
 
-    private Resource validateResourceNameAndVersion(String resourceName, String resourceVersion) {
+     Resource validateResourceNameAndVersion(String resourceName, String resourceVersion) {
 
         Either<Resource, StorageOperationStatus> resourceListBySystemName = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.RESOURCE, resourceName, resourceVersion, JsonParseFlagEnum.ParseMetadata);
         if (resourceListBySystemName.isRight()) {
@@ -2925,7 +2925,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return downloadArtifact(artifactDefinition);
     }
 
-    private Component validateComponentExists(String componentId, AuditingActionEnum auditingAction, User user, String artifactId, ComponentTypeEnum componentType,
+     Component validateComponentExists(String componentId, AuditingActionEnum auditingAction, User user, String artifactId, ComponentTypeEnum componentType,
                                               String containerComponentType) {
 
         ComponentTypeEnum componentForAudit = null == containerComponentType ? componentType : ComponentTypeEnum.findByParamName(containerComponentType);
@@ -2944,7 +2944,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return componentResult.left().value();
     }
 
-    private void validateWorkOnComponent(Component component, String userId, AuditingActionEnum auditingAction, User user, String artifactId, ArtifactOperationInfo operation) {
+     void validateWorkOnComponent(Component component, String userId, AuditingActionEnum auditingAction, User user, String artifactId, ArtifactOperationInfo operation) {
         if (operation.getArtifactOperationEnum() != ArtifactOperationEnum.DOWNLOAD && !operation.ignoreLifecycleState()) {
             try {
                 validateCanWorkOnComponent(component, userId);
@@ -2958,7 +2958,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateUserRole(User user, AuditingActionEnum auditingAction, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperationInfo operation) {
+     void validateUserRole(User user, AuditingActionEnum auditingAction, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperationInfo operation) {
 
         if (operation.isNotDownload()) {
             String role = user.getRole();
@@ -2971,7 +2971,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private User validateUserExists(String userId, AuditingActionEnum auditingAction, String componentId, String artifactId, ComponentTypeEnum componentType, boolean inTransaction) {
+     User validateUserExists(String userId, AuditingActionEnum auditingAction, String componentId, String artifactId, ComponentTypeEnum componentType, boolean inTransaction) {
         User user;
         try{
             user = validateUserExists(userId);
@@ -2987,7 +2987,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return user;
     }
 
-    private void handleComponentException(AuditingActionEnum auditingAction, String componentId, String artifactId,
+     void handleComponentException(AuditingActionEnum auditingAction, String componentId, String artifactId,
         ResponseFormat responseFormat, ComponentTypeEnum componentType, String userId){
         User user = new User();
         user.setUserId(userId);
@@ -3015,7 +3015,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return auditingAction;
     }
 
-    private ImmutablePair<String, byte[]> downloadArtifact(ArtifactDefinition artifactDefinition) {
+     ImmutablePair<String, byte[]> downloadArtifact(ArtifactDefinition artifactDefinition) {
         String esArtifactId = artifactDefinition.getEsId();
         Either<DAOArtifactData, CassandraOperationStatus> artifactfromES = artifactCassandraDao.getArtifact(esArtifactId);
         if (artifactfromES.isRight()) {
@@ -3041,7 +3041,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return new DAOArtifactData(artifactInfo.getEsId(), artifactPayload);
     }
 
-    private void saveArtifactInCassandra(DAOArtifactData artifactData, Component parent, ArtifactDefinition artifactInfo,
+     void saveArtifactInCassandra(DAOArtifactData artifactData, Component parent, ArtifactDefinition artifactInfo,
                                          String currArtifactId, String prevArtifactId, AuditingActionEnum auditingAction, ComponentTypeEnum componentType) {
         CassandraOperationStatus resourceUploadStatus = artifactCassandraDao.saveArtifact(artifactData);
 
@@ -3060,19 +3060,19 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean isArtifactMetadataUpdate(AuditingActionEnum auditingActionEnum) {
+     boolean isArtifactMetadataUpdate(AuditingActionEnum auditingActionEnum) {
         return auditingActionEnum == AuditingActionEnum.ARTIFACT_METADATA_UPDATE;
     }
 
-    private boolean isDeploymentArtifact(ArtifactDefinition artifactInfo) {
+     boolean isDeploymentArtifact(ArtifactDefinition artifactInfo) {
         return ArtifactGroupTypeEnum.DEPLOYMENT == artifactInfo.getArtifactGroupType();
     }
 
-    private boolean isInformationalArtifact(final ArtifactDefinition artifactInfo) {
+     boolean isInformationalArtifact(final ArtifactDefinition artifactInfo) {
         return ArtifactGroupTypeEnum.INFORMATIONAL == artifactInfo.getArtifactGroupType();
     }
 
-    private boolean isHeatArtifact(final ArtifactDefinition artifactInfo) {
+     boolean isHeatArtifact(final ArtifactDefinition artifactInfo) {
         final String artifactType = artifactInfo.getArtifactType();
         final ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.parse(artifactType);
         if (artifactTypeEnum == null) {
@@ -3115,7 +3115,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return artifactInfo;
     }
 
-    private void setArtifactPlaceholderCommonFields(String resourceId, User user, ArtifactDefinition artifactInfo) {
+     void setArtifactPlaceholderCommonFields(String resourceId, User user, ArtifactDefinition artifactInfo) {
         String uniqueId = null;
 
         if (resourceId != null) {
@@ -3146,7 +3146,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return artifactToscaOperation.addHeatEnvArtifact(artifactHeatEnv, artifact, component, parentType, true, instanceId);
     }
 
-    private Either<DAOArtifactData, ResponseFormat> createEsHeatEnvArtifactDataFromString(ArtifactDefinition artifactDefinition, String payloadStr) {
+     Either<DAOArtifactData, ResponseFormat> createEsHeatEnvArtifactDataFromString(ArtifactDefinition artifactDefinition, String payloadStr) {
 
         byte[] payload = payloadStr.getBytes();
 
@@ -3212,7 +3212,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(updatedArtDef);
     }
 
-    private String generateHeatEnvPayload(ArtifactDefinition artifactDefinition) {
+     String generateHeatEnvPayload(ArtifactDefinition artifactDefinition) {
         List<HeatParameterDefinition> heatParameters = artifactDefinition.getListHeatParameters();
         StringBuilder sb = new StringBuilder();
         sb.append(ConfigurationManager.getConfigurationManager().getConfiguration().getHeatEnvArtifactHeader());
@@ -3514,7 +3514,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(uploadArtifactToService.left().value());
     }
 
-    private Either<ArtifactDefinition, Operation> handleUpdateHeatEnvAndHeatMeta(String componentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction, String artifactId, User user, ComponentTypeEnum componentType,
+     Either<ArtifactDefinition, Operation> handleUpdateHeatEnvAndHeatMeta(String componentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction, String artifactId, User user, ComponentTypeEnum componentType,
                                                                                  Component parent, String originData, String origMd5, ArtifactOperationInfo operation) {
         if (origMd5 != null) {
             validateMd5(origMd5, originData, artifactInfo.getPayloadData(), operation);
@@ -3528,7 +3528,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updateHeatEnvParamsAndMetadata(componentId, artifactId, artifactInfo, user, auditingAction, parent, componentType, origMd5);
     }
 
-    private Either<ArtifactDefinition, Operation> updateHeatEnvParamsAndMetadata(String componentId, String artifactId, ArtifactDefinition artifactInfo, User user, AuditingActionEnum auditingAction, Component parent,
+     Either<ArtifactDefinition, Operation> updateHeatEnvParamsAndMetadata(String componentId, String artifactId, ArtifactDefinition artifactInfo, User user, AuditingActionEnum auditingAction, Component parent,
                                                                                  ComponentTypeEnum componentType, String origMd5) {
         Either<ComponentInstance, ResponseFormat> getRI = getRIFromComponent(parent, componentId, artifactId, auditingAction, user);
         if (getRI.isRight()) {
@@ -3591,7 +3591,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(currArtifact);
     }
 
-    private void
+     void
     updateHeatMetaDataIfNeeded(String componentId, User user, AuditingActionEnum auditingAction, ComponentTypeEnum componentType, Component parent, ComponentInstance resourceInstance, ArtifactDefinition updatedHeatEnvArtifact) {
         String heatArtifactId = updatedHeatEnvArtifact.getGeneratedFromId();
         Either<ArtifactDefinition, ResponseFormat> getArtifactRes = getArtifactFromRI(parent, resourceInstance, componentId, heatArtifactId, auditingAction, user);
@@ -3618,7 +3618,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateHeatMetaData(ArtifactDefinition updatedHeatEnv) {
+     void validateHeatMetaData(ArtifactDefinition updatedHeatEnv) {
         Integer maxMinutes = ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout().getMaxMinutes();
         Integer minMinutes = ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout().getMinMinutes();
         Integer updateTimeout = updatedHeatEnv.getTimeout();
@@ -3627,17 +3627,17 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private boolean isUpdateHeatMetaDataNeeded(ArtifactDefinition updatedHeatEnv, ArtifactDefinition origHeat) {
+     boolean isUpdateHeatMetaDataNeeded(ArtifactDefinition updatedHeatEnv, ArtifactDefinition origHeat) {
         // currently only timeout metadata can be updated
         return !origHeat.getTimeout().equals(updatedHeatEnv.getTimeout());
     }
 
-    private void updateHeatMetadataFromHeatEnv(ArtifactDefinition updatedHeatEnv, ArtifactDefinition origHeat) {
+     void updateHeatMetadataFromHeatEnv(ArtifactDefinition updatedHeatEnv, ArtifactDefinition origHeat) {
         // currently only timeout metadata can be updated
         origHeat.setTimeout(updatedHeatEnv.getTimeout());
     }
 
-    private boolean replaceCurrHeatValueWithUpdatedValue(List<HeatParameterDefinition> currentHeatEnvParams, List<HeatParameterDefinition> updatedHeatEnvParams) {
+     boolean replaceCurrHeatValueWithUpdatedValue(List<HeatParameterDefinition> currentHeatEnvParams, List<HeatParameterDefinition> updatedHeatEnvParams) {
         boolean isUpdate = false;
         List<String> currentParamsNames = currentHeatEnvParams.stream().map(x -> x.getName()).collect(Collectors.toList());
         for (HeatParameterDefinition heatEnvParam : updatedHeatEnvParams) {
@@ -3656,13 +3656,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return isUpdate;
     }
 
-    private void validateParamName(String paramName, List<String> heatParamsNames) {
+     void validateParamName(String paramName, List<String> heatParamsNames) {
         if (!heatParamsNames.contains(paramName)) {
             throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, paramName);
         }
     }
 
-    private Either<ArtifactDefinition, Operation> updateHeatParams(String componentId, ArtifactDefinition artifactEnvInfo, AuditingActionEnum auditingAction, Component parent,
+     Either<ArtifactDefinition, Operation> updateHeatParams(String componentId, ArtifactDefinition artifactEnvInfo, AuditingActionEnum auditingAction, Component parent,
                                                                    ComponentTypeEnum componentType, ArtifactDefinition currHeatArtifact, boolean needToUpdateGroup) {
         Either<ArtifactDefinition, Operation> insideEither = null;
         String currentHeatId = currHeatArtifact.getUniqueId();
@@ -3746,7 +3746,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
 
-    private StorageOperationStatus generateCustomizationUUIDOnGroupInstance(ComponentInstance ri, String artifactId, String componentId) {
+     StorageOperationStatus generateCustomizationUUIDOnGroupInstance(ComponentInstance ri, String artifactId, String componentId) {
         StorageOperationStatus error = StorageOperationStatus.OK;
         log.debug("Need to re-generate  customization UUID for group instance on component instance  {}", ri.getUniqueId());
         List<GroupInstance> groupsInstances = ri.getGroupInstances();
@@ -3798,7 +3798,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(updatedHeatEnvParams);
     }
 
-    private Either<ComponentInstance, ResponseFormat> getRIFromComponent(Component component, String riID, String artifactId, AuditingActionEnum auditingAction, User user) {
+     Either<ComponentInstance, ResponseFormat> getRIFromComponent(Component component, String riID, String artifactId, AuditingActionEnum auditingAction, User user) {
         ResponseFormat responseFormat = null;
         List<ComponentInstance> ris = component.getComponentInstances();
         for (ComponentInstance ri : ris) {
@@ -3812,7 +3812,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.right(responseFormat);
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> getArtifactFromRI(Component component, ComponentInstance ri, String riID, String artifactId, AuditingActionEnum auditingAction, User user) {
+     Either<ArtifactDefinition, ResponseFormat> getArtifactFromRI(Component component, ComponentInstance ri, String riID, String artifactId, AuditingActionEnum auditingAction, User user) {
         ResponseFormat responseFormat = null;
         Map<String, ArtifactDefinition> rtifactsMap = ri.getDeploymentArtifacts();
         for (ArtifactDefinition artifact : rtifactsMap.values()) {
@@ -4060,7 +4060,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return actionResult.left().value();
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> updateOperationArtifact(String componentId, String interfaceType, String operationUuid, ArtifactDefinition artifactInfo){
+     Either<ArtifactDefinition, ResponseFormat> updateOperationArtifact(String componentId, String interfaceType, String operationUuid, ArtifactDefinition artifactInfo){
         Either<Component, StorageOperationStatus> componentStorageOperationStatusEither = toscaOperationFacade.getToscaElement(componentId);
         if (componentStorageOperationStatusEither.isRight()) {
             StorageOperationStatus errorStatus = componentStorageOperationStatusEither.right().value();
@@ -4206,7 +4206,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updateArtifactResult;
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> handleArtifactRequestAndFlatten(
+     Either<ArtifactDefinition, ResponseFormat> handleArtifactRequestAndFlatten(
         String componentId, String userId, ComponentTypeEnum componentType, ArtifactOperationInfo operation,
         String artifactId, ArtifactDefinition artifactInfo, String origMd5, String originData, String interfaceName,
         String operationName) {
@@ -4223,13 +4223,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadataOrThrow(
+     Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadataOrThrow(
         ComponentTypeEnum componentType, String componentUuid
     ) {
         return fetchLatestComponentMetadataOrThrow(componentType, componentUuid, componentUuid);
     }
 
-    private Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadataOrThrow(
+     Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadataOrThrow(
         ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName
     ) {
         return fetchLatestComponentMetadata(componentType, componentUuid).right().map(as -> {
@@ -4237,7 +4237,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         });
     }
 
-    private Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadata(
+     Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadata(
         ComponentTypeEnum componentType, String componentUuid
     ) {
         return toscaOperationFacade
@@ -4248,7 +4248,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             });
     }
 
-    private Either<String, ResponseFormat> fetchInterfaceName(String componentId, String interfaceUUID) {
+     Either<String, ResponseFormat> fetchInterfaceName(String componentId, String interfaceUUID) {
         Either<Component, StorageOperationStatus> componentStorageOperationStatusEither = toscaOperationFacade.getToscaElement(componentId);
         if (componentStorageOperationStatusEither.isRight()) {
             StorageOperationStatus errorStatus = componentStorageOperationStatusEither.right().value();
@@ -4357,7 +4357,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return actionResult.left().value();
     }
 
-    private String findArtifactId(ComponentInstance instance, String artifactUUID) {
+     String findArtifactId(ComponentInstance instance, String artifactUUID) {
         String artifactId = null;
         ArtifactDefinition foundArtifact = null;
         if (instance.getDeploymentArtifacts() != null) {
@@ -4449,7 +4449,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return heatEnvPlaceholder;
     }
 
-    private void setHeatCurrentValuesOnHeatEnvDefaultValues(ArtifactDefinition artifact, ArtifactDefinition artifactDefinition) {
+     void setHeatCurrentValuesOnHeatEnvDefaultValues(ArtifactDefinition artifact, ArtifactDefinition artifactDefinition) {
         if (artifact.getListHeatParameters() == null) {
             return;
         }
@@ -4463,7 +4463,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         artifactDefinition.setListHeatParameters(heatEnvParameters);
     }
 
-    private void buildHeatEnvFileName(ArtifactDefinition heatArtifact, ArtifactDefinition heatEnvArtifact, Map<String, Object> placeHolderData) {
+     void buildHeatEnvFileName(ArtifactDefinition heatArtifact, ArtifactDefinition heatEnvArtifact, Map<String, Object> placeHolderData) {
         String heatExtension = GeneralUtility.getFilenameExtension(heatArtifact.getArtifactName());
         String envExtension = (String) placeHolderData.get(ARTIFACT_PLACEHOLDER_FILE_EXTENSION);
         String name = heatArtifact.getArtifactName();
@@ -4478,7 +4478,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         heatEnvArtifact.setArtifactName(fileName);
     }
 
-    private void handleEnvArtifactVersion(ArtifactDefinition heatEnvArtifact, Map<String, String> existingEnvVersions) {
+     void handleEnvArtifactVersion(ArtifactDefinition heatEnvArtifact, Map<String, String> existingEnvVersions) {
         if (null != existingEnvVersions) {
             String prevVersion = existingEnvVersions.get(heatEnvArtifact.getArtifactName());
             if (null != prevVersion) {
@@ -4576,7 +4576,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return handleArtifactsResult;
     }
 
-    private ComponentInstance getRelatedComponentInstance(
+     ComponentInstance getRelatedComponentInstance(
         ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName
     ) {
         String normalizedName = ValidationUtils.normalizeComponentInstanceName(resourceInstanceName);
@@ -4589,7 +4589,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         ).get();
     }
 
-    private ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(
+     ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(
         Component component, String resourceInstanceName
     ) {
         String normalizedName = ValidationUtils.normalizeComponentInstanceName(resourceInstanceName);
@@ -4599,7 +4599,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return new ImmutablePair<>(component, componentInstance);
     }
 
-    private ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(
+     ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(
         ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName
     ) {
         Component component = getLatestComponentByUuid(componentType, componentUuid);
@@ -4609,14 +4609,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return new ImmutablePair<>(component, componentInstance);
     }
 
-    private Supplier<Throwable> componentNotFound(ComponentTypeEnum componentType, String componentUuid) {
+     Supplier<Throwable> componentNotFound(ComponentTypeEnum componentType, String componentUuid) {
         return () -> {
             log.debug(FAILED_FETCH_COMPONENT, componentType.getValue(), componentUuid);
             return new ByActionStatusComponentException(ActionStatus.COMPONENT_NOT_FOUND, componentUuid);
         };
     }
 
-    private Supplier<Throwable> componentInstanceNotFound(
+     Supplier<Throwable> componentInstanceNotFound(
         ComponentTypeEnum componentType, String resourceInstanceName, Component component
     ) {
         return () -> {
@@ -4627,14 +4627,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         };
     }
 
-    private static Option<ComponentInstance> findFirstMatching(Component component, Predicate<ComponentInstance> filter) {
+     static Option<ComponentInstance> findFirstMatching(Component component, Predicate<ComponentInstance> filter) {
         return Option.ofOptional(component.getComponentInstances()
             .stream()
             .filter(filter)
             .findFirst());
     }
 
-    private byte[] downloadArtifact(Map<String, ArtifactDefinition> artifacts, String artifactUUID, String componentName) {
+     byte[] downloadArtifact(Map<String, ArtifactDefinition> artifacts, String artifactUUID, String componentName) {
 
         ImmutablePair<String, byte[]> downloadArtifact;
         List<ArtifactDefinition> artifactsList = null;
@@ -4656,7 +4656,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return downloadArtifact.getRight();
     }
 
-    private Component getLatestComponentByUuid(ComponentTypeEnum componentType, String componentUuid) {
+     Component getLatestComponentByUuid(ComponentTypeEnum componentType, String componentUuid) {
         Component component;
         Either<Component, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentByUuid(componentUuid);
         if (getComponentRes.isRight()) {
@@ -4670,7 +4670,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return component;
     }
 
-    private Component getComponentByUuid(ComponentTypeEnum componentType, String componentUuid) {
+     Component getComponentByUuid(ComponentTypeEnum componentType, String componentUuid) {
         Component component;
         Either<List<Component>, StorageOperationStatus> getComponentRes = toscaOperationFacade.getComponentListByUuid(componentUuid, null);
         if (getComponentRes.isRight()) {
@@ -4692,7 +4692,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return component;
     }
 
-    private String getLatestParentArtifactDataIdByArtifactUUID(String artifactUUID, String parentId, ComponentTypeEnum componentType) {
+     String getLatestParentArtifactDataIdByArtifactUUID(String artifactUUID, String parentId, ComponentTypeEnum componentType) {
         ActionStatus actionStatus = ActionStatus.ARTIFACT_NOT_FOUND;
         StorageOperationStatus storageStatus;
         ArtifactDefinition latestArtifact;
@@ -4732,7 +4732,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return latestArtifact.getUniqueId();
     }
 
-    private Component checkoutParentComponent(ComponentTypeEnum componentType, String parentId, String userId) {
+     Component checkoutParentComponent(ComponentTypeEnum componentType, String parentId, String userId) {
 
         Component component = null;
         User modifier = userBusinessLogic.getUser(userId, false);

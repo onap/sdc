@@ -22,14 +22,9 @@
 package org.openecomp.sdc.be.dao.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import mockit.Deencapsulation;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import org.junit.Test;
 
 public class JsonUtilTest {
 	
@@ -38,7 +33,7 @@ public class JsonUtilTest {
 		ObjectMapper result;
 
 		// default test
-		result = Deencapsulation.invoke(JsonUtil.class, "getOneObjectMapper");
+		JsonUtil.getOneObjectMapper();
 	}
 
 	@Test

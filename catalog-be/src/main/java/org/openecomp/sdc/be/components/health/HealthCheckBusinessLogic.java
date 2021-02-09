@@ -133,7 +133,7 @@ public class HealthCheckBusinessLogic {
         return new ImmutablePair<>(healthCheckUtil.getAggregateStatus(prevBeHealthCheckInfos, config.getHealthStatusExclude()), prevBeHealthCheckInfos);
     }
 
-    private List<HealthCheckInfo> getBeHealthCheckInfos() {
+     List<HealthCheckInfo> getBeHealthCheckInfos() {
 
         log.trace("In getBeHealthCheckInfos");
 
@@ -175,7 +175,7 @@ public class HealthCheckBusinessLogic {
         return healthCheckInfos;
     }
 
-    private HealthCheckInfo getDmaapHealthCheck() {
+     HealthCheckInfo getDmaapHealthCheck() {
         HealthCheckInfo healthCheckInfo = null;
         if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
             String appVersion = getAppVersion();
@@ -187,7 +187,7 @@ public class HealthCheckBusinessLogic {
         return healthCheckInfo;
     }
 
-    private HealthCheckInfo getDmaapProducerHealthCheck() {
+     HealthCheckInfo getDmaapProducerHealthCheck() {
         if (ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()) {
             String appVersion = getAppVersion();
             dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
@@ -225,7 +225,7 @@ public class HealthCheckBusinessLogic {
         return healthCheckInfo;
     }
 
-    private HealthCheckInfo getCassandraHealthCheck() {
+     HealthCheckInfo getCassandraHealthCheck() {
 
         String description;
         boolean isCassandraUp = false;
@@ -250,7 +250,7 @@ public class HealthCheckBusinessLogic {
         return healthCheckInfo;
     }
 
-    private HealthCheckInfo getHostedComponentsBeHealthCheck(String componentName, String healthCheckUrl) {
+     HealthCheckInfo getHostedComponentsBeHealthCheck(String componentName, String healthCheckUrl) {
         HealthCheckStatus healthCheckStatus;
         String description;
         String version = null;
@@ -302,19 +302,19 @@ public class HealthCheckBusinessLogic {
         return new HealthCheckInfo(componentName, healthCheckStatus, version, description, componentsInfo);
     }
 
-    private void addToHealthCheckInfoObject(String description, List<HealthCheckInfo> componentsInfo) {
+     void addToHealthCheckInfoObject(String description, List<HealthCheckInfo> componentsInfo) {
         if (componentsInfo != null && componentsInfo.isEmpty()) {
             componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
         }
     }
 
-    private void setDescriptionToObject(String description, List<HealthCheckInfo> componentsInfo) {
+     void setDescriptionToObject(String description, List<HealthCheckInfo> componentsInfo) {
         if (componentsInfo.isEmpty()) {
             componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
         }
     }
 
-    private String getDescription(String componentName, String aggDescription) {
+     String getDescription(String componentName, String aggDescription) {
         String description;
         description = aggDescription.length() > 0
                 ? aggDescription
@@ -322,11 +322,11 @@ public class HealthCheckBusinessLogic {
         return description;
     }
 
-    private String getVersion(Map<String, Object> healthCheckMap) {
+     String getVersion(Map<String, Object> healthCheckMap) {
         return healthCheckMap.get("sdcVersion") != null ? healthCheckMap.get("sdcVersion").toString() : null;
     }
 
-    private String getAggDescription(List<HealthCheckInfo> componentsInfo, String aggDescription) {
+     String getAggDescription(List<HealthCheckInfo> componentsInfo, String aggDescription) {
         if (!componentsInfo.isEmpty()) {
             aggDescription = healthCheckUtil.getAggregateDescription(componentsInfo);
         } else {
@@ -349,7 +349,7 @@ public class HealthCheckBusinessLogic {
 
     }
 
-    private void logAlarm(String componentChangedMsg) {
+     void logAlarm(String componentChangedMsg) {
         BeEcompErrorManager.getInstance().logBeHealthCheckRecovery(componentChangedMsg);
     }
 
@@ -388,11 +388,11 @@ public class HealthCheckBusinessLogic {
         return result;
     }
 
-    private void writeLogAlarm(List<HealthCheckInfo> prevBeHealthCheckInfos) {
+     void writeLogAlarm(List<HealthCheckInfo> prevBeHealthCheckInfos) {
         logAlarm(format(COMPONENT_CHANGED_MESSAGE, "", prevBeHealthCheckInfos == null ? "null" : "true", prevBeHealthCheckInfos == null ? "true" : "null"));
     }
 
-    private boolean isHealthStatusChanged(boolean result, Map<String, HealthCheckStatus> currentValues, Map<String, HealthCheckStatus> prevValues) {
+     boolean isHealthStatusChanged(boolean result, Map<String, HealthCheckStatus> currentValues, Map<String, HealthCheckStatus> prevValues) {
         for (Entry<String, HealthCheckStatus> entry : currentValues.entrySet()) {
             String key = entry.getKey();
             HealthCheckStatus value = entry.getValue();
@@ -414,7 +414,7 @@ public class HealthCheckBusinessLogic {
         return result;
     }
 
-    private void updateHealthCheckStatusMap(Map<String, HealthCheckStatus> currentValues, Map<String, HealthCheckStatus> prevValues) {
+     void updateHealthCheckStatusMap(Map<String, HealthCheckStatus> currentValues, Map<String, HealthCheckStatus> prevValues) {
         Map<String, HealthCheckStatus> notPresent;
         if (currentValues.keySet().containsAll(prevValues.keySet())) {
             notPresent = new HashMap<>(currentValues);
@@ -476,7 +476,7 @@ public class HealthCheckBusinessLogic {
             }
         }
 
-        private void logAlarm(boolean prevHealthState) {
+         void logAlarm(boolean prevHealthState) {
             if (prevHealthState) {
                 BeEcompErrorManager.getInstance().logBeHealthCheckRecovery(BE_HEALTH_CHECK_STR);
             } else {

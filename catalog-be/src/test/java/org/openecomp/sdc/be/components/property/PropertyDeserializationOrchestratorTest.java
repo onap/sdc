@@ -21,7 +21,11 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -34,12 +38,6 @@ import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class PropertyDeserializationOrchestratorTest {
 
@@ -96,7 +94,7 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = testSubject.getPropertyDeclarator(componentInstInputsMap);
 	}
 
 	@Test
@@ -109,7 +107,7 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = testSubject.getPropertyDeclarator(componentInstInputsMap);
 	}
 
 	@Test
@@ -122,7 +120,7 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = testSubject.getPropertyDeclarator(componentInstInputsMap);
 	}
 
 	@Test
@@ -135,6 +133,6 @@ public class PropertyDeserializationOrchestratorTest {
 		PropertyDeclarator result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+		result = testSubject.getPropertyDeclarator(componentInstInputsMap);
 	}
 }
