@@ -75,7 +75,7 @@ public class ServiceDistributionArtifactsBuilder {
         this.interfaceLifecycleOperation = interfaceLifecycleOperation;
     }
 
-    private String resolveWorkloadContext(String workloadContext) {
+    String resolveWorkloadContext(String workloadContext) {
         return workloadContext != null ? workloadContext :
                 ConfigurationManager.getConfigurationManager().getConfiguration().getWorkloadContext();
     }
@@ -108,7 +108,7 @@ public class ServiceDistributionArtifactsBuilder {
         return notificationData;
     }
 
-    private List<ArtifactInfoImpl> convertServiceArtifactsToArtifactInfo(Service service) {
+    List<ArtifactInfoImpl> convertServiceArtifactsToArtifactInfo(Service service) {
 
         Map<String, ArtifactDefinition> serviceArtifactsMap = service.getDeploymentArtifacts();
         List<ArtifactDefinition> extractedServiceArtifacts = serviceArtifactsMap.values().stream()
@@ -130,19 +130,19 @@ public class ServiceDistributionArtifactsBuilder {
         return ArtifactInfoImpl.convertServiceArtifactToArtifactInfoImpl(service, extractedServiceArtifacts);
     }
 
-    private Optional<ArtifactDefinition> exrtactToscaTemplateArtifact(Service service) {
+    Optional<ArtifactDefinition> exrtactToscaTemplateArtifact(Service service) {
         return service.getToscaArtifacts().values().stream()
                 //filters TOSCA_TEMPLATE artifact
                 .filter(e -> e.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType())).findAny();
     }
 
-    private Optional<ArtifactDefinition> exrtactToscaCsarArtifact(Service service) {
+    Optional<ArtifactDefinition> exrtactToscaCsarArtifact(Service service) {
         return service.getToscaArtifacts().values().stream()
                 //filters TOSCA_CSAR artifact
                 .filter(e -> e.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny();
     }
 
-    private List<JsonContainerResourceInstance> convertRIsToJsonContanier(Service service) {
+    List<JsonContainerResourceInstance> convertRIsToJsonContanier(Service service) {
         List<JsonContainerResourceInstance> ret = new ArrayList<>();
         if (service.getComponentInstances() != null) {
             for (ComponentInstance instance : service.getComponentInstances()) {
@@ -161,17 +161,17 @@ public class ServiceDistributionArtifactsBuilder {
         return ret;
     }
 
-    private void fillJsonContainer(JsonContainerResourceInstance jsonContainer, Resource resource) {
+    void fillJsonContainer(JsonContainerResourceInstance jsonContainer, Resource resource) {
         jsonContainer.setResourceInvariantUUID(resource.getInvariantUUID());
         setCategories(jsonContainer, resource.getCategories());
     }
 
-    private List<ArtifactInfoImpl> convertToArtifactsInfoImpl(Service service, ComponentInstance resourceInstance) {
+    List<ArtifactInfoImpl> convertToArtifactsInfoImpl(Service service, ComponentInstance resourceInstance) {
         List<ArtifactInfoImpl> artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(service, resourceInstance, getArtifactsWithPayload(resourceInstance));
         return artifacts;
     }
 
-    private void setCategories(JsonContainerResourceInstance jsonContainer, List<CategoryDefinition> categories) {
+    void setCategories(JsonContainerResourceInstance jsonContainer, List<CategoryDefinition> categories) {
         if (categories != null) {
             CategoryDefinition categoryDefinition = categories.get(0);
 
@@ -189,7 +189,7 @@ public class ServiceDistributionArtifactsBuilder {
         }
     }
 
-    private List<ArtifactDefinition> getArtifactsWithPayload(ComponentInstance resourceInstance) {
+    List<ArtifactDefinition> getArtifactsWithPayload(ComponentInstance resourceInstance) {
         List<ArtifactDefinition> ret = new ArrayList<>();
 
         List<ArtifactDefinition> deployableArtifacts = new ArrayList<>();
@@ -260,7 +260,7 @@ public class ServiceDistributionArtifactsBuilder {
         return contains;
     }
 
-    private boolean isContainsPayload(Map<String, ArtifactDefinition> deploymentArtifacts) {
+    boolean isContainsPayload(Map<String, ArtifactDefinition> deploymentArtifacts) {
        return deploymentArtifacts != null && deploymentArtifacts.values().stream().anyMatch(ArtifactDefinition::checkEsIdExist);
     }
 
