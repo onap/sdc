@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (c) 2021 Nokia
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -47,6 +49,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
@@ -102,6 +106,7 @@ import org.springframework.stereotype.Controller;
 @Tag(name = "SDC External APIs")
 @Server(url = "/sdc")
 @Controller
+@Singleton
 public class CrudExternalServlet extends AbstractValidationsServlet {
 
     @Context
@@ -115,9 +120,11 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     private final ServiceBusinessLogic serviceBusinessLogic;
 
     @Inject
-    public CrudExternalServlet(UserBusinessLogic userBusinessLogic,
+    public CrudExternalServlet(
+        UserBusinessLogic userBusinessLogic,
         ComponentInstanceBusinessLogic componentInstanceBL,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
+        ComponentsUtils componentsUtils,
+        ServletUtils servletUtils,
         ResourceImportManager resourceImportManager,
         ElementBusinessLogic elementBusinessLogic,
         AssetMetadataConverter assetMetadataUtils,
@@ -643,5 +650,4 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             return Either.right(error);
         }
     }
-
 }

@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import mockit.Deencapsulation;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 
@@ -42,6 +41,6 @@ public class ServiceCategoryDataTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "createUniqueId");
+		//Deencapsulation.invoke(testSubject, "createUniqueId");
 	}
 }

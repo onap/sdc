@@ -129,13 +129,13 @@ public class ComponentValidations {
         return component;
     }
 
-    private void validateComponentType(Component component, ComponentTypeEnum componentType) {
+    void validateComponentType(Component component, ComponentTypeEnum componentType) {
         if (componentType!=component.getComponentType()) {
             throw new ByActionStatusComponentException(ActionStatus.INVALID_RESOURCE_TYPE);
         }
     }
 
-    private Component onToscaOperationError(StorageOperationStatus storageOperationStatus, String componentId) {
+    Component onToscaOperationError(StorageOperationStatus storageOperationStatus, String componentId) {
         throw new StorageException(storageOperationStatus, componentId);
     }
 

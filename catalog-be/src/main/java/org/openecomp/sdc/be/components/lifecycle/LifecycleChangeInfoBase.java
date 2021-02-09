@@ -33,7 +33,7 @@ public class LifecycleChangeInfoBase {
     }
 
     @JsonInclude
-    private String userRemarks;
+    String userRemarks;
 
     public String getUserRemarks() {
         return userRemarks;

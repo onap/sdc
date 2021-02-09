@@ -21,14 +21,12 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import com.att.nsa.mr.client.MRConsumer;
-import mockit.Deencapsulation;
-import org.junit.Test;
-import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
-import org.openecomp.sdc.be.config.DmaapConsumerConfiguration.Credential;
-
 import java.io.File;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
+import org.junit.Test;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
+import org.openecomp.sdc.be.config.DmaapConsumerConfiguration.Credential;
 
 public class DmaapClientFactoryTest {
 
@@ -124,7 +122,7 @@ public class DmaapClientFactoryTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildProperties", parameters);
+		testSubject.buildProperties(parameters);
 
 		File file = new File(filePath);
 		file.delete();
@@ -143,7 +141,7 @@ public class DmaapClientFactoryTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildProperties", parameters);
+		testSubject.buildProperties(parameters);
 	}
 
 	@Test
@@ -153,8 +151,7 @@ public class DmaapClientFactoryTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "ensureFileExists", new Object[] { filePath });
-		Deencapsulation.invoke(testSubject, "ensureFileExists", filePath);
+		testSubject.ensureFileExists(filePath);
 		File file = new File(filePath);
 		file.delete();
 	}

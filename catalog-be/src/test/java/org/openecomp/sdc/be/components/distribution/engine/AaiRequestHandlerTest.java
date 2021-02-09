@@ -20,11 +20,9 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import mockit.Deencapsulation;
+import java.util.Properties;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
-
-import java.util.Properties;
 
 public class AaiRequestHandlerTest extends BeConfDependentTest {
 
@@ -56,23 +54,23 @@ public class AaiRequestHandlerTest extends BeConfDependentTest {
 	@Test
 	public void testRetryOnException() throws Exception {
 		AaiRequestHandler testSubject;
-		Exception e = null;
+		Exception e = new NullPointerException();
 		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "retryOnException", new Object[] { Exception.class });
+		result = testSubject.retryOnException(e);
 	}
 
 	@Test
 	public void testGetCause() throws Exception {
 		AaiRequestHandler testSubject;
-		Exception e = null;
+		Exception e = new NullPointerException();
 		Throwable result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getCause", new Object[] { Exception.class });
+		result = testSubject.getCause(e);
 	}
 
 	@Test
@@ -82,6 +80,6 @@ public class AaiRequestHandlerTest extends BeConfDependentTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "createHeaders");
+		result = testSubject.createHeaders();
 	}
 }

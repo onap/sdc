@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth.HealthCheckScheduledTask;
@@ -43,7 +42,7 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "init");
+		testSubject.init();
 	}
 
 	@Test
@@ -52,7 +51,7 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "destroy");
+		testSubject.destroy();
 	}
 
 	@Test
@@ -90,7 +89,7 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 		healthCheckCalls.add(hcc);
 		healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
 		
-		Deencapsulation.invoke(healthCheckScheduledTask, "queryUeb");
+		healthCheckScheduledTask.queryUeb();
 	}
 	
 	@Test
@@ -107,7 +106,7 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 		healthCheckCalls.add(hcc);
 		healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
 		
-		Deencapsulation.invoke(healthCheckScheduledTask, "run");
+		healthCheckScheduledTask.run();
 	}
 	
 	@Test
@@ -124,7 +123,7 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 		healthCheckCalls.add(hcc);
 		healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
 		
-		Deencapsulation.invoke(healthCheckScheduledTask, "run");
+		healthCheckScheduledTask.run();
 	}
 	
 	@Test
@@ -134,7 +133,7 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "logAlarm", new Object[] { lastHealthState });
+		testSubject.logAlarm(lastHealthState);
 	}
 	
 	@Test

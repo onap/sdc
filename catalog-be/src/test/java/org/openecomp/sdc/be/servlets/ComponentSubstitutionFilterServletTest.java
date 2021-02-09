@@ -52,10 +52,10 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentSubstitutionFilterBusinessLogic;
@@ -120,7 +120,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     private String inputJson;
     private User user;
 
-    @BeforeAll
+    @BeforeClass
     public static void initClass() {
         createMocks();
         when(request.getSession()).thenReturn(session);
@@ -142,15 +142,14 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         ExternalConfiguration.setAppName("catalog-be");
     }
 
-    @BeforeEach
+    @Before
     public void resetMock() throws Exception {
-        super.setUp();
         reset(componentSubstitutionFilterBusinessLogic);
         initComponentData();
     }
 
-    @AfterEach
-    void after() throws Exception {
+    @After
+    public void after() throws Exception {
         super.tearDown();
     }
 

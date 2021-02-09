@@ -49,27 +49,27 @@ import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DMAAP_ENGINE;
 public class DmaapHealth {
 
 
-    private static final String DMAAP_HEALTH_LOG_CONTEXT = "dmaap.healthcheck";
-    private static final String DMAAP_HEALTH_CHECK_STR = "dmaapHealthCheck";
-    private static final Logger log = Logger.getLogger(DmaapHealth.class.getName());
-    private static final Logger logHealth = Logger.getLogger(DMAAP_HEALTH_LOG_CONTEXT);
-    private HealthCheckInfo healthCheckInfo = DmaapHealth.HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
-    private long healthCheckReadTimeout = 20;
-    private long reconnectInterval = 5;
-    private HealthCheckScheduledTask healthCheckScheduledTask = null ;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture<?> scheduledFuture = null;
-    private DmaapConsumerConfiguration configuration = null ;
+    static final String DMAAP_HEALTH_LOG_CONTEXT = "dmaap.healthcheck";
+    static final String DMAAP_HEALTH_CHECK_STR = "dmaapHealthCheck";
+    static final Logger log = Logger.getLogger(DmaapHealth.class.getName());
+    static final Logger logHealth = Logger.getLogger(DMAAP_HEALTH_LOG_CONTEXT);
+    HealthCheckInfo healthCheckInfo = DmaapHealth.HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
+    long healthCheckReadTimeout = 20;
+    long reconnectInterval = 5;
+    HealthCheckScheduledTask healthCheckScheduledTask = null ;
+    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    ScheduledFuture<?> scheduledFuture = null;
+    DmaapConsumerConfiguration configuration = null ;
 
-    private volatile AtomicBoolean lastHealthState = new AtomicBoolean(false);
-    private volatile AtomicBoolean reportedHealthState = null;
+    volatile AtomicBoolean lastHealthState = new AtomicBoolean(false);
+    volatile AtomicBoolean reportedHealthState = null;
 
     public enum HealthCheckInfoResult {
         OK(new HealthCheckInfo(HC_COMPONENT_DMAAP_ENGINE, HealthCheckInfo.HealthCheckStatus.UP, null, DmaapStatusDescription.OK.getDescription())),
         UNAVAILABLE(new HealthCheckInfo(HC_COMPONENT_DMAAP_ENGINE, HealthCheckInfo.HealthCheckStatus.DOWN, null, DmaapStatusDescription.UNAVAILABLE.getDescription())),
         DOWN(new HealthCheckInfo(HC_COMPONENT_DMAAP_ENGINE, HealthCheckInfo.HealthCheckStatus.DOWN, null, DmaapStatusDescription.DOWN.getDescription()));
 
-        private HealthCheckInfo healthCheckInfo;
+        HealthCheckInfo healthCheckInfo;
         HealthCheckInfoResult(HealthCheckInfo healthCheckInfo) {
             this.healthCheckInfo = healthCheckInfo;
         }
@@ -81,7 +81,7 @@ public class DmaapHealth {
     public enum DmaapStatusDescription {
         OK("OK"), UNAVAILABLE("Dmaap is not available"),DOWN("DOWN"), NOT_CONFIGURED("Dmaap configuration is missing/wrong ");
 
-        private String desc;
+        String desc;
         DmaapStatusDescription(String desc) {
             this.desc = desc;
         }
@@ -132,7 +132,7 @@ public class DmaapHealth {
      *
      * @param startTask
      */
-    private void startHealthCheckTask(boolean startTask) {
+    void startHealthCheckTask(boolean startTask) {
         synchronized (DmaapHealth.class){
             if (startTask && this.scheduledFuture == null) {
                 this.scheduledFuture = this.scheduler.scheduleAtFixedRate(this.healthCheckScheduledTask , 0, reconnectInterval, TimeUnit.SECONDS);
@@ -155,8 +155,8 @@ public class DmaapHealth {
      * Health Check Task Scheduler - infinite check.
      */
     public class HealthCheckScheduledTask implements Runnable {
-        private final DmaapConsumerConfiguration config;
-        private static final int TIMEOUT = 8192;
+        final DmaapConsumerConfiguration config;
+        static final int TIMEOUT = 8192;
 
         HealthCheckScheduledTask(final DmaapConsumerConfiguration config){
             this.config = config;
@@ -201,7 +201,7 @@ public class DmaapHealth {
             return false;
         }
 
-        private void logAlarm(boolean lastHealthState) {
+        void logAlarm(boolean lastHealthState) {
             try{
                 if ( lastHealthState ) {
                     BeEcompErrorManager.getInstance().logDmaapHealthCheckRecovery( DMAAP_HEALTH_CHECK_STR );

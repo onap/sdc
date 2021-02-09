@@ -16,13 +16,12 @@
 
 package org.openecomp.core.enrichment.types;
 
-import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
-import mockit.Deencapsulation;
 import org.junit.Test;
 
 public class ComponentMonitoringUploadInfoTest {
@@ -61,7 +60,7 @@ public class ComponentMonitoringUploadInfoTest {
     }
 
     private Map<MonitoringUploadType, MonitoringArtifactInfo> getInternal(ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
-        return Deencapsulation.getField(componentMonitoringUploadInfo, "infoByType");
+        return componentMonitoringUploadInfo.infoByType;
     }
 
     private void setInternals(ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
@@ -69,6 +68,6 @@ public class ComponentMonitoringUploadInfoTest {
         infoMap.put(MonitoringUploadType.SNMP_POLL, new MonitoringArtifactInfo());
         infoMap.put(MonitoringUploadType.SNMP_TRAP, new MonitoringArtifactInfo());
         infoMap.put(MonitoringUploadType.VES_EVENTS, new MonitoringArtifactInfo());
-        Deencapsulation.setField(componentMonitoringUploadInfo, "infoByType", infoMap);
+        componentMonitoringUploadInfo.infoByType = infoMap;
     }
 }

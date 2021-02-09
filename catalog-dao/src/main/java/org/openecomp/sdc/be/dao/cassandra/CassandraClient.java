@@ -73,7 +73,7 @@ public class CassandraClient {
 		logger.info("** CassandraClient created");
 	}
 
-	private void setSocketOptions(Cluster.Builder clusterBuilder) {
+	void setSocketOptions(Cluster.Builder clusterBuilder) {
 		SocketOptions socketOptions =new SocketOptions();
 		Integer socketConnectTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getSocketConnectTimeout();
 		if( socketConnectTimeout!=null ){
@@ -88,7 +88,7 @@ public class CassandraClient {
 		clusterBuilder.withSocketOptions(socketOptions);
 	}
 
-	private void setLocalDc(Cluster.Builder clusterBuilder) {
+	void setLocalDc(Cluster.Builder clusterBuilder) {
 		String localDataCenter = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
 				.getLocalDataCenter();
 		if (localDataCenter != null) {
@@ -103,7 +103,7 @@ public class CassandraClient {
 		}
 	}
 
-	private void enableSsl(Cluster.Builder clusterBuilder) {
+	void enableSsl(Cluster.Builder clusterBuilder) {
 		boolean ssl = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().isSsl();
 		if (ssl) {
 			String truststorePath = ConfigurationManager.getConfigurationManager().getConfiguration()
@@ -121,7 +121,7 @@ public class CassandraClient {
 		}
 	}
 
-	private void enableAuthentication(Cluster.Builder clusterBuilder) {
+	 void enableAuthentication(Cluster.Builder clusterBuilder) {
 		boolean authenticate = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
 				.isAuthenticate();
 		if (authenticate) {
