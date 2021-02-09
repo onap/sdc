@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nokia
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +26,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.openecomp.sdc.common.errors.Messages.COULD_NOT_READ_MANIFEST_FILE;
+import static org.openecomp.sdc.common.errors.Messages.MANIFEST_VALIDATION_HELM_IS_BASE_MISSING;
+import static org.openecomp.sdc.common.errors.Messages.MANIFEST_VALIDATION_HELM_IS_BASE_NOT_SET;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_EMPTY_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_INVALID_EXTENSION;
 
@@ -49,6 +53,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 
 @RunWith(Parameterized.class)
 public class OnboardingPackageProcessorTest {
+
     private static final String BASE_DIR = "/vspmanager.csar/";
     private final String packageName;
     private final byte[] packageBytes;
@@ -56,8 +61,8 @@ public class OnboardingPackageProcessorTest {
     private final OnboardingTypesEnum expectedPackageType;
 
     public OnboardingPackageProcessorTest(final String packageName, final byte[] packageBytes,
-                                          final Set<ErrorMessage> expectedErrorSet,
-                                          final OnboardingTypesEnum expectedPackageType) {
+        final Set<ErrorMessage> expectedErrorSet,
+        final OnboardingTypesEnum expectedPackageType) {
         this.packageName = packageName;
         this.packageBytes = packageBytes;
         this.expectedErrorSet = expectedErrorSet;
@@ -87,23 +92,43 @@ public class OnboardingPackageProcessorTest {
             {"successfulUpload.csar", getFileBytes("successfulUpload.csar"), Collections.emptySet(),
                 OnboardingTypesEnum.CSAR},
 
-            {"fakeNonSignedZipPackage.zip", getFileBytes("signing/fakeNonSignedZipPackage.zip"), Collections.emptySet(),
+            {"helm-package-valid.zip", getFileBytes("helm-package-valid.zip"), Collections.emptySet(),
+                OnboardingTypesEnum.ZIP},
+
+            {"helm-package-invalid.zip", getFileBytes("helm-package-invalid-missing-flag-isbase.zip"), ImmutableSet.of(
+                new ErrorMessage(ErrorLevel.ERROR,
+                    MANIFEST_VALIDATION_HELM_IS_BASE_NOT_SET.getErrorMessage()),
+                new ErrorMessage(ErrorLevel.ERROR,
+                    MANIFEST_VALIDATION_HELM_IS_BASE_MISSING.formatMessage(3)
+                )
+            ),
+                OnboardingTypesEnum.ZIP},
+
+            {"fakeNonSignedZipPackage.zip", getFileBytes("signing/fakeNonSignedZipPackage.zip"), ImmutableSet.of(
+                new ErrorMessage(ErrorLevel.ERROR,
+                    COULD_NOT_READ_MANIFEST_FILE.formatMessage("MANIFEST.json", "fakeNonSignedZipPackage.zip")
+                )),
                 OnboardingTypesEnum.ZIP}
         });
     }
 
     @Test
     public void processPackage() {
-        final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(packageName, packageBytes);
+        final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(packageName,
+            packageBytes);
+        System.out.println(onboardingPackageProcessor.getErrorMessages());
         assertThat("Should contains errors", onboardingPackageProcessor.hasErrors(), is(!expectedErrorSet.isEmpty()));
-        assertThat("Should have the same number of errors", onboardingPackageProcessor.getErrorMessageSet().size(), equalTo(expectedErrorSet.size()));
+        assertThat("Should have the same number of errors", onboardingPackageProcessor.getErrorMessages().size(),
+            equalTo(expectedErrorSet.size()));
         if (expectedErrorSet.size() > 0) {
-            assertThat("Should have the expected errors", onboardingPackageProcessor.getErrorMessageSet(), containsInAnyOrder(expectedErrorSet.toArray()));
+            assertThat("Should have the expected errors", onboardingPackageProcessor.getErrorMessages(),
+                containsInAnyOrder(expectedErrorSet.toArray()));
             return;
         }
         final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
         assertThat("Should build onboardPackageInfo", onboardPackageInfo, is(notNullValue()));
-        assertThat("Should have the expected package type", onboardPackageInfo.getPackageType(), is(equalTo(expectedPackageType)));
+        assertThat("Should have the expected package type", onboardPackageInfo.getPackageType(),
+            is(equalTo(expectedPackageType)));
     }
 
     private static byte[] getFileBytes(final String filePath) {

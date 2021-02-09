@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nokia
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding;
 
+import static org.openecomp.sdc.common.errors.Messages.COULD_NOT_READ_MANIFEST_FILE;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_EMPTY_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_INVALID_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_INVALID_EXTENSION;
@@ -35,6 +37,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,89 +50,158 @@ import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.common.zip.exception.ZipException;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
 public class OnboardingPackageProcessor {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingPackageProcessor.class);
     private static final String CSAR_EXTENSION = "csar";
     private static final String ZIP_EXTENSION = "zip";
-    private static  boolean helmBase = false;
 
     private final String packageFileName;
     private final byte[] packageFileContent;
-    private FileContentHandler onboardPackageContentHandler;
-    private Set<ErrorMessage> errorMessageSet = new HashSet<>();
-    private OnboardPackageInfo onboardPackageInfo;
+    private FileContentHandler packageContent;
+    private final Set<ErrorMessage> errorMessages = new HashSet<>();
+    private final OnboardPackageInfo onboardPackageInfo;
+    private final CnfPackageValidator cnfPackageValidator;
 
     public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent) {
         this.packageFileName = packageFileName;
         this.packageFileContent = packageFileContent;
+        this.cnfPackageValidator = new CnfPackageValidator();
         onboardPackageInfo = processPackage();
     }
 
+    public Optional<OnboardPackageInfo> getOnboardPackageInfo() {
+        return Optional.ofNullable(onboardPackageInfo);
+    }
+
+    public boolean hasErrors() {
+        return !errorMessages.isEmpty();
+    }
+
+    public boolean hasNoErrors() {
+        return errorMessages.isEmpty();
+    }
+
+    public Set<ErrorMessage> getErrorMessages() {
+        return errorMessages;
+    }
+
     private OnboardPackageInfo processPackage() {
-        if (!hasValidExtension()) {
-            final String message = PACKAGE_INVALID_EXTENSION.formatMessage(packageFileName, String.join(", ", CSAR_EXTENSION, ZIP_EXTENSION));
-            reportError(ErrorLevel.ERROR, message);
-            return null;
-        }
-        try {
-            onboardPackageContentHandler = CommonUtil.getZipContent(packageFileContent);
-        } catch (final ZipException e) {
-            final String message = PACKAGE_PROCESS_ERROR.formatMessage(packageFileName);
-            LOGGER.error(message, e);
-            reportError(ErrorLevel.ERROR, message);
-            return null;
-        }
-        if (isPackageEmpty()) {
-            final String message = PACKAGE_EMPTY_ERROR.formatMessage(packageFileName);
-            reportError(ErrorLevel.ERROR, message);
-            return null;
-        }
+        OnboardPackageInfo packageInfo = null;
+        validateFile();
+        if (hasNoErrors()) {
+            final String packageName = FilenameUtils.getBaseName(packageFileName);
+            final String packageExtension = FilenameUtils.getExtension(packageFileName);
 
-        final String packageName = FilenameUtils.getBaseName(packageFileName);
-        final String packageExtension = FilenameUtils.getExtension(packageFileName);
-
-        if (hasSignedPackageStructure()) {
-            return processSignedPackage(packageName, packageExtension);
-        } else {
-            if (packageExtension.equalsIgnoreCase(CSAR_EXTENSION)) {
-                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
-                    ByteBuffer.wrap(packageFileContent), new OnboardingPackageContentHandler(onboardPackageContentHandler));
-                return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.CSAR);
-            } else if (packageExtension.equalsIgnoreCase(ZIP_EXTENSION)) {
-                addDummyHeat();
-                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
-                    ByteBuffer.wrap(packageFileContent), onboardPackageContentHandler);
-                return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
+            if (hasSignedPackageStructure()) {
+                packageInfo = processSignedPackage(packageName, packageExtension);
+            } else {
+                if (packageExtension.equalsIgnoreCase(CSAR_EXTENSION)) {
+                    packageInfo = processCsarPackage(packageName, packageExtension);
+                } else if (packageExtension.equalsIgnoreCase(ZIP_EXTENSION)) {
+                    packageInfo = processOnapNativeZipPackage(packageName, packageExtension);
+                }
             }
         }
+        return packageInfo;
+    }
 
-        reportError(ErrorLevel.ERROR, PACKAGE_INVALID_ERROR.formatMessage(packageFileName));
+    private void validateFile() {
+        if (!hasValidExtension()) {
+            String message = PACKAGE_INVALID_EXTENSION
+                .formatMessage(packageFileName, String.join(", ", CSAR_EXTENSION, ZIP_EXTENSION));
+            reportError(ErrorLevel.ERROR, message);
+        } else {
+            try {
+                packageContent = CommonUtil.getZipContent(packageFileContent);
+                if (isPackageEmpty()) {
+                    String message = PACKAGE_EMPTY_ERROR.formatMessage(packageFileName);
+                    reportError(ErrorLevel.ERROR, message);
+                }
+            } catch (final ZipException e) {
+                String message = PACKAGE_PROCESS_ERROR.formatMessage(packageFileName);
+                reportError(ErrorLevel.ERROR, message);
+                LOGGER.error(message, e);
+            }
+        }
+    }
+
+    private OnboardPackageInfo processCsarPackage(String packageName, String packageExtension) {
+        OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
+            ByteBuffer.wrap(packageFileContent), new OnboardingPackageContentHandler(packageContent));
+        return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.CSAR);
+    }
+
+    private OnboardPackageInfo processOnapNativeZipPackage(String packageName, String packageExtension) {
+        ManifestContent manifest = getManifest();
+        if (manifest != null) {
+            List<String> errors = validateZipPackage(manifest);
+            if (errors.isEmpty()) {
+                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
+                    ByteBuffer.wrap(packageFileContent), packageContent);
+                return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
+            } else {
+                errors.forEach(message -> reportError(ErrorLevel.ERROR, message));
+            }
+        } else {
+            reportError(ErrorLevel.ERROR,
+                COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));
+        }
         return null;
     }
 
-    private void addDummyHeat() {
+    List<String> validateZipPackage(ManifestContent manifest) {
+        ManifestAnalyzer analyzer = new ManifestAnalyzer(manifest);
+        List<String> errors = Collections.emptyList();
+        if (analyzer.hasHelmEntries()) {
+            if (shouldValidateHelmPackage(analyzer)) {
+                errors = cnfPackageValidator.validateHelmPackage(analyzer.getHelmEntries());
+            }
+        } else {
+            addDummyHeat(manifest);
+        }
+        return errors;
+    }
+
+    boolean shouldValidateHelmPackage(ManifestAnalyzer analyzer) {
+        return analyzer.hasHelmEntries() && !analyzer.hasHeatEntries();
+    }
+
+    private ManifestContent getManifest() {
+        ManifestContent manifest = null;
+        try (InputStream zipFileManifest = packageContent.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            manifest = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+
+        } catch (Exception e) {
+            final String message = COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName);
+            LOGGER.error(message, e);
+        }
+        return manifest;
+    }
+
+    private void addDummyHeat(ManifestContent manifestContent) {
         // temporary fix for adding dummy base
         List<FileData> newfiledata = new ArrayList<>();
-        try (InputStream zipFileManifest = onboardPackageContentHandler.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
-            ManifestContent manifestContent =
-                    JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+        try {
+            boolean heatBase = false;
             for (FileData fileData : manifestContent.getData()) {
                 if (Objects.nonNull(fileData.getType()) &&
-                        fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
-                    helmBase = true;
+                    fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
+                    heatBase = true;
                     fileData.setBase(false);
                     FileData dummyHeat = new FileData();
                     dummyHeat.setBase(true);
@@ -146,27 +218,28 @@ public class OnboardingPackageProcessor {
                     String filePath = new File("").getAbsolutePath() + "/resources";
                     File envFilePath = new File(filePath + "/base_template.env");
                     File baseFilePath = new File(filePath + "/base_template.yaml");
-                    try (
-                            InputStream envStream = new FileInputStream(envFilePath);
-                            InputStream baseStream = new FileInputStream(baseFilePath);) {
-                        onboardPackageContentHandler.addFile("base_template_dummy_ignore.env", envStream);
-                        onboardPackageContentHandler.addFile("base_template_dummy_ignore.yaml", baseStream);
+                    try (InputStream envStream = new FileInputStream(envFilePath);
+                        InputStream baseStream = new FileInputStream(baseFilePath)) {
+                        packageContent.addFile("base_template_dummy_ignore.env", envStream);
+                        packageContent.addFile("base_template_dummy_ignore.yaml", baseStream);
                     } catch (Exception e) {
                         LOGGER.error("Failed creating input stream {}", e);
                     }
                 }
             }
-            if (helmBase) {
+            if (heatBase) {
                 manifestContent.getData().addAll(newfiledata);
-                InputStream manifestContentStream = new ByteArrayInputStream((JsonUtil.object2Json(manifestContent)).getBytes(StandardCharsets.UTF_8));
-                onboardPackageContentHandler.remove(SdcCommon.MANIFEST_NAME);
-                onboardPackageContentHandler.addFile(SdcCommon.MANIFEST_NAME, manifestContentStream);
+                InputStream manifestContentStream = new ByteArrayInputStream(
+                    (JsonUtil.object2Json(manifestContent)).getBytes(StandardCharsets.UTF_8));
+                packageContent.remove(SdcCommon.MANIFEST_NAME);
+                packageContent.addFile(SdcCommon.MANIFEST_NAME, manifestContentStream);
             }
         } catch (Exception e) {
             final String message = PACKAGE_INVALID_ERROR.formatMessage(packageFileName);
             LOGGER.error(message, e);
         }
     }
+
     private boolean hasValidExtension() {
         final String packageExtension = FilenameUtils.getExtension(packageFileName);
         return packageExtension.equalsIgnoreCase(CSAR_EXTENSION) || packageExtension.equalsIgnoreCase(ZIP_EXTENSION);
@@ -182,12 +255,12 @@ public class OnboardingPackageProcessor {
         final String certificateFilePath = findCertificateFilePath().orElse(null);
         final OnboardSignedPackage onboardSignedPackage =
             new OnboardSignedPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
-                onboardPackageContentHandler, signatureFilePath, internalPackagePath, certificateFilePath);
+                packageContent, signatureFilePath, internalPackagePath, certificateFilePath);
 
         final String internalPackageName = FilenameUtils.getName(internalPackagePath);
         final String internalPackageBaseName = FilenameUtils.getBaseName(internalPackagePath);
         final String internalPackageExtension = FilenameUtils.getExtension(internalPackagePath);
-        final byte[] internalPackageContent = onboardPackageContentHandler.getFileContent(internalPackagePath);
+        final byte[] internalPackageContent = packageContent.getFileContent(internalPackagePath);
         final OnboardPackage onboardPackage;
         try {
             final OnboardingPackageContentHandler fileContentHandler =
@@ -205,19 +278,11 @@ public class OnboardingPackageProcessor {
     }
 
     private void reportError(final ErrorLevel errorLevel, final String message) {
-        errorMessageSet.add(new ErrorMessage(errorLevel, message));
-    }
-
-    public boolean hasErrors() {
-        return !errorMessageSet.isEmpty();
-    }
-
-    public Set<ErrorMessage> getErrorMessageSet() {
-        return errorMessageSet;
+        errorMessages.add(new ErrorMessage(errorLevel, message));
     }
 
     private Optional<String> findInternalPackagePath() {
-        return onboardPackageContentHandler.getFileList().stream()
+        return packageContent.getFileList().stream()
             .filter(filePath -> {
                     final String extension = FilenameUtils.getExtension(filePath);
                     return CSAR_EXTENSION.equalsIgnoreCase(extension) || ZIP_EXTENSION.equalsIgnoreCase(extension);
@@ -227,24 +292,24 @@ public class OnboardingPackageProcessor {
     }
 
     private boolean isPackageEmpty() {
-        return MapUtils.isEmpty(onboardPackageContentHandler.getFiles());
+        return MapUtils.isEmpty(packageContent.getFiles());
     }
 
     private boolean hasSignedPackageStructure() {
-        if (MapUtils.isEmpty(onboardPackageContentHandler.getFiles()) || !CollectionUtils.isEmpty(
-            onboardPackageContentHandler.getFolderList())) {
+        if (MapUtils.isEmpty(packageContent.getFiles()) || !CollectionUtils.isEmpty(
+            packageContent.getFolderList())) {
             return false;
         }
-        final int numberOfFiles = onboardPackageContentHandler.getFileList().size();
+        final int numberOfFiles = packageContent.getFileList().size();
         if (numberOfFiles == 2) {
-            return hasOneInternalPackageFile(onboardPackageContentHandler) &&
-                hasOneSignatureFile(onboardPackageContentHandler);
+            return hasOneInternalPackageFile(packageContent) &&
+                hasOneSignatureFile(packageContent);
         }
 
         if (numberOfFiles == 3) {
-            return hasOneInternalPackageFile(onboardPackageContentHandler) &&
-                hasOneSignatureFile(onboardPackageContentHandler) &&
-                hasOneCertificateFile(onboardPackageContentHandler);
+            return hasOneInternalPackageFile(packageContent) &&
+                hasOneSignatureFile(packageContent) &&
+                hasOneCertificateFile(packageContent);
         }
 
         return false;
@@ -272,20 +337,19 @@ public class OnboardingPackageProcessor {
     }
 
     private Optional<String> findSignatureFilePath() {
-        final Map<String, byte[]> files = onboardPackageContentHandler.getFiles();
+        final Map<String, byte[]> files = packageContent.getFiles();
         return files.keySet().stream()
-            .filter(fileName -> ALLOWED_SIGNATURE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
+            .filter(
+                fileName -> ALLOWED_SIGNATURE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
             .findFirst();
     }
 
     private Optional<String> findCertificateFilePath() {
-        final Map<String, byte[]> files = onboardPackageContentHandler.getFiles();
+        final Map<String, byte[]> files = packageContent.getFiles();
         return files.keySet().stream()
-            .filter(fileName -> ALLOWED_CERTIFICATE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
+            .filter(
+                fileName -> ALLOWED_CERTIFICATE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
             .findFirst();
     }
 
-    public Optional<OnboardPackageInfo> getOnboardPackageInfo() {
-        return Optional.ofNullable(onboardPackageInfo);
-    }
 }
