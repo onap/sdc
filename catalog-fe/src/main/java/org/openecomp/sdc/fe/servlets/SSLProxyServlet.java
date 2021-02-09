@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.fe.servlets;
 
+import javax.servlet.ServletException;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -29,8 +30,6 @@ import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.utils.BeProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
 
 public abstract class SSLProxyServlet extends ProxyServlet {
 
@@ -53,7 +52,7 @@ public abstract class SSLProxyServlet extends ProxyServlet {
 
     private HttpClient getSecureHttpClient() throws ServletException {
         // Instantiate and configure the SslContextFactory
-        SslContextFactory sslContextFactory = new SslContextFactory(true);
+        SslContextFactory sslContextFactory = new SslContextFactory.Client.Client(true);
 
         // Instantiate HttpClient with the SslContextFactory
         HttpClient httpClient = new HttpClient(sslContextFactory);
