@@ -423,6 +423,12 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
+            <exclusions>
+                <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>compile</scope>
 
         </dependency>

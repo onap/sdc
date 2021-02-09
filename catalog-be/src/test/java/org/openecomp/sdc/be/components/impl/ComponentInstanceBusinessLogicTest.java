@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -46,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Lists;
@@ -892,7 +890,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateParent", new Object[]{resource, nodeTemplateId});
+        result = testSubject.validateParent(resource, nodeTemplateId);
         assertFalse(result);
     }
 
@@ -903,7 +901,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getComponentType", new Object[]{ComponentTypeEnum.class});
+        result = testSubject.getComponentType(ComponentTypeEnum.RESOURCE_INSTANCE);
         assertNotNull(result);
     }
 
@@ -917,8 +915,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // test 1
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getNewGroupName",
-            new Object[]{oldPrefix, newNormailzedPrefix, qualifiedGroupInstanceName});
+        result = testSubject.getNewGroupName(oldPrefix, newNormailzedPrefix, qualifiedGroupInstanceName);
         assertNotNull(result);
     }
 
@@ -930,8 +927,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation
-            .invoke(testSubject, "updateComponentInstanceMetadata", new Object[]{toInstance, toInstance});
+        result = testSubject.updateComponentInstanceMetadata(toInstance, toInstance);
         assertNotNull(result);
     }
 
@@ -944,8 +940,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "findRelation",
-            new Object[]{relationId, requirementCapabilityRelations});
+        result = testSubject.findRelation(relationId, requirementCapabilityRelations);
         assertNull(result);
     }
 
@@ -995,8 +990,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "updateCapabilityPropertyOnContainerComponent",
-            new Object[]{property, newValue, resource, toInstance, capabilityType, capabilityName});
+        result = testSubject.updateCapabilityPropertyOnContainerComponent(property, newValue, resource, toInstance, capabilityType, capabilityName);
         assertNull(result);
     }
 
@@ -1101,7 +1095,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getComponentParametersViewForForwardingPath");
+        result = testSubject.getComponentParametersViewForForwardingPath();
         assertNotNull(result);
     }
 
@@ -1114,7 +1108,7 @@ class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getResourceInstanceById", new Object[]{resource, instanceId});
+        result = testSubject.getResourceInstanceById(resource, instanceId);
         assertNotNull(result);
     }
 
@@ -1288,9 +1282,8 @@ class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
             .thenReturn(serviceEitherLeft);
 
-        Either<ComponentInstanceAttribute, ResponseFormat> result = Deencapsulation
-            .invoke(componentInstanceBusinessLogic,
-                "createOrUpdateAttributeValueForCopyPaste",
+        Either<ComponentInstanceAttribute, ResponseFormat> result = componentInstanceBusinessLogic.
+                createOrUpdateAttributeValueForCopyPaste(
                 ComponentTypeEnum.SERVICE,
                 serviceComponentInstance
                     .getUniqueId(),
@@ -1323,8 +1316,7 @@ class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
             .thenReturn(updateContainerRes);
 
-        Either<String, ResponseFormat> result = Deencapsulation.invoke(componentInstanceBusinessLogic,
-            "updateComponentInstanceProperty", containerComponentId, componentInstanceId, property);
+        Either<String, ResponseFormat> result = componentInstanceBusinessLogic.updateComponentInstanceProperty(containerComponentId, componentInstanceId, property);
         assertNotNull(result);
         assertThat(result.isLeft()).isTrue();
     }
@@ -1342,8 +1334,7 @@ class ComponentInstanceBusinessLogicTest {
         List<InputDefinition> oldInputs = service.getInputs();
         service.setInputs(newInputs);
 
-        Either<String, ResponseFormat> result =
-            Deencapsulation.invoke(componentInstanceBusinessLogic, "getInputListDefaultValue", component, inputId);
+        Either<String, ResponseFormat> result = componentInstanceBusinessLogic.getInputListDefaultValue(component, inputId);
 
         service.setInputs(oldInputs);
 

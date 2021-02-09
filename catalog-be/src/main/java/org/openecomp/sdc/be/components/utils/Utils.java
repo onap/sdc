@@ -36,7 +36,7 @@ public class Utils {
 
     private Utils() {}
 
-    public static int getNextCounter(@NotNull List<String> existingValues) {
+    public static int getNextCounter(List<String> existingValues) {
         if (existingValues.isEmpty()) {
             return 0;
         }
@@ -50,7 +50,7 @@ public class Utils {
                     .orElse(0);
         }
         catch (Exception e) {
-            Log.warn("Failed in retrieivng counter from existing value: ", e);
+            Log.warn("Failed in retrieving counter from existing value: ", e);
             return random.nextInt(100) + 50;
         }
     }
