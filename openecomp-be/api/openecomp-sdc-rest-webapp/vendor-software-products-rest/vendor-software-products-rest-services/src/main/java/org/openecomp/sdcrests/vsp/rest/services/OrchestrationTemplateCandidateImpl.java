@@ -104,7 +104,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes);
     if (onboardingPackageProcessor.hasErrors()) {
       final UploadFileResponseDto uploadFileResponseDto =
-          buildUploadResponseWithError(onboardingPackageProcessor.getErrorMessageSet().toArray(new ErrorMessage[0]));
+          buildUploadResponseWithError(onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]));
       return Response.ok(uploadFileResponseDto).build();
     }
 
