@@ -31,10 +31,10 @@ import javax.annotation.Resource;
 @Getter
 public class ServletUtils {
     @Resource
-    private ComponentsUtils componentsUtils;
+    ComponentsUtils componentsUtils;
 
-    private Gson gson = new Gson();
+    Gson gson = new Gson();
 
     @Resource
-    private UserBusinessLogic userAdmin;
+    UserBusinessLogic userAdmin;
 }
