@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -47,8 +48,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -102,7 +106,8 @@ import org.springframework.stereotype.Controller;
 @Tag(name = "SDC External APIs")
 @Server(url = "/sdc")
 @Controller
-public class CrudExternalServlet extends AbstractValidationsServlet {
+@Singleton
+public class CrudExternalServlet extends AbstractValidationsServlet implements Feature {
 
     @Context
     private HttpServletRequest request;
@@ -644,4 +649,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         }
     }
 
+    @Override
+    public boolean configure(FeatureContext context) {
+        return true;
+    }
 }
