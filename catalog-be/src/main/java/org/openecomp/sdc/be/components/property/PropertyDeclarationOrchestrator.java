@@ -79,7 +79,7 @@ public class PropertyDeclarationOrchestrator {
         return propertyDeclarator.declarePropertiesAsInputs(component, propsToDeclare.getLeft(), propsToDeclare.getRight());
     }
 
-    private void updatePropertiesConstraints(Component component, ComponentInstInputsMap componentInstInputsMap) {
+     void updatePropertiesConstraints(Component component, ComponentInstInputsMap componentInstInputsMap) {
         componentInstInputsMap.getComponentInstanceProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetComponentInstancesProperties(), k, v));
         componentInstInputsMap.getComponentInstanceInputsMap().forEach((k, v) -> updatePropsConstraints(component.safeGetComponentInstancesInputs(), k, v));
         componentInstInputsMap.getGroupProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetPolicyProperties(), k, v));
@@ -99,7 +99,7 @@ public class PropertyDeclarationOrchestrator {
         return propertyDeclarator.declarePropertiesAsListInput(component, propsToDeclare.getLeft(), propsToDeclare.getRight(), input);
     }
 
-    private <T extends PropertyDataDefinition> void updatePropsConstraints(Map<String, List<T>> instancesProperties , String ownerId, List<ComponentInstancePropInput> inputs) {
+     <T extends PropertyDataDefinition> void updatePropsConstraints(Map<String, List<T>> instancesProperties , String ownerId, List<ComponentInstancePropInput> inputs) {
         Optional<List<T>> propertiesOpt = instancesProperties.entrySet()
                 .stream()
                 .filter(e -> e.getKey().equals(ownerId))
@@ -116,7 +116,7 @@ public class PropertyDeclarationOrchestrator {
         }
     }
 
-    private void updatePropConstraints(PropertyDataDefinition input, PropertyDataDefinition property) {
+     void updatePropConstraints(PropertyDataDefinition input, PropertyDataDefinition property) {
         if(CollectionUtils.isNotEmpty(property.getPropertyConstraints())){
             input.setPropertyConstraints(property.getPropertyConstraints());
         } else if(property.getSchemaProperty() != null && CollectionUtils.isNotEmpty(property.getSchemaProperty().getPropertyConstraints())){
@@ -185,7 +185,7 @@ public class PropertyDeclarationOrchestrator {
 
     }
 
-    private PropertyDeclarator getPropertyDeclarator(ComponentInstInputsMap componentInstInputsMap) {
+     PropertyDeclarator getPropertyDeclarator(ComponentInstInputsMap componentInstInputsMap) {
         if (isNotEmpty(componentInstInputsMap.getComponentInstanceInputsMap())) {
             return componentInstanceInputPropertyDeclarator;
         }

@@ -103,7 +103,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 
     }
 
-    private static List<String> getUpdatedRequiredArtifactsFromNamesToUuids(ArtifactDefinition artifactDefinition, Map<String, ArtifactDefinition> artifacts) {
+    static List<String> getUpdatedRequiredArtifactsFromNamesToUuids(ArtifactDefinition artifactDefinition, Map<String, ArtifactDefinition> artifacts) {
         List<String> requiredArtifacts = null;
         if (artifactDefinition != null && artifactDefinition.getRequiredArtifacts() != null && !artifactDefinition.getRequiredArtifacts().isEmpty() && artifacts != null && !artifacts.isEmpty()) {
             requiredArtifacts = artifacts.values().stream().filter(art -> artifactDefinition.getRequiredArtifacts().contains(art.getArtifactName())).map(ArtifactDataDefinition::getArtifactUUID).collect(Collectors.toList());

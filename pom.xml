@@ -43,19 +43,19 @@ Modifications copyright (c) 2018-2019 Nokia
 
         <tosca.datatype.version>${project.version}</tosca.datatype.version>
         <!-- 3rd parties versions -->
-        <bean-matcher.version>0.11</bean-matcher.version>
+        <bean-matcher.version>0.13</bean-matcher.version>
         <lang3.version>3.10</lang3.version>
         <guava.version>18.0</guava.version>
         <janusgraph.version>0.3.1</janusgraph.version>
-        <spring.version>4.3.18.RELEASE</spring.version>
-        <jersey-bom.version>2.27</jersey-bom.version>
+        <spring.version>4.3.30.RELEASE</spring.version>
+        <jersey-bom.version>2.33</jersey-bom.version>
         <netty.version>4.1.48.Final</netty.version>
         <servlet-api.version>3.1.0</servlet-api.version>
-        <wire-mock.version>2.26.3</wire-mock.version>
+        <wire-mock.version>2.27.2</wire-mock.version>
         <ecomp.version>2.6.0</ecomp.version>
         <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
         <cadi.version>2.1.8</cadi.version>
-        <lombok.version>1.18.12</lombok.version>
+        <lombok.version>1.18.18</lombok.version>
         <commons-beanutils>1.9.4</commons-beanutils>
         <commons-configuration>2.3</commons-configuration>
         <apache-poi.version>4.1.0</apache-poi.version>
@@ -64,13 +64,17 @@ Modifications copyright (c) 2018-2019 Nokia
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <io.vavr.version>0.10.3</io.vavr.version>
 
-        <commons.collections.version>4.1</commons.collections.version>
-        <ws.rs.version>2.1</ws.rs.version>
+        <groovy.version>3.0.7</groovy.version>
 
-        <jetty.version>9.4.18.v20190429</jetty.version>
+        <byte.buddy.version>1.10.20</byte.buddy.version>
+
+        <commons.collections.version>4.1</commons.collections.version>
+        <ws.rs.version>2.1.1</ws.rs.version>
+
+        <jetty.version>9.4.36.v20210114</jetty.version>
 
         <!-- JSON and YAML Parsing -->
-        <jackson.version>2.11.0</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
         <jackson-annotations.version>${jackson.version}</jackson-annotations.version>
 
         <clearspring.version>2.1.1</clearspring.version>
@@ -79,9 +83,9 @@ Modifications copyright (c) 2018-2019 Nokia
         <!-- Yaml for properties -->
         <snakeyaml.version>1.14</snakeyaml.version>
         <functionaljava.version>4.7</functionaljava.version>
-        <httpclient.version>4.5.3</httpclient.version>
-        <httpcore.version>4.4.1</httpcore.version>
-        <json-simple.version>1.1</json-simple.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <httpcore.version>4.4.14</httpcore.version>
+        <json-simple.version>1.1.1</json-simple.version>
 
         <!-- PM Dictionary validation -->
         <onap.vnfsdk.validation.pmdictionary.version>1.2.15</onap.vnfsdk.validation.pmdictionary.version>
@@ -96,10 +100,10 @@ Modifications copyright (c) 2018-2019 Nokia
         <log4j.version>2.13.1</log4j.version>
 
         <!-- aspects -->
-        <jcabi.version>0.20.1</jcabi.version>
-        <aspectjrt.version>1.8.4</aspectjrt.version>
-        <aspectj.version>1.7.4</aspectj.version>
-        <jcabi.maven.plugin.version>0.13.2</jcabi.maven.plugin.version>
+        <jcabi.version>0.22.6</jcabi.version>
+        <aspectjrt.version>1.9.6</aspectjrt.version>
+        <aspectj.version>1.9.6</aspectj.version>
+        <jcabi.maven.plugin.version>0.14.1</jcabi.maven.plugin.version>
 
         <!-- Logging end -->
         <!-- System Metrics -->
@@ -108,21 +112,21 @@ Modifications copyright (c) 2018-2019 Nokia
         <regex.version>3.0.3</regex.version>
 
         <!--GSON-->
-        <gson.version>2.3.1</gson.version>
+        <gson.version>2.8.6</gson.version>
 
         <!--listen to file changes-->
         <commons-jci-core.version>1.1</commons-jci-core.version>
 
         <!--TESTING-->
-        <mockito.version>3.3.3</mockito.version>
-        <mockitoJupiter.version>3.3.3</mockitoJupiter.version>
-        <jmockit.version>1.35</jmockit.version>
-        <junit.version>4.12</junit.version>
-        <junit.platform.version>1.6.0</junit.platform.version>
-        <junitJupiter.version>5.6.0</junitJupiter.version>
+        <mockito.version>3.7.7</mockito.version>
+        <mockitoJupiter.version>3.7.7</mockitoJupiter.version>
+        <jmockit.version>1.49</jmockit.version>
+        <junit.version>4.13.1</junit.version>
+        <junit.platform.version>1.7.1</junit.platform.version>
+        <junitJupiter.version>5.7.1</junitJupiter.version>
         <assertj.version>3.16.0</assertj.version>
         <testng.version>7.3.0</testng.version>
-        <cucumber.version>6.8.1</cucumber.version>
+        <cucumber.version>6.10.0</cucumber.version>
         <bean-matchers.version>0.11</bean-matchers.version>
         <hamcrest.version>2.1</hamcrest.version>
         <hamcrest-all.version>1.3</hamcrest-all.version>
@@ -231,7 +235,7 @@ Modifications copyright (c) 2018-2019 Nokia
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy</artifactId>
-                <version>2.4.13</version>
+                <version>${groovy.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -524,6 +528,7 @@ Modifications copyright (c) 2018-2019 Nokia
                     <reuseForks>${surefire.reuseForks}</reuseForks>
                     <parallel>methods</parallel>
                     <skip>${surefire.skip.tests}</skip>
+                    <argLine>-Djdk.attach.allowAttachSelf</argLine>
                 </configuration>
             </plugin>
             <plugin>

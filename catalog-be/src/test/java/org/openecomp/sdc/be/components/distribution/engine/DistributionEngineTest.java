@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import mockit.Deencapsulation;
+import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -145,7 +145,7 @@ public class DistributionEngineTest{
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "init");
+		testSubject.init();
 	}
 
 	@Test
@@ -162,26 +162,23 @@ public class DistributionEngineTest{
 		DistributionEngine testSubject;
 		DistributionEngineConfiguration deConfiguration = new DistributionEngineConfiguration();
 		deConfiguration.setDistributionStatusTopic((new DistributionStatusTopicConfig()));
-		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "validateConfiguration", deConfiguration);
+		testSubject.validateConfiguration(deConfiguration);
 	}
 
 	@Test
 	public void testIsValidServers() throws Exception {
 		DistributionEngine testSubject;
-		List<String> uebServers = null;
+		List<String> uebServers = Collections.emptyList();
 		String methodName = "";
 		String paramName = "";
 		boolean result;
 
 		// test 1
 		testSubject = createTestSubject();
-		uebServers = null;
-		result = Deencapsulation.invoke(testSubject, "isValidServers",
-				new Object[] { List.class, methodName, paramName });
+		result = testSubject.isValidServers(uebServers, methodName, paramName);
 		Assert.assertEquals(false, result);
 	}
 
@@ -193,7 +190,7 @@ public class DistributionEngineTest{
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isValidFqdn", new Object[] { serverFqdn });
+		result = testSubject.isValidFqdn(serverFqdn);
 	}
 
 	@Test
@@ -206,8 +203,7 @@ public class DistributionEngineTest{
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isValidParam",
-				new Object[] { paramValue, methodName, paramName });
+		result = testSubject.isValidParam(paramValue, methodName, paramName);
 	}
 
 	@Test
@@ -220,41 +216,37 @@ public class DistributionEngineTest{
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isValidParam",
-				new Object[] { List.class, methodName, paramName });
+		result = testSubject.isValidParam(paramValue, methodName, paramName);
 	}
 
 	@Test
 	public void testIsValidObject() throws Exception {
 		DistributionEngine testSubject;
-		Object paramValue = null;
+		Object paramValue = Collections.emptyList();
 		String methodName = "";
 		String paramName = "";
 		boolean result;
 
 		// test 1
 		testSubject = createTestSubject();
-		paramValue = null;
-		result = Deencapsulation.invoke(testSubject, "isValidObject",
-				new Object[] { Object.class, methodName, paramName });
-		Assert.assertEquals(false, result);
+		result = testSubject.isValidObject(paramValue, methodName, paramName);
+		Assert.assertTrue(result);
 	}
 
 	@Test
 	public void testGetEnvironmentErrorDescription() throws Exception {
 		DistributionEngine testSubject;
 		StorageOperationStatus status = null;
-		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+		testSubject.getEnvironmentErrorDescription(
 				 StorageOperationStatus.DISTR_ENVIRONMENT_NOT_AVAILABLE);
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+		testSubject.getEnvironmentErrorDescription(
 				 StorageOperationStatus.DISTR_ENVIRONMENT_NOT_FOUND);
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+		testSubject.getEnvironmentErrorDescription(
 				 StorageOperationStatus.DISTR_ENVIRONMENT_SENT_IS_INVALID);
-		result = Deencapsulation.invoke(testSubject, "getEnvironmentErrorDescription",
+		testSubject.getEnvironmentErrorDescription(
 				 StorageOperationStatus.ARTIFACT_NOT_FOUND);
 	}
 
@@ -302,11 +294,10 @@ public class DistributionEngineTest{
 	public void testBuildTopicName() throws Exception {
 		DistributionEngine testSubject;
 		String envName = "";
-		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildTopicName", new Object[] { envName });
+		testSubject.buildTopicName(envName);
 	}
 
 	@Test

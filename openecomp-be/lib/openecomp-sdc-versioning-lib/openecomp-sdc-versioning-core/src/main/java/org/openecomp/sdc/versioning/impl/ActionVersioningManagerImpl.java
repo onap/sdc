@@ -46,7 +46,7 @@ import java.util.Set;
 public class ActionVersioningManagerImpl implements ActionVersioningManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(ActionVersioningManagerImpl.class);
   private static final Version INITIAL_ACTIVE_VERSION = new Version(0, 0);
-  private static final Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES =
+  static final Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES =
       new HashMap<>();
 
   private final VersionInfoDao versionInfoDao;

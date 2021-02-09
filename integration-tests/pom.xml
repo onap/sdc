@@ -206,7 +206,7 @@ limitations under the License.
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-server</artifactId>
-            <version>4.0.0-alpha-2</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
