@@ -205,7 +205,7 @@ public class AbstractTemplateServletTest extends JerseyTest {
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig()
-                .register(new CrudExternalServlet(userBusinessLogic, componentInstanceBusinessLogic,componentsUtils,servletUtils,resourceImportManager, elementBusinessLogic, assetMetadataConverter, lifecycleBusinessLogic, resourceBusinessLogic, serviceBusinessLogic))
+                .register(CrudExternalServlet.class)
                 .register(new AbstractBinder() {
 
                     @Override
@@ -214,6 +214,20 @@ public class AbstractTemplateServletTest extends JerseyTest {
                     }
                 })
                 .property("contextConfig", context);
+    }
+
+    private CrudExternalServlet createMockServlet() {
+        return new CrudExternalServlet(
+            userBusinessLogic,
+            componentInstanceBusinessLogic,
+            componentsUtils,
+            servletUtils,
+            resourceImportManager,
+            elementBusinessLogic,
+            assetMetadataConverter,
+            lifecycleBusinessLogic,
+            resourceBusinessLogic,
+            serviceBusinessLogic);
     }
 
 }
