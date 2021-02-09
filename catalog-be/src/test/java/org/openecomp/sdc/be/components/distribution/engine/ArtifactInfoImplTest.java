@@ -23,7 +23,11 @@ package org.openecomp.sdc.be.components.distribution.engine;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import mockit.Deencapsulation;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
@@ -31,12 +35,6 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class ArtifactInfoImplTest extends BeConfDependentTest {
 
@@ -101,14 +99,12 @@ public class ArtifactInfoImplTest extends BeConfDependentTest {
 
 		// test 1
 		artifactDefinition = null;
-		result = Deencapsulation.invoke(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
-				new Object[] { ArtifactDefinition.class, artifacts.getClass() });
+		result = ArtifactInfoImpl.getUpdatedRequiredArtifactsFromNamesToUuids(artifactDefinition, artifacts);
 		Assert.assertEquals(null, result);
 
 		// test 2
 		artifactDefinition = new ArtifactDefinition();
-		result = Deencapsulation.invoke(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
-				new Object[] { ArtifactDefinition.class, artifacts.getClass() });
+		result = ArtifactInfoImpl.getUpdatedRequiredArtifactsFromNamesToUuids(artifactDefinition, artifacts);
 		Assert.assertEquals(null, result);
 	}
 

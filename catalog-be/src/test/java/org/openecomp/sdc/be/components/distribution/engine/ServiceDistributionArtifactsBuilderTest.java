@@ -20,8 +20,16 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -38,15 +46,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest {
 
@@ -93,7 +92,7 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "resolveWorkloadContext", new Object[] { workloadContext });
+		testSubject.resolveWorkloadContext(workloadContext);
 	}
 
 	@Test
@@ -188,9 +187,9 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "convertServiceArtifactsToArtifactInfo", service);
+		testSubject.convertServiceArtifactsToArtifactInfo(service);
 		service.setToscaArtifacts(toscaArtifacts);
-		result = Deencapsulation.invoke(testSubject, "convertServiceArtifactsToArtifactInfo", service);
+		testSubject.convertServiceArtifactsToArtifactInfo(service);
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -202,11 +201,11 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "convertRIsToJsonContanier", service);
+		testSubject.convertRIsToJsonContanier(service);
 		
 		resourceInstances.add(new ComponentInstance());
 		service.setComponentInstances(resourceInstances);
-		result = Deencapsulation.invoke(testSubject, "convertRIsToJsonContanier", service);
+		testSubject.convertRIsToJsonContanier(service);
 	}
 
 	@Test
@@ -218,7 +217,7 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "fillJsonContainer", jsonContainer, resource);
+		testSubject.fillJsonContainer(jsonContainer, resource);
 	}
 
 	@Test
@@ -230,20 +229,19 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "convertToArtifactsInfoImpl", service, resourceInstance);
+		testSubject.convertToArtifactsInfoImpl(service, resourceInstance);
 	}
 
 	@Test
 	public void testSetCategories() throws Exception {
 		ServiceDistributionArtifactsBuilder testSubject;
-		JsonContainerResourceInstance jsonContainer = null;
-		List<CategoryDefinition> categories = null;
+		JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(new ComponentInstance(), null);
+		List<CategoryDefinition> categories = new ArrayList<>();
 
 		// test 1
 		testSubject = createTestSubject();
 		categories = null;
-		Deencapsulation.invoke(testSubject, "setCategories",
-				new Object[] { JsonContainerResourceInstance.class, List.class });
+		testSubject.setCategories(jsonContainer, categories);
 	}
 
 	@Test
@@ -256,9 +254,9 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getArtifactsWithPayload", resourceInstance);
+		testSubject.getArtifactsWithPayload(resourceInstance);
 		deploymentArtifacts.put("mock", new ArtifactDefinition());
-		result = Deencapsulation.invoke(testSubject, "getArtifactsWithPayload", resourceInstance);
+		testSubject.getArtifactsWithPayload(resourceInstance);
 	}
 
 	@Test
@@ -309,12 +307,12 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 	@Test
 	public void testIsContainsPayload() throws Exception {
 		ServiceDistributionArtifactsBuilder testSubject;
-		Map<String, ArtifactDefinition> deploymentArtifacts = null;
+		Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap<>();
 		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "isContainsPayload", new Object[] { Map.class });
+		testSubject.isContainsPayload(deploymentArtifacts);
 	}
 
 	private class INotificationDataMock implements INotificationData {
