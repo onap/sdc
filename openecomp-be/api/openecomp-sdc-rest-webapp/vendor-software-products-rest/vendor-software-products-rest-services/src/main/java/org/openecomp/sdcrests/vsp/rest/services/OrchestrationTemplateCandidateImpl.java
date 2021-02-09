@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Copyright © 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +105,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes);
     if (onboardingPackageProcessor.hasErrors()) {
       final UploadFileResponseDto uploadFileResponseDto =
-          buildUploadResponseWithError(onboardingPackageProcessor.getErrorMessageSet().toArray(new ErrorMessage[0]));
+          buildUploadResponseWithError(onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]));
       return Response.ok(uploadFileResponseDto).build();
     }
 
