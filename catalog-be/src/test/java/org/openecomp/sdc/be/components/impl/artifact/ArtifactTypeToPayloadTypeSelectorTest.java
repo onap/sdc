@@ -55,7 +55,7 @@ public class ArtifactTypeToPayloadTypeSelectorTest {
         this.expectedPayloadTypeEnum = expectedPayloadTypeEnum;
     }
 
-    @Parameters(name = "{index}: {0}, {1}")
+    @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 { ArtifactTypeEnum.HEAT.getType(), ANY_EXTENSION, HEAT_YAML },
