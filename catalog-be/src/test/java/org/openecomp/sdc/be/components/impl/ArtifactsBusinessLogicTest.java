@@ -27,10 +27,10 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import mockit.Deencapsulation;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -853,7 +852,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "checkCreateFields", user, artifactInfo, type);
+        testSubject.checkCreateFields(user, artifactInfo, type);
     }
 
     @Test
@@ -868,8 +867,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // test 1
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "composeArtifactId",
-                new Object[]{resourceId, artifactId, artifactInfo, interfaceName, operationName});
+        testSubject.composeArtifactId(resourceId, artifactId, artifactInfo, interfaceName, operationName);
     }
 
     @Test
@@ -880,7 +878,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "convertParentType", new Object[]{componentType});
+        testSubject.convertParentType(componentType);
     }
 
     @Test
@@ -892,8 +890,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "convertToOperation",
-                new Object[]{artifactInfo, operationName});
+        testSubject.convertToOperation(artifactInfo, operationName);
     }
 
     @Test
@@ -905,8 +902,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "createInterfaceArtifactNameFromOperation",
-                new Object[]{operationName, artifactName});
+        testSubject.createInterfaceArtifactNameFromOperation(operationName,artifactName);
     }
 
     @Test
@@ -918,8 +914,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "fetchArtifactsFromComponent",
-                artifactId, component, artifacts);
+        testSubject.fetchArtifactsFromComponent(artifactId, component, artifacts);
     }
 
     @Test
@@ -968,8 +963,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "artifactGenerationRequired",
-                new Object[]{component, artifactInfo});
+        testSubject.artifactGenerationRequired(component, artifactInfo);
     }
 
     @Test
@@ -1030,8 +1024,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "ignoreUnupdateableFieldsInUpdate",
-                operation, artifactInfo, artifactInfo);
+        testSubject.ignoreUnupdateableFieldsInUpdate(operation, artifactInfo, artifactInfo);
     }
 
     @Test
@@ -1047,8 +1040,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "findArtifact", new Object[]{component,
-                componentType, parentId, operation, artifactId});
+        testSubject.findArtifact(component, componentType, parentId, operation, artifactId);
     }
 
 
@@ -1061,8 +1053,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateInformationalArtifact",
-                new Object[]{artifactInfo, component});
+        testSubject.validateInformationalArtifact(artifactInfo, component);
     }
 
 
@@ -1076,7 +1067,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // test 1
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getUpdatedGroups", new Object[]{artifactId, artifactInfo, groups});
+        testSubject.getUpdatedGroups(artifactId, artifactInfo, groups);
     }
 
 
@@ -1085,12 +1076,12 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         ArtifactsBusinessLogic testSubject;
         String artifactId = "";
         ArtifactDefinition artifactInfo = buildArtifactPayload();
-        List<GroupDefinition> groups = new ArrayList<>();
+        List<GroupInstance> groups = new ArrayList<>();
         List<GroupInstance> result;
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getUpdatedGroupInstances", new Object[]{artifactId, artifactInfo, groups});
+        testSubject.getUpdatedGroupInstances(artifactId, artifactInfo, groups);
     }
 
 
@@ -1105,8 +1096,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "findArtifact",
-                new Object[]{artifactId, component, parentId, componentType});
+        testSubject.findArtifact(artifactId, component, parentId, componentType);
     }
 
 
@@ -1120,7 +1110,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "fetchArtifactsFromInstance", new Object[]{artifactId, artifacts, instance});
+        testSubject.fetchArtifactsFromInstance(artifactId, artifacts, instance);
     }
 
 
@@ -1134,8 +1124,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "generateCustomizationUUIDOnInstance",
-                new Object[]{componentId, instanceId, componentType});
+        testSubject.generateCustomizationUUIDOnInstance(componentId, instanceId, componentType);
     }
 
     @Test
@@ -1147,8 +1136,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "findComponentInstance",
-                new Object[]{componentInstanceId, component});
+        testSubject.findComponentInstance(componentInstanceId, component);
     }
 
     @Test(expected = ComponentException.class)
@@ -1263,7 +1251,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isValidXml", new Object[]{xmlToParse});
+        testSubject.isValidXml(xmlToParse);
     }
 
     @Test(expected = ByActionStatusComponentException.class)
@@ -1342,8 +1330,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateFirstUpdateHasPayload",
-                new Object[]{artifactInfo, artifactInfo});
+        testSubject.validateFirstUpdateHasPayload(artifactInfo, artifactInfo);
     }
 
     @Test
@@ -1362,8 +1349,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         final ArtifactsBusinessLogic artifactsBusinessLogic = createTestSubject();
         final ArtifactDefinition artifactInfo = buildArtifactPayload();
         artifactInfo.setArtifactType("notConfiguredType");
-        Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateArtifactType", artifactInfo, ComponentTypeEnum.RESOURCE);
+        artifactsBusinessLogic.validateArtifactType(artifactInfo, ComponentTypeEnum.RESOURCE);
     }
 
     @Test(expected = ComponentException.class)
@@ -1372,8 +1358,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         final ArtifactDefinition artifactInfo = buildArtifactPayload();
         artifactInfo.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
 
-        Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateArtifactType", artifactInfo, ComponentTypeEnum.RESOURCE);
+        artifactsBusinessLogic.validateArtifactType(artifactInfo, ComponentTypeEnum.RESOURCE);
     }
 
     @Test(expected = ComponentException.class)
@@ -1383,8 +1368,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         artifactInfo.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
         artifactInfo.setArtifactGroupType(ArtifactGroupTypeEnum.INFORMATIONAL);
 
-        Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateArtifactType", artifactInfo, ComponentTypeEnum.SERVICE);
+        artifactsBusinessLogic.validateArtifactType(artifactInfo, ComponentTypeEnum.SERVICE);
     }
 
     @Test
@@ -1396,8 +1380,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateArtifactTypeNotChanged",
-                new Object[]{artifactInfo, artifactInfo});
+        testSubject.validateArtifactTypeNotChanged(artifactInfo, artifactInfo);
     }
 
 
@@ -1410,8 +1393,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateOrSetArtifactGroupType",
-                new Object[]{artifactInfo, artifactInfo});
+        testSubject.validateOrSetArtifactGroupType(artifactInfo, artifactInfo);
     }
 
     @Test
@@ -1424,9 +1406,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // test 1
         testSubject = createTestSubject();
-        type = null;
-        Deencapsulation.invoke(testSubject, "checkAndSetUnUpdatableFields", user,
-                artifactInfo, artifactInfo, ArtifactGroupTypeEnum.class);
+        testSubject.checkAndSetUnUpdatableFields(user, artifactInfo, artifactInfo, ArtifactGroupTypeEnum.OTHER);
     }
 
     @Test
@@ -1438,7 +1418,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "checkAndSetUnupdatableHeatParams", new Object[]{heatParameters, currentParameters});
+        testSubject.checkAndSetUnupdatableHeatParams(heatParameters, currentParameters);
     }
 
     @Test
@@ -1449,7 +1429,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getMapOfParameters", new Object[]{currentParameters});
+        testSubject.getMapOfParameters(currentParameters);
     }
 
     @Test
@@ -1460,8 +1440,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         final boolean isArtifactMetadataUpdate = false;
         ArtifactsBusinessLogic testSubject = getTestSubject();
 
-        Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
-                new Object[] { artifactInfo, isArtifactMetadataUpdate });
+        Either<byte[], ResponseFormat> result = testSubject.handlePayload(artifactInfo, isArtifactMetadataUpdate);
         assertArrayEquals(payload, result.left().value());
     }
 
@@ -1480,9 +1459,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         ArtifactsBusinessLogic testSubject = getTestSubject();
         testSubject.setComponentsUtils(componentsUtils);
 
-        Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
-                new Object[]{artifactInfo, isArtifactMetadataUpdate});
-
+        Either<byte[], ResponseFormat> result = testSubject.handlePayload(artifactInfo, isArtifactMetadataUpdate);
+        
         int status = result.right().value().getStatus();
         assertEquals(expectedStatus, status);
     }
@@ -1498,8 +1476,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         ArtifactsBusinessLogic testSubject = getTestSubject();
         testSubject.setComponentsUtils(componentsUtils);
 
-        Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
-                new Object[]{artifactInfo, isArtifactMetadataUpdate});
+        Either<byte[], ResponseFormat> result = testSubject.handlePayload(artifactInfo, isArtifactMetadataUpdate);
 
 		int status = result.right().value().getStatus();
 		assertEquals(expectedStatus, status);
@@ -1514,8 +1491,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         final boolean isArtifactMetadataUpdate = false;
         ArtifactsBusinessLogic testSubject = getTestSubject();
 
-        Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
-                new Object[]{artifactInfo, isArtifactMetadataUpdate});
+        Either<byte[], ResponseFormat> result = testSubject.handlePayload(artifactInfo, isArtifactMetadataUpdate);
+        
         assertArrayEquals(payload, result.left().value());
     }
 
@@ -1530,8 +1507,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         ArtifactsBusinessLogic testSubject = getTestSubject();
         testSubject.setComponentsUtils(componentsUtils);
 
-        Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
-                new Object[]{artifactInfo, isArtifactMetadataUpdate});
+        Either<byte[], ResponseFormat> result = testSubject.handlePayload(artifactInfo, isArtifactMetadataUpdate);
 
         int status = result.right().value().getStatus();
         assertEquals(expectedStatus, status);
@@ -1556,14 +1532,10 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
         ArtifactsBusinessLogic arb = getTestSubject();
         ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
-        Either<Boolean, ResponseFormat> result;
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateUserRole",
-                new Object[]{user, auditingAction, componentId, artifactId, componentType,
-                        operation});
-        assertNull(result);
+        testSubject.validateUserRole(user, auditingAction, componentId, artifactId, componentType, operation);
     }
 
     @Test
@@ -1576,8 +1548,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "detectAuditingType",
-                new Object[]{operation, origMd5});
+        result = testSubject.detectAuditingType(operation, origMd5);
         assertNotNull(result);
     }
 
@@ -1591,8 +1562,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "detectAuditingType",
-                new Object[]{operation, origMd5});
+        result = testSubject.detectAuditingType(operation, origMd5);
         assertNull(result);
     }
 
@@ -1618,8 +1588,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isArtifactMetadataUpdate",
-                new Object[]{auditingActionEnum});
+        result = testSubject.isArtifactMetadataUpdate(auditingActionEnum);
         assertThat(result).isTrue();
     }
 
@@ -1631,8 +1600,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isArtifactMetadataUpdate",
-                new Object[]{auditingActionEnum});
+        result = testSubject.isArtifactMetadataUpdate(auditingActionEnum);
         assertThat(result).isFalse();
     }
 
@@ -1645,7 +1613,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isDeploymentArtifact", new Object[]{artifactInfo});
+        result = testSubject.isDeploymentArtifact(artifactInfo);
         assertThat(result).isTrue();
     }
 
@@ -1657,7 +1625,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isDeploymentArtifact", new Object[]{artifactInfo});
+        result = testSubject.isDeploymentArtifact(artifactInfo);
         assertThat(result).isFalse();
     }
 
@@ -1670,8 +1638,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // test 1
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "setArtifactPlaceholderCommonFields",
-                resourceId, user, artifactInfo);
+        testSubject.setArtifactPlaceholderCommonFields(resourceId, user, artifactInfo);
         assertEquals(resourceId + "." +ARTIFACT_LABEL, artifactInfo.getUniqueId());
         assertEquals(user.getFullName(), artifactInfo.getCreatorFullName());
     }
@@ -1686,8 +1653,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "createEsHeatEnvArtifactDataFromString",
-                new Object[]{artifactDefinition, payloadStr});
+        result = testSubject.createEsHeatEnvArtifactDataFromString(artifactDefinition, payloadStr);
         assertThat(result.isLeft()).isTrue();
     }
 
@@ -1715,8 +1681,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "generateHeatEnvPayload",
-                new Object[]{artifactDefinition});
+        result = testSubject.generateHeatEnvPayload(artifactDefinition);
         assertThat(result.isEmpty()).isFalse();
     }
 
@@ -1768,7 +1733,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        boolean result = Deencapsulation.invoke(testSubject, "replaceCurrHeatValueWithUpdatedValue", new Object[]{currentHeatEnvParams, updatedHeatEnvParams});
+        boolean result = testSubject.replaceCurrHeatValueWithUpdatedValue(currentHeatEnvParams, updatedHeatEnvParams);
         assertThat(result).isFalse();
     }
 
@@ -1792,7 +1757,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        boolean result = Deencapsulation.invoke(testSubject, "replaceCurrHeatValueWithUpdatedValue", new Object[]{currentHeatEnvParams, updatedHeatEnvParams});
+        boolean result = testSubject.replaceCurrHeatValueWithUpdatedValue(currentHeatEnvParams, updatedHeatEnvParams);
         assertThat(result).isTrue();
         assertEquals(hpdUpd.getCurrentValue(), hpdOrig.getCurrentValue());
     }
@@ -1828,10 +1793,9 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "setHeatCurrentValuesOnHeatEnvDefaultValues",
-                artifact, artifactInfo);
-
-        assertNotEquals(artifact, artifactInfo);
+        testSubject.setHeatCurrentValuesOnHeatEnvDefaultValues(artifact, artifactInfo);
+        
+        assertFalse(artifact.equals(artifactInfo));
         assertEquals(1, artifact.getListHeatParameters().size());
         assertEquals(1, artifactInfo.getListHeatParameters().size());
 
@@ -1853,7 +1817,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "buildHeatEnvFileName", new Object[]{heatArtifact, heatEnvArtifact, placeHolderData});
+        testSubject.buildHeatEnvFileName(heatArtifact, heatEnvArtifact, placeHolderData);
         assertThat(heatEnvArtifact.getArtifactName().startsWith(artName)).isTrue();
         assertThat(heatEnvArtifact.getArtifactName().endsWith(heatEnvExt)).isTrue();
     }
@@ -1870,7 +1834,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "buildHeatEnvFileName", new Object[]{heatArtifact, heatEnvArtifact, placeHolderData});
+        testSubject.buildHeatEnvFileName(heatArtifact, heatEnvArtifact, placeHolderData);
         assertThat(heatEnvArtifact.getArtifactName().startsWith(ARTIFACT_LABEL)).isTrue();
         assertThat(heatEnvArtifact.getArtifactName().endsWith(heatEnvExt)).isTrue();
     }
@@ -1885,7 +1849,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // test 1
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "handleEnvArtifactVersion", artifactInfo, existingEnvVersions);
+        testSubject.handleEnvArtifactVersion(artifactInfo, existingEnvVersions);
         assertEquals(existingVersion, artifactInfo.getArtifactVersion());
     }
 
@@ -1917,8 +1881,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "setNodeTemplateOperation", nodeTemplateOperation);
-        assertEquals(Deencapsulation.getField(testSubject, "nodeTemplateOperation"), nodeTemplateOperation);
+        testSubject.setNodeTemplateOperation(nodeTemplateOperation);
+        assertEquals(testSubject.nodeTemplateOperation, nodeTemplateOperation);
     }
 
 
@@ -1928,8 +1892,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         Component component = new Resource();
         component.setComponentType(ComponentTypeEnum.PRODUCT);
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
-        Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateDeploymentArtifact", artifactDefinition, component);
+        artifactsBusinessLogic.validateDeploymentArtifact(artifactDefinition, component);
     }
 
     @Test(expected = ComponentException.class)
@@ -1939,8 +1902,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         component.setComponentType(ComponentTypeEnum.RESOURCE);
         artifactDefinition.setArtifactType("NotConfiguredType");
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
-        Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateDeploymentArtifact", artifactDefinition, component);
+        artifactsBusinessLogic.validateDeploymentArtifact(artifactDefinition, component);
     }
 
     @Test(expected = ComponentException.class)
@@ -1952,8 +1914,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         resourceComponent.setComponentType(ComponentTypeEnum.RESOURCE);
         resourceComponent.setResourceType(ResourceTypeEnum.ServiceProxy);
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
-        Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateDeploymentArtifact", artifactDefinition, resourceComponent);
+        artifactsBusinessLogic.validateDeploymentArtifact(artifactDefinition, resourceComponent);
     }
 
     @Test
@@ -1966,8 +1927,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         resourceComponent.setResourceType(ResourceTypeEnum.VF);
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
         assertThatCode(() -> {
-            Deencapsulation
-                .invoke(artifactsBusinessLogic, "validateDeploymentArtifact", artifactDefinition, resourceComponent);
+            artifactsBusinessLogic.validateDeploymentArtifact(artifactDefinition, resourceComponent);
         }).doesNotThrowAnyException();
 
     }
@@ -1979,8 +1939,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         artifactDefinition.setTimeout(1);
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
         assertThatCode(() -> {
-            Deencapsulation
-                .invoke(artifactsBusinessLogic, "validateHeatArtifact", new Resource(), "componentId", artifactDefinition);
+            artifactsBusinessLogic.validateHeatArtifact(new Resource(), "componentId", artifactDefinition);
         }).doesNotThrowAnyException();
     }
 
@@ -2025,17 +1984,15 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
         artifactsBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
-        Object result = Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateInput", componentId, artifactDefinition, operationInfo, artifactId,
-                user, "interfaceName", ARTIFACT_LABEL, ComponentTypeEnum.RESOURCE_INSTANCE, service);
+        Object result = artifactsBusinessLogic.validateInput(componentId, artifactDefinition, operationInfo, artifactId,
+            user, "interfaceName", ARTIFACT_LABEL, ComponentTypeEnum.RESOURCE_INSTANCE, service); 
         assertTrue(result instanceof Either<?, ?>);
         assertTrue(((Either<?, ?>) result).isLeft());
 
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
 
-        result = Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateInput", componentId, artifactDefinition, operationInfo, artifactId,
-                user, "interfaceName", ARTIFACT_LABEL, ComponentTypeEnum.RESOURCE_INSTANCE, service);
+        result = artifactsBusinessLogic.validateInput(componentId, artifactDefinition, operationInfo, artifactId,
+            user, "interfaceName", ARTIFACT_LABEL, ComponentTypeEnum.RESOURCE_INSTANCE, service);
         assertTrue(result instanceof Either<?, ?>);
         assertTrue(((Either<?, ?>) result).isLeft());
     }
@@ -2080,9 +2037,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
         artifactsBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
 
-        final Object result = Deencapsulation
-            .invoke(artifactsBusinessLogic, "validateInput", componentId, artifactDefinition, operationInfo, artifactId,
-                user, "interfaceName", ARTIFACT_LABEL, ComponentTypeEnum.RESOURCE_INSTANCE, service);
+        final Object result = artifactsBusinessLogic.validateInput(componentId, artifactDefinition, operationInfo, artifactId,
+            user, "interfaceName", ARTIFACT_LABEL, ComponentTypeEnum.RESOURCE_INSTANCE, service);
         assertTrue(result instanceof Either<?, ?>);
         assertTrue(((Either<?, ?>) result).isLeft());
     }

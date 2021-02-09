@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.auditing.impl;
 
-import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
@@ -66,8 +65,7 @@ public class AuditConsumerEventFactoryTest {
 
 		// test 1
 		consumer = null;
-		result = Deencapsulation.invoke(AuditConsumerEventFactory.class, "buildConsumerName",
-				new Object[] { ConsumerDefinition.class });
+		result = AuditConsumerEventFactory.buildConsumerName(consumer);
 		Assert.assertEquals("", result);
 	}
 }
