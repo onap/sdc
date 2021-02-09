@@ -25,7 +25,6 @@ import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.BeforeClass;
@@ -54,13 +53,13 @@ public class CassandraClientTest extends DAOConfDependentTest {
         Mockito.when(mock.withLoadBalancingPolicy(Mockito.any())).thenReturn(new Builder());
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "setLocalDc", new Object[]{Cluster.Builder.class});
+        testSubject.setLocalDc(new Cluster.Builder());
 
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
             .setLocalDataCenter("mock");
 
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "setLocalDc", mock);
+        testSubject.setLocalDc(mock);
     }
 
     @Test
@@ -74,16 +73,16 @@ public class CassandraClientTest extends DAOConfDependentTest {
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setSsl(false);
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "enableSsl", mock);
+        testSubject.enableSsl(mock);
 
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setSsl(true);
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "enableSsl", mock);
+        testSubject.enableSsl(mock);
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setTruststorePath(null);
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
             .setTruststorePassword(null);
-        Deencapsulation.invoke(testSubject, "enableSsl", mock);
+        testSubject.enableSsl(mock);
     }
 
     @Test
@@ -94,13 +93,13 @@ public class CassandraClientTest extends DAOConfDependentTest {
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "enableAuthentication", Cluster.Builder.class);
+        testSubject.enableAuthentication(new Cluster.Builder());
 
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setAuthenticate(true);
-        Deencapsulation.invoke(testSubject, "enableAuthentication", mock);
+        testSubject.enableAuthentication(mock);
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setUsername(null);
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setPassword(null);
-        Deencapsulation.invoke(testSubject, "enableAuthentication", mock);
+        testSubject.enableAuthentication(mock);
     }
 
     @Test
