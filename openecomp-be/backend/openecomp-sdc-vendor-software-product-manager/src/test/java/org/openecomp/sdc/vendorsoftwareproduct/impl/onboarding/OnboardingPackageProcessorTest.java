@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nokia
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -87,7 +88,10 @@ public class OnboardingPackageProcessorTest {
             {"successfulUpload.csar", getFileBytes("successfulUpload.csar"), Collections.emptySet(),
                 OnboardingTypesEnum.CSAR},
 
-            {"fakeNonSignedZipPackage.zip", getFileBytes("signing/fakeNonSignedZipPackage.zip"), Collections.emptySet(),
+            {"fakeNonSignedZipPackage.zip", getFileBytes("signing/fakeNonSignedZipPackage.zip"), ImmutableSet.of(
+                new ErrorMessage(ErrorLevel.ERROR,
+                    "Could not read manifest file: MANIFEST.json [fakeNonSignedZipPackage.zip]"
+                )),
                 OnboardingTypesEnum.ZIP}
         });
     }
@@ -95,10 +99,11 @@ public class OnboardingPackageProcessorTest {
     @Test
     public void processPackage() {
         final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(packageName, packageBytes);
+        System.out.println(onboardingPackageProcessor.getErrorMessages());
         assertThat("Should contains errors", onboardingPackageProcessor.hasErrors(), is(!expectedErrorSet.isEmpty()));
-        assertThat("Should have the same number of errors", onboardingPackageProcessor.getErrorMessageSet().size(), equalTo(expectedErrorSet.size()));
+        assertThat("Should have the same number of errors", onboardingPackageProcessor.getErrorMessages().size(), equalTo(expectedErrorSet.size()));
         if (expectedErrorSet.size() > 0) {
-            assertThat("Should have the expected errors", onboardingPackageProcessor.getErrorMessageSet(), containsInAnyOrder(expectedErrorSet.toArray()));
+            assertThat("Should have the expected errors", onboardingPackageProcessor.getErrorMessages(), containsInAnyOrder(expectedErrorSet.toArray()));
             return;
         }
         final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
