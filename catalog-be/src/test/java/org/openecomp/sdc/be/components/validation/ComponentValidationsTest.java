@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.List;
-import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -50,106 +49,111 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 public class ComponentValidationsTest {
 
-	@InjectMocks
-	ComponentValidations testSubject;
+    @InjectMocks
+    ComponentValidations testSubject;
 
-	@Mock
-	ToscaOperationFacade toscaOperationFacadeMock;
+    @Mock
+    ToscaOperationFacade toscaOperationFacadeMock;
 
-	@Mock
-	GraphLockOperation graphLockOperationMock;
+    @Mock
+    GraphLockOperation graphLockOperationMock;
 
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
-	}
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            "src/test/resources/config/catalog-be"));
+    }
 
-	@Test
-	public void testValidateComponentInstanceExist() throws Exception {
-		String instanceId = "test";
+    @Test
+    public void testValidateComponentInstanceExist() throws Exception {
+        String instanceId = "test";
 
-		ComponentInstance instance = new ComponentInstance();
-		instance.setUniqueId(instanceId);
-		List<ComponentInstance> instances = new ArrayList<>();
-		instances.add(instance);
+        ComponentInstance instance = new ComponentInstance();
+        instance.setUniqueId(instanceId);
+        List<ComponentInstance> instances = new ArrayList<>();
+        instances.add(instance);
 
-		Component component = new Resource();
-		component.setComponentInstances(instances);
+        Component component = new Resource();
+        component.setComponentInstances(instances);
 
-		// default test
-		boolean result = ComponentValidations.validateComponentInstanceExist(component, instanceId);
-		assertTrue(result);
-	}
+        // default test
+        boolean result = ComponentValidations.validateComponentInstanceExist(component, instanceId);
+        assertTrue(result);
+    }
 
-	@Test
-	public void testGetNormalizedName() throws Exception {
-		String name = "mock";
-		ToscaDataDefinition toscaDataDefinition = new AdditionalInfoParameterDataDefinition();
-		toscaDataDefinition.setToscaPresentationValue(JsonPresentationFields.NAME, name);
+    @Test
+    public void testGetNormalizedName() throws Exception {
+        String name = "mock";
+        ToscaDataDefinition toscaDataDefinition = new AdditionalInfoParameterDataDefinition();
+        toscaDataDefinition.setToscaPresentationValue(JsonPresentationFields.NAME, name);
 
-		// default test
-		String result = ComponentValidations.getNormalizedName(toscaDataDefinition);
-		assertEquals(name, result);
-	}
+        // default test
+        String result = ComponentValidations.getNormalizedName(toscaDataDefinition);
+        assertEquals(name, result);
+    }
 
-	@Test
-	public void testValidateNameIsUniqueInComponent() throws Exception {
-		String currentName = "curr_name";
-		String newName = "curr_name";
-		String newName2 = "mock";
+    @Test
+    public void testValidateNameIsUniqueInComponent() throws Exception {
+        String currentName = "curr_name";
+        String newName = "curr_name";
+        String newName2 = "mock";
 
-		ComponentInstance instance = new ComponentInstance();
-		instance.setName(currentName);
-		instance.setNormalizedName(currentName);
-		List<ComponentInstance> instances = new ArrayList<>();
-		instances.add(instance);
+        ComponentInstance instance = new ComponentInstance();
+        instance.setName(currentName);
+        instance.setNormalizedName(currentName);
+        List<ComponentInstance> instances = new ArrayList<>();
+        instances.add(instance);
 
-		Component component = new Resource();
-		component.setComponentInstances(instances);
+        Component component = new Resource();
+        component.setComponentInstances(instances);
 
-		// default test
-		boolean result = ComponentValidations.validateNameIsUniqueInComponent(currentName, newName, component);
-		assertTrue(result);
-		result = ComponentValidations.validateNameIsUniqueInComponent(currentName, newName2, component);
-		assertTrue(result);
-	}
+        // default test
+        boolean result = ComponentValidations.validateNameIsUniqueInComponent(currentName, newName, component);
+        assertTrue(result);
+        result = ComponentValidations.validateNameIsUniqueInComponent(currentName, newName2, component);
+        assertTrue(result);
+    }
 
-	@Test(expected=ComponentException.class)
-	public void testValidateComponentIsCheckedOutByUserAndLockIt() throws Exception {
-		String componentId = "";
-		String userId = "";
-		Component result;
-		Resource resource = new  Resource();
-		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		
-		Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(resource));
-		
-		// default test
-		result = testSubject.validateComponentIsCheckedOutByUser("",ComponentTypeEnum.RESOURCE,
-				userId);
-	}
+    @Test(expected = ComponentException.class)
+    public void testValidateComponentIsCheckedOutByUserAndLockIt() throws Exception {
+        String componentId = "";
+        String userId = "";
+        Component result;
+        Resource resource = new Resource();
+        resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 
-	@Test
-	public void testGetComponent() throws Exception {
-		String componentId = "mock";
-		ComponentTypeEnum componentType = null;
-		Component result;
-		Component resource = new Resource();
-		resource.setComponentType(ComponentTypeEnum.RESOURCE);
-		Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(resource));
-		
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getComponent", componentId, ComponentTypeEnum.RESOURCE);
-		assertThat(result).isInstanceOf(Component.class);
-	}
+        Mockito.when(
+            toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class)))
+            .thenReturn(Either.left(resource));
 
-	@Test(expected = StorageException.class)
-	public void testOnToscaOperationError() throws Exception {
-		Component result;
+        // default test
+        result = testSubject.validateComponentIsCheckedOutByUser("", ComponentTypeEnum.RESOURCE,
+            userId);
+    }
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "onToscaOperationError",
-				StorageOperationStatus.ARTIFACT_NOT_FOUND,"");
-	}
+    @Test
+    public void testGetComponent() throws Exception {
+        String componentId = "mock";
+        ComponentTypeEnum componentType = null;
+        Component result;
+        Component resource = new Resource();
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        Mockito.when(
+            toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class)))
+            .thenReturn(Either.left(resource));
+
+        // default test
+        result = testSubject.getComponent(componentId, ComponentTypeEnum.RESOURCE);
+        assertThat(result).isInstanceOf(Component.class);
+    }
+
+    @Test(expected = StorageException.class)
+    public void testOnToscaOperationError() throws Exception {
+        Component result;
+
+        // default test
+        result = testSubject.onToscaOperationError(
+            StorageOperationStatus.ARTIFACT_NOT_FOUND, "");
+    }
 }

@@ -20,15 +20,13 @@
 
 package org.openecomp.sdc.be.model;
 
-import mockit.Deencapsulation;
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class GroupInstanceTest {
 
@@ -48,11 +46,11 @@ public class GroupInstanceTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.convertToGroupInstancesProperties();
+		testSubject.convertToGroupInstancesProperties();
 		List<PropertyDataDefinition> properties = new LinkedList<>();
 		properties.add(new PropertyDataDefinition());
 		testSubject.setProperties(properties);
-		result = testSubject.convertToGroupInstancesProperties();
+		testSubject.convertToGroupInstancesProperties();
 	}
 
 	@Test
@@ -75,14 +73,14 @@ public class GroupInstanceTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "removeArtifactsDuplicates");
+		testSubject.removeArtifactsDuplicates();
 		LinkedList<String> artifacts = new LinkedList<>();
 		artifacts.add("mock");
 		testSubject.setArtifacts(artifacts);
 		LinkedList<String> groupInstanceArtifacts = new LinkedList<>();
 		groupInstanceArtifacts.add("mock");
 		testSubject.setGroupInstanceArtifacts(groupInstanceArtifacts);
-		Deencapsulation.invoke(testSubject, "removeArtifactsDuplicates");
+		testSubject.removeArtifactsDuplicates();
 	}
 
 	@Test
@@ -91,7 +89,7 @@ public class GroupInstanceTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "clearArtifactsUuid");
+		testSubject.clearArtifactsUuid();
 	}
 
 	@Test
@@ -119,8 +117,8 @@ public class GroupInstanceTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "addArtifactsIdToCollection", artifactUuids, artifact);
+		testSubject.addArtifactsIdToCollection(artifactUuids, artifact);
 		artifact.setArtifactUUID("mock");
-		Deencapsulation.invoke(testSubject, "addArtifactsIdToCollection", artifactUuids, artifact);
+		testSubject.addArtifactsIdToCollection(artifactUuids, artifact);
 	}
 }

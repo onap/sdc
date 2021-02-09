@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import mockit.Deencapsulation;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,23 +87,13 @@ public class PnfTransformationEngineTest {
         assertEquals(expectedResult, result);
     }
 
-    @Test
-    public void testBuildParseBlock() {
-        final PnfdCustomNodeTypeBlockParser blockParser = spy(new PnfdCustomNodeTypeBlockParser(null));
-        final ConversionDefinition conversionDefinition = Mockito.mock(ConversionDefinition.class);
-        final Map<String, Object> stringObjectMap = new HashMap<>();
-        stringObjectMap.put("type", null);
-        stringObjectMap.put("name", null);
-        assertEquals(Optional.empty(), Deencapsulation.invoke(blockParser, "buildParsedBlock",
-            stringObjectMap, stringObjectMap, conversionDefinition));
-    }
 
     @Test
     public void testReadDefinition() {
-        final PnfdTransformationEngine engine = spy(
+        final PnfdNodeTemplateTransformationEngine engine = spy(
             new PnfdNodeTemplateTransformationEngine(null, null, "test.txt"));
-        Deencapsulation.invoke(engine, "readDefinition");
-        assertNull(Deencapsulation.getField(engine, "transformationDescription"));
+        engine.readDefinition();
+        assertNull(engine.transformationDescription);
     }
 
     private String getExpectedResultFor(final String inputFilename) throws IOException {

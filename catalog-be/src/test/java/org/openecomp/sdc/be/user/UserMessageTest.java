@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.user;
 
 import static com.google.code.beanmatchers.BeanMatchers.isABeanWithValidGettersAndSettersExcluding;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
@@ -39,7 +38,6 @@ public class UserMessageTest {
     @Test
     public void testCtor() {
         UserMessage userMessage = createUserMessage();
-        assertThat(userMessage, isA(UserMessage.class));
         assertThat(userMessage.getOperation(), is(USER_OPERATION));
         assertThat(userMessage.getUserId(), is(USER_ID));
         assertThat(userMessage.getRole(), is(ROLE));

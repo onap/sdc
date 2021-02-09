@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -205,7 +204,7 @@ public class ActionVersioningManagerImplTest {
                         "mock-ver-id-name"
                 )
         );
-        Map<String, Set<VersionableEntityMetadata>> entities = Deencapsulation.getField(actionVersioningManager, "VERSIONABLE_ENTITIES");
+        Map<String, Set<VersionableEntityMetadata>> entities = ((ActionVersioningManagerImpl)actionVersioningManager).VERSIONABLE_ENTITIES;
         assertThat(entities, notNullValue());
         assertThat(entities.size(), is(1));
     }

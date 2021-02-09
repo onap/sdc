@@ -61,17 +61,17 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @Component("cambriaHandler")
 public class CambriaHandler implements ICambriaHandler{
 
-    private static final Logger log = Logger.getLogger(CambriaHandler.class.getName());
-    private static final String PARTITION_KEY = "asdc" + "aa";
-    private static final String SEND_NOTIFICATION = "send notification";
-    private static final String CONSUMER_ID = ConfigurationManager.getConfigurationManager()
+     static final Logger log = Logger.getLogger(CambriaHandler.class.getName());
+     static final String PARTITION_KEY = "asdc" + "aa";
+     static final String SEND_NOTIFICATION = "send notification";
+     static final String CONSUMER_ID = ConfigurationManager.getConfigurationManager()
                                                                   .getDistributionEngineConfiguration()
                                                                   .getDistributionStatusTopic()
                                                                   .getConsumerId();
-    private static final boolean USE_HTTPS_WITH_DMAAP = ConfigurationManager.getConfigurationManager()
+     static final boolean USE_HTTPS_WITH_DMAAP = ConfigurationManager.getConfigurationManager()
                                                                     .getDistributionEngineConfiguration()
                                                                     .isUseHttpsWithDmaap();
-    private final Gson gson = new Gson();
+     final Gson gson = new Gson();
 
 
     /**
@@ -80,7 +80,7 @@ public class CambriaHandler implements ICambriaHandler{
      * @param message
      * @return
      */
-    private Integer processMessageException(String message) {
+     Integer processMessageException(String message) {
 
         String[] patterns = {"(HTTP Status )(\\d\\d\\d)", "(HTTP/\\d.\\d )(\\d\\d\\d)"};
 
@@ -102,7 +102,7 @@ public class CambriaHandler implements ICambriaHandler{
      * @param groupIndex
      * @return
      */
-    private Integer checkPattern(String patternStr, String message, int groupIndex) {
+     Integer checkPattern(String patternStr, String message, int groupIndex) {
         Integer result = null;
 
         Pattern pattern = Pattern.compile(patternStr);
@@ -169,7 +169,7 @@ public class CambriaHandler implements ICambriaHandler{
      *
      * @return
      */
-    private CambriaErrorResponse processError(Exception e) {
+     CambriaErrorResponse processError(Exception e) {
 
         CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse();
 
@@ -227,7 +227,7 @@ public class CambriaHandler implements ICambriaHandler{
      * @param methodName
      * @param operationDesc
      */
-    private void writeErrorToLog(CambriaErrorResponse cambriaErrorResponse, String methodName, String operationDesc) {
+     void writeErrorToLog(CambriaErrorResponse cambriaErrorResponse, String methodName, String operationDesc) {
 
         String httpCode = cambriaErrorResponse.getHttpCode() == null ? "" : String.valueOf(cambriaErrorResponse.getHttpCode());
 
@@ -336,7 +336,7 @@ public class CambriaHandler implements ICambriaHandler{
         return new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
     }
 
-    private AbstractAuthenticatedManagerBuilder<CambriaTopicManager> createTopicManagerBuilder(Collection<String> hostSet, String managerApiKey, String managerSecretKey) {
+     AbstractAuthenticatedManagerBuilder<CambriaTopicManager> createTopicManagerBuilder(Collection<String> hostSet, String managerApiKey, String managerSecretKey) {
         AbstractAuthenticatedManagerBuilder<CambriaTopicManager> clientBuilder = createTopicManagerBuilder(hostSet)
                                                                          .authenticatedBy(managerApiKey, managerSecretKey);
         if (USE_HTTPS_WITH_DMAAP) {
@@ -346,7 +346,7 @@ public class CambriaHandler implements ICambriaHandler{
         return clientBuilder;
     }
 
-    private AbstractAuthenticatedManagerBuilder<CambriaTopicManager> createTopicManagerBuilder(Collection<String> hostSet) {
+     AbstractAuthenticatedManagerBuilder<CambriaTopicManager> createTopicManagerBuilder(Collection<String> hostSet) {
         return new TopicManagerBuilder().usingHosts(hostSet);
     }
 

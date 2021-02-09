@@ -47,12 +47,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.ADD_USER;
 import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.GET_USERS_LIST;
 import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_USER;
 
-@org.springframework.stereotype.Component
+@Component
 public class UserBusinessLogic {
 
     private static final Logger log = Logger.getLogger(UserBusinessLogic.class);

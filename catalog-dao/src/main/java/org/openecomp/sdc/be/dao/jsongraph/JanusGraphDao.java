@@ -117,7 +117,7 @@ public class JanusGraphDao {
         return janusGraphClient.getGraph().left().map(graph -> graph.query().has(GraphPropertyEnum.LABEL.getProperty(), label.getName()).vertices()).left().bind(janusGraphVertices -> getFirstFoundVertex(JsonParseFlagEnum.NoParse, janusGraphVertices));
     }
 
-    private Either<GraphVertex, JanusGraphOperationStatus> getFirstFoundVertex(JsonParseFlagEnum parseFlag, Iterable<JanusGraphVertex> vertices) {
+    Either<GraphVertex, JanusGraphOperationStatus> getFirstFoundVertex(JsonParseFlagEnum parseFlag, Iterable<JanusGraphVertex> vertices) {
         Iterator<JanusGraphVertex> iterator = vertices.iterator();
         if (iterator.hasNext()) {
             JanusGraphVertex vertex = iterator.next();
@@ -228,7 +228,7 @@ public class JanusGraphDao {
         }
     }
 
-    private void setVertexProperties(JanusGraphVertex vertex, GraphVertex graphVertex) throws IOException {
+    void setVertexProperties(JanusGraphVertex vertex, GraphVertex graphVertex) throws IOException {
 
         if (graphVertex.getMetadataProperties() != null) {
             for (Map.Entry<GraphPropertyEnum, Object> entry : graphVertex.getMetadataProperties().entrySet()) {
@@ -260,7 +260,7 @@ public class JanusGraphDao {
         }
     }
 
-    private GraphVertex createAndFill(JanusGraphVertex vertex, JsonParseFlagEnum parseFlag) {
+    GraphVertex createAndFill(JanusGraphVertex vertex, JsonParseFlagEnum parseFlag) {
         GraphVertex graphVertex = new GraphVertex();
         graphVertex.setVertex(vertex);
         parseVertexProperties(graphVertex, parseFlag);
@@ -560,7 +560,7 @@ public class JanusGraphDao {
         }
     }
 
-    private void buildMultipleNegateQueryFromList(Map.Entry<GraphPropertyEnum, Object> entry, JanusGraphQuery query) {
+    void buildMultipleNegateQueryFromList(Map.Entry<GraphPropertyEnum, Object> entry, JanusGraphQuery query) {
         List<Object> negateList = (List<Object>) entry.getValue();
         for (Object listItem : negateList) {
             query.hasNot(entry.getKey().getProperty(), listItem);
@@ -638,7 +638,7 @@ public class JanusGraphDao {
         return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.IN);
     }
 
-    private Either<List<Vertex>, JanusGraphOperationStatus> getAdjacentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
+    Either<List<Vertex>, JanusGraphOperationStatus> getAdjacentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
         List<Vertex> list = new ArrayList<>();
         try {
             Either<JanusGraph, JanusGraphOperationStatus> graphRes = janusGraphClient.getGraph();
@@ -683,7 +683,7 @@ public class JanusGraphDao {
         return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.OUT);
     }
 
-    private Either<List<GraphVertex>, JanusGraphOperationStatus> getAdjacentVertices(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
+    Either<List<GraphVertex>, JanusGraphOperationStatus> getAdjacentVertices(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
         List<GraphVertex> list = new ArrayList<>();
 
         Either<List<Vertex>, JanusGraphOperationStatus> adjacentVerticies = getAdjacentVertices(parentVertex.getVertex(), edgeLabel, parseFlag, direction);

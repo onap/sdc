@@ -13,8 +13,21 @@
  */
 package org.openecomp.sdc.be.components.property;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import mockit.Deencapsulation;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
@@ -34,263 +47,258 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 public class PropertyDeclarationOrchestratorTest {
 
-	@InjectMocks
-	PropertyDeclarationOrchestrator testSubject;
+    @InjectMocks
+    PropertyDeclarationOrchestrator testSubject;
 
-	@Mock(answer = Answers.CALLS_REAL_METHODS)
-	List<PropertyDeclarator> propertyDeceleratorsMock;
+    @Mock(answer = Answers.CALLS_REAL_METHODS)
+    List<PropertyDeclarator> propertyDeceleratorsMock;
 
-	@Mock
-	private ComponentInstancePropertyToPolicyDeclarator componentInstancePropertyToPolicyDeclarator;
+    @Mock
+    private ComponentInstancePropertyToPolicyDeclarator componentInstancePropertyToPolicyDeclarator;
 
-	@Mock
-	private ComponentPropertyToPolicyDeclarator componentPropertyToPolicyDeclarator;
+    @Mock
+    private ComponentPropertyToPolicyDeclarator componentPropertyToPolicyDeclarator;
 
-	@Mock
-	private ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDecelerator;
+    @Mock
+    private ComponentInstanceInputPropertyDeclarator componentInstanceInputPropertyDecelerator;
 
-	@Mock
-	private ComponentInstancePropertyDeclarator componentInstancePropertyDecelerator;
+    @Mock
+    private ComponentInstancePropertyDeclarator componentInstancePropertyDecelerator;
 
-	@Mock
-	private ComponentPropertyDeclarator servicePropertyDeclarator;
+    @Mock
+    private ComponentPropertyDeclarator servicePropertyDeclarator;
 
-	@Mock
-	private PolicyPropertyDeclarator policyPropertyDecelerator;
+    @Mock
+    private PolicyPropertyDeclarator policyPropertyDecelerator;
 
-	@Mock
-	private GroupPropertyDeclarator groupPropertyDeclarator;;
+    @Mock
+    private GroupPropertyDeclarator groupPropertyDeclarator;
+    ;
 
-	private static final String PROP_UID = "propertyUid";
-	private static final String SERVICE_UID = "serviceUid";
+    private static final String PROP_UID = "propertyUid";
+    private static final String SERVICE_UID = "serviceUid";
 
-	private Service service;
+    private Service service;
 
-	@Before
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
-		MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(this);
 
-		service = new ServiceBuilder().setUniqueId(SERVICE_UID).build();
-	}
+        service = new ServiceBuilder().setUniqueId(SERVICE_UID).build();
+    }
 
-	@Test(expected = IllegalStateException.class)
-	public void testDeclarePropertiesToInputs() throws Exception {
-		Component component = new Resource();
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Either<List<InputDefinition>, StorageOperationStatus> result;
+    @Test(expected = IllegalStateException.class)
+    public void testDeclarePropertiesToInputs() throws Exception {
+        Component component = new Resource();
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Either<List<InputDefinition>, StorageOperationStatus> result;
 
-		// default test
-		result = testSubject.declarePropertiesToInputs(component, componentInstInputsMap);
-	}
+        // default test
+        result = testSubject.declarePropertiesToInputs(component, componentInstInputsMap);
+    }
 
-	@Test
-	public void testDeclarePropertiesToListInputs() throws Exception {
-		Component component = new Resource();
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = getPropertiesMapToDeclare();
-		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
-		InputDefinition input = new InputDefinition();
-		input.setUniqueId(PROP_UID);
-		Either<InputDefinition, StorageOperationStatus> result;
+    @Test
+    public void testDeclarePropertiesToListInputs() throws Exception {
+        Component component = new Resource();
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = getPropertiesMapToDeclare();
+        componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId(PROP_UID);
+        Either<InputDefinition, StorageOperationStatus> result;
 
-		when(componentInstanceInputPropertyDecelerator.declarePropertiesAsListInput(eq(component), anyString(), anyList(), eq(input))).thenReturn(Either.left(input));
-		// default test
-		result = testSubject.declarePropertiesToListInput(component, componentInstInputsMap, input);
+        when(componentInstanceInputPropertyDecelerator
+            .declarePropertiesAsListInput(eq(component), anyString(), anyList(), eq(input)))
+            .thenReturn(Either.left(input));
+        // default test
+        result = testSubject.declarePropertiesToListInput(component, componentInstInputsMap, input);
 
-		assertTrue(result.isLeft());
-		assertEquals(PROP_UID, result.left().value().getUniqueId());
-	}
+        assertTrue(result.isLeft());
+        assertEquals(PROP_UID, result.left().value().getUniqueId());
+    }
 
-	@Test
-	public void testUnDeclarePropertiesAsInputs() throws Exception {
-		Component component = new Resource();
-		InputDefinition inputToDelete = new InputDefinition();
-		StorageOperationStatus result;
+    @Test
+    public void testUnDeclarePropertiesAsInputs() throws Exception {
+        Component component = new Resource();
+        InputDefinition inputToDelete = new InputDefinition();
+        StorageOperationStatus result;
 
-		Iterator<PropertyDeclarator> mockIter = Mockito.mock(Iterator.class);
-		when(propertyDeceleratorsMock.iterator()).thenReturn(mockIter);
-		when(mockIter.hasNext()).thenReturn(false);
+        Iterator<PropertyDeclarator> mockIter = Mockito.mock(Iterator.class);
+        when(propertyDeceleratorsMock.iterator()).thenReturn(mockIter);
+        when(mockIter.hasNext()).thenReturn(false);
 
-		setInputUndeclarationStubbings(component, inputToDelete);
+        setInputUndeclarationStubbings(component, inputToDelete);
 
-		// default test
-		result = testSubject.unDeclarePropertiesAsInputs(component, inputToDelete);
+        // default test
+        result = testSubject.unDeclarePropertiesAsInputs(component, inputToDelete);
 
-		assertEquals(StorageOperationStatus.OK, result);
-	}
+        assertEquals(StorageOperationStatus.OK, result);
+    }
 
-	@Test
-	public void testUnDeclarePropertiesAsListInputs() throws Exception {
-		Component component = new Resource();
-		InputDefinition inputToDelete = new InputDefinition();
-		StorageOperationStatus result;
+    @Test
+    public void testUnDeclarePropertiesAsListInputs() throws Exception {
+        Component component = new Resource();
+        InputDefinition inputToDelete = new InputDefinition();
+        StorageOperationStatus result;
 
-		Iterator<PropertyDeclarator> mockIter = Mockito.mock(Iterator.class);
-		Mockito.when(propertyDeceleratorsMock.iterator()).thenReturn(mockIter);
-		Mockito.when(mockIter.hasNext()).thenReturn(false);
+        Iterator<PropertyDeclarator> mockIter = Mockito.mock(Iterator.class);
+        Mockito.when(propertyDeceleratorsMock.iterator()).thenReturn(mockIter);
+        Mockito.when(mockIter.hasNext()).thenReturn(false);
 
-		// default test
-		result = testSubject.unDeclarePropertiesAsListInputs(component, inputToDelete);
-	}
+        // default test
+        result = testSubject.unDeclarePropertiesAsListInputs(component, inputToDelete);
+    }
 
-	@Test
-	public void testGetPropOwnerId() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = new HashMap<>();
-		List<ComponentInstancePropInput> value = new LinkedList<>();
-		componentInstanceInputsMap.put("mock", value);
-		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
-		String result;
+    @Test
+    public void testGetPropOwnerId() throws Exception {
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = new HashMap<>();
+        List<ComponentInstancePropInput> value = new LinkedList<>();
+        componentInstanceInputsMap.put("mock", value);
+        componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
+        String result;
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropOwnerId", componentInstInputsMap);
-	}
+        // default test
+        result = testSubject.getPropOwnerId(componentInstInputsMap);
+    }
 
-	@Test(expected = IllegalStateException.class)
-	public void testGetPropertyDecelerator() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		PropertyDeclarator result;
+    @Test(expected = IllegalStateException.class)
+    public void testGetPropertyDecelerator() throws Exception {
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        PropertyDeclarator result;
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-	}
+        // default test
+        result = testSubject.getPropertyDeclarator(componentInstInputsMap);
+    }
 
-	@Test
-	public void testGetPropertyDeceleratorWithInputsMap() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = getPropertiesMapToDeclare();
-		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
-		PropertyDeclarator result;
+    @Test
+    public void testGetPropertyDeceleratorWithInputsMap() throws Exception {
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = getPropertiesMapToDeclare();
+        componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
+        PropertyDeclarator result;
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+        // default test
+        result = testSubject.getPropertyDeclarator(componentInstInputsMap);
 
-		assertTrue(result instanceof ComponentInstanceInputPropertyDeclarator);
-	}
+        assertTrue(result instanceof ComponentInstanceInputPropertyDeclarator);
+    }
 
-	@Test
-	public void testGetPropertyDeceleratorWithCIProperties() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
-		List<ComponentInstancePropInput> value = new LinkedList<>();
-		componentInstanceProperties.put("mock", value);
-		componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
-		PropertyDeclarator result;
+    @Test
+    public void testGetPropertyDeceleratorWithCIProperties() throws Exception {
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
+        List<ComponentInstancePropInput> value = new LinkedList<>();
+        componentInstanceProperties.put("mock", value);
+        componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
+        PropertyDeclarator result;
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+        // default test
+        result = testSubject.getPropertyDeclarator(componentInstInputsMap);
 
-		assertTrue(result instanceof ComponentInstancePropertyDeclarator);
-	}
+        assertTrue(result instanceof ComponentInstancePropertyDeclarator);
+    }
 
-	@Test
-	public void testGetPropertyDeceleratorWithCIPolicy() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> policyProperties = getPropertiesMapToDeclare();
-		componentInstInputsMap.setPolicyProperties(policyProperties);
-		PropertyDeclarator result;
+    @Test
+    public void testGetPropertyDeceleratorWithCIPolicy() throws Exception {
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> policyProperties = getPropertiesMapToDeclare();
+        componentInstInputsMap.setPolicyProperties(policyProperties);
+        PropertyDeclarator result;
 
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
+        // default test
+        result = testSubject.getPropertyDeclarator(componentInstInputsMap);
 
-		assertTrue(result instanceof PolicyPropertyDeclarator);
-	}
+        assertTrue(result instanceof PolicyPropertyDeclarator);
+    }
 
-	@Test
-	public void testDeclarePropertiesToPolicies() {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> policyProperties = getPropertiesMapToDeclare();
-		componentInstInputsMap.setComponentInstancePropertiesToPolicies(policyProperties);
+    @Test
+    public void testDeclarePropertiesToPolicies() {
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> policyProperties = getPropertiesMapToDeclare();
+        componentInstInputsMap.setComponentInstancePropertiesToPolicies(policyProperties);
 
-		PolicyDefinition declaredPolicy = getDeclaredPolicy();
+        PolicyDefinition declaredPolicy = getDeclaredPolicy();
 
-		when(componentInstancePropertyToPolicyDeclarator.declarePropertiesAsPolicies(any(), anyString(), anyList())).thenReturn(
-				Either.left(Collections.singletonList(declaredPolicy)));
+        when(componentInstancePropertyToPolicyDeclarator.declarePropertiesAsPolicies(any(), anyString(), anyList()))
+            .thenReturn(
+                Either.left(Collections.singletonList(declaredPolicy)));
 
-		Either<List<PolicyDefinition>, StorageOperationStatus> declareEither =
-				testSubject.declarePropertiesToPolicies(service, componentInstInputsMap);
+        Either<List<PolicyDefinition>, StorageOperationStatus> declareEither =
+            testSubject.declarePropertiesToPolicies(service, componentInstInputsMap);
 
-		validatePolicyDeclaration(declaredPolicy, declareEither);
-	}
+        validatePolicyDeclaration(declaredPolicy, declareEither);
+    }
 
-	@Test
-	public void testUndeclarePropertiesAsPolicies() {
-		when(componentInstancePropertyToPolicyDeclarator.unDeclarePropertiesAsPolicies(any(), any(PolicyDefinition.class))).thenReturn(StorageOperationStatus.OK);
-		when(componentPropertyToPolicyDeclarator.unDeclarePropertiesAsPolicies(any(), any(PolicyDefinition.class))).thenReturn(StorageOperationStatus.OK);
+    @Test
+    public void testUndeclarePropertiesAsPolicies() {
+        when(componentInstancePropertyToPolicyDeclarator
+            .unDeclarePropertiesAsPolicies(any(), any(PolicyDefinition.class))).thenReturn(StorageOperationStatus.OK);
+        when(componentPropertyToPolicyDeclarator.unDeclarePropertiesAsPolicies(any(), any(PolicyDefinition.class)))
+            .thenReturn(StorageOperationStatus.OK);
 
-		StorageOperationStatus undeclareStatus =
-				testSubject.unDeclarePropertiesAsPolicies(service, getDeclaredPolicy());
+        StorageOperationStatus undeclareStatus =
+            testSubject.unDeclarePropertiesAsPolicies(service, getDeclaredPolicy());
 
-		assertEquals(StorageOperationStatus.OK, undeclareStatus);
-	}
+        assertEquals(StorageOperationStatus.OK, undeclareStatus);
+    }
 
-	@Test
-	public void testDeclareServiceProperties() {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> serviceProperties = getPropertiesMapToDeclare();
-		componentInstInputsMap.setServiceProperties(serviceProperties);
+    @Test
+    public void testDeclareServiceProperties() {
+        ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+        Map<String, List<ComponentInstancePropInput>> serviceProperties = getPropertiesMapToDeclare();
+        componentInstInputsMap.setServiceProperties(serviceProperties);
 
-		PolicyDefinition declaredPolicy = getDeclaredPolicy();
+        PolicyDefinition declaredPolicy = getDeclaredPolicy();
 
-		when(servicePropertyDeclarator.declarePropertiesAsPolicies(any(), anyString(), anyList())).thenReturn(
-				Either.left(Collections.singletonList(declaredPolicy)));
+        when(servicePropertyDeclarator.declarePropertiesAsPolicies(any(), anyString(), anyList())).thenReturn(
+            Either.left(Collections.singletonList(declaredPolicy)));
 
-		Either<List<PolicyDefinition>, StorageOperationStatus> declareEither =
-				testSubject.declarePropertiesToPolicies(service, componentInstInputsMap);
+        Either<List<PolicyDefinition>, StorageOperationStatus> declareEither =
+            testSubject.declarePropertiesToPolicies(service, componentInstInputsMap);
 
-		validatePolicyDeclaration(declaredPolicy, declareEither);
-	}
+        validatePolicyDeclaration(declaredPolicy, declareEither);
+    }
 
-	private PolicyDefinition getDeclaredPolicy() {
-		PolicyDefinition declaredPolicy = new PolicyDefinition();
-		declaredPolicy.setUniqueId(PROP_UID);
-		return declaredPolicy;
-	}
+    private PolicyDefinition getDeclaredPolicy() {
+        PolicyDefinition declaredPolicy = new PolicyDefinition();
+        declaredPolicy.setUniqueId(PROP_UID);
+        return declaredPolicy;
+    }
 
-	private Map<String, List<ComponentInstancePropInput>> getPropertiesMapToDeclare() {
-		Map<String, List<ComponentInstancePropInput>> policyProperties = new HashMap<>();
+    private Map<String, List<ComponentInstancePropInput>> getPropertiesMapToDeclare() {
+        Map<String, List<ComponentInstancePropInput>> policyProperties = new HashMap<>();
 
-		ComponentInstancePropInput propertyToDeclare = new ComponentInstancePropInput();
-		propertyToDeclare.setUniqueId(PROP_UID);
-		propertyToDeclare.setPropertiesName(PROP_UID);
+        ComponentInstancePropInput propertyToDeclare = new ComponentInstancePropInput();
+        propertyToDeclare.setUniqueId(PROP_UID);
+        propertyToDeclare.setPropertiesName(PROP_UID);
 
-		policyProperties.put("mock", Collections.singletonList(propertyToDeclare));
-		return policyProperties;
-	}
+        policyProperties.put("mock", Collections.singletonList(propertyToDeclare));
+        return policyProperties;
+    }
 
-	private void validatePolicyDeclaration(PolicyDefinition declaredPolicy,
-			Either<List<PolicyDefinition>, StorageOperationStatus> declareEither) {
-		assertTrue(declareEither.isLeft());
+    private void validatePolicyDeclaration(PolicyDefinition declaredPolicy,
+        Either<List<PolicyDefinition>, StorageOperationStatus> declareEither) {
+        assertTrue(declareEither.isLeft());
 
-		List<PolicyDefinition> declaredPolicies = declareEither.left().value();
-		assertEquals(1, declaredPolicies.size());
-		assertEquals(declaredPolicy.getUniqueId(), declaredPolicies.get(0).getUniqueId());
-	}
+        List<PolicyDefinition> declaredPolicies = declareEither.left().value();
+        assertEquals(1, declaredPolicies.size());
+        assertEquals(declaredPolicy.getUniqueId(), declaredPolicies.get(0).getUniqueId());
+    }
 
-	private void setInputUndeclarationStubbings(Component component, InputDefinition inputToDelete) {
-		when(policyPropertyDecelerator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete))).thenReturn(
-				StorageOperationStatus.OK);
-		when(servicePropertyDeclarator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete))).thenReturn(StorageOperationStatus.OK);
-		when(componentInstancePropertyDecelerator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete))).thenReturn(StorageOperationStatus.OK);
-		when(componentInstanceInputPropertyDecelerator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete))).thenReturn(StorageOperationStatus.OK);
-		when(groupPropertyDeclarator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete))).thenReturn(StorageOperationStatus.OK);
-	}
+    private void setInputUndeclarationStubbings(Component component, InputDefinition inputToDelete) {
+        when(policyPropertyDecelerator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete))).thenReturn(
+            StorageOperationStatus.OK);
+        when(servicePropertyDeclarator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete)))
+            .thenReturn(StorageOperationStatus.OK);
+        when(componentInstancePropertyDecelerator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete)))
+            .thenReturn(StorageOperationStatus.OK);
+        when(componentInstanceInputPropertyDecelerator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete)))
+            .thenReturn(StorageOperationStatus.OK);
+        when(groupPropertyDeclarator.unDeclarePropertiesAsInputs(eq(component), eq(inputToDelete)))
+            .thenReturn(StorageOperationStatus.OK);
+    }
 }

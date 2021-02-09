@@ -29,7 +29,7 @@ public class LifecycleChangeInfoWithAction extends LifecycleChangeInfoBase {
     };
 
     @JsonInclude
-    private LifecycleChanceActionEnum action;
+    LifecycleChanceActionEnum action;
 
     public LifecycleChangeInfoWithAction() {
     }
