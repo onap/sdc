@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0250f909_02dbce22",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-10T09:43:42Z",
+      "side": 1,
+      "message": "remove unused import",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 32
+      },
+      "revId": "a27323cd7963526ed0e5c8700fa7242199d13b24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "649d16d3_5dd1ca52",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServletTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-10T09:43:42Z",
+      "side": 1,
+      "message": "wouldn\u0027t be better to migrate to junit 5 already?",
+      "range": {
+        "startLine": 41,
+        "startChar": 41,
+        "endLine": 43,
+        "endChar": 22
+      },
+      "revId": "a27323cd7963526ed0e5c8700fa7242199d13b24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
