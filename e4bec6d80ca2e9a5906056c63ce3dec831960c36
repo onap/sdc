@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "81ac1e3d_a7638c3e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/ManifestAnalyzer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T12:19:16Z",
+      "side": 1,
+      "message": "to make it extendable",
+      "parentUuid": "032448d3_a38dc9aa",
+      "range": {
+        "startLine": 34,
+        "startChar": 25,
+        "endLine": 34,
+        "endChar": 34
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "658726af_ba1791f2",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/ManifestAnalyzer.java",
         "patchSetId": 7
@@ -117,6 +141,30 @@
     },
     {
       "key": {
+        "uuid": "35980508_945b3db1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T12:19:16Z",
+      "side": 1,
+      "message": "multiple returns are not good practice.",
+      "parentUuid": "44260a2e_267c337a",
+      "range": {
+        "startLine": 170,
+        "startChar": 7,
+        "endLine": 170,
+        "endChar": 40
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e5ebfa30_ca593ab4",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
         "patchSetId": 7
@@ -128,6 +176,30 @@
       "writtenOn": "2021-02-10T11:50:39Z",
       "side": 1,
       "message": "Could be change to return",
+      "range": {
+        "startLine": 187,
+        "startChar": 11,
+        "endLine": 187,
+        "endChar": 22
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "809c8263_2b2ce03c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T12:19:16Z",
+      "side": 1,
+      "message": "multiple returns are not good practice",
+      "parentUuid": "e5ebfa30_ca593ab4",
       "range": {
         "startLine": 187,
         "startChar": 11,
@@ -174,6 +246,30 @@
       "writtenOn": "2021-02-10T11:50:39Z",
       "side": 1,
       "message": "Consider revert if \n\nif (modules \u003d\u003d null || modules.isEmpty()) {\n            return Collections.emptyList();\n        }\n        Stats stats \u003d calculateStats(modules);\n        return createErrorMessages(stats);",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 49
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "088b3c20_7e08ae45",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfPackageValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T12:19:16Z",
+      "side": 1,
+      "message": "multiple returns are not good practice",
+      "parentUuid": "b6c3387e_9386d81d",
       "range": {
         "startLine": 37,
         "startChar": 12,
