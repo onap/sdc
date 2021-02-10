@@ -279,6 +279,30 @@
       "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1be9526_37f9a408",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfPackageValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-02-10T12:36:40Z",
+      "side": 1,
+      "message": "Why ?",
+      "parentUuid": "088b3c20_7e08ae45",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 49
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
