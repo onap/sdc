@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7f6881b7_2b04c394",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/ManifestAnalyzer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T13:26:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81ac1e3d_a7638c3e",
+      "range": {
+        "startLine": 34,
+        "startChar": 25,
+        "endLine": 34,
+        "endChar": 34
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "658726af_ba1791f2",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/ManifestAnalyzer.java",
         "patchSetId": 7
@@ -165,6 +189,30 @@
     },
     {
       "key": {
+        "uuid": "473fdb23_b07599a7",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T13:26:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "35980508_945b3db1",
+      "range": {
+        "startLine": 170,
+        "startChar": 7,
+        "endLine": 170,
+        "endChar": 40
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e5ebfa30_ca593ab4",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
         "patchSetId": 7
@@ -209,6 +257,30 @@
       "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f032ea8a_a8b79bfa",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T13:26:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "809c8263_2b2ce03c",
+      "range": {
+        "startLine": 187,
+        "startChar": 11,
+        "endLine": 187,
+        "endChar": 22
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
