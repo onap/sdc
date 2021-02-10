@@ -303,6 +303,30 @@
       "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e25d578_db979281",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfPackageValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6714
+      },
+      "writtenOn": "2021-02-10T13:25:08Z",
+      "side": 1,
+      "message": "ok, it\u0027s the matter of taste",
+      "parentUuid": "b1be9526_37f9a408",
+      "range": {
+        "startLine": 37,
+        "startChar": 12,
+        "endLine": 37,
+        "endChar": 49
+      },
+      "revId": "e4bec6d80ca2e9a5906056c63ce3dec831960c36",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
