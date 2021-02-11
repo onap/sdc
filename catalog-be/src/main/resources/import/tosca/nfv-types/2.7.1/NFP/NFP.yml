@@ -1,0 +1,11 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+node_types:
+  tosca.nodes.nfv.NFP:
+    derived_from: tosca.nodes.Root
+    description: node definition of NFP
+    requirements:
+      - nfp_position:
+          capability: tosca.capabilities.nfv.Forwarding
+          node: tosca.nodes.nfv.NfpPosition
+          relationship: tosca.relationships.nfv.ForwardTo
+          occurrences: [ 1, UNBOUNDED ]

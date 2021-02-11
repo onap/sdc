@@ -2807,6 +2807,13 @@ tosca.datatypes.nfv.NsVlProfile:
       type: tosca.datatypes.nfv.ServiceAvailability
       description: Network service virtual link service availability levels, as described in ETSI GS NFV-REL 001
       required: false 
+    service_availability_level:
+      type: integer
+      description: Specifies the service availability level for the VL instance created from this profile
+      required: false 
+      constraints:
+        - greater_or_equal: 1
+
 tosca.datatypes.nfv.NsProfile:
   derived_from: tosca.datatypes.Root
   description: describes a profile for instantiating NSs of a particular NS DF according to a specific NSD and NS DF.
@@ -2958,6 +2965,46 @@ tosca.datatypes.nfv.AdditionalServiceData:
       type: string
       description: Service matching information exposed by the VirtualCp.
       required: false
+tosca.datatypes.nfv.NsOperationAdditionalParameters:
+  derived_from: tosca.datatypes.Root
+  description: Is an empty base type for deriving data types for describing NS-specific additional parameters to be passed when invoking NS lifecycle management operations 
+  #properties:
+tosca.datatypes.nfv.Mask:
+  derived_from: tosca.datatypes.Root
+  properties:  
+    starting_point: 
+      description: Indicates the offset between the last bit of the source mac address and the first bit of the sequence of bits to be matched.
+      type: integer
+      required: true    
+    length: 
+      description: Indicates the number of bits to be matched.
+      type: integer
+      required: true
+    value:
+      description: Provide the sequence of bit values to be matched.
+      type: string
+      required: true 
+tosca.datatypes.nfv.NsMonitoringParameter:
+  derived_from: tosca.datatypes.Root
+  description: Represents information on virtualised resource related performance metrics applicable to the NS.
+  properties:
+    name:
+      type: string
+      description: Human readable name of the monitoring parameter
+      required: true
+    performance_metric:
+      type: string
+      description: Identifies a performance metric to be monitored, according to ETSI GS NFV-IFA 027. 
+      required: true
+      constraints:
+         - valid_values: [byte_incoming_sap, byte_outgoing_sap, packet_incoming_sap, packet_outgoing_sap, byte_incoming, byte_outgoing, packet_incoming, packet_outgoing ] 
+    collection_period:  
+      type: scalar-unit.time
+      description: Describes the periodicity at which to collect the performance information.
+      required: false
+
+
+
       
 ##### Partner service domain datatypes ######
 

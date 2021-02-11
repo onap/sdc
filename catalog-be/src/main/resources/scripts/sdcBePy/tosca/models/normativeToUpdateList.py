@@ -58,7 +58,7 @@ def get_nfv(types, base_location="/"):
                                   
 def get_nfv_2_7_1(types, base_location="/"):
     return NormativeTypeCandidate(base_location + "nfv-types/2.7.1/",
-                                  types.get_type("nfv_2_7_1"))                               
+                                  types.get_type("nfv_2_7_1"))
 
 def get_nfv_3_3_1(types, base_location="/"):
     return NormativeTypeCandidate(base_location + "nfv-types/3.3.1/",

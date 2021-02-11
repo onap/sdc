@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+node_types:
+  tosca.nodes.nfv.NfpPosition:
+    derived_from: tosca.nodes.Root
+    description: node definition of NFP position
+    properties:
+      forwarding_behaviour: 
+        type: string
+        description: Identifies a rule to apply to forward traffic to CP or SAP instances corresponding to the referenced NfpPositionElement(s). 
+        constraints:
+          - valid_values: [ all, lb, ff ]
+        required: false
+#     forwarding_behaviour_input_parameters: 
+#       description: Provides input parameters to configure the forwarding behaviour.
+#       type: map
+#       required: false
+#       entry_schema:
+#         type: string

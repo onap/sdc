@@ -22,7 +22,6 @@ def main(sdc_be_proxy):
     base_file_location = os.getcwd() + "/"
     logger.debug("working directory =" + base_file_location)
     process_element_list(get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
-    process_element_list(get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
 
     all_types = get_all_types()
 
@@ -34,6 +33,8 @@ def main(sdc_be_proxy):
 
     nfv_list = get_nfv_to_update_list(all_types, base_file_location)
     process_type_list(nfv_list, sdc_be_proxy, update_nfv_version)
+    
+    process_element_list(get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
 
     logger.log("Updating end ->", "All normatives updated successfully!")
     print_and_exit(0, None)

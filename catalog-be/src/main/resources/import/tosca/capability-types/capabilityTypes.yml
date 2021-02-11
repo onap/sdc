@@ -294,3 +294,6 @@ tosca.capabilities.nfv.ext.Compute.Container.Architecture:
     mem_size:
       type: string
       required: false
+tosca.capabilities.nfv.Forwarding:
+  derived_from: tosca.capabilities.Root
+

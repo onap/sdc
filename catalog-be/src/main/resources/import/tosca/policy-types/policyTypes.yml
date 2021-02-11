@@ -301,3 +301,166 @@ tosca.policies.nfv.AntiAffinityRule:
       constraints:
         - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop ]
   targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup ]
+
+tosca.policies.nfv.NsAffinityRule:
+  derived_from: tosca.policies.Placement
+  description: The NsAffinityRule describes the affinity rules applicable for the defined targets
+  properties:
+    scope:
+      type: string
+      description: Specifies the scope of the local affinity rule.
+      required: true
+      constraints:
+        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop, network_link_and_node ]
+  targets: [tosca.nodes.nfv.VNF, tosca.nodes.nfv.NsVirtualLink, tosca.nodes.nfv.NS, tosca.groups.nfv.NsPlacementGroup ]
+
+tosca.policies.nfv.NsAntiAffinityRule:
+  derived_from: tosca.policies.Placement
+  description: The NsAntiAffinityRule describes the anti-affinity rules applicable for the defined targets
+  properties:
+    scope:
+      type: string
+      description: Specifies the scope of the local affinity rule..
+      required: true
+      constraints:
+        - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop, network_link_and_node ]
+  targets: [tosca.nodes.nfv.VNF, tosca.nodes.nfv.NsVirtualLink, tosca.nodes.nfv.NS, tosca.groups.nfv.NsPlacementGroup ]
+
+tosca.policies.nfv.Abstract.SecurityGroupRule:
+  derived_from: tosca.policies.Root
+  description: The Abstract.SecurityGroupRule type represents an abstract policy type without any target requirements
+  properties:
+    description:
+      type: string
+      description: Human readable description of the security group rule.
+      required: false
+    direction:
+      type: string
+      description: The direction in which the security group rule is applied. The direction of 'ingress' or 'egress' is specified against the associated CP. I.e., 'ingress' means the packets entering a CP, while 'egress' means the packets sent out of a CP.
+      required: true
+      constraints:
+        - valid_values: [ ingress, egress ]
+      default: ingress
+    ether_type:
+      type: string
+      description: Indicates the protocol carried over the Ethernet layer.
+      required: true
+      constraints:
+        - valid_values: [ ipv4, ipv6 ]
+      default: ipv4
+    protocol:
+      type: string
+      description: Indicates the protocol carried over the IP layer. Permitted values include any protocol defined in the IANA protocol registry, e.g. TCP, UDP, ICMP, etc.
+      required: true
+      constraints:
+        - valid_values: [ hopopt, icmp, igmp, ggp, ipv4, st, tcp, cbt, egp, igp, bbn_rcc_mon, nvp_ii, pup, argus, emcon, xnet, chaos, udp, mux, dcn_meas, hmp, prm, xns_idp, trunk_1, trunk_2, leaf_1, leaf_2, rdp, irtp, iso_tp4, netblt, mfe_nsp, merit_inp, dccp, 3pc, idpr, xtp, ddp, idpr_cmtp, tp++, il, ipv6, sdrp, ipv6_route, ipv6_frag, idrp, rsvp, gre, dsr, bna, esp, ah, i_nlsp, swipe, narp, mobile, tlsp, skip, ipv6_icmp, ipv6_no_nxt, ipv6_opts, cftp, sat_expak, kryptolan, rvd, ippc, sat_mon, visa, ipcv, cpnx, cphb, wsn, pvp, br_sat_mon, sun_nd, wb_mon, wb_expak, iso_ip, vmtp, secure_vmtp, vines, ttp, iptm, nsfnet_igp, dgp, tcf, eigrp, ospfigp, sprite_rpc, larp, mtp, ax.25, ipip, micp, scc_sp, etherip, encap, gmtp, ifmp, pnni, pim, aris, scps, qnx, a/n, ip_comp, snp, compaq_peer, ipx_in_ip, vrrp, pgm, l2tp, ddx, iatp, stp, srp, uti, smp, sm, ptp, isis, fire, crtp, crudp, sscopmce, iplt, sps, pipe, sctp, fc, rsvp_e2e_ignore, mobility, udp_lite, mpls_in_ip, manet, hip, shim6, wesp, rohc ]
+      default: tcp
+    port_range_min:
+      type: integer
+      description: Indicates minimum port number in the range that is matched by the security group rule. If a value is provided at design-time, this value may be overridden at run-time based on other deployment requirements or constraints.
+      required: true
+      constraints:
+        - greater_or_equal: 0
+        - less_or_equal: 65535
+      default: 0
+    port_range_max:
+      type: integer
+      description: Indicates maximum port number in the range that is matched by the security group rule. If a value is provided at design-time, this value may be overridden at run-time based on other deployment requirements or constraints.
+      required: true
+      constraints:
+        - greater_or_equal: 0
+        - less_or_equal: 65535
+      default: 65535
+
+tosca.policies.nfv.NsSecurityGroupRule:
+  derived_from: tosca.policies.nfv.Abstract.SecurityGroupRule
+  description: The NsSecurityGroupRule type is a policy type specified the matching criteria for the ingress and/or egress traffic to/from visited SAPs.
+  targets: [ tosca.nodes.nfv.Sap ]
+
+tosca.policies.nfv.NfpRule:
+  derived_from: tosca.policies.Root
+  description: policy definition of NfpRule
+  properties:
+    ether_destination_address:
+      description: Indicates a destination Mac address.
+      type: string
+      required: false    
+    ether_source_address:
+      description: Indicates a source Mac address.
+      type: string
+      required: false
+    ether_type:
+      description: Indicates the protocol carried over the Ethernet layer.
+      type: string
+      constraints:
+        - valid_values: [ ipv4, ipv6 ]
+      required: false
+    vlan_tag:
+      description: Indicates a VLAN identifier in an IEEE 802.1Q-2014 tag [14]. Multiple tags can be included for QinQ stacking.
+      type: list
+      entry_schema:
+        type: string
+      required: false            
+    protocol:
+      description: 'Indicates the L4 protocol, For IPv4 [15] this corresponds to the field called "Protocol" to identify the next level protocol. For IPv6 [16] this corresponds to the field is called the "Next Header" field. Permitted values: Any keyword defined in the IANA [17] protocol registry.'
+      type: string
+      required: false
+    dscp:
+      description: For IPv4 [15] a string of "0" and "1" digits that corresponds to the 6-bit Differentiated Services Code Point (DSCP) field of the IP header. For IPv6 [16] a string of "0" and "1" digits that corresponds to the 6 differentiated services bits of the traffic class header field.
+      type: string
+      required: false
+    source_port_range:
+      description: Indicates a range of source ports.
+      type: range
+      required: false
+      constraints:
+        - in_range: [0, 65535]
+    destination_port_range:
+      description: Indicates a range of destination ports.
+      type: range
+      required: false
+      constraints:
+        - in_range: [0, 65535]
+    source_ip_address_prefix:
+      description: Indicates the source IP address range in CIDR format.
+      type: string
+      required: false   
+    destination_ip_address_prefix:
+      description: Indicates the destination IP address range in CIDR format.
+      type: string
+      required: false
+    extended_criteria:
+      description: Indicates values of specific bits in a frame.
+      type: list
+      entry_schema:
+        type: tosca.datatypes.nfv.Mask
+      required: false
+  targets: [ tosca.nodes.nfv.NFP ]
+
+tosca.policies.nfv.NsMonitoring:
+  derived_from: tosca.policies.Root
+  description: Policy type is used to identify information to be monitored during the lifetime of a network service instance as defined in ETSI GS NFV-IFA 014 [2].
+  properties:
+    ns_monitoring_parameters:
+      type: list
+      description: Specifies a virtualised resource related performance metric to be monitored on the NS level.
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.NsMonitoringParameter
+      constraints:
+        - min_length: 1
+  targets: [ tosca.nodes.nfv.NS ]
+
+tosca.policies.nfv.VnfMonitoring:
+  derived_from: tosca.policies.Root
+  description: Policy type is used to identify information to be monitored during the lifetime of a VNF instance as defined in ETSI GS NFV-IFA 014 [2].
+  properties:
+    vnf_monitoring_parameters:
+      type: list
+      description: Specifies a virtualised resource related performance metric to be monitored on the NS level.
+      required: true
+      entry_schema:
+        type: tosca.datatypes.nfv.VnfMonitoringParameter
+      constraints:
+        - min_length: 1
+  targets: [ tosca.nodes.nfv.VNF ]

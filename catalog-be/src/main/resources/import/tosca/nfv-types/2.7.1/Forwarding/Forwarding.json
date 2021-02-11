@@ -1,0 +1,17 @@
+{
+	"payloadName": "Forwarding.yml",
+	"contactId": "jh0003",
+	"name": "Forwarding",
+	"description": "Forwarding",
+	"resourceIconPath": "network",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+        "vendorName": "ETSI",
+        "vendorRelease": "2.7.1",
+	"tags": ["Forwarding"]
+}
