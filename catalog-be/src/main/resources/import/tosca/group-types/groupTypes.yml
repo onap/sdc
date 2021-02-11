@@ -130,3 +130,24 @@ tosca.groups.nfv.PlacementGroup:
       description: Human readable description of the group
       required: true
   members: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink ]
+tosca.groups.nfv.NsPlacementGroup:
+  derived_from: tosca.groups.Root
+  description: NsPlacementGroup is used for describing the affinity or anti-affinity relationship applicable between VNF instances created using different VNFDs, the Virtual Link instances created using different VLDs or the nested NS instances created using different NSDs when used in a NSD.
+  properties:
+    description:
+      type: string
+      description: Human readable description of the group
+      required: true
+  members: [tosca.nodes.nfv.VNF, tosca.nodes.nfv.NsVirtualLink, tosca.nodes.nfv.NS]
+
+tosca.groups.nfv.VNFFG:
+  derived_from: tosca.groups.Root
+  description: the VNFFG group type describes a topology of the NS or a portion of the NS, and optionally forwarding rules, applicable to the traffic conveyed over this topology
+  properties:
+    description:
+      type: string
+      description: Human readable description of the group
+      required: true
+  members: [ tosca.nodes.nfv.NFP, tosca.nodes.nfv.VNF, tosca.nodes.nfv.NS, tosca.nodes.nfv.NsVirtualLink, tosca.nodes.nfv.NfpPositionElement ]
+
+
