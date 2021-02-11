@@ -22,5 +22,13 @@
   "tosca.groups.nfv.PlacementGroup": {
     "displayName": "NFV PlacementGroup",
     "icon": "group-nfv-placementgroup"
+  },
+  "tosca.groups.nfv.NsPlacementGroup": {
+    "displayName": "NFV NS PlacementGroup",
+    "icon": "group-nfv-placementgroup"
+  },
+  "tosca.groups.nfv.VNFFG": {
+    "displayName": "NFV VNF Forwarding Graph",
+    "icon": "group-nfv-placementgroup"
   }
 }

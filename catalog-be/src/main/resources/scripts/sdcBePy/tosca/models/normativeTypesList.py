@@ -112,11 +112,16 @@ def get_nfv(base_file_location="/"):
                                    "OntPnf",
                                    "PonUni",
                                    "OltNni",
-                                   "OntNni"])
+                                   "OntNni",
+                                   "Sap"])
                                    
 def get_nfv_2_7_1(base_file_location="/"):
     return NormativeTypeCandidate(base_file_location + "nfv-types/2.7.1/",
-                                  ["vduCompute",
+                                  ["NfpPositionElement",
+                                   "NfpPosition",
+                                   "NFP",
+                                   "Forwarding",
+                                   "vduCompute",
                                    "vduVirtualFileStorage",
                                    "vnfExtCp",
                                    "vduCp",
@@ -125,7 +130,8 @@ def get_nfv_2_7_1(base_file_location="/"):
 def get_nfv_3_3_1(base_file_location="/"):
     return NormativeTypeCandidate(base_file_location + "nfv-types/3.3.1/",
                                   ["vduVirtualBlockStorage",
-                                   "VNF"])
+                                   "VNF",
+                                   "NS"])
 
 def get_nfv_4_1_1(base_file_location="/"):
     return NormativeTypeCandidate(base_file_location + "nfv-types/4.1.1/",

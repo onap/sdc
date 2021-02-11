@@ -94,5 +94,37 @@
   "tosca.policies.nfv.AntiAffinityRule": {
     "displayName": "NFV AntiAffinityRule",
     "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.NsAffinityRule": {
+    "displayName": "NFV NsAffinityRule",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.NsAntiAffinityRule": {
+    "displayName": "NFV NsAntiAffinityRule",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.Abstract.SecurityGroupRule": {
+    "displayName": "NFV Abstract SecurityGroupRule",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.Abstract.SecurityGroupRule": {
+    "displayName": "NFV Abstract SecurityGroupRule",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.NsSecurityGroupRule": {
+    "displayName": "NFV NsSecurityGroupRule",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.NfpRule": {
+    "displayName": "NFV NfpRule ",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.NsMonitoring": {
+    "displayName": "NFV NsMonitoring",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.VnfMonitoring": {
+    "displayName": "NFV VnfMonitoring",
+    "icon": "policy-nfv-anti-affinityrule"
   }
 }

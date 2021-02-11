@@ -38,7 +38,7 @@ def run_import_nfv():
     run(nfv_candidate)
 
 def run_import_nfv_2_7_1():
-    nfv_candidate = get_nfv_3_3_1()
+    nfv_candidate = get_nfv_2_7_1()
     run(nfv_candidate)
 
 def run_import_nfv_3_3_1():
@@ -46,7 +46,7 @@ def run_import_nfv_3_3_1():
     run(nfv_candidate)
 
 def run_import_nfv_4_1_1():
-    nfv_candidate = get_nfv_3_3_1()
+    nfv_candidate = get_nfv_4_1_1()
     run(nfv_candidate)
 
 def run_import_onap():
