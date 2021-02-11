@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+node_types:
+  tosca.nodes.nfv.Forwarding:
+    derived_from: tosca.nodes.Root
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.nfv.VirtualLinkable
+      forwarding:
+        type: tosca.capabilities.nfv.Forwarding
+        occurrences: [ 1, 2 ]  #When the number of occurrences is 1, the ingress and egress traffic is associated to a single VnfExtCp, PnfExtCp or Sap; When the number of occurrences is 2, the ingress VnfExtCp, PnfExtCp or Sap is associated to the first value and the egress VnfExtCp, PnfExtCp or Sap is associated to the second value.
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+

@@ -137,3 +137,8 @@ tosca.relationships.nfv.AttachesTo:
 tosca.relationships.nfv.Vdu.AttachedTo:
   derived_from: tosca.relationships.DependsOn
   valid_target_types: [ tosca.capabilities.nfv.VirtualStorage ]
+
+tosca.relationships.nfv.ForwardTo:
+  derived_from: tosca.relationships.Root
+  valid_target_types: [ tosca.capabilities.nfv.Forwarding ]
+
