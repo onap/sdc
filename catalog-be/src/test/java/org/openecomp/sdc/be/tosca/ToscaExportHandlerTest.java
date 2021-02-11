@@ -37,6 +37,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType.PROPERTY;
 
@@ -46,6 +48,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,6 +75,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.exception.ToscaExportException;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -326,6 +330,45 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // default test
         result = testSubject.getDependencies(component);
         Assert.assertNotNull(result);
+    }
+
+    @Test
+    public void testSetImports() throws Exception {
+        Resource resource = new Resource();
+        resource.setResourceType(ResourceTypeEnum.PNF);
+
+        Component component = resource;
+        component.setName("TestResourceName");
+        Map<String, ArtifactDefinition> artifactList = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("name.name2");
+        artifactList.put("assettoscatemplate", artifact);
+        component.setArtifacts(artifactList);
+        component.setToscaArtifacts(artifactList);
+        ToscaTemplate toscaTemplate = new ToscaTemplate("");
+
+
+        ComponentInstance ci = new ComponentInstance();
+        ci.setComponentUid("name");
+        ci.setOriginType(OriginTypeEnum.PNF);
+        ci.setSourceModelUid("modelName");
+        List<ComponentInstance> componentInstanceList = new LinkedList<>();
+        componentInstanceList.add(ci);
+        component.setComponentInstances(componentInstanceList);
+
+        when(toscaOperationFacade.getToscaFullElement(eq("name"))).thenReturn(Either.left(component));
+
+        Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> result;
+        result = Deencapsulation.invoke(testSubject, "fillImports", component, toscaTemplate);
+
+        verify(toscaOperationFacade, times(1)).getToscaFullElement("name");
+        Assert.assertTrue(result.isLeft());
+        ToscaTemplate toscaTemplateRes = result.left().value().left;
+        Assert.assertTrue(toscaTemplateRes.getImports().size() == 8);
+        Assert.assertNotNull(toscaTemplateRes.getImports().get(6).get("resource-TestResourceName-interface"));
+        Assert.assertNotNull(toscaTemplateRes.getImports().get(7).get("resource-TestResourceName"));
+        Assert.assertTrue(toscaTemplateRes.getDependencies().size() == 1);
+        Assert.assertNotNull(toscaTemplateRes.getDependencies().get(0).getLeft().equals("name.name2"));
     }
 
     @Test
