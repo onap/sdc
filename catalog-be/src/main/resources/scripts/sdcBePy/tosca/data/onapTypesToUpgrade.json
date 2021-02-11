@@ -2,9 +2,14 @@
   "nfv": [
     "allottedResource",
     "NS",
-    "NsVirtualLink"
+    "NsVirtualLink",
+    "Sap"
   ],
   "nfv_2_7_1": [
+    "NfpPositionElement",
+    "NfpPosition",
+    "NFP",
+    "Forwarding",
     "vduCompute",
     "vduVirtualFileStorage",
     "vnfExtCp",
@@ -13,7 +18,8 @@
   ],
   "nfv_3_3_1": [
     "VNF",
-    "vduVirtualBlockStorage"
+    "vduVirtualBlockStorage",
+    "NS"
   ],
   "nfv_4_1_1": [
     "VNF",
