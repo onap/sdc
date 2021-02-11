@@ -561,7 +561,7 @@ public class ToscaExportHandler {
                                   final List<Triple<String, String, Component>> dependencies,
                                   final ComponentInstance componentInstance) {
         log.debug("createDependency componentCache {}", componentCache);
-        final Component componentRI = componentCache.get(componentInstance.getComponentUid());
+        Component componentRI = componentCache.get(componentInstance.getComponentUid());
         if (componentRI == null || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
             // all resource must be only once!
             final Either<Component, StorageOperationStatus> resource = toscaOperationFacade
@@ -572,15 +572,15 @@ public class ToscaExportHandler {
                 return;
             }
             final Component fetchedComponent = resource.left().value();
-            setComponentCache(componentCache, componentInstance, fetchedComponent);
-            addDependencies(imports, dependencies, fetchedComponent);
+            componentRI = setComponentCache(componentCache, componentInstance, fetchedComponent);
+            addDependencies(imports, dependencies, componentRI);
         }
     }
 
     /**
      * Sets a componentCache from the given component/resource.
      */
-    private void setComponentCache(final Map<String, Component> componentCache,
+    private Component setComponentCache(final Map<String, Component> componentCache,
                                    final ComponentInstance componentInstance,
                                    final Component fetchedComponent) {
         componentCache.put(fetchedComponent.getUniqueId(), fetchedComponent);
@@ -593,7 +593,9 @@ public class ToscaExportHandler {
             }
             final Component fetchedSource = sourceService.left().value();
             componentCache.put(fetchedSource.getUniqueId(), fetchedSource);
+            return fetchedSource;
         }
+        return fetchedComponent;
     }
 
     /**
@@ -608,7 +610,7 @@ public class ToscaExportHandler {
 
             final Optional<Map<String, String>> derivedFromMapOfIdToName = getDerivedFromMapOfIdToName(fetchedComponent,
                 componentsList);
-            if (derivedFromMapOfIdToName.isPresent()) {
+            if (derivedFromMapOfIdToName.isPresent() && !derivedFromMapOfIdToName.get().isEmpty()) {
                 derivedFromMapOfIdToName.get().entrySet().forEach(entry -> {
                     log.debug("Started entry.getValue() : {}", entry.getValue());
                     if (!NATIVE_ROOT.equals(entry.getValue())) {
@@ -619,8 +621,11 @@ public class ToscaExportHandler {
                         }
                     }
                 });
+                setImports(imports, dependencies, componentsList);
+            } else {
+                setImports(imports, dependencies, fetchedComponent);
             }
-            setImports(imports, dependencies, componentsList);
+
         }
     }
 
@@ -657,30 +662,33 @@ public class ToscaExportHandler {
     private void setImports(final List<Map<String, Map<String, String>>> imports,
                             final List<Triple<String, String, Component>> dependencies,
                             final Set<Component> componentsList) {
-        componentsList.forEach(component -> {
-            final Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
-            final ArtifactDefinition artifactDefinition = toscaArtifacts.get(ASSET_TOSCA_TEMPLATE);
-            if (artifactDefinition != null) {
-                final Map<String, String> files = new HashMap<>();
-                final String artifactName = artifactDefinition.getArtifactName();
-                files.put(IMPORTS_FILE_KEY, artifactName);
-                final StringBuilder keyNameBuilder = new StringBuilder();
-                keyNameBuilder.append(component.getComponentType().toString().toLowerCase());
-                keyNameBuilder.append("-");
-                keyNameBuilder.append(component.getName());
-                addImports(imports, keyNameBuilder, files);
-                dependencies
-                    .add(new ImmutableTriple<String, String, Component>(artifactName, artifactDefinition.getEsId(),
-                        component));
+        componentsList.forEach(component -> setImports(imports, dependencies, component));
+    }
 
-                if (!ModelConverter.isAtomicComponent(component)) {
-                    final Map<String, String> interfaceFiles = new HashMap<>();
-                    interfaceFiles.put(IMPORTS_FILE_KEY, getInterfaceFilename(artifactName));
-                    keyNameBuilder.append("-interface");
-                    addImports(imports, keyNameBuilder, interfaceFiles);
-                }
+    private void setImports(final List<Map<String, Map<String, String>>> imports,
+                            final List<Triple<String, String, Component>> dependencies,
+                            final Component component) {
+        final Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
+        final ArtifactDefinition artifactDefinition = toscaArtifacts.get(ASSET_TOSCA_TEMPLATE);
+        if (artifactDefinition != null) {
+            final Map<String, String> files = new HashMap<>();
+            final String artifactName = artifactDefinition.getArtifactName();
+            files.put(IMPORTS_FILE_KEY, artifactName);
+            final StringBuilder keyNameBuilder = new StringBuilder();
+            keyNameBuilder.append(component.getComponentType().toString().toLowerCase());
+            keyNameBuilder.append("-");
+            keyNameBuilder.append(component.getName());
+            addImports(imports, keyNameBuilder, files);
+            dependencies
+                    .add(new ImmutableTriple<String, String, Component>(artifactName, artifactDefinition.getEsId(), component));
+
+            if (!ModelConverter.isAtomicComponent(component)) {
+                final Map<String, String> interfaceFiles = new HashMap<>();
+                interfaceFiles.put(IMPORTS_FILE_KEY, getInterfaceFilename(artifactName));
+                keyNameBuilder.append("-interface");
+                addImports(imports, keyNameBuilder, interfaceFiles);
             }
-        });
+        }
     }
 
     /**
