@@ -101,6 +101,7 @@ function putSoftwareProduct({ softwareProduct, version }) {
                 ? softwareProduct.licensingVersion
                 : undefined,
             icon: softwareProduct.icon,
+            licenseType: softwareProduct.licenseType,
             licensingData: getLicensingData(softwareProduct.licensingData)
         }
     );

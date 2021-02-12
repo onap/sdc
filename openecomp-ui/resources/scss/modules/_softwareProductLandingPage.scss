@@ -97,7 +97,7 @@
                         margin-right: 0;
                     }
                     .software-product-landing-view-top-block-col-upl {
-                        height: 215px;
+                        height: 225px;
                         width: initial;
                     }
                 }
@@ -132,7 +132,7 @@
                     }
                     border: 1px solid $light-gray;
                     padding: 20px 18px 0 18px;
-                    height: 215px;
+                    height: 225px;
                     display: flex;
                     justify-content: space-between;
                     background-color: $white;
@@ -161,7 +161,7 @@
 
                 .software-product-landing-view-top-block-col-upl {
                     @extend .flex;
-                    height: 215px;
+                    height: 225px;
                     text-align: center;
                     flex-direction: column;
                     justify-content: center;
@@ -218,6 +218,10 @@
                 }
             }
         }
+    }
+    .licenceLabel {
+        float: right;
+        margin-left: 5px;
     }
 }
 
