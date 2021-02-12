@@ -25,6 +25,7 @@ import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -168,6 +169,7 @@ public class InputsServletTest extends JerseyTest {
         InputsServlet inputsServlet = new InputsServlet(userBusinessLogic, inputsBusinessLogic,
             componentInstanceBL, componentsUtils,
             servletUtils, resourceImportManager, dataTypeBusinessLogic);
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         ResourceConfig resourceConfig = new ResourceConfig()
             .register(inputsServlet)
             .register(new ComponentExceptionMapper(componentsUtils))

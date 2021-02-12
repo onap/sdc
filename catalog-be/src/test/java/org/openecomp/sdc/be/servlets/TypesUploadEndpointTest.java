@@ -33,6 +33,7 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -129,6 +130,7 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
 
     @Override
     protected ResourceConfig configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure(TypesUploadEndpointTest.TypesUploadTestConfig.class)
                 .register(TypesUploadEndpoint.class)
                 .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "WARNING");

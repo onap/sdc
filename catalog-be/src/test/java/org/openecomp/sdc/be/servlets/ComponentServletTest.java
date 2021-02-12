@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.servlets;
 
 import fj.data.Either;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -65,6 +66,7 @@ public class ComponentServletTest extends JerseySpringBaseTest{
 
     @Override
     protected ResourceConfig configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         resourceBusinessLogic = mock(ResourceBusinessLogic.class);
         UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
         ComponentsUtils componentsUtils = mock(ComponentsUtils.class);

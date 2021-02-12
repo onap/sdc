@@ -64,6 +64,8 @@ import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.UserValidations;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
@@ -82,6 +84,9 @@ import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -112,7 +117,7 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
     private static ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
     private static ResponseFormat responseFormat;
     private static UserValidations userValidations;
-
+    private static ConfigurationManager configurationManager;
     private CINodeFilterDataDefinition ciNodeFilterDataDefinition;
     private UIConstraint uiConstraint;
     private String constraint;
@@ -130,6 +135,13 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         when(request.getHeader("USER_ID")).thenReturn(USER_ID);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
+        String appConfigDir = "src/test/resources/config/catalog-be";
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        configurationManager = new ConfigurationManager(configurationSource);
+        org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
+        configuration.setJanusGraphInMemoryGraph(true);
+        configurationManager.setConfiguration(configuration);
+        ExternalConfiguration.setAppName("catalog-be");
     }
 
     @BeforeEach
