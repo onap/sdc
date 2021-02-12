@@ -17,9 +17,13 @@
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.util.Collections;
 import org.junit.Test;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.LicenseType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
 
 /**
@@ -64,5 +68,22 @@ public class MapVspDescriptionDtoToVspDetailsTest {
         assertEquals(icon, target.getIcon());
         assertEquals(vendorName, target.getVendorName());
         assertEquals(vendorId, target.getVendorId());
+    }
+
+    @Test
+    public void testLicenceTypeMapping() {
+        final VspDescriptionDto source = new VspDescriptionDto();
+        LicensingData licensingData = new LicensingData();
+        licensingData.setLicenseAgreement("testLicenseAgreement");
+        licensingData.setFeatureGroups(Collections.emptyList());
+        source.setLicenseType(LicenseType.external);
+        source.setLicensingData(licensingData);
+
+        final VspDetails target = new VspDetails();
+        final MapVspDescriptionDtoToVspDetails mapper = new MapVspDescriptionDtoToVspDetails();
+        mapper.doMapping(source, target);
+        assertEquals(LicenseType.external.name(), target.getLicenseType());
+        assertNull(target.getLicenseAgreement());
+        assertNull(target.getFeatureGroups());
     }
 }
