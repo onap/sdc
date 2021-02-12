@@ -28,6 +28,7 @@ import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -171,7 +172,7 @@ public class ElementServletTest extends JerseyTest {
 
 		when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
 
-		String appConfigDir = "src/test/resources/config";
+		String appConfigDir = "src/test/resources/config/catalog-be";
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 		configurationManager = new ConfigurationManager(configurationSource);
 
@@ -1051,6 +1052,7 @@ public class ElementServletTest extends JerseyTest {
 	@Override
 	protected Application configure() {
 		ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+		forceSet(TestProperties.CONTAINER_PORT, "0");
 		return new ResourceConfig(ElementServlet.class)
 				.register(new AbstractBinder() {
 

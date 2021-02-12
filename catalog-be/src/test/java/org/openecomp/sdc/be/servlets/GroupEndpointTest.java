@@ -28,6 +28,7 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonP
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -141,6 +142,7 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
 
     @Override
     protected ResourceConfig configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure(GroupEndpointTestConfig.class)
                 .register(GroupEndpoint.class)
                 .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "WARNING");

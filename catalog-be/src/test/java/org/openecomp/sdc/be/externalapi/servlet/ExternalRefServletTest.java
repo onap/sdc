@@ -346,7 +346,7 @@ public class ExternalRefServletTest extends JerseyTest {
         when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
-        String appConfigDir = "src/test/resources/config";
+        String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 

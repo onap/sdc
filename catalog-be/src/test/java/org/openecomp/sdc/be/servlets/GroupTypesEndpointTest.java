@@ -28,6 +28,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -142,6 +143,7 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
     @Override
     protected ResourceConfig configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure(GroupTypesTestConfig.class)
                 .register(GroupTypesEndpoint.class);
     }
