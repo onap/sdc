@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.Path;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,8 +47,10 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -86,7 +87,7 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * The test suite designed for test functionality of ComponentInstanceServlet class
  */
-public class ComponentInstanceServletTest extends JerseyTest {
+class ComponentInstanceServletTest extends JerseyTest {
 
     private final static String USER_ID = "jh0003";
     private static HttpServletRequest request;
@@ -105,7 +106,7 @@ public class ComponentInstanceServletTest extends JerseyTest {
     private static ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
     private static ConfigurationManager configurationManager;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         createMocks();
         stubMethods();
@@ -118,47 +119,61 @@ public class ComponentInstanceServletTest extends JerseyTest {
         ExternalConfiguration.setAppName("catalog-be");
     }
 
+    @BeforeEach
+    public void before() throws Exception {
+        super.setUp();
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
     @Test
-    public void testGetRelationByIdSuccess(){
+    void testGetRelationByIdSuccess() {
 
         String containerComponentType = "resources";
         String componentId = "componentId";
         String relationId = "relationId";
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/" + relationId + "/relationId";
-        Either<RequirementCapabilityRelDef, ResponseFormat> successResponse = Either.left(new RequirementCapabilityRelDef());
-        when(componentInstanceBusinessLogic.getRelationById(eq(componentId), eq(relationId), eq(USER_ID), eq(ComponentTypeEnum.RESOURCE))).thenReturn(successResponse);
+        Either<RequirementCapabilityRelDef, ResponseFormat> successResponse = Either
+            .left(new RequirementCapabilityRelDef());
+        when(componentInstanceBusinessLogic
+            .getRelationById(eq(componentId), eq(relationId), eq(USER_ID), eq(ComponentTypeEnum.RESOURCE)))
+            .thenReturn(successResponse);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID)
-                .get( Response.class);
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .get(Response.class);
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
 
     @Test
-    public void testGetRelationByIdFailure(){
+    void testGetRelationByIdFailure() {
 
         String containerComponentType = "unknown_type";
         String componentId = "componentId";
         String relationId = "relationId";
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/" + relationId + "/relationId";
         when(responseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST_400);
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.UNSUPPORTED_ERROR), eq(containerComponentType))).thenReturn(responseFormat);
+        when(componentsUtils.getResponseFormat(eq(ActionStatus.UNSUPPORTED_ERROR), eq(containerComponentType)))
+            .thenReturn(responseFormat);
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID)
-                .get( Response.class);
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .get(Response.class);
 
-        assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST_400);
+        assertEquals(HttpStatus.BAD_REQUEST_400, response.getStatus());
     }
 
     @Test
-    public void testBatchDeleteResourceInstancesSuccess() {
+    void testBatchDeleteResourceInstancesSuccess() {
 
         String componentId = "componentId";
         String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
@@ -179,23 +194,23 @@ public class ComponentInstanceServletTest extends JerseyTest {
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         Either<String[], ResponseFormat> convertStatusEither = Either.left(delCompIds);
         when(componentsUtils
-                .convertJsonToObjectUsingObjectMapper(anyString(), any(User.class), ArgumentMatchers.<Class<String[]>>any(),
-                        nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class))).thenReturn(convertStatusEither);
+            .convertJsonToObjectUsingObjectMapper(anyString(), any(User.class), ArgumentMatchers.<Class<String[]>>any(),
+                nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class))).thenReturn(convertStatusEither);
         when(componentInstanceBusinessLogic
-                .batchDeleteComponentInstance(eq(containerComponentType), eq(componentId), any(List.class),
-                        eq(USER_ID))).thenReturn(Mockito.mock(Map.class));
+            .batchDeleteComponentInstance(eq(containerComponentType), eq(componentId), any(List.class),
+                eq(USER_ID))).thenReturn(Mockito.mock(Map.class));
 
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID)
-                .post(Entity.json(compInsts));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .post(Entity.json(compInsts));
 
         assertEquals(HttpStatus.OK_200, response.getStatus());
     }
 
     @Test
-    public void testBatchDeleteResourceInstancesFailure() {
+    void testBatchDeleteResourceInstancesFailure() {
 
         String componentId = "componentId";
         String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
@@ -205,16 +220,16 @@ public class ComponentInstanceServletTest extends JerseyTest {
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
 
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID)
-                .post(Entity.json(""));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .post(Entity.json(""));
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
     }
 
     @Test
-    public void testBatchDissociateRIFromRISuccess() {
+    void testBatchDissociateRIFromRISuccess() {
 
         String componentId = "componentId";
         String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
@@ -227,24 +242,24 @@ public class ComponentInstanceServletTest extends JerseyTest {
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         Either<RequirementCapabilityRelDef[], ResponseFormat> convertReqEither = Either.left(refs);
         when(componentsUtils.convertJsonToObjectUsingObjectMapper(anyString(), any(User.class),
-                ArgumentMatchers.<Class<RequirementCapabilityRelDef[]>>any(),
-                nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class))).thenReturn(convertReqEither);
+            ArgumentMatchers.<Class<RequirementCapabilityRelDef[]>>any(),
+            nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class))).thenReturn(convertReqEither);
         RequirementCapabilityRelDef actionResponseEither = ref;
         when(componentInstanceBusinessLogic
-                .dissociateRIFromRI(componentId, USER_ID, ref, ComponentTypeEnum.findByParamName(containerComponentType)))
-                .thenReturn(actionResponseEither);
+            .dissociateRIFromRI(componentId, USER_ID, ref, ComponentTypeEnum.findByParamName(containerComponentType)))
+            .thenReturn(actionResponseEither);
 
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID)
-                .put(Entity.json(refs));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .put(Entity.json(refs));
 
         assertEquals(HttpStatus.OK_200, response.getStatus());
     }
 
     @Test
-    public void testBatchDissociateRIFromRIFailure() {
+    void testBatchDissociateRIFromRIFailure() {
 
         String componentId = "componentId";
         String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
@@ -254,10 +269,10 @@ public class ComponentInstanceServletTest extends JerseyTest {
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
 
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID)
-                .put(Entity.json(""));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .put(Entity.json(""));
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
     }
@@ -267,21 +282,21 @@ public class ComponentInstanceServletTest extends JerseyTest {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         return new ResourceConfig(ComponentInstanceServlet.class)
-                .register(new AbstractBinder() {
-                    @Override
-                    protected void configure() {
-                        bind(request).to(HttpServletRequest.class);
-                        bind(userBusinessLogic).to(UserBusinessLogic.class);
-                        bind(groupBusinessLogic).to(GroupBusinessLogic.class);
-                        bind(componentInstanceBusinessLogic).to(ComponentInstanceBusinessLogic.class);
-                        bind(componentsUtils).to(ComponentsUtils.class);
-                        bind(servletUtils).to(ServletUtils.class);
-                        bind(resourceImportManager).to(ResourceImportManager.class);
-                        bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
-                        bind(componentNodeFilterBusinessLogic).to(ComponentNodeFilterBusinessLogic.class);
-                    }
-                })
-                .property("contextConfig", context);
+            .register(new AbstractBinder() {
+                @Override
+                protected void configure() {
+                    bind(request).to(HttpServletRequest.class);
+                    bind(userBusinessLogic).to(UserBusinessLogic.class);
+                    bind(groupBusinessLogic).to(GroupBusinessLogic.class);
+                    bind(componentInstanceBusinessLogic).to(ComponentInstanceBusinessLogic.class);
+                    bind(componentsUtils).to(ComponentsUtils.class);
+                    bind(servletUtils).to(ServletUtils.class);
+                    bind(resourceImportManager).to(ResourceImportManager.class);
+                    bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
+                    bind(componentNodeFilterBusinessLogic).to(ComponentNodeFilterBusinessLogic.class);
+                }
+            })
+            .property("contextConfig", context);
     }
 
     private static void createMocks() {
@@ -304,21 +319,23 @@ public class ComponentInstanceServletTest extends JerseyTest {
     private static void stubMethods() {
         when(request.getSession()).thenReturn(session);
         when(session.getServletContext()).thenReturn(servletContext);
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
+        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
+            .thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
-        when(webApplicationContext.getBean(ComponentInstanceBusinessLogic.class)).thenReturn(componentInstanceBusinessLogic);
+        when(webApplicationContext.getBean(ComponentInstanceBusinessLogic.class))
+            .thenReturn(componentInstanceBusinessLogic);
         when(request.getHeader("USER_ID")).thenReturn(USER_ID);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
     }
 
     @Test
-    public void testUpdateResourceInstancePropertiesSuccess(){
+    void testUpdateResourceInstancePropertiesSuccess() {
 
         String containerComponentType = "services";
         String componentId = "componentId";
         String resourceInstanceId = "resourceInstanceId";
-        ComponentInstanceProperty [] properties = new ComponentInstanceProperty[1];
+        ComponentInstanceProperty[] properties = new ComponentInstanceProperty[1];
         ComponentInstanceProperty property = new ComponentInstanceProperty();
         property.setName("property");
         property.setValue("value");
@@ -332,22 +349,25 @@ public class ComponentInstanceServletTest extends JerseyTest {
             e.printStackTrace();
         }
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance" + "/" +
-                resourceInstanceId + "/properties";
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(propertyJson, new User(), ComponentInstanceProperty[].class,
+            resourceInstanceId + "/properties";
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(propertyJson, new User(), ComponentInstanceProperty[].class,
                 null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(properties));
-        when(componentInstanceBusinessLogic.createOrUpdatePropertiesValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
-                eq(componentId), eq(resourceInstanceId), eq(Arrays.asList(properties)), eq(USER_ID))).thenReturn(Either.left(Arrays.asList(properties)));
+        when(componentInstanceBusinessLogic
+            .createOrUpdatePropertiesValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
+                eq(componentId), eq(resourceInstanceId), eq(Arrays.asList(properties)), eq(USER_ID)))
+            .thenReturn(Either.left(Arrays.asList(properties)));
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID).post(Entity.entity(properties, MediaType.APPLICATION_JSON));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(properties, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
 
     @Test
-    public void testUpdateResourceInstanceInputsSuccess(){
+    void testUpdateResourceInstanceInputsSuccess() {
 
         String containerComponentType = "services";
         String componentId = "componentId";
@@ -366,27 +386,29 @@ public class ComponentInstanceServletTest extends JerseyTest {
             e.printStackTrace();
         }
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance" + "/" +
-                resourceInstanceId + "/inputs";
+            resourceInstanceId + "/inputs";
         when(componentsUtils.convertJsonToObjectUsingObjectMapper(inputJson, new User(), ComponentInstanceInput[].class,
-                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(inputs));
-        when(componentInstanceBusinessLogic.createOrUpdateInstanceInputValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
-                eq(componentId), eq(resourceInstanceId), eq(Arrays.asList(inputs)), eq(USER_ID))).thenReturn(Either.left(Arrays.asList(inputs)));
+            null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(inputs));
+        when(componentInstanceBusinessLogic
+            .createOrUpdateInstanceInputValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
+                eq(componentId), eq(resourceInstanceId), eq(Arrays.asList(inputs)), eq(USER_ID)))
+            .thenReturn(Either.left(Arrays.asList(inputs)));
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID).post(Entity.entity(inputs, MediaType.APPLICATION_JSON));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputs, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
 
     @Test
-    public void testUpdateResourceInstancePropertiesFailure(){
+    void testUpdateResourceInstancePropertiesFailure() {
 
         String containerComponentType = "services";
         String componentId = "componentId";
         String resourceInstanceId = "resourceInstanceId";
-        ComponentInstanceProperty [] properties = new ComponentInstanceProperty[1];
+        ComponentInstanceProperty[] properties = new ComponentInstanceProperty[1];
         ComponentInstanceProperty property = new ComponentInstanceProperty();
         property.setName("property");
         property.setValue("value");
@@ -400,28 +422,30 @@ public class ComponentInstanceServletTest extends JerseyTest {
             e.printStackTrace();
         }
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance" + "/" +
-                resourceInstanceId + "/properties";
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(propertyJson, new User(), ComponentInstanceProperty[].class,
+            resourceInstanceId + "/properties";
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(propertyJson, new User(), ComponentInstanceProperty[].class,
                 null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(properties));
-        when(componentInstanceBusinessLogic.createOrUpdatePropertiesValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
+        when(componentInstanceBusinessLogic
+            .createOrUpdatePropertiesValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
                 eq(componentId), eq(resourceInstanceId), eq(Arrays.asList(properties)), eq(USER_ID)))
-                .thenReturn(Either.right(new ResponseFormat(404)));
+            .thenReturn(Either.right(new ResponseFormat(404)));
         when(responseFormat.getStatus()).thenReturn(HttpStatus.NOT_FOUND_404);
         when(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND)).thenReturn(responseFormat);
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID).post(Entity.entity(properties, MediaType.APPLICATION_JSON));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(properties, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
 
     @Test
-    public void testUpdateResourceInstanceInputsFailure(){
+    void testUpdateResourceInstanceInputsFailure() {
 
         String containerComponentType = "services";
         String componentId = "componentId";
         String resourceInstanceId = "resourceInstanceId";
-        ComponentInstanceInput [] inputs = new ComponentInstanceInput[1];
+        ComponentInstanceInput[] inputs = new ComponentInstanceInput[1];
         ComponentInstanceInput input = new ComponentInstanceInput();
         input.setName("input");
         input.setValue("value");
@@ -435,23 +459,24 @@ public class ComponentInstanceServletTest extends JerseyTest {
             e.printStackTrace();
         }
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance" + "/" +
-                resourceInstanceId + "/inputs";
+            resourceInstanceId + "/inputs";
         when(componentsUtils.convertJsonToObjectUsingObjectMapper(inputJson, new User(), ComponentInstanceInput[].class,
-                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(inputs));
-        when(componentInstanceBusinessLogic.createOrUpdateInstanceInputValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
+            null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(inputs));
+        when(componentInstanceBusinessLogic
+            .createOrUpdateInstanceInputValues(eq(ComponentTypeEnum.findByParamName(SERVICE_PARAM_NAME)),
                 eq(componentId), eq(resourceInstanceId), eq(Arrays.asList(inputs)), eq(USER_ID)))
-                .thenReturn(Either.right(new ResponseFormat(404)));
+            .thenReturn(Either.right(new ResponseFormat(404)));
         when(responseFormat.getStatus()).thenReturn(HttpStatus.NOT_FOUND_404);
         when(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND)).thenReturn(responseFormat);
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID).post(Entity.entity(inputs, MediaType.APPLICATION_JSON));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputs, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
-    
+
     @Test
-    public void testUpdateInstanceRequirement(){
+    void testUpdateInstanceRequirement() {
 
         String containerComponentType = "services";
         String componentId = "componentId";
@@ -467,19 +492,21 @@ public class ComponentInstanceServletTest extends JerseyTest {
             e.printStackTrace();
         }
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/componentInstances/" +
-                componentInstanceId + "/requirement/" + capabilityType + "/requirementName/" + requirementName;
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(eq(requirementJson), any(User.class), eq(RequirementDefinition.class),
-                eq(AuditingActionEnum.GET_TOSCA_MODEL), eq(ComponentTypeEnum.SERVICE))).thenReturn(Either.left(requirementDefinition));
+            componentInstanceId + "/requirement/" + capabilityType + "/requirementName/" + requirementName;
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(eq(requirementJson), any(User.class), eq(RequirementDefinition.class),
+                eq(AuditingActionEnum.GET_TOSCA_MODEL), eq(ComponentTypeEnum.SERVICE)))
+            .thenReturn(Either.left(requirementDefinition));
         when(componentInstanceBusinessLogic.updateInstanceRequirement(ComponentTypeEnum.SERVICE,
-                componentId, componentInstanceId, capabilityType, requirementName, requirementDefinition, USER_ID))
-                .thenReturn(Either.left(requirementDefinition));
+            componentId, componentInstanceId, capabilityType, requirementName, requirementDefinition, USER_ID))
+            .thenReturn(Either.left(requirementDefinition));
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
 
         Response response = target()
-                .path(path)
-                .request(MediaType.APPLICATION_JSON)
-                .header("USER_ID", USER_ID).put(Entity.entity(requirementDefinition, MediaType.APPLICATION_JSON));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).put(Entity.entity(requirementDefinition, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
 }
