@@ -204,7 +204,8 @@ class LicensesSection extends React.Component {
         onLicensingDataChanged: PropTypes.func.isRequired,
         featureGroupsList: PropTypes.array,
         licenseAgreementList: PropTypes.array,
-        isVendorArchived: PropTypes.bool
+        isVendorArchived: PropTypes.bool,
+        licenseType: PropTypes.string
     };
 
     onVendorParamChanged(e) {
@@ -234,7 +235,10 @@ class LicensesSection extends React.Component {
                         onChange={e => this.onVendorParamChanged(e)}
                         value={this.props.licensingVersion || ''}
                         label={i18n('Licensing Version')}
-                        disabled={this.props.isVendorArchived}
+                        disabled={
+                            this.props.isVendorArchived ||
+                            this.props.licenseType !== 'internal'
+                        }
                         type="select">
                         {this.props.licensingVersionsList.map(version => (
                             <option key={version.enum} value={version.enum}>
@@ -248,7 +252,10 @@ class LicensesSection extends React.Component {
                         data-test-id="vsp-license-agreement"
                         label={i18n('License Agreement')}
                         type="select"
-                        disabled={this.props.isVendorArchived}
+                        disabled={
+                            this.props.isVendorArchived ||
+                            this.props.licenseType !== 'internal'
+                        }
                         value={
                             this.props.licensingData.licenseAgreement
                                 ? this.props.licensingData.licenseAgreement
@@ -272,7 +279,10 @@ class LicensesSection extends React.Component {
                             type="select"
                             isMultiSelect={true}
                             onInputChange={() => {}}
-                            disabled={this.props.isVendorArchived}
+                            disabled={
+                                this.props.isVendorArchived ||
+                                this.props.licenseType !== 'internal'
+                            }
                             onEnumChange={featureGroups =>
                                 this.props.onFeatureGroupsChanged({
                                     featureGroups
@@ -466,6 +476,7 @@ class SoftwareProductDetails extends Component {
             vendorId: PropTypes.string,
             vendorName: PropTypes.string,
             licensingVersion: PropTypes.string,
+            licenseType: PropTypes.string,
             licensingData: PropTypes.shape({
                 licenceAgreement: PropTypes.string,
                 featureGroups: PropTypes.array
@@ -527,7 +538,8 @@ class SoftwareProductDetails extends Component {
         let {
             vendorId,
             licensingVersion,
-            licensingData = {}
+            licensingData = {},
+            licenseType
         } = currentSoftwareProduct;
         return {
             onVendorParamChanged: args => this.onVendorParamChanged(args),
@@ -539,7 +551,8 @@ class SoftwareProductDetails extends Component {
             onLicensingDataChanged: args => this.onLicensingDataChanged(args),
             featureGroupsList,
             licenseAgreementList,
-            isVendorArchived
+            isVendorArchived,
+            licenseType
         };
     }
 

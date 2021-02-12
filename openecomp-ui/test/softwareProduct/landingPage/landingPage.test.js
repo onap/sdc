@@ -107,6 +107,34 @@ describe('Software Product Landing Page: ', function () {
 		expect(vspLandingView).toBeTruthy();
 	});
 
+	it('vsp licence agreement type change', () => {
+		const params = {
+			...currentScreen.props,
+			currentSoftwareProduct,
+			componentsList: VSPComponentsFactory.buildList(2)
+		};
+		const e = { target: {
+			value: 'INTERNAL'
+			}};
+		const obj = {dummyFunction: x => true};
+		const store = storeCreator();
+		let vspLandingView = TestUtils.renderIntoDocument(
+			<Provider store={store}>
+				<SoftwareProductLandingPageView {...params}/>
+			</Provider>
+		);
+		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
+			vspLandingView,
+			SoftwareProductLandingPageView
+		);
+		const spy = jest.spyOn(obj, "dummyFunction");
+		vspLandingViewWrapper.licenceChange(e, currentSoftwareProduct, obj.dummyFunction);
+		expect(spy).toHaveBeenCalled();
+		expect(currentSoftwareProduct.licenseType).toBe("INTERNAL");
+		expect(vspLandingViewWrapper).toBeTruthy();
+
+	})
+
 	it('vsp landing handleOnDragEnter test ', () => {
 
 		const params = {

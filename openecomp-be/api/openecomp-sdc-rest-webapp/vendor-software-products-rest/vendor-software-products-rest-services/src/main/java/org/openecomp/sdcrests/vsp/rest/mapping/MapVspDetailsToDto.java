@@ -20,6 +20,8 @@
 
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
+import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.LicenseType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 import org.openecomp.sdcrests.mapping.MappingBase;
@@ -40,7 +42,11 @@ public class MapVspDetailsToDto extends MappingBase<VspDetails, VspDetailsDto> {
     target.setVendorName(source.getVendorName());
     target.setLicensingVersion(
         source.getVlmVersion() == null ? null : source.getVlmVersion().getId());
-
+    if (StringUtils.isNotBlank(source.getLicenseType())) {
+      target.setLicenseType(LicenseType.valueOf(source.getLicenseType()));
+    } else if (StringUtils.isNotBlank(target.getLicensingVersion())){
+      target.setLicenseType(LicenseType.INTERNAL);
+    }
     if (source.getLicenseAgreement() != null || source.getFeatureGroups() != null) {
       LicensingData licensingData = new LicensingData();
       licensingData.setLicenseAgreement(source.getLicenseAgreement());

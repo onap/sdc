@@ -44,6 +44,7 @@ public class VspDetails implements VersionableEntity {
     private String vendorName;
     private String vendorId;
     private Version vlmVersion;
+    private String licenseType;
     private String licenseAgreement;
     private List<String> featureGroups;
     private String onboardingMethod;
