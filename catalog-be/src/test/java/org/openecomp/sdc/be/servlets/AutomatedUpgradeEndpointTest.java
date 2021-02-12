@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,29 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -64,22 +78,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
+class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
-    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationSource configurationSource = new FSConfigurationSource(
+        ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     private static final String RESOURCE_ID_PREV = "prevVF";
@@ -128,12 +130,13 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         UpgradeBusinessLogic upgradeBusinessLogic() {
-            return new UpgradeBusinessLogic(lifecycleBusinessLogic, componentInstanceBusinessLogic, userValidations, toscaOperationFacade, componentsUtils, upgradeOperation,
+            return new UpgradeBusinessLogic(lifecycleBusinessLogic, componentInstanceBusinessLogic, userValidations,
+                toscaOperationFacade, componentsUtils, upgradeOperation,
                 janusGraphDao);
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initClass() {
         lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
         componentInstanceBusinessLogic = mock(ComponentInstanceBusinessLogic.class);
@@ -145,8 +148,9 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
         user = mock(User.class);
     }
 
-    @Before
-    public void init() {
+    @BeforeEach
+    public void init() throws Exception {
+        super.setUp();
         prepareComponents();
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
         when(toscaOperationFacade.getToscaFullElement(eq(RESOURCE_ID_PREV))).thenReturn(Either.left(vfPrev));
@@ -155,20 +159,33 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
         when(toscaOperationFacade.getToscaFullElement(eq(SERVICE_ID_NEW))).thenReturn(Either.left(serviceNew));
 
         Either<Service, ResponseFormat> fromLifeCycle = Either.left(serviceNew);
-        doReturn(fromLifeCycle).when(lifecycleBusinessLogic).changeComponentState(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID_PREV), any(User.class), eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), eq(false),
+        doReturn(fromLifeCycle).when(lifecycleBusinessLogic)
+            .changeComponentState(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID_PREV), any(User.class),
+                eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), eq(false),
                 eq(true));
 
-        when(toscaOperationFacade.getToscaElement(eq(RESOURCE_ID_PREV), any(ComponentParametersView.class))).thenReturn(Either.left(vfPrev));
-        when(componentInstanceBusinessLogic.changeInstanceVersion(any(Service.class), any(ComponentInstance.class), any(ComponentInstance.class), any(User.class), eq(ComponentTypeEnum.SERVICE))).thenReturn(istanceNew);
+        when(toscaOperationFacade.getToscaElement(eq(RESOURCE_ID_PREV), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(vfPrev));
+        when(componentInstanceBusinessLogic
+            .changeInstanceVersion(any(Service.class), any(ComponentInstance.class), any(ComponentInstance.class),
+                any(User.class), eq(ComponentTypeEnum.SERVICE))).thenReturn(istanceNew);
 
-        doReturn(Either.left(serviceNewCheckIn)).when(lifecycleBusinessLogic).changeComponentState(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID_NEW), any(User.class), eq(LifeCycleTransitionEnum.CHECKIN), any(LifecycleChangeInfoWithAction.class),
+        doReturn(Either.left(serviceNewCheckIn)).when(lifecycleBusinessLogic)
+            .changeComponentState(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID_NEW), any(User.class),
+                eq(LifeCycleTransitionEnum.CHECKIN), any(LifecycleChangeInfoWithAction.class),
                 eq(false), eq(true));
 
     }
 
+    @AfterEach
+    void after() throws Exception {
+        super.tearDown();
+    }
+
     @Override
     protected void configureClient(ClientConfig config) {
-        final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         config.register(jacksonJsonProvider);
     }
 
@@ -178,13 +195,14 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
     }
 
     @Test
-    public void upgradeVfInService_success() {
+    void upgradeVfInService_success() {
         List<UpgradeRequest> inputsToUpdate = new ArrayList<>();
         UpgradeRequest request = new UpgradeRequest(SERVICE_ID_PREV);
         inputsToUpdate.add(request);
 
         Invocation.Builder builder = buildAutomatedUpgradeCall(RESOURCE_ID_NEW);
-        UpgradeStatus status = builder.post(Entity.entity(inputsToUpdate, MediaType.APPLICATION_JSON), UpgradeStatus.class);
+        UpgradeStatus status = builder
+            .post(Entity.entity(inputsToUpdate, MediaType.APPLICATION_JSON), UpgradeStatus.class);
 
         assertThat(status.getStatus()).isEqualTo(ActionStatus.OK);
         List<ServiceInfo> expected = new ArrayList<>();
@@ -198,20 +216,25 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
     }
 
     @Test
-    public void upgradeVfInService_IdNotExist() {
+    void upgradeVfInService_IdNotExist() {
         List<UpgradeRequest> inputsToUpdate = new ArrayList<>();
         UpgradeRequest request = new UpgradeRequest(SERVICE_ID_PREV);
         inputsToUpdate.add(request);
         String wrongId = "1234";
-        when(toscaOperationFacade.getToscaFullElement(eq(wrongId))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND))).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
-        String[] variables = { wrongId };
-        ServiceException serviceException = new ServiceException("SVC4063", "Error: Requested '%1' resource was not found.", variables);
+        when(toscaOperationFacade.getToscaFullElement(eq(wrongId)))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND)))
+            .thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
+        String[] variables = {wrongId};
+        ServiceException serviceException = new ServiceException("SVC4063",
+            "Error: Requested '%1' resource was not found.", variables);
         ResponseFormat expected = new ResponseFormat(HttpStatus.NOT_FOUND.value());
         expected.setServiceException(serviceException);
-        when(componentsUtils.getResponseFormatByResource(eq(ActionStatus.RESOURCE_NOT_FOUND), eq(wrongId))).thenReturn(expected);
+        when(componentsUtils.getResponseFormatByResource(eq(ActionStatus.RESOURCE_NOT_FOUND), eq(wrongId)))
+            .thenReturn(expected);
 
-        Response response = buildAutomatedUpgradeCall(wrongId).post(Entity.entity(inputsToUpdate, MediaType.APPLICATION_JSON), Response.class);
+        Response response = buildAutomatedUpgradeCall(wrongId)
+            .post(Entity.entity(inputsToUpdate, MediaType.APPLICATION_JSON), Response.class);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 
         ResponseFormat actual = response.readEntity(ResponseFormat.class);
@@ -221,19 +244,24 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
     }
 
     @Test
-    public void upgradeVfInService_NotHihgestCertified() {
+    void upgradeVfInService_NotHihgestCertified() {
         List<UpgradeRequest> inputsToUpdate = new ArrayList<>();
         UpgradeRequest request = new UpgradeRequest(RESOURCE_ID_PREV);
         inputsToUpdate.add(request);
 
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND))).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
-        String[] variables = { vfPrev.getName() };
-        ServiceException serviceException = new ServiceException("SVC4699", "Error: Component %1 is not highest certified", variables);
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND)))
+            .thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
+        String[] variables = {vfPrev.getName()};
+        ServiceException serviceException = new ServiceException("SVC4699",
+            "Error: Component %1 is not highest certified", variables);
         ResponseFormat expected = new ResponseFormat(HttpStatus.BAD_REQUEST.value());
         expected.setServiceException(serviceException);
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.COMPONENT_IS_NOT_HIHGEST_CERTIFIED), eq(vfPrev.getName()))).thenReturn(expected);
+        when(componentsUtils
+            .getResponseFormat(eq(ActionStatus.COMPONENT_IS_NOT_HIHGEST_CERTIFIED), eq(vfPrev.getName())))
+            .thenReturn(expected);
 
-        Response response = buildAutomatedUpgradeCall(RESOURCE_ID_PREV).post(Entity.entity(inputsToUpdate, MediaType.APPLICATION_JSON), Response.class);
+        Response response = buildAutomatedUpgradeCall(RESOURCE_ID_PREV)
+            .post(Entity.entity(inputsToUpdate, MediaType.APPLICATION_JSON), Response.class);
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
         ResponseFormat actual = response.readEntity(ResponseFormat.class);
@@ -254,7 +282,8 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
 //    }
 
     private Invocation.Builder buildAutomatedUpgradeCall(String id) {
-        return target("/v1/catalog/resources/{id}/automatedupgrade").resolveTemplate("id", id).request(MediaType.APPLICATION_JSON).header(Constants.USER_ID_HEADER, USER_ID);
+        return target("/v1/catalog/resources/{id}/automatedupgrade").resolveTemplate("id", id)
+            .request(MediaType.APPLICATION_JSON).header(Constants.USER_ID_HEADER, USER_ID);
     }
 
     private void prepareComponents() {
@@ -265,7 +294,7 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
 
     private void createService() {
         servicePrev = createService("service1", SERVICE_ID_PREV, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        
+
         ComponentInstance ci = new ComponentInstance();
         ci.setComponentUid(RESOURCE_ID_PREV);
         ci.setName("inst 1");
@@ -277,7 +306,7 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
         serviceNew.setComponentInstances(resourceInstances);
 
         serviceNewCheckIn = createService("service1", SERVICE_ID_NEW, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        
+
         serviceNewCheckIn.setComponentInstances(resourceInstances);
 
         istanceNew = new ComponentInstance();
@@ -285,14 +314,15 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
         istanceNew.setName("inst 1");
 
         serviceProxy = createService("serviceProxy", SERVICE_ID_PROXY, LifecycleStateEnum.CERTIFIED);
-        serviceProxyContainerPrev = createService("serviceProxyContainer", SERVICE_ID_PROXY_PREV, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        serviceProxyContainerNew = createService("serviceProxyContainer", SERVICE_ID_PROXY_NEW, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-       
-        
+        serviceProxyContainerPrev = createService("serviceProxyContainer", SERVICE_ID_PROXY_PREV,
+            LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        serviceProxyContainerNew = createService("serviceProxyContainer", SERVICE_ID_PROXY_NEW,
+            LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
 
     }
 
-    private Service createService(String name, String id, LifecycleStateEnum state){
+    private Service createService(String name, String id, LifecycleStateEnum state) {
         Service service = new Service();
         service.setName(name);
         service.setUniqueId(id);
@@ -300,6 +330,7 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
         service.setHighestVersion(true);
         return service;
     }
+
     private void createVF() {
         vfPrev = new Resource();
         vfPrev.setName("vf1");

@@ -12,10 +12,6 @@
     <version>1.8.1-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <jersey-common.version>2.22.2</jersey-common.version>
-  </properties>
-
   <dependencies>
 
     <dependency>
@@ -74,13 +70,13 @@
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-common</artifactId>
-      <version>${jersey-common.version}</version>
+      <version>${jersey-bom.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-server</artifactId>
-      <version>${jersey-common.version}</version>
+      <version>${jersey-bom.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
