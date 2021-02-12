@@ -145,7 +145,7 @@ public class Configuration extends BasicConfiguration {
 
     private CadiFilterParams cadiFilterParams;
 
-    private Boolean aafAuthNeeded;
+    private Boolean aafAuthNeeded = false;
     private String autoHealingOwner;
     private boolean enableAutoHealing;
     private Map<String, List<String>> resourcesForUpgrade;
