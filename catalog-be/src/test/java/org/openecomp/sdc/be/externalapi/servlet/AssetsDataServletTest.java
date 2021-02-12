@@ -135,7 +135,7 @@ public class AssetsDataServletTest extends JerseyTest {
         Mockito.doReturn(Either.left(resourceAssetMetadata)).when(assetMetadataConverter).convertToSingleAssetMetadata(Mockito.eq(resource), Mockito.anyString(),
                 Mockito.eq(true));
 
-        String appConfigDir = "src/test/resources/config";
+        String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
