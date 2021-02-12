@@ -31,6 +31,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -123,7 +124,7 @@ public class TypesUploadServletTest extends JerseyTest {
     protected ResourceConfig configure() {
 
 
-
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, null, componentUtils,
             servletUtils, null, importManager, null,
             null, null,
