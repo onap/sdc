@@ -84,6 +84,8 @@ public class ElementToVSPGeneralConvertor extends ElementConvertor {
           VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue())));
     }
 
+    vspDetails.setLicenseType(info.getProperty(
+        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_TYPE.getValue()));
     vspDetails.setLicenseAgreement(info.getProperty(
         VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_AGREEMENT.getValue()));
     vspDetails.setFeatureGroups(info.getProperty(

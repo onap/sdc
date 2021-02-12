@@ -18,9 +18,9 @@ package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.LicenseType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 
@@ -68,6 +68,9 @@ public class MapVspDetailsToDtoTest {
         final String onboardingMethod = "b46520ac-e62f-4a24-8f40-ee6e65889bfc";
         source.setOnboardingMethod(onboardingMethod);
 
+        final String licenseType = LicenseType.EXTERNAL.name();
+        source.setLicenseType(licenseType);
+
         final VspDetailsDto target = new VspDetailsDto();
         final MapVspDetailsToDto mapper = new MapVspDetailsToDto();
         mapper.doMapping(source, target);
@@ -83,5 +86,6 @@ public class MapVspDetailsToDtoTest {
         assertEquals(vendorName, target.getVendorName());
         assertEquals(vlmVersionId, target.getLicensingVersion());
         assertEquals(onboardingMethod, target.getOnboardingMethod());
+        assertEquals(LicenseType.EXTERNAL, target.getLicenseType());
     }
 }

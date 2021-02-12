@@ -75,14 +75,32 @@ export const mapStateToProps = ({
     };
 };
 
+function handleScreenChange(softwareProduct, dispatch, version) {
+    const softwareProductId = softwareProduct.id;
+    if (softwareProduct.licenseType === 'INTERNAL') {
+        ScreensHelper.loadScreen(dispatch, {
+            screen: enums.SCREEN.SOFTWARE_PRODUCT_DETAILS,
+            screenType: screenTypes.SOFTWARE_PRODUCT,
+            props: { softwareProductId, version }
+        });
+    } else {
+        ScreensHelper.loadScreen(dispatch, {
+            screen: enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE,
+            screenType: screenTypes.SOFTWARE_PRODUCT,
+            props: { softwareProductId, version }
+        });
+    }
+}
+
 const mapActionsToProps = (dispatch, { version }) => {
     return {
-        onDetailsSelect: ({ id: softwareProductId }) =>
-            ScreensHelper.loadScreen(dispatch, {
-                screen: enums.SCREEN.SOFTWARE_PRODUCT_DETAILS,
-                screenType: screenTypes.SOFTWARE_PRODUCT,
-                props: { softwareProductId, version }
-            }),
+        onLicenseChange: softwareProduct => {
+            SoftwareProductActionHelper.updateSoftwareProductData(dispatch, {
+                softwareProduct,
+                version
+            }).then(() => {});
+            handleScreenChange(softwareProduct, dispatch, version);
+        },
         onCandidateInProcess: softwareProductId =>
             ScreensHelper.loadScreen(dispatch, {
                 screen: enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP,

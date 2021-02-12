@@ -23,7 +23,6 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import VnfRepositorySearchBox from 'nfvo-components/vnfMarketPlace/VnfRepositorySearchBox.jsx';
 
-import { SVGIcon } from 'onap-ui-react';
 import SoftwareProductComponentsList from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponents.js';
 
 const SoftwareProductPropType = PropTypes.shape({
@@ -33,6 +32,7 @@ const SoftwareProductPropType = PropTypes.shape({
     id: PropTypes.string,
     categoryId: PropTypes.string,
     vendorId: PropTypes.string,
+    licenseType: PropTypes.string,
     status: PropTypes.string,
     licensingData: PropTypes.object,
     validationData: PropTypes.object
@@ -57,7 +57,7 @@ class SoftwareProductLandingPageView extends React.Component {
         isReadOnlyMode: PropTypes.bool,
         componentsList: PropTypes.arrayOf(ComponentPropType),
         version: PropTypes.object,
-        onDetailsSelect: PropTypes.func,
+        onLicenseChange: PropTypes.func,
         onUpload: PropTypes.func,
         onUploadConfirmation: PropTypes.func,
         onInvalidFileSizeUpload: PropTypes.func,
@@ -74,13 +74,20 @@ class SoftwareProductLandingPageView extends React.Component {
             onCandidateInProcess(currentSoftwareProduct.id);
         }
     }
+
+    licenceChange = (e, currentSoftwareProduct, onLicenseChange) => {
+        currentSoftwareProduct.licenseType = e.target.value;
+        onLicenseChange(currentSoftwareProduct);
+    };
+
     render() {
         let {
             currentSoftwareProduct,
             isReadOnlyMode,
             isManual,
-            onDetailsSelect
+            onLicenseChange
         } = this.props;
+        let licenceChange = this.licenceChange;
         return (
             <div className="software-product-landing-wrapper">
                 <Dropzone
@@ -106,7 +113,8 @@ class SoftwareProductLandingPageView extends React.Component {
                                     currentSoftwareProduct={
                                         currentSoftwareProduct
                                     }
-                                    onDetailsSelect={onDetailsSelect}
+                                    licenceChange={licenceChange}
+                                    onLicenseChange={onLicenseChange}
                                 />
                                 {this.renderProductDetails(
                                     isManual,
@@ -223,22 +231,23 @@ class SoftwareProductLandingPageView extends React.Component {
     }
 }
 
-const ProductSummary = ({ currentSoftwareProduct, onDetailsSelect }) => {
+const ProductSummary = ({
+    currentSoftwareProduct,
+    licenceChange,
+    onLicenseChange
+}) => {
     let {
         name = '',
         description = '',
         vendorName = '',
-        fullCategoryDisplayName = '',
-        licenseAgreementName = ''
+        fullCategoryDisplayName = ''
     } = currentSoftwareProduct;
     return (
         <div className="details-panel">
             <div className="software-product-landing-view-heading-title">
                 {i18n('Software Product Details')}
             </div>
-            <div
-                className="software-product-landing-view-top-block clickable"
-                onClick={() => onDetailsSelect(currentSoftwareProduct)}>
+            <div className="software-product-landing-view-top-block">
                 <div className="details-container">
                     <div className="single-detail-section title-section">
                         <div className="single-detail-section title-text">
@@ -263,9 +272,11 @@ const ProductSummary = ({ currentSoftwareProduct, onDetailsSelect }) => {
                                 </div>
                                 <div className="description">
                                     <LicenseAgreement
-                                        licenseAgreementName={
-                                            licenseAgreementName
+                                        licenceChange={licenceChange}
+                                        currentSoftwareProduct={
+                                            currentSoftwareProduct
                                         }
+                                        onLicenseChange={onLicenseChange}
                                     />
                                 </div>
                             </div>
@@ -281,16 +292,52 @@ const ProductSummary = ({ currentSoftwareProduct, onDetailsSelect }) => {
     );
 };
 
-const LicenseAgreement = ({ licenseAgreementName }) => {
-    if (!licenseAgreementName) {
-        return (
-            <div className="missing-license">
-                <SVGIcon color="warning" name="exclamationTriangleFull" />
-                <div className="warning-text">{i18n('Missing')}</div>
-            </div>
-        );
-    }
-    return <div>{licenseAgreementName}</div>;
+const LicenseAgreement = ({
+    licenceChange,
+    currentSoftwareProduct,
+    onLicenseChange
+}) => {
+    return (
+        <div className="missing-license">
+            <form>
+                <input
+                    type="radio"
+                    value="INTERNAL"
+                    id="INTERNAL"
+                    onChange={event =>
+                        licenceChange(
+                            event,
+                            currentSoftwareProduct,
+                            onLicenseChange
+                        )
+                    }
+                    checked={currentSoftwareProduct.licenseType === 'INTERNAL'}
+                    name="license"
+                />
+                <div className="description licenceLabel">
+                    {i18n('Internal license')}
+                </div>
+                <br />
+                <input
+                    type="radio"
+                    value="EXTERNAL"
+                    id="EXTERNAL"
+                    onChange={event =>
+                        licenceChange(
+                            event,
+                            currentSoftwareProduct,
+                            onLicenseChange
+                        )
+                    }
+                    checked={currentSoftwareProduct.licenseType === 'EXTERNAL'}
+                    name="license"
+                />
+                <div className="description licenceLabel">
+                    {i18n('External license')}
+                </div>
+            </form>
+        </div>
+    );
 };
 
 export default SoftwareProductLandingPageView;
