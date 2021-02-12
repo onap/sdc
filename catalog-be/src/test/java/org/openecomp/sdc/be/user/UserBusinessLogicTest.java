@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,25 @@
 
 package org.openecomp.sdc.be.user;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Lists;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedEdge;
@@ -46,30 +63,11 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 import org.openecomp.sdc.common.datastructure.UserContext;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserBusinessLogicTest {
@@ -95,7 +93,8 @@ public class UserBusinessLogicTest {
     @Before
     public void setUp() {
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
-        doThrow(new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR)).when(componentsUtils).auditAdminUserActionAndThrowException(any(), any(), any(), any(), any(), any());
+        doThrow(new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR)).when(componentsUtils)
+            .auditAdminUserActionAndThrowException(any(), any(), any(), any(), any(), any());
     }
 
     @Test(expected = ComponentException.class)
@@ -110,6 +109,7 @@ public class UserBusinessLogicTest {
 
     @Test(expected = ComponentException.class)
     public void testGetUserContextNull() {
+        ThreadLocalsHolder.setUserContext(null);
         testSubject.getUser("userId");
     }
 
@@ -127,7 +127,7 @@ public class UserBusinessLogicTest {
         String userId = "userId";
         Set<String> userRoles = new HashSet<>();
         userRoles.add(Role.DESIGNER.name());
-        UserContext userContext = new UserContext(userId, userRoles, "test" ,"User");
+        UserContext userContext = new UserContext(userId, userRoles, "test", "User");
 
         User user = new User();
         user.setUserId(userId);
@@ -144,8 +144,7 @@ public class UserBusinessLogicTest {
             ThreadLocalsHolder.setUserContext(userContext);
             User convertedUser = testSubject.getUser(userId);
             assertThat(convertedUser).isEqualTo(user);
-        }
-        finally {
+        } finally {
             ThreadLocalsHolder.setUserContext(originalUserContext);
         }
     }
@@ -156,7 +155,7 @@ public class UserBusinessLogicTest {
         String userId = "userId";
         //Set<String> userRoles = new HashSet<>();
         //userRoles.add(Role.DESIGNER.name());
-        UserContext userContext = new UserContext(userId, null, "test" ,"User");
+        UserContext userContext = new UserContext(userId, null, "test", "User");
 
         User user = new User();
         user.setUserId(userId);
@@ -280,7 +279,7 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation).updateUserCache(UserOperationEnum.CREATE, newUser.getUserId(), newUser.getRole());
     }
 
-    @Test(expected =  ComponentException.class)
+    @Test(expected = ComponentException.class)
     public void testUpdateUserRoleNotFound() {
         User modifier = new User(MOCK_MODIFIER);
         String userIdToUpdate = "";
@@ -292,7 +291,7 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
-    @Test(expected =  ComponentException.class)
+    @Test(expected = ComponentException.class)
     public void testUpdateUserRoleModifierWrongRole() {
         User modifier = new User(MOCK_MODIFIER);
         modifier.setRole(UserRoleEnum.DESIGNER.getName());
@@ -305,7 +304,7 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
-    @Test(expected =  ComponentException.class)
+    @Test(expected = ComponentException.class)
     public void testUpdateUserRoleSameId() {
         User modifier = new User(MOCK_MODIFIER);
         modifier.setRole(UserRoleEnum.ADMIN.getName());
@@ -317,7 +316,7 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
-    @Test(expected =  ComponentException.class)
+    @Test(expected = ComponentException.class)
     public void testUpdateUserRoleUpdatedNotFound() {
         User modifier = new User(MOCK_MODIFIER);
         modifier.setRole(UserRoleEnum.ADMIN.getName());
@@ -332,7 +331,7 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
-    @Test(expected =  ComponentException.class)
+    @Test(expected = ComponentException.class)
     public void testUpdateUserRoleUpdatedToInvalidRole() {
         User modifier = new User(MOCK_MODIFIER);
         modifier.setRole(UserRoleEnum.ADMIN.getName());
@@ -347,7 +346,7 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
-    @Test(expected =  StorageException.class)
+    @Test(expected = StorageException.class)
     public void testUpdateUserRolePendingTaskFetchFailed() {
         User modifier = new User(MOCK_MODIFIER);
         modifier.setRole(UserRoleEnum.ADMIN.getName());
@@ -360,7 +359,8 @@ public class UserBusinessLogicTest {
 
         when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
         when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
-        when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenThrow(new StorageException(StorageOperationStatus.INCONSISTENCY));
+        when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any()))
+            .thenThrow(new StorageException(StorageOperationStatus.INCONSISTENCY));
 
         // default test
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
@@ -394,7 +394,7 @@ public class UserBusinessLogicTest {
         verify(facadeUserOperation).updateUserCache(UserOperationEnum.CHANGE_ROLE, userIdToUpdate, UserRoleEnum.TESTER.name());
     }
 
-    @Test(expected =  ComponentException.class)
+    @Test(expected = ComponentException.class)
     public void testUpdateDesignerRoleListOfTasksNotEmpty_shouldFail() {
         User modifier = new User(MOCK_MODIFIER);
         modifier.setRole(UserRoleEnum.ADMIN.getName());
@@ -412,13 +412,13 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
         List<Edge> list = new LinkedList<>();
         list.add(new DetachedEdge("sdas", "fdfs", new HashMap<>(), Pair.with("sadas", "sadasd"), "",
-                Pair.with("sadas", "sadasd"), ""));
+            Pair.with("sadas", "sadasd"), ""));
         testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
 
         verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
     }
 
-    @Test(expected =  StorageException.class)
+    @Test(expected = StorageException.class)
     public void testUpdateUserRoleStorageError_shouldFail() {
         User modifier = new User(MOCK_MODIFIER);
         modifier.setRole(UserRoleEnum.ADMIN.getName());
@@ -478,7 +478,7 @@ public class UserBusinessLogicTest {
     public void testGetAllAdminUsers() {
         Either<List<User>, ActionStatus> response = Either.left(new LinkedList<>());
         when(userAdminOperation.getAllUsersWithRole(anyString(), Mockito.nullable(String.class)))
-                .thenReturn(response);
+            .thenReturn(response);
         assertEquals(0, testSubject.getAllAdminUsers().size());
     }
 
@@ -486,7 +486,7 @@ public class UserBusinessLogicTest {
     public void testGetAllAdminUsersFail() {
         Either<List<User>, ActionStatus> response = Either.right(ActionStatus.NOT_ALLOWED);
         when(userAdminOperation.getAllUsersWithRole(anyString(), Mockito.nullable(String.class)))
-                .thenReturn(response);
+            .thenReturn(response);
         testSubject.getAllAdminUsers();
     }
 
@@ -528,7 +528,7 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
         Either<List<User>, ActionStatus> value = Either.left(new LinkedList<>());
         when(userAdminOperation.getAllUsersWithRole(Mockito.nullable(String.class), anyString()))
-                .thenReturn(value);
+            .thenReturn(value);
 
         assertEquals(0, testSubject.getUsersList(modifierAttId, roles, rolesStr).size());
     }
@@ -564,7 +564,7 @@ public class UserBusinessLogicTest {
         when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
         Either<List<User>, ActionStatus> value = Either.left(new LinkedList<>());
         when(userAdminOperation.getAllUsersWithRole(Mockito.nullable(String.class), anyString()))
-                .thenReturn(value);
+            .thenReturn(value);
 
         assertEquals(0, testSubject.getUsersList(modifierAttId, roles, rolesStr).size());
     }
@@ -659,13 +659,13 @@ public class UserBusinessLogicTest {
 
         when(userAdminOperation.updateUserData(Mockito.any(User.class))).thenReturn(updatedUserCred);
         assertEquals(updatedUserCred.getUserId(),
-                testSubject.updateUserCredentials(updatedUserCred).left().value().getUserId());
+            testSubject.updateUserCredentials(updatedUserCred).left().value().getUserId());
     }
 
     @Test
     public void getUsersPerRoleWhenListIsEmpty() {
         when(userAdminOperation.getAllUsersWithRole(any(), any()))
-                .thenReturn(Either.left(Lists.newArrayList()));
+            .thenReturn(Either.left(Lists.newArrayList()));
         assertEquals(0, testSubject.getUsersPerRole("all", user, "").left().value().size());
     }
 
@@ -675,7 +675,7 @@ public class UserBusinessLogicTest {
         when(user.getUserId()).thenReturn("123");
         when(userNull.getUserId()).thenReturn(null);
         when(userAdminOperation.getAllUsersWithRole(any(), any()))
-                .thenReturn(Either.left(users));
+            .thenReturn(Either.left(users));
         List<User> result = testSubject.getUsersPerRole("all", user, "").left().value();
 
         assertEquals(1, result.size());
@@ -687,7 +687,7 @@ public class UserBusinessLogicTest {
         List<User> users = Lists.newArrayList(user, user);
         when(user.getUserId()).thenReturn("123");
         when(userAdminOperation.getAllUsersWithRole(any(), any()))
-                .thenReturn(Either.left(users));
+            .thenReturn(Either.left(users));
         List<User> result = testSubject.getUsersPerRole("all", user, "").left().value();
 
         assertEquals(2, result.size());
@@ -699,7 +699,7 @@ public class UserBusinessLogicTest {
         List<User> users = Lists.newArrayList(userNull);
         when(userNull.getUserId()).thenReturn(null);
         when(userAdminOperation.getAllUsersWithRole(any(), any()))
-                .thenReturn(Either.left(users));
+            .thenReturn(Either.left(users));
         List<User> result = testSubject.getUsersPerRole("all", user, "").left().value();
 
         assertEquals(0, result.size());
@@ -713,7 +713,7 @@ public class UserBusinessLogicTest {
             String userId = "mock";
             Set<String> userRoles = new HashSet<>();
             userRoles.add(Role.DESIGNER.name());
-            UserContext userContext = new UserContext(userId, userRoles, "test" ,"User");
+            UserContext userContext = new UserContext(userId, userRoles, "test", "User");
             ThreadLocalsHolder.setUserContext(userContext);
 
             assertThat(testSubject.hasActiveUser(userId)).isTrue();
@@ -729,7 +729,7 @@ public class UserBusinessLogicTest {
             originalUserContext = ThreadLocalsHolder.getUserContext();
             String userId = "mock";
             Set<String> userRoles = new HashSet<>();
-            UserContext userContext = new UserContext(userId, userRoles, "test" ,"User");
+            UserContext userContext = new UserContext(userId, userRoles, "test", "User");
             ThreadLocalsHolder.setUserContext(userContext);
 
             assertThat(testSubject.hasActiveUser(userId)).isFalse();

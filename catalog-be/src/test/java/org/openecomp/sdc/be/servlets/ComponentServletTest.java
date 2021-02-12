@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,25 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.Collections;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.PolicyDefinitionBuilder;
@@ -37,19 +49,7 @@ import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Collections;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-public class ComponentServletTest extends JerseySpringBaseTest{
+class ComponentServletTest extends JerseySpringBaseTest {
 
     private static final String USER_ID = "userId";
     private static final String RESOURCE_ID = "resourceId";
@@ -57,11 +57,16 @@ public class ComponentServletTest extends JerseySpringBaseTest{
     private PolicyDefinition policy1, policy2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         policy1 = buildPolicy("p1");
         policy2 = buildPolicy("p2");
+    }
+
+    @AfterEach
+    void after() throws Exception {
+        super.tearDown();
     }
 
     @Override
@@ -70,26 +75,29 @@ public class ComponentServletTest extends JerseySpringBaseTest{
         resourceBusinessLogic = mock(ResourceBusinessLogic.class);
         UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
         ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-        ComponentServlet componentServlet = new ComponentServlet(userBusinessLogic, componentsUtils, new ComponentBusinessLogicProvider(resourceBusinessLogic, null, null));
+        ComponentServlet componentServlet = new ComponentServlet(userBusinessLogic, componentsUtils,
+            new ComponentBusinessLogicProvider(resourceBusinessLogic, null, null));
         return super.configure().register(componentServlet);
     }
 
     @Test
-    public void filterDataByParam_getPolicies_returnOnlyNameTargetsAndIdFields() {
+    void filterDataByParam_getPolicies_returnOnlyNameTargetsAndIdFields() {
         UiComponentDataTransfer dataTransfer = buildDataTransferWithPolicies();
-        when(resourceBusinessLogic.getComponentDataFilteredByParams(eq(RESOURCE_ID.toLowerCase()), any(User.class), eq(Collections.singletonList("policies")))).thenReturn(Either.left(dataTransfer));
+        when(resourceBusinessLogic.getComponentDataFilteredByParams(eq(RESOURCE_ID.toLowerCase()), any(User.class),
+            eq(Collections.singletonList("policies")))).thenReturn(Either.left(dataTransfer));
         UiComponentDataTransfer uiComponentDataTransfer = buildGetPolicyTypesCall().get(UiComponentDataTransfer.class);
         assertThat(uiComponentDataTransfer.getPolicies())
-                .usingElementComparatorOnFields("name", "uniqueId", "targets")
-                .containsExactlyInAnyOrder(policy1, policy2)
-                .extracting("properties")//properties is not returned in the response
-                .containsExactly(null, null);
+            .usingElementComparatorOnFields("name", "uniqueId", "targets")
+            .containsExactlyInAnyOrder(policy1, policy2)
+            .extracting("properties")//properties is not returned in the response
+            .containsExactly(null, null);
     }
 
     @Test
-    public void filterDataByParam_getPolicies_policyTypeNameFieldShouldReturnAsType() {
+    void filterDataByParam_getPolicies_policyTypeNameFieldShouldReturnAsType() {
         UiComponentDataTransfer dataTransfer = buildDataTransferWithPolicies();
-        when(resourceBusinessLogic.getComponentDataFilteredByParams(eq(RESOURCE_ID.toLowerCase()), any(User.class), eq(Collections.singletonList("policies")))).thenReturn(Either.left(dataTransfer));
+        when(resourceBusinessLogic.getComponentDataFilteredByParams(eq(RESOURCE_ID.toLowerCase()), any(User.class),
+            eq(Collections.singletonList("policies")))).thenReturn(Either.left(dataTransfer));
         Response uiComponentDataTransfer = buildGetPolicyTypesCall().get();
         verifyPolicyTypeFieldUsingJsonResponse(uiComponentDataTransfer);
     }
@@ -112,22 +120,22 @@ public class ComponentServletTest extends JerseySpringBaseTest{
 
     private PolicyDefinition buildPolicy(String id) {
         return PolicyDefinitionBuilder.create()
-                .setUniqueId(id)
-                .setName("name" + id)
-                .setType("type" + id)
-                .addGroupTarget("group1")
-                .addGroupTarget("group2")
-                .addComponentInstanceTarget("inst1")
-                .addComponentInstanceTarget("inst2")
-                .addProperty("prop1")
-                .build();
+            .setUniqueId(id)
+            .setName("name" + id)
+            .setType("type" + id)
+            .addGroupTarget("group1")
+            .addGroupTarget("group2")
+            .addComponentInstanceTarget("inst1")
+            .addComponentInstanceTarget("inst2")
+            .addProperty("prop1")
+            .build();
     }
 
     private Invocation.Builder buildGetPolicyTypesCall() {
         return target("/v1/catalog/resources/{id}/filteredDataByParams")
-                .queryParam("include", "policies")
-                .resolveTemplate("id", RESOURCE_ID)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, USER_ID);
+            .queryParam("include", "policies")
+            .resolveTemplate("id", RESOURCE_ID)
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID);
     }
 }

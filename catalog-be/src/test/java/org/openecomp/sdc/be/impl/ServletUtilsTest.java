@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.gson.Gson;
 
 import mockit.Deencapsulation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -36,9 +37,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath:application-context-test.xml"})
 public class ServletUtilsTest {
 	@Autowired
-	ServletUtils servletUtils;
+	private ServletUtils servletUtils;
 
 	@Test
+	@Ignore("migration to Junit 5 depends on migration to Spring 5")
 	public void testCtrServletUtils() {
 		// default test
 		assertThat(servletUtils)

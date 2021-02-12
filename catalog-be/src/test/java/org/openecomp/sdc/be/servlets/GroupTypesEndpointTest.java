@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,18 +20,34 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import fj.data.Either;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.utils.GroupTypeBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -58,23 +74,7 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-public class GroupTypesEndpointTest extends JerseySpringBaseTest {
+class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
     private static final String USER_ID = "a001";
     private static final GroupTypeDefinition EMPTY_GROUP_TYPE = new GroupTypeDefinition();
@@ -92,7 +92,8 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
     private static OperationUtils operationUtils;
     private static User user;
 
-    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationSource configurationSource = new FSConfigurationSource(
+        ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @org.springframework.context.annotation.Configuration
@@ -113,11 +114,12 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         GroupTypeOperation groupTypeOperation() {
-            return new GroupTypeOperation(janusGraphGenericDao, propertyOperation, capabilityTypeOperation, capabilityOperation, derivedFromOperation, operationUtils);
+            return new GroupTypeOperation(janusGraphGenericDao, propertyOperation, capabilityTypeOperation,
+                capabilityOperation, derivedFromOperation, operationUtils);
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initClass() {
         componentsUtils = mock(ComponentsUtils.class);
         propertyOperation = mock(PropertyOperation.class);
@@ -129,15 +131,24 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
         user = mock(User.class);
     }
 
-    @Before
-    public void init() {
+    @BeforeEach
+    public void before() throws Exception {
+        super.setUp();
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class))).thenReturn(Either.left(buildGroupTypeDataList()));
+        when(
+            janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class)))
+            .thenReturn(Either.left(buildGroupTypeDataList()));
+    }
+
+    @AfterEach
+    void after() throws Exception {
+        super.tearDown();
     }
 
     @Override
     protected void configureClient(ClientConfig config) {
-        final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         config.register(jacksonJsonProvider);
     }
 
@@ -145,81 +156,88 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
     protected ResourceConfig configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure(GroupTypesTestConfig.class)
-                .register(GroupTypesEndpoint.class);
+            .register(GroupTypesEndpoint.class);
     }
 
     @Test
-    public void verifyExclusionMapIsCaseInsensitive() {
-        Map<String, Set<String>> excludedGroupTypesMapping = configurationManager.getConfiguration().getExcludedGroupTypesMapping();
-        assertThat(excludedGroupTypesMapping.get(COMPONENT_TYPE)).hasSameElementsAs(excludedGroupTypesMapping.get(COMPONENT_TYPE.toLowerCase()));
+    void verifyExclusionMapIsCaseInsensitive() {
+        Map<String, Set<String>> excludedGroupTypesMapping = configurationManager.getConfiguration()
+            .getExcludedGroupTypesMapping();
+        assertThat(excludedGroupTypesMapping.get(COMPONENT_TYPE))
+            .hasSameElementsAs(excludedGroupTypesMapping.get(COMPONENT_TYPE.toLowerCase()));
     }
 
     @Test
-    public void getGroupTypes_validUser_Success() {
+    void getGroupTypes_validUser_Success() {
         List<GroupTypeDefinition> testConfigGroupTypes = buildGroupTypesList();
-        List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCall(USER_ID, COMPONENT_TYPE).get(new GenericType<List<GroupTypeDefinition>>(){});
+        List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCall(USER_ID, COMPONENT_TYPE)
+            .get(new GenericType<List<GroupTypeDefinition>>() {
+            });
         verifyGroupTypesList(testConfigGroupTypes, fetchedGroupTypes);
     }
 
     @Test
-    public void getGroupTypes_whenNoInteranlComponentType_passEmptyAsExcludedTypes() {
+    void getGroupTypes_whenNoInteranlComponentType_passEmptyAsExcludedTypes() {
         List<GroupTypeDefinition> testConfigGroupTypes = buildGroupTypesList();
-        List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCallNoInternalComponent(USER_ID).get(new GenericType<List<GroupTypeDefinition>>(){});
+        List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCallNoInternalComponent(USER_ID)
+            .get(new GenericType<List<GroupTypeDefinition>>() {
+            });
         verifyGroupTypesList(testConfigGroupTypes, fetchedGroupTypes);
     }
 
-    private void verifyGroupTypesList(List<GroupTypeDefinition> groupTypes, List<GroupTypeDefinition> fetchedGroupTypes) {
+    private void verifyGroupTypesList(List<GroupTypeDefinition> groupTypes,
+                                      List<GroupTypeDefinition> fetchedGroupTypes) {
         String[] expectedReturnFields = {"version", "type", "uniqueId", "name", "icon"};
         assertThat(fetchedGroupTypes)
-                .usingElementComparatorOnFields(expectedReturnFields)
-                .isEqualTo(groupTypes);
+            .usingElementComparatorOnFields(expectedReturnFields)
+            .isEqualTo(groupTypes);
         verifyOnlySpecificFieldsInResponse(fetchedGroupTypes, expectedReturnFields);
     }
 
-    private void verifyOnlySpecificFieldsInResponse(List<GroupTypeDefinition> fetchedGroupTypes, String ... fields) {
+    private void verifyOnlySpecificFieldsInResponse(List<GroupTypeDefinition> fetchedGroupTypes, String... fields) {
         assertThat(fetchedGroupTypes)
-                .usingElementComparatorIgnoringFields(fields)
-                .containsOnly(EMPTY_GROUP_TYPE);
+            .usingElementComparatorIgnoringFields(fields)
+            .containsOnly(EMPTY_GROUP_TYPE);
     }
 
     private Invocation.Builder buildGetGroupTypesCall(String userId, String componentType) {
         return target("/v1/catalog/groupTypes")
-                .queryParam("internalComponentType", componentType)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, userId);
+            .queryParam("internalComponentType", componentType)
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, userId);
     }
 
     private Invocation.Builder buildGetGroupTypesCallNoInternalComponent(String userId) {
         return target("/v1/catalog/groupTypes")
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, userId);
+            .request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, userId);
     }
 
     private Map<String, Set<String>> buildExcludeGroupTypesMap() {
         return new ImmutableMap.Builder<String, Set<String>>()
-                .put("CR", Sets.newHashSet("VFModule", "Root", "Heat"))
-                .put(COMPONENT_TYPE, EXCLUDED_TYPES)
-                .build();
+            .put("CR", Sets.newHashSet("VFModule", "Root", "Heat"))
+            .put(COMPONENT_TYPE, EXCLUDED_TYPES)
+            .build();
     }
 
 
     private List<GroupTypeDefinition> buildGroupTypesList() {
         GroupTypeDefinition type1 = GroupTypeBuilder.create()
-                                                    .setDerivedFrom("root")
-                                                    .setType("org.openecomp.groups.VfModule")
-                                                    .setUniqueId("id1")
-                                                    .setVersion("1.0")
-                                                    .setName("vf module")
-                                                    .setIcon("vf module icon")
-                                                    .build();
+            .setDerivedFrom("root")
+            .setType("org.openecomp.groups.VfModule")
+            .setUniqueId("id1")
+            .setVersion("1.0")
+            .setName("vf module")
+            .setIcon("vf module icon")
+            .build();
         GroupTypeDefinition type2 = GroupTypeBuilder.create()
-                                                    .setDerivedFrom("root")
-                                                    .setType("org.openecomp.groups.NetworkCollection")
-                                                    .setUniqueId("id2")
-                                                    .setVersion("1.0")
-                                                    .setName("network collection")
-                                                    .setIcon("network collection icon")
-                                                    .build();
+            .setDerivedFrom("root")
+            .setType("org.openecomp.groups.NetworkCollection")
+            .setUniqueId("id2")
+            .setVersion("1.0")
+            .setName("network collection")
+            .setIcon("network collection icon")
+            .build();
         return asList(type1, type2);
     }
 

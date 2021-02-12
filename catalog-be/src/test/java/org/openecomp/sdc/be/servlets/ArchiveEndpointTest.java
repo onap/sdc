@@ -22,12 +22,33 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
@@ -89,27 +110,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-public class ArchiveEndpointTest extends JerseyTest {
+class ArchiveEndpointTest extends JerseyTest {
 
     private static final ServletContext servletContext = mock(ServletContext.class);
     private static final String CSAR_UUID1 = "123456789abcdefgh";
@@ -121,7 +122,7 @@ public class ArchiveEndpointTest extends JerseyTest {
     private static final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
     private static final ComponentsUtils componentUtils = mock(ComponentsUtils.class);
     private static final CatalogOperation catalogOperations = mock(CatalogOperation.class);
-//    private static final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+    //    private static final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
     private static final ToscaOperationFacade toscaOperationFacade = Mockito.spy(new ToscaOperationFacade());
 
 
@@ -144,6 +145,7 @@ public class ArchiveEndpointTest extends JerseyTest {
     @Configuration
     @PropertySource("classpath:dao.properties")
     static class TestSpringConfig {
+
         private ArchiveOperation archiveOperation;
         private GraphVertex catalogVertex;
 
@@ -171,7 +173,8 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ArchiveBusinessLogic archiveBusinessLogic() {
-            return new ArchiveBusinessLogic(janusGraphDao(), accessValidations(), archiveOperation(), toscaOperationFacade(), componentUtils, catalogOperations);
+            return new ArchiveBusinessLogic(janusGraphDao(), accessValidations(), archiveOperation(),
+                toscaOperationFacade(), componentUtils, catalogOperations);
         }
 
         @Bean
@@ -249,7 +252,7 @@ public class ArchiveEndpointTest extends JerseyTest {
         }
 
         @Bean
-        HealingPipelineDao healingPipelineDao(){
+        HealingPipelineDao healingPipelineDao() {
             return HEALING_PIPELINE_DAO;
         }
 
@@ -271,7 +274,6 @@ public class ArchiveEndpointTest extends JerseyTest {
             //Create Service for Scenario 1 Tests (1 Service)
             serviceVertex = GraphTestUtils.createServiceVertex(janusGraphDao, propsForHighestVersion());
 
-
             Map<GraphPropertyEnum, Object> props = propsForHighestVersion();
             props.put(GraphPropertyEnum.IS_VSP_ARCHIVED, false);
             props.put(GraphPropertyEnum.CSAR_UUID, CSAR_UUID1);
@@ -287,7 +289,7 @@ public class ArchiveEndpointTest extends JerseyTest {
             janusGraphDao.createEdge(catalogVertex, resourceVertex, EdgeLabelEnum.CATALOG_ELEMENT, null);
         }
 
-        private Map<GraphPropertyEnum, Object> propsForHighestVersion(){
+        private Map<GraphPropertyEnum, Object> propsForHighestVersion() {
             Map<GraphPropertyEnum, Object> props = new HashMap<>();
             props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
             return props;
@@ -297,22 +299,26 @@ public class ArchiveEndpointTest extends JerseyTest {
     public static final HttpServletRequest request = mock(HttpServletRequest.class);
 
     /* Users */
-    private static final User adminUser = new User("admin", "admin", "admin", "admin@email.com", Role.ADMIN.name(), System.currentTimeMillis());
-    private static final User designerUser = new User("designer", "designer", "designer", "designer@email.com", Role.DESIGNER.name(), System
-                                                                                                                                              .currentTimeMillis());
-    private static final User otherUser = new User("other", "other", "other", "other@email.com", Role.TESTER.name(), System.currentTimeMillis());
+    private static final User adminUser = new User("admin", "admin", "admin", "admin@email.com", Role.ADMIN.name(),
+        System.currentTimeMillis());
+    private static final User designerUser = new User("designer", "designer", "designer", "designer@email.com",
+        Role.DESIGNER.name(), System.currentTimeMillis());
+    private static final User otherUser = new User("other", "other", "other", "other@email.com", Role.TESTER.name(),
+        System.currentTimeMillis());
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         //Needed for User Authorization
         //========================================================================================================================
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
+        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
+            .thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getUserAdmin()).thenReturn(userAdmin);
         when(servletUtils.getComponentsUtils()).thenReturn(componentUtils);
         when(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(responseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.INVALID_SERVICE_STATE), any())).thenReturn(invalidServiceStateResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.INVALID_SERVICE_STATE), any()))
+            .thenReturn(invalidServiceStateResponseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.UNAUTHORIZED.value());
 
         ComponentException ce = new ByResponseFormatComponentException(responseFormat);
@@ -322,24 +328,29 @@ public class ArchiveEndpointTest extends JerseyTest {
         when(notFoundResponseFormat.getStatus()).thenReturn(HttpStatus.NOT_FOUND.value());
         when(invalidServiceStateResponseFormat.getStatus()).thenReturn(HttpStatus.CONFLICT.value());
         when(badRequestResponseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
-        when(componentUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any())).thenReturn(badRequestResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), (String[]) any()))
+            .thenReturn(notFoundResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any()))
+            .thenReturn(badRequestResponseFormat);
 
-        when(graphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class)))
+            .thenReturn(StorageOperationStatus.OK);
         when(userAdmin.getUser(adminUser.getUserId(), false)).thenReturn(adminUser);
         when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
         when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
         String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
 
         org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout();
-        heatDeploymentArtifactTimeout.setDefaultMinutes(30);;
+        heatDeploymentArtifactTimeout.setDefaultMinutes(30);
+        ;
         configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
         configurationManager.setConfiguration(configuration);
 
@@ -347,13 +358,23 @@ public class ArchiveEndpointTest extends JerseyTest {
         ExternalConfiguration.setAppName("catalog-be");
     }
 
+    @BeforeEach
+    public void before() throws Exception {
+        super.setUp();
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
     @Test
-    public void getArchivedComponents_Empty() {
+    void getArchivedComponents_Empty() {
         assertOnGetArchivedComponents(null, 0);
     }
 
     @Test
-    public void archiveAndGetArchivedService_SingleService() {
+    void archiveAndGetArchivedService_SingleService() {
         Component serviceComponent = mock(Component.class);
         final String serviceUniqueId = serviceVertex.getUniqueId();
         when(toscaOperationFacade.getToscaElement(serviceUniqueId)).thenReturn(Either.left(serviceComponent));
@@ -364,7 +385,7 @@ public class ArchiveEndpointTest extends JerseyTest {
     }
 
     @Test
-    public void archiveAndGetArchivedResource_SingleResource() {
+    void archiveAndGetArchivedResource_SingleResource() {
         Component component = mock(Component.class);
         final String uniqueId = resourceVertex.getUniqueId();
         when(toscaOperationFacade.getToscaElement(uniqueId)).thenReturn(Either.left(component));
@@ -375,40 +396,40 @@ public class ArchiveEndpointTest extends JerseyTest {
     }
 
     @Test
-    public void attemptArchiveCheckedOutService() {
+    void attemptArchiveCheckedOutService() {
         checkoutComponent(serviceVertex);
         archiveService(serviceVertex.getUniqueId(), HttpStatus.CONFLICT.value());
     }
 
     @Test
-    public void testOnArchivedVsps(){
+    void testOnArchivedVsps() {
         String path = "/v1/catalog/notif/vsp/archived";
         List<String> csarIds = new LinkedList<>();
         csarIds.add("123456");
         csarIds.add(CSAR_UUID2);   //An archived CSAR ID
         Response response = target()
-                                    .path(path)
-                                    .request(MediaType.APPLICATION_JSON)
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                                    .post(Entity.json(csarIds));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .post(Entity.json(csarIds));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertOnVertexProp(resourceVertexVspArchived.getUniqueId(), true);
     }
 
     @Test
-    public void testOnRestoredVsps(){
+    void testOnRestoredVsps() {
         String path = "/v1/catalog/notif/vsp/restored";
         List<String> csarIds = new LinkedList<>();
         csarIds.add("123456");
         csarIds.add(CSAR_UUID1);   //Non archived CSAR_ID
         Response response = target()
-                                    .path(path)
-                                    .request(MediaType.APPLICATION_JSON)
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                                    .post(Entity.json(csarIds));
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .post(Entity.json(csarIds));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertOnVertexProp(resourceVertex.getUniqueId(), false);
@@ -418,24 +439,24 @@ public class ArchiveEndpointTest extends JerseyTest {
      *   Rainy Scenarios
      */
     @Test
-    public void archiveWithInvalidUid() {
+    void archiveWithInvalidUid() {
         archiveService("fakeUid", HttpStatus.NOT_FOUND.value());
     }
 
     @Test
-    public void restoreWithInvalidUid() {
+    void restoreWithInvalidUid() {
         restoreService("fakeUid", HttpStatus.NOT_FOUND.value());
     }
 
     @Test
-    public void archiveWithTester() {
+    void archiveWithTester() {
         String path = String.format("/v1/catalog/services/%s/%s", serviceVertex.getUniqueId(), "archive");
         Response response = target()
-                                    .path(path)
-                                    .request()
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .header(Constants.USER_ID_HEADER, otherUser.getUserId())
-                                    .post(null);
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, otherUser.getUserId())
+            .post(null);
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
@@ -455,20 +476,30 @@ public class ArchiveEndpointTest extends JerseyTest {
         assertThat(v.getMetadataProperty(GraphPropertyEnum.IS_VSP_ARCHIVED)).isEqualTo(expectedValue);
     }
 
-    private void archiveService(String id, int expectedStatus){ archiveOrRestoreService(id, ArchiveOperation.Action.ARCHIVE, expectedStatus); }
-    private void restoreService(String id, int expectedStatus){ archiveOrRestoreService(id, ArchiveOperation.Action.RESTORE, expectedStatus); }
+    private void archiveService(String id, int expectedStatus) {
+        archiveOrRestoreService(id, ArchiveOperation.Action.ARCHIVE, expectedStatus);
+    }
 
-    private void archiveResource(String id, int expectedStatus){ archiveOrRestoreResource(id, ArchiveOperation.Action.ARCHIVE, expectedStatus); }
-    private void restoreResource(String id, int expectedStatus){ archiveOrRestoreResource(id, ArchiveOperation.Action.RESTORE, expectedStatus); }
+    private void restoreService(String id, int expectedStatus) {
+        archiveOrRestoreService(id, ArchiveOperation.Action.RESTORE, expectedStatus);
+    }
+
+    private void archiveResource(String id, int expectedStatus) {
+        archiveOrRestoreResource(id, ArchiveOperation.Action.ARCHIVE, expectedStatus);
+    }
+
+    private void restoreResource(String id, int expectedStatus) {
+        archiveOrRestoreResource(id, ArchiveOperation.Action.RESTORE, expectedStatus);
+    }
 
     private void archiveOrRestoreService(String compUid, ArchiveOperation.Action action, int expectedStatus) {
         String path = String.format("/v1/catalog/services/%s/%s", compUid, action.name().toLowerCase());
         Response response = target()
-                                    .path(path)
-                                    .request()
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                                    .post(null);
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .post(null);
 
         assertThat(response.getStatus()).isEqualTo(expectedStatus);
     }
@@ -476,11 +507,11 @@ public class ArchiveEndpointTest extends JerseyTest {
     private void archiveOrRestoreResource(String compUid, ArchiveOperation.Action action, int expectedStatus) {
         String path = String.format("/v1/catalog/resources/%s/%s", compUid, action.name().toLowerCase());
         Response response = target()
-                .path(path)
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                .post(null);
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .post(null);
 
         assertThat(response.getStatus()).isEqualTo(expectedStatus);
     }
@@ -489,13 +520,15 @@ public class ArchiveEndpointTest extends JerseyTest {
         String path = "/v1/catalog/archive";
 
         Response response = target()
-                                    .path(path)
-                                    .request()
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .header(Constants.USER_ID_HEADER, designerUser.getUserId())
-                                    .get();
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .get();
 
-        Map<String, List<CatalogComponent>> archivedComponents = response.readEntity(new GenericType<Map<String, List<CatalogComponent>>>() {  });
+        Map<String, List<CatalogComponent>> archivedComponents = response
+            .readEntity(new GenericType<Map<String, List<CatalogComponent>>>() {
+            });
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
         if (componentType == null) {
@@ -511,9 +544,9 @@ public class ArchiveEndpointTest extends JerseyTest {
         ApplicationContext context = new AnnotationConfigApplicationContext(TestSpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig(ArchiveEndpoint.class)
-                       .register(DefaultExceptionMapper.class)
-                       .register(ComponentExceptionMapper.class)
-                       .register(StorageExceptionMapper.class)
-                       .property("contextConfig", context);
+            .register(DefaultExceptionMapper.class)
+            .register(ComponentExceptionMapper.class)
+            .register(StorageExceptionMapper.class)
+            .property("contextConfig", context);
     }
 }
