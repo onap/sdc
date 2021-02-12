@@ -110,7 +110,7 @@ public class SecurityManagerTest {
 
     @Test
     public void verifySignedDataTestCertIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
-        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         byte[] signature = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.cms");
         byte[] archive = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.csar");
         assertTrue(securityManager.verifySignedData(signature, null, archive));
@@ -129,7 +129,7 @@ public class SecurityManagerTest {
 
     @Test
     public void verifySignedDataTestCertNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
-        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
         byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
         byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cert");
@@ -138,11 +138,11 @@ public class SecurityManagerTest {
 
     @Test
     public void verifySignedDataTestCertIntermediateNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
-        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
-        PrepareCertFiles("/cert/signing-ca2.crt", cerDirPath + "signing-ca2.crt");
+        PrepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/package2.cert", cerDirPath + "signing-ca2.crt");
         byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
         byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
-        byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4-no-intermediate.cert");
+        byte[] cert = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cert");
         assertTrue(securityManager.verifySignedData(signature, cert, archive));
     }
 
@@ -161,7 +161,7 @@ public class SecurityManagerTest {
 
     @Test
     public void verifySignedDataTestCertIncludedIntoSignatureWithWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
-        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         PrepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
         byte[] signature = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.cms");
         byte[] archive = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.csar");
@@ -170,7 +170,7 @@ public class SecurityManagerTest {
 
     @Test
     public void verifySignedDataTestCertWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
-        PrepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
+        PrepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         PrepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
         byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
         byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");

@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.servlets;
 
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.utils.PolicyTypeBuilder;
@@ -51,6 +52,7 @@ public class PolicyTypesEndpointTest extends JerseySpringBaseTest {
 
     @Override
     protected ResourceConfig configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         policyTypeBusinessLogic = mock(PolicyTypeBusinessLogic.class);
         componentUtils = mock(ComponentsUtils.class);
         UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);

@@ -29,6 +29,7 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvi
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.janusgraph.graphdb.types.system.EmptyVertex;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -149,6 +150,7 @@ public class UserEndpointTest extends JerseySpringBaseTest {
 
     @Override
     protected ResourceConfig configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure(UserEndpointTest.UserTestConfig.class)
                 .register(UserAdminServlet.class)
                 .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "WARNING");

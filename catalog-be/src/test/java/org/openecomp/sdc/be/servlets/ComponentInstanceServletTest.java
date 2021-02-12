@@ -57,6 +57,8 @@ import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -72,10 +74,14 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+
 
 /**
  * The test suite designed for test functionality of ComponentInstanceServlet class
@@ -97,11 +103,19 @@ public class ComponentInstanceServletTest extends JerseyTest {
     private static ResourceImportManager resourceImportManager;
     private static ServiceBusinessLogic serviceBusinessLogic;
     private static ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
+    private static ConfigurationManager configurationManager;
 
     @BeforeClass
     public static void setup() {
         createMocks();
         stubMethods();
+        String appConfigDir = "src/test/resources/config/catalog-be";
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        configurationManager = new ConfigurationManager(configurationSource);
+        org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
+        configuration.setJanusGraphInMemoryGraph(true);
+        configurationManager.setConfiguration(configuration);
+        ExternalConfiguration.setAppName("catalog-be");
     }
 
     @Test

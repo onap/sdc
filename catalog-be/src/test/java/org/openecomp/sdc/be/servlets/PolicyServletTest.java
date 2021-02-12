@@ -27,6 +27,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -489,6 +490,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
 
     @Override
     protected ResourceConfig configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure()
                 .register(new PolicyServlet(null, null, componentsUtils,
                     servletUtils, null, businessLogic));

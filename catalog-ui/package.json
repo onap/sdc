@@ -169,5 +169,8 @@
     "webpack-dev-server": "^2.4.1",
     "webpack-merge": "^4.0.0",
     "zone.js": "0.8.5"
+  },
+  "resolutions": {
+    "cypress": "3.8.0"
   }
 }
