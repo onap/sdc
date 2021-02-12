@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.gson.Gson;
 
 import mockit.Deencapsulation;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -39,6 +40,7 @@ public class ServletUtilsTest {
 	ServletUtils servletUtils;
 
 	@Test
+	@Ignore("migration to Junit 5 depends on mgration to Spring 5")
 	public void testCtrServletUtils() {
 		// default test
 		assertThat(servletUtils)
