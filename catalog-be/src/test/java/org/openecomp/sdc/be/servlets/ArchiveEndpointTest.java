@@ -25,6 +25,7 @@ package org.openecomp.sdc.be.servlets;
 import fj.data.Either;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -330,7 +331,7 @@ public class ArchiveEndpointTest extends JerseyTest {
         when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
-        String appConfigDir = "src/test/resources/config";
+        String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
@@ -508,6 +509,7 @@ public class ArchiveEndpointTest extends JerseyTest {
     @Override
     protected Application configure() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TestSpringConfig.class);
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig(ArchiveEndpoint.class)
                        .register(DefaultExceptionMapper.class)
                        .register(ComponentExceptionMapper.class)
