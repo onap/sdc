@@ -26,11 +26,11 @@ import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, Att
     InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup} from "app/models";
 import {CommonUtils} from "app/utils";
 import {Serializable} from "../utils/serializable";
-import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../../../models/graph/zones/group-instance";
 import { InputsGroup } from "../../../models/inputs";
 import { InterfaceModel } from "../../../models/operation";
+import { OutputBEModel } from "app/models/attributes-outputs/output-be-model";
 
 export class ComponentGenericResponse  implements Serializable<ComponentGenericResponse> {
 
@@ -45,6 +45,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public componentInstances:Array<ComponentInstance>;
     public componentInstancesInterfaces: Map<string, Array<InterfaceModel>>;
     public inputs:Array<InputBEModel>;
+    public outputs:Array<OutputBEModel>;
     public capabilities:CapabilitiesGroup;
     public requirements:RequirementsGroup;
     public properties:Array<PropertyModel>;
@@ -81,6 +82,9 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         }
         if(response.inputs) {
             this.inputs = CommonUtils.initInputs(response.inputs);
+        }
+        if (response.outputs) {
+            this.outputs = CommonUtils.initOutputs(response.outputs);
         }
         if(response.attributes) {
             this.attributes = CommonUtils.initAttributes(response.attributes);

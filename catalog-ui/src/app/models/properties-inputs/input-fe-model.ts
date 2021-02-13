@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import { SchemaPropertyGroupModel, SchemaProperty } from "../aschema-property";
+import { SchemaPropertyGroupModel, SchemaProperty } from "../schema-property";
 import {PropertyFEModel} from "../../models";
 import {PROPERTY_DATA} from "../../utils/constants";
 import {InputBEModel} from "./input-be-model";

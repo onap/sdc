@@ -22,7 +22,7 @@
  * Created by obarda on 1/22/2017.
  */
 'use strict';
-import {SchemaPropertyGroupModel} from "./aschema-property";
+import {SchemaPropertyGroupModel} from "./schema-property";
 
 export interface InputPropertyBase {
 

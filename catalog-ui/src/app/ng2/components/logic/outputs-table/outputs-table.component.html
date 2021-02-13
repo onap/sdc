@@ -1,0 +1,97 @@
+<!--
+============LICENSE_START=======================================================
+*  Copyright (C) 2021 Nordix Foundation
+*  ================================================================================
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*        http://www.apache.org/licenses/LICENSE-2.0
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+*
+*  SPDX-License-Identifier: Apache-2.0
+*  ============LICENSE_END=========================================================
+-->
+
+<div class="output-attributes-table">
+  <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+  <div class="table-header">
+    <div class="table-cell col-output-attribute-name" (click)="sort('name')">Output Name
+      <span *ngIf="sortBy === 'name'" class="table-header-sort-arrow"
+            [ngClass]="{'down': reverse, 'up':!reverse}"></span>
+    </div>
+    <div class="table-cell col-output-attribute-instance" (click)="sort('instanceUniqueId')">From
+      Instance
+      <span *ngIf="sortBy === 'instanceUniqueId'" class="table-header-sort-arrow"
+            [ngClass]="{'down': reverse, 'up':!reverse}"></span>
+    </div>
+    <div class="table-cell col-output-attribute-type" (click)="sort('type')">Type
+      <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow"
+            [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+    </div>
+    <div class="table-cell col-output-attribute-required" (click)="sort('required')"
+         *ngIf="componentType == 'SERVICE'">
+      <span tooltip="Required in Runtime" tooltipDelay="400">Req. in RT</span>
+    </div>
+    <div class="table-cell col-output-attribute-value">Value</div>
+  </div>
+  <div class="table-body">
+    <div class="no-data" *ngIf="!outputs || !outputs.length">No data to display</div>
+    <div>
+      <div class="table-row" *ngFor="let output of outputs">
+        <!-- attribute Name -->
+        <div class="table-cell col-output-attribute-name">
+          <div class="output-inner-cell-div">
+            <span class="attribute-name" tooltip="{{output.name}}">{{output.name}}</span>
+          </div>
+          <span *ngIf="output.description"
+                class="attribute-description-icon sprite-new show-desc"
+                tooltip="{{output.description}}" tooltipDelay="0"></span>
+        </div>
+        <!-- From Instance -->
+        <div class="table-cell col-output-attribute-instance">
+          <div class="output-inner-cell-div"
+               tooltip="{{instanceNamesMap[output.instanceUniqueId]?.name}}">
+            <span>{{instanceNamesMap[output.instanceUniqueId]?.name}}</span>
+          </div>
+        </div>
+        <!-- Type -->
+        <div class="table-cell col-output-attribute-type">
+          <div class="output-inner-cell-div" tooltip="{{output.type | contentAfterLastDot}}">
+            <span>{{output.type | contentAfterLastDot}}</span>
+          </div>
+        </div>
+        <!-- Required in runtime -->
+        <div class="table-cell col-output-attribute-required" *ngIf="componentType == 'SERVICE'">
+          <sdc-checkbox [(checked)]="output.required"
+                        (checkedChange)="onRequiredChanged(output, $event)"
+                        [disabled]="readonly"></sdc-checkbox>
+        </div>
+        <!-- Value -->
+        <div class="table-cell col-output-attribute-value output-value-col"
+             [class.inner-table-container]="!output.isSimpleType">
+          <dynamic-element class="value-output"
+                           *ngIf="checkInstanceFeAttributesMapIsFilled() && output.isSimpleType"
+                           pattern="null"
+                           [value]="output.value"
+                           [type]="'string'"
+                           [name]="output.name"
+                           (elementChanged)="onOutputChanged(output, $event)"
+                           [readonly]="true"
+                           [testId]="'output-' + output.name"
+                           [constraints]="getConstraints(output)">
+          </dynamic-element>
+          <div class="delete-button-container">
+            <span *ngIf="output.instanceUniqueId && !readonly" class="sprite-new delete-btn"
+                  (click)="openDeleteModal(output)"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

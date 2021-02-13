@@ -6,6 +6,7 @@ import { DataTypeService } from 'app/ng2/services/data-type.service';
 import { PROPERTY_DATA } from 'app/utils';
 import * as _ from 'lodash';
 import { PROPERTY_TYPES } from '../../../../utils';
+import {Validation} from "../../../../view-models/workspace/tabs/general/general-view-model";
 
 @Component({
     selector: 'property-creator',
@@ -15,12 +16,10 @@ import { PROPERTY_TYPES } from '../../../../utils';
 
 export class PropertyCreatorComponent {
 
+    validation:Validation;
     typesProperties: DropdownValue[];
     typesSchemaProperties: DropdownValue[];
     propertyModel: PropertyBEModel;
-    // propertyNameValidationPattern:RegExp = /^[a-zA-Z0-9_:-]{1,50}$/;
-    // commentValidationPattern:RegExp = /^[\u0000-\u00BF]*$/;
-    // types:Array<string>;
     dataTypes: DataTypesMap;
     isLoading: boolean;
 

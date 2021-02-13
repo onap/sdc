@@ -20,14 +20,14 @@
 
 'use strict';
 
-import { SchemaProperty } from './aschema-property';
+import {SchemaProperty} from './schema-property';
 
 export class SchemaAttributeGroupModel {
-    property: SchemaAttribute;
+  property: SchemaAttribute;
 
-    constructor(schemaAttribute?: SchemaAttribute) {
-        this.property = schemaAttribute;
-    }
+  constructor(schemaAttribute?: SchemaAttribute) {
+    this.property = schemaAttribute;
+  }
 }
 
 export class SchemaAttribute extends SchemaProperty {
