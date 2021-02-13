@@ -376,6 +376,12 @@
                 <artifactId>aspectjweaver</artifactId>
                 <version>1.9.2</version>
             </dependency>
+          <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>catalog-ui</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+          </dependency>
         </dependencies>
         <executions>
           <execution>
