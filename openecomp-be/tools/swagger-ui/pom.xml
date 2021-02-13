@@ -11,6 +11,14 @@
         <version>1.8.1-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
+    <dependencies>
+        <dependency>
+            <groupId>org.openecomp.sdc.onboarding</groupId>
+            <artifactId>onboarding-be</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
 
     <properties>
         <plugin.name>api-docs</plugin.name>

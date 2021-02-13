@@ -27,7 +27,13 @@ limitations under the License.
         <groupId>org.openecomp.sdc</groupId>
         <version>1.8.1-SNAPSHOT</version>
     </parent>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>etsi-nfv-nsd-csar-plugin</artifactId>
+            <version>1.8.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
 
