@@ -29,14 +29,25 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.AttributeDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.Component;
@@ -47,6 +58,8 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -107,8 +120,7 @@ public class ModelConverterTest {
     }
 
     @Test
-    public void testConvertFromToscaElementResourceType()
-    {
+    public void testConvertFromToscaElementResourceType() {
         TopologyTemplate topologyTemplate = new TopologyTemplate();
         topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
         topologyTemplate.setResourceType(ResourceTypeEnum.PNF);
@@ -117,8 +129,44 @@ public class ModelConverterTest {
     }
 
     @Test
-    public void testIsAtomicComponent()
-    {
+    public void testConvertFromToscaElementResourceOutputs() {
+        final TopologyTemplate topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
+        final OutputDefinition outputDefinition = new OutputDefinition();
+        final Map<String, AttributeDataDefinition> map = new HashMap<>();
+        map.put("mock", outputDefinition);
+        topologyTemplate.setOutputs(map);
+        final Resource resource = test.convertFromToscaElement(topologyTemplate);
+        assertNotNull(resource.getOutputs());
+        assertFalse(resource.getOutputs().isEmpty());
+    }
+
+    @Test
+    public void testConvertFromToscaElementResourceComponentInstancesOutputs() {
+        final TopologyTemplate topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
+
+        final Map<String, MapAttributesDataDefinition> instOutputs = new HashMap<>();
+        final MapAttributesDataDefinition mapAttributesDataDefinition = new MapAttributesDataDefinition();
+        final AttributeDefinition attributeDefinition = new AttributeDefinition();
+        final Map<String, AttributeDataDefinition> mapToscaDataDefinition = new HashMap<>();
+        mapToscaDataDefinition.put("mock", attributeDefinition);
+        mapAttributesDataDefinition.setMapToscaDataDefinition(mapToscaDataDefinition);
+        instOutputs.put("mock", mapAttributesDataDefinition);
+        topologyTemplate.setInstOutputs(instOutputs);
+
+        final Map<String, ComponentInstanceDataDefinition> componentInstanceDataDefinitionMap = new HashMap<>();
+        componentInstanceDataDefinitionMap.put("mock", new ComponentInstance());
+        topologyTemplate.setComponentInstances(componentInstanceDataDefinitionMap);
+
+        final Resource resource = test.convertFromToscaElement(topologyTemplate);
+        assertNotNull(resource);
+        assertNotNull(resource.getComponentInstancesOutputs());
+        assertFalse(resource.getComponentInstancesOutputs().isEmpty());
+    }
+
+    @Test
+    public void testIsAtomicComponent() {
         Resource component = new Resource();
         component.setComponentType(ComponentTypeEnum.RESOURCE);
         boolean result = test.isAtomicComponent(component);
