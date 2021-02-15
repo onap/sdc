@@ -241,7 +241,7 @@ public class ResourceBusinessLogicTest {
 		user.setRole(Role.ADMIN.name());
 
 		when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
-		when(userValidations.validateUserExists(eq(user.getUserId()))).thenReturn(user);
+		when(userValidations.validateUserExists(user.getUserId())).thenReturn(user);
 		when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
 		// Servlet Context attributes
 		when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
@@ -1620,7 +1620,7 @@ public class ResourceBusinessLogicTest {
 		assertThat(createOrUpdateResource).isNotNull();
 
 		Mockito.verify(toscaOperationFacade, times(1))
-				.createToscaComponent(eq(resourceToUpdtae));
+				.createToscaComponent(resourceToUpdtae);
 		Mockito.verify(toscaOperationFacade, Mockito.times(0))
 				.overrideComponent(any(Resource.class), any(Resource.class));
 		Mockito.verify(lifecycleBl, Mockito.times(0))
@@ -1663,7 +1663,7 @@ public class ResourceBusinessLogicTest {
 		assertThat(createOrUpdateResource).isNotNull();
 
 		Mockito.verify(toscaOperationFacade, times(1))
-				.createToscaComponent(eq(resourceToUpdate));
+				.createToscaComponent(resourceToUpdate);
 		Mockito.verify(toscaOperationFacade, times(0))
 				.overrideComponent(any(Resource.class), any(Resource.class));
 		Mockito.verify(lifecycleBl, times(0))
@@ -2187,6 +2187,7 @@ public class ResourceBusinessLogicTest {
 		Resource resource = getResourceWithType("HEAT_VOL", "org.openecomp.groups.VfModule");
 		resource.setGroups(null);
 		bl.updateVolumeGroup(resource);
+		assertThat(resource.getGroups()).isNull();
 	}
 
 	@Test

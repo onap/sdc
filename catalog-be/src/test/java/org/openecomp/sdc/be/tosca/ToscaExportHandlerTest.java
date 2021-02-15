@@ -82,6 +82,8 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribOutput;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -90,6 +92,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -113,6 +116,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplateArtifact;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
+import org.openecomp.sdc.be.tosca.utils.OutputConverter;
 
 public class ToscaExportHandlerTest extends BeConfDependentTest {
 
@@ -138,6 +142,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
     @Mock
     private InputConverter inputConverter;
+
+    @Mock
+    private OutputConverter outputConverter;
 
     @Mock
     private GroupExportParser groupExportParser;
@@ -374,11 +381,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     @Test
     public void testConvertToscaTemplate() throws Exception {
 
-        Component component = getNewResource();
-        ToscaTemplate toscaNode = new ToscaTemplate("");
+        final Component component = getNewResource();
+        final ToscaTemplate toscaNode = new ToscaTemplate("");
         Either<ToscaTemplate, ToscaError> result;
-        List<ComponentInstance> resourceInstances = new ArrayList<>();
-        ComponentInstance instance = new ComponentInstance();
+        final List<ComponentInstance> resourceInstances = new ArrayList<>();
+        final ComponentInstance instance = new ComponentInstance();
 
         instance.setOriginType(OriginTypeEnum.SERVICE);
         instance.setSourceModelUid("targetModelUid");
@@ -387,8 +394,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         component.setComponentInstances(resourceInstances);
 
         when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
-        when(capabilityRequirementConverter.getOriginComponent(any(Map.class),
-            any(ComponentInstance.class))).thenReturn(Either.right(false));
+        when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.right(false));
+
+        final Map<String, ToscaProperty> map = new HashMap<>();
+        map.put("mock", new ToscaProperty());
+        doReturn(map).when(outputConverter).convert(any(), any());
 
         // default test
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
@@ -426,8 +436,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(inputConverter.convertInputs(any(List.class), any(Map.class))).thenReturn(new HashMap<>());
 
-        when(groupExportParser.getGroups(component))
-            .thenReturn(null);
+        when(groupExportParser.getGroups(component)).thenReturn(null);
+
+        final Map<String, ToscaProperty> map = new HashMap<>();
+        map.put("mock", new ToscaProperty());
+        doReturn(map).when(outputConverter).convert(any(), any());
 
         // test component contains group
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
@@ -464,6 +477,10 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
 
         when(inputConverter.convertInputs(anyList(), anyMap())).thenReturn(new HashMap<>());
+        final Map<String, ToscaProperty> map = new HashMap<>();
+        map.put("mock", new ToscaProperty());
+        doReturn(map).when(outputConverter).convert(any(), any());
+
         // test component contains group
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
         Assert.assertNotNull(result);
@@ -527,13 +544,13 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         ci.setOriginType(OriginTypeEnum.ServiceProxy);
         ci.setSourceModelUid("modelName");
 
-        when(toscaOperationFacade.getToscaFullElement(eq("name"))).thenReturn(Either.left(component));
+        when(toscaOperationFacade.getToscaFullElement("name")).thenReturn(Either.left(component));
 
-        when(toscaOperationFacade.getToscaFullElement(eq("modelName")))
-            .thenReturn(Either.left(new Service()));
+        when(toscaOperationFacade.getToscaFullElement("modelName")).thenReturn(Either.left(new Service()));
 
         // default test
         Deencapsulation.invoke(testSubject, "createDependency", componentCache, imports, dependecies, ci);
+        Assert.assertFalse(componentCache.isEmpty());
     }
 
     @Test
@@ -1483,7 +1500,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // test return false
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToRelation", originComponent,
             reqAndRelationshipPair, requirement, fromInstanceId);
-        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
     }
 
     @Test
@@ -1498,7 +1515,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // default test return true
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToRelation", originComponent,
             reqAndRelationshipPair, requirement, fromInstanceId);
-        Assert.assertNotNull(result);
+        Assert.assertTrue(result);
     }
 
     @Test
@@ -1516,19 +1533,17 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // default test
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToOwner", reqAndRelationshipPair, requirement,
             fromInstanceId, originComponent);
-        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
     }
 
     @Test
     public void testIsCvfc() throws Exception {
 
-        Component component = new Resource();
+        Component component = new Service();
         boolean result;
 
-        component = new Service();
-
         result = Deencapsulation.invoke(testSubject, "isCvfc", component);
-        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
     }
 
     @Test
@@ -1574,8 +1589,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         result = Deencapsulation.invoke(testSubject, "convertToNodeTemplateArtifacts", container);
         Assert.assertNotNull(result);
         Assert.assertTrue(MapUtils.isNotEmpty(result));
-        Assert.assertTrue(result.get("test_art").getFile().equals("test_file"));
-        Assert.assertTrue(result.get("test_art").getType().equals("test_type"));
+        Assert.assertEquals("test_file", result.get("test_art").getFile());
+        Assert.assertEquals("test_type", result.get("test_art").getType());
     }
 
     @Test
