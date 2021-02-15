@@ -36,22 +36,28 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraphVertex;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
@@ -64,27 +70,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.codehaus.groovy.runtime.DefaultGroovyMethods.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NodeTemplateOperationTest extends ModelTestBase {
+@ExtendWith(MockitoExtension.class)
+@TestInstance(Lifecycle.PER_CLASS)
+class NodeTemplateOperationTest extends ModelTestBase {
 
-    private final static String COMPONENT_ID = "componentId";
-    private final static String TO_INSTANCE_ID = "toInstanceId";
-    private final static String FROM_INSTANCE_ID = "fromInstanceId";
-    private final static String RELATION_ID = "relationId";
-    private final static String CAPABILITY_OWNER_ID = "capabilityOwnerId";
-    private final static String CAPABILITY_UID = "capabilityUid";
-    private final static String CAPABILITY_NAME = "capabilityName";
-    private final static String REQUIREMENT_OWNER_ID = "requirementOwnerId";
-    private final static String REQUIREMENT_UID = "requirementUid";
-    private final static String REQUIREMENT_NAME = "requirementName";
-    private final static String RELATIONSHIP_TYPE = "relationshipType";
+    private static final String COMPONENT_ID = "componentId";
+    private static final String TO_INSTANCE_ID = "toInstanceId";
+    private static final String FROM_INSTANCE_ID = "fromInstanceId";
+    private static final String RELATION_ID = "relationId";
+    private static final String CAPABILITY_OWNER_ID = "capabilityOwnerId";
+    private static final String CAPABILITY_UID = "capabilityUid";
+    private static final String CAPABILITY_NAME = "capabilityName";
+    private static final String REQUIREMENT_OWNER_ID = "requirementOwnerId";
+    private static final String REQUIREMENT_UID = "requirementUid";
+    private static final String REQUIREMENT_NAME = "requirementName";
+    private static final String RELATIONSHIP_TYPE = "relationshipType";
 
     private static Map<String, MapListCapabilityDataDefinition> fulfilledCapability;
     private static Map<String, MapListRequirementDataDefinition> fulfilledRequirement;
@@ -92,19 +105,15 @@ public class NodeTemplateOperationTest extends ModelTestBase {
     private static RequirementDataDefinition requirement;
     private static RequirementCapabilityRelDef relation;
 
+    private final JanusGraphDao janusGraphDao = Mockito.mock(JanusGraphDao.class);
+    private final TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
+
     @InjectMocks
-    private static NodeTemplateOperation operation;
+    private NodeTemplateOperation operation;
 
-    @Mock
-    private static JanusGraphDao janusGraphDao;
-
-    @Mock
-    private static TopologyTemplateOperation topologyTemplateOperation;
-
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    public void setup() {
         init();
-        janusGraphDao = Mockito.mock(JanusGraphDao.class);
         operation = new NodeTemplateOperation();
         operation.setJanusGraphDao(janusGraphDao);
         buildDataDefinition();
@@ -117,7 +126,7 @@ public class NodeTemplateOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testGetFulfilledCapabilityByRelationSuccess(){
+    void testGetFulfilledCapabilityByRelationSuccess() {
         GraphVertex vertex = Mockito.mock(GraphVertex.class);
         Either<GraphVertex, JanusGraphOperationStatus> vertexRes = Either.left(vertex);
         when(janusGraphDao.getVertexById(eq(COMPONENT_ID), eq(JsonParseFlagEnum.ParseAll))).thenReturn(vertexRes);
@@ -132,7 +141,7 @@ public class NodeTemplateOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testGetFulfilledRequirementByRelationSuccess(){
+    void testGetFulfilledRequirementByRelationSuccess() {
         GraphVertex vertex = Mockito.mock(GraphVertex.class);
         Either<GraphVertex, JanusGraphOperationStatus> vertexRes = Either.left(vertex);
         when(janusGraphDao.getVertexById(eq(COMPONENT_ID), eq(JsonParseFlagEnum.ParseAll))).thenReturn(vertexRes);
@@ -147,7 +156,7 @@ public class NodeTemplateOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testGetFulfilledCapabilityByRelationNotFoundFailure(){
+    void testGetFulfilledCapabilityByRelationNotFoundFailure() {
         GraphVertex vertex = Mockito.mock(GraphVertex.class);
         Either<GraphVertex, JanusGraphOperationStatus> vertexRes = Either.left(vertex);
         when(janusGraphDao.getVertexById(eq(COMPONENT_ID), eq(JsonParseFlagEnum.ParseAll))).thenReturn(vertexRes);
@@ -157,11 +166,11 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         when(janusGraphDao.getChildVertex(eq(vertex), eq(EdgeLabelEnum.FULLFILLED_CAPABILITIES), eq(JsonParseFlagEnum.ParseJson))).thenReturn(childVertexRes);
         Either<CapabilityDataDefinition, StorageOperationStatus> result = operation.getFulfilledCapabilityByRelation(COMPONENT_ID, TO_INSTANCE_ID, relation, this::isBelongingCapability);
         assertTrue(result.isRight());
-        assertSame(result.right().value(), StorageOperationStatus.NOT_FOUND);
+        assertSame(StorageOperationStatus.NOT_FOUND, result.right().value());
     }
 
     @Test
-    public void testGetFulfilledRequirementByRelationNotFoundFailure(){
+    void testGetFulfilledRequirementByRelationNotFoundFailure() {
         GraphVertex vertex = Mockito.mock(GraphVertex.class);
         Either<GraphVertex, JanusGraphOperationStatus> vertexRes = Either.left(vertex);
         when(janusGraphDao.getVertexById(eq(COMPONENT_ID), eq(JsonParseFlagEnum.ParseAll))).thenReturn(vertexRes);
@@ -171,11 +180,11 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         when(janusGraphDao.getChildVertex(eq(vertex), eq(EdgeLabelEnum.FULLFILLED_REQUIREMENTS), eq(JsonParseFlagEnum.ParseJson))).thenReturn(childVertexRes);
         Either<RequirementDataDefinition, StorageOperationStatus> result = operation.getFulfilledRequirementByRelation(COMPONENT_ID, FROM_INSTANCE_ID, relation, this::isBelongingRequirement);
         assertTrue(result.isRight());
-        assertSame(result.right().value(), StorageOperationStatus.NOT_FOUND);
+        assertSame(StorageOperationStatus.NOT_FOUND, result.right().value());
     }
 
     @Test
-    public void testUpdateCIMetadataOfTopologyTemplate() {
+    void testUpdateCIMetadataOfTopologyTemplate() {
         Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> result;
         String id = "id";
         TopologyTemplate container = new TopologyTemplate();
@@ -194,16 +203,16 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         assertTrue(result.isLeft());
     }
 
-	@Test
-	public void testGetDefaultHeatTimeout() {
-		Integer result;
+    @Test
+    void testGetDefaultHeatTimeout() {
+        Integer result;
 
-		// default test
-		result = NodeTemplateOperation.getDefaultHeatTimeout();
+        // default test
+        result = NodeTemplateOperation.getDefaultHeatTimeout();
     }
 
-	@Test
-    public void testPrepareInstDeploymentArtifactPerInstance() {
+    @Test
+    void testPrepareInstDeploymentArtifactPerInstance() {
         Map<String, Object> deploymentResourceArtifacts = new HashMap<>();
         Map<String, ArtifactDataDefinition> deploymentArtifacts = new HashMap<>();
         ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
@@ -220,22 +229,22 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         MapArtifactDataDefinition result;
 
         result = operation.prepareInstDeploymentArtifactPerInstance(deploymentArtifacts, componentInstanceId, user,
-                envType);
-        Assert.assertEquals(2, result.getMapToscaDataDefinition().size());
+            envType);
+        assertEquals(2, result.getMapToscaDataDefinition().size());
     }
 
-	@Test
-	public void testCreateCapPropertyKey() throws Exception {
-		String key = "";
-		String instanceId = "";
-		String result;
+    @Test
+    void testCreateCapPropertyKey() throws Exception {
+        String key = "";
+        String instanceId = "";
+        String result;
 
-		// default test
-		result = NodeTemplateOperation.createCapPropertyKey(key, instanceId);
-	}
+        // default test
+        result = NodeTemplateOperation.createCapPropertyKey(key, instanceId);
+    }
 
-	@Test
-	public void testPrepareCalculatedCapabiltyForNodeType() {
+    @Test
+    void testPrepareCalculatedCapabiltyForNodeType() {
         Map<String, ListCapabilityDataDefinition> capabilities = new HashMap<>();
         ListCapabilityDataDefinition listCapDataDefinition = new ListCapabilityDataDefinition();
         List<CapabilityDataDefinition> listToscaDataDefinition = new ArrayList<>();
@@ -248,11 +257,11 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         MapListCapabilityDataDefinition result;
 
         result = operation.prepareCalculatedCapabiltyForNodeType(capabilities, componentInstance);
-        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
+        assertEquals(1, result.getMapToscaDataDefinition().size());
 	}
 
     @Test
-    public void testPrepareCalculatedReqForNodeType() {
+    void testPrepareCalculatedReqForNodeType() {
         Map<String, ListRequirementDataDefinition> requirements = new HashMap<>();
         ListRequirementDataDefinition listReqDataDef = new ListRequirementDataDefinition();
         List<RequirementDataDefinition> listToscaDataDefinition = new ArrayList<>();
@@ -265,43 +274,43 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         MapListRequirementDataDefinition result;
 
         result = operation.prepareCalculatedRequirementForNodeType(requirements, componentInstance);
-        Assert.assertEquals(1, result.getMapToscaDataDefinition().size());
+        assertEquals(1, result.getMapToscaDataDefinition().size());
     }
 
-	@Test
-	public void testAddGroupInstancesToComponentInstance() throws Exception {
-		Component containerComponent = null;
-		ComponentInstanceDataDefinition componentInstance = null;
-		List<GroupDefinition> groups = null;
-		Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = null;
-		StorageOperationStatus result;
+    @Test
+    void testAddGroupInstancesToComponentInstance() throws Exception {
+        Component containerComponent = null;
+        ComponentInstanceDataDefinition componentInstance = null;
+        List<GroupDefinition> groups = null;
+        Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = null;
+        StorageOperationStatus result;
 
-		result = operation.addGroupInstancesToComponentInstance(containerComponent, componentInstance, groups,
-				groupInstancesArtifacts);
-		Assert.assertEquals(StorageOperationStatus.OK, result);
-	}
+        result = operation.addGroupInstancesToComponentInstance(containerComponent, componentInstance, groups,
+            groupInstancesArtifacts);
+        assertEquals(StorageOperationStatus.OK, result);
+    }
 
-	@Test
-	public void testGenerateCustomizationUUIDOnInstanceGroup() throws Exception {
-		String componentId = "";
-		String instanceId = "";
-		List<String> groupInstances = null;
-		StorageOperationStatus result;
+    @Test
+    void testGenerateCustomizationUUIDOnInstanceGroup() throws Exception {
+        String componentId = "";
+        String instanceId = "";
+        List<String> groupInstances = null;
+        StorageOperationStatus result;
 
-		result = operation.generateCustomizationUUIDOnInstanceGroup(componentId, instanceId, groupInstances);
-		Assert.assertEquals(StorageOperationStatus.OK, result);
-	}
-	
-	@Test
-	public void testUpdateComponentInstanceRequirement() {
+        result = operation.generateCustomizationUUIDOnInstanceGroup(componentId, instanceId, groupInstances);
+        assertEquals(StorageOperationStatus.OK, result);
+    }
+
+    @Test
+    void testUpdateComponentInstanceRequirement() {
         String componentId = "";
         String componentInstanceId = "requirementOwnerId";
-        
+
         GraphVertex graphVertex = new GraphVertex();
         graphVertex.setUniqueId("uniqueId");
         when(janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
         when(janusGraphDao.updateVertex(graphVertex)).thenReturn(Either.left(graphVertex));
-        
+
         MapListRequirementDataDefinition mapListRequirementDataDefinition = new MapListRequirementDataDefinition();
         mapListRequirementDataDefinition.add(requirement.getCapability(), requirement);
         Map<String, MapListRequirementDataDefinition> mapOfRequirements = new HashMap<>();
@@ -326,16 +335,108 @@ public class NodeTemplateOperationTest extends ModelTestBase {
             }
         };
         String outId = (String) janusGraphDao
-                .getProperty((JanusGraphVertex) outVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
+            .getProperty((JanusGraphVertex) outVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
         when(janusGraphDao.getProperty(outVertex, GraphPropertyEnum.UNIQUE_ID.getProperty())).thenReturn("uniqueId");
         when(janusGraphDao.updateVertex(childVertex)).thenReturn(Either.left(childVertex));
         JanusGraphVertex janusGraphVertex = Mockito.mock(JanusGraphVertex.class);
         childVertex.setVertex(janusGraphVertex);
         when(janusGraphVertex.edges(Direction.IN, EdgeLabelEnum.CALCULATED_REQUIREMENTS.name())).thenReturn(edgeIterator);
-                
-	    StorageOperationStatus result = operation.updateComponentInstanceRequirement(componentId, componentInstanceId, requirement);
-	    assertEquals(StorageOperationStatus.OK, result);
-	}
+
+        StorageOperationStatus result = operation.updateComponentInstanceRequirement(componentId, componentInstanceId, requirement);
+        assertEquals(StorageOperationStatus.OK, result);
+    }
+
+    @Test
+    void test_addComponentInstanceOutput() {
+        final NodeTemplateOperation testInstance = Mockito.spy(new NodeTemplateOperation());
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+
+        final String componentInstanceId = "requirementOwnerId";
+
+        final ComponentInstanceOutput instanceOutput = new ComponentInstanceOutput();
+
+        doReturn(StorageOperationStatus.OK).when((BaseOperation) testInstance)
+            .addToscaDataDeepElementToToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_OUTPUTS), eq(VertexTypeEnum.INST_OUTPUTS),
+                ArgumentMatchers.any(ComponentInstanceOutput.class), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+
+        final StorageOperationStatus result = testInstance.addComponentInstanceOutput(component, componentInstanceId, instanceOutput);
+        assertNotNull(result);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify((BaseOperation) testInstance, times(1))
+            .addToscaDataDeepElementToToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_OUTPUTS), eq(VertexTypeEnum.INST_OUTPUTS),
+                ArgumentMatchers.any(ComponentInstanceOutput.class), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+    }
+
+    @Test
+    void test_updateComponentInstanceAttributes() {
+        final NodeTemplateOperation testInstance = Mockito.spy(new NodeTemplateOperation());
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+
+        final String componentInstanceId = "requirementOwnerId";
+
+        final ComponentInstanceAttribute instanceAttribute = new ComponentInstanceAttribute();
+        final List<ComponentInstanceAttribute> attributes = new ArrayList<>();
+        attributes.add(instanceAttribute);
+
+        doReturn(StorageOperationStatus.OK).when((BaseOperation) testInstance)
+            .updateToscaDataDeepElementsOfToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_ATTRIBUTES), eq(VertexTypeEnum.INST_ATTRIBUTES),
+                eq(attributes), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+
+        final StorageOperationStatus result = testInstance.updateComponentInstanceAttributes(component, componentInstanceId, attributes);
+        assertNotNull(result);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify((BaseOperation) testInstance, times(1))
+            .updateToscaDataDeepElementsOfToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_ATTRIBUTES), eq(VertexTypeEnum.INST_ATTRIBUTES),
+                eq(attributes), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+    }
+
+    @Test
+    void test_updateComponentInstanceAttribute() {
+        final NodeTemplateOperation testInstance = Mockito.spy(new NodeTemplateOperation());
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+
+        final String componentInstanceId = "requirementOwnerId";
+
+        final ComponentInstanceAttribute instanceAttribute = new ComponentInstanceAttribute();
+
+        doReturn(StorageOperationStatus.OK).when((BaseOperation) testInstance)
+            .updateToscaDataDeepElementOfToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_ATTRIBUTES), eq(VertexTypeEnum.INST_ATTRIBUTES),
+                eq(instanceAttribute), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+
+        final StorageOperationStatus result = testInstance.updateComponentInstanceAttribute(component, componentInstanceId, instanceAttribute);
+        assertNotNull(result);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify((BaseOperation) testInstance, times(1))
+            .updateToscaDataDeepElementOfToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_ATTRIBUTES), eq(VertexTypeEnum.INST_ATTRIBUTES),
+                eq(instanceAttribute), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+    }
+
+    @Test
+    void test_updateComponentInstanceOutputs() {
+        final NodeTemplateOperation testInstance = Mockito.spy(new NodeTemplateOperation());
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+
+        final String componentInstanceId = "requirementOwnerId";
+
+        List<ComponentInstanceOutput> componentInstanceOutputList = new ArrayList<>();
+        ComponentInstanceOutput instanceOutput = new ComponentInstanceOutput();
+        componentInstanceOutputList.add(instanceOutput);
+
+        doReturn(StorageOperationStatus.OK).when((BaseOperation) testInstance)
+            .updateToscaDataDeepElementsOfToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_OUTPUTS), eq(VertexTypeEnum.INST_OUTPUTS),
+                eq(componentInstanceOutputList), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+
+        final StorageOperationStatus result = testInstance.updateComponentInstanceOutputs(component, componentInstanceId, componentInstanceOutputList);
+        assertNotNull(result);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify((BaseOperation) testInstance, times(1))
+            .updateToscaDataDeepElementsOfToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_OUTPUTS), eq(VertexTypeEnum.INST_OUTPUTS),
+                eq(componentInstanceOutputList), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+    }
 
     private ComponentInstance createCompInstance() {
         ComponentInstance componentInstance = new ComponentInstance();
@@ -345,6 +446,7 @@ public class NodeTemplateOperationTest extends ModelTestBase {
         componentInstance.setName(id);
         return componentInstance;
     }
+
     private static void buildRequirementDataDefinition() {
         buildRequirement();
         fulfilledRequirement = new HashMap<>();
