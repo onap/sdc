@@ -22,16 +22,21 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import javax.activation.DataHandler;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
@@ -135,32 +140,46 @@ public class OrchestrationTemplateCandidateImplTest {
 
     @Test
     public void uploadSignedTest() {
-        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.zip"), "1");
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Response response = orchestrationTemplateCandidate
+            .upload("1", "1", mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")),
+                "1");
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
 
     @Test
-    public void uploadNotSignedTest(){
-        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.csar"), "1");
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    public void uploadNotSignedTest() {
+        Response response = orchestrationTemplateCandidate.upload("1", "1",
+            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), "1");
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
 
-    private Attachment mockAttachment(final String fileName) {
+    private Attachment mockAttachment(final String fileName, final URL fileToUpload) {
         final Attachment attachment = Mockito.mock(Attachment.class);
         when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
         final DataHandler dataHandler = Mockito.mock(DataHandler.class);
         when(dataHandler.getName()).thenReturn(fileName);
         when(attachment.getDataHandler()).thenReturn(dataHandler);
-        final byte[] bytes = "upload package Test".getBytes();
+        byte[] bytes = "upload package Test".getBytes();
+        if (Objects.nonNull(fileToUpload)) {
+            try {
+                bytes = IOUtils.toByteArray(fileToUpload);
+            } catch (final IOException e) {
+                logger.error("unexpected exception", e);
+                Assert.fail("Not able to convert file to byte array");
+            }
+        }
         when(attachment.getObject(ArgumentMatchers.any())).thenReturn(bytes);
         return attachment;
     }
 
     @Test
     public void uploadSignNotValidTest() {
-        Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.zip"), "1");
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertFalse(((UploadFileResponseDto)response.getEntity()).getErrors().isEmpty());
+        Response response = orchestrationTemplateCandidate
+            .upload("1", "1", mockAttachment("filename.zip", null), "1");
+        assertEquals(Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatus());
+        assertFalse(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
 
     @Test
