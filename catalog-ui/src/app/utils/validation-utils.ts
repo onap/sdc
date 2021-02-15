@@ -64,7 +64,10 @@ export class ValidationUtils {
         if (!text) {
             return null;
         }
-        return text.replace(/\s+/g, ' ').replace(/%[A-Fa-f0-9]{2}/g, '').trim();
+        return text.replace(/\s+/g, ' ').replace(/%[A-Fa-f0-9]{2}/g, '')
+        .replace(/&/g, "&amp;").replace(/>/g, "&gt;")
+        .replace(/</g, "&lt;").replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;").trim();
     }
 
     public getValidationPattern = (validationType:string, parameterType?:string):RegExp => {
