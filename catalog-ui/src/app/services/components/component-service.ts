@@ -19,8 +19,25 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, IValidate, RelationshipModel, PropertyModel, Component, ComponentInstance,
-    AttributeModel, IAppConfigurtaion, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
+import {
+    ArtifactModel,
+    IFileDownload,
+    InstancesInputsPropertiesMap,
+    InputModel,
+    IValidate,
+    RelationshipModel,
+    PropertyModel,
+    Component,
+    ComponentInstance,
+    AttributeModel,
+    IAppConfigurtaion,
+    Resource,
+    Module,
+    DisplayModule,
+    ArtifactGroupModel,
+    InputsAndProperties,
+    AsdcComment
+} from "app/models";
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
 import {SharingService} from "app/services-ng2";
 import {ComponentMetadata} from "../../models/component-metadata";
@@ -29,7 +46,7 @@ export interface IComponentService {
 
     getComponent(id:string);
     updateComponent(component:Component):ng.IPromise<Component>;
-    changeLifecycleState(component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> ;
+    changeLifecycleState(component:Component, state:string, userRemarks:AsdcComment):ng.IPromise<ComponentMetadata> ;
     validateName(newName:string, subtype?:string):ng.IPromise<IValidate>;
     createComponent(component:Component):ng.IPromise<Component>;
     //importComponent
@@ -233,15 +250,28 @@ export class ComponentService implements IComponentService {
         return deferred.promise;
     };
 
-    public changeLifecycleState = (component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> => {
+    public changeLifecycleState = (component:Component, state:string, commentObj:AsdcComment):ng.IPromise<ComponentMetadata> => {
         let deferred = this.$q.defer<ComponentMetadata>();
-        this.restangular.one(component.uniqueId).one(state).customPOST(userRemarks).then((response:ComponentMetadata) => {
-            this.sharingService.addUuidValue(response.uniqueId, response.uuid);
-            let component:ComponentMetadata = new ComponentMetadata().deserialize(response);
-            deferred.resolve(component);
-        }, (err)=> {
-            deferred.reject(err);
-        });
+        let headerObj = {};
+        if (commentObj.userRemarks) {
+            headerObj = this.getHeaderMd5(commentObj);
+            this.restangular.one(component.uniqueId).one(state).customPOST(JSON.stringify(commentObj), '', {}, headerObj)
+            .then((response:ComponentMetadata) => {
+                this.sharingService.addUuidValue(response.uniqueId, response.uuid);
+                let component:ComponentMetadata = new ComponentMetadata().deserialize(response);
+                deferred.resolve(component);
+            }, (err)=> {
+                deferred.reject(err);
+            });
+        } else {
+            this.restangular.one(component.uniqueId).one(state).customPOST().then((response:ComponentMetadata) => {
+                this.sharingService.addUuidValue(response.uniqueId, response.uuid);
+                let component:ComponentMetadata = new ComponentMetadata().deserialize(response);
+                deferred.resolve(component);
+            }, (err)=> {
+                deferred.reject(err);
+            });
+        }
         return deferred.promise;
     };
 
