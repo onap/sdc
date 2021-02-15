@@ -27,14 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.RESOURCE_PARAM_NAME;
 
 import fj.data.Either;
 import java.util.ArrayList;
@@ -90,10 +91,10 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -1742,7 +1743,7 @@ class ComponentInstanceBusinessLogicTest {
         when(containerInstanceTypeData.isAllowedForResourceComponent(eq(ResourceTypeEnum.VF), eq(ResourceTypeEnum.VF)))
             .thenReturn(false);
         actualException = assertThrows(ByActionStatusComponentException.class, () -> {
-            componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
+            componentInstanceBusinessLogic.createComponentInstance(RESOURCE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
         //then
         assertThat(actualException.getActionStatus()).isEqualTo(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE);
@@ -1877,14 +1878,85 @@ class ComponentInstanceBusinessLogicTest {
         // Check graph db change was committed
         verify(janusGraphDao, times(1)).commit();
     }
-    
+
+    @Test
+    void testGetComponentInstanceAttributesById_success() {
+        final ComponentInstanceAttribute componentInstanceAttribute = new ComponentInstanceAttribute();
+        componentInstanceAttribute.setComponentInstanceId(TO_INSTANCE_ID);
+
+        final HashMap<String, List<ComponentInstanceAttribute>> map = new HashMap<>();
+        map.put(TO_INSTANCE_ID, Arrays.asList(componentInstanceAttribute));
+        resource.setComponentInstancesAttributes(map);
+
+        final Either<Component, StorageOperationStatus> leftServiceOp = Either.left(resource);
+        doReturn(leftServiceOp).when(toscaOperationFacade).getToscaElement(COMPONENT_ID);
+
+        final List<ComponentInstanceAttribute> result = componentInstanceBusinessLogic
+            .getComponentInstanceAttributesById(RESOURCE_PARAM_NAME, COMPONENT_ID, TO_INSTANCE_ID, USER_ID);
+        assertThat(result).isNotNull().isNotEmpty();
+        verify(toscaOperationFacade, times(1)).getToscaElement(COMPONENT_ID);
+    }
+
+    @Test
+    void testGetComponentInstanceAttributesById_fail_missing_ComponentInstancesAttributes() {
+        final Either<Component, StorageOperationStatus> leftServiceOp = Either.left(resource);
+        doReturn(leftServiceOp).when(toscaOperationFacade).getToscaElement(COMPONENT_ID);
+
+        final List<ComponentInstanceAttribute> result = componentInstanceBusinessLogic
+            .getComponentInstanceAttributesById(RESOURCE_PARAM_NAME, COMPONENT_ID, TO_INSTANCE_ID, USER_ID);
+        assertThat(result).isNotNull().isEmpty();
+        verify(toscaOperationFacade, times(1)).getToscaElement(COMPONENT_ID);
+    }
+
+    @Test
+    void testGetComponentInstanceAttributesById_fail_getToscaElement() {
+        final ComponentInstanceAttribute componentInstanceAttribute = new ComponentInstanceAttribute();
+        componentInstanceAttribute.setComponentInstanceId(TO_INSTANCE_ID);
+
+        final HashMap<String, List<ComponentInstanceAttribute>> map = new HashMap<>();
+        map.put(TO_INSTANCE_ID, Arrays.asList(componentInstanceAttribute));
+        resource.setComponentInstancesAttributes(map);
+
+        final Either<Object, StorageOperationStatus> right = Either.right(StorageOperationStatus.BAD_REQUEST);
+        doReturn(right).when(toscaOperationFacade).getToscaElement(COMPONENT_ID);
+        doReturn(ActionStatus.BAD_REQUEST_MISSING_RESOURCE).when(componentsUtils).convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST);
+
+        assertThrows(ByActionStatusComponentException.class, () -> {
+            final List<ComponentInstanceAttribute> result = componentInstanceBusinessLogic
+                .getComponentInstanceAttributesById(RESOURCE_PARAM_NAME, COMPONENT_ID, TO_INSTANCE_ID, USER_ID);
+
+        });
+
+    }
+
+    @Test
+    void testGetComponentInstanceAttributesById_fail_getResourceInstanceById() {
+        final ComponentInstanceAttribute componentInstanceAttribute = new ComponentInstanceAttribute();
+        componentInstanceAttribute.setComponentInstanceId(TO_INSTANCE_ID);
+
+        final HashMap<String, List<ComponentInstanceAttribute>> map = new HashMap<>();
+        map.put(TO_INSTANCE_ID, Arrays.asList(componentInstanceAttribute));
+        resource.setComponentInstancesAttributes(map);
+
+        final Either<Component, StorageOperationStatus> leftServiceOp = Either.left(resource);
+        doReturn(leftServiceOp).when(toscaOperationFacade).getToscaElement(COMPONENT_ID);
+        doReturn(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE).when(componentsUtils).convertFromStorageResponse(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
+
+        assertThrows(ByActionStatusComponentException.class, () -> {
+            final List<ComponentInstanceAttribute> result = componentInstanceBusinessLogic
+                .getComponentInstanceAttributesById(RESOURCE_PARAM_NAME, COMPONENT_ID, "", USER_ID);
+
+        });
+
+    }
+
     private ComponentInstance createServiceSubstitutionComponentInstance() {
         final ComponentInstance instanceToBeCreated = new ComponentInstance();
         instanceToBeCreated.setName(COMPONENT_INSTANCE_NAME);
         instanceToBeCreated.setUniqueId(COMPONENT_INSTANCE_ID);
         instanceToBeCreated.setComponentUid(ORIGIN_COMPONENT_ID);
         instanceToBeCreated.setOriginType(OriginTypeEnum.ServiceSubstitution);
-        
+
         return instanceToBeCreated;
     }
     
@@ -1897,7 +1969,6 @@ class ComponentInstanceBusinessLogicTest {
         originComponent.setName("myService");
         return originComponent;
     }
-    
     
     private Component createServiceSubstitutionServiceDerivedFromComponent() {
         final Resource component = new Resource();
