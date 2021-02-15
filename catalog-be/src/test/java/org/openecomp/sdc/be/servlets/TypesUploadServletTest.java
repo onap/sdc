@@ -48,6 +48,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -69,21 +71,22 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
+@TestInstance(Lifecycle.PER_CLASS)
 class TypesUploadServletTest extends JerseyTest {
 
-    public static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-    private static final HttpSession session = Mockito.mock(HttpSession.class);
-    public static final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    public static final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    private static final WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
-    private static final CapabilityTypeImportManager importManager = Mockito.mock(CapabilityTypeImportManager.class);
-    private static final ServletUtils servletUtils = Mockito.mock(ServletUtils.class);
-    private static final UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
-    private static final ComponentsUtils componentUtils = Mockito.mock(ComponentsUtils.class);
-    private static final ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
+    private final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private final HttpSession session = Mockito.mock(HttpSession.class);
+    private final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
+    private final WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
+    private final CapabilityTypeImportManager importManager = Mockito.mock(CapabilityTypeImportManager.class);
+    private final ServletUtils servletUtils = Mockito.mock(ServletUtils.class);
+    private final UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
+    private final ComponentsUtils componentUtils = Mockito.mock(ComponentsUtils.class);
+    private final ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
 
     @BeforeAll
-    public static void setup() {
+    public void setup() {
         ExternalConfiguration.setAppName("catalog-be");
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
             .thenReturn(webAppContextWrapper);
@@ -92,15 +95,13 @@ class TypesUploadServletTest extends JerseyTest {
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getComponentsUtils()).thenReturn(componentUtils);
         when(servletUtils.getUserAdmin()).thenReturn(userAdmin);
-        String userId = "jh0003";
-        User user = new User();
-        user.setUserId(userId);
+        final String userId = "jh0003";
+        final User user = new User(userId);
         user.setRole(Role.ADMIN.name());
         when(userAdmin.getUser(userId)).thenReturn(user);
         when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(userId);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.CREATED_201);
         when(componentUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
-
     }
 
     @BeforeEach
@@ -115,19 +116,16 @@ class TypesUploadServletTest extends JerseyTest {
 
     @Test
     void creatingCapabilityTypeSuccessTest() {
-        Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either
-            .left(emptyList());
+        final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(emptyList());
         when(importManager.createCapabilityTypes(Mockito.anyString())).thenReturn(either);
-        FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip",
-            new File("src/test/resources/types/capabilityTypes.zip"));
+        final FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
 
-        Response response = target().path("/v1/catalog/uploadType/capability").request(MediaType.APPLICATION_JSON)
+        final Response response = target().path("/v1/catalog/uploadType/capability").request(MediaType.APPLICATION_JSON)
             .post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
 
         assertEquals(HttpStatus.CREATED_201, response.getStatus());
-
     }
 
     @Override
@@ -138,16 +136,15 @@ class TypesUploadServletTest extends JerseyTest {
     @Override
     protected ResourceConfig configure() {
 
-        TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, null, componentUtils,
+        forceSet(TestProperties.CONTAINER_PORT, "0");
+        final TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, null, componentUtils,
             servletUtils, null, importManager, null,
             null, null,
             null, null, null);
-        ResourceConfig resourceConfig = new ResourceConfig()
-            .register(typesUploadServlet);
+        final ResourceConfig resourceConfig = new ResourceConfig().register(typesUploadServlet);
 
         resourceConfig.register(MultiPartFeature.class);
         resourceConfig.register(new AbstractBinder() {
-
             @Override
             protected void configure() {
                 // The below code was cut-pasted to here from setup() because
@@ -160,17 +157,15 @@ class TypesUploadServletTest extends JerseyTest {
                 ConfigurationSource configurationSource = new FSConfigurationSource(
                     ExternalConfiguration.getChangeListener(), appConfigDir);
                 ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-                for (String mandatoryHeader : configurationManager.getConfiguration().getIdentificationHeaderFields()) {
-
+                for (final String mandatoryHeader : configurationManager.getConfiguration().getIdentificationHeaderFields()) {
                     when(request.getHeader(mandatoryHeader)).thenReturn(mandatoryHeader);
-
                 }
 
                 when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
                     .thenReturn(configurationManager);
             }
         });
-        ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+        final ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         resourceConfig.property("contextConfig", context);
 
         return resourceConfig;
