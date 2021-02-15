@@ -585,4 +585,15 @@ public class ValidationUtils {
 	public static boolean validateForwardingPathNamePattern(String forwardingPathName) {
 		return FORWARDING_PATH_NAME_PATTERN.matcher(forwardingPathName).matches();
 	}
+
+	public static String sanitizeInputString(String input) {
+		if (StringUtils.isNotEmpty(input)) {
+			input = ValidationUtils.removeNoneUtf8Chars(input);
+			input = ValidationUtils.removeHtmlTags(input);
+			input = ValidationUtils.normaliseWhitespace(input);
+			input = ValidationUtils.stripOctets(input);
+		}
+		return input;
+	}
+
 }
