@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -61,6 +62,7 @@ public class UiComponentDataConverterTest {
     private PolicyDefinition policy1, policy2;
     private GroupDefinition group1, group2;
     private InputDefinition input1;
+    private OutputDefinition output;
     private PropertyDefinition propertyDef;
     private InterfaceDefinition interfaceDef;
 
@@ -149,6 +151,7 @@ public class UiComponentDataConverterTest {
     public void getUiDataTransferFromResourceByParams_All() {
         Resource resourceWithGroups = buildResourceWithGroups();
         Resource resourceWithInputs = buildResourceWithInputs();
+        Resource resourceWithOutputs = buildResourceWithOutputs();
 
         UiComponentDataTransfer componentDTO1 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("PROPERTIES"));
         UiComponentDataTransfer componentDTO2 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("properties"));
@@ -160,6 +163,7 @@ public class UiComponentDataConverterTest {
 
         UiComponentDataTransfer componentDTO8 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("inputs"));
         UiComponentDataTransfer componentDTO81 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithInputs, Collections.singletonList("inputs"));
+        UiComponentDataTransfer componentDTO82 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithOutputs, Collections.singletonList("outputs"));
 
         UiComponentDataTransfer componentDTO9 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("users"));
         UiComponentDataTransfer componentDTO10 = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resourceWithGroups, Collections.singletonList("componentInstances"));
@@ -202,7 +206,7 @@ public class UiComponentDataConverterTest {
     @Test
     public void getUiDataTransferFromServiceByParams_METADATA() {
         UiServiceDataTransfer componentDTO = (UiServiceDataTransfer) uiComponentDataConverter.getUiDataTransferFromServiceByParams(new Service(), Collections.singletonList("metadata"));
-        assertThat(componentDTO.getMetadata().getNamingPolicy()).isEqualTo("");
+        assertThat(componentDTO.getMetadata().getNamingPolicy()).isEmpty();
     }
 
     @Test
@@ -348,11 +352,20 @@ public class UiComponentDataConverterTest {
                 .build();
     }
 
-    private Resource buildResourceWithParameter(String field) {
-        ResourceBuilder res =  new ResourceBuilder();
+    private Resource buildResourceWithOutputs() {
+        return new ResourceBuilder()
+                .addOutput(output)
+                .build();
+    }
+
+    private Resource buildResourceWithParameter(final String field) {
+        final ResourceBuilder res =  new ResourceBuilder();
         switch(field){
             case "inputs":
                 res.addInput(input1);
+                break;
+            case "outputs":
+                res.addOutput(output);
                 break;
             case "properties":
                 //res.addProperty(propertyDef);
@@ -360,10 +373,9 @@ public class UiComponentDataConverterTest {
 
 
         }
-
-
         return new ResourceBuilder()
                 .addInput(input1)
+                .addOutput(output)
                 .build();
     }
 

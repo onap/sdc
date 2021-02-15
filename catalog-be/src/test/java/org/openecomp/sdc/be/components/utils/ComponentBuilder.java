@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 
@@ -129,6 +130,22 @@ public abstract class ComponentBuilder<T extends Component, B extends ComponentB
         inputDefinition.setName(inputName);
         inputDefinition.setUniqueId(inputName);
         this.addInput(inputDefinition);
+        return self();
+    }
+
+    public ComponentBuilder<T, B> addOutput(final OutputDefinition output) {
+        if (component.getOutputs() == null) {
+            component.setOutputs(new ArrayList<>());
+        }
+        component.getOutputs().add(output);
+        return self();
+    }
+
+    public ComponentBuilder<T, B> addOutput(final String outputName) {
+        final OutputDefinition outputDefinition = new OutputDefinition();
+        outputDefinition.setName(outputName);
+        outputDefinition.setUniqueId(outputName);
+        this.addOutput(outputDefinition);
         return self();
     }
 
