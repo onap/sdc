@@ -33,6 +33,25 @@ import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -40,7 +59,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
-import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -67,29 +85,10 @@ import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -582,12 +581,12 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         try {
 
             Either<Resource, ResponseFormat> eitherResource =
-                    resourceBusinessLogic.getLatestResourceFromCsarUuid(csarUUID, user);
+                    resourceBusinessLogic.getLatestResourceFromCsarUuid(ValidationUtils.sanitizeInputString(csarUUID), user);
 
             // validate response
             if (eitherResource.isRight()) {
                 log.debug("failed to get resource from csarUuid : {}", csarUUID);
-                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), eitherResource.right().value());
+                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT), eitherResource.right().value());
             } else {
                 Object representation = RepresentationUtils.toRepresentation(eitherResource.left().value());
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);

@@ -1,6 +1,7 @@
 /*
  * Copyright © 2016-2018 European Support Limited
  * Copyright © 2021 Nokia
+ * Copyright © 2021 Nordix Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +33,7 @@ import java.util.Optional;
 import javax.activation.DataHandler;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
@@ -39,6 +41,7 @@ import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -100,13 +103,13 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
                          final Attachment fileToUpload, final String user) {
     final byte[] fileToUploadBytes = fileToUpload.getObject(byte[].class);
     final DataHandler dataHandler = fileToUpload.getDataHandler();
-    final String filename = dataHandler.getName();
+    final String filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
 
     final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes);
     if (onboardingPackageProcessor.hasErrors()) {
       final UploadFileResponseDto uploadFileResponseDto =
           buildUploadResponseWithError(onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]));
-      return Response.ok(uploadFileResponseDto).build();
+      return Response.status(Status.NOT_ACCEPTABLE).entity(uploadFileResponseDto).build();
     }
 
     final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
@@ -117,7 +120,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
       return Response.ok(uploadFileResponseDto).build();
     }
 
-    final VspDetails vspDetails = new VspDetails(vspId, new Version(versionId));
+    final VspDetails vspDetails = new VspDetails(ValidationUtils.sanitizeInputString(vspId),
+        new Version(ValidationUtils.sanitizeInputString(versionId)));
     return processOnboardPackage(onboardPackageInfo, vspDetails);
   }
 
