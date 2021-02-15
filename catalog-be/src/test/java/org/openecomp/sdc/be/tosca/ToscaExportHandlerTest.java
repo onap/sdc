@@ -82,6 +82,8 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribOutput;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -90,6 +92,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -102,6 +105,7 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.tosca.exception.ToscaConversionException;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaMetadata;
@@ -378,11 +382,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     @Test
     public void testConvertToscaTemplate() throws Exception {
 
-        Component component = getNewResource();
-        ToscaTemplate toscaNode = new ToscaTemplate("");
+        final Component component = getNewResource();
+        final ToscaTemplate toscaNode = new ToscaTemplate("");
         Either<ToscaTemplate, ToscaError> result;
-        List<ComponentInstance> resourceInstances = new ArrayList<>();
-        ComponentInstance instance = new ComponentInstance();
+        final List<ComponentInstance> resourceInstances = new ArrayList<>();
+        final ComponentInstance instance = new ComponentInstance();
 
         instance.setOriginType(OriginTypeEnum.SERVICE);
         instance.setSourceModelUid("targetModelUid");
@@ -391,8 +395,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         component.setComponentInstances(resourceInstances);
 
         when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
-        when(capabilityRequirementConverter.getOriginComponent(any(Map.class),
-            any(ComponentInstance.class))).thenReturn(Either.right(false));
+        when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.right(false));
+
+        final Map<String, ToscaProperty> map = new HashMap<>();
+        map.put("mock", new ToscaProperty());
+        doReturn(map).when(outputConverter).convert(any(), any());
 
         // default test
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
@@ -400,7 +407,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     }
 
     @Test
-    public void testConvertToscaTemplateWhenComponentContainsGroup() {
+    public void testConvertToscaTemplateWhenComponentContainsGroup() throws ToscaConversionException {
         Component component = getNewResource();
         ToscaTemplate toscaNode = new ToscaTemplate("");
         Either<ToscaTemplate, ToscaError> result;
@@ -431,6 +438,10 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         when(inputConverter.convertInputs(any(List.class), any(Map.class))).thenReturn(new HashMap<>());
 
         when(groupExportParser.getGroups(component)).thenReturn(null);
+
+        final Map<String, ToscaProperty> map = new HashMap<>();
+        map.put("mock", new ToscaProperty());
+        doReturn(map).when(outputConverter).convert(any(), any());
 
         // test component contains group
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
@@ -467,6 +478,10 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
 
         when(inputConverter.convertInputs(anyList(), anyMap())).thenReturn(new HashMap<>());
+        final Map<String, ToscaProperty> map = new HashMap<>();
+        map.put("mock", new ToscaProperty());
+        doReturn(map).when(outputConverter).convert(any(), any());
+
         // test component contains group
         result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
         Assert.assertNotNull(result);
@@ -536,6 +551,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         // default test
         Deencapsulation.invoke(testSubject, "createDependency", componentCache, imports, dependecies, ci);
+        Assert.assertFalse(componentCache.isEmpty());
     }
 
     @Test
@@ -1524,10 +1540,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     @Test
     public void testIsCvfc() throws Exception {
 
-        Component component = new Resource();
+        Component component = new Service();
         boolean result;
-
-        component = new Service();
 
         result = Deencapsulation.invoke(testSubject, "isCvfc", component);
         Assert.assertFalse(result);
@@ -1576,8 +1590,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         result = Deencapsulation.invoke(testSubject, "convertToNodeTemplateArtifacts", container);
         Assert.assertNotNull(result);
         Assert.assertTrue(MapUtils.isNotEmpty(result));
-        Assert.assertEquals("test_file",result.get("test_art").getFile());
-        Assert.assertEquals("test_type",result.get("test_art").getType());
+        Assert.assertEquals("test_file", result.get("test_art").getFile());
+        Assert.assertEquals("test_type", result.get("test_art").getType());
     }
 
     @Test

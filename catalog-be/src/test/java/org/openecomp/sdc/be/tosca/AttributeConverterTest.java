@@ -19,7 +19,6 @@
 
 package org.openecomp.sdc.be.tosca;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -130,7 +129,6 @@ class AttributeConverterTest {
         assertAttribute(attributeDefinition, defaultValueMap, actualToscaAttribute);
     }
 
-
     @Test
     void testInvalidDefaultValueJsonConversion() {
         //given
@@ -143,8 +141,7 @@ class AttributeConverterTest {
         assertEquals("Failed to parse json value", toscaConversionException.getMessage());
     }
 
-    private void assertAttribute(final AttributeDefinition expectedAttributeDefinition,
-                                 final ToscaAttribute actualToscaAttribute) {
+    private void assertAttribute(final AttributeDefinition expectedAttributeDefinition, final ToscaAttribute actualToscaAttribute) {
         assertAttribute(expectedAttributeDefinition, expectedAttributeDefinition.get_default(), actualToscaAttribute);
     }
 

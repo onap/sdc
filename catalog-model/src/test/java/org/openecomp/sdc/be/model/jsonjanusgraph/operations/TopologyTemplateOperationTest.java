@@ -55,6 +55,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -148,6 +151,25 @@ public class TopologyTemplateOperationTest {
     }
 
     @Test
+    public void testSetOutputsFromGraph() {
+        final GraphVertex containerVertex = new GraphVertex();
+        final ComponentParametersView filter = new ComponentParametersView(true);
+        filter.setIgnoreOutputs(false);
+        final String componentName = "componentName";
+        final String componentId = UniqueIdBuilder.buildResourceUniqueId();
+        containerVertex.setVertex(Mockito.mock(JanusGraphVertex.class));
+        containerVertex.setJsonMetadataField(JsonPresentationFields.NAME, componentName);
+        containerVertex.setUniqueId(componentId);
+        containerVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        doReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR)).when(janusGraphDao)
+            .getChildVertex(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class));
+        final Either<ToscaElement, StorageOperationStatus> storageOperationStatus
+            = topologyTemplateOperation.getToscaElement(containerVertex, filter);
+        assertThat(storageOperationStatus).isEqualTo(Either.right(StorageOperationStatus.GENERAL_ERROR));
+        verify(janusGraphDao, times(1)).getChildVertex(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class));
+    }
+
+    @Test
     public void testUpdateDistributionStatus() {
         Either<GraphVertex, StorageOperationStatus> result;
         String uniqueId = "uniqueId";
@@ -176,7 +198,7 @@ public class TopologyTemplateOperationTest {
             JanusGraphOperationStatus.OK);
         when(janusGraphDao.updateVertex(graphVertex)).thenReturn(Either.left(graphVertex));
         result = topologyTemplateOperation.updateDistributionStatus(uniqueId, user, DistributionStatusEnum.DISTRIBUTED);
-        assertThat(result.isLeft());
+        assertThat(result.isLeft()).isTrue();
     }
 
     @SuppressWarnings("unchecked")
@@ -195,7 +217,7 @@ public class TopologyTemplateOperationTest {
         int counter = 0;
         Either<GraphVertex, JanusGraphOperationStatus> toscaDataVertexRes = Either.right(
             JanusGraphOperationStatus.NOT_FOUND);
-        when(janusGraphDao.getChildVertex(eq(componentV), eq(EdgeLabelEnum.POLICIES), eq(JsonParseFlagEnum.ParseJson))).thenReturn(toscaDataVertexRes);
+        when(janusGraphDao.getChildVertex(componentV, EdgeLabelEnum.POLICIES, JsonParseFlagEnum.ParseJson)).thenReturn(toscaDataVertexRes);
         Either<GraphVertex, JanusGraphOperationStatus> createVertex = Either.left(dataV);
         when(janusGraphDao.createVertex(any(GraphVertex.class))).thenReturn(createVertex);
         when(janusGraphDao.createEdge(any(JanusGraphVertex.class), any(JanusGraphVertex.class), any(EdgeLabelEnum.class), any(HashMap.class))).thenReturn(status);
