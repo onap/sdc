@@ -33,6 +33,18 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.IOException;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -54,21 +66,9 @@ import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -101,9 +101,8 @@ public class LifecycleServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409", description = "Resource already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response changeResourceState(
-            @Parameter(
-                    description = "LifecycleChangeInfo - relevant for checkin, failCertification, cancelCertification",
-                    required = false) String jsonChangeInfo,
+            @Parameter(description = "LifecycleChangeInfo - relevant for checkin, failCertification, cancelCertification")
+                String jsonChangeInfo,
             @Parameter(description = "validValues: resources / services / products",
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
                             ComponentTypeEnum.SERVICE_PARAM_NAME, ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam(
@@ -116,7 +115,6 @@ public class LifecycleServlet extends BeGenericServlet {
             @Context final HttpServletRequest request,
             @Parameter(description = "id of user initiating the operation") @HeaderParam(
                     value = Constants.USER_ID_HEADER) String userId) throws IOException {
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
         loggerSupportability.log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE, StatusCode.STARTED,"Starting to change lifecycle state to " + lifecycleTransition + " by user " + userId);
@@ -143,7 +141,9 @@ public class LifecycleServlet extends BeGenericServlet {
         try {
             if (jsonChangeInfo != null && !jsonChangeInfo.isEmpty()) {
                 ObjectMapper mapper = new ObjectMapper();
-                changeInfo = new LifecycleChangeInfoWithAction(mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
+                changeInfo = new LifecycleChangeInfoWithAction(mapper
+                    .readValue(ValidationUtils.sanitizeInputString(jsonChangeInfo), LifecycleChangeInfoBase.class)
+                    .getUserRemarks());
             }
         }
 

@@ -247,7 +247,7 @@ export abstract class Component implements IComponent {
         let onError = (error:any):void => {
             deferred.reject(error);
         };
-        this.componentService.changeLifecycleState(this, state, JSON.stringify(commentObj)).then(onSuccess, onError);
+        this.componentService.changeLifecycleState(this, state, commentObj).then(onSuccess, onError);
         return deferred.promise;
     };
 
