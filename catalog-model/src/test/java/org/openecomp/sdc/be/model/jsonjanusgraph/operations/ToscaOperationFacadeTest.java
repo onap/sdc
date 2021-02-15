@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -56,9 +57,13 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -90,8 +95,12 @@ import java.util.Collections;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -122,7 +131,7 @@ public class ToscaOperationFacadeTest {
     private TopologyTemplateOperation topologyTemplateOperationMock;
 
     @Mock
-    private NodeTypeOperation nodeTypeOperation;
+    private NodeTypeOperation nodeTypeOperationMock;
 
     @Mock
     private NodeTemplateOperation nodeTemplateOperationMock;
@@ -369,7 +378,7 @@ public class ToscaOperationFacadeTest {
         when(janusGraphDaoMock.getVertexById(id, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
         when(janusGraphDaoMock.getParentVertex(graphVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
         when(topologyTemplateOperationMock.deleteToscaElement(graphVertex)).thenReturn(Either.left(toscaElement));
-        when(nodeTypeOperation.createToscaElement(any(ToscaElement.class))).thenReturn(Either.left(nodeType));
+        when(nodeTypeOperationMock.createToscaElement(any(ToscaElement.class))).thenReturn(Either.left(nodeType));
         when(janusGraphDaoMock.getVertexById(null, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(graphVertex));
         when(janusGraphDaoMock.createEdge(graphVertex, graphVertex, EdgeLabelEnum.VERSION, null)).thenReturn(
             JanusGraphOperationStatus.OK);
@@ -397,7 +406,7 @@ public class ToscaOperationFacadeTest {
         component.setUniqueId(id);
         GraphVertex graphVertex = getTopologyTemplateVertex();
         when(janusGraphDaoMock.getVertexById(id, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
-        when(nodeTypeOperation.markComponentToDelete(graphVertex)).thenReturn(Either.left(graphVertex));
+        when(nodeTypeOperationMock.markComponentToDelete(graphVertex)).thenReturn(Either.left(graphVertex));
         result = testInstance.markComponentToDelete(component);
         assertEquals(result, StorageOperationStatus.OK);
     }
@@ -484,7 +493,8 @@ public class ToscaOperationFacadeTest {
         List<ToscaElement> toscaEleList = new ArrayList<>();
         ToscaElement toscaElement = getToscaElementForTest();
         toscaEleList.add(toscaElement);
-        when(nodeTypeOperation.getFollowedComponent(userId, lifecycleStates, lastStateStates, componentType)).thenReturn(Either.left(toscaEleList));
+        when(nodeTypeOperationMock.getFollowedComponent(userId, lifecycleStates, lastStateStates, componentType))
+            .thenReturn(Either.left(toscaEleList));
         result = testInstance.getFollowed(userId, lifecycleStates, lastStateStates, componentType);
         assertTrue(result.isLeft());
         assertEquals(1, result.left().value().size());
@@ -806,9 +816,224 @@ public class ToscaOperationFacadeTest {
     }
 
     @Test
-    public void associateRequirementsToServiceSuccessTest(){
+    public void associateRequirementsToServiceSuccessTest() {
         StorageOperationStatus result = associateRequirementsToServiceWithStatus(StorageOperationStatus.OK);
         assertTrue(result == StorageOperationStatus.OK);
+    }
+
+    @Test
+    public void test_addOutputsToComponent() {
+        final GraphVertex graphVertex = getTopologyTemplateVertex();
+        final String componentId = "componentId";
+
+        doReturn(Either.left(graphVertex)).when(janusGraphDaoMock).getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        doReturn(StorageOperationStatus.OK).when(topologyTemplateOperationMock)
+            .addToscaDataToToscaElement(
+                any(GraphVertex.class), eq(EdgeLabelEnum.OUTPUTS), eq(VertexTypeEnum.OUTPUTS), anyMap(), eq(JsonPresentationFields.NAME));
+
+        final Map<String, OutputDefinition> outputs = new HashMap<>();
+        final OutputDefinition outputDefinition = new OutputDefinition();
+        outputs.put("mock", outputDefinition);
+        final Either<List<OutputDefinition>, StorageOperationStatus> result = testInstance.addOutputsToComponent(outputs, componentId);
+        assertNotNull(result);
+        assertTrue(result.isLeft());
+        assertFalse(result.left().value().isEmpty());
+        assertThat(result.left().value().get(0)).isInstanceOf(OutputDefinition.class);
+        verify(janusGraphDaoMock, times(1)).getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        verify(topologyTemplateOperationMock, times(1)).addToscaDataToToscaElement(
+            any(GraphVertex.class), eq(EdgeLabelEnum.OUTPUTS), eq(VertexTypeEnum.OUTPUTS), anyMap(), eq(JsonPresentationFields.NAME));
+    }
+
+    @Test
+    public void test_addComponentInstanceOutputsToComponent_updateComponentInstanceOutput() {
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+        final Map<String, List<ComponentInstanceOutput>> map = new HashMap<>();
+        final List<ComponentInstanceOutput> componentInstanceOutputList = new ArrayList<>();
+        final ComponentInstanceOutput componentInstanceOutput = new ComponentInstanceOutput();
+        componentInstanceOutput.setComponentInstanceId(COMPONENT_ID);
+        componentInstanceOutput.setComponentInstanceName(COMPONENT_ID);
+        componentInstanceOutput.setName(COMPONENT_ID);
+        componentInstanceOutputList.add(componentInstanceOutput);
+        map.put("mock", componentInstanceOutputList);
+        component.setComponentInstancesOutputs(map);
+
+        doReturn(StorageOperationStatus.OK).when(nodeTemplateOperationMock)
+            .updateComponentInstanceOutput(any(Component.class), anyString(), any(ComponentInstanceOutput.class));
+
+        final Either<Map<String, List<ComponentInstanceOutput>>, StorageOperationStatus> result
+            = testInstance.addComponentInstanceOutputsToComponent(component, map);
+        assertNotNull(result);
+        assertTrue(result.isLeft());
+        assertFalse(result.left().value().isEmpty());
+        assertSame(result.left().value(), map);
+        verify(nodeTemplateOperationMock, times(1))
+            .updateComponentInstanceOutput(any(Component.class), anyString(), any(ComponentInstanceOutput.class));
+
+    }
+
+    @Test
+    public void test_addComponentInstanceOutputsToComponent_addComponentInstanceOutput() {
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+        Map<String, List<ComponentInstanceOutput>> map = new HashMap<>();
+        List<ComponentInstanceOutput> componentInstanceOutputList = new ArrayList<>();
+        ComponentInstanceOutput componentInstanceOutput = new ComponentInstanceOutput();
+        componentInstanceOutput.setComponentInstanceId(COMPONENT_ID);
+        componentInstanceOutput.setComponentInstanceName(COMPONENT_ID);
+        componentInstanceOutput.setName(COMPONENT_ID);
+        componentInstanceOutputList.add(componentInstanceOutput);
+        map.put("mock", componentInstanceOutputList);
+        component.setComponentInstancesOutputs(map);
+
+        map = new HashMap<>();
+        componentInstanceOutputList = new ArrayList<>();
+        componentInstanceOutput = new ComponentInstanceOutput();
+        componentInstanceOutput.setComponentInstanceId("mock");
+        componentInstanceOutput.setComponentInstanceName("mock");
+        componentInstanceOutput.setName("mock");
+        componentInstanceOutputList.add(componentInstanceOutput);
+        map.put("mock", componentInstanceOutputList);
+
+        final Either<Map<String, List<ComponentInstanceOutput>>, StorageOperationStatus> result = testInstance
+            .addComponentInstanceOutputsToComponent(component, map);
+        assertNotNull(result);
+        assertTrue(result.isRight());
+    }
+
+    @Test
+    public void test_addComponentInstanceAttributesToComponent() {
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+        Map<String, List<ComponentInstanceAttribute>> map = new HashMap<>();
+        List<ComponentInstanceAttribute> componentInstanceOutputList = new ArrayList<>();
+        ComponentInstanceAttribute componentInstanceAttribute = new ComponentInstanceAttribute();
+        componentInstanceAttribute.setComponentInstanceId(COMPONENT_ID);
+        componentInstanceAttribute.setUniqueId(COMPONENT_ID);
+        componentInstanceOutputList.add(componentInstanceAttribute);
+        map.put("mock", componentInstanceOutputList);
+        component.setComponentInstancesAttributes(map);
+
+        doReturn(StorageOperationStatus.OK).when(nodeTemplateOperationMock)
+            .updateComponentInstanceAttribute(any(Component.class), anyString(), any(ComponentInstanceAttribute.class));
+
+        final Either<Map<String, List<ComponentInstanceAttribute>>, StorageOperationStatus> result
+            = testInstance.addComponentInstanceAttributesToComponent(component, map);
+
+        assertNotNull(result);
+        assertTrue(result.isLeft());
+        assertFalse(result.left().value().isEmpty());
+        assertSame(result.left().value(), map);
+        verify(nodeTemplateOperationMock, times(1))
+            .updateComponentInstanceAttribute(any(Component.class), anyString(), any(ComponentInstanceAttribute.class));
+    }
+
+    @Test
+    public void test_updateAttributeOfComponent_success() {
+        final GraphVertex graphVertex = getTopologyTemplateVertex();
+        final String componentId = "componentId";
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+        doReturn(StorageOperationStatus.OK).when(nodeTypeOperationMock).updateToscaDataOfToscaElement(
+            anyString(), eq(EdgeLabelEnum.ATTRIBUTES), eq(VertexTypeEnum.ATTRIBUTES), any(AttributeDefinition.class),
+            eq(JsonPresentationFields.NAME));
+        doReturn(Either.left(graphVertex)).when(janusGraphDaoMock).getVertexById(eq(componentId), any(JsonParseFlagEnum.class));
+
+        final ToscaElement toscaElement = getToscaElementForTest();
+        final Map<String, AttributeDataDefinition> attributes = new HashMap<>();
+        final AttributeDefinition attributeDefinition = new AttributeDefinition();
+        attributeDefinition.setName("mock");
+        attributes.put("mock", attributeDefinition);
+        toscaElement.setAttributes(attributes);
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock)
+            .getToscaElement(ArgumentMatchers.eq(graphVertex), any(ComponentParametersView.class));
+
+        final Either<AttributeDefinition, StorageOperationStatus> result
+            = testInstance.updateAttributeOfComponent(component, attributeDefinition);
+        assertNotNull(result);
+    }
+
+    @Test
+    public void test_updateAttributeOfComponent_isNotPresent() {
+        final GraphVertex graphVertex = getTopologyTemplateVertex();
+        final String componentId = "componentId";
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+        doReturn(StorageOperationStatus.OK).when(nodeTypeOperationMock).updateToscaDataOfToscaElement(
+            anyString(), eq(EdgeLabelEnum.ATTRIBUTES), eq(VertexTypeEnum.ATTRIBUTES), any(AttributeDefinition.class),
+            eq(JsonPresentationFields.NAME));
+        doReturn(Either.left(graphVertex)).when(janusGraphDaoMock).getVertexById(eq(componentId), any(JsonParseFlagEnum.class));
+
+        final ToscaElement toscaElement = getToscaElementForTest();
+        final Map<String, AttributeDataDefinition> attributes = new HashMap<>();
+        final AttributeDefinition attributeDefinition = new AttributeDefinition();
+        attributeDefinition.setName("mock");
+        attributes.put("mock", attributeDefinition);
+        toscaElement.setAttributes(attributes);
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock)
+            .getToscaElement(ArgumentMatchers.eq(graphVertex), any(ComponentParametersView.class));
+
+        final AttributeDefinition attributeDefinitionOneMore = new AttributeDefinition();
+        attributeDefinitionOneMore.setName("Anothermock");
+
+        final Either<AttributeDefinition, StorageOperationStatus> result
+            = testInstance.updateAttributeOfComponent(component, attributeDefinitionOneMore);
+        assertNotNull(result);
+    }
+
+    @Test
+    public void test_updateComponentInstanceAttributes() {
+        final GraphVertex graphVertex = getTopologyTemplateVertex();
+        final String componentId = "componentId";
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+
+        final List<ComponentInstanceAttribute> attributes = new ArrayList<>();
+        final ComponentInstanceAttribute attributeDefinition = new ComponentInstanceAttribute();
+        attributeDefinition.setName("mock");
+        attributes.add(attributeDefinition);
+
+        doReturn(StorageOperationStatus.OK).when(nodeTemplateOperationMock).updateComponentInstanceAttributes(component, componentId, attributes);
+
+        final StorageOperationStatus result = testInstance.updateComponentInstanceAttributes(component, componentId, attributes);
+        assertNotNull(result);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify(nodeTemplateOperationMock, times(1)).updateComponentInstanceAttributes(component, componentId, attributes);
+    }
+
+    @Test
+    public void test_updateComponentInstanceOutputs() {
+        final GraphVertex graphVertex = getTopologyTemplateVertex();
+        final String componentId = "componentId";
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+
+        final List<ComponentInstanceOutput> list = new ArrayList<>();
+        final ComponentInstanceOutput output = new ComponentInstanceOutput();
+        output.setName("mock");
+        list.add(output);
+
+        doReturn(StorageOperationStatus.OK).when(nodeTemplateOperationMock).updateComponentInstanceOutputs(component, componentId, list);
+
+        final StorageOperationStatus result = testInstance.updateComponentInstanceOutputs(component, componentId, list);
+        assertNotNull(result);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify(nodeTemplateOperationMock, times(1)).updateComponentInstanceOutputs(component, componentId, list);
+    }
+
+    @Test
+    public void test_deleteOutputOfResource() {
+        final Component component = new Resource();
+        component.setUniqueId(COMPONENT_ID);
+
+        doReturn(StorageOperationStatus.OK).when(nodeTypeOperationMock)
+            .deleteToscaDataElement(anyString(), eq(EdgeLabelEnum.OUTPUTS), eq(VertexTypeEnum.OUTPUTS), anyString(), eq(JsonPresentationFields.NAME));
+
+        final StorageOperationStatus result = testInstance.deleteOutputOfResource(component, "mock");
+        assertNotNull(result);
+        assertEquals(StorageOperationStatus.OK, result);
+        verify(nodeTypeOperationMock, times(1))
+            .deleteToscaDataElement(anyString(), eq(EdgeLabelEnum.OUTPUTS), eq(VertexTypeEnum.OUTPUTS), anyString(), eq(JsonPresentationFields.NAME));
     }
 
     private StorageOperationStatus associateRequirementsToServiceWithStatus(StorageOperationStatus status) {
@@ -819,7 +1044,7 @@ public class ToscaOperationFacadeTest {
         requirementsMap.put("requirements1", listRequirementDataDefinition1);
 
         GraphVertex vertex;
-        if(status == StorageOperationStatus.OK){
+        if (status == StorageOperationStatus.OK) {
             vertex = getTopologyTemplateVertex();
         } else {
             vertex = getNodeTypeVertex();
