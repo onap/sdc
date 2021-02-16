@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0111bdfa_ba2c6f6f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/test/java/org/openecomp/sdcrests/vsp/rest/mapping/MapVspDescriptionDtoToVspDetailsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-16T17:59:35Z",
+      "side": 1,
+      "message": "all new TCs should use Junit 5, please migrate",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 9
+      },
+      "revId": "7413dd774e14ccce7f202aab0047ee2a59ae8ca8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5310871_ef7c2799",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/LicenseType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-16T17:59:35Z",
+      "side": 1,
+      "message": "missing header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "7413dd774e14ccce7f202aab0047ee2a59ae8ca8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9cccc4b8_f4c8c4b8",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/LicenseType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-16T17:59:35Z",
+      "side": 1,
+      "message": "UPPERCASE ?",
+      "range": {
+        "startLine": 4,
+        "startChar": 5,
+        "endLine": 5,
+        "endChar": 12
+      },
+      "revId": "7413dd774e14ccce7f202aab0047ee2a59ae8ca8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
