@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import { SchemaPropertyGroupModel, SchemaProperty } from '../aschema-property';
+import { SchemaPropertyGroupModel, SchemaProperty } from '../schema-property';
 import { DerivedPropertyType, PropertyBEModel, PropertyFEModel } from '../../models';
 import { PROPERTY_TYPES } from 'app/utils';
 import { UUID } from "angular2-uuid";

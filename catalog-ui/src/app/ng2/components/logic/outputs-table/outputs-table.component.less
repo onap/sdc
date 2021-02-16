@@ -1,0 +1,189 @@
+@import './../../../../../assets/styles/variables.less';
+
+:host /deep/ output {
+  width: 100%;
+}
+
+.output-attributes-table {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  text-align: left;
+
+  .output-inner-cell-div {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 20px;
+  }
+
+
+  .table-header {
+    font-weight: bold;
+    border-top: #d2d2d2 solid 1px;
+    background-color: #eaeaea;
+    color: #191919;
+
+    .table-cell {
+      font-size: 13px;
+
+      .table-header-sort-arrow {
+        display: inline-block;
+        background-color: transparent;
+        border: none;
+        color: #AAA;
+        margin: 8px 0 0 5px;
+
+        &.up {
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: 5px solid;
+        }
+
+        &.down {
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-top: 5px solid;
+        }
+      }
+    }
+
+    .output-value-col {
+      justify-content: flex-start;
+      padding: 10px;
+    }
+  }
+
+  .table-header, .table-row {
+    display: flex;
+    flex-direction: row;
+    flex: 0 0 auto;
+  }
+
+  .table-body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex: 1;
+
+    .no-data {
+      border: #d2d2d2 solid 1px;
+      border-top: none;
+      text-align: center;
+      height: 100%;
+      padding: 20px;
+    }
+
+    /deep/ .selected {
+      background-color: #e6f6fb;
+      color: #009fdb;
+    }
+  }
+
+  .table-row {
+    &:hover {
+      background-color: #f8f8f8;
+      cursor: pointer;
+    }
+
+    &:last-child {
+      flex: 1 0 auto;
+    }
+
+    .selected-row {
+      background-color: #e6f6fb;
+    }
+  }
+
+  .table-cell {
+    font-size: 13px;
+    flex: 1;
+    border: #d2d2d2 solid 1px;
+    border-right: none;
+    border-top: none;
+    padding: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+
+    &:last-child {
+      border-right: #d2d2d2 solid 1px;
+    }
+
+    &.col-output-attribute-name {
+      flex: 1 0 130px;
+      max-width: 250px;
+
+      justify-content: space-between;
+
+      .property-name {
+        flex: 1;
+      }
+
+      .property-description-icon {
+        float: right;
+        margin-top: 4px;
+        margin-left: 5px;
+        flex: 0 0 auto;
+      }
+    }
+
+    &.col-output-attribute-type {
+      flex: 0 0 140px;
+      max-width: 140px;
+    }
+
+    &.col-output-attribute-instance {
+      flex: 0 0 120px;
+      max-width: 120px;
+    }
+
+    &.col-output-attribute-required {
+      flex: 0 0 80px;
+      max-width: 80px;
+      text-align: center;
+    }
+
+    &.col-output-attribute-value {
+      .value-output {
+        flex: 1;
+        border: none;
+        background-color: inherit;
+
+        &:focus, &:active {
+          border: none;
+          outline: none;
+        }
+      }
+
+      .delete-btn {
+        flex: 0 0 auto;
+      }
+
+      .delete-button-container {
+        max-height: 24px;
+      }
+
+      &.inner-table-container {
+        padding: 0;
+
+        .delete-button-container {
+          padding: 0 8px 0 0;
+        }
+      }
+    }
+
+    &.output-value-col {
+      padding: 8px;
+    }
+
+  }
+
+  .filtered {
+    /deep/ .checkbox-label-content {
+      background-color: yellow;
+    }
+  }
+
+}
