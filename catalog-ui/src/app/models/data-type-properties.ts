@@ -22,7 +22,7 @@
  * Created by rcohen on 9/25/2016.
  */
 'use strict';
-import {SchemaPropertyGroupModel} from "./aschema-property";
+import {SchemaPropertyGroupModel} from "./schema-property";
 import {PropertyModel} from "./properties";
 
 export class DataTypePropertyModel extends PropertyModel{

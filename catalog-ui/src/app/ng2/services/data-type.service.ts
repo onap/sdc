@@ -23,6 +23,7 @@ import { Injectable } from '@angular/core';
 import { DataTypeModel, DataTypesMap, PropertyFEModel, DerivedFEProperty} from "app/models";
 import { DataTypesService } from "app/services/data-types-service";
 import { PROPERTY_DATA } from "app/utils";
+import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-attribute";
 
 /** This is a new service for NG2, to eventually replace app/services/data-types-service.ts
  *
@@ -57,7 +58,6 @@ export class DataTypeService {
         return null;
     }
 
-
     public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string) {
         //push all child properties to array
         if (!dataTypeObj) return;
@@ -73,6 +73,24 @@ export class DataTypeService {
         //recurse parent (derivedFrom), in case one of parents contains properties
         if (dataTypeObj.derivedFrom && PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFrom.name) {
             this.getDerivedDataTypeProperties(dataTypeObj.derivedFrom, propertiesArray, parentName);
+        }
+    }
+
+    public getDerivedDataTypeAttributes(dataTypeObj: DataTypeModel, attributesArray: Array<DerivedFEAttribute>, parentName: string) {
+        //push all child properties to array
+        if (!dataTypeObj) return;
+        if (dataTypeObj.attributes) {
+            dataTypeObj.attributes.forEach((derivedAttribute) => {
+                if(dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedAttribute.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA){//The requirement is to not display the property supplemental_data
+                    attributesArray.push(new DerivedFEAttribute(derivedAttribute, parentName));
+                }
+                let derivedDataTypeObj: DataTypeModel = this.getDataTypeByTypeName(derivedAttribute.type);
+                this.getDerivedDataTypeAttributes(derivedDataTypeObj, attributesArray, parentName + "#" + derivedAttribute.name);
+            });
+        }
+        //recurse parent (derivedFrom), in case one of parents contains properties
+        if (dataTypeObj.derivedFrom && PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFrom.name) {
+            this.getDerivedDataTypeAttributes(dataTypeObj.derivedFrom, attributesArray, parentName);
         }
     }
 

@@ -21,7 +21,7 @@
  */
 
 import * as _ from "lodash";
-import {SchemaPropertyGroupModel, SchemaProperty} from '../aschema-property';
+import {SchemaPropertyGroupModel, SchemaProperty} from '../schema-property';
 import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
 import { FilterPropertiesAssignmentData, PropertyBEModel, DerivedPropertyType, DerivedFEPropertyMap, DerivedFEProperty } from 'app/models';
 

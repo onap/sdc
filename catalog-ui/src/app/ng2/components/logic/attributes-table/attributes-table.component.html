@@ -1,0 +1,97 @@
+<!--
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2021 Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ -->
+
+<div class="attributes-table">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
+    <div class="table-header">
+        <div class="table-cell col1" (click)="sort('name')">Attribute Name
+            <span *ngIf="sortBy === 'name'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+        <div class="table-cell col2" (click)="sort('type')" *ngIf="!hideAttributeType">Type
+            <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+        <div class="table-cell col3" (click)="sort('schema.property.type')" *ngIf="!hideAttributeType">EntrySchema
+            <span *ngIf="sortBy === 'schema.property.type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+        <div class="table-cell valueCol">Value</div>
+    </div>
+    <div class="table-body" [ngClass]="{'view-mode': readonly}">
+        <div class="no-data" *ngIf="!feAttributesMap || !(feAttributesMap | keys).length">No data to display</div>
+
+        <ng-container *ngFor="let instanceId of feAttributesMap | keys; trackBy:vspId">
+            <!-- Icon & Instance Name -->
+            <div class="table-rows-header white-sub-header" *ngIf="feInstanceNamesMap">
+                <span [ngClass]="['prop-instance-icon', feInstanceNamesMap[instanceId].iconClass, 'small']"></span>
+                {{feInstanceNamesMap[instanceId].name}}
+                <div class="sprite-new archive-label" *ngIf="feInstanceNamesMap[instanceId].originArchived == true"></div>
+            </div>
+
+            <div class="table-row" *ngFor="let property of feAttributesMap[instanceId] | searchFilter:'name':searchTerm | propertiesOrderBy:{path: path, direction: direction}; trackBy:property?.name "
+                 (click)="onClickAttributeRow(property, instanceId, $event)" [ngClass]="{'selected': selectedAttributeId && selectedAttributeId === property.name, 'readonly': property.isDisabled || property.isDeclared}">
+
+                <div class="table-cell col1" [ngClass]="{'filtered':property.name === attributeNameSearchText}" [class.round-checkbox]="property.isDeclared">
+                <!-- Attribute Name -->
+                    <div class="attribute-name">
+                        <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly"
+                                  (checkedChange)="attributeChecked(property)" [attr.data-tests-id]="property.name"></checkbox>
+                        <div class="inner-cell-div-multiline" tooltip="{{property.name}}">
+                            <multiline-ellipsis className="table-cell-multiline-ellipsis" [lines]="2">{{property.name}}</multiline-ellipsis>
+                        </div>
+                    </div>
+                    <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}"
+                        tooltipDelay="0"></span>
+                </div>
+                <!-- Attribute Type -->
+                <div class="table-cell col2" *ngIf="!hideAttributeType">
+                    <div class="inner-cell-div" tooltip="{{property.type | contentAfterLastDot}}">
+                        <span>{{property.type | contentAfterLastDot}}</span>
+                    </div>
+                </div>
+                <!-- Attribute ES (Entry Schema) -->
+                <div class="table-cell col3" *ngIf="!hideAttributeType">
+                    <div *ngIf="property.schema && property.schema.property && property.schema.property.type" class="inner-cell-div" tooltip="{{property.schema.property.type | contentAfterLastDot}}">
+                        <span>{{property.schema.property.type | contentAfterLastDot}}</span>
+                    </div>
+                </div>
+                <!-- Attribute Value -->
+                <div class="table-cell valueCol">
+                    <dynamic-property
+                        [selectedAttributeId]="selectedAttributeId"
+                        [hasDeclareOption]="hasDeclareOption"
+                        [canBeDeclared]="hasDeclareOption && true"
+                        [attribute]="property"
+                        [expandedChildId]="property.expandedChildPropertyId"
+                        [attributeNameSearchText]="attributeNameSearchText"
+                        [readonly]="readonly"
+                        (attributeChanged)="onAttributeChanged(property)"
+                        (expandChild)="property.updateExpandedChildPropertyId($event)"
+                        (clickOnAttributeRow)="onClickAttributeInnerRow($event, instanceId)"
+                        (checkAttribute)="attributeChecked(property, $event)"
+                        >
+                    </dynamic-property>
+                </div>
+            </div>
+        </ng-container>
+
+    </div>
+</div>

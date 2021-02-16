@@ -1,0 +1,102 @@
+<!--
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2021 Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ -->
+
+<div *ngIf="!attribute.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
+     [ngClass]="{'selected': selectedAttributeId && selectedAttributeId === attribute.propertiesName, 'readonly':  attribute.isDisabled ||attribute.isDeclared}"
+     [class.with-top-border]="attribute.isChildOfListOrMap"
+     (click)="onClickPropertyRow(attribute, $event)">
+    <!-- LEFT CELL -->
+    <ng-container *ngIf="!isAttributeFEModel">
+        <div class="table-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':attribute.name === attributeNameSearchText}" [class.round-checkbox]="attribute.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
+            <checkbox *ngIf="hasDeclareOption" [(checked)]="attribute.isSelected" [disabled]="attribute.isDisabled ||attribute.isDeclared || readonly" (checkedChange)="checkAttribute.emit(attribute.propertiesName)" ></checkbox>
+            <div class="inner-cell-div" tooltip="{{attribute.name}}"><span>{{attribute.name}}</span></div>
+        </div>
+        <div class="table-cell" *ngIf="!canBeDeclared && !attribute.isChildOfListOrMap">
+            <div class="inner-cell-div" tooltip="{{attribute.name}}"><span>{{attribute.name}}</span></div>
+        </div> <!-- simple children of complex type within map or list -->
+        <div class="table-cell map-entry" *ngIf="attribute.isChildOfListOrMap && attribType == derivedAttributeType.MAP"><!-- map left cell -->
+            <dynamic-element #mapKeyInput
+                class="value-input"
+                pattern="validationUtils.getValidationPattern(string)"
+                [value]="attribute.mapKey"
+                type="string"
+                [name]="attribute.name"
+                (elementChanged)="mapKeyChanged.emit($event.value)"
+                [readonly]="readonly"
+                [testId]="'prop-key-' + attributeTestsId"
+            ></dynamic-element>
+        </div>
+    </ng-container>
+    <!-- RIGHT CELL OR FULL WIDTH CELL-->
+    <ng-container *ngIf="attribType == derivedAttributeType.SIMPLE || attribute.isDeclared || (attribute.isChildOfListOrMap && attribType == derivedAttributeType.MAP && attribute.schema.property.isSimpleType)">
+        <div class="table-cell">
+            <dynamic-element class="value-input"
+                pattern="validationUtils.getValidationPattern(property.type)"
+                [value]="attribute.isDeclared ? attribute.value : attribute.valueObj"
+                [type]="attribute.isDeclared ? 'string' : attribute.type"
+                [name]="attribute.name"
+                [path]="attribute.propertiesName"
+                (elementChanged)="onElementChanged($event)"
+                [readonly]="readonly || attribute.isDeclared || attribute.isDisabled"
+                [testId]="'prop-' + attributeTestsId"
+                [declared] = "attribute.isDeclared"
+                [constraints] = "constraints"
+            ></dynamic-element>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!isAttributeFEModel && attribType != derivedAttributeType.SIMPLE && !attribute.isDeclared"> <!-- right cell for complex elements, or list complex -->
+        <div class="table-cell" *ngIf="attribType == derivedAttributeType.COMPLEX">{{attribute.type | contentAfterLastDot }}</div>
+        <div class="table-cell" *ngIf="attribType == derivedAttributeType.MAP && !attribute.schema.property.isSimpleType">{{attribute.schema.property.type | contentAfterLastDot }}</div>
+    </ng-container>
+    <ng-container *ngIf="isAttributeFEModel && (attribType == derivedAttributeType.LIST || attribType == derivedAttributeType.MAP) && !attribute.isDeclared"><!-- empty, full-width table cell - for PropertyFEModel of type list or map -->
+        <div class="table-cell empty"></div>
+    </ng-container>
+    <!-- ICONS: add, delete, and expand -->
+    <ng-container *ngIf="!attribute.isDeclared">
+            <a *ngIf="(attribType == derivedAttributeType.LIST || attribType == derivedAttributeType.MAP) && !attribute.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(attribute)}" [attr.data-tests-id]="'add-to-list-' + attributeTestsId">Add value to list</a>
+            <span *ngIf="attribute.isChildOfListOrMap" (click)="deleteItem.emit(attribute);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + attributeTestsId"></span>
+            <span *ngIf="!isAttributeFEModel && (attribType == derivedAttributeType.COMPLEX || ((attribType == derivedAttributeType.LIST || attribType == derivedAttributeType.MAP) && hasChildren))" (click)="expandChildById(attribPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(attribPath) == 0" [attr.data-tests-id]="'expand-' + attributeTestsId" ></span>
+    </ng-container>
+
+</div>
+<!-- FLAT CHILDREN -->
+<div class="flat-children-container" *ngIf="isAttributeFEModel && !attribute.isDeclared">
+    <ng-container *ngFor="let prop of attribute.flattenedChildren | filterChildAttributes: expandedChildId; trackBy:prop?.propertiesName">
+        <dynamic-property
+            [selectedAttributeId]="selectedAttributeId"
+            [hasDeclareOption]="hasDeclareOption"
+            [canBeDeclared]="hasDeclareOption && prop.canBeDeclared"
+            [attribute]="prop"
+            [rootAttribute]="rootAttribute || attribute"
+            [expandedChildId]="expandedChildId"
+            [attributeNameSearchText]="attributeNameSearchText"
+            [readonly]="readonly"
+            [hasChildren]="getHasChildren(prop)"
+            (propertyChanged)="childValueChanged(prop)"
+            (mapKeyChanged)="updateChildKeyInParent(prop, $event)"
+            (expandChild)="expandChildById($event)"
+            (deleteItem)="deleteListOrMapItem($event)"
+            (clickOnAttributeRow)="onClickPropertyRow($event)"
+            (checkAttribute)="checkedChange($event)"
+            (addChildAttribsToParent)="addChildProps($event, prop.propertiesName)"
+            >
+        </dynamic-property>
+    </ng-container>
+</div>

@@ -17,8 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import { NgModule } from "@angular/core";
-import {HierarchyNavigationComponent} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.component";
+import {NgModule} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {PropertyTableModule} from "../../components/logic/properties-table/property-table.module";
 import {UiElementsModule} from "../../components/ui/ui-elements.module";
@@ -36,29 +35,30 @@ import {InputsUtils} from "./services/inputs.utils";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
 import {SdcUiComponentsModule} from "onap-ui-angular";
 import {ModalFormsModule} from "app/ng2/components/ui/forms/modal-forms.module";
+import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.module";
 
 @NgModule({
-    declarations: [
-        PropertiesAssignmentComponent,
-        InputsTableComponent,
-        HierarchyNavigationComponent,
-        FilterPropertiesAssignmentComponent
-    ],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        GlobalPipesModule,
-        PropertyTableModule,
-        PoliciesTableModule,
-        UiElementsModule,
-        SdcUiComponentsModule,
-        ModalFormsModule],
+  declarations: [
+    PropertiesAssignmentComponent,
+    InputsTableComponent,
+    FilterPropertiesAssignmentComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    GlobalPipesModule,
+    PropertyTableModule,
+    PoliciesTableModule,
+    HierarchyNavigationModule,
+    UiElementsModule,
+    SdcUiComponentsModule,
+    ModalFormsModule],
 
-    entryComponents: [PropertiesAssignmentComponent],
-    exports: [
-        PropertiesAssignmentComponent
-    ],
-    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, DataTypeService, ComponentModeService]
+  entryComponents: [PropertiesAssignmentComponent],
+  exports: [
+    PropertiesAssignmentComponent
+  ],
+  providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, DataTypeService, ComponentModeService]
 })
 export class PropertiesAssignmentModule {
 
