@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1bc37ec9_186c4b42",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/ToscaExportHandlerTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-16T17:48:55Z",
+      "side": 1,
+      "message": "for each when-then I\u0027d add verify() on the end",
+      "range": {
+        "startLine": 357,
+        "startChar": 8,
+        "endLine": 359,
+        "endChar": 57
+      },
+      "revId": "f62de8c1227e28b84713917fbbec7e3dfe6fe85b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
