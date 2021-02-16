@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -7,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,335 +18,301 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.junit.Test;
-
 import java.util.List;
+import org.junit.Test;
 
 public class RelationshipInstDataDefinitionTest {
 
-	private RelationshipInstDataDefinition createTestSubject() {
-		return new RelationshipInstDataDefinition();
-	}
-	
-	@Test
-	public void testCopyConstructor() throws Exception {
-		RelationshipInstDataDefinition testSubject;
+    private RelationshipInstDataDefinition createTestSubject() {
+        return new RelationshipInstDataDefinition();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		new RelationshipInstDataDefinition(testSubject);
-	}
+    @Test
+    public void testCopyConstructor() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        // default test
+        testSubject = createTestSubject();
+        new RelationshipInstDataDefinition(testSubject);
+    }
 
-	@Test
-	public void testSetRequirement() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String requirement = "";
+    @Test
+    public void testSetRequirement() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String requirement = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setRequirement(requirement);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRequirement(requirement);
-	}
+    @Test
+    public void testGetRequirement() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getRequirement();
+    }
 
-	@Test
-	public void testGetRequirement() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
+    @Test
+    public void testSetCapability() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String capability = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setCapability(capability);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRequirement();
-	}
+    @Test
+    public void testGetCapability() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getCapability();
+    }
 
-	@Test
-	public void testSetCapability() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String capability = "";
+    @Test
+    public void testSetToId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Object toId = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setToId(toId);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCapability(capability);
-	}
+    @Test
+    public void testSetFromId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Object fromId = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setFromId(fromId);
+    }
 
-	@Test
-	public void testGetCapability() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
+    @Test
+    public void testGetToId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getToId();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCapability();
-	}
+    @Test
+    public void testGetFromId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getFromId();
+    }
 
-	@Test
-	public void testSetToId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Object toId = null;
+    @Test
+    public void testSetRequirementId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Object requirementId = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setRequirementId(requirementId);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setToId(toId);
-	}
+    @Test
+    public void testSetCapabilityId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Object capabilityId = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setCapabilityId(capabilityId);
+    }
 
-	@Test
-	public void testSetFromId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Object fromId = null;
+    @Test
+    public void testGetRequirementId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getRequirementId();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setFromId(fromId);
-	}
+    @Test
+    public void testGetCapabilityId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getCapabilityId();
+    }
 
-	@Test
-	public void testGetToId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
+    @Test
+    public void testSetRequirementOwnerId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Object requirementOwnerId = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setRequirementOwnerId(requirementOwnerId);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getToId();
-	}
+    @Test
+    public void testGetRequirementOwnerId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getRequirementOwnerId();
+    }
 
-	@Test
-	public void testGetFromId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
+    @Test
+    public void testSetCapabilityOwnerId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Object capabilityOwnerId = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setCapabilityOwnerId(capabilityOwnerId);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getFromId();
-	}
+    @Test
+    public void testGetCapabilityOwnerId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getCapabilityOwnerId();
+    }
 
-	@Test
-	public void testSetRequirementId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Object requirementId = null;
+    @Test
+    public void testGetUniqueId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getUniqueId();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRequirementId(requirementId);
-	}
+    @Test
+    public void testSetUniqueId() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String uniqueId = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setUniqueId(uniqueId);
+    }
 
-	@Test
-	public void testSetCapabilityId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Object capabilityId = null;
+    @Test
+    public void testGetDescription() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getDescription();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCapabilityId(capabilityId);
-	}
+    @Test
+    public void testSetDescription() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String description = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setDescription(description);
+    }
 
-	@Test
-	public void testGetRequirementId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
+    @Test
+    public void testGetType() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getType();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRequirementId();
-	}
+    @Test
+    public void testSetType() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String type = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setType(type);
+    }
 
-	@Test
-	public void testGetCapabilityId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
+    @Test
+    public void testGetValidSourceTypes() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        List<String> result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getValidSourceTypes();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCapabilityId();
-	}
+    @Test
+    public void testSetValidSourceTypes() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        List<String> validSourceTypes = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setValidSourceTypes(validSourceTypes);
+    }
 
-	@Test
-	public void testSetRequirementOwnerId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Object requirementOwnerId = null;
+    @Test
+    public void testGetVersion() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getVersion();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setRequirementOwnerId(requirementOwnerId);
-	}
+    @Test
+    public void testSetVersion() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String version = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setVersion(version);
+    }
 
-	@Test
-	public void testGetRequirementOwnerId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
+    @Test
+    public void testGetCreationTime() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Long result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getCreationTime();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRequirementOwnerId();
-	}
+    @Test
+    public void testSetCreationTime() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Long creationTime = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setCreationTime(creationTime);
+    }
 
-	@Test
-	public void testSetCapabilityOwnerId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Object capabilityOwnerId = null;
+    @Test
+    public void testGetModificationTime() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Long result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getModificationTime();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCapabilityOwnerId(capabilityOwnerId);
-	}
+    @Test
+    public void testSetModificationTime() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        Long modificationTime = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setModificationTime(modificationTime);
+    }
 
-	@Test
-	public void testGetCapabilityOwnerId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCapabilityOwnerId();
-	}
-
-	@Test
-	public void testGetUniqueId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUniqueId();
-	}
-
-	@Test
-	public void testSetUniqueId() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String uniqueId = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setUniqueId(uniqueId);
-	}
-
-	@Test
-	public void testGetDescription() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDescription();
-	}
-
-	@Test
-	public void testSetDescription() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String description = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDescription(description);
-	}
-
-	@Test
-	public void testGetType() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getType();
-	}
-
-	@Test
-	public void testSetType() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String type = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setType(type);
-	}
-
-	@Test
-	public void testGetValidSourceTypes() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		List<String> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getValidSourceTypes();
-	}
-
-	@Test
-	public void testSetValidSourceTypes() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		List<String> validSourceTypes = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setValidSourceTypes(validSourceTypes);
-	}
-
-	@Test
-	public void testGetVersion() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getVersion();
-	}
-
-	@Test
-	public void testSetVersion() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String version = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setVersion(version);
-	}
-
-	@Test
-	public void testGetCreationTime() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Long result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCreationTime();
-	}
-
-	@Test
-	public void testSetCreationTime() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Long creationTime = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCreationTime(creationTime);
-	}
-
-	@Test
-	public void testGetModificationTime() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Long result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getModificationTime();
-	}
-
-	@Test
-	public void testSetModificationTime() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		Long modificationTime = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setModificationTime(modificationTime);
-	}
-
-	@Test
-	public void testToString() throws Exception {
-		RelationshipInstDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
-	}
+    @Test
+    public void testToString() throws Exception {
+        RelationshipInstDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.toString();
+    }
 }

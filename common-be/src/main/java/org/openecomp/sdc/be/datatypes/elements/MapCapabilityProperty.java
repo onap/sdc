@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,16 +18,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.Map;
 
 public class MapCapabilityProperty extends MapDataDefinition<MapPropertiesDataDefinition> {
+
     @JsonCreator
     public MapCapabilityProperty(Map<String, MapPropertiesDataDefinition> mapToscaDataDefinition) {
         super(mapToscaDataDefinition);
@@ -34,7 +33,6 @@ public class MapCapabilityProperty extends MapDataDefinition<MapPropertiesDataDe
 
     public MapCapabilityProperty() {
         super();
-
     }
 
     @JsonValue
@@ -46,5 +44,4 @@ public class MapCapabilityProperty extends MapDataDefinition<MapPropertiesDataDe
     public void setMapToscaDataDefinition(Map<String, MapPropertiesDataDefinition> mapToscaDataDefinition) {
         this.mapToscaDataDefinition = mapToscaDataDefinition;
     }
-
 }

@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,22 +18,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.workers;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 /**
  * Created by michael on 6/24/2016.
  */
 public class Manager<T extends Job, E> {
+
     private static final int TERMINATION_TIMEAUT = 30;
     private static Logger log = Logger.getLogger(Manager.class.getName());
     private ExecutorService executor;
@@ -72,20 +72,33 @@ public class Manager<T extends Job, E> {
         }
         return outputQueue;
     }
-
     //
+
     // public static void main(String[] args) {
+
     // ExecutorService executor = Executors.newFixedThreadPool(NTHREDS);
+
     // for (int i = 0; i < 500; i++) {
+
     // Runnable worker = new MyRunnable(10000000L + i);
+
     // executor.execute(worker);
+
     // }
+
     // // This will make the executor accept no new threads
+
     // // and finish all existing threads in the queue
+
     // executor.shutdown();
+
     // // Wait until all threads are finish
+
     // executor.awaitTermination();
+
     // System.out.println("Finished all threads");
+
     // }
+
     // }
-}
+} 

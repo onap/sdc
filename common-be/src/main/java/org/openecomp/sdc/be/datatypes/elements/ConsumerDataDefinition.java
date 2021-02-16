@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.EqualsAndHashCode;
@@ -25,7 +25,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @Getter
@@ -34,30 +33,52 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 @ToString
 @NoArgsConstructor
 public class ConsumerDataDefinition extends ToscaDataDefinition {
-
     // ECOMP Consumer Name - UTF-8 string up to 255 characters containing the
+
     // following characters : ( maybe to limit 4-64 chars ? )
+
     // Lowercase characters {a-z}
+
     // Uppercase characters {A-Z}
+
     // Numbers {0-9}
+
     // Dash {-}; this character is not supported as the first character in the
+
     // user name
+
     // Period {.}; this character is not supported as the first character in the
+
     // user name
+
     // Underscore {_}
+
     // * ECOMP Consumer Password - expected to be SHA-2 256 encrypted value (
+
     // SALT + "real" password ) => maximal length 256 bytes = 32 characters
+
     // Before storing/comparing please convert upper case letter to lower.
+
     // The "normalized" encrypted password should match the following format :
+
     // [a-z0-9]{32} = alphanumeric string
+
     //
+
     // * ECOMP Consumer Salt - alphanumeric string [a-z0-9] , length = 32 chars.
+
     // * ECOMP Consumer Last Authentication Time ( for future use) -
+
     // time when ECOMP Consumer was authenticated for the last time in
+
     // milliseconds from 1970 (GMT) - should be set to "0" on creation .
+
     // * ECOMP Consumer Details Last updated time - time of the last update in
+
     // milliseconds from 1970 (GMT)
+
     // * USER_ID - USER_ID of the last user that created/updated credentials (
+
     // should be retrieved from USER_ID header)
     private String consumerName;
     private String consumerPassword;
@@ -73,7 +94,5 @@ public class ConsumerDataDefinition extends ToscaDataDefinition {
         this.consumerLastAuthenticationTime = a.consumerLastAuthenticationTime;
         this.consumerDetailsLastupdatedtime = a.consumerDetailsLastupdatedtime;
         this.lastModfierAtuid = a.lastModfierAtuid;
-
     }
-
 }

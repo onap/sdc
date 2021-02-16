@@ -1,3 +1,4 @@
+
 /*-
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,46 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum ComponentTypeEnum {
-    RESOURCE("Resource"),
-    SERVICE("Service"),
-    RESOURCE_INSTANCE("Resource Instance"),
-    PRODUCT("Product"),
-    SERVICE_INSTANCE("Service Instance");
-
-    private String value;
-
-    ComponentTypeEnum(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    // Those values cannot be another field in enum, because they are needed
+    RESOURCE("Resource"), SERVICE("Service"), RESOURCE_INSTANCE("Resource Instance"), PRODUCT("Product"), SERVICE_INSTANCE("Service Instance");
     // as constants for Swagger allowedValues param
     public static final String RESOURCE_PARAM_NAME = "resources";
     public static final String SERVICE_PARAM_NAME = "services";
     public static final String PRODUCT_PARAM_NAME = "products";
+    // Those values cannot be another field in enum, because they are needed
+    private String value;
 
-    public NodeTypeEnum getNodeType() {
-
-        switch (this) {
-            case RESOURCE:
-                return NodeTypeEnum.Resource;
-            case SERVICE:
-                return NodeTypeEnum.Service;
-            case PRODUCT:
-                return NodeTypeEnum.Product;
-            case RESOURCE_INSTANCE:
-                return NodeTypeEnum.ResourceInstance;
-            default:
-                throw new UnsupportedOperationException("No nodeType is defined for: " + this.getValue());
-        }
+    ComponentTypeEnum(String value) {
+        this.value = value;
     }
 
     public static ComponentTypeEnum findByValue(String value) {
@@ -88,7 +62,6 @@ public enum ComponentTypeEnum {
         if (type == null) {
             return ret;
         }
-
         switch (type) {
             case RESOURCE:
                 ret = RESOURCE_PARAM_NAME;
@@ -103,5 +76,24 @@ public enum ComponentTypeEnum {
                 break;
         }
         return ret;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public NodeTypeEnum getNodeType() {
+        switch (this) {
+            case RESOURCE:
+                return NodeTypeEnum.Resource;
+            case SERVICE:
+                return NodeTypeEnum.Service;
+            case PRODUCT:
+                return NodeTypeEnum.Product;
+            case RESOURCE_INSTANCE:
+                return NodeTypeEnum.ResourceInstance;
+            default:
+                throw new UnsupportedOperationException("No nodeType is defined for: " + this.getValue());
+        }
     }
 }

@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -19,13 +20,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
-public enum PromoteVersionEnum {
-    
-    NONE,
-    MINOR,
-    MAJOR
-
-}
+public enum PromoteVersionEnum {NONE, MINOR, MAJOR}

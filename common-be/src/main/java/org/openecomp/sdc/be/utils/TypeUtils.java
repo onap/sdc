@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -45,10 +46,8 @@ public class TypeUtils {
     public enum ToscaTagNamesEnum {
         DERIVED_FROM("derived_from"), IS_PASSWORD("is_password"),
         // Properties
-        PROPERTIES("properties"), TYPE("type"), STATUS("status"),
-        ENTRY_SCHEMA("entry_schema"), REQUIRED("required"), DESCRIPTION("description"),
-        DEFAULT_VALUE("default"), VALUE("value"), CONSTRAINTS("constraints"),
-        DEFAULT("default"),
+        PROPERTIES("properties"), TYPE("type"), STATUS("status"), ENTRY_SCHEMA("entry_schema"), REQUIRED("required"), DESCRIPTION(
+            "description"), DEFAULT_VALUE("default"), VALUE("value"), CONSTRAINTS("constraints"), DEFAULT("default"),
         // Group Types
         MEMBERS("members"), METADATA("metadata"),
         // Policy Types
@@ -56,28 +55,25 @@ public class TypeUtils {
         // Capabilities
         CAPABILITIES("capabilities"), VALID_SOURCE_TYPES("valid_source_types"),
         // Requirements
-        REQUIREMENTS("requirements"), NODE("node"), RELATIONSHIP("relationship"), CAPABILITY("capability"), INTERFACES("interfaces"),
-        NODE_FILTER("node_filter"), TOSCA_ID("tosca_id"),
+        REQUIREMENTS("requirements"), NODE("node"), RELATIONSHIP("relationship"), CAPABILITY("capability"), INTERFACES("interfaces"), NODE_FILTER(
+            "node_filter"), TOSCA_ID("tosca_id"),
         // Artifacts
         ARTIFACTS("artifacts"), FILE("file"),
         // Heat env Validation
         PARAMETERS("parameters"),
         // Import Validations
-        TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), OCCURRENCES("occurrences"), NODE_TEMPLATES("node_templates"), GROUPS("groups"), INPUTS("inputs"),
-        SUBSTITUTION_MAPPINGS("substitution_mappings"), NODE_TYPE("node_type"), DIRECTIVES("directives"),
+        TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), OCCURRENCES("occurrences"), NODE_TEMPLATES(
+            "node_templates"), GROUPS("groups"), INPUTS("inputs"), SUBSTITUTION_MAPPINGS("substitution_mappings"), NODE_TYPE("node_type"), DIRECTIVES(
+            "directives"),
         // Attributes
-        ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"),
-        VERSION("version"), OPERATIONS("operations"), NOTIFICATIONS("notifications"),
+        ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"), VERSION(
+            "version"), OPERATIONS("operations"), NOTIFICATIONS("notifications"),
         //functions
         GET_INPUT("get_input"),
         // Definitions
         DATA_TYPES("data_types"), NODE_TYPES("node_types"), IMPORTS("imports"),
         //Operations
-        IMPLEMENTATION("implementation"),
-
-        DERIVED_FROM_NAME("derivedFromName");
-
+        IMPLEMENTATION("implementation"), DERIVED_FROM_NAME("derivedFromName");
         private final String elementName;
-
     }
 }

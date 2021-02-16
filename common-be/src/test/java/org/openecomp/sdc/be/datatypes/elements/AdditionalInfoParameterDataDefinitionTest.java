@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -7,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,147 +18,122 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.junit.Test;
-
 import java.util.List;
-
+import org.junit.Test;
 
 public class AdditionalInfoParameterDataDefinitionTest {
 
-	private AdditionalInfoParameterDataDefinition createTestSubject() {
-		return new AdditionalInfoParameterDataDefinition();
-	}
+    private AdditionalInfoParameterDataDefinition createTestSubject() {
+        return new AdditionalInfoParameterDataDefinition();
+    }
 
-	@Test
-	public void testCopyConstructor() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		String result;
+    @Test
+    public void testCopyConstructor() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        AdditionalInfoParameterDataDefinition additionalInfoParameterDataDefinition = new AdditionalInfoParameterDataDefinition(testSubject);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		AdditionalInfoParameterDataDefinition additionalInfoParameterDataDefinition = new AdditionalInfoParameterDataDefinition(testSubject);
-	}
-	
-	@Test
-	public void testGetUniqueId() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		String result;
+    @Test
+    public void testGetUniqueId() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getUniqueId();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUniqueId();
-	}
+    @Test
+    public void testSetUniqueId() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        String uniqueId = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setUniqueId(uniqueId);
+    }
 
-	
-	@Test
-	public void testSetUniqueId() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		String uniqueId = "";
+    @Test
+    public void testGetCreationTime() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        Long result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getCreationTime();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setUniqueId(uniqueId);
-	}
+    @Test
+    public void testSetCreationTime() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        Long creationTime = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setCreationTime(creationTime);
+    }
 
-	
-	@Test
-	public void testGetCreationTime() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		Long result;
+    @Test
+    public void testGetModificationTime() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        Long result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getModificationTime();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCreationTime();
-	}
+    @Test
+    public void testSetModificationTime() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        Long modificationTime = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setModificationTime(modificationTime);
+    }
 
-	
-	@Test
-	public void testSetCreationTime() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		Long creationTime = null;
+    @Test
+    public void testGetLastCreatedCounter() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        Integer result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getLastCreatedCounter();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCreationTime(creationTime);
-	}
+    @Test
+    public void testSetLastCreatedCounter() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        Integer lastCreatedCounter = 0;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setLastCreatedCounter(lastCreatedCounter);
+    }
 
-	
-	@Test
-	public void testGetModificationTime() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		Long result;
+    @Test
+    public void testGetParameters() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        List<AdditionalInfoParameterInfo> result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getParameters();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getModificationTime();
-	}
+    @Test
+    public void testSetParameters() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        List<AdditionalInfoParameterInfo> parameters = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setParameters(parameters);
+    }
 
-	
-	@Test
-	public void testSetModificationTime() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		Long modificationTime = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setModificationTime(modificationTime);
-	}
-
-	
-	@Test
-	public void testGetLastCreatedCounter() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		Integer result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLastCreatedCounter();
-	}
-
-	
-	@Test
-	public void testSetLastCreatedCounter() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		Integer lastCreatedCounter = 0;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setLastCreatedCounter(lastCreatedCounter);
-	}
-
-	
-	@Test
-	public void testGetParameters() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		List<AdditionalInfoParameterInfo> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getParameters();
-	}
-
-	
-	@Test
-	public void testSetParameters() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		List<AdditionalInfoParameterInfo> parameters = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setParameters(parameters);
-	}
-
-	
-	@Test
-	public void testToString() throws Exception {
-		AdditionalInfoParameterDataDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
-	}
+    @Test
+    public void testToString() throws Exception {
+        AdditionalInfoParameterDataDefinition testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.toString();
+    }
 }

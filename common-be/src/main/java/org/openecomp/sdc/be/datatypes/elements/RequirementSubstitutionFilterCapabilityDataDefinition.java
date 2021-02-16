@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
@@ -40,8 +40,7 @@ public class RequirementSubstitutionFilterCapabilityDataDefinition extends Tosca
     }
 
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.PROPERTIES);
+        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {

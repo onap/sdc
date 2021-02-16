@@ -1,3 +1,4 @@
+
 /*
  * Copyright © 2016-2018 European Support Limited
  *
@@ -15,12 +16,11 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
-
 public class OperationInputDefinition extends InputDataDefinition {
+
     private String source;
     private String sourceProperty;
     private String toscaDefaultValue;

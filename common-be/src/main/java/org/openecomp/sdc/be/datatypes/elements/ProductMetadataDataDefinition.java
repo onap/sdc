@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,21 +18,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 
 public class ProductMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
     private String fullName;
-
     private List<String> contacts;
-
     private Boolean isActive;
 
     public ProductMetadataDataDefinition() {
@@ -40,10 +37,10 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
     public ProductMetadataDataDefinition(ProductMetadataDataDefinition other) {
         super(other);
-	}
+    }
 
-	public ProductMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
-		super(extractor);
+    public ProductMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
+        super(extractor);
     }
 
     public Boolean getIsActive() {
@@ -81,15 +78,13 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
     @Override
     public String toString() {
-        return "ProductMetadataDataDefinition [fullName=" + fullName + ", contacts=" + contacts + ", isActive="
-                + isActive + "]";
+        return "ProductMetadataDataDefinition [fullName=" + fullName + ", contacts=" + contacts + ", isActive=" + isActive + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-
         result = prime * result + ((contacts == null) ? 0 : contacts.hashCode());
         result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
         result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());

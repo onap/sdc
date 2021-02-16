@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -7,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,50 +18,43 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
-import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
-
+import org.junit.Test;
 
 public class ListMapPropertiesDataDefinitionTest {
 
-	private ListMapPropertiesDataDefinition createTestSubject() {
-		return new ListMapPropertiesDataDefinition();
-	}
+    private ListMapPropertiesDataDefinition createTestSubject() {
+        return new ListMapPropertiesDataDefinition();
+    }
 
-	@Test
-	public void testCopyConstructor() throws Exception {
-		ListMapPropertiesDataDefinition testSubject;
-		List<MapPropertiesDataDefinition> result;
+    @Test
+    public void testCopyConstructor() throws Exception {
+        ListMapPropertiesDataDefinition testSubject;
+        List<MapPropertiesDataDefinition> result;
+        // default test
+        testSubject = createTestSubject();
+        new ListMapPropertiesDataDefinition(testSubject);
+        new ListMapPropertiesDataDefinition(new LinkedList<>());
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		new ListMapPropertiesDataDefinition(testSubject);
-		new ListMapPropertiesDataDefinition(new LinkedList<>());
-	}
-	
-	@Test
-	public void testGetListToscaDataDefinition() throws Exception {
-		ListMapPropertiesDataDefinition testSubject;
-		List<MapPropertiesDataDefinition> result;
+    @Test
+    public void testGetListToscaDataDefinition() throws Exception {
+        ListMapPropertiesDataDefinition testSubject;
+        List<MapPropertiesDataDefinition> result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getListToscaDataDefinition();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getListToscaDataDefinition();
-	}
-
-	
-	@Test
-	public void testSetMapToscaDataDefinition() throws Exception {
-		ListMapPropertiesDataDefinition testSubject;
-		List<MapPropertiesDataDefinition> listToscaDataDefinition = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setMapToscaDataDefinition(listToscaDataDefinition);
-	}
+    @Test
+    public void testSetMapToscaDataDefinition() throws Exception {
+        ListMapPropertiesDataDefinition testSubject;
+        List<MapPropertiesDataDefinition> listToscaDataDefinition = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setMapToscaDataDefinition(listToscaDataDefinition);
+    }
 }

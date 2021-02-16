@@ -1,3 +1,4 @@
+
 /*
  * Copyright © 2016-2018 European Support Limited
  *
@@ -13,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.Map;
 import java.util.Objects;
 
 public class OperationInstance/* extends Operation*/ {
+
     private OperationImplementation implementation;
     private Map<String, Object> inputs;
 
@@ -50,7 +51,7 @@ public class OperationInstance/* extends Operation*/ {
         }
         OperationInstance that = (OperationInstance) o;
         return Objects.equals(implementation, that.implementation)
-                && Objects.equals(inputs, that.inputs);
+            && Objects.equals(inputs, that.inputs);
     }
 
     @Override
@@ -59,3 +60,4 @@ public class OperationInstance/* extends Operation*/ {
         return Objects.hash(implementation, inputs);
     }
 }
+

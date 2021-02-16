@@ -17,5 +17,4 @@ public class EntrySchemaDataDefinition extends ToscaDataDefinition {
     private String description;
     private String type;
     private List<Constraint> constraints;
-
 }

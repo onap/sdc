@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,20 +18,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @EqualsAndHashCode
 public class GetPolicyValueDataDefinition {
+
     private String policyId;
     private String propertyName;
     private String origPropertyValue;
-
 }

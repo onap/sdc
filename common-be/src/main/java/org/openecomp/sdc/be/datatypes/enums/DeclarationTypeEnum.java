@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,10 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
-public enum DeclarationTypeEnum {
-    INPUT,
-    POLICY;
-}
+public enum DeclarationTypeEnum {INPUT, POLICY;}

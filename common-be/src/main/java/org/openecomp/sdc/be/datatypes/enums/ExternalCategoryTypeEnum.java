@@ -1,3 +1,4 @@
+
 /*-
  * Copyright (C) 2019 Telstra Intellectual Property. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,33 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 /**
- * Category Type Enum
- * Any service category to be supported by SDC Ext API can be added here
+ * Category Type Enum Any service category to be supported by SDC Ext API can be added here
  *
  * @author atifhusain
  */
 public enum ExternalCategoryTypeEnum {
-
     PARTNER_DOMAIN_SERVICE("Partner Domain Service", true);
-
     private String value;
     private boolean isAtomicType;
 
     ExternalCategoryTypeEnum(String value, boolean isAtomicType) {
         this.value = value;
         this.isAtomicType = isAtomicType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public boolean isAtomicType() {
-        return isAtomicType;
     }
 
     public static ExternalCategoryTypeEnum getType(String type) {
@@ -81,7 +70,6 @@ public enum ExternalCategoryTypeEnum {
      * @return
      */
     public static boolean containsName(String type) {
-
         for (ExternalCategoryTypeEnum e : ExternalCategoryTypeEnum.values()) {
             if (e.getValue().equals(type)) {
                 return true;
@@ -97,7 +85,6 @@ public enum ExternalCategoryTypeEnum {
      * @return
      */
     public static boolean containsIgnoreCase(String type) {
-
         for (ExternalCategoryTypeEnum e : ExternalCategoryTypeEnum.values()) {
             if (e.getValue().equalsIgnoreCase(type)) {
                 return true;
@@ -106,5 +93,11 @@ public enum ExternalCategoryTypeEnum {
         return false;
     }
 
-}
+    public String getValue() {
+        return value;
+    }
 
+    public boolean isAtomicType() {
+        return isAtomicType;
+    }
+}

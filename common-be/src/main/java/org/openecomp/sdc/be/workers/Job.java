@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,13 +18,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.workers;
 
 /**
  * Created by michael on 6/24/2016.
  */
 public abstract class Job<E> {
-    public abstract E doWork();
 
+    public abstract E doWork();
 }

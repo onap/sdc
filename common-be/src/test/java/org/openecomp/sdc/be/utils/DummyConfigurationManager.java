@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -19,16 +20,15 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.utils;
+
+import static org.mockito.Mockito.mock;
 
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
-
-import static org.mockito.Mockito.mock;
 
 public class DummyConfigurationManager {
 
@@ -55,8 +55,6 @@ public class DummyConfigurationManager {
 
         @Override
         public <T> void addWatchConfiguration(Class<T> className, ConfigurationListener configurationListener) {
-
         }
     }
-
 }

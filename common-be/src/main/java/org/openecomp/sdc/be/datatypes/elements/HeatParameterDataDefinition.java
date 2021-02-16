@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -25,11 +25,9 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class HeatParameterDataDefinition extends ToscaDataDefinition {
 
     private String uniqueId;
-
     private String name;
     private String type;
     private String description;
-
     private String currentValue;
     private String defaultValue;
 
@@ -95,9 +93,8 @@ public class HeatParameterDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "HeatParameterDataDefinition [uniqueId=" + uniqueId + ", name=" + name + ", type=" + type
-                + ", description=" + description + ", currentValue=" + currentValue + ", defaultValue=" + defaultValue
-                + "]";
+        return "HeatParameterDataDefinition [uniqueId=" + uniqueId + ", name=" + name + ", type=" + type + ", description=" + description
+            + ", currentValue=" + currentValue + ", defaultValue=" + defaultValue + "]";
     }
 
     @Override

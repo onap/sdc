@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
@@ -16,16 +17,15 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
-
-import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
 
 public class NonManoConfigurationManagerTest {
 
@@ -37,12 +37,10 @@ public class NonManoConfigurationManagerTest {
 
     @Test
     public void getNonManoConfiguration() {
-        final NonManoConfiguration nonManoConfiguration = NonManoConfigurationManager.getInstance()
-            .getNonManoConfiguration();
+        final NonManoConfiguration nonManoConfiguration = NonManoConfigurationManager.getInstance().getNonManoConfiguration();
         assertThat("NonManoConfiguration instance should never be null", nonManoConfiguration, is(notNullValue()));
-        assertThat("NonManoConfiguration FolderMapping configuration should no be empty",
-            nonManoConfiguration.getNonManoKeyFolderMapping(), is(not(anEmptyMap())));
-
+        assertThat("NonManoConfiguration FolderMapping configuration should no be empty", nonManoConfiguration.getNonManoKeyFolderMapping(),
+            is(not(anEmptyMap())));
         for (final NonManoArtifactType value : NonManoArtifactType.values()) {
             assertThat(String.format("Expected %s value should not be null", value), nonManoConfiguration.getNonManoType(value), is(notNullValue()));
         }

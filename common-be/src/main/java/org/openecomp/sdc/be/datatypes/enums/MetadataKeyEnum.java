@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -21,16 +22,11 @@ package org.openecomp.sdc.be.datatypes.enums;
 import lombok.Getter;
 
 public enum MetadataKeyEnum {
-    METADATA_KEYS("metadataKeys"), 
-    NAME("name"), 
-    MANDATORY("mandatory"),
-    VALID_VALUES("validValues");
-
+    METADATA_KEYS("metadataKeys"), NAME("name"), MANDATORY("mandatory"), VALID_VALUES("validValues");
     @Getter
     private final String name;
 
     MetadataKeyEnum(final String name) {
         this.name = name;
     }
-
 }

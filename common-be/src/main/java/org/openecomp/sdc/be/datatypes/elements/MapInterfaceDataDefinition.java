@@ -1,3 +1,4 @@
+
 /*
  * Copyright © 2016-2018 European Support Limited
  *
@@ -13,18 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.Map;
 
 public class MapInterfaceDataDefinition extends MapDataDefinition<InterfaceDataDefinition> {
 
     public MapInterfaceDataDefinition() {
-
     }
 
     @JsonCreator

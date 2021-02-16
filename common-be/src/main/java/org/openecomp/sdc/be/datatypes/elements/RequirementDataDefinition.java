@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,19 +18,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents the requirement of the component or component instance
@@ -41,7 +40,6 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
     public static final String MIN_OCCURRENCES = "0";
     public static final String MAX_OCCURRENCES = "UNBOUNDED";
     public static final String MAX_DEFAULT_OCCURRENCES = "1";
-    
     @Getter
     @Setter
     public boolean external = false;
@@ -120,7 +118,6 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
     /**
      * specify the capability type
      */
-
     public String getCapability() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILITY);
     }
@@ -196,21 +193,21 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.MAX_OCCURRENCES, maxOccurrences);
     }
 
-    public void setPath(List<String> path) {
-        setToscaPresentationValue(JsonPresentationFields.PATH, path);
-    }
-
     @SuppressWarnings({"unchecked"})
     public List<String> getPath() {
         return (List<String>) getToscaPresentationValue(JsonPresentationFields.PATH);
     }
 
-    public void setSource(String source) {
-        setToscaPresentationValue(JsonPresentationFields.SOURCE, source);
+    public void setPath(List<String> path) {
+        setToscaPresentationValue(JsonPresentationFields.PATH, path);
     }
 
     public String getSource() {
         return (String) getToscaPresentationValue(JsonPresentationFields.SOURCE);
+    }
+
+    public void setSource(String source) {
+        setToscaPresentationValue(JsonPresentationFields.SOURCE, source);
     }
 
     /**
@@ -228,5 +225,4 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
         }
         setPath(path);
     }
-
 }

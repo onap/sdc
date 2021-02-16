@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -31,12 +31,10 @@ public class PolicyTypeDataDefinition extends ToscaTypeDataDefinition {
     private List<String> targets;
     private Map<String, String> metadata;
     private String description;
-
     /**
      * Timestamp of data type creation
      */
     private Long creationTime;
-
     /**
      * Timestamp of the data type last update
      */
@@ -117,9 +115,9 @@ public class PolicyTypeDataDefinition extends ToscaTypeDataDefinition {
 
     @Override
     public String toString() {
-        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version=" + version
-                + ", targets=" + targets + ", metadata=" + metadata + ", description=" + description + ", creationTime="
-                + creationTime + ", modificationTime=" + modificationTime + "]";
+        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version="
+            + version + ", targets=" + targets + ", metadata=" + metadata + ", description=" + description + ", creationTime=" + creationTime
+            + ", modificationTime=" + modificationTime + "]";
     }
 
     public String getDerivedFrom() {

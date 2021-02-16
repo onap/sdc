@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.pnf;
 
 import lombok.AllArgsConstructor;
@@ -32,19 +32,17 @@ public class PnfSoftwareVersion {
     private final String version;
     private final String description;
 
+    public boolean isValid() {
+        return StringUtils.isNotEmpty(version);
+    }
+
     /**
      * Stores the pnf software version yaml fields.
      */
     @Getter
     @AllArgsConstructor
     public enum PnfSoftwareVersionField {
-        DESCRIPTION("description"),
-        PNF_SOFTWARE_VERSION("pnf_software_version");
-
+        DESCRIPTION("description"), PNF_SOFTWARE_VERSION("pnf_software_version");
         private final String fieldName;
-    }
-
-    public boolean isValid() {
-        return StringUtils.isNotEmpty(version);
     }
 }

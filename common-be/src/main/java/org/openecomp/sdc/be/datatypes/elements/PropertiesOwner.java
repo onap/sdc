@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 public interface PropertiesOwner {
@@ -27,5 +27,4 @@ public interface PropertiesOwner {
     String getName();
 
     String getNormalizedName();
-
 }

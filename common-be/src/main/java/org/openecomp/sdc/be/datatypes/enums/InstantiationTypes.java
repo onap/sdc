@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.stream.Stream;
 
 public enum InstantiationTypes {
-
-    A_LA_CARTE("A-la-carte"),
-    MACRO("Macro");
-
+    A_LA_CARTE("A-la-carte"), MACRO("Macro");
     private String value;
 
     InstantiationTypes(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     /**
@@ -38,9 +31,11 @@ public enum InstantiationTypes {
      * @param type
      * @return bool
      */
-
     public static boolean containsName(String type) {
-        return Stream.of(InstantiationTypes.values())
-                .anyMatch(instType -> type.equals(instType.getValue()));
+        return Stream.of(InstantiationTypes.values()).anyMatch(instType -> type.equals(instType.getValue()));
+    }
+
+    public String getValue() {
+        return value;
     }
 }

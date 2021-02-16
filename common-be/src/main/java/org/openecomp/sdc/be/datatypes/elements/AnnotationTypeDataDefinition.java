@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -27,10 +27,8 @@ public class AnnotationTypeDataDefinition extends ToscaDataDefinition {
     protected String uniqueId;
     protected String type;
     protected String description;
-
     protected Long creationTime;
     protected Long modificationTime;
-
     protected String version;
     protected boolean highestVersion;
 
@@ -107,11 +105,7 @@ public class AnnotationTypeDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return getClass().getName() + ": [uniqueId=" + uniqueId + ", type=" + getType()
-                + ", version=" + version + ", highestVersion=" + highestVersion
-                + ", description=" + description
-                + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
+        return getClass().getName() + ": [uniqueId=" + uniqueId + ", type=" + getType() + ", version=" + version + ", highestVersion="
+            + highestVersion + ", description=" + description + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
     }
-
-
 }

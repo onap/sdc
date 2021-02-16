@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -19,7 +20,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.List;
@@ -148,7 +148,7 @@ public class JsonPresentationFieldsExtractor {
     }
 
     public ResourceTypeEnum getResourceType() {
-        return ResourceTypeEnum.valueOf((String)properties.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation()));
+        return ResourceTypeEnum.valueOf((String) properties.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation()));
     }
 
     public String getToscaResourceName() {
@@ -166,5 +166,4 @@ public class JsonPresentationFieldsExtractor {
     public String getServiceFunction() {
         return (String) properties.get(JsonPresentationFields.SERVICE_FUNCTION.getPresentation());
     }
-
 }

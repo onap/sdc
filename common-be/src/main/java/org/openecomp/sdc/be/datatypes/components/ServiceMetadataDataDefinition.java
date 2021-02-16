@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.components;
 
 import lombok.Data;
@@ -25,38 +25,21 @@ import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
-
 @Data
 @NoArgsConstructor
 public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
     private static final String EMPTY_STR = "";
-
-    private String distributionStatus;
-
-
-    private String serviceType = EMPTY_STR;
-
-
-    private String serviceRole = EMPTY_STR;
-
-
-    private String instantiationType = EMPTY_STR;
-
-
-    private String serviceFunction = EMPTY_STR;
-
-
-    private Boolean ecompGeneratedNaming = true;
-
-
-    private String namingPolicy = EMPTY_STR;
-
-
-    private String environmentContext;
-
-    private String serviceVendorModelNumber;
     public Boolean isAbstract;
+    private String distributionStatus;
+    private String serviceType = EMPTY_STR;
+    private String serviceRole = EMPTY_STR;
+    private String instantiationType = EMPTY_STR;
+    private String serviceFunction = EMPTY_STR;
+    private Boolean ecompGeneratedNaming = true;
+    private String namingPolicy = EMPTY_STR;
+    private String environmentContext;
+    private String serviceVendorModelNumber;
     private ResourceTypeEnum importServiceType = ResourceTypeEnum.SERVICE;
     private String toscaServiceName;
     private String vendorName;
@@ -79,13 +62,11 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
     }
 
     public Boolean isEcompGeneratedNaming() {
-       return getEcompGeneratedNaming();
+        return getEcompGeneratedNaming();
     }
 
     @Override
     public String getActualComponentType() {
-
         return componentType != null ? componentType.getValue() : "";
     }
-
 }

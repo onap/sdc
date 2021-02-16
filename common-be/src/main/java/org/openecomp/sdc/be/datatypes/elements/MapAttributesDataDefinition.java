@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,9 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -45,13 +44,14 @@ public class MapAttributesDataDefinition extends MapDataDefinition<AttributeData
      */
     public MapAttributesDataDefinition(MapAttributesDataDefinition toBeDeepCopiedMapPropertiesDataDefinition) {
         this.parentName = toBeDeepCopiedMapPropertiesDataDefinition.parentName;
-        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
-        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
+        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
+        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
     }
 
     public MapAttributesDataDefinition() {
         super();
-
     }
 
     @JsonValue
@@ -59,7 +59,6 @@ public class MapAttributesDataDefinition extends MapDataDefinition<AttributeData
     public Map<String, AttributeDataDefinition> getMapToscaDataDefinition() {
         return mapToscaDataDefinition;
     }
-
 
     public void setMapToscaDataDefinition(Map<String, AttributeDataDefinition> mapToscaDataDefinition) {
         this.mapToscaDataDefinition = mapToscaDataDefinition;
@@ -72,6 +71,4 @@ public class MapAttributesDataDefinition extends MapDataDefinition<AttributeData
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
-
-
 }
