@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.category;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -29,7 +29,6 @@ public class GroupingDataDefinition extends ToscaDataDefinition {
     private String uniqueId;
 
     public GroupingDataDefinition() {
-
     }
 
     public GroupingDataDefinition(GroupingDataDefinition c) {
@@ -107,8 +106,6 @@ public class GroupingDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "GroupingDataDefinition [name=" + name + ", normalizedName=" + normalizedName + ", uniqueId=" + uniqueId
-                + "]";
+        return "GroupingDataDefinition [name=" + name + ", normalizedName=" + normalizedName + ", uniqueId=" + uniqueId + "]";
     }
-
 }

@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,17 +18,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class MapDataDefinition<T extends ToscaDataDefinition> extends ToscaDataDefinition {
 
@@ -36,7 +35,6 @@ public class MapDataDefinition<T extends ToscaDataDefinition> extends ToscaDataD
     public MapDataDefinition(MapDataDefinition<T> cdt) {
         super();
         mapToscaDataDefinition = cdt.mapToscaDataDefinition;
-
     }
 
     @JsonCreator
@@ -82,14 +80,11 @@ public class MapDataDefinition<T extends ToscaDataDefinition> extends ToscaDataD
         }
     }
 
-
     public String findKeyByItemUidMatch(String uid) {
         if (null == mapToscaDataDefinition || uid == null) {
             return null;
         }
-        Map.Entry<String, T> entry = mapToscaDataDefinition.entrySet().stream().filter(e ->
-                e.getValue().findUidMatch(uid))
-                .findAny().orElse(null);
+        Map.Entry<String, T> entry = mapToscaDataDefinition.entrySet().stream().filter(e -> e.getValue().findUidMatch(uid)).findAny().orElse(null);
         if (null == entry) {
             return null;
         }
@@ -99,12 +94,9 @@ public class MapDataDefinition<T extends ToscaDataDefinition> extends ToscaDataD
     @Override
     public <T extends ToscaDataDefinition> T removeByOwnerId(Set<String> ownerIdList) {
         if (mapToscaDataDefinition != null) {
-            Map<String, T> collect = (Map<String, T>) mapToscaDataDefinition.entrySet()
-                    .stream()
-                    .filter(e -> ownerIdList.contains(e.getValue().getOwnerId())).collect(Collectors.toMap(Map.Entry::getKey, (Map.Entry::getValue)));
-
+            Map<String, T> collect = (Map<String, T>) mapToscaDataDefinition.entrySet().stream()
+                .filter(e -> ownerIdList.contains(e.getValue().getOwnerId())).collect(Collectors.toMap(Map.Entry::getKey, (Map.Entry::getValue)));
             MapDataDefinition collectMap = new MapDataDefinition<>(collect);
-
             mapToscaDataDefinition.entrySet().removeIf(e -> ownerIdList.contains(e.getValue().getOwnerId()));
             return (T) collectMap;
         }
@@ -113,7 +105,6 @@ public class MapDataDefinition<T extends ToscaDataDefinition> extends ToscaDataD
 
     @Override
     public <T extends ToscaDataDefinition> T updateIfExist(T other, boolean allowDefaultValueOverride) {
-
         Map<String, T> map = ((MapDataDefinition) other).getMapToscaDataDefinition();
         if (map != null) {
             map.entrySet().forEach(e -> {

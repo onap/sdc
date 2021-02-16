@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -32,12 +32,10 @@ public class GroupTypeDataDefinition extends ToscaTypeDataDefinition {
     private Map<String, String> metadata;
     private String description;
     private boolean highestVersion;
-
     /**
      * Timestamp of data type creation
      */
     private Long creationTime;
-
     /**
      * Timestamp of the data type last update
      */
@@ -117,9 +115,9 @@ public class GroupTypeDataDefinition extends ToscaTypeDataDefinition {
 
     @Override
     public String toString() {
-        return "GroupTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version=" + version
-                + ", members=" + members + ", metadata=" + metadata + ", description=" + description + ", creationTime="
-                + creationTime + ", modificationTime=" + modificationTime + "]";
+        return "GroupTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version="
+            + version + ", members=" + members + ", metadata=" + metadata + ", description=" + description + ", creationTime=" + creationTime
+            + ", modificationTime=" + modificationTime + "]";
     }
 
     public String getDerivedFrom() {
@@ -137,5 +135,4 @@ public class GroupTypeDataDefinition extends ToscaTypeDataDefinition {
     public void setHighestVersion(boolean isLatestVersion) {
         this.highestVersion = isLatestVersion;
     }
-
 }

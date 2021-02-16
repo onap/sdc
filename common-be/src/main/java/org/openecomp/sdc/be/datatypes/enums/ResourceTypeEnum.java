@@ -1,3 +1,4 @@
+
 /*-
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.Arrays;
@@ -23,20 +23,21 @@ import java.util.Arrays;
  * @author mshitrit
  */
 public enum ResourceTypeEnum {
-
     VFC("VFC"/* (Virtual Function Component)"*/, true),
     VF("VF"/* (Virtual Function)" */, false),
+
     CR("CR"/* (Complex Resource"*/, false),
     CP("CP"/* (Connection Point)"*/, true),
+
     PNF("PNF"/* (Physical Network Function)" */, false),
     CVFC("CVFC"/* Complex Virtual Function Component*/, false),
+
     VL("VL"/* (Virtual Link)"*/, true),
     VFCMT("VFCMT"/* (VFC Monitoring Template)"*/, true),
-    Configuration("Configuration", true),
-    ServiceProxy("ServiceProxy", true),
+    Configuration("Configuration", true), ServiceProxy("ServiceProxy", true),
     //Generic VFC/VF/PNF/Service Type
     ABSTRACT("Abstract", true),
-	SERVICE("Service"/*(Network Service)"*/,false);
+    SERVICE("Service"/*(Network Service)"*/, false);
 
     private final String value;
     private final boolean isAtomicType;
@@ -44,14 +45,6 @@ public enum ResourceTypeEnum {
     ResourceTypeEnum(final String value, final boolean isAtomicType) {
         this.value = value;
         this.isAtomicType = isAtomicType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public boolean isAtomicType() {
-        return isAtomicType;
     }
 
     public static ResourceTypeEnum getType(final String type) {
@@ -84,9 +77,7 @@ public enum ResourceTypeEnum {
         if (type == null) {
             return null;
         }
-        return Arrays.stream(ResourceTypeEnum.values())
-            .filter(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type))
-            .findFirst()
+        return Arrays.stream(ResourceTypeEnum.values()).filter(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type)).findFirst()
             .orElse(null);
     }
 
@@ -100,8 +91,7 @@ public enum ResourceTypeEnum {
         if (type == null) {
             return false;
         }
-        return Arrays.stream(ResourceTypeEnum.values())
-            .anyMatch(resourceTypeEnum -> resourceTypeEnum.name().equals(type));
+        return Arrays.stream(ResourceTypeEnum.values()).anyMatch(resourceTypeEnum -> resourceTypeEnum.name().equals(type));
     }
 
     /**
@@ -114,8 +104,14 @@ public enum ResourceTypeEnum {
         if (type == null) {
             return false;
         }
-        return Arrays.stream(ResourceTypeEnum.values())
-            .anyMatch(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type));
+        return Arrays.stream(ResourceTypeEnum.values()).anyMatch(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type));
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public boolean isAtomicType() {
+        return isAtomicType;
+    }
 }

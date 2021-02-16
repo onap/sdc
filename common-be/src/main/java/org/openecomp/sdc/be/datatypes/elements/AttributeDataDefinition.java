@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -112,5 +113,4 @@ public class AttributeDataDefinition extends ToscaDataDefinition implements Seri
     public SchemaDefinition getSchema() {
         return (SchemaDefinition) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
     }
-
 }

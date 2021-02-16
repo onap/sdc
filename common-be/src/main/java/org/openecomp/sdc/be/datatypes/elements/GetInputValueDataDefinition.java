@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,12 +18,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class GetInputValueDataDefinition extends ToscaDataDefinition {
 
@@ -31,7 +30,6 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
     private String inputId;
     private Integer indexValue;
     private GetInputValueDataDefinition getInputIndex;
-
     private boolean isList = false;
 
     public GetInputValueDataDefinition() {
@@ -49,8 +47,6 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
         this.setIndexValue(p.getIndexValue());
         this.setGetInputIndex(p.getGetInputIndex());
         this.setList(p.isList());
-
-
     }
 
     public String getPropName() {
@@ -93,7 +89,6 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
         this.isList = isList;
     }
 
-
     public String getInputId() {
         return inputId;
     }
@@ -104,7 +99,8 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "GetInputValueDataDefinition [propName=" + propName + ", inputName=" + inputName + ", indexValue=" + indexValue + ", getInputIndex=" + getInputIndex + ", isList=" + isList + "]";
+        return "GetInputValueDataDefinition [propName=" + propName + ", inputName=" + inputName + ", indexValue=" + indexValue + ", getInputIndex="
+            + getInputIndex + ", isList=" + isList + "]";
     }
 
     @Override
@@ -163,6 +159,4 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
             return propName.equals(other.propName);
         }
     }
-
-
 }

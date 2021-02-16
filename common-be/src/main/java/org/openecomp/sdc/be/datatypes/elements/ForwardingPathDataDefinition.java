@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,11 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.DESCRIPTION;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_DESTINATION_PORT_NUMBER;
@@ -30,6 +27,9 @@ import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_N
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.PATH_PROTOCOL;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.UNIQUE_ID;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class ForwardingPathDataDefinition extends ToscaDataDefinition {
 
@@ -41,7 +41,6 @@ public class ForwardingPathDataDefinition extends ToscaDataDefinition {
     public ForwardingPathDataDefinition(String name) {
         super();
         setName(name);
-
     }
 
     public ForwardingPathDataDefinition(ForwardingPathDataDefinition path) {

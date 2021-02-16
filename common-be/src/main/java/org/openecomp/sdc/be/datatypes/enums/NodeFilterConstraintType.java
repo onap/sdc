@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -28,15 +29,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum NodeFilterConstraintType {
-
-    PROPERTIES(NodeFilterConstraintType.PROPERTIES_PARAM_NAME),
-    CAPABILITIES(NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
-
-    private final String type;
-
+    PROPERTIES(NodeFilterConstraintType.PROPERTIES_PARAM_NAME), CAPABILITIES(NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
     // Those values are needed as constants for Swagger allowedValues param
     public static final String PROPERTIES_PARAM_NAME = "properties";
     public static final String CAPABILITIES_PARAM_NAME = "capabilities";
+    private final String type;
 
     /**
      * Parse a String to the related {@link NodeFilterConstraintType}.

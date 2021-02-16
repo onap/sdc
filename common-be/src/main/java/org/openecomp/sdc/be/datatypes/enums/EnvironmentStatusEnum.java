@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum EnvironmentStatusEnum {
-    UNKNOWN("unknown"),
-    IN_PROGRESS("in_progress"),
-    FAILED("failed"),
-    COMPLETED("completed");
-
+    UNKNOWN("unknown"), IN_PROGRESS("in_progress"), FAILED("failed"), COMPLETED("completed");
     private final String name;
 
     EnvironmentStatusEnum(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public static EnvironmentStatusEnum getByName(final String name) {
@@ -44,4 +36,7 @@ public enum EnvironmentStatusEnum {
         }
     }
 
+    public String getName() {
+        return name;
+    }
 }

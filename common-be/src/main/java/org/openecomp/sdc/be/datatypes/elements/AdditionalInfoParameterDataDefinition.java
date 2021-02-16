@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,27 +18,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
 
     private String uniqueId;
-
     private Long creationTime;
-
     private Long modificationTime;
-
     private Integer lastCreatedCounter = 0;
-
     private List<AdditionalInfoParameterInfo> parameters;
 
     public AdditionalInfoParameterDataDefinition() {
-
     }
 
     public AdditionalInfoParameterDataDefinition(AdditionalInfoParameterDataDefinition p) {
@@ -90,8 +84,7 @@ public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "AdditionalInfoParameterDataDefinition [uniqueId=" + uniqueId + ", creationTime=" + creationTime
-                + ", modificationTime=" + modificationTime + ", lastCreatedCounter=" + lastCreatedCounter + "]";
+        return "AdditionalInfoParameterDataDefinition [uniqueId=" + uniqueId + ", creationTime=" + creationTime + ", modificationTime="
+            + modificationTime + ", lastCreatedCounter=" + lastCreatedCounter + "]";
     }
-
 }

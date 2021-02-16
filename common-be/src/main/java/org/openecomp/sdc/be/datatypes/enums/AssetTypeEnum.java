@@ -1,3 +1,4 @@
+
 /*-
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum AssetTypeEnum {
     RESOURCES("resources", "Resource"), SERVICES("services", "Service"), PRODUCTS("products", "Product");
-
     private String value;
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getCorrespondingComponent() {
-        return correspondingComponent;
-    }
-
     private String correspondingComponent;
 
     AssetTypeEnum(String value, String correspondingComponent) {
@@ -42,7 +32,14 @@ public enum AssetTypeEnum {
                 return ComponentTypeEnum.findByValue(curr.correspondingComponent);
             }
         }
-
         return ret;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getCorrespondingComponent() {
+        return correspondingComponent;
     }
 }

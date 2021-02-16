@@ -1,3 +1,4 @@
+
 /*
  * Copyright © 2016-2018 European Support Limited
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -45,5 +45,4 @@ public class OperationOutputDefinition extends InputDataDefinition {
     public void setLabel(String name) {
         setToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL, name);
     }
-
 }

@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,15 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.common.util.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
 public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
@@ -101,17 +100,17 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
     public void setModificationTime(Long modificationTime) {
         setToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME, modificationTime);
-	}
+    }
 
-	public CreatedFrom getCreatedFrom() {
-		String createdFrom = (String) getToscaPresentationValue(JsonPresentationFields.CREATED_FROM);
-		return Objects.nonNull(createdFrom) ? CreatedFrom.valueOf(createdFrom) : null;
-	}
+    public CreatedFrom getCreatedFrom() {
+        String createdFrom = (String) getToscaPresentationValue(JsonPresentationFields.CREATED_FROM);
+        return Objects.nonNull(createdFrom) ? CreatedFrom.valueOf(createdFrom) : null;
+    }
 
-	public void setCreatedFrom(CreatedFrom createdFrom) {
-		if (Objects.nonNull(createdFrom)){
-			setToscaPresentationValue(JsonPresentationFields.CREATED_FROM, createdFrom.name());
-		}
+    public void setCreatedFrom(CreatedFrom createdFrom) {
+        if (Objects.nonNull(createdFrom)) {
+            setToscaPresentationValue(JsonPresentationFields.CREATED_FROM, createdFrom.name());
+        }
     }
 
     public String getDescription() {
@@ -185,7 +184,6 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         OriginTypeEnum originType = null;
         String origType = (String) getToscaPresentationValue(JsonPresentationFields.CI_ORIGIN_TYPE);
         if (origType != null && !origType.isEmpty()) {
-
             originType = OriginTypeEnum.findByValue(origType);
         }
         return originType;
@@ -233,6 +231,10 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         return (String) getToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_VERSION);
     }
 
+    public void setComponentVersion(String resourceVersion) {
+        setToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_VERSION, resourceVersion);
+    }
+
     public String getToscaComponentName() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CI_TOSCA_COMPONENT_NAME);
     }
@@ -241,40 +243,41 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.CI_TOSCA_COMPONENT_NAME, toscaComponentName);
     }
 
-    public void setComponentVersion(String resourceVersion) {
-        setToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_VERSION, resourceVersion);
+    public String getSourceModelUuid() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_UUID);
     }
 
     public void setSourceModelUuid(String targetModelUuid) {
         setToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_UUID, targetModelUuid);
     }
 
-    public void setSourceModelUid(String targetModelUid) {
-        setToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_UID, targetModelUid);
-    }
-
-    public void setSourceModelName(String targetModelName) {
-        setToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_NAME, targetModelName);
-    }
-
-    public void setSourceModelInvariant(String targetModelInvariant) {
-        setToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_INVARIANT, targetModelInvariant);
-    }
-
-    public String getSourceModelUuid() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_UUID);
-    }
-
     public String getSourceModelUid() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_UID);
+    }
+
+    public void setSourceModelUid(String targetModelUid) {
+        setToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_UID, targetModelUid);
     }
 
     public String getSourceModelName() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_NAME);
     }
 
+    public void setSourceModelName(String targetModelName) {
+        setToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_NAME, targetModelName);
+    }
+
     public String getSourceModelInvariant() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_INVARIANT);
+    }
+
+    public void setSourceModelInvariant(String targetModelInvariant) {
+        setToscaPresentationValue(JsonPresentationFields.CI_SOURCE_MODEL_INVARIANT, targetModelInvariant);
+    }
+
+    public Boolean getIsProxy() {
+        Boolean isProxy = (Boolean) getToscaPresentationValue(JsonPresentationFields.CI_IS_PROXY);
+        return (isProxy != null) ? isProxy : false;
     }
 
     public void setIsProxy(Boolean isProxy) {
@@ -285,11 +288,6 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         }
     }
 
-    public Boolean getIsProxy() {
-        Boolean isProxy = (Boolean) getToscaPresentationValue(JsonPresentationFields.CI_IS_PROXY);
-        return (isProxy != null) ? isProxy : false;
-    }
-    
     public Boolean isServiceSubstitution() {
         return getOriginType() == OriginTypeEnum.ServiceSubstitution;
     }
@@ -313,12 +311,12 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.CI_DIRECTIVES, directives);
     }
 
-    public  Map<String, ToscaArtifactDataDefinition> getToscaArtifacts() {
-        return ( Map<String, ToscaArtifactDataDefinition>) getToscaPresentationValue(JsonPresentationFields.CI_ARTIFACTS);
+    public Map<String, ToscaArtifactDataDefinition> getToscaArtifacts() {
+        return (Map<String, ToscaArtifactDataDefinition>) getToscaPresentationValue(JsonPresentationFields.CI_ARTIFACTS);
     }
 
-    public  void setToscaArtifacts(Map<String, ToscaArtifactDataDefinition> artifacts) {
-        if (artifacts == null){
+    public void setToscaArtifacts(Map<String, ToscaArtifactDataDefinition> artifacts) {
+        if (artifacts == null) {
             artifacts = new HashMap<>();
         }
         setToscaPresentationValue(JsonPresentationFields.CI_ARTIFACTS, artifacts);
@@ -338,15 +336,12 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "ComponentInstanceDataDefinition [icon=" + getIcon() + ", uniqueId=" + getUniqueId() + ", name="
-                + getName() + ", normalizedName=" + getNormalizedName() + ", componentUid=" + getComponentUid()
-                + ", creationTime=" + getCreationTime() + ", modificationTime=" + getModificationTime()
-                + ", description=" + getDescription() + ", posX=" + getPosX() + ", posY=" + getPosY()
-                + ", propertyValueCounter=" + getPropertyValueCounter() + ", attributeValueCounter="
-                + getAttributeValueCounter() + ", inputValueCounter=" + getInputValueCounter() + ", originType="
-                + getOriginType() + ", customizationUUID=" + getCustomizationUUID() + ", componentName="
-                + getComponentName() + ", componentVersion=" + getComponentVersion() + ", toscaComponentName="
-                + getToscaComponentName() + ", directives =" + getDirectivesString() + "]";
+        return "ComponentInstanceDataDefinition [icon=" + getIcon() + ", uniqueId=" + getUniqueId() + ", name=" + getName() + ", normalizedName="
+            + getNormalizedName() + ", componentUid=" + getComponentUid() + ", creationTime=" + getCreationTime() + ", modificationTime="
+            + getModificationTime() + ", description=" + getDescription() + ", posX=" + getPosX() + ", posY=" + getPosY() + ", propertyValueCounter="
+            + getPropertyValueCounter() + ", attributeValueCounter=" + getAttributeValueCounter() + ", inputValueCounter=" + getInputValueCounter()
+            + ", originType=" + getOriginType() + ", customizationUUID=" + getCustomizationUUID() + ", componentName=" + getComponentName()
+            + ", componentVersion=" + getComponentVersion() + ", toscaComponentName=" + getToscaComponentName() + ", directives ="
+            + getDirectivesString() + "]";
     }
-
 }

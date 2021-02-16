@@ -1,3 +1,4 @@
+
 /*-
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.Arrays;
@@ -20,18 +20,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum FilterKeyEnum {
-    RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus"), NAME_FRAGMENT("nameFragment");
-
+    RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus"), NAME_FRAGMENT(
+        "nameFragment");
     private static final int NUMBER_OF_RESOURCES_FILTERED = 3;
     private static final int NUMBER_OF_SERVICES_FILTERED = 4;
     private String name;
 
     FilterKeyEnum(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public static List<String> getAllFilters() {
@@ -50,6 +46,9 @@ public enum FilterKeyEnum {
             default:
                 return null;
         }
+    }
 
+    public String getName() {
+        return name;
     }
 }

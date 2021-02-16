@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,21 +18,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.tosca;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import fj.data.Either;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 public abstract class ToscaDataDefinition {
 
@@ -46,6 +45,32 @@ public abstract class ToscaDataDefinition {
         toscaPresentation = art;
     }
 
+    public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2) {
+        return mergeDataMaps(map1, map2, false);
+    }
+
+    // return Either.right(item key) if an illegal merge was attempted (overriding data type is forbidden)
+    public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2,
+                                                                                               boolean allowDefaultValueOverride) {
+        for (Entry<String, T> entry : map2.entrySet()) {
+            map1.merge(entry.getKey(), entry.getValue(), (item1, item2) -> item1.mergeFunction(item2, allowDefaultValueOverride));
+            // validate merge success
+            if (!map1.containsKey(entry.getKey())) {
+                return Either.right(entry.getKey());
+            }
+        }
+        return Either.left(map1);
+    }
+
+    public static <T extends ToscaDataDefinition> Map<String, T> listToMapByName(List<T> dataList) {
+        return null == dataList ? new HashMap<>()
+            : dataList.stream().collect(Collectors.toMap(p -> (String) p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
+    }
+
+    public static <T extends ToscaDataDefinition> T removeAndCollectByOwnerId(T complexStructure, Set<String> ownerIdList) {
+        return complexStructure.removeByOwnerId(ownerIdList);
+    }
+
     @JsonValue
     public Object getToscaPresentationValue(JsonPresentationFields name) {
         if (toscaPresentation != null && toscaPresentation.containsKey(name.getPresentation())) {
@@ -55,13 +80,12 @@ public abstract class ToscaDataDefinition {
     }
 
     public void setToscaPresentationValue(JsonPresentationFields name, Object value) {
-        if(name !=null) {
+        if (name != null) {
             if (toscaPresentation == null) {
                 toscaPresentation = new HashMap<>();
             }
             toscaPresentation.put(name.getPresentation(), value);
         }
-
     }
 
     public void setOwnerIdIfEmpty(String ownerId) {
@@ -74,20 +98,20 @@ public abstract class ToscaDataDefinition {
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
-    public String getVersion() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
-    }
-
     public void setType(String type) {
         setToscaPresentationValue(JsonPresentationFields.TYPE, type);
     }
 
-    public void setOwnerId(String ownerId) {
-        setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
+    public String getVersion() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
     }
 
     public String getOwnerId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.OWNER_ID);
+    }
+
+    public void setOwnerId(String ownerId) {
+        setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
     }
 
     // default merge function for merging data maps - implement where needed and use mergeDataMaps method where applicable instead of map1.putAll(map2)
@@ -96,38 +120,12 @@ public abstract class ToscaDataDefinition {
         return other;
     }
 
-    public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2) {
-        return mergeDataMaps(map1, map2, false);
-    }
-
-    // return Either.right(item key) if an illegal merge was attempted (overriding data type is forbidden)
-    public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2, boolean allowDefaultValueOverride) {
-        for (Entry<String, T> entry : map2.entrySet()) {
-            map1.merge(entry.getKey(), entry.getValue(), (item1, item2) -> item1.mergeFunction(item2, allowDefaultValueOverride));
-            // validate merge success
-            if (!map1.containsKey(entry.getKey())) {
-                return Either.right(entry.getKey());
-            }
-        }
-        return Either.left(map1);
-    }
-
-    public static <T extends ToscaDataDefinition> Map<String, T> listToMapByName(List<T> dataList) {
-        return null == dataList ? new HashMap<>() : dataList.stream()
-                .collect(Collectors.toMap(p -> (String) p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
-    }
-
     public boolean findUidMatch(String uid) {
         return uid.equals(getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID));
-
     }
 
     public <T extends ToscaDataDefinition> T removeByOwnerId(Set<String> ownerIdList) {
         return (T) this;
-    }
-
-    public static <T extends ToscaDataDefinition> T removeAndCollectByOwnerId(T complexStructure, Set<String> ownerIdList) {
-        return complexStructure.removeByOwnerId(ownerIdList);
     }
 
     public <T extends ToscaDataDefinition> T updateIfExist(T other, boolean allowDefaultValueOverride) {
@@ -138,5 +136,8 @@ public abstract class ToscaDataDefinition {
         return false;
     }
 
-    public void setSchema(final SchemaDefinition schemaDef){};
+    public void setSchema(final SchemaDefinition schemaDef) {
+    }
+
+    ;
 }

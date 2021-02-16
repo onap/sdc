@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
@@ -16,19 +17,17 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.test.util;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
-
-import static org.junit.Assert.fail;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Util class for handling test resources.
@@ -38,15 +37,13 @@ public class TestResourcesHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestResourcesHandler.class);
 
     private TestResourcesHandler() {
-
     }
 
     /**
      * Gets the input stream of a resource file
      *
-     * @param resourcePath      The resource file path
-     * @return
-     *  The resource input stream
+     * @param resourcePath The resource file path
+     * @return The resource input stream
      */
     public static InputStream getResourceAsStream(final String resourcePath) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
@@ -59,14 +56,12 @@ public class TestResourcesHandler {
     /**
      * Reads a file and coverts it to a byte array.
      *
-     * @param resourcePath      The resource file path
-     * @return
-     *  The resource file byte array
-     * @throws IOException
-     *  When the file was not found or the input stream could not be opened
+     * @param resourcePath The resource file path
+     * @return The resource file byte array
+     * @throws IOException When the file was not found or the input stream could not be opened
      */
     public static byte[] getResourceAsByteArray(final String resourcePath) throws IOException {
-        try(final InputStream inputStream = getResourceAsStream(resourcePath)) {
+        try (final InputStream inputStream = getResourceAsStream(resourcePath)) {
             if (inputStream == null) {
                 throw new IOException(String.format("Could not find the resource on path \"%s\"", resourcePath));
             }
@@ -81,11 +76,10 @@ public class TestResourcesHandler {
     }
 
     /**
-     * Reads a file in the given path.
-     * The method forces an assertion fail if the resource could not be loaded.
-     * @param resourcePath      The resource file path
-     * @return
-     *  The resource file byte array
+     * Reads a file in the given path. The method forces an assertion fail if the resource could not be loaded.
+     *
+     * @param resourcePath The resource file path
+     * @return The resource file byte array
      */
     public static byte[] getResourceBytesOrFail(final String resourcePath) {
         try {
@@ -95,7 +89,6 @@ public class TestResourcesHandler {
             LOGGER.error(errorMsg, e);
             fail(errorMsg);
         }
-
         return null;
     }
 
@@ -106,9 +99,8 @@ public class TestResourcesHandler {
     /**
      * Gets the input stream of a resource file
      *
-     * @param resourcePath      The resource file path
-     * @return
-     *  The resource input stream
+     * @param resourcePath The resource file path
+     * @return The resource input stream
      */
     public static URL getFileUrl(final String resourcePath) {
         return Thread.currentThread().getContextClassLoader().getResource(resourcePath);

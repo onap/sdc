@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.components;
 
 import java.util.ArrayList;
@@ -41,7 +41,9 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinition {
 
     private static final Logger LOGGER = Logger.getLogger(ComponentMetadataDataDefinition.class.getName());
-
+    @Getter
+    @Setter
+    protected ComponentTypeEnum componentType;
     @Getter
     private String uniqueId;
     @Getter
@@ -105,9 +107,6 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
     private String importedToscaChecksum;
     @Getter
     private String invariantUUID;
-    @Getter
-    @Setter
-    protected ComponentTypeEnum componentType;
     // USER
     @Getter
     @Setter
@@ -205,8 +204,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 
     public void setInvariantUUID(String invariantUUID) {
         if (this.invariantUUID != null && !this.invariantUUID.equals(invariantUUID)) {
-            LOGGER.warn("InvariantUUID changed more then once -> OLD : {} , NEW: {} ", this.invariantUUID,
-                    invariantUUID);
+            LOGGER.warn("InvariantUUID changed more then once -> OLD : {} , NEW: {} ", this.invariantUUID, invariantUUID);
         }
         this.invariantUUID = invariantUUID;
     }
@@ -249,5 +247,4 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
      * @return
      */
     public abstract String getActualComponentType();
-
 }

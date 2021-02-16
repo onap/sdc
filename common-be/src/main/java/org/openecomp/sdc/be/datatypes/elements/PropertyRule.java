@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,33 +18,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class PropertyRule extends ToscaDataDefinition {
 
     private static final String FORCE_ALL = "FORCE_ALL";
     private static final String ALL = "ALL";
     private static final String RULE_ANY_MATCH = ".+";
-
-    public static String getForceAll() {
-        return FORCE_ALL;
-    }
-
-    public static String getALL() {
-        return ALL;
-    }
-
-    public static String getRuleAnyMatch() {
-        return RULE_ANY_MATCH;
-    }
-
-
     private List<String> rule;
     private String value;
 
@@ -55,6 +40,18 @@ public class PropertyRule extends ToscaDataDefinition {
         super();
         this.rule = rule;
         this.value = value;
+    }
+
+    public static String getForceAll() {
+        return FORCE_ALL;
+    }
+
+    public static String getALL() {
+        return ALL;
+    }
+
+    public static String getRuleAnyMatch() {
+        return RULE_ANY_MATCH;
     }
 
     public List<String> getRule() {
@@ -79,12 +76,10 @@ public class PropertyRule extends ToscaDataDefinition {
     }
 
     public String getToken(int tokenNumber) {
-
         int index = tokenNumber - 1;
         if (rule == null || index >= rule.size() || index < 0) {
             return null;
         }
-
         return rule.get(index);
     }
 
@@ -102,16 +97,13 @@ public class PropertyRule extends ToscaDataDefinition {
     }
 
     public boolean compareRule(PropertyRule comparedPropertyRule) {
-
         if (comparedPropertyRule == null) {
             return false;
         }
-
         List<String> comparedRule = comparedPropertyRule.getRule();
         if (rule == null && comparedRule == null) {
             return true;
         }
-
         if (rule != null && comparedRule != null) {
             if (rule.size() != comparedRule.size()) {
                 return false;
@@ -131,15 +123,11 @@ public class PropertyRule extends ToscaDataDefinition {
         } else {
             return false;
         }
-
     }
 
     public void replaceFirstToken(String token) {
-
         if (rule != null && rule.size() > 0) {
             rule.set(0, token);
         }
-
     }
-
 }

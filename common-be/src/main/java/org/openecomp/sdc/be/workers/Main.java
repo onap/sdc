@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.workers;
 
 /**
@@ -26,7 +26,6 @@ package org.openecomp.sdc.be.workers;
 public class Main {
 
     public static void main(String[] args) {
-
         Manager manger = new Manager();
         manger.init(2);
         manger.addJob(new Job() {
@@ -44,7 +43,9 @@ public class Main {
         // try {
         System.out.println(manger.start());
         // } catch (InterruptedException e) {
+
         // e.printStackTrace();
+
         // }
     }
 }

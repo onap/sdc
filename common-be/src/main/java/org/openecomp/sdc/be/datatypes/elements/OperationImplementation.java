@@ -1,3 +1,4 @@
+
 /*
  * Copyright © 2016-2018 European Support Limited
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.HashSet;
@@ -50,8 +50,7 @@ public class OperationImplementation {
             return false;
         }
         OperationImplementation that = (OperationImplementation) o;
-        return Objects.equals(primary, that.primary)
-                && Objects.equals(new HashSet<>(dependencies), new HashSet<>(that.dependencies));
+        return Objects.equals(primary, that.primary) && Objects.equals(new HashSet<>(dependencies), new HashSet<>(that.dependencies));
     }
 
     @Override

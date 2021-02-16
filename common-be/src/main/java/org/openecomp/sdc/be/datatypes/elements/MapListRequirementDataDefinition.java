@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,13 +18,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +29,6 @@ public class MapListRequirementDataDefinition extends MapDataDefinition<ListRequ
 
     public MapListRequirementDataDefinition(MapListRequirementDataDefinition cdt) {
         super(cdt);
-
     }
 
     @JsonCreator
@@ -41,7 +38,6 @@ public class MapListRequirementDataDefinition extends MapDataDefinition<ListRequ
 
     public MapListRequirementDataDefinition() {
         super();
-
     }
 
     @JsonValue
@@ -67,5 +63,4 @@ public class MapListRequirementDataDefinition extends MapDataDefinition<ListRequ
             }
         }
     }
-
 }

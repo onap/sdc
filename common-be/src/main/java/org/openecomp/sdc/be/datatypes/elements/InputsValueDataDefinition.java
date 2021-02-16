@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,12 +18,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class InputsValueDataDefinition extends ToscaDataDefinition {
+
     private String name;
     private String value;
     private String uniqueId;
@@ -60,5 +61,4 @@ public class InputsValueDataDefinition extends ToscaDataDefinition {
     public void setValue(String value) {
         this.value = value;
     }
-
 }

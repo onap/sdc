@@ -1,3 +1,4 @@
+
 /*-
  * ============LICENSE_START=======================================================
  * SDC
@@ -17,16 +18,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.category;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import java.util.List;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @Getter
 @Setter
@@ -48,5 +48,4 @@ public class SubCategoryDataDefinition extends ToscaDataDefinition {
         this.icons = c.icons;
         this.metadataKeys = c.metadataKeys;
     }
-
 }

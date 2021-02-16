@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
@@ -16,14 +17,12 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Stores non mano artifact types.
@@ -31,19 +30,11 @@ import java.util.Optional;
 @Getter
 @AllArgsConstructor
 public enum NonManoArtifactType {
-    ONAP_VES_EVENTS("onap_ves_events"),
-    ONAP_PM_DICTIONARY("onap_pm_dictionary"),
-    ONAP_YANG_MODULES("onap_yang_modules"),
-    ONAP_ANSIBLE_PLAYBOOKS("onap_ansible_playbooks"),
-    ONAP_SCRIPTS("onap_scripts"),
-    ONAP_OTHERS("onap_others"),
-    ONAP_SW_INFORMATION("onap_pnf_sw_information");
-
+    ONAP_VES_EVENTS("onap_ves_events"), ONAP_PM_DICTIONARY("onap_pm_dictionary"), ONAP_YANG_MODULES("onap_yang_modules"), ONAP_ANSIBLE_PLAYBOOKS(
+        "onap_ansible_playbooks"), ONAP_SCRIPTS("onap_scripts"), ONAP_OTHERS("onap_others"), ONAP_SW_INFORMATION("onap_pnf_sw_information");
     private final String type;
 
     public static Optional<NonManoArtifactType> parse(final String type) {
-        return Arrays.stream(values())
-            .filter(nonManoArtifactType -> nonManoArtifactType.getType().equals(type))
-            .findFirst();
+        return Arrays.stream(values()).filter(nonManoArtifactType -> nonManoArtifactType.getType().equals(type)).findFirst();
     }
 }
