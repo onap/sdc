@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -16,15 +17,14 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory;
 
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsdCsarGenerator;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsdCsarGeneratorImpl;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.VnfDescriptorGenerator;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -51,5 +51,4 @@ public class EtsiNfvNsdCsarGeneratorFactory {
         return etsiNfvNsdCsarGeneratorObjectProvider
             .getObject(nsDescriptorConfig, vnfDescriptorGenerator, nsDescriptorGeneratorFactory, artifactCassandraDao);
     }
-
 }

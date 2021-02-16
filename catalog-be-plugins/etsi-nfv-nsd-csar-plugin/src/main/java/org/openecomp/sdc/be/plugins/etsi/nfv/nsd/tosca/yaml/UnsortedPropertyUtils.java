@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.tosca.yaml;
 
 import java.beans.IntrospectionException;
@@ -30,9 +30,7 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 public class UnsortedPropertyUtils extends PropertyUtils {
 
     @Override
-    protected Set<Property> createPropertySet(final Class clazz, final BeanAccess beanAccess)
-        throws IntrospectionException {
-
+    protected Set<Property> createPropertySet(final Class clazz, final BeanAccess beanAccess) throws IntrospectionException {
         final Collection<Property> fields = getPropertiesMap(clazz, BeanAccess.FIELD).values();
         return new LinkedHashSet<>(fields);
     }

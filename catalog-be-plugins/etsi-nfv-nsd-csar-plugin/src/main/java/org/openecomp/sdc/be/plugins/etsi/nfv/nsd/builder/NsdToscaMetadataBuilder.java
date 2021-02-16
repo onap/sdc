@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder;
 
 /**
@@ -30,10 +30,8 @@ public class NsdToscaMetadataBuilder {
     public static final String ENTRY_DEFINITIONS = "Entry-Definitions";
     public static final String ETSI_ENTRY_CHANGE_LOG = "ETSI-Entry-Change-Log";
     public static final String ETSI_ENTRY_MANIFEST = "ETSI-Entry-Manifest";
-
     private static final String ATTRIBUTE_SEPARATOR = ": ";
     private static final String NEW_LINE = "\n";
-
     private final StringBuilder builder = new StringBuilder();
     private String csarVersion;
     private String createdBy;
@@ -125,9 +123,7 @@ public class NsdToscaMetadataBuilder {
 
     private void appendEntry(final String entry, final String value) {
         if (value != null) {
-            builder.append(entry).append(ATTRIBUTE_SEPARATOR).append(value)
-                .append(NEW_LINE);
+            builder.append(entry).append(ATTRIBUTE_SEPARATOR).append(value).append(NEW_LINE);
         }
     }
-
 }

@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model;
 
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ public class Nsd {
     public static final String VERSION_PROPERTY = "version";
     public static final String NAME_PROPERTY = "name";
     public static final String INVARIANT_ID_PROPERTY = "invariant_id";
-
     private String designer;
     private String version;
     private String name;

@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import java.io.FileNotFoundException;
@@ -60,22 +60,22 @@ public class VnfDescriptorGeneratorImpl implements VnfDescriptorGenerator {
     private static final String DEFINITIONS_DIRECTORY = "Definitions";
     private static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
 
-    public Optional<VnfDescriptor> generate(final String name,
-                                            final ArtifactDefinition onboardedPackageArtifact)
-        throws VnfDescriptorException {
+    private static boolean isACsarArtifact(final ArtifactDefinition definition) {
+        return definition.getPayloadData() != null && definition.getArtifactName() != null && CSAR
+            .equalsIgnoreCase(FilenameUtils.getExtension(definition.getArtifactName()));
+    }
+
+    public Optional<VnfDescriptor> generate(final String name, final ArtifactDefinition onboardedPackageArtifact) throws VnfDescriptorException {
         if (!isACsarArtifact(onboardedPackageArtifact)) {
             return Optional.empty();
         }
-
         final FileContentHandler fileContentHandler;
         try {
             fileContentHandler = FileUtils.getFileContentMapFromZip(onboardedPackageArtifact.getPayloadData());
         } catch (final ZipException e) {
-            final String errorMsg = String
-                .format("Could not unzip artifact '%s' content", onboardedPackageArtifact.getArtifactName());
+            final String errorMsg = String.format("Could not unzip artifact '%s' content", onboardedPackageArtifact.getArtifactName());
             throw new VnfDescriptorException(errorMsg, e);
         }
-
         if (MapUtils.isEmpty(fileContentHandler.getFiles())) {
             return Optional.empty();
         }
@@ -83,9 +83,7 @@ public class VnfDescriptorGeneratorImpl implements VnfDescriptorGenerator {
         try {
             mainDefinitionFile = getMainFilePathFromMetaFile(fileContentHandler).orElse(null);
         } catch (final IOException e) {
-            final String errorMsg = String
-                .format("Could not read main definition file of artifact '%s'",
-                    onboardedPackageArtifact.getArtifactName());
+            final String errorMsg = String.format("Could not read main definition file of artifact '%s'", onboardedPackageArtifact.getArtifactName());
             throw new VnfDescriptorException(errorMsg, e);
         }
         LOGGER.debug("found main file: {}", mainDefinitionFile);
@@ -95,30 +93,19 @@ public class VnfDescriptorGeneratorImpl implements VnfDescriptorGenerator {
         final VnfDescriptor vnfDescriptor = new VnfDescriptor();
         vnfDescriptor.setName(name);
         final String vnfdFileName = FilenameUtils.getName(mainDefinitionFile);
-
         vnfDescriptor.setVnfdFileName(vnfdFileName);
         vnfDescriptor.setDefinitionFiles(getFiles(fileContentHandler, mainDefinitionFile));
         vnfDescriptor.setNodeType(getNodeType(getFileContent(fileContentHandler, mainDefinitionFile)));
-
         return Optional.of(vnfDescriptor);
-    }
-
-    private static boolean isACsarArtifact(final ArtifactDefinition definition) {
-        return definition.getPayloadData() != null && definition.getArtifactName() != null && CSAR
-            .equalsIgnoreCase(FilenameUtils.getExtension(definition.getArtifactName()));
     }
 
     private Map<String, byte[]> getFiles(final FileContentHandler fileContentHandler, final String filePath) {
         final Map<String, byte[]> files = new HashMap<>();
-
         final byte[] fileContent = fileContentHandler.getFileContent(filePath);
-
         if (fileContent != null) {
             final String mainYmlFile = new String(fileContent);
             LOGGER.debug("file content: {}", mainYmlFile);
-
-            files.put(appendDefinitionDirPath(filePath.substring(filePath.lastIndexOf(SLASH) + 1)),
-                getVnfdWithoutTopologyTemplate(fileContent));
+            files.put(appendDefinitionDirPath(filePath.substring(filePath.lastIndexOf(SLASH) + 1)), getVnfdWithoutTopologyTemplate(fileContent));
             final List<Object> imports = getImportFilesPath(mainYmlFile);
             LOGGER.info("found imports {}", imports);
             for (final Object importObject : imports) {
@@ -135,15 +122,13 @@ public class VnfDescriptorGeneratorImpl implements VnfDescriptorGenerator {
 
     private String getFileContent(final FileContentHandler fileContentHandler, final String filePath) {
         final byte[] fileContent = fileContentHandler.getFileContent(filePath);
-
         if (fileContent != null) {
             return new String(fileContent);
         }
         return null;
     }
 
-    private Optional<String> getMainFilePathFromMetaFile(final FileContentHandler fileContentHandler)
-        throws IOException {
+    private Optional<String> getMainFilePathFromMetaFile(final FileContentHandler fileContentHandler) throws IOException {
         final Map<String, String> metaFileContent = getMetaFileContent(fileContentHandler);
         final String mainFile = metaFileContent.get(NsdToscaMetadataBuilder.ENTRY_DEFINITIONS);
         if (mainFile != null) {
@@ -153,16 +138,13 @@ public class VnfDescriptorGeneratorImpl implements VnfDescriptorGenerator {
         return Optional.empty();
     }
 
-    private Map<String, String> getMetaFileContent(final FileContentHandler fileContentHandler)
-        throws IOException {
+    private Map<String, String> getMetaFileContent(final FileContentHandler fileContentHandler) throws IOException {
         final InputStream inputStream = fileContentHandler.getFileContentAsStream(TOSCA_META_PATH);
         if (inputStream == null) {
             throw new FileNotFoundException("Unable find " + TOSCA_META_PATH + " file");
         }
         final List<String> lines = IOUtils.readLines(inputStream, StandardCharsets.UTF_8);
-
-        return lines.stream().map(str -> str.split(COLON))
-            .collect(Collectors.toMap(str -> str[0], str -> str.length > 1 ? str[1] : EMPTY_STRING));
+        return lines.stream().map(str -> str.split(COLON)).collect(Collectors.toMap(str -> str[0], str -> str.length > 1 ? str[1] : EMPTY_STRING));
     }
 
     private String appendDefinitionDirPath(final String filename) {
@@ -171,9 +153,7 @@ public class VnfDescriptorGeneratorImpl implements VnfDescriptorGenerator {
 
     private List<Object> getImportFilesPath(final String mainYmlFile) {
         final Map<Object, Object> fileContentMap = new YamlUtil().yamlToObject(mainYmlFile, Map.class);
-
         final Object importsObject = fileContentMap.get("imports");
-
         if (importsObject instanceof List) {
             return (List<Object>) importsObject;
         }
@@ -184,19 +164,15 @@ public class VnfDescriptorGeneratorImpl implements VnfDescriptorGenerator {
         final Yaml yaml = new Yaml();
         final Map<String, Object> toscaFileContent = (Map<String, Object>) yaml.load(new String(vnfdFileContent));
         toscaFileContent.remove("topology_template");
-
         return yaml.dumpAsMap(toscaFileContent).getBytes();
     }
 
     private String getNodeType(final String mainYmlFile) {
         final Map<Object, Object> fileContentMap = new YamlUtil().yamlToObject(mainYmlFile, Map.class);
-
         final Object nodeTypesObject = fileContentMap.get("node_types");
-        if (nodeTypesObject instanceof Map
-            && ((Map<String, Object>) nodeTypesObject).size() == 1) {
+        if (nodeTypesObject instanceof Map && ((Map<String, Object>) nodeTypesObject).size() == 1) {
             return ((Map<String, Object>) nodeTypesObject).keySet().iterator().next();
         }
         return null;
     }
-
 }

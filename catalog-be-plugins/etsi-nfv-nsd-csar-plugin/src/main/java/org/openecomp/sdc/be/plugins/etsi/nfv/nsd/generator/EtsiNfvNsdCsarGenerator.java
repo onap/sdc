@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import org.openecomp.sdc.be.model.Component;
@@ -34,5 +34,4 @@ public interface EtsiNfvNsdCsarGenerator {
      * @return the CSAR package content
      */
     byte[] generateNsdCsar(Component component) throws NsdException;
-
 }

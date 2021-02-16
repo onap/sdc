@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.tosca.yaml;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,24 +40,15 @@ class ToscaTemplateYamlGeneratorTest {
     void testGenerateYamlWithImportsKey() {
         //given
         final ToscaTemplate toscaTemplate = new ToscaTemplate("tosca_simple_yaml_1_1");
-        final List<Map<String, Map<String, String>>> importList =
-            ImmutableList.of(
-                ImmutableMap.of("etsi_nfv_sol001_nsd_2_7_1_types",
-                    ImmutableMap.of("file", "etsi_nfv_sol001_nsd_2_7_1_types.yaml")
-                ),
-                ImmutableMap.of("anotherImport",
-                    ImmutableMap.of("file", "anotherImport.yaml")
-                )
-            );
+        final List<Map<String, Map<String, String>>> importList = ImmutableList
+            .of(ImmutableMap.of("etsi_nfv_sol001_nsd_2_7_1_types", ImmutableMap.of("file", "etsi_nfv_sol001_nsd_2_7_1_types.yaml")),
+                ImmutableMap.of("anotherImport", ImmutableMap.of("file", "anotherImport.yaml")));
         toscaTemplate.setImports(importList);
         final ToscaTemplateYamlGenerator toscaTemplateYamlGenerator = new ToscaTemplateYamlGenerator(toscaTemplate);
         //when
         final String toscaTemplateYamlString = toscaTemplateYamlGenerator.parseToYamlString();
-
         //then
-        final String expectedImports = "imports:\n"
-            + "- file: etsi_nfv_sol001_nsd_2_7_1_types.yaml\n"
-            + "- file: anotherImport.yaml";
+        final String expectedImports = "imports:\n" + "- file: etsi_nfv_sol001_nsd_2_7_1_types.yaml\n" + "- file: anotherImport.yaml";
         assertThat("Imports format should be as expected", toscaTemplateYamlString.contains(expectedImports), is(true));
     }
 
@@ -65,17 +56,15 @@ class ToscaTemplateYamlGeneratorTest {
     void testGenerateYamlWithToscaProperty() {
         //given
         final ToscaTemplate toscaTemplate = new ToscaTemplate("tosca_simple_yaml_1_1");
-
         final Map<String, ToscaProperty> toscaPropertyMap = new HashMap<>();
         final ToscaProperty toscaProperty = new ToscaProperty();
         final String defaultpValue = "defaultpValue";
         toscaProperty.setDefaultp(defaultpValue);
-        ToscaPropertyConstraintValidValues toscaPropertyConstraintValidValues =
-            new ToscaPropertyConstraintValidValues(Collections.singletonList(defaultpValue));
+        ToscaPropertyConstraintValidValues toscaPropertyConstraintValidValues = new ToscaPropertyConstraintValidValues(
+            Collections.singletonList(defaultpValue));
         toscaProperty.setConstraints(Collections.singletonList(toscaPropertyConstraintValidValues));
         final String propertyName = "aProperty";
         toscaPropertyMap.put(propertyName, toscaProperty);
-
         final Map<String, ToscaNodeType> toscaNodeMap = new HashMap<>();
         final ToscaNodeType toscaNodeType = new ToscaNodeType();
         toscaNodeType.setProperties(toscaPropertyMap);
@@ -84,15 +73,10 @@ class ToscaTemplateYamlGeneratorTest {
         final ToscaTemplateYamlGenerator toscaTemplateYamlGenerator = new ToscaTemplateYamlGenerator(toscaTemplate);
         //when
         final String toscaTemplateYamlString = toscaTemplateYamlGenerator.parseToYamlString();
-
-        final String expectedProperty = String.format("%s:\n"
-                + "        default: %s\n"
-                + "        constraints:\n"
-                + "        - valid_values:\n"
-                + "          - %s",
-            propertyName, defaultpValue, defaultpValue);
+        final String expectedProperty = String
+            .format("%s:\n" + "        default: %s\n" + "        constraints:\n" + "        - valid_values:\n" + "          - %s", propertyName,
+                defaultpValue, defaultpValue);
         //then
-        assertThat("Property format should be as expected",
-            toscaTemplateYamlString.contains(expectedProperty), is(true));
+        assertThat("Property format should be as expected", toscaTemplateYamlString.contains(expectedProperty), is(true));
     }
 }

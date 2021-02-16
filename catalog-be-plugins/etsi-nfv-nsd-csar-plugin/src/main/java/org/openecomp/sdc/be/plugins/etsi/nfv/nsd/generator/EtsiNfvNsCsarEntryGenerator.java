@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ETSI_PACKAGE;
@@ -39,11 +39,10 @@ import org.slf4j.LoggerFactory;
 @org.springframework.stereotype.Component("etsiNfvNsCsarEntryGenerator")
 public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNfvNsCsarEntryGenerator.class);
     static final String ETSI_NS_COMPONENT_CATEGORY = "ETSI NFV Network Service";
     static final String NSD_FILE_PATH_FORMAT = "Artifacts/%s/%s.csar";
     static final String ETSI_VERSION_METADATA = "ETSI Version";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNfvNsCsarEntryGenerator.class);
     private final EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory;
 
     public EtsiNfvNsCsarEntryGenerator(final EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory) {
@@ -51,8 +50,8 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
     }
 
     /**
-     * Generates a Network Service CSAR based on a SERVICE component of category {@link
-     * EtsiNfvNsCsarEntryGenerator#ETSI_NS_COMPONENT_CATEGORY} and wraps it in a SDC CSAR entry.
+     * Generates a Network Service CSAR based on a SERVICE component of category {@link EtsiNfvNsCsarEntryGenerator#ETSI_NS_COMPONENT_CATEGORY} and
+     * wraps it in a SDC CSAR entry.
      *
      * @param component the component to create the NS CSAR from
      * @return an entry to be added in the Component CSAR by SDC
@@ -64,31 +63,24 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
             LOGGER.debug("Ignoring NSD CSAR generation for component '{}' as it is not a SERVICE", componentName);
             return Collections.emptyMap();
         }
-
-        final boolean isEOTemplate = component.getCategories().stream()
-            .anyMatch(category -> ETSI_NS_COMPONENT_CATEGORY.equals(category.getName()));
+        final boolean isEOTemplate = component.getCategories().stream().anyMatch(category -> ETSI_NS_COMPONENT_CATEGORY.equals(category.getName()));
         if (!isEOTemplate) {
-            LOGGER.debug("Ignoring NSD CSAR generation for component '{}' as it does not belong to the category '{}'",
-                componentName, ETSI_NS_COMPONENT_CATEGORY);
+            LOGGER.debug("Ignoring NSD CSAR generation for component '{}' as it does not belong to the category '{}'", componentName,
+                ETSI_NS_COMPONENT_CATEGORY);
             return Collections.emptyMap();
         }
-
         final byte[] nsdCsar;
         try {
             final EtsiVersion etsiVersion = getComponentEtsiVersion(component);
-            final EtsiNfvNsdCsarGenerator etsiNfvNsdCsarGenerator =
-                etsiNfvNsdCsarGeneratorFactory.create(etsiVersion);
+            final EtsiNfvNsdCsarGenerator etsiNfvNsdCsarGenerator = etsiNfvNsdCsarGeneratorFactory.create(etsiVersion);
             nsdCsar = etsiNfvNsdCsarGenerator.generateNsdCsar(component);
         } catch (final NsdException e) {
-            LOGGER.error("Could not create NSD CSAR entry for component '{}'"
-                , component.getName(), e);
+            LOGGER.error("Could not create NSD CSAR entry for component '{}'", component.getName(), e);
             return Collections.emptyMap();
         } catch (final Exception e) {
-            LOGGER.error("Could not create NSD CSAR entry for component '{}'. An unexpected exception occurred"
-                , component.getName(), e);
+            LOGGER.error("Could not create NSD CSAR entry for component '{}'. An unexpected exception occurred", component.getName(), e);
             return Collections.emptyMap();
         }
-
         return createEntry(component.getNormalizedName(), nsdCsar);
     }
 

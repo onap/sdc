@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model;
 
 import java.util.HashMap;
@@ -63,5 +63,4 @@ public class VnfDescriptor {
     public void setNodeType(String nodeType) {
         this.nodeType = nodeType;
     }
-
 }

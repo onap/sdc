@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import com.google.common.collect.ImmutableMap;
@@ -63,15 +63,14 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(NsDescriptorGeneratorImpl.class);
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
     private static final String NS_TOSCA_TYPE = "tosca.nodes.nfv.NS";
-    private static final List<Map<String, Map<String, String>>> DEFAULT_IMPORTS = ConfigurationManager
-        .getConfigurationManager().getConfiguration().getDefaultImports();
+    private static final List<Map<String, Map<String, String>>> DEFAULT_IMPORTS = ConfigurationManager.getConfigurationManager().getConfiguration()
+        .getDefaultImports();
     private static final List<String> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE = Arrays
         .asList("cds_model_name", "cds_model_version", "skip_post_instantiation_configuration", "controller_actor");
     private static final List<String> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TEMPLATE = Arrays
-        .asList("nf_function", "nf_role", "nf_naming_code", "nf_type", "nf_naming", "availability_zone_max_count",
-            "min_instances", "max_instances", "multi_stage_design", "sdnc_model_name", "sdnc_model_version",
-            "sdnc_artifact_name", "skip_post_instantiation_configuration", "controller_actor");
-
+        .asList("nf_function", "nf_role", "nf_naming_code", "nf_type", "nf_naming", "availability_zone_max_count", "min_instances", "max_instances",
+            "multi_stage_design", "sdnc_model_name", "sdnc_model_version", "sdnc_artifact_name", "skip_post_instantiation_configuration",
+            "controller_actor");
     private final ToscaExportHandler toscaExportHandler;
     private final ObjectProvider<ToscaTemplateYamlGenerator> toscaTemplateYamlGeneratorProvider;
 
@@ -81,19 +80,16 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         this.toscaTemplateYamlGeneratorProvider = toscaTemplateYamlGeneratorProvider;
     }
 
-    public Optional<Nsd> generate(final Component component,
-                                  final List<VnfDescriptor> vnfDescriptorList) throws NsdException {
+    public Optional<Nsd> generate(final Component component, final List<VnfDescriptor> vnfDescriptorList) throws NsdException {
         if (!ComponentTypeEnum.SERVICE.equals(component.getComponentType())) {
             return Optional.empty();
         }
-
         final ToscaTemplate toscaTemplate = createNetworkServiceDescriptor(component, vnfDescriptorList);
         final ToscaNodeType nsNodeType = toscaTemplate.getNode_types().values().stream()
             .filter(toscaNodeType -> NS_TOSCA_TYPE.equals(toscaNodeType.getDerived_from())).findFirst().orElse(null);
         if (nsNodeType == null) {
             return Optional.empty();
         }
-
         return Optional.of(buildNsd(toscaTemplate, nsNodeType));
     }
 
@@ -103,8 +99,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         nsd.setVersion(getProperty(nsNodeType, Nsd.VERSION_PROPERTY));
         nsd.setName(getProperty(nsNodeType, Nsd.NAME_PROPERTY));
         nsd.setInvariantId(getProperty(nsNodeType, Nsd.INVARIANT_ID_PROPERTY));
-        final ToscaTemplateYamlGenerator yamlParserProvider =
-            toscaTemplateYamlGeneratorProvider.getObject(toscaTemplate);
+        final ToscaTemplateYamlGenerator yamlParserProvider = toscaTemplateYamlGeneratorProvider.getObject(toscaTemplate);
         final byte[] contents = yamlParserProvider.parseToYamlString().getBytes();
         nsd.setContents(contents);
         final List<String> interfaceImplementations = getInterfaceImplementations(toscaTemplate);
@@ -117,14 +112,10 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
             return Collections.emptyList();
         }
         final List<String> interfaceImplementations = new ArrayList<>();
-        final Collection<ToscaNodeTemplate> nodeTemplates =
-            template.getTopology_template().getNode_templates().values();
-        nodeTemplates.stream()
-            .filter(toscaNodeTemplate -> toscaNodeTemplate.getInterfaces() != null)
-            .forEach(toscaNodeTemplate ->
-                toscaNodeTemplate.getInterfaces().values().forEach(interfaceInstance ->
-                    interfaceImplementations.addAll(getInterfaceImplementations(interfaceInstance))
-            ));
+        final Collection<ToscaNodeTemplate> nodeTemplates = template.getTopology_template().getNode_templates().values();
+        nodeTemplates.stream().filter(toscaNodeTemplate -> toscaNodeTemplate.getInterfaces() != null).forEach(
+            toscaNodeTemplate -> toscaNodeTemplate.getInterfaces().values()
+                .forEach(interfaceInstance -> interfaceImplementations.addAll(getInterfaceImplementations(interfaceInstance))));
         return interfaceImplementations;
     }
 
@@ -142,78 +133,58 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
 
     private String getProperty(final ToscaNodeType nodeType, final String propertyName) {
         final ToscaProperty toscaProperty = nodeType.getProperties().get(propertyName);
-
-        final String errorMsg =
-            String.format("Property '%s' must be defined and must have a valid values constraint", propertyName);
+        final String errorMsg = String.format("Property '%s' must be defined and must have a valid values constraint", propertyName);
         final String returnValueOnError = "unknown";
         if (toscaProperty == null || CollectionUtils.isEmpty(toscaProperty.getConstraints())) {
             LOGGER.error(errorMsg);
             return returnValueOnError;
         }
-
         final ToscaPropertyConstraint toscaPropertyConstraint = toscaProperty.getConstraints().get(0);
         if (ConstraintType.VALID_VALUES != toscaPropertyConstraint.getConstraintType()) {
             LOGGER.error(errorMsg);
             return returnValueOnError;
         }
-
-        final ToscaPropertyConstraintValidValues validValuesConstraint =
-            (ToscaPropertyConstraintValidValues) toscaPropertyConstraint;
+        final ToscaPropertyConstraintValidValues validValuesConstraint = (ToscaPropertyConstraintValidValues) toscaPropertyConstraint;
         final List<String> validValues = validValuesConstraint.getValidValues();
-        if(CollectionUtils.isEmpty(validValues)) {
+        if (CollectionUtils.isEmpty(validValues)) {
             LOGGER.error(errorMsg);
             return returnValueOnError;
         }
-
         return validValues.get(0);
     }
 
-    private ToscaTemplate createNetworkServiceDescriptor(final Component component,
-                                                        final List<VnfDescriptor> vnfDescriptorList)
-        throws NsdException {
-
+    private ToscaTemplate createNetworkServiceDescriptor(final Component component, final List<VnfDescriptor> vnfDescriptorList) throws NsdException {
         final ToscaTemplate componentToscaTemplate = parseToToscaTemplate(component);
         final ToscaTemplate componentToscaTemplateInterface = exportComponentInterfaceAsToscaTemplate(component);
-
-        final Entry<String, ToscaNodeType> firstNodeTypeEntry =
-            componentToscaTemplateInterface.getNode_types()
-                .entrySet().stream().findFirst().orElse(null);
+        final Entry<String, ToscaNodeType> firstNodeTypeEntry = componentToscaTemplateInterface.getNode_types().entrySet().stream().findFirst()
+            .orElse(null);
         if (firstNodeTypeEntry == null) {
             throw new NsdException("Could not find abstract Service type");
         }
-
         final String nsNodeTypeName = firstNodeTypeEntry.getKey();
         final ToscaNodeType nsNodeType = firstNodeTypeEntry.getValue();
-
         final Map<String, ToscaNodeType> nodeTypeMap = new HashMap<>();
         nodeTypeMap.put(nsNodeTypeName, createEtsiSolNsNodeType(nsNodeType));
-
         if (componentToscaTemplate.getNode_types() == null) {
             componentToscaTemplate.setNode_types(nodeTypeMap);
         } else {
             componentToscaTemplate.getNode_types().putAll(nodeTypeMap);
         }
-
         setPropertiesForNodeTemplates(componentToscaTemplate);
         removeCapabilitiesFromNodeTemplates(componentToscaTemplate);
         removeOnapPropertiesFromInputs(componentToscaTemplate);
         handleSubstitutionMappings(componentToscaTemplate, nsNodeTypeName);
-
         final Map<String, ToscaNodeTemplate> nodeTemplates = new HashMap<>();
-        nodeTemplates.put(nsNodeTypeName, createNodeTemplateForNsNodeType(nsNodeTypeName,
-            componentToscaTemplateInterface.getNode_types().get(nsNodeTypeName)));
-
+        nodeTemplates.put(nsNodeTypeName,
+            createNodeTemplateForNsNodeType(nsNodeTypeName, componentToscaTemplateInterface.getNode_types().get(nsNodeTypeName)));
         if (componentToscaTemplate.getTopology_template().getNode_templates() == null) {
             componentToscaTemplate.getTopology_template().setNode_templates(nodeTemplates);
         } else {
             setNodeTemplateTypesForVnfs(componentToscaTemplate, vnfDescriptorList);
             componentToscaTemplate.getTopology_template().getNode_templates().putAll(nodeTemplates);
         }
-
         removeOnapMetaData(componentToscaTemplate);
-
         setDefaultImportsForEtsiSolNsNsd(componentToscaTemplate, vnfDescriptorList);
-
         return componentToscaTemplate;
     }
 
@@ -228,8 +199,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         componentToscaTemplate.getTopology_template().setSubstitution_mappings(substitutionMapping);
     }
 
-    private void setNodeTemplateTypesForVnfs(final ToscaTemplate template,
-                                             final List<VnfDescriptor> vnfDescriptorList) {
+    private void setNodeTemplateTypesForVnfs(final ToscaTemplate template, final List<VnfDescriptor> vnfDescriptorList) {
         if (CollectionUtils.isEmpty(vnfDescriptorList)) {
             return;
         }
@@ -237,11 +207,9 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         if (MapUtils.isEmpty(nodeTemplateMap)) {
             return;
         }
-        nodeTemplateMap.forEach((key, toscaNodeTemplate) ->
-            vnfDescriptorList.stream()
-                .filter(vnfDescriptor -> key.equals(vnfDescriptor.getName())).findFirst()
-                .ifPresent(vnfDescriptor -> toscaNodeTemplate.setType(vnfDescriptor.getNodeType()))
-        );
+        nodeTemplateMap.forEach(
+            (key, toscaNodeTemplate) -> vnfDescriptorList.stream().filter(vnfDescriptor -> key.equals(vnfDescriptor.getName())).findFirst()
+                .ifPresent(vnfDescriptor -> toscaNodeTemplate.setType(vnfDescriptor.getNodeType())));
     }
 
     private void setPropertiesForNodeTemplates(final ToscaTemplate template) {
@@ -257,10 +225,9 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
             }
             final Map<String, Object> editedPropertyMap = new HashMap<>();
             for (final Entry<String, Object> property : propertyMap.entrySet()) {
-                if (!PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TEMPLATE.contains(property.getKey())
-                        && propertyIsDefinedInNodeType(property.getKey())) {
-                    editedPropertyMap
-                        .put(property.getKey().substring(property.getKey().indexOf('_') + 1), property.getValue());
+                if (!PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TEMPLATE.contains(property.getKey()) && propertyIsDefinedInNodeType(
+                    property.getKey())) {
+                    editedPropertyMap.put(property.getKey().substring(property.getKey().indexOf('_') + 1), property.getValue());
                 }
             }
             if (editedPropertyMap.isEmpty()) {
@@ -270,14 +237,14 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
             }
         }
     }
-    
+
     private void removeCapabilitiesFromNodeTemplates(final ToscaTemplate template) {
         final Map<String, ToscaNodeTemplate> nodeTemplateMap = template.getTopology_template().getNode_templates();
         if (MapUtils.isEmpty(nodeTemplateMap)) {
             return;
         }
         for (final Entry<String, ToscaNodeTemplate> nodeTemplate : nodeTemplateMap.entrySet()) {
-        	nodeTemplate.getValue().setCapabilities(null);
+            nodeTemplate.getValue().setCapabilities(null);
         }
     }
 
@@ -285,8 +252,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         final ToscaTopolgyTemplate topologyTemplate = template.getTopology_template();
         final Map<String, ToscaProperty> inputMap = topologyTemplate.getInputs();
         if (MapUtils.isNotEmpty(inputMap)) {
-            inputMap.entrySet()
-                .removeIf(entry -> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE.contains(entry.getKey()));
+            inputMap.entrySet().removeIf(entry -> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE.contains(entry.getKey()));
         }
         if (MapUtils.isEmpty(inputMap)) {
             topologyTemplate.setInputs(null);
@@ -302,8 +268,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         nodeTemplateMap.values().forEach(toscaNodeTemplate -> toscaNodeTemplate.setMetadata(null));
     }
 
-    private void setDefaultImportsForEtsiSolNsNsd(final ToscaTemplate template,
-                                                  final List<VnfDescriptor> vnfDescriptorList) {
+    private void setDefaultImportsForEtsiSolNsNsd(final ToscaTemplate template, final List<VnfDescriptor> vnfDescriptorList) {
         final List<Map<String, Map<String, String>>> importEntryMap = new ArrayList<>();
         final Map<String, Map<String, String>> defaultImportEntryMap = generateDefaultImportEntry();
         if (MapUtils.isNotEmpty(defaultImportEntryMap)) {
@@ -318,22 +283,17 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
                 importEntryMap.add(vnfdImportVnfdEntry);
             }
         }
-
         template.setImports(importEntryMap);
     }
 
     private Map<String, Map<String, String>> generateDefaultImportEntry() {
-        return ImmutableMap.of("etsi_nfv_sol001_nsd_types",
-            ImmutableMap.of("file", "etsi_nfv_sol001_nsd_types.yaml")
-        );
+        return ImmutableMap.of("etsi_nfv_sol001_nsd_types", ImmutableMap.of("file", "etsi_nfv_sol001_nsd_types.yaml"));
     }
 
     private ToscaNodeType createEtsiSolNsNodeType(final ToscaNodeType nsNodeType) {
         final ToscaNodeType toscaNodeType = new ToscaNodeType();
         toscaNodeType.setDerived_from(NS_TOSCA_TYPE);
-
         final Map<String, ToscaProperty> propertiesInNsNodeType = nsNodeType.getProperties();
-
         for (final Entry<String, ToscaProperty> property : propertiesInNsNodeType.entrySet()) {
             final ToscaProperty toscaProperty = property.getValue();
             if (toscaProperty.getDefaultp() != null) {
@@ -342,36 +302,29 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
                 toscaProperty.setConstraints(Collections.singletonList(constraint));
             }
         }
-
-        propertiesInNsNodeType.entrySet()
-            .removeIf(entry -> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE.contains(entry.getKey()));
+        propertiesInNsNodeType.entrySet().removeIf(entry -> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE.contains(entry.getKey()));
         toscaNodeType.setProperties(propertiesInNsNodeType);
-
         return toscaNodeType;
     }
 
     private boolean propertyIsDefinedInNodeType(final String propertyName) {
         // This will achieve what we want for now, but will look into a more generic solution which would involve
+
         // checking the node_type definition in the VNFD
         return !propertyName.equals("additional_parameters");
     }
 
-
-    private ToscaNodeTemplate createNodeTemplateForNsNodeType(final String nodeType,
-                                                              final ToscaNodeType toscaNodeType) {
+    private ToscaNodeTemplate createNodeTemplateForNsNodeType(final String nodeType, final ToscaNodeType toscaNodeType) {
         final ToscaNodeTemplate nodeTemplate = new ToscaNodeTemplate();
         nodeTemplate.setType(nodeType);
-
         final Map<String, ToscaProperty> properties = toscaNodeType.getProperties();
         final Map<String, Object> nodeTemplateProperties = new HashMap<>();
         for (final Entry<String, ToscaProperty> property : properties.entrySet()) {
             nodeTemplateProperties.put(property.getKey(), property.getValue().getDefaultp());
         }
-
         if (!nodeTemplateProperties.isEmpty()) {
             nodeTemplate.setProperties(nodeTemplateProperties);
         }
-
         final Map<String, Object> interfaces = toscaNodeType.getInterfaces();
         if (interfaces != null) {
             for (final Entry<String, Object> nodeInterface : interfaces.entrySet()) {
@@ -381,37 +334,30 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
             }
             nodeTemplate.setInterfaces(interfaces);
         }
-
         return nodeTemplate;
     }
 
     private ToscaTemplate parseToToscaTemplate(final Component component) throws NsdException {
         final Either<ToscaTemplate, ToscaError> toscaTemplateRes = toscaExportHandler.convertToToscaTemplate(component);
         if (toscaTemplateRes.isRight()) {
-            String errorMsg = String.format("Could not parse component '%s' to tosca template. Error '%s'",
-                component.getName(), toscaTemplateRes.right().value().name());
+            String errorMsg = String
+                .format("Could not parse component '%s' to tosca template. Error '%s'", component.getName(), toscaTemplateRes.right().value().name());
             throw new NsdException(errorMsg);
         }
-
         return toscaTemplateRes.left().value();
     }
-
 
     private ToscaTemplate exportComponentInterfaceAsToscaTemplate(final Component component) throws NsdException {
         if (null == DEFAULT_IMPORTS) {
             throw new NsdException("Could not load default CSAR imports from configuration");
         }
-
         final ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
         toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
         final Either<ToscaTemplate, ToscaError> toscaTemplateRes = toscaExportHandler
             .convertInterfaceNodeType(new HashMap<>(), component, toscaTemplate, new HashMap<>(), false);
         if (toscaTemplateRes.isRight()) {
-            throw new NsdException(String.format("Could not create abstract service from component '%s'",
-                component.getName()));
+            throw new NsdException(String.format("Could not create abstract service from component '%s'", component.getName()));
         }
-
         return toscaTemplateRes.left().value();
     }
-
 }

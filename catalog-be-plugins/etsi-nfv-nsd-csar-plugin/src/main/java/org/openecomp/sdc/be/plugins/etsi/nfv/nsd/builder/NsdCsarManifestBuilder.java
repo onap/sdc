@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder;
 
 import java.time.ZonedDateTime;
@@ -30,19 +30,18 @@ import java.util.TreeSet;
  * Builder for the manifest (.mf) file in a NSD CSAR
  */
 public class NsdCsarManifestBuilder {
+
     static final String METADATA = "metadata";
     static final String SOURCE = "Source";
     static final String COMPATIBLE_SPECIFICATION_VERSIONS = "compatible_specification_versions";
+    static final String NSD_RELEASE_DATE_TIME = "nsd_release_date_time";
+    static final String ATTRIBUTE_SEPARATOR = ": ";
     private static final String NSD_DESIGNER = "nsd_designer";
     private static final String NSD_FILE_STRUCTURE_VERSION = "nsd_file_structure_version";
-    static final String NSD_RELEASE_DATE_TIME = "nsd_release_date_time";
     private static final String NSD_NAME = "nsd_name";
     private static final String NSD_INVARIANT_ID = "nsd_invariant_id";
-    static final String ATTRIBUTE_SEPARATOR = ": ";
     private static final String NEW_LINE = "\n";
-    private static final DateTimeFormatter RFC_3339_DATE_TIME_FORMATTER =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
-
+    private static final DateTimeFormatter RFC_3339_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
     private final MetadataHeader metadataHeader;
     private final Set<String> sources;
     private final Set<String> compatibleSpecificationVersions;
@@ -137,21 +136,13 @@ public class NsdCsarManifestBuilder {
         appendEntry(metadataBuilder, NSD_FILE_STRUCTURE_VERSION, metadataHeader.fileStructureVersion);
         final StringBuilder sourceBuilder = new StringBuilder();
         sources.forEach(source -> appendEntry(sourceBuilder, SOURCE, source));
-
         final StringBuilder compatibleSpecificationVersionsBuilder = new StringBuilder();
         if (!compatibleSpecificationVersions.isEmpty()) {
-            compatibleSpecificationVersionsBuilder.append(COMPATIBLE_SPECIFICATION_VERSIONS)
-                .append(ATTRIBUTE_SEPARATOR)
-                .append(String.join(",", compatibleSpecificationVersions))
-                .append(NEW_LINE);
+            compatibleSpecificationVersionsBuilder.append(COMPATIBLE_SPECIFICATION_VERSIONS).append(ATTRIBUTE_SEPARATOR)
+                .append(String.join(",", compatibleSpecificationVersions)).append(NEW_LINE);
         }
-
         final StringBuilder builder = new StringBuilder();
-
-        builder.append(metadataBuilder)
-            .append(compatibleSpecificationVersionsBuilder)
-            .append(NEW_LINE)
-            .append(sourceBuilder);
+        builder.append(metadataBuilder).append(compatibleSpecificationVersionsBuilder).append(NEW_LINE).append(sourceBuilder);
         return builder.toString();
     }
 
@@ -167,17 +158,16 @@ public class NsdCsarManifestBuilder {
 
     private void appendEntry(final StringBuilder builder, final String entry, final String value) {
         if (value != null) {
-            builder.append(entry).append(ATTRIBUTE_SEPARATOR).append(value)
-                .append(NEW_LINE);
+            builder.append(entry).append(ATTRIBUTE_SEPARATOR).append(value).append(NEW_LINE);
         }
     }
 
     private class MetadataHeader {
+
         private String fileStructureVersion;
         private String nsdName;
         private String nsdReleaseDateTime;
         private String designer;
         private String invariantId;
     }
-
 }

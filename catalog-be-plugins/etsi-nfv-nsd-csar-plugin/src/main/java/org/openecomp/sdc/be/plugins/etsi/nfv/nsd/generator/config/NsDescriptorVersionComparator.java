@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config;
 
 import java.util.Comparator;
@@ -32,19 +32,16 @@ public class NsDescriptorVersionComparator implements Comparator<EtsiVersion> {
         } else if (Integer.parseInt(v1[0]) < Integer.parseInt(v2[0])) {
             return -1;
         }
-
         if (Integer.parseInt(v1[1]) > Integer.parseInt(v2[1])) {
             return 1;
         } else if (Integer.parseInt(v1[1]) < Integer.parseInt(v2[1])) {
             return -1;
         }
-
         if (Integer.parseInt(v1[2]) > Integer.parseInt(v2[2])) {
             return 1;
         } else if (Integer.parseInt(v1[2]) < Integer.parseInt(v2[2])) {
             return -1;
         }
-
         return 0;
     }
 }

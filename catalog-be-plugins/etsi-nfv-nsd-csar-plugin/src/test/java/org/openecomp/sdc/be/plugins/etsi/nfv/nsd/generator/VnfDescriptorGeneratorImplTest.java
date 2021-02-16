@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,30 +48,23 @@ class VnfDescriptorGeneratorImplTest {
         artifactDefinition.setPayload(onboardedPackage);
         artifactDefinition.setArtifactName("vnf-onboarded-csar.csar");
         final String vnfDescriptorName = "vnf-onboarded-csar";
-        final VnfDescriptor vnfDescriptor = vnfDescriptorGenerator
-            .generate(vnfDescriptorName, artifactDefinition).orElse(null);
+        final VnfDescriptor vnfDescriptor = vnfDescriptorGenerator.generate(vnfDescriptorName, artifactDefinition).orElse(null);
         final String expectedNodeType = "com.ericsson.resource.abstract.Ericsson.AMF";
         final String expectedVnfdFileName = "vnfd_amf.yaml";
         assertThat("Vnf Descriptor should be present", vnfDescriptor, is(notNullValue()));
-        assertThat("Vnf Descriptor should have the expected name", vnfDescriptor.getName(),
-            is(vnfDescriptorName));
-        assertThat("Vnf Descriptor should have the expected node type", vnfDescriptor.getNodeType(),
-            is(expectedNodeType));
-        assertThat("Vnf Descriptor should have the expected vnfd file name", vnfDescriptor.getVnfdFileName(),
-            is(expectedVnfdFileName));
-        assertThat("Vnf Descriptor should contain the expected definition files count",
-            vnfDescriptor.getDefinitionFiles().size(), is(2));
-        assertThat("Vnf Descriptor should contain the expected definition entries",
-            vnfDescriptor.getDefinitionFiles().keySet(), contains("Definitions/vnfd_amf.yaml",
-                "Definitions/etsi_nfv_sol001_vnfd_2_5_1_types.yaml"));
+        assertThat("Vnf Descriptor should have the expected name", vnfDescriptor.getName(), is(vnfDescriptorName));
+        assertThat("Vnf Descriptor should have the expected node type", vnfDescriptor.getNodeType(), is(expectedNodeType));
+        assertThat("Vnf Descriptor should have the expected vnfd file name", vnfDescriptor.getVnfdFileName(), is(expectedVnfdFileName));
+        assertThat("Vnf Descriptor should contain the expected definition files count", vnfDescriptor.getDefinitionFiles().size(), is(2));
+        assertThat("Vnf Descriptor should contain the expected definition entries", vnfDescriptor.getDefinitionFiles().keySet(),
+            contains("Definitions/vnfd_amf.yaml", "Definitions/etsi_nfv_sol001_vnfd_2_5_1_types.yaml"));
     }
 
     private byte[] getResourceAsByteArray(final String filename) throws IOException {
         try (final InputStream inputStream = readFileAsStream(filename)) {
             return IOUtils.toByteArray(inputStream);
         } catch (final IOException ex) {
-            throw new IOException(
-                String.format("Could not read the file \"%s\"", filename), ex);
+            throw new IOException(String.format("Could not read the file \"%s\"", filename), ex);
         }
     }
 
@@ -79,5 +72,4 @@ class VnfDescriptorGeneratorImplTest {
         final Path path = Paths.get(testResourcesPath.toString(), fileName);
         return new FileInputStream(path.toFile());
     }
-
 }

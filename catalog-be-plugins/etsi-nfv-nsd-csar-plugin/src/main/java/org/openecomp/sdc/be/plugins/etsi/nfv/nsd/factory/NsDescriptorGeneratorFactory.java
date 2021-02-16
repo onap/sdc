@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory;
 
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.NsDescriptorGenerator;
@@ -42,8 +42,6 @@ public class NsDescriptorGeneratorFactory {
     }
 
     public NsDescriptorGenerator create() {
-        return nsDescriptorGeneratorProvider
-            .getObject(toscaExportHandler, toscaTemplateYamlGeneratorProvider);
+        return nsDescriptorGeneratorProvider.getObject(toscaExportHandler, toscaTemplateYamlGeneratorProvider);
     }
-
 }

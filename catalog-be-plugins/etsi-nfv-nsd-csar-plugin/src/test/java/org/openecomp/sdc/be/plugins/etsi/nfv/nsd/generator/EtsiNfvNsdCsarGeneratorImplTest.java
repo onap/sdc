@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,14 +49,15 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.VnfDescriptorException;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.NsDescriptorGeneratorFactory;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.NsDescriptorConfig;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.Nsd;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.VnfDescriptor;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 
 class EtsiNfvNsdCsarGeneratorImplTest {
 
+    private static final String SERVICE_NORMALIZED_NAME = "normalizedName";
     @Mock
     private VnfDescriptorGenerator vnfDescriptorGenerator;
     @Mock
@@ -67,17 +68,14 @@ class EtsiNfvNsdCsarGeneratorImplTest {
     private ArtifactCassandraDao artifactCassandraDao;
     @Mock
     private Service service;
-
     private EtsiNfvNsdCsarGeneratorImpl etsiNfvNsdCsarGenerator;
-
-    private static final String SERVICE_NORMALIZED_NAME = "normalizedName";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
         final EtsiVersion version2_5_1 = EtsiVersion.VERSION_2_5_1;
-        etsiNfvNsdCsarGenerator = new EtsiNfvNsdCsarGeneratorImpl(new NsDescriptorConfig(version2_5_1),
-            vnfDescriptorGenerator, nsDescriptorGeneratorFactory, artifactCassandraDao);
+        etsiNfvNsdCsarGenerator = new EtsiNfvNsdCsarGeneratorImpl(new NsDescriptorConfig(version2_5_1), vnfDescriptorGenerator,
+            nsDescriptorGeneratorFactory, artifactCassandraDao);
         when(nsDescriptorGeneratorFactory.create()).thenReturn(nsDescriptorGeneratorImpl);
     }
 
@@ -99,16 +97,12 @@ class EtsiNfvNsdCsarGeneratorImplTest {
         when(service.getComponentType()).thenReturn(ComponentTypeEnum.SERVICE);
         final String componentInstance1Name = "componentInstance1";
         final ComponentInstance componentInstance1 = mockServiceComponentInstance(componentInstance1Name);
-        final ArtifactDefinition instanceArtifact1 = mockComponentInstanceArtifact(componentInstance1,
-            "instanceArtifact1");
-
+        final ArtifactDefinition instanceArtifact1 = mockComponentInstanceArtifact(componentInstance1, "instanceArtifact1");
         final VnfDescriptor vnfDescriptor1 = new VnfDescriptor();
         final List<VnfDescriptor> vnfDescriptorList = Collections.singletonList(vnfDescriptor1);
         final Nsd nsd = new Nsd();
-        when(vnfDescriptorGenerator.generate(componentInstance1Name, instanceArtifact1))
-            .thenReturn(Optional.of(vnfDescriptor1));
+        when(vnfDescriptorGenerator.generate(componentInstance1Name, instanceArtifact1)).thenReturn(Optional.of(vnfDescriptor1));
         when(nsDescriptorGeneratorImpl.generate(service, vnfDescriptorList)).thenReturn(Optional.of(nsd));
-
         final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();
         nsComponentCategoryDefinition.setName(ETSI_NS_COMPONENT_CATEGORY);
@@ -144,15 +138,12 @@ class EtsiNfvNsdCsarGeneratorImplTest {
         final List<ComponentInstance> componentInstanceList = new ArrayList<>();
         componentInstanceList.add(componentInstance);
         when(service.getComponentInstances()).thenReturn(componentInstanceList);
-
         return componentInstance;
     }
 
-    private ArtifactDefinition mockComponentInstanceArtifact(final ComponentInstance componentInstance,
-                                                             final String instanceArtifactId) {
+    private ArtifactDefinition mockComponentInstanceArtifact(final ComponentInstance componentInstance, final String instanceArtifactId) {
         final Map<String, ArtifactDefinition> deploymentArtifactMap = new HashMap<>();
         when(componentInstance.getDeploymentArtifacts()).thenReturn(deploymentArtifactMap);
-
         final ArtifactDefinition instanceArtifact1 = mockArtifactDefinition(instanceArtifactId);
         instanceArtifact1.setToscaPresentationValue(JsonPresentationFields.ARTIFACT_TYPE, ONBOARDED_PACKAGE.getType());
         deploymentArtifactMap.put(instanceArtifactId, instanceArtifact1);
@@ -166,7 +157,6 @@ class EtsiNfvNsdCsarGeneratorImplTest {
     private ArtifactDefinition mockArtifactDefinition(final String artifactId) {
         final ArtifactDefinition artifact = new ArtifactDefinition();
         artifact.setEsId(artifactId);
-
         return artifact;
     }
 }

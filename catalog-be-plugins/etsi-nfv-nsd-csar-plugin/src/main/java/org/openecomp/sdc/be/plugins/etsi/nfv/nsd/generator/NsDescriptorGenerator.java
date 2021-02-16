@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public interface NsDescriptorGenerator {
     /**
      * Generates the TOSCA Network Service Descriptor (NSD) based on a SERVICE SDC component and its VNF instances.
      *
-     * @param component the SERVICE component
+     * @param component         the SERVICE component
      * @param vnfDescriptorList the VNF instances
      * @return a NSD representation
      */

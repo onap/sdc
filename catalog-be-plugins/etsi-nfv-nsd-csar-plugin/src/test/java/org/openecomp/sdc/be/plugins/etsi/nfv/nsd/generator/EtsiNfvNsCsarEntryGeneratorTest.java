@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,7 +47,9 @@ import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
 
 class EtsiNfvNsCsarEntryGeneratorTest {
 
-
+    private static final String SERVICE_NORMALIZED_NAME = "normalizedName";
+    private static final String CSAR_ENTRY_EMPTY_ASSERT = "Csar Entries should be empty";
+    private static final EtsiVersion nsdVersion = EtsiVersion.VERSION_2_5_1;
     @Mock
     private EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory;
     @Mock
@@ -56,10 +58,6 @@ class EtsiNfvNsCsarEntryGeneratorTest {
     private Service service;
     @InjectMocks
     private EtsiNfvNsCsarEntryGenerator etsiNfvNsCsarEntryGenerator;
-
-    private static final String SERVICE_NORMALIZED_NAME = "normalizedName";
-    private static final String CSAR_ENTRY_EMPTY_ASSERT = "Csar Entries should be empty";
-    private static final EtsiVersion nsdVersion = EtsiVersion.VERSION_2_5_1;
 
     @BeforeEach
     void setUp() {
@@ -72,9 +70,7 @@ class EtsiNfvNsCsarEntryGeneratorTest {
         mockServiceComponent();
         final byte[] expectedNsdCsar = new byte[5];
         when(etsiNfvNsdCsarGenerator.generateNsdCsar(service)).thenReturn(expectedNsdCsar);
-
         final Map<String, byte[]> entryMap = etsiNfvNsCsarEntryGenerator.generateCsarEntries(service);
-
         assertThat("Csar Entries should contain only one entry", entryMap.size(), is(1));
         assertThat("Csar Entries should contain the expected entry", entryMap,
             hasEntry(String.format(NSD_FILE_PATH_FORMAT, ETSI_PACKAGE, SERVICE_NORMALIZED_NAME), expectedNsdCsar));
@@ -85,7 +81,6 @@ class EtsiNfvNsCsarEntryGeneratorTest {
         mockServiceComponent();
         when(etsiNfvNsdCsarGenerator.generateNsdCsar(service)).thenThrow(new NsdException(""));
         final Map<String, byte[]> entryMap = etsiNfvNsCsarEntryGenerator.generateCsarEntries(service);
-
         assertThat(CSAR_ENTRY_EMPTY_ASSERT, entryMap, is(anEmptyMap()));
     }
 
@@ -94,7 +89,6 @@ class EtsiNfvNsCsarEntryGeneratorTest {
         mockServiceComponent();
         when(etsiNfvNsdCsarGenerator.generateNsdCsar(service)).thenThrow(new RuntimeException());
         final Map<String, byte[]> entryMap = etsiNfvNsCsarEntryGenerator.generateCsarEntries(service);
-
         assertThat(CSAR_ENTRY_EMPTY_ASSERT, entryMap, is(anEmptyMap()));
     }
 
@@ -102,7 +96,6 @@ class EtsiNfvNsCsarEntryGeneratorTest {
     void componentNullOrNotAServiceTest() {
         Map<String, byte[]> entryMap = etsiNfvNsCsarEntryGenerator.generateCsarEntries(service);
         assertThat(CSAR_ENTRY_EMPTY_ASSERT, entryMap, is(anEmptyMap()));
-
         entryMap = etsiNfvNsCsarEntryGenerator.generateCsarEntries(null);
         assertThat(CSAR_ENTRY_EMPTY_ASSERT, entryMap, is(anEmptyMap()));
     }
@@ -123,11 +116,9 @@ class EtsiNfvNsCsarEntryGeneratorTest {
         when(service.getName()).thenReturn("anyName");
         when(service.getComponentType()).thenReturn(ComponentTypeEnum.SERVICE);
         when(service.getNormalizedName()).thenReturn(SERVICE_NORMALIZED_NAME);
-
         final Map<String, String> categorySpecificMetadataMap = new HashMap<>();
         categorySpecificMetadataMap.put(ETSI_VERSION_METADATA, nsdVersion.getVersion());
         when(service.getCategorySpecificMetadata()).thenReturn(categorySpecificMetadataMap);
-
         final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();
         nsComponentCategoryDefinition.setName(ETSI_NS_COMPONENT_CATEGORY);

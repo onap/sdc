@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -16,10 +17,11 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder.NsdCsarManifestBuilder.ATTRIBUTE_SEPARATOR;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder.NsdCsarManifestBuilder.COMPATIBLE_SPECIFICATION_VERSIONS;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder.NsdCsarManifestBuilder.METADATA;
@@ -29,7 +31,6 @@ import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder.NsdCsarManifestB
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-
 
 class NsdCsarManifestBuilderTest {
 
@@ -52,19 +53,11 @@ class NsdCsarManifestBuilderTest {
         assertSource(manifest, source1);
         assertSource(manifest, source2);
         assertCompatibleSpecificationVersions(manifest, "1.0.0,1.0.1");
-        final String expectedManifest = "metadata: \n"
-            + "nsd_designer: designer\n"
-            + "nsd_invariant_id: invariantId\n"
-            + "nsd_name: name\n"
-            + "nsd_file_structure_version: fileStructureVersion\n"
-            + "compatible_specification_versions: 1.0.0,1.0.1\n"
-            + "\n"
-            + "Source: Definitions/aSource1.yaml\n"
-            + "Source: Definitions/aSource2.yaml\n"
-            + "";
+        final String expectedManifest = "metadata: \n" + "nsd_designer: designer\n" + "nsd_invariant_id: invariantId\n" + "nsd_name: name\n"
+            + "nsd_file_structure_version: fileStructureVersion\n" + "compatible_specification_versions: 1.0.0,1.0.1\n" + "\n"
+            + "Source: Definitions/aSource1.yaml\n" + "Source: Definitions/aSource2.yaml\n" + "";
         assertEquals(expectedManifest, manifest);
     }
-
 
     @Test
     void testMetadataReleaseDateTime() {
@@ -105,6 +98,4 @@ class NsdCsarManifestBuilderTest {
     void assertSource(final String manifest, final String source) {
         assertTrue(manifest.contains(SOURCE + ATTRIBUTE_SEPARATOR + source));
     }
-
-  
 }

@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import java.util.Optional;
@@ -32,12 +32,10 @@ public interface VnfDescriptorGenerator {
     /**
      * Generates the a VNF Descriptor based on the ONBOARDED_PACKAGE artifact.
      *
-     * @param name the name of the VNF package
+     * @param name                     the name of the VNF package
      * @param onboardedPackageArtifact the onboarded package for the VNF
      * @return a representation of the VNF package
      * @throws VnfDescriptorException when a problem happens during the generation
      */
-    Optional<VnfDescriptor> generate(final String name, final ArtifactDefinition onboardedPackageArtifact)
-        throws VnfDescriptorException;
-
+    Optional<VnfDescriptor> generate(final String name, final ArtifactDefinition onboardedPackageArtifact) throws VnfDescriptorException;
 }

@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config;
 
 import lombok.AllArgsConstructor;
@@ -29,10 +29,7 @@ import org.apache.commons.lang.StringUtils;
 @Getter
 @AllArgsConstructor
 public enum EtsiVersion {
-    VERSION_2_5_1("2.5.1"),
-    VERSION_2_7_1("2.7.1"),
-    VERSION_3_3_1("3.3.1");
-
+    VERSION_2_5_1("2.5.1"), VERSION_2_7_1("2.7.1"), VERSION_3_3_1("3.3.1");
     private final String version;
 
     public static EtsiVersion convertOrNull(final String etsiVersion) {
@@ -48,7 +45,6 @@ public enum EtsiVersion {
         if (VERSION_3_3_1.getVersion().equals(etsiVersion)) {
             return VERSION_3_3_1;
         }
-
         return null;
     }
 

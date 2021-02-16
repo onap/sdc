@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.tosca.yaml;
 
 import java.util.ArrayList;
@@ -49,64 +49,50 @@ public class NsdTemplateRepresenter extends Representer {
     }
 
     @Override
-    protected NodeTuple representJavaBeanProperty(final Object javaBean, final Property property,
-                                                  final Object propertyValue, final Tag customTag) {
+    protected NodeTuple representJavaBeanProperty(final Object javaBean, final Property property, final Object propertyValue, final Tag customTag) {
         if (propertyValue == null) {
             return null;
         }
-
         if (ignoredPropertySet.contains(property.getName())) {
             return null;
         }
-
         if (javaBean instanceof ToscaTemplate) {
             return handleToscaTemplate(javaBean, property, propertyValue, customTag);
         }
-
         if (javaBean instanceof ToscaPropertyConstraintValidValues) {
             return handleToscaPropertyConstraintValidValues(javaBean, property, propertyValue, customTag);
         }
-
         if (javaBean instanceof ToscaProperty) {
             return handleToscaProperty(javaBean, property, propertyValue, customTag);
         }
-
         return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
     }
 
-    private NodeTuple handleToscaProperty(final Object javaBean, final Property property,
-                                          final Object propertyValue, final Tag customTag) {
+    private NodeTuple handleToscaProperty(final Object javaBean, final Property property, final Object propertyValue, final Tag customTag) {
         final NodeTuple nodeTuple = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
         if ("_defaultp_".equals(property.getName())) {
             return new NodeTuple(representData("default"), nodeTuple.getValueNode());
         }
-
         return nodeTuple;
     }
 
-    private NodeTuple handleToscaPropertyConstraintValidValues(final Object javaBean, final Property property,
-                                                               final Object propertyValue, final Tag customTag) {
+    private NodeTuple handleToscaPropertyConstraintValidValues(final Object javaBean, final Property property, final Object propertyValue,
+                                                               final Tag customTag) {
         final NodeTuple nodeTuple = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
         if ("validValues".equals(property.getName())) {
             final String validValuesEntryName = ToscaPropertyConstraintValidValues.getEntryToscaName("validValues");
             return new NodeTuple(representData(validValuesEntryName), nodeTuple.getValueNode());
         }
-
         return nodeTuple;
     }
 
-    private NodeTuple handleToscaTemplate(final Object javaBean, final Property property,
-                                          final Object propertyValueObj, final Tag customTag) {
+    private NodeTuple handleToscaTemplate(final Object javaBean, final Property property, final Object propertyValueObj, final Tag customTag) {
         if ("imports".equals(property.getName())) {
-            final List<Map<String, Map<String, String>>> importsList =
-                (List<Map<String, Map<String, String>>>) propertyValueObj;
-
+            final List<Map<String, Map<String, String>>> importsList = (List<Map<String, Map<String, String>>>) propertyValueObj;
             final List<Map<String, String>> newImportList = new ArrayList<>();
             importsList.forEach(importMap -> importMap.forEach((key, value) -> newImportList.add(value)));
-
             return super.representJavaBeanProperty(javaBean, property, newImportList, customTag);
         }
-
         return super.representJavaBeanProperty(javaBean, property, propertyValueObj, customTag);
     }
 
@@ -115,7 +101,6 @@ public class NsdTemplateRepresenter extends Representer {
         if (!classTags.containsKey(javaBean.getClass())) {
             addClassTag(javaBean.getClass(), Tag.MAP);
         }
-
         return super.representJavaBean(properties, javaBean);
     }
 

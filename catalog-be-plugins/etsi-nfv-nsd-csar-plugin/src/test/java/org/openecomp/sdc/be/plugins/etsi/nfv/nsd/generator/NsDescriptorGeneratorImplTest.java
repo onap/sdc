@@ -1,3 +1,4 @@
+
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -70,10 +70,6 @@ class NsDescriptorGeneratorImplTest {
 
     private static final String VNFD_AMF_NODE_NAME = "vnfd_amf";
     private static final String VIRTUAL_LINK_REQUIREMENT_NAME = "virtual_link";
-
-    @Mock
-    private ToscaExportHandler toscaExportHandler;
-
     private final ObjectProvider<ToscaTemplateYamlGenerator> toscaTemplateYamlGeneratorProvider = new ObjectProvider<>() {
         @Override
         public ToscaTemplateYamlGenerator getObject(Object... args) {
@@ -95,7 +91,8 @@ class NsDescriptorGeneratorImplTest {
             return null;
         }
     };
-
+    @Mock
+    private ToscaExportHandler toscaExportHandler;
     private NsDescriptorGeneratorImpl nsDescriptorGenerator;
 
     @BeforeEach
@@ -112,7 +109,6 @@ class NsDescriptorGeneratorImplTest {
         nodeImportEntry.put("file", "nodes.yml");
         importMap.put("nodes", nodeImportEntry);
         defaultImports.add(importMap);
-
         final ConfigurationSource configurationSource = mock(ConfigurationSource.class);
         final Configuration configuration = new Configuration();
         configuration.setDefaultImports(defaultImports);
@@ -130,7 +126,6 @@ class NsDescriptorGeneratorImplTest {
         final ToscaTemplate componentToscaTemplate = new ToscaTemplate("");
         final ToscaTopolgyTemplate componentToscaTopologyTemplate = new ToscaTopolgyTemplate();
         componentToscaTemplate.setTopology_template(componentToscaTopologyTemplate);
-
         final HashMap<String, ToscaNodeTemplate> nodeTemplateMap = new HashMap<>();
         final ToscaNodeTemplate vnfAmfNodeTemplate = new ToscaNodeTemplate();
         vnfAmfNodeTemplate.setType("com.ericsson.resource.abstract.Ericsson.AMF");
@@ -139,46 +134,38 @@ class NsDescriptorGeneratorImplTest {
         //a property that wont be excluded
         vnfAmfNodeTemplate.setProperties(ImmutableMap.of("will_not_be_excluded", new ToscaProperty()));
         nodeTemplateMap.put(VNFD_AMF_NODE_NAME, vnfAmfNodeTemplate);
-        
         final Map<String, ToscaTemplateCapability> vnfAmfCapabilities = new HashMap<>();
         vnfAmfCapabilities.put("myCapability", new ToscaTemplateCapability());
-		vnfAmfNodeTemplate.setCapabilities(vnfAmfCapabilities);
+        vnfAmfNodeTemplate.setCapabilities(vnfAmfCapabilities);
         componentToscaTopologyTemplate.setNode_templates(nodeTemplateMap);
-        
         final SubstitutionMapping substitutionMapping = mock(SubstitutionMapping.class);
         Map<String, String[]> requirements = new HashMap<>();
         String[] requirementAssignment = {"VNF1", VIRTUAL_LINK_REQUIREMENT_NAME};
         requirements.put(VIRTUAL_LINK_REQUIREMENT_NAME, requirementAssignment);
-		when(substitutionMapping.getRequirements()).thenReturn(requirements);
-		Map<String, String[]> capabilities = new HashMap<>();
+        when(substitutionMapping.getRequirements()).thenReturn(requirements);
+        Map<String, String[]> capabilities = new HashMap<>();
         String[] capabilitiesAssignment = {"VNF1", "capability1"};
         capabilities.put("capability", capabilitiesAssignment);
-		when(substitutionMapping.getCapabilities()).thenReturn(capabilities);
-		componentToscaTopologyTemplate.setSubstitution_mappings(substitutionMapping);
-
+        when(substitutionMapping.getCapabilities()).thenReturn(capabilities);
+        componentToscaTopologyTemplate.setSubstitution_mappings(substitutionMapping);
         final ToscaTemplate componentInterfaceToscaTemplate = new ToscaTemplate("");
         final String designerPropertyValue = "designerValue";
         final String versionPropertyValue = "versionValue";
         final String namePropertyValue = "nameValue";
         final String invariantIdPropertyValue = "invariantIdValue";
-        final ToscaNodeType interfaceToscaNodeType = createDefaultInterfaceToscaNodeType(designerPropertyValue,
-            versionPropertyValue, namePropertyValue, invariantIdPropertyValue);
+        final ToscaNodeType interfaceToscaNodeType = createDefaultInterfaceToscaNodeType(designerPropertyValue, versionPropertyValue,
+            namePropertyValue, invariantIdPropertyValue);
         final String nsNodeTypeName = "nsNodeTypeName";
         componentInterfaceToscaTemplate.setNode_types(ImmutableMap.of(nsNodeTypeName, interfaceToscaNodeType));
-
-
         when(toscaExportHandler.convertToToscaTemplate(component)).thenReturn(Either.left(componentToscaTemplate));
         when(toscaExportHandler.convertInterfaceNodeType(any(), any(), any(), any(), anyBoolean()))
             .thenReturn(Either.left(componentInterfaceToscaTemplate));
-
         final List<VnfDescriptor> vnfDescriptorList = new ArrayList<>();
         VnfDescriptor vnfDescriptor1 = new VnfDescriptor();
         vnfDescriptor1.setName(VNFD_AMF_NODE_NAME);
         vnfDescriptor1.setVnfdFileName("vnfd_amf.yaml");
         vnfDescriptor1.setNodeType("com.ericsson.resource.abstract.Ericsson.AMF");
-
         vnfDescriptorList.add(vnfDescriptor1);
-
         //when
         final Nsd nsd = nsDescriptorGenerator.generate(component, vnfDescriptorList).orElse(null);
         //then
@@ -187,48 +174,31 @@ class NsDescriptorGeneratorImplTest {
         assertThat("Nsd version should be as expected", nsd.getVersion(), is(versionPropertyValue));
         assertThat("Nsd name should be as expected", nsd.getName(), is(namePropertyValue));
         assertThat("Nsd invariantId should be as expected", nsd.getInvariantId(), is(invariantIdPropertyValue));
-
         final Map<String, Object> toscaTemplateYaml = readYamlAsMap(nsd.getContents());
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> topologyTemplate = (Map<String, Object>) toscaTemplateYaml.get("topology_template");
+        @SuppressWarnings("unchecked") final Map<String, Object> topologyTemplate = (Map<String, Object>) toscaTemplateYaml.get("topology_template");
         assertThat("topology_template should not be empty", topologyTemplate, is(not(anEmptyMap())));
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> substitutionMappings =
-            (Map<String, Object>) topologyTemplate.get("substitution_mappings");
+        @SuppressWarnings("unchecked") final Map<String, Object> substitutionMappings = (Map<String, Object>) topologyTemplate
+            .get("substitution_mappings");
         assertThat("substitution_mappings should not be empty", substitutionMappings, is(not(anEmptyMap())));
-        assertThat("substitution_mappings->node_type should not be null",
-            substitutionMappings.get("node_type"), is(notNullValue()));
-        assertThat("substitution_mappings->node_type should be as expected",
-            substitutionMappings.get("node_type"), is(nsNodeTypeName));
-        
+        assertThat("substitution_mappings->node_type should not be null", substitutionMappings.get("node_type"), is(notNullValue()));
+        assertThat("substitution_mappings->node_type should be as expected", substitutionMappings.get("node_type"), is(nsNodeTypeName));
         final Map<String, List<String>> subMappingRequirements = (Map<String, List<String>>) substitutionMappings.get("requirements");
         assertThat(subMappingRequirements.get(VIRTUAL_LINK_REQUIREMENT_NAME).get(0), is("VNF1"));
         assertThat(subMappingRequirements.get(VIRTUAL_LINK_REQUIREMENT_NAME).get(1), is(VIRTUAL_LINK_REQUIREMENT_NAME));
         final Map<String, List<String>> subMappingCapabilities = (Map<String, List<String>>) substitutionMappings.get("capabilities");
         assertThat(subMappingCapabilities.get("capability").get(0), is("VNF1"));
         assertThat(subMappingCapabilities.get("capability").get(1), is("capability1"));
-        
-        @SuppressWarnings("unchecked")
-		final Map<String, Object> nodeTemplates =
-                (Map<String, Object>) topologyTemplate.get("node_templates");
-        @SuppressWarnings("unchecked")
-		final Map<String, Object> nodeTemplate =
-                (Map<String, Object>) nodeTemplates.get(VNFD_AMF_NODE_NAME);
-        assertThat("capabilities should be null",
-        		nodeTemplate.get("capabilities"), is(nullValue()));
+        @SuppressWarnings("unchecked") final Map<String, Object> nodeTemplates = (Map<String, Object>) topologyTemplate.get("node_templates");
+        @SuppressWarnings("unchecked") final Map<String, Object> nodeTemplate = (Map<String, Object>) nodeTemplates.get(VNFD_AMF_NODE_NAME);
+        assertThat("capabilities should be null", nodeTemplate.get("capabilities"), is(nullValue()));
     }
 
-    private ToscaNodeType createDefaultInterfaceToscaNodeType(final String designerPropertyValue,
-                                                              final String versionPropertyValue,
-                                                              final String namePropertyValue,
-                                                              final String invariantIdPropertyValue) {
+    private ToscaNodeType createDefaultInterfaceToscaNodeType(final String designerPropertyValue, final String versionPropertyValue,
+                                                              final String namePropertyValue, final String invariantIdPropertyValue) {
         final ToscaNodeType interfaceToscaNodeType = new ToscaNodeType();
-        interfaceToscaNodeType.setProperties(
-            ImmutableMap.of("designer", createToscaProperty(designerPropertyValue),
-                "version", createToscaProperty(versionPropertyValue),
-                "name", createToscaProperty(namePropertyValue),
-                "invariant_id", createToscaProperty(invariantIdPropertyValue))
-        );
+        interfaceToscaNodeType.setProperties(ImmutableMap
+            .of("designer", createToscaProperty(designerPropertyValue), "version", createToscaProperty(versionPropertyValue), "name",
+                createToscaProperty(namePropertyValue), "invariant_id", createToscaProperty(invariantIdPropertyValue)));
         return interfaceToscaNodeType;
     }
 
@@ -240,8 +210,7 @@ class NsDescriptorGeneratorImplTest {
 
     private ToscaProperty createToscaProperty(final String value) {
         final ToscaProperty toscaProperty = new ToscaProperty();
-        final ToscaPropertyConstraint toscaPropertyConstraint =
-            new ToscaPropertyConstraintValidValues(ImmutableList.of(value));
+        final ToscaPropertyConstraint toscaPropertyConstraint = new ToscaPropertyConstraintValidValues(ImmutableList.of(value));
         toscaProperty.setConstraints(ImmutableList.of(toscaPropertyConstraint));
         return toscaProperty;
     }
@@ -250,7 +219,7 @@ class NsDescriptorGeneratorImplTest {
     private Map<String, Object> readYamlAsMap(final byte[] yamlContents) throws IOException {
         final Yaml yaml = new Yaml();
         try (final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(yamlContents)) {
-            return  (Map<String, Object>) yaml.load(byteArrayInputStream);
+            return (Map<String, Object>) yaml.load(byteArrayInputStream);
         }
     }
 }

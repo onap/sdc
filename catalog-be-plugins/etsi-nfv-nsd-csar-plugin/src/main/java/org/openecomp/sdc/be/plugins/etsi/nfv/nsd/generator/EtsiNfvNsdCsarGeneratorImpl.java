@@ -1,3 +1,4 @@
+ 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2020 Nordix Foundation
@@ -16,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ETSI_PACKAGE;
@@ -71,22 +71,18 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNfvNsdCsarGeneratorImpl.class);
-
     private static final String MANIFEST_EXT = "mf";
     private static final String SLASH = "/";
     private static final String DOT = ".";
     private static final String DOT_YAML = DOT + "yaml";
-
     private static final String DEFINITION = "Definitions";
     private static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
-
     private final VnfDescriptorGenerator vnfDescriptorGenerator;
     private final NsDescriptorGeneratorFactory nsDescriptorGeneratorFactory;
     private final ArtifactCassandraDao artifactCassandraDao;
     private final NsDescriptorConfig nsDescriptorConfig;
 
-    public EtsiNfvNsdCsarGeneratorImpl(final NsDescriptorConfig nsDescriptorConfig,
-                                       final VnfDescriptorGenerator vnfDescriptorGenerator,
+    public EtsiNfvNsdCsarGeneratorImpl(final NsDescriptorConfig nsDescriptorConfig, final VnfDescriptorGenerator vnfDescriptorGenerator,
                                        final NsDescriptorGeneratorFactory nsDescriptorGeneratorFactory,
                                        final ArtifactCassandraDao artifactCassandraDao) {
         this.nsDescriptorConfig = nsDescriptorConfig;
@@ -100,19 +96,14 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
         if (component == null) {
             throw new NsdException("Could not generate the NSD CSAR, invalid component argument");
         }
-
         loadComponentArtifacts(component);
         loadComponentInstancesArtifacts(component);
-
         final String componentName = component.getName();
-
         try {
             LOGGER.debug("Starting NSD CSAR generation for component '{}'", componentName);
             final Map<String, byte[]> nsdCsarFiles = new HashMap<>();
-
             final List<VnfDescriptor> vnfDescriptorList = generateVnfPackages(component);
             vnfDescriptorList.forEach(vnfPackage -> nsdCsarFiles.putAll(vnfPackage.getDefinitionFiles()));
-
             final String nsdFileName = getNsdFileName(component);
             final EtsiVersion etsiVersion = nsDescriptorConfig.getNsVersion();
             final Nsd nsd = generateNsd(component, vnfDescriptorList);
@@ -120,13 +111,10 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
             nsdCsarFiles.put(TOSCA_META_PATH, buildToscaMetaContent(nsdFileName).getBytes());
             addEtsiSolNsdTypes(etsiVersion, nsdCsarFiles);
             for (final String referencedFile : nsd.getArtifactReferences()) {
-                getReferencedArtifact(component, referencedFile).ifPresent(
-                    artifactDefinition -> nsdCsarFiles.put(referencedFile, artifactDefinition.getPayloadData())
-                );
+                getReferencedArtifact(component, referencedFile)
+                    .ifPresent(artifactDefinition -> nsdCsarFiles.put(referencedFile, artifactDefinition.getPayloadData()));
             }
-            nsdCsarFiles
-                .put(getManifestPath(nsdFileName), getManifestFileContent(nsd, etsiVersion, nsdCsarFiles.keySet()).getBytes());
-
+            nsdCsarFiles.put(getManifestPath(nsdFileName), getManifestFileContent(nsd, etsiVersion, nsdCsarFiles.keySet()).getBytes());
             final byte[] csar = buildCsarPackage(nsdCsarFiles);
             LOGGER.debug("Successfully generated NSD CSAR package");
             return csar;
@@ -147,8 +135,7 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
                 if (artifactPayload.isPresent()) {
                     artifactDefinition.setPayload(artifactPayload.get());
                 } else {
-                    LOGGER.warn("Could not load component '{}' artifact '{}'",
-                        component.getName(), artifactDefinition.getArtifactName());
+                    LOGGER.warn("Could not load component '{}' artifact '{}'", component.getName(), artifactDefinition.getArtifactName());
                 }
             }
         });
@@ -164,15 +151,14 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
             if (MapUtils.isEmpty(deploymentArtifacts)) {
                 continue;
             }
-            deploymentArtifacts.values().stream()
-                .filter(artifactDefinition -> StringUtils.isNotEmpty(artifactDefinition.getEsId()))
+            deploymentArtifacts.values().stream().filter(artifactDefinition -> StringUtils.isNotEmpty(artifactDefinition.getEsId()))
                 .forEach(artifactDefinition -> {
                     final Optional<byte[]> artifactPayload = loadArtifactPayload(artifactDefinition.getEsId());
                     if (artifactPayload.isPresent()) {
                         artifactDefinition.setPayload(artifactPayload.get());
                     } else {
-                        LOGGER.warn("Could not load component '{}' instance '{}' artifact '{}'",
-                            component.getName(), componentInstance.getName(), artifactDefinition.getArtifactName());
+                        LOGGER.warn("Could not load component '{}' instance '{}' artifact '{}'", component.getName(), componentInstance.getName(),
+                            artifactDefinition.getArtifactName());
                     }
                 });
         }
@@ -184,34 +170,27 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
             LOGGER.warn("Could not find any instance in service '{}'", component.getName());
             return Collections.emptyList();
         }
-
         final List<VnfDescriptor> vnfDescriptorList = new ArrayList<>();
         for (final ComponentInstance componentInstance : componentInstanceList) {
             final String componentInstanceName = componentInstance.getName();
             final ArtifactDefinition onboardedCsarArtifact = findOnboardedCsar(componentInstance).orElse(null);
             if (onboardedCsarArtifact == null) {
-                LOGGER.warn(
-                    "Unable to generate VNF Package for component instance '{}', no onboarded package present",
-                    componentInstanceName);
+                LOGGER.warn("Unable to generate VNF Package for component instance '{}', no onboarded package present", componentInstanceName);
                 continue;
             }
             final Optional<VnfDescriptor> vnfPackage;
             try {
                 vnfPackage = vnfDescriptorGenerator.generate(componentInstanceName, onboardedCsarArtifact);
             } catch (final Exception e) {
-                final String errorMsg =
-                    String.format("Could not generate VNF package for component instance %s", componentInstanceName);
+                final String errorMsg = String.format("Could not generate VNF package for component instance %s", componentInstanceName);
                 throw new NsdException(errorMsg, e);
             }
             if (vnfPackage.isPresent()) {
                 vnfDescriptorList.add(vnfPackage.get());
             } else {
-                LOGGER.warn(
-                    "Unable to generate VNF Package for component instance '{}', no onboarded package present",
-                    componentInstanceName);
+                LOGGER.warn("Unable to generate VNF Package for component instance '{}', no onboarded package present", componentInstanceName);
             }
         }
-
         return vnfDescriptorList;
     }
 
@@ -220,23 +199,15 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
         if (artifactDefinitionMap == null || artifactDefinitionMap.isEmpty()) {
             return Optional.empty();
         }
-        return artifactDefinitionMap.values()
-            .stream()
-            .filter(artifactDefinition -> {
-                final String artifactType = (String) artifactDefinition
-                    .getToscaPresentationValue(JsonPresentationFields.ARTIFACT_TYPE);
-                return ONBOARDED_PACKAGE.getType().equals(artifactType) || ETSI_PACKAGE.getType().equals(artifactType);
-            })
-            .findFirst();
+        return artifactDefinitionMap.values().stream().filter(artifactDefinition -> {
+            final String artifactType = (String) artifactDefinition.getToscaPresentationValue(JsonPresentationFields.ARTIFACT_TYPE);
+            return ONBOARDED_PACKAGE.getType().equals(artifactType) || ETSI_PACKAGE.getType().equals(artifactType);
+        }).findFirst();
     }
 
-    private void addEtsiSolNsdTypes(final EtsiVersion etsiVersion,
-                                    final Map<String, byte[]> nsdCsarFileMap) {
-        final EtsiVersion currentVersion = etsiVersion == null ?
-            EtsiVersion.getDefaultVersion() : etsiVersion;
-
+    private void addEtsiSolNsdTypes(final EtsiVersion etsiVersion, final Map<String, byte[]> nsdCsarFileMap) {
+        final EtsiVersion currentVersion = etsiVersion == null ? EtsiVersion.getDefaultVersion() : etsiVersion;
         final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
         try {
             final Resource[] resources =
                 resolver.getResources(String.format("classpath:etsi-nfv-types/%s/*.*", currentVersion.getVersion()));
@@ -388,3 +359,5 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
     }
 
 }
+
+
