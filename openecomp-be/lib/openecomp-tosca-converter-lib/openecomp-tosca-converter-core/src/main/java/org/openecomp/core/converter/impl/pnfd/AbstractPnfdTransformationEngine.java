@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
@@ -43,6 +44,7 @@ public abstract class AbstractPnfdTransformationEngine implements PnfdTransforma
     protected final ServiceTemplateReaderService templateFrom;
     private final PnfdTransformationDescriptorReader pnfdTransformationDescriptorReader =
         new PnfdTransformationDescriptorReader();
+    @Getter
     protected TransformationDescription transformationDescription;
     protected Map<TransformationBlock, List<Transformation>> transformationGroupByBlockMap;
     private final String descriptorResourcePath;

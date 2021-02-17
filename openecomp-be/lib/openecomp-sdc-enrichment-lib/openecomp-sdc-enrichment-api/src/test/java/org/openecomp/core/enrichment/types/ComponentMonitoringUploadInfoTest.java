@@ -22,53 +22,50 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
-import mockit.Deencapsulation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ComponentMonitoringUploadInfoTest {
+class ComponentMonitoringUploadInfoTest {
 
     @Test
-    public void testGetSnmpTrap() {
-        ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
+    void testGetSnmpTrap() {
+        final ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
         setInternals(uploadInfo);
 
         assertThat(uploadInfo.getSnmpTrap(), isA(MonitoringArtifactInfo.class));
     }
 
     @Test
-    public void testGetSnmpPoll() {
-        ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
+    void testGetSnmpPoll() {
+        final ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
         setInternals(uploadInfo);
 
         assertThat(uploadInfo.getSnmpPoll(), isA(MonitoringArtifactInfo.class));
     }
 
     @Test
-    public void testGetVesEvent() {
-        ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
+    void testGetVesEvent() {
+        final ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
         setInternals(uploadInfo);
 
         assertThat(uploadInfo.getVesEvent(), isA(MonitoringArtifactInfo.class));
     }
 
     @Test
-    public void testSetMonitoringArtifactFile() {
-        ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
+    void testSetMonitoringArtifactFile() {
+        final ComponentMonitoringUploadInfo uploadInfo = new ComponentMonitoringUploadInfo();
 
         uploadInfo.setMonitoringArtifactFile(MonitoringUploadType.SNMP_POLL, new MonitoringArtifactInfo());
 
         assertThat(getInternal(uploadInfo).containsKey(MonitoringUploadType.SNMP_POLL), is(true));
     }
 
-    private Map<MonitoringUploadType, MonitoringArtifactInfo> getInternal(ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
-        return Deencapsulation.getField(componentMonitoringUploadInfo, "infoByType");
+    private Map<MonitoringUploadType, MonitoringArtifactInfo> getInternal(final ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
+        return componentMonitoringUploadInfo.getInfoByType();
     }
 
-    private void setInternals(ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
-        Map<MonitoringUploadType, MonitoringArtifactInfo> infoMap = new HashMap<>();
-        infoMap.put(MonitoringUploadType.SNMP_POLL, new MonitoringArtifactInfo());
-        infoMap.put(MonitoringUploadType.SNMP_TRAP, new MonitoringArtifactInfo());
-        infoMap.put(MonitoringUploadType.VES_EVENTS, new MonitoringArtifactInfo());
-        Deencapsulation.setField(componentMonitoringUploadInfo, "infoByType", infoMap);
+    private void setInternals(final ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
+        componentMonitoringUploadInfo.setMonitoringArtifactFile(MonitoringUploadType.SNMP_POLL, new MonitoringArtifactInfo());
+        componentMonitoringUploadInfo.setMonitoringArtifactFile(MonitoringUploadType.SNMP_TRAP, new MonitoringArtifactInfo());
+        componentMonitoringUploadInfo.setMonitoringArtifactFile(MonitoringUploadType.VES_EVENTS, new MonitoringArtifactInfo());
     }
 }

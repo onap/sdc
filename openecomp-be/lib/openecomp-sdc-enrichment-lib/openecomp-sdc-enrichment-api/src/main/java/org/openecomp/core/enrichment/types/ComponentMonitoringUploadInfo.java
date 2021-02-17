@@ -22,13 +22,14 @@ package org.openecomp.core.enrichment.types;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
 import static org.openecomp.core.enrichment.types.MonitoringUploadType.*;
 
 public class ComponentMonitoringUploadInfo {
 
-
-  private Map<MonitoringUploadType, MonitoringArtifactInfo> infoByType = new HashMap<>();
+  @Getter
+  private final Map<MonitoringUploadType, MonitoringArtifactInfo> infoByType = new HashMap<>();
 
   public MonitoringArtifactInfo getSnmpTrap() {
     return infoByType.get(SNMP_TRAP);
@@ -42,8 +43,8 @@ public class ComponentMonitoringUploadInfo {
     return infoByType.get(VES_EVENTS);
   }
 
-  public void setMonitoringArtifactFile(MonitoringUploadType type,
-                                        MonitoringArtifactInfo monitoringArtifactInfo) {
+  public void setMonitoringArtifactFile(final MonitoringUploadType type,
+                                        final MonitoringArtifactInfo monitoringArtifactInfo) {
     infoByType.put(type, monitoringArtifactInfo);
   }
 }

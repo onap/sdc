@@ -104,7 +104,7 @@ public class PnfTransformationEngineTest {
         final PnfdTransformationEngine engine = spy(
             new PnfdNodeTemplateTransformationEngine(null, null, "test.txt"));
         Deencapsulation.invoke(engine, "readDefinition");
-        assertNull(Deencapsulation.getField(engine, "transformationDescription"));
+        assertNull(((AbstractPnfdTransformationEngine) engine).getTransformationDescription());
     }
 
     private String getExpectedResultFor(final String inputFilename) throws IOException {

@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.versioning.impl;
 
+import lombok.Getter;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -46,8 +47,8 @@ import java.util.Set;
 public class ActionVersioningManagerImpl implements ActionVersioningManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(ActionVersioningManagerImpl.class);
   private static final Version INITIAL_ACTIVE_VERSION = new Version(0, 0);
-  private static final Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES =
-      new HashMap<>();
+  @Getter
+  private final Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES = new HashMap<>();
 
   private final VersionInfoDao versionInfoDao;
   private final VersionInfoDeletedDao versionInfoDeletedDao;

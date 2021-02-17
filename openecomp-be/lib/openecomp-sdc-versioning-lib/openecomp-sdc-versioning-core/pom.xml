@@ -31,12 +31,12 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jmockit</groupId>
-      <artifactId>jmockit</artifactId>
-      <version>${jmockit.version}</version>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.jmockit</groupId>-->
+<!--      <artifactId>jmockit</artifactId>-->
+<!--      <version>${jmockit.version}</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>openecomp-sdc-logging-core</artifactId>
