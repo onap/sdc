@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7f427f02_b542bede",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/test/java/org/openecomp/sdcrests/vsp/rest/mapping/MapVspDescriptionDtoToVspDetailsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 6729
+      },
+      "writtenOn": "2021-02-17T09:17:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0111bdfa_ba2c6f6f",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 9
+      },
+      "revId": "7413dd774e14ccce7f202aab0047ee2a59ae8ca8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b5310871_ef7c2799",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/LicenseType.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "99155cc8_fd1c9c0f",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/LicenseType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6729
+      },
+      "writtenOn": "2021-02-17T09:17:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5310871_ef7c2799",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "7413dd774e14ccce7f202aab0047ee2a59ae8ca8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9cccc4b8_f4c8c4b8",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/LicenseType.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "7413dd774e14ccce7f202aab0047ee2a59ae8ca8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e244c66_f8078f39",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/LicenseType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6729
+      },
+      "writtenOn": "2021-02-17T09:17:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9cccc4b8_f4c8c4b8",
+      "range": {
+        "startLine": 4,
+        "startChar": 5,
+        "endLine": 5,
+        "endChar": 12
+      },
+      "revId": "7413dd774e14ccce7f202aab0047ee2a59ae8ca8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
