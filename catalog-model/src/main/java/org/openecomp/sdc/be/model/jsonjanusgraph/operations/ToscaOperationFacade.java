@@ -60,6 +60,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
@@ -3058,6 +3059,12 @@ public class ToscaOperationFacade {
                                                                                     List<InputDefinition> inputsToDelete) {
         return topologyTemplateOperation.deleteToscaDataElements(containerComponent.getUniqueId(), EdgeLabelEnum.INPUTS,
             inputsToDelete.stream().map(PropertyDataDefinition::getName).collect(Collectors.toList()));
+    }
+
+    public StorageOperationStatus deleteComponentInstanceOutputsFromTopologyTemplate(final Component containerComponent,
+                                                                                     final List<OutputDefinition> outputsToDelete) {
+        return topologyTemplateOperation.deleteToscaDataElements(containerComponent.getUniqueId(), EdgeLabelEnum.OUTPUTS,
+            outputsToDelete.stream().map(AttributeDataDefinition::getName).collect(Collectors.toList()));
     }
 
     public StorageOperationStatus updateComponentInstanceCapabiltyProperty(Component containerComponent, String componentInstanceUniqueId,
