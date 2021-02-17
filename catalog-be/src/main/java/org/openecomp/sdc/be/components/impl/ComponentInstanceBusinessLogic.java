@@ -2568,7 +2568,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
 
             Component eitherOriginComponent = getInstanceOriginNode(currentResourceInstance);
-
             DataForMergeHolder dataHolder = compInstMergeDataBL
                 .saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent);
             ComponentInstance resResourceInfo = deleteComponentInstance(containerComponent, componentInstanceId,
@@ -2580,8 +2579,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             } else {
                 Component origComponent = null;
                 OriginTypeEnum originType = currentResourceInstance.getOriginType();
+                newComponentInstance.setOriginType(originType);
                 if (originType == OriginTypeEnum.ServiceProxy) {
-                    newComponentInstance.setOriginType(originType);
                     Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade
                         .getLatestByName("serviceProxy");
                     if (isServiceProxyOrigin(serviceProxyOrigin)) {
@@ -2597,8 +2596,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                             componentsUtils.convertFromStorageResponse(fillProxyRes));
                     }
                 } else if (originType == OriginTypeEnum.ServiceSubstitution){
-                    newComponentInstance.setOriginType(originType);
-
 	            	final Either<Component, StorageOperationStatus> getServiceResult = toscaOperationFacade.getToscaFullElement(newComponentInstance.getComponentUid());
 	                if (getServiceResult.isRight()) {
 	                	throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
