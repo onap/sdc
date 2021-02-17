@@ -17,9 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,28 +34,15 @@ import org.openecomp.sdc.common.http.config.ClientCertificate;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
 
-import java.util.Collections;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(MockitoJUnitRunner.class)
 public class HttpClientConfigImmutableTest {
 
     @Mock
     private ComparableHttpRequestRetryHandler testRetryHandler;
-
     private ClientCertificate testClientCertificate;
-
     private Map<String, String> testHeaders;
-
     private BasicAuthorization testBasicAuthorization;
-
-
     private Timeouts testTimeouts;
-
-
     private int testNumOfRetries;
 
     @Test
@@ -70,7 +61,6 @@ public class HttpClientConfigImmutableTest {
     public void validateToString() {
         HttpClientConfigImmutable httpClientConfigImmutable = HttpClientConfigImmutable.getOrCreate(prepareTestClientConfig());
         final String result = httpClientConfigImmutable.toString();
-
         assertTrue(result.contains(testBasicAuthorization.toString()));
         assertTrue(result.contains(testClientCertificate.toString()));
         assertTrue(result.contains(testRetryHandler.toString()));
@@ -83,47 +73,21 @@ public class HttpClientConfigImmutableTest {
     public void validateHashCode() {
         HttpClientConfigImmutable httpClientConfigImmutable01 = new HttpClientConfigImmutable(prepareTestClientConfig());
         HttpClientConfigImmutable httpClientConfigImmutable02 = HttpClientConfigImmutable.getOrCreate(prepareTestClientConfig());
-
-        assertEquals(
-                httpClientConfigImmutable01.hashCode(),
-                httpClientConfigImmutable02.hashCode()
-        );
+        assertEquals(httpClientConfigImmutable01.hashCode(), httpClientConfigImmutable02.hashCode());
     }
 
     private void validateAllVieldsInImmutableConfig(HttpClientConfigImmutable httpClientConfigImmutable) {
-        assertEquals(
-                httpClientConfigImmutable.getNumOfRetries(),
-                testNumOfRetries);
-        assertEquals(
-                httpClientConfigImmutable.getReadTimeoutMs(),
-                testTimeouts.getReadTimeoutMs());
-        assertEquals(
-                httpClientConfigImmutable.getConnectTimeoutMs(),
-                testTimeouts.getConnectTimeoutMs());
-        assertEquals(
-                httpClientConfigImmutable.getConnectPoolTimeoutMs(),
-                testTimeouts.getConnectPoolTimeoutMs());
-        assertEquals(
-                httpClientConfigImmutable.getBasicAuthUserName(),
-                testBasicAuthorization.getUserName());
-        assertEquals(
-                httpClientConfigImmutable.getBasicAuthPassword(),
-                testBasicAuthorization.getPassword());
-        assertEquals(
-                httpClientConfigImmutable.getClientCertificate().getClass(),
-                testClientCertificate.getClass());
-        assertEquals(
-                httpClientConfigImmutable.getClientCertKeyStore(),
-                testClientCertificate.getKeyStore());
-        assertEquals(
-                httpClientConfigImmutable.getClientCertKeyPassword(),
-                testClientCertificate.getKeyStorePassword());
-        assertEquals(
-                httpClientConfigImmutable.getRetryHandler(),
-                testRetryHandler);
-        assertEquals(
-                httpClientConfigImmutable.getHeaders(),
-                testHeaders);
+        assertEquals(httpClientConfigImmutable.getNumOfRetries(), testNumOfRetries);
+        assertEquals(httpClientConfigImmutable.getReadTimeoutMs(), testTimeouts.getReadTimeoutMs());
+        assertEquals(httpClientConfigImmutable.getConnectTimeoutMs(), testTimeouts.getConnectTimeoutMs());
+        assertEquals(httpClientConfigImmutable.getConnectPoolTimeoutMs(), testTimeouts.getConnectPoolTimeoutMs());
+        assertEquals(httpClientConfigImmutable.getBasicAuthUserName(), testBasicAuthorization.getUserName());
+        assertEquals(httpClientConfigImmutable.getBasicAuthPassword(), testBasicAuthorization.getPassword());
+        assertEquals(httpClientConfigImmutable.getClientCertificate().getClass(), testClientCertificate.getClass());
+        assertEquals(httpClientConfigImmutable.getClientCertKeyStore(), testClientCertificate.getKeyStore());
+        assertEquals(httpClientConfigImmutable.getClientCertKeyPassword(), testClientCertificate.getKeyStorePassword());
+        assertEquals(httpClientConfigImmutable.getRetryHandler(), testRetryHandler);
+        assertEquals(httpClientConfigImmutable.getHeaders(), testHeaders);
     }
 
     private HttpClientConfig prepareTestClientConfig() {
@@ -132,10 +96,9 @@ public class HttpClientConfigImmutableTest {
         final int timeouts = 10;
         final String testKeyStore = "testKeyStore";
         final String testKeyStorePassword = SecurityUtil.INSTANCE.encrypt("testKeyStorePassword").left().value();
-
         testNumOfRetries = 10;
         testHeaders = Collections.emptyMap();
-        testTimeouts = new Timeouts(timeouts,timeouts);
+        testTimeouts = new Timeouts(timeouts, timeouts);
         testTimeouts.setConnectPoolTimeoutMs(timeouts);
         testBasicAuthorization = new BasicAuthorization();
         testBasicAuthorization.setUserName(testUserName);
@@ -143,7 +106,6 @@ public class HttpClientConfigImmutableTest {
         testClientCertificate = new ClientCertificate();
         testClientCertificate.setKeyStore(testKeyStore);
         testClientCertificate.setKeyStorePassword(testKeyStorePassword);
-
         HttpClientConfig httpClientConfig = new HttpClientConfig();
         httpClientConfig.setNumOfRetries(testNumOfRetries);
         httpClientConfig.setTimeouts(testTimeouts);
@@ -151,7 +113,6 @@ public class HttpClientConfigImmutableTest {
         httpClientConfig.setClientCertificate(testClientCertificate);
         httpClientConfig.setRetryHandler(testRetryHandler);
         httpClientConfig.setHeaders(testHeaders);
-
         return httpClientConfig;
     }
 }

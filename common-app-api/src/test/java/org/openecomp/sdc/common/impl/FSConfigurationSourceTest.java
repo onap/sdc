@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.impl;
 
 import static org.junit.Assert.assertEquals;
@@ -29,33 +28,28 @@ import org.openecomp.sdc.be.config.Neo4jErrorsConfiguration;
 import org.openecomp.sdc.common.api.Constants;
 
 public class FSConfigurationSourceTest {
+
     @Test
     public void calculateFileNameWhenSplitRequired() {
         Class<ErrorConfiguration> clazz = ErrorConfiguration.class;
-
         String expected = "error-configuration" + Constants.YAML_SUFFIX;
         String actual = FSConfigurationSource.calculateFileName(clazz);
-
         assertEquals(expected, actual);
     }
 
     @Test
     public void calculateFileNameWhenNoSplitRequired() {
         Class<Configuration> clazz = Configuration.class;
-
         String expected = "configuration" + Constants.YAML_SUFFIX;
         String actual = FSConfigurationSource.calculateFileName(clazz);
-
         assertEquals(expected, actual);
     }
 
     @Test
     public void calculateFileNameWithCamelCaseAndDigits() {
         Class<Neo4jErrorsConfiguration> clazz = Neo4jErrorsConfiguration.class;
-
         String expected = "neo4j-errors-configuration" + Constants.YAML_SUFFIX;
         String actual = FSConfigurationSource.calculateFileName(clazz);
-
         assertEquals(expected, actual);
     }
 }

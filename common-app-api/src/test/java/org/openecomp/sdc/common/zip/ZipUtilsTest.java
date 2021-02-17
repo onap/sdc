@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.zip;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -69,14 +68,12 @@ class ZipUtilsTest {
             fail("Could not load the required zip slip files", e);
             return;
         }
-
         try {
             ZipUtils.readZip(linuxZipBytes, true);
             fail("Zip slip should be detected");
         } catch (final ZipException ex) {
             assertThat("Expected ZipSlipException", ex, is(instanceOf(ZipSlipException.class)));
         }
-
         try {
             ZipUtils.readZip(windowsZipBytes, true);
             fail("Zip slip should be detected");
@@ -97,13 +94,11 @@ class ZipUtilsTest {
                 fail("Could not load the required zip slip files", e);
                 return;
             }
-
             try {
                 ZipUtils.unzip(linuxZipPath, tempDirectoryLinux);
                 fail("Zip slip should be detected");
             } catch (final ZipException ex) {
-                assertThat("At least one of the zip files should throw ZipSlipException",
-                    ex, is(instanceOf(ZipSlipException.class)));
+                assertThat("At least one of the zip files should throw ZipSlipException", ex, is(instanceOf(ZipSlipException.class)));
             }
         } finally {
             FileUtils.deleteDirectory(tempDirectoryLinux.toFile());
@@ -122,13 +117,11 @@ class ZipUtilsTest {
                 fail("Could not load the required zip slip files", e);
                 return;
             }
-
             try {
                 ZipUtils.unzip(windowsZipPath, tempDirectoryWindows);
                 fail("Zip slip should be detected");
             } catch (final ZipException ex) {
-                assertThat("At least one of the zip files should throw ZipSlipException",
-                    ex, is(instanceOf(ZipSlipException.class)));
+                assertThat("At least one of the zip files should throw ZipSlipException", ex, is(instanceOf(ZipSlipException.class)));
             }
         } finally {
             FileUtils.deleteDirectory(tempDirectoryWindows.toFile());
@@ -148,11 +141,10 @@ class ZipUtilsTest {
                 fail("Could not load the required zip file", e);
                 return;
             }
-
             final Set<Path> expectedPaths = new HashSet<>();
-            expectedPaths.add(Paths.get(unzipTempPath.toString(),"rootFile1.txt"));
-            expectedPaths.add(Paths.get(unzipTempPath.toString(),"rootFileNoExtension"));
-            expectedPaths.add(Paths.get(unzipTempPath.toString(),"EmptyFolder"));
+            expectedPaths.add(Paths.get(unzipTempPath.toString(), "rootFile1.txt"));
+            expectedPaths.add(Paths.get(unzipTempPath.toString(), "rootFileNoExtension"));
+            expectedPaths.add(Paths.get(unzipTempPath.toString(), "EmptyFolder"));
             expectedPaths.add(Paths.get(unzipTempPath.toString(), "SingleLvlFolder"));
             expectedPaths.add(Paths.get(unzipTempPath.toString(), "SingleLvlFolder", "singleLvlFolderFile.txt"));
             expectedPaths.add(Paths.get(unzipTempPath.toString(), "SingleLvlFolder", "singleLvlFolderFileNoExtension"));
@@ -162,7 +154,6 @@ class ZipUtilsTest {
             expectedPaths.add(Paths.get(unzipTempPath.toString(), "TwoLvlFolder", "SingleLvlFolder"));
             expectedPaths.add(Paths.get(unzipTempPath.toString(), "TwoLvlFolder", "SingleLvlFolder", "singleLvlFolderFile.txt"));
             expectedPaths.add(Paths.get(unzipTempPath.toString(), "TwoLvlFolder", "SingleLvlFolder", "singleLvlFolderFileNoExtension"));
-
             final AtomicLong actualPathCount = new AtomicLong(0);
             try (final Stream<Path> stream = Files.walk(unzipTempPath)) {
                 stream.filter(path -> !unzipTempPath.equals(path)).forEach(actualPath -> {
@@ -175,11 +166,10 @@ class ZipUtilsTest {
             ZipUtils.createZipFromPath(unzipTempPath, zipFilePath);
             final Map<String, byte[]> fileMap = ZipUtils.readZip(zipFilePath.toFile(), true);
             //matching the folder pattern of the readZip
-            final Set<String> expectedPathStringSet = expectedPaths.stream()
-                .map(path -> {
-                    final Path relativePath = unzipTempPath.relativize(path);
-                    return path.toFile().isDirectory() ? relativePath.toString() + File.separator : relativePath.toString();
-                }).collect(Collectors.toSet());
+            final Set<String> expectedPathStringSet = expectedPaths.stream().map(path -> {
+                final Path relativePath = unzipTempPath.relativize(path);
+                return path.toFile().isDirectory() ? relativePath.toString() + File.separator : relativePath.toString();
+            }).collect(Collectors.toSet());
             assertThat("The number of zipped files should be as expected", fileMap, aMapWithSize(expectedPathStringSet.size()));
             fileMap.keySet().forEach(s -> {
                 assertThat("File in zip package should be in the expected list", s, isIn(expectedPathStringSet));
@@ -189,5 +179,4 @@ class ZipUtilsTest {
             FileUtils.deleteDirectory(zipTempPath.toFile());
         }
     }
-
 }

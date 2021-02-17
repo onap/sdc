@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.exception;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Test;
 
 public class OkResponseInfoTest {
 
@@ -34,10 +32,9 @@ public class OkResponseInfoTest {
         final String testMessage = "test error message: %0, %1";
         final String[] testVariables = {"testVariable01", "testVariable02"};
         final String expectedMessage = "test error message: testVariable01, testVariable02";
-
         OkResponseInfo okResponseInfo = new OkResponseInfo(testMessageId, testMessage, testVariables);
-        assertEquals(okResponseInfo.getMessageId(),testMessageId);
-        assertEquals(okResponseInfo.getFormattedErrorMessage(),expectedMessage);
-        assertArrayEquals(okResponseInfo.getVariables(),testVariables);
+        assertEquals(okResponseInfo.getMessageId(), testMessageId);
+        assertEquals(okResponseInfo.getFormattedErrorMessage(), expectedMessage);
+        assertArrayEquals(okResponseInfo.getVariables(), testVariables);
     }
 }

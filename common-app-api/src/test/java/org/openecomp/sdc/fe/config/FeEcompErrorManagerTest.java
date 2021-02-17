@@ -17,8 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.config;
+
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,23 +27,21 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(MockitoJUnitRunner.class)
 public class FeEcompErrorManagerTest {
-    private FeEcompErrorManager feEcompErrorManager;
 
+    private FeEcompErrorManager feEcompErrorManager;
     @Mock
     private ConfigurationManager configurationManager;
 
     @Before
-    public void setUp () {
+    public void setUp() {
         ConfigurationManager.setTestInstance(configurationManager);
         feEcompErrorManager = FeEcompErrorManager.getInstance();
     }
 
     @Test
     public void validateInstanceGetsProperTestManager() {
-        assertEquals(feEcompErrorManager.getConfigurationManager(),configurationManager);
+        assertEquals(feEcompErrorManager.getConfigurationManager(), configurationManager);
     }
 }

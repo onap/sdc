@@ -19,7 +19,6 @@
  * ===================================================================
  *
  */
-
 package org.openecomp.sdc.common.config;
 
 import static org.hamcrest.core.StringContains.containsString;
@@ -27,26 +26,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.Map;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-
 public class EcompErrorConfigurationTest {
 
     private EcompErrorConfiguration ecompErrorConfiguration;
-
     private ConfigurationManager configurationManager;
 
     @Before
     public void loadEcompErrorConfiguration() {
         String appConfigDir = "src/test/resources/config/common";
-        ConfigurationSource configurationSource =
-                new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         configurationManager = new ConfigurationManager(configurationSource);
         ecompErrorConfiguration = configurationManager.getEcompErrorConfiguration();
     }
@@ -76,8 +72,7 @@ public class EcompErrorConfigurationTest {
         //when
         String result = ecompErrorConfiguration.toString();
         //then
-        assertThat(result, containsString(
-                "EcompErrorConfiguration [errors={BeRestApiGeneralError=org.openecomp.sdc.common.config.EcompErrorInfo@"));
+        assertThat(result, containsString("EcompErrorConfiguration [errors={BeRestApiGeneralError=org.openecomp.sdc.common.config.EcompErrorInfo@"));
     }
 
     @Test
@@ -94,10 +89,8 @@ public class EcompErrorConfigurationTest {
 
     @Test
     public void testMain() throws Exception {
-        String[] args = new String[] {""};
-
+        String[] args = new String[]{""};
         // default test
         EcompErrorConfiguration.main(args);
     }
-
 }

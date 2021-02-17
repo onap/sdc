@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.exception;
+
+import static org.hamcrest.core.Is.is;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.hamcrest.core.Is.is;
 
 public class DeleteLastApplicationEnvironmentExceptionTest {
 
@@ -36,7 +35,6 @@ public class DeleteLastApplicationEnvironmentExceptionTest {
         final String testMessage = "test error message";
         expectedException.expect(DeleteLastApplicationEnvironmentException.class);
         expectedException.expectMessage(testMessage);
-
         throw new DeleteLastApplicationEnvironmentException(testMessage);
     }
 
@@ -48,8 +46,6 @@ public class DeleteLastApplicationEnvironmentExceptionTest {
         expectedException.expect(DeleteLastApplicationEnvironmentException.class);
         expectedException.expectMessage(testMessage);
         expectedException.expectCause(is(testThrowable));
-
         throw new DeleteLastApplicationEnvironmentException(testMessage, testThrowable);
     }
-
 }

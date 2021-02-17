@@ -48,7 +48,6 @@ public class HttpClientTest {
     private FunctionThrows<CloseableHttpResponse, HttpResponse<String>, Exception> responseBuilder;
     @Mock
     private HttpClientConfig config;
-
     private HttpClientConfigImmutable configImmutable;
     private HttpClient httpClient;
 
@@ -81,5 +80,4 @@ public class HttpClientTest {
         httpClient.get(URL, new Properties(), responseBuilder);
         Mockito.verify(closeableHttpClient).execute(Mockito.any(HttpGet.class), Mockito.<HttpContext>isNull());
     }
-
 }

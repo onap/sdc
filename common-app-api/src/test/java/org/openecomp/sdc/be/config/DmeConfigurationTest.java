@@ -17,10 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
-
-import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToString;
@@ -28,13 +25,12 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.Test;
+
 public class DmeConfigurationTest {
+
     @Test
     public void validateBean() {
-        assertThat(DmeConfiguration.class, allOf(
-                hasValidBeanConstructor(),
-                hasValidGettersAndSettersExcluding(),
-                hasValidBeanToString()
-        ));
+        assertThat(DmeConfiguration.class, allOf(hasValidBeanConstructor(), hasValidGettersAndSettersExcluding(), hasValidBeanToString()));
     }
 }

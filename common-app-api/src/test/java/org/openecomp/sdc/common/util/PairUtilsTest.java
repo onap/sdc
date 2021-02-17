@@ -17,68 +17,39 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.util;
 
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.Lists;
+import java.util.List;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
-
 public class PairUtilsTest {
 
-    final ImmutablePair<String,String> immutablePair01 =
-            new ImmutablePair<>("leftValue01","rightValue01");
-    final ImmutablePair<String,String> immutablePair02 =
-            new ImmutablePair<>("leftValue02","rightValue02");
-    final ImmutablePair<String,String> immutablePair03 =
-            new ImmutablePair<>("leftValue03","rightValue03");
+    final ImmutablePair<String, String> immutablePair01 = new ImmutablePair<>("leftValue01", "rightValue01");
+    final ImmutablePair<String, String> immutablePair02 = new ImmutablePair<>("leftValue02", "rightValue02");
+    final ImmutablePair<String, String> immutablePair03 = new ImmutablePair<>("leftValue03", "rightValue03");
 
     @Test
     public void validateLeftSequenceReturnsListOfLeftElements() {
-
         List<String> result = PairUtils.leftSequence(generateImmutableListOfPairs());
-
-        assertTrue(result.containsAll(
-                Lists.newArrayList(
-                        immutablePair01.left,
-                        immutablePair02.left,
-                        immutablePair03.left
-                ))
-        );
+        assertTrue(result.containsAll(Lists.newArrayList(immutablePair01.left, immutablePair02.left, immutablePair03.left)));
     }
 
     @Test
     public void validateRightSequenceReturnsListOfRightElements() {
-
         List<String> result = PairUtils.rightSequence(generateListOfPairs());
-
-        assertTrue(result.containsAll(
-                Lists.newArrayList(
-                        immutablePair01.right,
-                        immutablePair02.right,
-                        immutablePair03.right
-                ))
-        );
+        assertTrue(result.containsAll(Lists.newArrayList(immutablePair01.right, immutablePair02.right, immutablePair03.right)));
     }
 
-    private List<Pair<String,String>> generateListOfPairs() {
-        return  Lists.newArrayList(
-                    immutablePair01,
-                    immutablePair02,
-                    immutablePair03
-                );
+    private List<Pair<String, String>> generateListOfPairs() {
+        return Lists.newArrayList(immutablePair01, immutablePair02, immutablePair03);
     }
 
-    private List<ImmutablePair<String,String>> generateImmutableListOfPairs() {
-        return  Lists.newArrayList(
-                immutablePair01,
-                immutablePair02,
-                immutablePair03
-        );
+    private List<ImmutablePair<String, String>> generateImmutableListOfPairs() {
+        return Lists.newArrayList(immutablePair01, immutablePair02, immutablePair03);
     }
 }

@@ -17,13 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.util;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 
 public class ThreadLocalsHolderTest {
 
@@ -31,7 +30,6 @@ public class ThreadLocalsHolderTest {
     public void validateSetAngGetMdcProcessReturnsValidThreadLocalBoolean() {
         final boolean testBoolean01 = false;
         final boolean testBoolean02 = true;
-
         ThreadLocalsHolder.setMdcProcessed(testBoolean01);
         assertEquals(ThreadLocalsHolder.isMdcProcessed(), testBoolean01);
         ThreadLocalsHolder.setMdcProcessed(testBoolean02);
@@ -42,7 +40,6 @@ public class ThreadLocalsHolderTest {
     public void validateSetAngGetUUIDReturnsValidThreadLocalString() {
         final String UUID01 = "testId01";
         final String UUID02 = "testId02";
-
         ThreadLocalsHolder.setUuid(UUID01);
         assertEquals(ThreadLocalsHolder.getUuid(), UUID01);
         ThreadLocalsHolder.setUuid(UUID02);
@@ -53,7 +50,6 @@ public class ThreadLocalsHolderTest {
     public void validateSetAngGetRequestStartTimeReturnsValidThreadLocalString() {
         final Long requestStartTime01 = 10L;
         final Long requestStartTime02 = 50L;
-
         ThreadLocalsHolder.setRequestStartTime(requestStartTime01);
         assertEquals(ThreadLocalsHolder.getRequestStartTime(), requestStartTime01);
         ThreadLocalsHolder.setRequestStartTime(requestStartTime02);
@@ -65,13 +61,10 @@ public class ThreadLocalsHolderTest {
         final Long requestStartTime = 10L;
         final String UUID = "testId01";
         final boolean testBoolean = true;
-
         ThreadLocalsHolder.setMdcProcessed(testBoolean);
         ThreadLocalsHolder.setUuid(UUID);
         ThreadLocalsHolder.setRequestStartTime(requestStartTime);
-
         ThreadLocalsHolder.cleanup();
-
         assertNull(ThreadLocalsHolder.getRequestStartTime());
         assertNull(ThreadLocalsHolder.getUuid());
         assertEquals(ThreadLocalsHolder.isMdcProcessed(), false);

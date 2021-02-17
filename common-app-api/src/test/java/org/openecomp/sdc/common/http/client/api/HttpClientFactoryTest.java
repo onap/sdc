@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
 
+import static junit.framework.TestCase.assertNotNull;
+
+import java.util.Collections;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -31,11 +34,6 @@ import org.openecomp.sdc.common.http.config.ClientCertificate;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
 
-import java.util.Collections;
-import java.util.Map;
-
-import static junit.framework.TestCase.assertNotNull;
-
 @RunWith(MockitoJUnitRunner.class)
 public class HttpClientFactoryTest {
 
@@ -44,7 +42,7 @@ public class HttpClientFactoryTest {
 
     @Test
     public void validateNewClientCreationReturnsValidClient() throws HttpExecuteException {
-        HttpClient httpClient = new HttpClientFactory(httpConnectionMngFactory).createClient("Http",prepareTestClientConfigImmutable());
+        HttpClient httpClient = new HttpClientFactory(httpConnectionMngFactory).createClient("Http", prepareTestClientConfigImmutable());
         assertNotNull(httpClient);
         httpClient.close();
     }
@@ -55,7 +53,6 @@ public class HttpClientFactoryTest {
         final int timeouts = 10;
         final String testKeyStore = "testKeyStore";
         final String testKeyStorePassword = SecurityUtil.INSTANCE.encrypt("testKeyStorePassword").left().value();
-
         int testNumOfRetries = 10;
         ComparableHttpRequestRetryHandler testRetryHandler = Mockito.mock(ComparableHttpRequestRetryHandler.class);
         Map<String, String> testHeaders = Collections.emptyMap();
@@ -67,7 +64,6 @@ public class HttpClientFactoryTest {
         ClientCertificate testClientCertificate = new ClientCertificate();
         testClientCertificate.setKeyStore(testKeyStore);
         testClientCertificate.setKeyStorePassword(testKeyStorePassword);
-
         HttpClientConfig httpClientConfig = new HttpClientConfig();
         httpClientConfig.setNumOfRetries(testNumOfRetries);
         httpClientConfig.setTimeouts(testTimeouts);
@@ -75,7 +71,6 @@ public class HttpClientFactoryTest {
         httpClientConfig.setClientCertificate(testClientCertificate);
         httpClientConfig.setRetryHandler(testRetryHandler);
         httpClientConfig.setHeaders(testHeaders);
-
         return new HttpClientConfigImmutable(httpClientConfig);
     }
 }

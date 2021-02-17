@@ -17,10 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.config;
-
-import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
@@ -28,14 +25,13 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
+
 public class ConnectionTest {
 
     @Test
     public void validateBean() {
-        assertThat(Connection.class, allOf(
-                hasValidBeanConstructor(),
-                hasValidGettersAndSetters()
-        ));
+        assertThat(Connection.class, allOf(hasValidBeanConstructor(), hasValidGettersAndSetters()));
     }
 
     @Test
@@ -45,7 +41,6 @@ public class ConnectionTest {
         Connection connection = new Connection();
         connection.setUrl(testUrl);
         connection.setPoolSize(testPoolSize);
-
         assertTrue(connection.toString().contains(testUrl));
         assertTrue(connection.toString().contains(Integer.toString(testPoolSize)));
     }

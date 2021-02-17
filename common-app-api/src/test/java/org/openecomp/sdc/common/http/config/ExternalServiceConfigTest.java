@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 public class ExternalServiceConfigTest {
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(ExternalServiceConfig.class, hasValidGettersAndSetters());

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.exception;
 
 import org.junit.Rule;
@@ -34,7 +33,6 @@ public class DeleteReferencedObjectExceptionTest {
         final String testMessage = "test error message";
         expectedException.expect(DeleteReferencedObjectException.class);
         expectedException.expectMessage(testMessage);
-
         throw new DeleteReferencedObjectException(testMessage);
     }
 }

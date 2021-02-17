@@ -17,10 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.config;
-
-import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToString;
@@ -28,31 +25,23 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.Test;
+
 public class PluginsConfigurationTest {
 
     @Test
     public void validateBean() {
-        assertThat(PluginsConfiguration.class, allOf(
-                hasValidBeanConstructor(),
-                hasValidGettersAndSetters(),
-                hasValidBeanToString()
-        ));
+        assertThat(PluginsConfiguration.class, allOf(hasValidBeanConstructor(), hasValidGettersAndSetters(), hasValidBeanToString()));
     }
 
     @Test
     public void validatePluginBean() {
-        assertThat(PluginsConfiguration.Plugin.class, allOf(
-                hasValidBeanConstructor(),
-                hasValidGettersAndSetters()
-        ));
+        assertThat(PluginsConfiguration.Plugin.class, allOf(hasValidBeanConstructor(), hasValidGettersAndSetters()));
     }
 
     @Test
     public void validatePluginDisplayOptionsBean() {
-        assertThat(PluginsConfiguration.PluginDisplayOptions.class, allOf(
-                hasValidBeanConstructor(),
-                hasValidGettersAndSetters(),
-                hasValidBeanToString()
-        ));
+        assertThat(PluginsConfiguration.PluginDisplayOptions.class,
+            allOf(hasValidBeanConstructor(), hasValidGettersAndSetters(), hasValidBeanToString()));
     }
 }

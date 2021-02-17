@@ -17,13 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.http.HttpStatus;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class ResponsesTest {
 

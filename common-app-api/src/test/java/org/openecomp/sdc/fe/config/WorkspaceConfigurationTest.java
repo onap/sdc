@@ -17,8 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.config;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,28 +31,24 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(MockitoJUnitRunner.class)
 public class WorkspaceConfigurationTest {
-    private WorkspaceConfiguration workspaceConfiguration = new WorkspaceConfiguration();
 
+    private WorkspaceConfiguration workspaceConfiguration = new WorkspaceConfiguration();
     @Mock
     private ConfigurationManager configurationManager;
 
     @Before
     public void setUp() {
         String appConfigDir = "src/test/resources/config/fe";
-        ConfigurationSource configurationSource =
-                new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         configurationManager = new ConfigurationManager(configurationSource);
     }
 
     @Test
     public void validateInstanceGetsProperTestManager() {
         workspaceConfiguration = configurationManager.getWorkspaceConfiguration();
-        assertEquals(7,workspaceConfiguration.getWorkspaceMenuConfiguration().size());
+        assertEquals(7, workspaceConfiguration.getWorkspaceMenuConfiguration().size());
         assertTrue(workspaceConfiguration.getWorkspaceMenuConfiguration().containsKey("VFC"));
     }
 }

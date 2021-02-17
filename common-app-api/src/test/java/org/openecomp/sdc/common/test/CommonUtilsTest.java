@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -31,297 +38,266 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-
 public class CommonUtilsTest {
-	private static Logger log = LoggerFactory.getLogger(CommonUtilsTest.class.getName());
 
-	/*
-	 * Validation utils start
-	 */
-	@Test
-	public void testValidateServiceName() {
+    private static Logger log = LoggerFactory.getLogger(CommonUtilsTest.class.getName());
 
-		assertTrue(ValidationUtils.validateComponentNamePattern("1111222"));
-		assertTrue(ValidationUtils.validateComponentNamePattern("sfE4444"));
-		assertTrue(ValidationUtils.validateComponentNamePattern("1111sfd222"));
-		assertTrue(ValidationUtils.validateComponentNamePattern("11sdf 1124_22"));
-		assertTrue(ValidationUtils.validateComponentNamePattern("111----1222"));
-		assertTrue(ValidationUtils.validateComponentNamePattern("1111f .222"));
-		assertTrue(ValidationUtils.validateComponentNamePattern("1111222"));
-		assertFalse(ValidationUtils.validateComponentNamePattern("11!11222"));
-		assertFalse(ValidationUtils.validateComponentNamePattern("111|`1222"));
-		assertFalse(ValidationUtils.validateComponentNamePattern("."));
-		assertFalse(ValidationUtils.validateComponentNamePattern(""));
-		assertTrue(ValidationUtils.validateComponentNamePattern("s"));
-	}
+    /*
+     * Validation utils start
+     */
+    @Test
+    public void testValidateServiceName() {
+        assertTrue(ValidationUtils.validateComponentNamePattern("1111222"));
+        assertTrue(ValidationUtils.validateComponentNamePattern("sfE4444"));
+        assertTrue(ValidationUtils.validateComponentNamePattern("1111sfd222"));
+        assertTrue(ValidationUtils.validateComponentNamePattern("11sdf 1124_22"));
+        assertTrue(ValidationUtils.validateComponentNamePattern("111----1222"));
+        assertTrue(ValidationUtils.validateComponentNamePattern("1111f .222"));
+        assertTrue(ValidationUtils.validateComponentNamePattern("1111222"));
+        assertFalse(ValidationUtils.validateComponentNamePattern("11!11222"));
+        assertFalse(ValidationUtils.validateComponentNamePattern("111|`1222"));
+        assertFalse(ValidationUtils.validateComponentNamePattern("."));
+        assertFalse(ValidationUtils.validateComponentNamePattern(""));
+        assertTrue(ValidationUtils.validateComponentNamePattern("s"));
+    }
 
-	@Test
-	public void validateServiceNameLengthTest() {
-		assertTrue(ValidationUtils.validateComponentNameLength("fsdlfsdlksdsd;"));
-		// assertFalse(ValidationUtils.validateComponentNameLength("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
-	}
+    @Test
+    public void validateServiceNameLengthTest() {
+        assertTrue(ValidationUtils.validateComponentNameLength("fsdlfsdlksdsd;"));
+        // assertFalse(ValidationUtils.validateComponentNameLength("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
+    }
 
-	@Test
-	public void testValidateIcon() {
+    @Test
+    public void testValidateIcon() {
+        assertTrue(ValidationUtils.validateIcon("something"));
+        assertTrue(ValidationUtils.validateIcon("sfE4444"));
+        assertTrue(ValidationUtils.validateIcon("1111sfd222"));
+        assertTrue(ValidationUtils.validateIcon("11sdf1124_22"));
+        assertTrue(ValidationUtils.validateIcon("111----1222"));
+        assertFalse(ValidationUtils.validateIcon("1111f.222"));
+        assertTrue(ValidationUtils.validateIcon("1111222"));
+        assertFalse(ValidationUtils.validateIcon("1111 222"));
+        assertFalse(ValidationUtils.validateIcon("11!11222"));
+        assertFalse(ValidationUtils.validateIcon("111|`1222"));
+    }
 
-		assertTrue(ValidationUtils.validateIcon("something"));
-		assertTrue(ValidationUtils.validateIcon("sfE4444"));
-		assertTrue(ValidationUtils.validateIcon("1111sfd222"));
-		assertTrue(ValidationUtils.validateIcon("11sdf1124_22"));
-		assertTrue(ValidationUtils.validateIcon("111----1222"));
-		assertFalse(ValidationUtils.validateIcon("1111f.222"));
-		assertTrue(ValidationUtils.validateIcon("1111222"));
-		assertFalse(ValidationUtils.validateIcon("1111 222"));
-		assertFalse(ValidationUtils.validateIcon("11!11222"));
-		assertFalse(ValidationUtils.validateIcon("111|`1222"));
+    @Test
+    public void testValidateIconLength() {
+        assertTrue(ValidationUtils.validateIconLength("fsdlfsdlksdsd"));
+        assertFalse(ValidationUtils.validateIconLength("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
+    }
 
-	}
+    @Test
+    public void testValidateProjectCode() {
+        assertTrue(ValidationUtils.validateProjectCode("15555"));
+        assertTrue(ValidationUtils.validateProjectCode("12434501"));
+        assertTrue(ValidationUtils.validateProjectCode("00000"));
+        assertTrue(ValidationUtils.validateProjectCode("something"));
+        assertTrue(ValidationUtils.validateProjectCode("som ething"));
+        assertTrue(ValidationUtils.validateProjectCode("3255 656"));
+        assertTrue(ValidationUtils.validateProjectCode("43535t636"));
+        assertFalse(ValidationUtils.validateProjectCode("098&656"));
+    }
 
+    @Test
+    public void testValidateProjectCodeLength() {
+        assertTrue(ValidationUtils.validateProjectCodeLegth("00000"));
+        assertFalse(ValidationUtils.validateProjectCodeLegth("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
+    }
 
-	@Test
-	public void testValidateIconLength() {
-		assertTrue(ValidationUtils.validateIconLength("fsdlfsdlksdsd"));
-		assertFalse(ValidationUtils.validateIconLength("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
-	}
+    @Test
+    public void testValidateContactId() {
+        assertTrue(ValidationUtils.validateContactId("ml7889"));
+        assertTrue(ValidationUtils.validateContactId("Ml7889"));
+        assertTrue(ValidationUtils.validateContactId("ml788r"));
+        assertTrue(ValidationUtils.validateContactId("something"));
+        assertTrue(ValidationUtils.validateContactId("mlk111"));
+        assertTrue(ValidationUtils.validateContactId("12ml89"));
+        assertFalse(ValidationUtils.validateContactId("!!78900"));
+    }
 
-	@Test
-	public void testValidateProjectCode() {
-
-		assertTrue(ValidationUtils.validateProjectCode("15555"));
-		assertTrue(ValidationUtils.validateProjectCode("12434501"));
-		assertTrue(ValidationUtils.validateProjectCode("00000"));
-		assertTrue(ValidationUtils.validateProjectCode("something"));
-		assertTrue(ValidationUtils.validateProjectCode("som ething"));
-		assertTrue(ValidationUtils.validateProjectCode("3255 656"));
-		assertTrue(ValidationUtils.validateProjectCode("43535t636"));
-		assertFalse(ValidationUtils.validateProjectCode("098&656"));
-	}
-
-	@Test
-	public void testValidateProjectCodeLength() {
-
-		assertTrue(ValidationUtils.validateProjectCodeLegth("00000"));
-		assertFalse(ValidationUtils.validateProjectCodeLegth("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
-
-	}
-
-	@Test
-	public void testValidateContactId() {
-
-		assertTrue(ValidationUtils.validateContactId("ml7889"));
-		assertTrue(ValidationUtils.validateContactId("Ml7889"));
-		assertTrue(ValidationUtils.validateContactId("ml788r"));
-		assertTrue(ValidationUtils.validateContactId("something"));
-		assertTrue(ValidationUtils.validateContactId("mlk111"));
-		assertTrue(ValidationUtils.validateContactId("12ml89"));
-		assertFalse(ValidationUtils.validateContactId("!!78900"));
-	}
-
-	@Test
-	public void testRemoveHtml() {
-
+    @Test
+    public void testRemoveHtml() {
         assertEquals("gooboo", ValidationUtils.removeHtmlTags("<b>goo<b></b></b><b>boo</b>"));
         assertEquals("goo&lt;boo", ValidationUtils.removeHtmlTags("<b>goo<b></b><</b><b>boo</b>"));
         assertEquals("goo boo", ValidationUtils.removeHtmlTags("goo boo"));
         assertEquals("goo# . boo12", ValidationUtils.removeHtmlTags("goo# . boo12"));
-	}
+    }
 
-	@Test
-	public void testnormaliseWhitespace() {
-
+    @Test
+    public void testnormaliseWhitespace() {
         assertEquals("goo boo", ValidationUtils.normaliseWhitespace("goo boo"));
         assertEquals("goo boo ", ValidationUtils.normaliseWhitespace("goo boo   "));
         assertEquals("goo boo", ValidationUtils.normaliseWhitespace("goo    boo"));
-	}
+    }
 
-	@Test
-	public void teststripOctets() {
+    @Test
+    public void teststripOctets() {
         assertEquals("goo boo", ValidationUtils.stripOctets("goo%1F boo"));
         assertEquals("goo boo ", ValidationUtils.stripOctets("goo boo %1F"));
         assertEquals("goo boo", ValidationUtils.stripOctets("%1Fgoo boo"));
-	}
+    }
 
-	@Test
-	public void testRemoveNoneUtf8Chars() {
+    @Test
+    public void testRemoveNoneUtf8Chars() {
         assertEquals("goo boo", ValidationUtils.removeNoneUtf8Chars("goo boo"));
         assertEquals("goo boo!!._", ValidationUtils.removeNoneUtf8Chars("goo boo!!._"));
         assertEquals("goo 	boo", ValidationUtils.removeNoneUtf8Chars("goo 	boo"));
         assertEquals("goo  bo123o", ValidationUtils.removeNoneUtf8Chars("goo  bo123o"));
         assertEquals("goo  bo123o", ValidationUtils.removeNoneUtf8Chars("goo  קקbo123oגכקק"));
         assertEquals("goo  bo123o", ValidationUtils.removeNoneUtf8Chars("goo  bo1������23o"));
-	}
+    }
 
-	@Test
-	public void validateEnglishTest() {
-		assertTrue(ValidationUtils.validateIsEnglish("ml7889"));
-		assertFalse(ValidationUtils.validateIsEnglish("ml7889קר"));
-		assertFalse(ValidationUtils.validateIsEnglish("ml7889文"));
-	}
+    @Test
+    public void validateEnglishTest() {
+        assertTrue(ValidationUtils.validateIsEnglish("ml7889"));
+        assertFalse(ValidationUtils.validateIsEnglish("ml7889קר"));
+        assertFalse(ValidationUtils.validateIsEnglish("ml7889文"));
+    }
 
-	@Test
-	public void removeDuplicateFromListTest() {
-		List<String> tagsBefore = new ArrayList<>();
-		tagsBefore.add("tag1");
-		tagsBefore.add("tag7");
-		tagsBefore.add("tag3");
-		tagsBefore.add("tag4");
-		tagsBefore.add("tag1");
+    @Test
+    public void removeDuplicateFromListTest() {
+        List<String> tagsBefore = new ArrayList<>();
+        tagsBefore.add("tag1");
+        tagsBefore.add("tag7");
+        tagsBefore.add("tag3");
+        tagsBefore.add("tag4");
+        tagsBefore.add("tag1");
+        List<String> tagsAfter = new ArrayList<>();
+        tagsAfter.add("tag1");
+        tagsAfter.add("tag7");
+        tagsAfter.add("tag3");
+        tagsAfter.add("tag4");
+        assertTrue(tagsAfter.containsAll(ValidationUtils.removeDuplicateFromList(tagsBefore)));
+        tagsBefore = new ArrayList<>();
+        tagsBefore.add("tag1");
+        tagsBefore.add("tag7");
+        tagsBefore.add("tag3");
+        tagsBefore.add("tag4");
+        tagsBefore.add("Tag1");
+        tagsAfter = new ArrayList<>();
+        tagsAfter.add("tag1");
+        tagsAfter.add("tag7");
+        tagsAfter.add("tag3");
+        tagsAfter.add("tag4");
+        tagsAfter.add("Tag1");
+        assertTrue(tagsAfter.containsAll(ValidationUtils.removeDuplicateFromList(tagsBefore)));
+    }
 
-		List<String> tagsAfter = new ArrayList<>();
-		tagsAfter.add("tag1");
-		tagsAfter.add("tag7");
-		tagsAfter.add("tag3");
-		tagsAfter.add("tag4");
-		assertTrue(tagsAfter.containsAll(ValidationUtils.removeDuplicateFromList(tagsBefore)));
-		tagsBefore = new ArrayList<>();
-		tagsBefore.add("tag1");
-		tagsBefore.add("tag7");
-		tagsBefore.add("tag3");
-		tagsBefore.add("tag4");
-		tagsBefore.add("Tag1");
+    @Test
+    public void validateTagLengthTest() {
+        assertTrue(ValidationUtils.validateTagLength("fsdlfsdlkfjkljsdf"));
+        // assertFalse(ValidationUtils.validateTagLength("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
+    }
 
-		tagsAfter = new ArrayList<>();
-		tagsAfter.add("tag1");
-		tagsAfter.add("tag7");
-		tagsAfter.add("tag3");
-		tagsAfter.add("tag4");
-		tagsAfter.add("Tag1");
-		assertTrue(tagsAfter.containsAll(ValidationUtils.removeDuplicateFromList(tagsBefore)));
-	}
+    @Test
+    public void validateTagListLengthTest() {
+        assertTrue(ValidationUtils.validateTagListLength("fsdlfsdlkfjkljsdf,dsfsdfsdf".length()));
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i <= 1024; i++) {
+            sb.append("a");
+        }
+        assertFalse(ValidationUtils.validateTagListLength(sb.toString().length()));
+    }
 
-	@Test
-	public void validateTagLengthTest() {
-		assertTrue(ValidationUtils.validateTagLength("fsdlfsdlkfjkljsdf"));
-		// assertFalse(ValidationUtils.validateTagLength("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
+    @Test
+    public void validateDescriptionLengthTest() {
+        assertTrue(ValidationUtils.validateDescriptionLength("fsdlfsdlkfjkljsddgfgdfgdfgdfgff"));
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i <= 1024; i++) {
+            sb.append("a");
+        }
+        assertFalse(ValidationUtils.validateDescriptionLength(sb.toString()));
+    }
 
-	}
+    @Test
+    public void validateStringNotEmptyTest() {
+        assertTrue(ValidationUtils.validateStringNotEmpty("fsdlfsdlk"));
+        assertFalse(ValidationUtils.validateStringNotEmpty(""));
+        assertFalse(!ValidationUtils.validateStringNotEmpty("  "));
+        assertFalse(!ValidationUtils.validateStringNotEmpty("	"));
+    }
 
-	@Test
-	public void validateTagListLengthTest() {
-		assertTrue(ValidationUtils.validateTagListLength("fsdlfsdlkfjkljsdf,dsfsdfsdf".length()));
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i <= 1024; i++) {
-			sb.append("a");
-		}
-		assertFalse(ValidationUtils.validateTagListLength(sb.toString().length()));
+    @Test
+    public void validateVendorNameTest() {
+        assertTrue(ValidationUtils.validateVendorName("fsdlfsdlk"));
+        assertTrue(ValidationUtils.validateVendorName("fsdlfsdlk.sdsd;"));
+        assertFalse(ValidationUtils.validateVendorName("sadf:"));
+        assertFalse(ValidationUtils.validateVendorName("sadf/"));
+        assertFalse(ValidationUtils.validateVendorName("sadf?"));
+    }
 
-	}
+    @Test
+    public void validateVendorNameLengthTest() {
+        assertTrue(ValidationUtils.validateVendorNameLength("fsdlfsdlk.sdsd;"));
+        assertFalse(ValidationUtils.validateVendorNameLength("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdfs"));
+    }
 
-	@Test
-	public void validateDescriptionLengthTest() {
-		assertTrue(ValidationUtils.validateDescriptionLength("fsdlfsdlkfjkljsddgfgdfgdfgdfgff"));
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i <= 1024; i++) {
-			sb.append("a");
-		}
-		assertFalse(ValidationUtils.validateDescriptionLength(sb.toString()));
+    @Test
+    public void validateVendorReleaseTest() {
+        assertTrue(ValidationUtils.validateVendorRelease("fsdlfsdlk"));
+        assertTrue(ValidationUtils.validateVendorRelease("fsdlfsdlk.sdsd;"));
+        assertFalse(ValidationUtils.validateVendorRelease("sadf:"));
+        assertFalse(ValidationUtils.validateVendorRelease("sadf/"));
+        assertFalse(ValidationUtils.validateVendorRelease("sadf?"));
+    }
 
-	}
+    @Test
+    public void validateVendorReleaseLengthTest() {
+        assertTrue(ValidationUtils.validateVendorReleaseLength("fsdlfsdlk.sdsd;"));
+        assertFalse(ValidationUtils.validateVendorReleaseLength("ddddddddddddddddddddddsdfs"));
+    }
 
-	@Test
-	public void validateStringNotEmptyTest() {
-		assertTrue(ValidationUtils.validateStringNotEmpty("fsdlfsdlk"));
-		assertFalse(ValidationUtils.validateStringNotEmpty(""));
-		assertFalse(!ValidationUtils.validateStringNotEmpty("  "));
-		assertFalse(!ValidationUtils.validateStringNotEmpty("	"));
-	}
+    @Test
+    public void hasBeenCertifiedTest() {
+        assertTrue(ValidationUtils.hasBeenCertified("1.2"));
+        assertTrue(ValidationUtils.hasBeenCertified("2.2"));
+        assertTrue(ValidationUtils.hasBeenCertified("1.0"));
+        assertFalse(ValidationUtils.hasBeenCertified("0.1"));
+    }
 
-	@Test
-	public void validateVendorNameTest() {
-		assertTrue(ValidationUtils.validateVendorName("fsdlfsdlk"));
-		assertTrue(ValidationUtils.validateVendorName("fsdlfsdlk.sdsd;"));
-		assertFalse(ValidationUtils.validateVendorName("sadf:"));
-		assertFalse(ValidationUtils.validateVendorName("sadf/"));
-		assertFalse(ValidationUtils.validateVendorName("sadf?"));
-	}
+    @Test
+    public void normalizedNameTest() {
+        String input = "MyNewSysName";
+        String outputNorm = ValidationUtils.normaliseComponentName(input);
+        String outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "My New Sys Name";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "My.New-Sys_Name";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "My..New-Sys_Name";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "My.New--sys_NAme";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "Layer 3 Connectivity";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "Layer 3 VPN";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "Layer-3      Connectivity";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+        input = "IP-connectivity";
+        outputNorm = ValidationUtils.normaliseComponentName(input);
+        outputSys = ValidationUtils.convertToSystemName(input);
+        log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
+    }
 
-	@Test
-	public void validateVendorNameLengthTest() {
-		assertTrue(ValidationUtils.validateVendorNameLength("fsdlfsdlk.sdsd;"));
-		assertFalse(ValidationUtils.validateVendorNameLength("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdfs"));
-	}
-
-	@Test
-	public void validateVendorReleaseTest() {
-		assertTrue(ValidationUtils.validateVendorRelease("fsdlfsdlk"));
-		assertTrue(ValidationUtils.validateVendorRelease("fsdlfsdlk.sdsd;"));
-		assertFalse(ValidationUtils.validateVendorRelease("sadf:"));
-		assertFalse(ValidationUtils.validateVendorRelease("sadf/"));
-		assertFalse(ValidationUtils.validateVendorRelease("sadf?"));
-	}
-
-	@Test
-	public void validateVendorReleaseLengthTest() {
-		assertTrue(ValidationUtils.validateVendorReleaseLength("fsdlfsdlk.sdsd;"));
-		assertFalse(ValidationUtils.validateVendorReleaseLength("ddddddddddddddddddddddsdfs"));
-	}
-
-	@Test
-	public void hasBeenCertifiedTest() {
-		assertTrue(ValidationUtils.hasBeenCertified("1.2"));
-		assertTrue(ValidationUtils.hasBeenCertified("2.2"));
-		assertTrue(ValidationUtils.hasBeenCertified("1.0"));
-		assertFalse(ValidationUtils.hasBeenCertified("0.1"));
-
-	}
-
-	@Test
-	public void normalizedNameTest() {
-		String input = "MyNewSysName";
-		String outputNorm = ValidationUtils.normaliseComponentName(input);
-		String outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "My New Sys Name";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "My.New-Sys_Name";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "My..New-Sys_Name";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "My.New--sys_NAme";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "Layer 3 Connectivity";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "Layer 3 VPN";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "Layer-3      Connectivity";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-		input = "IP-connectivity";
-		outputNorm = ValidationUtils.normaliseComponentName(input);
-		outputSys = ValidationUtils.convertToSystemName(input);
-		log.debug("{} <> {} <> {}", input, outputNorm, outputSys);
-
-	}
-
-	@Test
-	public void normalizeFileNameTest() {
+    @Test
+    public void normalizeFileNameTest() {
         assertEquals("too.jpeg", ValidationUtils.normalizeFileName("too.jpeg"));
         assertEquals("too..jpeg", ValidationUtils.normalizeFileName("too..jpeg"));
         assertEquals("too..jpeg", ValidationUtils.normalizeFileName("t*o:o..jpe<>g"));
@@ -331,180 +307,173 @@ public class CommonUtilsTest {
         assertEquals("goo-too-mo.jpeg", ValidationUtils.normalizeFileName(".\\..\\goo   too----mo.jpeg"));
         assertEquals("goo-too-mo.jpeg", ValidationUtils.normalizeFileName("__--goo   too----mo.jpeg--__"));
         assertEquals("goo-too-mo.jpeg", ValidationUtils.normalizeFileName("_ -goo   too----mo.jpeg _--  _-"));
+    }
 
-	}
+    @Test
+    public void validateUrlTest() {
+        assertTrue(ValidationUtils.validateUrl("http://google.co.il/"));
 
-	@Test
-	public void validateUrlTest() {
-		assertTrue(ValidationUtils.validateUrl("http://google.co.il/"));
-		assertTrue(ValidationUtils.validateUrl("https://google.co.il/"));
-		assertTrue(ValidationUtils.validateUrl("https://google.co.il/go/go"));
-		assertTrue(ValidationUtils.validateUrl("https://google.co.il/go/go"));
-		assertTrue(ValidationUtils.validateUrl("http://google.co.il/go/go"));
-		assertFalse(ValidationUtils.validateUrl("google.co.il/go/go"));
-		assertFalse(ValidationUtils.validateUrl("https://google.co.il/go/go!"));
-		assertFalse(ValidationUtils.validateUrl("https://g;oogle.co.il/go/go"));
+        assertTrue(ValidationUtils.validateUrl("https://google.co.il/"));
 
-	}
+        assertTrue(ValidationUtils.validateUrl("https://google.co.il/go/go"));
 
-	@Test
-	public void normalizeArtifactLabel() {
-		assertEquals(ValidationUtils.normalizeArtifactLabel("Test--3    134++"), "test3134");
-	}
+        assertTrue(ValidationUtils.validateUrl("https://google.co.il/go/go"));
 
-	@Test
-	public void cleanArtifactLabel() {
-		assertEquals(ValidationUtils.cleanArtifactDisplayName("Test--3    134++"), "Test-3 134+");
-	}
+        assertTrue(ValidationUtils.validateUrl("http://google.co.il/go/go"));
+        assertFalse(ValidationUtils.validateUrl("google.co.il/go/go"));
+        assertFalse(ValidationUtils.validateUrl("https://google.co.il/go/go!"));
 
-	@Test
-	public void validateArtifactLabel() {
-		assertTrue(ValidationUtils.validateArtifactLabel("dsflkjsdf345JKL"));
-		assertTrue(ValidationUtils.validateArtifactLabel("dsfsd lkj  "));
-		assertTrue(ValidationUtils.validateArtifactLabel("sdfdsf---+"));
-		assertTrue(ValidationUtils.validateArtifactLabel("   -  +"));
-		assertFalse(ValidationUtils.validateArtifactLabel("sfsdfhkj111="));
-		assertFalse(ValidationUtils.validateArtifactLabel("sfsdfhkj111=dfsf%"));
-		assertFalse(ValidationUtils.validateArtifactLabel("sdfsdfljghgklsdg908*"));
+        assertFalse(ValidationUtils.validateUrl("https://g;oogle.co.il/go/go"));
+    }
 
-	}
+    @Test
+    public void normalizeArtifactLabel() {
+        assertEquals(ValidationUtils.normalizeArtifactLabel("Test--3    134++"), "test3134");
+    }
 
-	@Test
-	public void validateCategoryNameFormatTest() {
-		assertTrue(ValidationUtils.validateCategoryDisplayNameFormat("Net           ele-2_3#456&+.'=:@@@@@#####"));
-		// this will fail at length
-		assertTrue(ValidationUtils.validateCategoryDisplayNameFormat(null));
-		// * is not allowed
-		assertFalse(ValidationUtils.validateCategoryDisplayNameFormat("Net ele-2_3#456&*+.'=:@"));
-		assertFalse(ValidationUtils.validateCategoryDisplayNameFormat(""));
-		// should start with alphanumeric
-		assertFalse(ValidationUtils.validateCategoryDisplayNameFormat("#abcdef"));
-	}
+    @Test
+    public void cleanArtifactLabel() {
+        assertEquals(ValidationUtils.cleanArtifactDisplayName("Test--3    134++"), "Test-3 134+");
+    }
 
-	@Test
-	public void validateCategoryNameLengthTest() {
-		assertTrue(ValidationUtils.validateCategoryDisplayNameLength("Netele-2_3#456&+.'=:@@@@@"));
-		assertTrue(ValidationUtils.validateCategoryDisplayNameLength("Nete"));
-		assertFalse(ValidationUtils.validateCategoryDisplayNameLength("Netele-2_3#456&+.'=:@@@@@1"));
-		assertFalse(ValidationUtils.validateCategoryDisplayNameLength("Ne"));
-		assertFalse(ValidationUtils.validateCategoryDisplayNameLength(null));
-	}
+    @Test
+    public void validateArtifactLabel() {
+        assertTrue(ValidationUtils.validateArtifactLabel("dsflkjsdf345JKL"));
+        assertTrue(ValidationUtils.validateArtifactLabel("dsfsd lkj  "));
+        assertTrue(ValidationUtils.validateArtifactLabel("sdfdsf---+"));
+        assertTrue(ValidationUtils.validateArtifactLabel("   -  +"));
+        assertFalse(ValidationUtils.validateArtifactLabel("sfsdfhkj111="));
+        assertFalse(ValidationUtils.validateArtifactLabel("sfsdfhkj111=dfsf%"));
+        assertFalse(ValidationUtils.validateArtifactLabel("sdfsdfljghgklsdg908*"));
+    }
 
-	@Test
-	public void normalizeCategoryNameTest() {
-		assertEquals("NeteLE-2_3 of #456&+. & Goal a Abc'=:@ AT & T", ValidationUtils.normalizeCategoryName4Display(
-				"   neteLE---2___3 OF ###456&&&+++...     aNd goal A abc'''==::@@@@@     AT and T  "));
-		assertEquals("The Bank of America", ValidationUtils.normalizeCategoryName4Display("The Bank OF America"));
-	}
+    @Test
+    public void validateCategoryNameFormatTest() {
+        assertTrue(ValidationUtils.validateCategoryDisplayNameFormat("Net           ele-2_3#456&+.'=:@@@@@#####"));
+        // this will fail at length
+        assertTrue(ValidationUtils.validateCategoryDisplayNameFormat(null));
+        // * is not allowed
+        assertFalse(ValidationUtils.validateCategoryDisplayNameFormat("Net ele-2_3#456&*+.'=:@"));
+        assertFalse(ValidationUtils.validateCategoryDisplayNameFormat(""));
+        // should start with alphanumeric
+        assertFalse(ValidationUtils.validateCategoryDisplayNameFormat("#abcdef"));
+    }
 
-	@Test
-	public void normalizeCategoryLabelTest() {
-		assertEquals("netele-2_3 of #456&+.&goal a abc'=:@ at&t",
-				ValidationUtils.normalizeCategoryName4Uniqueness("NeteLE-2_3 of #456&+.&Goal a Abc'=:@ AT&T"));
-	}
+    @Test
+    public void validateCategoryNameLengthTest() {
+        assertTrue(ValidationUtils.validateCategoryDisplayNameLength("Netele-2_3#456&+.'=:@@@@@"));
+        assertTrue(ValidationUtils.validateCategoryDisplayNameLength("Nete"));
+        assertFalse(ValidationUtils.validateCategoryDisplayNameLength("Netele-2_3#456&+.'=:@@@@@1"));
+        assertFalse(ValidationUtils.validateCategoryDisplayNameLength("Ne"));
+        assertFalse(ValidationUtils.validateCategoryDisplayNameLength(null));
+    }
 
-	/*
-	 * Validation utils end
-	 */
+    @Test
+    public void normalizeCategoryNameTest() {
+        assertEquals("NeteLE-2_3 of #456&+. & Goal a Abc'=:@ AT & T",
+            ValidationUtils.normalizeCategoryName4Display("   neteLE---2___3 OF ###456&&&+++...     aNd goal A abc'''==::@@@@@     AT and T  "));
+        assertEquals("The Bank of America", ValidationUtils.normalizeCategoryName4Display("The Bank OF America"));
+    }
 
-	/*
-	 * General utility start
-	 */
+    @Test
+    public void normalizeCategoryLabelTest() {
+        assertEquals("netele-2_3 of #456&+.&goal a abc'=:@ at&t",
+            ValidationUtils.normalizeCategoryName4Uniqueness("NeteLE-2_3 of #456&+.&Goal a Abc'=:@ AT&T"));
+    }
+    /*
+     * Validation utils end
+     */
 
-	@Test
-	public void validateFileExtension() {
-		assertEquals(Constants.EMPTY_STRING, GeneralUtility.getFilenameExtension("lalatru"));
-		assertEquals(Constants.EMPTY_STRING, GeneralUtility.getFilenameExtension("aa."));
-		assertEquals(Constants.EMPTY_STRING, GeneralUtility.getFilenameExtension(null));
-		assertEquals("yaml", GeneralUtility.getFilenameExtension("lala.tru.yaml"));
-		assertEquals("txt", GeneralUtility.getFilenameExtension("kuku.txt"));
-	}
+    /*
+     * General utility start
+     */
+    @Test
+    public void validateFileExtension() {
+        assertEquals(Constants.EMPTY_STRING, GeneralUtility.getFilenameExtension("lalatru"));
+        assertEquals(Constants.EMPTY_STRING, GeneralUtility.getFilenameExtension("aa."));
+        assertEquals(Constants.EMPTY_STRING, GeneralUtility.getFilenameExtension(null));
+        assertEquals("yaml", GeneralUtility.getFilenameExtension("lala.tru.yaml"));
+        assertEquals("txt", GeneralUtility.getFilenameExtension("kuku.txt"));
+    }
 
-	@Test
-	public void yamlTest() {
+    @Test
+    public void yamlTest() {
+        log.debug("\"kuku\"");
+        DumperOptions options = new DumperOptions();
+        // options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.FOLDED);
+        Yaml yaml = new Yaml(options);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("k1", "val");
+        parameters.put("k2", "\"val\"");
+        String str = yaml.dump(parameters);
+        log.debug(str);
+    }
 
-		log.debug("\"kuku\"");
-		DumperOptions options = new DumperOptions();
-		// options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-		options.setDefaultScalarStyle(DumperOptions.ScalarStyle.FOLDED);
-		Yaml yaml = new Yaml(options);
+    @Test
+    public void yamlValidTest() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("key: \"!@;/?:&=+$,_.~*'()[]\"");
+        byte[] payload = sb.toString().getBytes();
+        YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
+        assertTrue(yamlToObjectConverter.isValidYaml(payload));
+    }
 
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("k1", "val");
-		parameters.put("k2", "\"val\"");
+    @Test
+    public void testRemoveOnlyHtmlTags() {
+        assertEquals("gooboo", HtmlCleaner.stripHtml("<b>goo<b></b></b><b>boo</b>"));
+        /*String str = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>");*/
 
-		String str = yaml.dump(parameters);
-		log.debug(str);
-	}
-	
-	@Test
-	public void yamlValidTest() {
+        String stripHtmlAndEscape = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>");
+        assertEquals("<esofer>goo<boo", stripHtmlAndEscape);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("key: \"!@;/?:&=+$,_.~*'()[]\"");
-		byte[] payload = sb.toString().getBytes();
+        stripHtmlAndEscape = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>", true);
+        assertEquals("&lt;esofer&gt;goo&lt;boo", stripHtmlAndEscape);
 
-		YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
+        stripHtmlAndEscape = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><&</b><b>boo</b>dvc&", true);
+        assertEquals("&lt;esofer&gt;goo&lt;&amp;boodvc&amp;", stripHtmlAndEscape);
 
-		assertTrue(yamlToObjectConverter.isValidYaml(payload));
-	}
+        assertEquals("esofer&gt;&gt;&lt;&lt;", HtmlCleaner.stripHtml("esofer>><<", true));
+        assertEquals("esofer>><<", HtmlCleaner.stripHtml("esofer>><<", false));
 
-	@Test
-	public void testRemoveOnlyHtmlTags() {
+        assertEquals("<esofer1>><<esofer2>", HtmlCleaner.stripHtml("<esofer1>><<esofer2>"));
 
-		assertEquals("gooboo", HtmlCleaner.stripHtml("<b>goo<b></b></b><b>boo</b>"));
-		/*String str = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>");*/
+        assertEquals("<esofer1 a= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 a= b><h1>><<esofer2><br>"));
 
-		String stripHtmlAndEscape = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>");
-		assertEquals("<esofer>goo<boo", stripHtmlAndEscape);
+        assertEquals("&lt;esofer1 a= 'b'&gt;&gt;&lt;&lt;esofer2&gt;",
+            HtmlCleaner.stripHtml("<esofer1 a= 'b'>><<esofer2>", true));
+        assertEquals("<esofer1 a= 'b'>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 a= 'b'>><H6><<esofer2>"));
 
-		stripHtmlAndEscape = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>", true);
-		assertEquals("&lt;esofer&gt;goo&lt;boo", stripHtmlAndEscape);
+        assertEquals("<esofer1 a= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 a= b>><<esofer2>"));
 
-		stripHtmlAndEscape = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><&</b><b>boo</b>dvc&", true);
-		assertEquals("&lt;esofer&gt;goo&lt;&amp;boodvc&amp;", stripHtmlAndEscape);
+        assertEquals("<esofer1 sd sa= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>"));
 
-		assertEquals("esofer&gt;&gt;&lt;&lt;", HtmlCleaner.stripHtml("esofer>><<", true));
-		assertEquals("esofer>><<", HtmlCleaner.stripHtml("esofer>><<", false));
+        assertEquals("&lt;esofer1 sd sa= b&gt;&gt;&lt;&lt;esofer2&gt;",
+            HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>", true));
+        assertEquals("<esofer1 sd sa= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>", false));
+        assertEquals("&lt;esofer1 sd sa= b&gt;&gt;&lt;&lt;esofer2&gt;",
+            HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>", true));
+        assertEquals("<esofer1 sd sa= b>><<esofer2>",
+            HtmlCleaner.stripHtml("<esofer1 sd sa= b>><br><H1><<esofer2>", false));
+        assertEquals("&lt;esofer&gt;goo&lt;&amp;boodvc&amp;",
+            HtmlCleaner.stripHtml("<esofer><b>goo<b></b><&</b><b>boo</b>dvc&", true));
+        assertEquals("<esofer>goo<&boodvc&", HtmlCleaner.stripHtml("<esofer><b>goo<b></b><&</b><b>boo</b>dvc&", false));
+        assertEquals("<<<>>>;\"", HtmlCleaner.stripHtml("<<<>>>;\"", false));
+        assertEquals("&lt;&lt;&lt;&gt;&gt;&gt;;&quot;", HtmlCleaner.stripHtml("<<<>>>;\"", true));
+        assertEquals("<<<>>>;\"", HtmlCleaner.stripHtml("<<<>>>;\"", false));
+        assertEquals("abc ab a", HtmlCleaner.stripHtml("abc ab a", true));
+        assertEquals("abc ab a", HtmlCleaner.stripHtml("abc ab a", false));
+        assertEquals("< esofer1 sd &<>sa= b>><<esofer2>",
+            HtmlCleaner.stripHtml("< esofer1 sd &<>sa= b>><br><H1><<esofer2>", false));
+        assertEquals("sa= b>><<esofer2>", HtmlCleaner.stripHtml("<br sd &<>sa= b>><br><H1><<esofer2>", false));
+        assertEquals("< br sd &<>sa= b>><<esofer2>",
+            HtmlCleaner.stripHtml("< br sd &<>sa= b>><br><H1><<esofer2>", false));
+        assertEquals("sa= b>><<esofer2>", HtmlCleaner.stripHtml("</br sd &<>sa= b>><br><H1><<esofer2>", false));
+        assertEquals("sa= b>><<esofer2>", HtmlCleaner.stripHtml("<br sd &</>sa= b>><br><H1><<esofer2>", false));
 
-		assertEquals("<esofer1>><<esofer2>", HtmlCleaner.stripHtml("<esofer1>><<esofer2>"));
+    }
 
-		assertEquals("<esofer1 a= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 a= b><h1>><<esofer2><br>"));
-
-		assertEquals("&lt;esofer1 a= 'b'&gt;&gt;&lt;&lt;esofer2&gt;",
-				HtmlCleaner.stripHtml("<esofer1 a= 'b'>><<esofer2>", true));
-		assertEquals("<esofer1 a= 'b'>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 a= 'b'>><H6><<esofer2>"));
-
-		assertEquals("<esofer1 a= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 a= b>><<esofer2>"));
-
-		assertEquals("<esofer1 sd sa= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>"));
-
-		assertEquals("&lt;esofer1 sd sa= b&gt;&gt;&lt;&lt;esofer2&gt;",
-				HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>", true));
-		assertEquals("<esofer1 sd sa= b>><<esofer2>", HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>", false));
-		assertEquals("&lt;esofer1 sd sa= b&gt;&gt;&lt;&lt;esofer2&gt;",
-				HtmlCleaner.stripHtml("<esofer1 sd sa= b>><<esofer2>", true));
-		assertEquals("<esofer1 sd sa= b>><<esofer2>",
-				HtmlCleaner.stripHtml("<esofer1 sd sa= b>><br><H1><<esofer2>", false));
-		assertEquals("&lt;esofer&gt;goo&lt;&amp;boodvc&amp;",
-				HtmlCleaner.stripHtml("<esofer><b>goo<b></b><&</b><b>boo</b>dvc&", true));
-		assertEquals("<esofer>goo<&boodvc&", HtmlCleaner.stripHtml("<esofer><b>goo<b></b><&</b><b>boo</b>dvc&", false));
-		assertEquals("<<<>>>;\"", HtmlCleaner.stripHtml("<<<>>>;\"", false));
-		assertEquals("&lt;&lt;&lt;&gt;&gt;&gt;;&quot;", HtmlCleaner.stripHtml("<<<>>>;\"", true));
-		assertEquals("<<<>>>;\"", HtmlCleaner.stripHtml("<<<>>>;\"", false));
-		assertEquals("abc ab a", HtmlCleaner.stripHtml("abc ab a", true));
-		assertEquals("abc ab a", HtmlCleaner.stripHtml("abc ab a", false));
-		assertEquals("< esofer1 sd &<>sa= b>><<esofer2>",
-				HtmlCleaner.stripHtml("< esofer1 sd &<>sa= b>><br><H1><<esofer2>", false));
-		assertEquals("sa= b>><<esofer2>", HtmlCleaner.stripHtml("<br sd &<>sa= b>><br><H1><<esofer2>", false));
-		assertEquals("< br sd &<>sa= b>><<esofer2>",
-				HtmlCleaner.stripHtml("< br sd &<>sa= b>><br><H1><<esofer2>", false));
-		assertEquals("sa= b>><<esofer2>", HtmlCleaner.stripHtml("</br sd &<>sa= b>><br><H1><<esofer2>", false));
-		assertEquals("sa= b>><<esofer2>", HtmlCleaner.stripHtml("<br sd &</>sa= b>><br><H1><<esofer2>", false));
-
-	}
-
-	/*
-	 * General utility end
-	 */
-}
+    /*
+     * General utility end
+     */
+} 

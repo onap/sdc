@@ -20,7 +20,6 @@
  * ===================================================================
  *
  */
-
 package org.openecomp.sdc.be.config;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
@@ -46,52 +45,51 @@ public class ConfigurationManagerTest {
     @Before
     public void setUp() {
         String appConfigDir = "src/test/resources/config/common";
-        ConfigurationSource configurationSource =
-                new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         configurationManager = new ConfigurationManager(configurationSource);
     }
 
     @Test
     public void validateBean() {
         assertThat(ConfigurationManager.class,
-                hasValidGettersAndSettersExcluding(
-                        "distributionEngineConfiguration",
-                        "ecompErrorConfiguration",
-                        "errorConfiguration",
-                        "neo4jErrorsConfiguration"
-                ));
+            hasValidGettersAndSettersExcluding("distributionEngineConfiguration", "ecompErrorConfiguration", "errorConfiguration",
+                "neo4jErrorsConfiguration"));
     }
-    private class TestErrorConfiguration extends ErrorConfiguration{}
+
     @Test
     public void testGetSetErrorConfiguration() {
         configurationManager.setErrorConfiguration(new TestErrorConfiguration());
-        assertEquals(
-                configurationManager.getErrorConfiguration().getClass(),
-                TestErrorConfiguration.class);
+        assertEquals(configurationManager.getErrorConfiguration().getClass(), TestErrorConfiguration.class);
     }
-    private class TestEcompErrorConfiguration extends EcompErrorConfiguration{}
+
     @Test
     public void testGetSetEcompErrorConfiguration() {
         configurationManager.setEcompErrorConfiguration(new TestEcompErrorConfiguration());
-        assertEquals(
-                configurationManager.getEcompErrorConfiguration().getClass(),
-                TestEcompErrorConfiguration.class);
+        assertEquals(configurationManager.getEcompErrorConfiguration().getClass(), TestEcompErrorConfiguration.class);
     }
+
     @Test
     public void testGetDistributionEngineConfiguration() {
         assertEquals(configurationManager.getDistributionEngineConfiguration(),
-                ConfigurationManager.getConfigurationManager().configurations
-                        .get(DistributionEngineConfiguration.class.getSimpleName()));
+            ConfigurationManager.getConfigurationManager().configurations.get(DistributionEngineConfiguration.class.getSimpleName()));
     }
-    private class TestConfiguration extends Configuration{}
+
     @Test
     public void testGetConfigurationAndWatch() {
         ConfigurationListener testListener = Mockito.mock(ConfigurationListener.class);
         configurationManager.setConfiguration(new TestConfiguration());
-        assertEquals(
-                configurationManager.getConfigurationAndWatch(testListener).getClass(),
-                TestConfiguration.class
-                );
+        assertEquals(configurationManager.getConfigurationAndWatch(testListener).getClass(), TestConfiguration.class);
     }
 
+    private class TestErrorConfiguration extends ErrorConfiguration {
+
+    }
+
+    private class TestEcompErrorConfiguration extends EcompErrorConfiguration {
+
+    }
+
+    private class TestConfiguration extends Configuration {
+
+    }
 }

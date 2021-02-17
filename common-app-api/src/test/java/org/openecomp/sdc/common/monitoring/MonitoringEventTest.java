@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,246 +17,202 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.monitoring;
 
 import org.junit.Test;
 
-
 public class MonitoringEventTest {
 
-	private MonitoringEvent createTestSubject() {
-		return new MonitoringEvent();
-	}
+    private MonitoringEvent createTestSubject() {
+        return new MonitoringEvent();
+    }
 
-	
-	@Test
-	public void testGetHostid() throws Exception {
-		MonitoringEvent testSubject;
-		String result;
+    @Test
+    public void testGetHostid() throws Exception {
+        MonitoringEvent testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getHostid();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getHostid();
-	}
+    @Test
+    public void testSetHostid() throws Exception {
+        MonitoringEvent testSubject;
+        String hostid = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setHostid(hostid);
+    }
 
-	
-	@Test
-	public void testSetHostid() throws Exception {
-		MonitoringEvent testSubject;
-		String hostid = "";
+    @Test
+    public void testGetHostcpu() throws Exception {
+        MonitoringEvent testSubject;
+        Long result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getHostcpu();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setHostid(hostid);
-	}
+    @Test
+    public void testSetHostcpu() throws Exception {
+        MonitoringEvent testSubject;
+        Long hostcpu = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setHostcpu(hostcpu);
+    }
 
-	
-	@Test
-	public void testGetHostcpu() throws Exception {
-		MonitoringEvent testSubject;
-		Long result;
+    @Test
+    public void testGetHostmem() throws Exception {
+        MonitoringEvent testSubject;
+        Double result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getHostmem();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getHostcpu();
-	}
+    @Test
+    public void testSetHostmem() throws Exception {
+        MonitoringEvent testSubject;
+        Double hostmem = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setHostmem(hostmem);
+    }
 
-	
-	@Test
-	public void testSetHostcpu() throws Exception {
-		MonitoringEvent testSubject;
-		Long hostcpu = null;
+    @Test
+    public void testGetHostdisk() throws Exception {
+        MonitoringEvent testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getHostdisk();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setHostcpu(hostcpu);
-	}
+    @Test
+    public void testSetHostdisk() throws Exception {
+        MonitoringEvent testSubject;
+        String hostdisk = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setHostdisk(hostdisk);
+    }
 
-	
-	@Test
-	public void testGetHostmem() throws Exception {
-		MonitoringEvent testSubject;
-		Double result;
+    @Test
+    public void testGetJvmid() throws Exception {
+        MonitoringEvent testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getJvmid();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getHostmem();
-	}
+    @Test
+    public void testSetJvmid() throws Exception {
+        MonitoringEvent testSubject;
+        String jvmid = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setJvmid(jvmid);
+    }
 
-	
-	@Test
-	public void testSetHostmem() throws Exception {
-		MonitoringEvent testSubject;
-		Double hostmem = null;
+    @Test
+    public void testGetJvmcpu() throws Exception {
+        MonitoringEvent testSubject;
+        Long result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getJvmcpu();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setHostmem(hostmem);
-	}
+    @Test
+    public void testSetJvmcpu() throws Exception {
+        MonitoringEvent testSubject;
+        Long jvmcpu = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setJvmcpu(jvmcpu);
+    }
 
-	
-	@Test
-	public void testGetHostdisk() throws Exception {
-		MonitoringEvent testSubject;
-		String result;
+    @Test
+    public void testGetJvmmem() throws Exception {
+        MonitoringEvent testSubject;
+        Long result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getJvmmem();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getHostdisk();
-	}
+    @Test
+    public void testSetJvmmem() throws Exception {
+        MonitoringEvent testSubject;
+        Long jvmmem = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setJvmmem(jvmmem);
+    }
 
-	
-	@Test
-	public void testSetHostdisk() throws Exception {
-		MonitoringEvent testSubject;
-		String hostdisk = "";
+    @Test
+    public void testGetJvmtnum() throws Exception {
+        MonitoringEvent testSubject;
+        Integer result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getJvmtnum();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setHostdisk(hostdisk);
-	}
+    @Test
+    public void testSetJvmtnum() throws Exception {
+        MonitoringEvent testSubject;
+        Integer jvmtnum = 0;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setJvmtnum(jvmtnum);
+    }
 
-	
-	@Test
-	public void testGetJvmid() throws Exception {
-		MonitoringEvent testSubject;
-		String result;
+    @Test
+    public void testGetAppid() throws Exception {
+        MonitoringEvent testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getAppid();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getJvmid();
-	}
+    @Test
+    public void testSetAppid() throws Exception {
+        MonitoringEvent testSubject;
+        String appid = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setAppid(appid);
+    }
 
-	
-	@Test
-	public void testSetJvmid() throws Exception {
-		MonitoringEvent testSubject;
-		String jvmid = "";
+    @Test
+    public void testGetAppstat() throws Exception {
+        MonitoringEvent testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getAppstat();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setJvmid(jvmid);
-	}
+    @Test
+    public void testSetAppstat() throws Exception {
+        MonitoringEvent testSubject;
+        String appstat = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setAppstat(appstat);
+    }
 
-	
-	@Test
-	public void testGetJvmcpu() throws Exception {
-		MonitoringEvent testSubject;
-		Long result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getJvmcpu();
-	}
-
-	
-	@Test
-	public void testSetJvmcpu() throws Exception {
-		MonitoringEvent testSubject;
-		Long jvmcpu = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setJvmcpu(jvmcpu);
-	}
-
-	
-	@Test
-	public void testGetJvmmem() throws Exception {
-		MonitoringEvent testSubject;
-		Long result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getJvmmem();
-	}
-
-	
-	@Test
-	public void testSetJvmmem() throws Exception {
-		MonitoringEvent testSubject;
-		Long jvmmem = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setJvmmem(jvmmem);
-	}
-
-	
-	@Test
-	public void testGetJvmtnum() throws Exception {
-		MonitoringEvent testSubject;
-		Integer result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getJvmtnum();
-	}
-
-	
-	@Test
-	public void testSetJvmtnum() throws Exception {
-		MonitoringEvent testSubject;
-		Integer jvmtnum = 0;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setJvmtnum(jvmtnum);
-	}
-
-	
-	@Test
-	public void testGetAppid() throws Exception {
-		MonitoringEvent testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAppid();
-	}
-
-	
-	@Test
-	public void testSetAppid() throws Exception {
-		MonitoringEvent testSubject;
-		String appid = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setAppid(appid);
-	}
-
-	
-	@Test
-	public void testGetAppstat() throws Exception {
-		MonitoringEvent testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAppstat();
-	}
-
-	
-	@Test
-	public void testSetAppstat() throws Exception {
-		MonitoringEvent testSubject;
-		String appstat = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setAppstat(appstat);
-	}
-
-	
-	@Test
-	public void testToString() throws Exception {
-		MonitoringEvent testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
-	}
+    @Test
+    public void testToString() throws Exception {
+        MonitoringEvent testSubject;
+        String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.toString();
+    }
 }

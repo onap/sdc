@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config.validation;
 
 import java.util.ArrayList;
@@ -36,7 +35,6 @@ public class ArtifactConfigValidatorTest {
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
-
     public ArtifactConfigValidator artifactConfigValidator;
 
     @Test
@@ -45,26 +43,21 @@ public class ArtifactConfigValidatorTest {
         //not base artifacts, should validate
         artifactConfigValidator = new ArtifactConfigValidator(configuration, Collections.emptySet());
         artifactConfigValidator.validate();
-        final HashSet<ArtifactTypeEnum> baseArtifactTypes = new HashSet<>(
-            Arrays.asList(ArtifactTypeEnum.AAI_SERVICE_MODEL, ArtifactTypeEnum.BPEL));
+        final HashSet<ArtifactTypeEnum> baseArtifactTypes = new HashSet<>(Arrays.asList(ArtifactTypeEnum.AAI_SERVICE_MODEL, ArtifactTypeEnum.BPEL));
         //with base artifacts, but no artifact configured, should validate
         artifactConfigValidator = new ArtifactConfigValidator(configuration, baseArtifactTypes);
         artifactConfigValidator.validate();
-
         final List<ArtifactConfiguration> artifactConfigurationList = new ArrayList<>();
         final ArtifactConfiguration artifactConfiguration1 = new ArtifactConfiguration();
         artifactConfiguration1.setType(ArtifactTypeEnum.AAI_SERVICE_MODEL.getType());
         artifactConfigurationList.add(artifactConfiguration1);
-
         final ArtifactConfiguration artifactConfiguration2 = new ArtifactConfiguration();
         artifactConfiguration2.setType(ArtifactTypeEnum.BPEL.getType());
         artifactConfigurationList.add(artifactConfiguration2);
-
         configuration.setArtifacts(artifactConfigurationList);
         //with base artifacts and corresponding configuration, should validate
         artifactConfigValidator = new ArtifactConfigValidator(configuration, baseArtifactTypes);
         artifactConfigValidator.validate();
-
         //with base artifacts and missing one configuration, should not validate
         configuration.setArtifacts(Collections.singletonList(artifactConfiguration1));
         exceptionRule.expect(MissingBaseArtifactConfigException.class);
@@ -72,5 +65,4 @@ public class ArtifactConfigValidatorTest {
         artifactConfigValidator = new ArtifactConfigValidator(configuration, baseArtifactTypes);
         artifactConfigValidator.validate();
     }
-
 }

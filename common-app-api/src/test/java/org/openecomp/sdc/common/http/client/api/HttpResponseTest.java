@@ -17,47 +17,40 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
-
-import org.apache.http.HttpStatus;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.apache.http.HttpStatus;
+import org.junit.Test;
 
 public class HttpResponseTest {
 
     @Test
     public void validateNoDescriptionConstructor() {
         final String testResponse = "test response";
-
         HttpResponse<String> httpResponseTest = new HttpResponse<>(testResponse, HttpStatus.SC_OK);
-
-        assertEquals(httpResponseTest.getStatusCode(),HttpStatus.SC_OK);
-        assertEquals(httpResponseTest.getResponse(),testResponse);
-        assertEquals(httpResponseTest.getDescription(),"");
+        assertEquals(httpResponseTest.getStatusCode(), HttpStatus.SC_OK);
+        assertEquals(httpResponseTest.getResponse(), testResponse);
+        assertEquals(httpResponseTest.getDescription(), "");
     }
 
     @Test
     public void validateAllArgsConstructor() {
         final String testResponse = "test response";
         final String testDescription = "test description";
-
         HttpResponse<String> httpResponseTest = new HttpResponse<>(testResponse, HttpStatus.SC_OK, testDescription);
-
-        assertEquals(httpResponseTest.getStatusCode(),HttpStatus.SC_OK);
-        assertEquals(httpResponseTest.getResponse(),testResponse);
-        assertEquals(httpResponseTest.getDescription(),testDescription);
+        assertEquals(httpResponseTest.getStatusCode(), HttpStatus.SC_OK);
+        assertEquals(httpResponseTest.getResponse(), testResponse);
+        assertEquals(httpResponseTest.getDescription(), testDescription);
     }
 
     @Test
     public void validateToStringConstructor() {
         final String testResponse = "test response";
         final String testDescription = "test description";
-
         HttpResponse<String> httpResponseTest = new HttpResponse<>(testResponse, HttpStatus.SC_OK, testDescription);
-
         assertTrue(httpResponseTest.toString().contains(Integer.toString(HttpStatus.SC_OK)));
         assertTrue(httpResponseTest.toString().contains(testResponse));
         assertTrue(httpResponseTest.toString().contains(testDescription));

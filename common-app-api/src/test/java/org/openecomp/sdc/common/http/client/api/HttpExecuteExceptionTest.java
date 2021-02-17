@@ -17,15 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
+
+import static org.hamcrest.core.Is.is;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
 
 public class HttpExecuteExceptionTest {
 
@@ -33,7 +31,7 @@ public class HttpExecuteExceptionTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void validateOneArgConstructorWithMessage() throws Exception{
+    public void validateOneArgConstructorWithMessage() throws Exception {
         final String testMessage = "test error message";
         expectedException.expect(HttpExecuteException.class);
         expectedException.expectMessage(testMessage);
@@ -41,24 +39,22 @@ public class HttpExecuteExceptionTest {
     }
 
     @Test
-    public void validateOneArgConstructorWithThrowable() throws Exception{
+    public void validateOneArgConstructorWithThrowable() throws Exception {
         final String testThrowableMessage = "test throwable error message";
         final Throwable testThrowable = new Throwable(testThrowableMessage);
         expectedException.expect(HttpExecuteException.class);
         expectedException.expectCause(is(testThrowable));
-
         throw new HttpExecuteException(testThrowable);
     }
 
     @Test
-    public void validateAllArgConstructor() throws Exception{
+    public void validateAllArgConstructor() throws Exception {
         final String testMessage = "test error message";
         final String testThrowableMessage = "test throwable error message";
         final Throwable testThrowable = new Throwable(testThrowableMessage);
         expectedException.expect(HttpExecuteException.class);
         expectedException.expectMessage(testMessage);
         expectedException.expectCause(is(testThrowable));
-
         throw new HttpExecuteException(testMessage, testThrowable);
     }
 }

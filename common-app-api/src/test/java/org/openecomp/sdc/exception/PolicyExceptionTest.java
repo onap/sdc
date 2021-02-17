@@ -17,26 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.exception;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.junit.Test;
+
 public class PolicyExceptionTest {
 
     @Test
     public void validateNoArgConstructorsThrowsCorrectException() {
-
         PolicyException okResponseInfo = new PolicyException();
-
         assertNull(okResponseInfo.getMessageId());
         assertNull(okResponseInfo.getFormattedErrorMessage());
         assertNull(okResponseInfo.getVariables());
-
     }
 
     @Test
@@ -45,10 +41,9 @@ public class PolicyExceptionTest {
         final String testMessage = "test error message: %0, %1";
         final String[] testVariables = {"testVariable01", "testVariable02"};
         final String expectedMessage = "test error message: testVariable01, testVariable02";
-
         PolicyException okResponseInfo = new PolicyException(testMessageId, testMessage, testVariables);
-        assertEquals(okResponseInfo.getMessageId(),testMessageId);
-        assertEquals(okResponseInfo.getFormattedErrorMessage(),expectedMessage);
-        assertArrayEquals(okResponseInfo.getVariables(),testVariables);
+        assertEquals(okResponseInfo.getMessageId(), testMessageId);
+        assertEquals(okResponseInfo.getFormattedErrorMessage(), expectedMessage);
+        assertArrayEquals(okResponseInfo.getVariables(), testVariables);
     }
 }

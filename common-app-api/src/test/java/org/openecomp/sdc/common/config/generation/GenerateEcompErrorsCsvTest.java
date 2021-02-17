@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,36 +17,31 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.config.generation;
 
 import org.junit.Test;
 
 public class GenerateEcompErrorsCsvTest {
 
-	private GenerateEcompErrorsCsv createTestSubject() {
-		return new GenerateEcompErrorsCsv();
-	}
+    private GenerateEcompErrorsCsv createTestSubject() {
+        return new GenerateEcompErrorsCsv();
+    }
 
-	
-	@Test
-	public void testGenerateEcompErrorsCsvFile() throws Exception {
-		GenerateEcompErrorsCsv testSubject;
-		String targetFolder = "";
-		boolean addTimeToFileName = false;
-		boolean result;
+    @Test
+    public void testGenerateEcompErrorsCsvFile() throws Exception {
+        GenerateEcompErrorsCsv testSubject;
+        String targetFolder = "";
+        boolean addTimeToFileName = false;
+        boolean result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.generateEcompErrorsCsvFile(targetFolder, addTimeToFileName);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.generateEcompErrorsCsvFile(targetFolder, addTimeToFileName);
-	}
-
-	
-	@Test
-	public void testMain() throws Exception {
-		String[] args = new String[] { "" };
-
-		// default test
-		GenerateEcompErrorsCsv.main(args);
-	}
+    @Test
+    public void testMain() throws Exception {
+        String[] args = new String[]{""};
+        // default test
+        GenerateEcompErrorsCsv.main(args);
+    }
 }

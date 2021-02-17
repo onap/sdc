@@ -17,9 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.util;
 
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,24 +33,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class HealthCheckUtilTest {
 
-    private HealthCheckUtil healthCheckUtil;
-
     private final String testComponent = "service";
-
+    private HealthCheckUtil healthCheckUtil;
     @Mock
     private HealthCheckInfo healthCheckInfo;
-
     private List<HealthCheckInfo> healthCheckInfos;
 
     @Before
@@ -58,9 +53,7 @@ public class HealthCheckUtilTest {
     public void validateGetAggregateStatusReturnsTrue() {
         final Collection<String> excludes = Collections.emptyList();
         when(healthCheckInfo.getHealthCheckStatus()).thenReturn(HealthCheckInfo.HealthCheckStatus.UP);
-
         final boolean result = healthCheckUtil.getAggregateStatus(healthCheckInfos, excludes);
-
         assertTrue(result);
     }
 
@@ -68,20 +61,15 @@ public class HealthCheckUtilTest {
     public void validateGetAggregateStatusReturnsFalseIfStatusIsDown() {
         final Collection<String> excludes = Collections.emptyList();
         when(healthCheckInfo.getHealthCheckStatus()).thenReturn(HealthCheckInfo.HealthCheckStatus.DOWN);
-
         final boolean result = healthCheckUtil.getAggregateStatus(healthCheckInfos, excludes);
-
         assertFalse(result);
     }
 
     @Test
     public void validateGetAggregateDescriptionReturnsProperDescription() {
         when(healthCheckInfo.getHealthCheckStatus()).thenReturn(HealthCheckInfo.HealthCheckStatus.DOWN);
-
-        final String result = healthCheckUtil.getAggregateDescription(healthCheckInfos );
-
+        final String result = healthCheckUtil.getAggregateDescription(healthCheckInfos);
         assertTrue(result.contains(testComponent));
         assertTrue(result.contains("Down"));
     }
-
 }

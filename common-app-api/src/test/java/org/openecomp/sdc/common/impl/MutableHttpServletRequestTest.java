@@ -18,7 +18,6 @@
  * ============LICENSE_END============================================
  * ===================================================================
  */
-
 package org.openecomp.sdc.common.impl;
 
 import static org.junit.Assert.assertEquals;
@@ -38,13 +37,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MutableHttpServletRequestTest {
 
+    private static final String HOST = "Host";
+    private static final String HOST_LOWERCASE = "host";
+    private static final String WRAPPED_VALUE = "wrappedValue";
+    private static final String NOT_EXISTS_KEY = "notExistsKey";
     @Mock
     private HttpServletRequest servletRequest;
     private MutableHttpServletRequest mutableHttpServletRequest;
-    private static final String HOST = "Host";
-    private static final String HOST_LOWERCASE = "host";
-    private static final String WRAPPED_VALUE= "wrappedValue";
-    private static final String NOT_EXISTS_KEY= "notExistsKey";
 
     @Before
     public void setup() {

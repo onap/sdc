@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.exception;
+
+import static org.hamcrest.core.Is.is;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.hamcrest.core.Is.is;
 
 public class NotFoundExceptionTest {
 
@@ -36,7 +35,6 @@ public class NotFoundExceptionTest {
         final String testMessage = "test error message";
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(testMessage);
-
         throw new NotFoundException(testMessage);
     }
 
@@ -48,7 +46,6 @@ public class NotFoundExceptionTest {
         expectedException.expect(NotFoundException.class);
         expectedException.expectMessage(testMessage);
         expectedException.expectCause(is(testThrowable));
-
         throw new NotFoundException(testMessage, testThrowable);
     }
 }

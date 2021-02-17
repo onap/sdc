@@ -17,15 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
+
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.junit.Test;
 import org.onap.sdc.security.SecurityUtil;
 import org.openecomp.sdc.common.http.config.ClientCertificate;
-
-import static org.junit.Assert.assertNotNull;
 
 public class HttpConnectionMngFactoryTest {
 
@@ -33,15 +32,11 @@ public class HttpConnectionMngFactoryTest {
     public void validateFactoryCreatesValidHttpClientConnectionManager() {
         final String testKeyStore = "testKeyStore ";
         final String testKeyStorePassword = SecurityUtil.INSTANCE.encrypt("testKeyStorePassword").left().value();
-
         ClientCertificate clientCertificate = new ClientCertificate();
         clientCertificate.setKeyStore(testKeyStore);
         clientCertificate.setKeyStorePassword(testKeyStorePassword);
         HttpClientConnectionManager httpClientConnectionManager = new HttpConnectionMngFactory().getOrCreate(clientCertificate);
-
         assertNotNull(httpClientConnectionManager);
-
         httpClientConnectionManager.shutdown();
     }
-
 }

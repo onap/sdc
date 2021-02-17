@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 public class HttpRequestConfigTest {
+
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(HttpRequestConfig.class, hasValidGettersAndSetters());

@@ -30,13 +30,12 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 @RunWith(MockitoJUnitRunner.class)
 public class CommonUtilityTest {
 
-    @Mock
-    private Logger logger;
-
     private static final String ARGUMENT1 = "ARGUMENT1";
     private static final String ARGUMENT2 = "ARGUMENT2";
     private static final String ARGUMENT3 = "ARGUMENT3";
     private static final String FORMAT = "FORMAT";
+    @Mock
+    private Logger logger;
 
     @Test
     public void shouldLogError() {
