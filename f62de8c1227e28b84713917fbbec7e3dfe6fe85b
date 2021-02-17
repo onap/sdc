@@ -46,6 +46,29 @@
       "revId": "f62de8c1227e28b84713917fbbec7e3dfe6fe85b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20a70728_88ec79a9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/ToscaExportHandlerTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-17T09:42:08Z",
+      "side": 1,
+      "message": "I meant:\nverify(toscaOperationFacade, times(N)).getToscaFullElement(eq(\"name\"));\nverify(toscaOperationFacade, times(N)).getToscaFullElement(eq(\"modelName\"));\n\nmocked methods were called",
+      "range": {
+        "startLine": 370,
+        "startChar": 4,
+        "endLine": 370,
+        "endChar": 5
+      },
+      "revId": "f62de8c1227e28b84713917fbbec7e3dfe6fe85b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
