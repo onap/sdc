@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8fbcbe3c_34727460",
+        "filename": "catalog-model/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2021-02-17T14:34:52Z",
+      "side": 1,
+      "message": "pls update to latest of the dep",
+      "range": {
+        "startLine": 339,
+        "startChar": 14,
+        "endLine": 339,
+        "endChar": 20
+      },
+      "revId": "7e1c751e2d640356a50a387a3416b093207fe509",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
