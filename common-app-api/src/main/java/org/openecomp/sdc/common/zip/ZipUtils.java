@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.zip;
 
 import java.io.BufferedOutputStream;
@@ -55,6 +54,7 @@ public class ZipUtils {
 
     /**
      * Checks if the path is a zip slip attempt calling the {@link #checkForZipSlipInRead(Path)} method.
+     *
      * @param zipEntry the zip entry
      * @throws ZipSlipException when a zip slip attempt is detected
      */
@@ -64,8 +64,7 @@ public class ZipUtils {
     }
 
     /**
-     * Checks if the path is a zip slip attempt when you don't have a destination folder eg in memory reading or zip
-     * creation.
+     * Checks if the path is a zip slip attempt when you don't have a destination folder eg in memory reading or zip creation.
      *
      * @param filePath the file path
      * @throws ZipSlipException when a zip slip attempt is detected
@@ -81,7 +80,6 @@ public class ZipUtils {
         if (canonicalPath != null && !canonicalPath.equals(file.getAbsolutePath())) {
             throw new ZipSlipException(filePath.toString());
         }
-
         if (filePath.toString().contains("../") || filePath.toString().contains("..\\")) {
             throw new ZipSlipException(filePath.toString());
         }
@@ -90,30 +88,26 @@ public class ZipUtils {
     /**
      * Checks if the zip entry is a zip slip attempt based on the destination directory.
      *
-     * @param zipEntry the zip entry
+     * @param zipEntry            the zip entry
      * @param targetDirectoryPath the target extraction folder
-     * @throws ZipException when the zip slip was detected as a {@link ZipSlipException}. Also when there was a problem
-     * getting the canonical paths from the zip entry or target directory.
+     * @throws ZipException when the zip slip was detected as a {@link ZipSlipException}. Also when there was a problem getting the canonical paths
+     *                      from the zip entry or target directory.
      */
-    public static void checkForZipSlipInExtraction(final ZipEntry zipEntry,
-                                                   final Path targetDirectoryPath) throws ZipException {
+    public static void checkForZipSlipInExtraction(final ZipEntry zipEntry, final Path targetDirectoryPath) throws ZipException {
         final File targetDirectoryAsFile = targetDirectoryPath.toFile();
         final File targetFile = new File(targetDirectoryAsFile, zipEntry.getName());
         final String targetDirectoryCanonicalPath;
         try {
             targetDirectoryCanonicalPath = targetDirectoryAsFile.getCanonicalPath();
         } catch (final IOException e) {
-            throw new ZipException(
-                String.format("Could not obtain canonical path of: '%s'", targetDirectoryAsFile.getAbsolutePath()), e);
+            throw new ZipException(String.format("Could not obtain canonical path of: '%s'", targetDirectoryAsFile.getAbsolutePath()), e);
         }
         final String targetFileCanonicalPath;
         try {
             targetFileCanonicalPath = targetFile.getCanonicalPath();
         } catch (final IOException e) {
-            throw new ZipException(
-                String.format("Could not obtain canonical path of: '%s'", targetFile.getAbsolutePath()), e);
+            throw new ZipException(String.format("Could not obtain canonical path of: '%s'", targetFile.getAbsolutePath()), e);
         }
-
         if (!targetFileCanonicalPath.startsWith(targetDirectoryCanonicalPath + File.separator)) {
             throw new ZipSlipException(zipEntry.getName());
         }
@@ -132,13 +126,12 @@ public class ZipUtils {
     /**
      * Reads a zip file into memory. Parses the zipFile in byte array and calls {@link #readZip(byte[], boolean)}.
      *
-     * @param zipFile the zip file to read
+     * @param zipFile                 the zip file to read
      * @param hasToIncludeDirectories includes or not the directories found during the zip reading
      * @return a Map representing a pair of file path and file byte array
      * @throws ZipException when there was a problem during the reading process
      */
-    public static Map<String, byte[]> readZip(final File zipFile,
-                                              final boolean hasToIncludeDirectories) throws ZipException {
+    public static Map<String, byte[]> readZip(final File zipFile, final boolean hasToIncludeDirectories) throws ZipException {
         try {
             return readZip(Files.readAllBytes(zipFile.toPath()), hasToIncludeDirectories);
         } catch (final IOException e) {
@@ -147,9 +140,9 @@ public class ZipUtils {
     }
 
     /**
-     * Reads a zip file to a in memory structure formed by the file path and its bytes. The structure can contains only
-     * files or files and directories. If configured to include directories, only empty directories and directories that
-     * contains files will be included. The full directory tree will not be generated, eg:
+     * Reads a zip file to a in memory structure formed by the file path and its bytes. The structure can contains only files or files and
+     * directories. If configured to include directories, only empty directories and directories that contains files will be included. The full
+     * directory tree will not be generated, eg:
      * <pre>
      * \
      * \..\Directory
@@ -157,33 +150,27 @@ public class ZipUtils {
      * \..\..\..\aFile.txt
      * \..\..\EmptyChildDirectory
      * </pre>
-     * The return will include "Directory\ChildDirectory\aFile.txt" and "Directory\EmptyChildDirectory" but not
-     * "Directory" or the root.
+     * The return will include "Directory\ChildDirectory\aFile.txt" and "Directory\EmptyChildDirectory" but not "Directory" or the root.
      *
-     * @param zipFileBytes the zip file byte array to read
+     * @param zipFileBytes            the zip file byte array to read
      * @param hasToIncludeDirectories includes or not the directories found during the zip reading.
      * @return a Map representing a pair of file path and file byte array
      * @throws ZipException when there was a problem during the reading process
      */
-    public static Map<String, byte[]> readZip(final byte[] zipFileBytes,
-                                              final boolean hasToIncludeDirectories) throws ZipException {
+    public static Map<String, byte[]> readZip(final byte[] zipFileBytes, final boolean hasToIncludeDirectories) throws ZipException {
         final Map<String, byte[]> filePathAndByteMap = new HashMap<>();
-
         try (final ZipInputStream inputZipStream = ZipUtils.getInputStreamFromBytes(zipFileBytes)) {
             ZipEntry zipEntry;
             while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-                filePathAndByteMap
-                    .putAll(processZipEntryInRead(zipEntry, getBytes(inputZipStream), hasToIncludeDirectories));
+                filePathAndByteMap.putAll(processZipEntryInRead(zipEntry, getBytes(inputZipStream), hasToIncludeDirectories));
             }
         } catch (final IOException e) {
             LOGGER.warn("Could not close the zip input stream", e);
         }
-
         return filePathAndByteMap;
     }
 
-    private static Map<String, byte[]> processZipEntryInRead(final ZipEntry zipEntry,
-                                                             final byte[] inputStreamBytes,
+    private static Map<String, byte[]> processZipEntryInRead(final ZipEntry zipEntry, final byte[] inputStreamBytes,
                                                              final boolean hasToIncludeDirectories) throws ZipException {
         final Map<String, byte[]> filePathAndByteMap = new HashMap<>();
         checkForZipSlipInRead(zipEntry);
@@ -193,7 +180,6 @@ public class ZipUtils {
             }
             return filePathAndByteMap;
         }
-
         if (hasToIncludeDirectories) {
             final Path parentFolderPath = Paths.get(zipEntry.getName()).getParent();
             if (parentFolderPath != null) {
@@ -201,7 +187,6 @@ public class ZipUtils {
             }
         }
         filePathAndByteMap.put(zipEntry.getName(), inputStreamBytes);
-
         return filePathAndByteMap;
     }
 
@@ -213,7 +198,7 @@ public class ZipUtils {
      */
     private static String normalizeFolder(final String folderPath) {
         final StringBuilder normalizedFolderBuilder = new StringBuilder(folderPath);
-        if(!folderPath.endsWith(File.separator)) {
+        if (!folderPath.endsWith(File.separator)) {
             normalizedFolderBuilder.append(File.separator);
         }
         return normalizedFolderBuilder.toString();
@@ -239,7 +224,7 @@ public class ZipUtils {
     /**
      * Unzips a zip file into an output folder.
      *
-     * @param zipFilePath the zip file path
+     * @param zipFilePath  the zip file path
      * @param outputFolder the output folder path
      * @throws ZipException when there was a problem during the unzip process
      */
@@ -248,11 +233,9 @@ public class ZipUtils {
             return;
         }
         createDirectoryIfNotExists(outputFolder);
-
         final File zipFile = zipFilePath.toFile();
-        try (final FileInputStream fileInputStream = new FileInputStream(zipFile);
-            final ZipInputStream stream = new ZipInputStream(fileInputStream)) {
-
+        try (final FileInputStream fileInputStream = new FileInputStream(zipFile); final ZipInputStream stream = new ZipInputStream(
+            fileInputStream)) {
             ZipEntry zipEntry;
             while ((zipEntry = stream.getNextEntry()) != null) {
                 checkForZipSlipInExtraction(zipEntry, outputFolder);
@@ -267,14 +250,14 @@ public class ZipUtils {
         } catch (final FileNotFoundException e) {
             throw new ZipException(String.format("Could not find file: '%s'", zipFile.getAbsolutePath()), e);
         } catch (final IOException e) {
-            throw new ZipException(
-                String.format("An unexpected error occurred trying to unzip '%s'", zipFile.getAbsolutePath()), e);
+            throw new ZipException(String.format("An unexpected error occurred trying to unzip '%s'", zipFile.getAbsolutePath()), e);
         }
     }
 
     /**
      * Writes a file from a zipInputStream to a path. Creates the file parent directories if they don't exist.
-     * @param zipInputStream the zip input stream
+     *
+     * @param zipInputStream  the zip input stream
      * @param fileToWritePath the file path to write
      * @throws ZipException when there was a problem during the file creation
      */
@@ -284,8 +267,7 @@ public class ZipUtils {
             try {
                 Files.createDirectories(parentFolderPath);
             } catch (final IOException e) {
-                throw new ZipException(
-                    String.format("Could not create parent directories of '%s'", fileToWritePath.toString()), e);
+                throw new ZipException(String.format("Could not create parent directories of '%s'", fileToWritePath.toString()), e);
             }
         }
         try (final FileOutputStream outputStream = new FileOutputStream(fileToWritePath.toFile())) {
@@ -293,9 +275,7 @@ public class ZipUtils {
         } catch (final FileNotFoundException e) {
             throw new ZipException(String.format("Could not find file '%s'", fileToWritePath.toString()), e);
         } catch (final IOException e) {
-            throw new ZipException(
-                String.format("An unexpected error has occurred while writing file '%s'", fileToWritePath.toString())
-                , e);
+            throw new ZipException(String.format("An unexpected error has occurred while writing file '%s'", fileToWritePath.toString()), e);
         }
     }
 
@@ -306,7 +286,7 @@ public class ZipUtils {
      * @throws ZipException when there was a problem to create the directories
      */
     private static void createDirectoryIfNotExists(final Path path) throws ZipException {
-        if(path.toFile().exists()) {
+        if (path.toFile().exists()) {
             return;
         }
         try {
@@ -319,7 +299,7 @@ public class ZipUtils {
     /**
      * Zips a directory and its children content.
      *
-     * @param fromPath the directory path to zip
+     * @param fromPath      the directory path to zip
      * @param toZipFilePath the path to the zip file that will be created
      * @throws ZipException when there was a problem during the zip process
      */
@@ -330,8 +310,7 @@ public class ZipUtils {
         } catch (final IOException e) {
             throw new ZipException(String.format("Could not create file '%s'", toZipFilePath.toString()), e);
         }
-
-        try(final FileOutputStream fileOutputStream = new FileOutputStream(createdZipFilePath.toFile());
+        try (final FileOutputStream fileOutputStream = new FileOutputStream(createdZipFilePath.toFile());
             final BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
             final ZipOutputStream zipOut = new ZipOutputStream(bos);
             final Stream<Path> walkStream = Files.walk(fromPath)) {
@@ -357,5 +336,4 @@ public class ZipUtils {
             throw new ZipException("An error has occurred while creating the zip package", e);
         }
     }
-
 }

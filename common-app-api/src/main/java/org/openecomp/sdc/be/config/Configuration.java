@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
 
 import static java.lang.String.format;
@@ -36,11 +35,9 @@ public class Configuration extends BasicConfiguration {
 
     private List<String> identificationHeaderFields;
     /**
-     * Requests from these Urls will not be logged by
-     * org.openecomp.sdc.be.filters.BeServletFilter.<br>
+     * Requests from these Urls will not be logged by org.openecomp.sdc.be.filters.BeServletFilter.<br>
      **/
     private List<String> unLoggedUrls;
-
     /**
      * backend host
      */
@@ -61,7 +58,6 @@ public class Configuration extends BasicConfiguration {
      * backend protocol. http | https
      */
     private String beProtocol = "http";
-
     private Date released;
     private String version = "1111";
     private String toscaConformanceLevel = "3.0";
@@ -80,13 +76,11 @@ public class Configuration extends BasicConfiguration {
     private Long uebHealthCheckReconnectIntervalInSeconds;
     private Long uebHealthCheckReadTimeout;
     private List<Map<String, Map<String, String>>> defaultImports;
-
     private List<String> globalCsarImports;
     private List<String> resourceTypes;
     private List<String> excludeResourceCategory;
     private List<String> excludeResourceType;
     private Map<String, Set<String>> excludedPolicyTypesMapping;
-
     private Map<String, Set<String>> excludedGroupTypesMapping;
     private Map<String, Object> deploymentResourceArtifacts;
     private Map<String, Object> deploymentResourceInstanceArtifacts;
@@ -95,56 +89,35 @@ public class Configuration extends BasicConfiguration {
     private Map<String, Object> informationalServiceArtifacts;
     private Map<String, Object> serviceApiArtifacts;
     private List<String> excludeServiceCategory;
-
     private List<String> licenseTypes;
     private List<String> definedResourceNamespace;
     private List<String> directives;
-
     private Integer additionalInformationMaxNumberOfKeys;
     private HeatDeploymentArtifactTimeout heatArtifactDeploymentTimeout;
-
     private BeMonitoringConfig systemMonitoring;
     private CleanComponentsConfiguration cleanComponentsConfiguration;
-
     private String artifactsIndex;
-
     private String heatEnvArtifactHeader;
     private String heatEnvArtifactFooter;
-
     private String toscaFilesDir;
     private String heatTranslatorPath;
-
     private OnboardingConfig onboarding;
-
     private DcaeConfig dcae;
-
     private BasicAuthConfig basicAuth;
-
     private CassandrConfig cassandraConfig;
-
     private SwitchoverDetectorConfig switchoverDetector;
-
     private ApplicationL1CacheConfig applicationL1Cache;
-
     private ApplicationL2CacheConfig applicationL2Cache;
-
     private ToscaValidatorsConfig toscaValidators;
-
     private boolean disableAudit;
-
     private Boolean consumerBusinessLogic;
-
     private Map<String, VfModuleProperty> vfModuleProperties;
-
     private Map<String, String> genericAssetNodeTypes;
     private Map<String, String> serviceNodeTypes;
     private Map<String, Map<String, String>> resourceNodeTypes;
-
     private String appVersion;
     private String artifactGeneratorConfig;
-
     private CadiFilterParams cadiFilterParams;
-
     private Boolean aafAuthNeeded = false;
     private String autoHealingOwner;
     private boolean enableAutoHealing;
@@ -166,6 +139,11 @@ public class Configuration extends BasicConfiguration {
     private List<ArtifactConfiguration> artifacts;
     private Map<String, Map<String, List<String>>> componentAllowedInstanceTypes;
 
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
+        return map == null ? emptyMap() : new CaseInsensitiveMap(map);
+    }
+
     public List<ArtifactConfiguration> getArtifacts() {
         return artifacts;
     }
@@ -178,8 +156,7 @@ public class Configuration extends BasicConfiguration {
         return componentAllowedInstanceTypes;
     }
 
-    public void setComponentAllowedInstanceTypes(
-            final Map<String, Map<String, List<String>>> componentAllowedInstanceTypes) {
+    public void setComponentAllowedInstanceTypes(final Map<String, Map<String, List<String>>> componentAllowedInstanceTypes) {
         this.componentAllowedInstanceTypes = componentAllowedInstanceTypes;
     }
 
@@ -199,12 +176,12 @@ public class Configuration extends BasicConfiguration {
         this.maxDeleteComponents = maxDeleteComponents;
     }
 
-    public void setEnableAutoHealing(boolean enableAutoHealing) {
-        this.enableAutoHealing = enableAutoHealing;
-    }
-
     public boolean isEnableAutoHealing() {
         return enableAutoHealing;
+    }
+
+    public void setEnableAutoHealing(boolean enableAutoHealing) {
+        this.enableAutoHealing = enableAutoHealing;
     }
 
     public Integer getDeleteLockTimeoutInSeconds() {
@@ -222,6 +199,7 @@ public class Configuration extends BasicConfiguration {
     public void setDmaapConsumerConfiguration(DmaapConsumerConfiguration dmaapConsumerConfiguration) {
         this.dmaapConsumerConfiguration = dmaapConsumerConfiguration;
     }
+
     public DmeConfiguration getDmeConfiguration() {
         return dmeConfiguration;
     }
@@ -230,12 +208,20 @@ public class Configuration extends BasicConfiguration {
         this.dmeConfiguration = dmeConfiguration;
     }
 
-    public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) { this.skipUpgradeVSPs = skipUpgradeVSPs; }
+    public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) {
+        this.skipUpgradeVSPs = skipUpgradeVSPs;
+    }
 
-    public boolean getSkipUpgradeVSPsFlag() { return skipUpgradeVSPs; }
+    public boolean getSkipUpgradeVSPsFlag() {
+        return skipUpgradeVSPs;
+    }
 
     public boolean getSkipUpgradeFailedVfs() {
         return skipUpgradeFailedVfs;
+    }
+
+    public void setSkipUpgradeFailedVfs(boolean skipUpgradeFailedVfs) {
+        this.skipUpgradeFailedVfs = skipUpgradeFailedVfs;
     }
 
     public boolean getSupportAllottedResourcesAndProxyFlag() {
@@ -244,10 +230,6 @@ public class Configuration extends BasicConfiguration {
 
     public void setSupportAllottedResourcesAndProxy(boolean supportAllottedResourcesAndProxy) {
         this.supportAllottedResourcesAndProxy = supportAllottedResourcesAndProxy;
-    }
-
-    public void setSkipUpgradeFailedVfs(boolean skipUpgradeFailedVfs) {
-        this.skipUpgradeFailedVfs = skipUpgradeFailedVfs;
     }
 
     public String getAppVersion() {
@@ -274,19 +256,19 @@ public class Configuration extends BasicConfiguration {
         this.genericAssetNodeTypes = genericAssetNodeTypes;
     }
 
-    public Map<String, String> getServiceNodeTypes(){
-        return serviceNodeTypes ;
+    public Map<String, String> getServiceNodeTypes() {
+        return serviceNodeTypes;
     }
 
-    public void setServiceNodeTypes(Map<String, String> serviceNodeTypes){
+    public void setServiceNodeTypes(Map<String, String> serviceNodeTypes) {
         this.serviceNodeTypes = serviceNodeTypes;
     }
 
-    public Map<String, Map<String, String>> getResourceNodeTypes(){
+    public Map<String, Map<String, String>> getResourceNodeTypes() {
         return resourceNodeTypes;
     }
 
-    public void setResourceNodeTypes(Map<String, Map<String, String>> resourceNodeTypes){
+    public void setResourceNodeTypes(Map<String, Map<String, String>> resourceNodeTypes) {
         this.resourceNodeTypes = resourceNodeTypes;
     }
 
@@ -334,12 +316,12 @@ public class Configuration extends BasicConfiguration {
         return released;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
     public void setReleased(Date released) {
         this.released = released;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public void setVersion(String version) {
@@ -454,24 +436,24 @@ public class Configuration extends BasicConfiguration {
         return janusGraphHealthCheckReadTimeout;
     }
 
-    public Long getJanusGraphHealthCheckReadTimeout(long defaultVal) {
-        return janusGraphHealthCheckReadTimeout == null ? defaultVal : janusGraphHealthCheckReadTimeout;
-    }
-
     public void setJanusGraphHealthCheckReadTimeout(Long janusGraphHealthCheckReadTimeout) {
         this.janusGraphHealthCheckReadTimeout = janusGraphHealthCheckReadTimeout;
+    }
+
+    public Long getJanusGraphHealthCheckReadTimeout(long defaultVal) {
+        return janusGraphHealthCheckReadTimeout == null ? defaultVal : janusGraphHealthCheckReadTimeout;
     }
 
     public Long getJanusGraphReconnectIntervalInSeconds() {
         return janusGraphReconnectIntervalInSeconds;
     }
 
-    public Long getJanusGraphReconnectIntervalInSeconds(long defaultVal) {
-        return janusGraphReconnectIntervalInSeconds == null ? defaultVal : janusGraphReconnectIntervalInSeconds;
-    }
-
     public void setJanusGraphReconnectIntervalInSeconds(Long janusGraphReconnectIntervalInSeconds) {
         this.janusGraphReconnectIntervalInSeconds = janusGraphReconnectIntervalInSeconds;
+    }
+
+    public Long getJanusGraphReconnectIntervalInSeconds(long defaultVal) {
+        return janusGraphReconnectIntervalInSeconds == null ? defaultVal : janusGraphReconnectIntervalInSeconds;
     }
 
     public List<String> getExcludeResourceCategory() {
@@ -634,11 +616,268 @@ public class Configuration extends BasicConfiguration {
         this.gabConfig = gabConfig;
     }
 
+    public CookieConfig getAuthCookie() {
+        return authCookie;
+    }
+
+    public void setAuthCookie(CookieConfig authCookie) {
+        this.authCookie = authCookie;
+    }
+
+    public BasicAuthConfig getBasicAuth() {
+        return basicAuth;
+    }
+
+    public void setBasicAuth(BasicAuthConfig basicAuth) {
+        this.basicAuth = basicAuth;
+    }
+
+    public DcaeConfig getDcae() {
+        return dcae;
+    }
+
+    public void setDcae(DcaeConfig dcae) {
+        this.dcae = dcae;
+    }
+
+    public CleanComponentsConfiguration getCleanComponentsConfiguration() {
+        return cleanComponentsConfiguration;
+    }
+
+    public void setCleanComponentsConfiguration(CleanComponentsConfiguration cleanComponentsConfiguration) {
+        this.cleanComponentsConfiguration = cleanComponentsConfiguration;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append(format("backend host: %s%n", beFqdn)).append(format("backend http port: %s%n", beHttpPort))
+            .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
+            .append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
+            .append(format("Supported protocols: %s%n", protocols)).append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
+            .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile)).append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
+            .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
+            .append(format("JanusGraph reconnect interval seconds: %s%n", janusGraphReconnectIntervalInSeconds))
+            .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
+            .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
+            .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
+            .append(format("informationalServiceArtifacts: %s%n", informationalServiceArtifacts))
+            .append(format("Supported artifacts types: %s%n", artifacts)).append(format("Supported license types: %s%n", licenseTypes))
+            .append(format("Additional information Maximum number of preoperties: %s%n", additionalInformationMaxNumberOfKeys))
+            .append(format("Heat Artifact Timeout in Minutes: %s%n", heatArtifactDeploymentTimeout))
+            .append(format("URLs For HTTP Requests that will not be automatically logged : %s%n", unLoggedUrls))
+            .append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
+            .append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
+            .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter)).append(format("onboarding: %s%n", onboarding)).toString();
+    }
+
+    public List<String> getUnLoggedUrls() {
+        return unLoggedUrls;
+    }
+
+    public void setUnLoggedUrls(List<String> unLoggedUrls) {
+        this.unLoggedUrls = unLoggedUrls;
+    }
+
+    public Map<String, Object> getDeploymentResourceArtifacts() {
+        return deploymentResourceArtifacts;
+    }
+
+    public void setDeploymentResourceArtifacts(Map<String, Object> deploymentResourceArtifacts) {
+        this.deploymentResourceArtifacts = deploymentResourceArtifacts;
+    }
+
+    public String getHeatEnvArtifactHeader() {
+        return heatEnvArtifactHeader;
+    }
+
+    public void setHeatEnvArtifactHeader(String heatEnvArtifactHeader) {
+        this.heatEnvArtifactHeader = heatEnvArtifactHeader;
+    }
+
+    public String getHeatEnvArtifactFooter() {
+        return heatEnvArtifactFooter;
+    }
+
+    public void setHeatEnvArtifactFooter(String heatEnvArtifactFooter) {
+        this.heatEnvArtifactFooter = heatEnvArtifactFooter;
+    }
+
+    public Map<String, Object> getDeploymentResourceInstanceArtifacts() {
+        return deploymentResourceInstanceArtifacts;
+    }
+
+    public void setDeploymentResourceInstanceArtifacts(Map<String, Object> deploymentResourceInstanceArtifacts) {
+        this.deploymentResourceInstanceArtifacts = deploymentResourceInstanceArtifacts;
+    }
+
+    public String getArtifactsIndex() {
+        return artifactsIndex;
+    }
+
+    public void setArtifactsIndex(String artifactsIndex) {
+        this.artifactsIndex = artifactsIndex;
+    }
+
+    public List<String> getGlobalCsarImports() {
+        if (CollectionUtils.isEmpty(globalCsarImports)) {
+            return Collections.emptyList();
+        }
+        return globalCsarImports;
+    }
+
+    public void setGlobalCsarImports(List<String> globalCsarImports) {
+        this.globalCsarImports = globalCsarImports;
+    }
+
+    public List<String> getResourceTypes() {
+        return resourceTypes;
+    }
+
+    public void setResourceTypes(List<String> resourceTypes) {
+        this.resourceTypes = resourceTypes;
+    }
+
+    public String getToscaFilesDir() {
+        return toscaFilesDir;
+    }
+
+    public void setToscaFilesDir(String toscaFilesDir) {
+        this.toscaFilesDir = toscaFilesDir;
+    }
+
+    public String getHeatTranslatorPath() {
+        return heatTranslatorPath;
+    }
+
+    public void setHeatTranslatorPath(String heatTranslatorPath) {
+        this.heatTranslatorPath = heatTranslatorPath;
+    }
+
+    public OnboardingConfig getOnboarding() {
+        return onboarding;
+    }
+
+    public void setOnboarding(OnboardingConfig onboarding) {
+        this.onboarding = onboarding;
+    }
+
+    public EcompPortalConfig getEcompPortal() {
+        return ecompPortal;
+    }
+
+    public void setEcompPortal(EcompPortalConfig ecompPortal) {
+        this.ecompPortal = ecompPortal;
+    }
+
+    public ToscaValidatorsConfig getToscaValidators() {
+        return toscaValidators;
+    }
+
+    public void setToscaValidators(ToscaValidatorsConfig toscaValidators) {
+        this.toscaValidators = toscaValidators;
+    }
+
+    public boolean isDisableAudit() {
+        return disableAudit;
+    }
+
+    public void setDisableAudit(boolean enableAudit) {
+        this.disableAudit = enableAudit;
+    }
+
+    public Boolean getConsumerBusinessLogic() {
+        return consumerBusinessLogic;
+    }
+
+    public void setConsumerBusinessLogic(Boolean consumerBusinessLogic) {
+        this.consumerBusinessLogic = consumerBusinessLogic;
+    }
+
+    public Map<String, VfModuleProperty> getVfModuleProperties() {
+        return vfModuleProperties;
+    }
+
+    public void setVfModuleProperties(Map<String, VfModuleProperty> vfModuleProperties) {
+        this.vfModuleProperties = vfModuleProperties;
+    }
+
+    public String getToscaConformanceLevel() {
+        return toscaConformanceLevel;
+    }
+
+    public void setToscaConformanceLevel(String toscaConformanceLevel) {
+        this.toscaConformanceLevel = toscaConformanceLevel;
+    }
+
+    public String getMinToscaConformanceLevel() {
+        return minToscaConformanceLevel;
+    }
+
+    public void setMinToscaConformanceLevel(String toscaConformanceLevel) {
+        this.minToscaConformanceLevel = toscaConformanceLevel;
+    }
+
+    public List<Map<String, Map<String, String>>> getDefaultImports() {
+        return defaultImports;
+    }
+
+    public void setDefaultImports(List<Map<String, Map<String, String>>> defaultImports) {
+        this.defaultImports = defaultImports;
+    }
+
+    public Map<String, List<String>> getResourcesForUpgrade() {
+        return resourcesForUpgrade;
+    }
+
+    public void setResourcesForUpgrade(Map<String, List<String>> resourcesForUpgrade) {
+        this.resourcesForUpgrade = resourcesForUpgrade;
+    }
+
+    public List<String> getHealthStatusExclude() {
+        return healthStatusExclude;
+    }
+
+    public void setHealthStatusExclude(List<String> healthStatusExclude) {
+        this.healthStatusExclude = healthStatusExclude;
+    }
+
+    public DmaapProducerConfiguration getDmaapProducerConfiguration() {
+        return dmaapProducerConfiguration;
+    }
+
+    public void setDmaapProducerConfiguration(DmaapProducerConfiguration dmaapProducerConfiguration) {
+        this.dmaapProducerConfiguration = dmaapProducerConfiguration;
+    }
+
+    public String getAafNamespace() {
+        return aafNamespace;
+    }
+
+    public void setAafNamespace(String aafNamespace) {
+        this.aafNamespace = aafNamespace;
+    }
+
+    public Boolean getAafAuthNeeded() {
+        return aafAuthNeeded;
+    }
+
+    public void setAafAuthNeeded(Boolean aafAuthNeeded) {
+        this.aafAuthNeeded = aafAuthNeeded;
+    }
+
+    public CadiFilterParams getCadiFilterParams() {
+        return cadiFilterParams;
+    }
+
+    public void setCadiFilterParams(CadiFilterParams cadiFilterParams) {
+        this.cadiFilterParams = cadiFilterParams;
+    }
 
     public static class CookieConfig {
+
         String securityKey = "";
-        long maxSessionTimeOut = 600*1000;
-        long sessionIdleTimeOut = 30*1000;
+        long maxSessionTimeOut = 600 * 1000;
+        long sessionIdleTimeOut = 30 * 1000;
         String cookieName = "AuthenticationCookie";
         String redirectURL = "https://www.e-access.att.com/ecomp_portal_ist/ecompportal/process_csp";
         List<String> excludedUrls;
@@ -728,15 +967,8 @@ public class Configuration extends BasicConfiguration {
         }
     }
 
-    public CookieConfig getAuthCookie() {
-        return authCookie;
-    }
-
-    public void setAuthCookie(CookieConfig authCookie) {
-        this.authCookie = authCookie;
-    }
-
     public static class CassandrConfig {
+
         private static final Integer CASSANDRA_DEFAULT_PORT = 9042;
         List<String> cassandraHosts;
         Integer cassandraPort;
@@ -753,9 +985,13 @@ public class Configuration extends BasicConfiguration {
         String truststorePassword;
         int maxWaitSeconds = 120;
 
-        public Integer getCassandraPort() { return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT; }
+        public Integer getCassandraPort() {
+            return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT;
+        }
 
-        public void setCassandraPort(Integer cassandraPort) { this.cassandraPort = cassandraPort; }
+        public void setCassandraPort(Integer cassandraPort) {
+            this.cassandraPort = cassandraPort;
+        }
 
         public String getLocalDataCenter() {
             return localDataCenter;
@@ -821,13 +1057,21 @@ public class Configuration extends BasicConfiguration {
             this.reconnectTimeout = reconnectTimeout;
         }
 
-        public Integer getSocketReadTimeout() { return socketReadTimeout; }
+        public Integer getSocketReadTimeout() {
+            return socketReadTimeout;
+        }
 
-        public void setSocketReadTimeout(Integer socketReadTimeout) { this.socketReadTimeout = socketReadTimeout;}
+        public void setSocketReadTimeout(Integer socketReadTimeout) {
+            this.socketReadTimeout = socketReadTimeout;
+        }
 
-        public Integer getSocketConnectTimeout() {	return socketConnectTimeout;}
+        public Integer getSocketConnectTimeout() {
+            return socketConnectTimeout;
+        }
 
-        public void setSocketConnectTimeout(Integer socketConnectTimeout) { this.socketConnectTimeout = socketConnectTimeout; 	}
+        public void setSocketConnectTimeout(Integer socketConnectTimeout) {
+            this.socketConnectTimeout = socketConnectTimeout;
+        }
 
         public List<String> getCassandraHosts() {
             return cassandraHosts;
@@ -1026,10 +1270,10 @@ public class Configuration extends BasicConfiguration {
                 this.changePriorityBody = changePriorityBody;
             }
         }
-
     }
 
     public static class HeatDeploymentArtifactTimeout {
+
         Integer defaultMinutes;
         Integer minMinutes;
         Integer maxMinutes;
@@ -1090,12 +1334,12 @@ public class Configuration extends BasicConfiguration {
             return probeIntervalInSeconds;
         }
 
-        public Integer getProbeIntervalInSeconds(int defaultVal) {
-            return probeIntervalInSeconds == null ? defaultVal : probeIntervalInSeconds;
-        }
-
         public void setProbeIntervalInSeconds(Integer probeIntervalInSeconds) {
             this.probeIntervalInSeconds = probeIntervalInSeconds;
+        }
+
+        public Integer getProbeIntervalInSeconds(int defaultVal) {
+            return probeIntervalInSeconds == null ? defaultVal : probeIntervalInSeconds;
         }
     }
 
@@ -1171,21 +1415,12 @@ public class Configuration extends BasicConfiguration {
 
         @Override
         public String toString() {
-            return "OnboardingConfig [protocol=" + protocol + ", host=" + host + ", port=" + port + ", downloadCsarUri="
-                    + downloadCsarUri + "]";
+            return "OnboardingConfig [protocol=" + protocol + ", host=" + host + ", port=" + port + ", downloadCsarUri=" + downloadCsarUri + "]";
         }
-
-    }
-
-    public BasicAuthConfig getBasicAuth() {
-        return basicAuth;
-    }
-
-    public void setBasicAuth(BasicAuthConfig basicAuth) {
-        this.basicAuth = basicAuth;
     }
 
     public static class BasicAuthConfig {
+
         boolean enabled;
         String userName;
         String userPass;
@@ -1222,14 +1457,6 @@ public class Configuration extends BasicConfiguration {
         public void setExcludedUrls(String excludedUrls) {
             this.excludedUrls = excludedUrls;
         }
-    }
-
-    public DcaeConfig getDcae() {
-        return dcae;
-    }
-
-    public void setDcae(DcaeConfig dcae) {
-        this.dcae = dcae;
     }
 
     public static class DcaeConfig {
@@ -1273,6 +1500,7 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class EcompPortalConfig {
+
         private String protocol = "https";
         private String host;
         private Integer port;
@@ -1280,14 +1508,6 @@ public class Configuration extends BasicConfiguration {
         private String defaultFunctionalMenu;
         private Integer pollingInterval;
         private Integer timeoutMs;
-
-        public void setPollingInterval(Integer pollingInterval) {
-            this.pollingInterval = pollingInterval;
-        }
-
-        public void setTimeoutMs(Integer timeoutMs) {
-            this.timeoutMs = timeoutMs;
-        }
 
         public String getProtocol() {
             return protocol;
@@ -1333,15 +1553,22 @@ public class Configuration extends BasicConfiguration {
             return pollingInterval;
         }
 
+        public void setPollingInterval(Integer pollingInterval) {
+            this.pollingInterval = pollingInterval;
+        }
+
         public Integer getTimeoutMs() {
             return timeoutMs;
+        }
+
+        public void setTimeoutMs(Integer timeoutMs) {
+            this.timeoutMs = timeoutMs;
         }
 
         @Override
         public String toString() {
             return "EcompPortalConfig [defaultFunctionalMenu=" + defaultFunctionalMenu + "]";
         }
-
     }
 
     public static class ApplicationL1CacheConfig {
@@ -1360,14 +1587,12 @@ public class Configuration extends BasicConfiguration {
         public String toString() {
             return "ApplicationL1CacheConfig [datatypes=" + datatypes + "]";
         }
-
     }
 
     public static class ApplicationL2CacheConfig {
 
         boolean enabled;
         ApplicationL1CacheCatalogInfo catalogL1Cache;
-
         QueueInfo queue;
 
         public boolean isEnabled() {
@@ -1398,7 +1623,6 @@ public class Configuration extends BasicConfiguration {
         public String toString() {
             return "ApplicationL2CacheConfig [enabled=" + enabled + ", catalogL1Cache=" + catalogL1Cache + "]";
         }
-
     }
 
     public static class ToscaValidatorsConfig {
@@ -1417,7 +1641,6 @@ public class Configuration extends BasicConfiguration {
         public String toString() {
             return "ToscaValidatorsConfig [stringMaxLength=" + stringMaxLength + "]";
         }
-
     }
 
     public static class ApplicationL1CacheInfo {
@@ -1452,8 +1675,8 @@ public class Configuration extends BasicConfiguration {
 
         @Override
         public String toString() {
-            return "ApplicationL1CacheInfo [enabled=" + enabled + ", firstRunDelay=" + firstRunDelay
-                    + ", pollIntervalInSec=" + pollIntervalInSec + "]";
+            return "ApplicationL1CacheInfo [enabled=" + enabled + ", firstRunDelay=" + firstRunDelay + ", pollIntervalInSec=" + pollIntervalInSec
+                + "]";
         }
     }
 
@@ -1498,14 +1721,13 @@ public class Configuration extends BasicConfiguration {
 
         @Override
         public String toString() {
-            return "ApplicationL1CacheCatalogInfo [enabled=" + enabled + ", resourcesSizeInCache="
-                    + resourcesSizeInCache + ", servicesSizeInCache=" + servicesSizeInCache + ", productsSizeInCache="
-                    + productsSizeInCache + "]";
+            return "ApplicationL1CacheCatalogInfo [enabled=" + enabled + ", resourcesSizeInCache=" + resourcesSizeInCache + ", servicesSizeInCache="
+                + servicesSizeInCache + ", productsSizeInCache=" + productsSizeInCache + "]";
         }
-
     }
 
     public static class QueueInfo {
+
         Integer numberOfCacheWorkers;
         Integer waitOnShutDownInMinutes;
         Integer syncIntervalInSecondes;
@@ -1536,8 +1758,8 @@ public class Configuration extends BasicConfiguration {
 
         @Override
         public String toString() {
-            return "QueueInfo[" + "waitOnShutDownInMinutes=" + waitOnShutDownInMinutes + ", syncIntervalInSecondes="
-                    + syncIntervalInSecondes + ", numberOfCacheWorkers=" + this.numberOfCacheWorkers + ']';
+            return "QueueInfo[" + "waitOnShutDownInMinutes=" + waitOnShutDownInMinutes + ", syncIntervalInSecondes=" + syncIntervalInSecondes
+                + ", numberOfCacheWorkers=" + this.numberOfCacheWorkers + ']';
         }
     }
 
@@ -1563,271 +1785,30 @@ public class Configuration extends BasicConfiguration {
         }
     }
 
-
-    public CleanComponentsConfiguration getCleanComponentsConfiguration() {
-        return cleanComponentsConfiguration;
-    }
-
-    public void setCleanComponentsConfiguration(CleanComponentsConfiguration cleanComponentsConfiguration) {
-        this.cleanComponentsConfiguration = cleanComponentsConfiguration;
-    }
-
-    @Override
-    public String toString() {
-        return new StringBuilder().append(format("backend host: %s%n", beFqdn))
-                .append(format("backend http port: %s%n", beHttpPort))
-                .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
-                .append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version))
-                .append(format("Released: %s%n", released)).append(format("Supported protocols: %s%n", protocols))
-                .append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
-                .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile))
-                .append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
-                .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
-                .append(format("JanusGraph reconnect interval seconds: %s%n", janusGraphReconnectIntervalInSeconds))
-                .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
-                .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
-                .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
-                .append(format("informationalServiceArtifacts: %s%n", informationalServiceArtifacts))
-                .append(format("Supported artifacts types: %s%n", artifacts))
-                .append(format("Supported license types: %s%n", licenseTypes))
-                .append(format("Additional information Maximum number of preoperties: %s%n",
-                        additionalInformationMaxNumberOfKeys))
-                .append(format("Heat Artifact Timeout in Minutes: %s%n", heatArtifactDeploymentTimeout))
-                .append(format("URLs For HTTP Requests that will not be automatically logged : %s%n", unLoggedUrls))
-                .append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
-                .append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
-                .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter))
-                .append(format("onboarding: %s%n", onboarding)).toString();
-    }
-
-    public List<String> getUnLoggedUrls() {
-        return unLoggedUrls;
-    }
-
-    public void setUnLoggedUrls(List<String> unLoggedUrls) {
-        this.unLoggedUrls = unLoggedUrls;
-    }
-
-    public Map<String, Object> getDeploymentResourceArtifacts() {
-        return deploymentResourceArtifacts;
-    }
-
-    public void setDeploymentResourceArtifacts(Map<String, Object> deploymentResourceArtifacts) {
-        this.deploymentResourceArtifacts = deploymentResourceArtifacts;
-    }
-
-    public String getHeatEnvArtifactHeader() {
-        return heatEnvArtifactHeader;
-    }
-
-    public void setHeatEnvArtifactHeader(String heatEnvArtifactHeader) {
-        this.heatEnvArtifactHeader = heatEnvArtifactHeader;
-    }
-
-    public String getHeatEnvArtifactFooter() {
-        return heatEnvArtifactFooter;
-    }
-
-    public void setHeatEnvArtifactFooter(String heatEnvArtifactFooter) {
-        this.heatEnvArtifactFooter = heatEnvArtifactFooter;
-    }
-
-    public Map<String, Object> getDeploymentResourceInstanceArtifacts() {
-        return deploymentResourceInstanceArtifacts;
-    }
-
-    public void setDeploymentResourceInstanceArtifacts(Map<String, Object> deploymentResourceInstanceArtifacts) {
-        this.deploymentResourceInstanceArtifacts = deploymentResourceInstanceArtifacts;
-    }
-
-    public String getArtifactsIndex() {
-        return artifactsIndex;
-    }
-
-    public void setArtifactsIndex(String artifactsIndex) {
-        this.artifactsIndex = artifactsIndex;
-    }
-
-    public List<String> getGlobalCsarImports() {
-        if (CollectionUtils.isEmpty(globalCsarImports)) {
-            return Collections.emptyList();
-        }
-        return globalCsarImports;
-    }
-
-    public void setGlobalCsarImports(List<String> globalCsarImports) {
-        this.globalCsarImports = globalCsarImports;
-    }
-
-    public List<String> getResourceTypes() {
-        return resourceTypes;
-    }
-
-    public void setResourceTypes(List<String> resourceTypes) {
-        this.resourceTypes = resourceTypes;
-    }
-
-    public String getToscaFilesDir() {
-        return toscaFilesDir;
-    }
-
-    public void setToscaFilesDir(String toscaFilesDir) {
-        this.toscaFilesDir = toscaFilesDir;
-    }
-
-    public String getHeatTranslatorPath() {
-        return heatTranslatorPath;
-    }
-
-    public void setHeatTranslatorPath(String heatTranslatorPath) {
-        this.heatTranslatorPath = heatTranslatorPath;
-    }
-
-    public OnboardingConfig getOnboarding() {
-        return onboarding;
-    }
-
-    public void setOnboarding(OnboardingConfig onboarding) {
-        this.onboarding = onboarding;
-    }
-
-    public EcompPortalConfig getEcompPortal() {
-        return ecompPortal;
-    }
-
-    public void setEcompPortal(EcompPortalConfig ecompPortal) {
-        this.ecompPortal = ecompPortal;
-    }
-
-    public ToscaValidatorsConfig getToscaValidators() {
-        return toscaValidators;
-    }
-
-    public void setToscaValidators(ToscaValidatorsConfig toscaValidators) {
-        this.toscaValidators = toscaValidators;
-    }
-
-    public boolean isDisableAudit() {
-        return disableAudit;
-    }
-
-    public Boolean getConsumerBusinessLogic() {
-        return consumerBusinessLogic;
-    }
-
-    public void setConsumerBusinessLogic(Boolean consumerBusinessLogic) {
-        this.consumerBusinessLogic = consumerBusinessLogic;
-    }
-
-    public void setDisableAudit(boolean enableAudit) {
-        this.disableAudit = enableAudit;
-    }
-
-    public Map<String, VfModuleProperty> getVfModuleProperties() {
-        return vfModuleProperties;
-    }
-
-    public void setVfModuleProperties(Map<String, VfModuleProperty> vfModuleProperties) {
-        this.vfModuleProperties = vfModuleProperties;
-    }
-
-    public String getToscaConformanceLevel() {
-        return toscaConformanceLevel;
-    }
-
-    public void setToscaConformanceLevel(String toscaConformanceLevel) {
-        this.toscaConformanceLevel = toscaConformanceLevel;
-    }
-
-    public String getMinToscaConformanceLevel() {
-        return minToscaConformanceLevel;
-    }
-
-    public void setMinToscaConformanceLevel(String toscaConformanceLevel) {
-        this.minToscaConformanceLevel = toscaConformanceLevel;
-    }
-
     public static class VfModuleProperty {
+
         private String forBaseModule;
         private String forNonBaseModule;
+
         public String getForBaseModule() {
             return forBaseModule;
         }
+
         public void setForBaseModule(String forBaseModule) {
             this.forBaseModule = forBaseModule;
         }
+
         public String getForNonBaseModule() {
             return forNonBaseModule;
         }
+
         public void setForNonBaseModule(String forNonBaseModule) {
             this.forNonBaseModule = forNonBaseModule;
         }
     }
 
-    public List<Map<String, Map<String, String>>> getDefaultImports() {
-        return defaultImports;
-    }
-
-    public void setDefaultImports(List<Map<String, Map<String, String>>> defaultImports) {
-        this.defaultImports = defaultImports;
-    }
-
-    public Map<String, List<String>> getResourcesForUpgrade() {
-        return resourcesForUpgrade;
-    }
-
-    public void setResourcesForUpgrade(Map<String, List<String>> resourcesForUpgrade) {
-        this.resourcesForUpgrade = resourcesForUpgrade;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <K,V> Map<K,V> safeGetCapsInsensitiveMap(Map<K,V> map) {
-        return map == null ? emptyMap() : new CaseInsensitiveMap(map);
-    }
-
-
-    public List<String> getHealthStatusExclude() {
-        return healthStatusExclude;
-    }
-
-    public void setHealthStatusExclude(List<String> healthStatusExclude) {
-        this.healthStatusExclude = healthStatusExclude;
-    }
-
-    public DmaapProducerConfiguration getDmaapProducerConfiguration() {
-        return dmaapProducerConfiguration;
-    }
-
-    public void setDmaapProducerConfiguration(DmaapProducerConfiguration dmaapProducerConfiguration) {
-        this.dmaapProducerConfiguration = dmaapProducerConfiguration;
-    }
-
-    public String getAafNamespace() {
-        return aafNamespace;
-    }
-
-    public void setAafNamespace(String aafNamespace) {
-        this.aafNamespace = aafNamespace;
-    }
-
-    public Boolean getAafAuthNeeded(){
-        return aafAuthNeeded;
-    }
-
-    public void setAafAuthNeeded(Boolean aafAuthNeeded){
-        this.aafAuthNeeded = aafAuthNeeded;
-    }
-
-    public CadiFilterParams getCadiFilterParams() {
-        return cadiFilterParams;
-    }
-
-    public void setCadiFilterParams(CadiFilterParams cadiFilterParams) {
-        this.cadiFilterParams = cadiFilterParams;
-    }
-
-
     public static class PathsAndNamesDefinition {
+
         private String friendlyName;
         private String path;
         private Boolean searchable;
@@ -1836,20 +1817,20 @@ public class Configuration extends BasicConfiguration {
             return friendlyName;
         }
 
-        public String getPath() {
-            return path;
-        }
-
-        public Boolean getSearchable() {
-            return searchable;
-        }
-
         public void setFriendlyName(String friendlyName) {
             this.friendlyName = friendlyName;
         }
 
+        public String getPath() {
+            return path;
+        }
+
         public void setPath(String path) {
             this.path = path;
+        }
+
+        public Boolean getSearchable() {
+            return searchable;
         }
 
         public void setSearchable(Boolean searchable) {
@@ -1858,6 +1839,7 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class GabConfig {
+
         private String artifactType;
         private List<PathsAndNamesDefinition> pathsAndNamesDefinitions;
 
@@ -1865,17 +1847,16 @@ public class Configuration extends BasicConfiguration {
             return artifactType;
         }
 
-        public List<PathsAndNamesDefinition> getPathsAndNamesDefinitions() {
-            return pathsAndNamesDefinitions;
-        }
-
         public void setArtifactType(String artifactType) {
             this.artifactType = artifactType;
+        }
+
+        public List<PathsAndNamesDefinition> getPathsAndNamesDefinitions() {
+            return pathsAndNamesDefinitions;
         }
 
         public void setPathsAndNamesDefinitions(List<PathsAndNamesDefinition> pathsAndNamesDefinitions) {
             this.pathsAndNamesDefinitions = pathsAndNamesDefinitions;
         }
     }
-
 }

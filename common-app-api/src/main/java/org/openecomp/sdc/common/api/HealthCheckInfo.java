@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,106 +17,100 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.api;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.List;
 
 public class HealthCheckInfo {
-	
-	private String healthCheckComponent;
-	private HealthCheckStatus healthCheckStatus;
-	private String version;
-	private String description;
-	private List<HealthCheckInfo> componentsInfo;
 
-	public void setHealthCheckComponent(String healthCheckComponent) {
-		this.healthCheckComponent = healthCheckComponent;
-	}
+    private String healthCheckComponent;
+    private HealthCheckStatus healthCheckStatus;
+    private String version;
+    private String description;
+    private List<HealthCheckInfo> componentsInfo;
 
-	public HealthCheckInfo(String healthCheckComponent, HealthCheckStatus healthCheckStatus,
-			String version, String description) {
-		super();
-		this.healthCheckComponent = healthCheckComponent;
-		this.healthCheckStatus = healthCheckStatus;
-		this.version = version;
-		this.description = description;
-	}
+    public HealthCheckInfo(String healthCheckComponent, HealthCheckStatus healthCheckStatus, String version, String description) {
+        super();
+        this.healthCheckComponent = healthCheckComponent;
+        this.healthCheckStatus = healthCheckStatus;
+        this.version = version;
+        this.description = description;
+    }
 
-	public HealthCheckInfo(String healthCheckComponent, HealthCheckStatus healthCheckStatus,
-						   String version, String description, List<HealthCheckInfo> componentsInfo) {
-		super();
-		this.healthCheckComponent = healthCheckComponent;
-		this.healthCheckStatus = healthCheckStatus;
-		this.version = version;
-		this.description = description;
-		this.componentsInfo = componentsInfo;
-}
+    public HealthCheckInfo(String healthCheckComponent, HealthCheckStatus healthCheckStatus, String version, String description,
+                           List<HealthCheckInfo> componentsInfo) {
+        super();
+        this.healthCheckComponent = healthCheckComponent;
+        this.healthCheckStatus = healthCheckStatus;
+        this.version = version;
+        this.description = description;
+        this.componentsInfo = componentsInfo;
+    }
 
-	public HealthCheckInfo() {
-		super();
-	}
+    public HealthCheckInfo() {
+        super();
+    }
 
-	public String getHealthCheckComponent() {
-		return healthCheckComponent;
-	}
+    public static void main(String[] args) {
+        String des = "[{healthCheckComponent=BE4, healthCheckStatus=UP, version=0.0.1-SNAPSHOT, description=OK}, {healthCheckComponent=BE, healthCheckStatus=UP, version=1710.0.0-SNAPSHOT, description=OK}, {healthCheckComponent=BE5, healthCheckStatus=UP, version=2.1.9, description=OK}]";
+        Type listType = new TypeToken<List<HealthCheckInfo>>() {
+        }.getType();
+        List<HealthCheckInfo> componentsInfo = new Gson().fromJson(des.toString(), listType);
+        System.out.println(componentsInfo.toString());
+    }
 
-	public HealthCheckStatus getHealthCheckStatus() {
-		return healthCheckStatus;
-	}
+    public String getHealthCheckComponent() {
+        return healthCheckComponent;
+    }
 
-	public void setHealthCheckStatus(HealthCheckStatus healthCheckStatus) {
-		this.healthCheckStatus = healthCheckStatus;
-	}
+    public void setHealthCheckComponent(String healthCheckComponent) {
+        this.healthCheckComponent = healthCheckComponent;
+    }
 
-	public List<HealthCheckInfo> getComponentsInfo() {
-		return componentsInfo;
-	}
+    public HealthCheckStatus getHealthCheckStatus() {
+        return healthCheckStatus;
+    }
 
-	public void setComponentsInfo(List<HealthCheckInfo> componentsInfo) {
-		this.componentsInfo = componentsInfo;
-	}
+    public void setHealthCheckStatus(HealthCheckStatus healthCheckStatus) {
+        this.healthCheckStatus = healthCheckStatus;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public List<HealthCheckInfo> getComponentsInfo() {
+        return componentsInfo;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setComponentsInfo(List<HealthCheckInfo> componentsInfo) {
+        this.componentsInfo = componentsInfo;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	/*public enum HealthCheckComponent {
-		FE, BE, JANUSGRAPH, DE, ON_BOARDING, CASSANDRA, DCAE,
-		CAS, ZU;//Amdocs components
-	}*/
+    public String getDescription() {
+        return description;
+    }
 
-	public enum HealthCheckStatus {
-		UP, DOWN, UNKNOWN;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	public String toString() {
-		return "HealthCheckInfo [healthCheckComponent=" + healthCheckComponent + ", healthCheckStatus="
-				+ healthCheckStatus + ", version=" + version + ", description=" + description + ", componentsInfo="
-				+ componentsInfo + "]";
-	}
-	
-	public static void main(String[] args) {
-		String des = "[{healthCheckComponent=BE4, healthCheckStatus=UP, version=0.0.1-SNAPSHOT, description=OK}, {healthCheckComponent=BE, healthCheckStatus=UP, version=1710.0.0-SNAPSHOT, description=OK}, {healthCheckComponent=BE5, healthCheckStatus=UP, version=2.1.9, description=OK}]";
-		Type listType = new TypeToken<List<HealthCheckInfo>>(){}.getType();
-		List<HealthCheckInfo> componentsInfo = new Gson().fromJson(des.toString(), listType);
-		System.out.println(componentsInfo.toString());
-	}
+    @Override
+    public String toString() {
+        return "HealthCheckInfo [healthCheckComponent=" + healthCheckComponent + ", healthCheckStatus=" + healthCheckStatus + ", version=" + version
+            + ", description=" + description + ", componentsInfo=" + componentsInfo + "]";
+    }
+
+    /*public enum HealthCheckComponent {
+        FE, BE, JANUSGRAPH, DE, ON_BOARDING, CASSANDRA, DCAE,
+        CAS, ZU;//Amdocs components
+    }*/
+    public enum HealthCheckStatus {UP, DOWN, UNKNOWN;}
 }

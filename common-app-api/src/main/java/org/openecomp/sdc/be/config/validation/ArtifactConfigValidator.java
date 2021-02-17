@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config.validation;
 
 import java.util.List;
@@ -36,12 +35,10 @@ import org.slf4j.LoggerFactory;
 public class ArtifactConfigValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactConfigValidator.class);
-
     private final Configuration configuration;
     private final Set<ArtifactTypeEnum> baseArtifactSet;
 
-    public ArtifactConfigValidator(final Configuration configuration,
-                                   final Set<ArtifactTypeEnum> baseArtifactSet) {
+    public ArtifactConfigValidator(final Configuration configuration, final Set<ArtifactTypeEnum> baseArtifactSet) {
         this.configuration = configuration;
         this.baseArtifactSet = baseArtifactSet;
     }
@@ -53,19 +50,13 @@ public class ArtifactConfigValidator {
         if (CollectionUtils.isEmpty(baseArtifactSet)) {
             return;
         }
-
         final List<ArtifactConfiguration> artifacts = configuration.getArtifacts();
         if (CollectionUtils.isEmpty(artifacts)) {
             LOGGER.warn("No configuration artifacts entry found. Ignoring artifacts validation.");
             return;
         }
-
-        final Set<ArtifactTypeEnum> notConfiguredArtifactTypeSet = baseArtifactSet.stream()
-            .filter(artifactTypeEnum ->
-                artifacts.stream()
-                    .noneMatch(artifactConfiguration ->
-                        artifactTypeEnum.getType().equals(artifactConfiguration.getType())))
-            .collect(Collectors.toSet());
+        final Set<ArtifactTypeEnum> notConfiguredArtifactTypeSet = baseArtifactSet.stream().filter(artifactTypeEnum -> artifacts.stream()
+            .noneMatch(artifactConfiguration -> artifactTypeEnum.getType().equals(artifactConfiguration.getType()))).collect(Collectors.toSet());
         if (!notConfiguredArtifactTypeSet.isEmpty()) {
             final String msg = buildErrorMessage(notConfiguredArtifactTypeSet);
             throw new MissingBaseArtifactConfigException(msg);
@@ -73,10 +64,7 @@ public class ArtifactConfigValidator {
     }
 
     private String buildErrorMessage(final Set<ArtifactTypeEnum> missingConfigArtifactTypeSet) {
-        final String artifactTypeAsString = missingConfigArtifactTypeSet.stream()
-            .map(ArtifactTypeEnum::getType)
-            .collect(Collectors.joining(", "));
+        final String artifactTypeAsString = missingConfigArtifactTypeSet.stream().map(ArtifactTypeEnum::getType).collect(Collectors.joining(", "));
         return String.format("Missing configuration for Artifact Type(s): %s", artifactTypeAsString);
     }
-
 }

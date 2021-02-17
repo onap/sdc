@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config.exception;
 
 public class MissingBaseArtifactConfigException extends RuntimeException {
@@ -24,5 +23,4 @@ public class MissingBaseArtifactConfigException extends RuntimeException {
     public MissingBaseArtifactConfigException(final String msg) {
         super(msg);
     }
-
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,59 +24,58 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ResponseInfo {
 
-	public enum ResponseStatusEnum {
-		SUCCESS("success"), LOGIN_FAILED("loginFailed"), INTERNAL_ERROR("internalError"), MISSING_HEADERS("required headers are missing"), TIMEOUT("timeout"), PARSING_ERROR("parsingFailed");
+    private ResponseStatusEnum applicativeStatus;
+    private String description;
 
-		private String statusDescription;
+    public ResponseInfo(ResponseStatusEnum applicativeStatus, String description) {
+        super();
+        this.applicativeStatus = applicativeStatus;
+        this.description = description;
+    }
 
-		ResponseStatusEnum(String status) {
-			this.statusDescription = status;
-		}
+    public ResponseInfo(ResponseStatusEnum applicativeStatus) {
+        super();
+        this.applicativeStatus = applicativeStatus;
+    }
 
-		public String getStatusDescription() {
-			return statusDescription;
-		}
-	}
+    public ResponseStatusEnum getApplicativeStatus() {
+        return applicativeStatus;
+    }
 
-	private ResponseStatusEnum applicativeStatus;
-	private String description;
+    public void setApplicativeStatus(ResponseStatusEnum applicativeStatus) {
+        this.applicativeStatus = applicativeStatus;
+    }
 
-	public ResponseInfo(ResponseStatusEnum applicativeStatus, String description) {
-		super();
-		this.applicativeStatus = applicativeStatus;
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public ResponseInfo(ResponseStatusEnum applicativeStatus) {
-		super();
-		this.applicativeStatus = applicativeStatus;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public ResponseStatusEnum getApplicativeStatus() {
-		return applicativeStatus;
-	}
+    @Override
+    public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        String tostring = super.toString();
+        try {
+            tostring = mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+        }
+        return tostring;
+    }
 
-	public void setApplicativeStatus(ResponseStatusEnum applicativeStatus) {
-		this.applicativeStatus = applicativeStatus;
-	}
+    public enum ResponseStatusEnum {
+        SUCCESS("success"), LOGIN_FAILED("loginFailed"), INTERNAL_ERROR("internalError"), MISSING_HEADERS("required headers are missing"), TIMEOUT(
+            "timeout"), PARSING_ERROR("parsingFailed");
+        private String statusDescription;
 
-	public String getDescription() {
-		return description;
-	}
+        ResponseStatusEnum(String status) {
+            this.statusDescription = status;
+        }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	@Override
-	public String toString() {
-		ObjectMapper mapper = new ObjectMapper();
-		String tostring = super.toString();
-		try {
-			tostring = mapper.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
-
-		}
-		return tostring;
-	}
+        public String getStatusDescription() {
+            return statusDescription;
+        }
+    }
 }

@@ -8,7 +8,6 @@ public class CadiFilterParams {
     private String cadi_loglevel;
     private String cadi_truststore;
     private String cadi_truststore_password;
-
     private String aaf_id;
     private String aaf_password;
     private String aaf_env;
@@ -138,5 +137,4 @@ public class CadiFilterParams {
     public void setCadiX509Issuers(String cadiX509Issuers) {
         this.cadiX509Issuers = cadiX509Issuers;
     }
-
 }

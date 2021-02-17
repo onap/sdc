@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
 
 import java.util.List;
@@ -32,7 +31,6 @@ public class ArtifactConfigManager {
     public static final ArtifactConfigManager INSTANCE = new ArtifactConfigManager();
 
     private ArtifactConfigManager() {
-
     }
 
     public static ArtifactConfigManager getInstance() {
@@ -47,26 +45,22 @@ public class ArtifactConfigManager {
      */
     public Optional<ArtifactConfiguration> find(final String type) {
         final List<ArtifactConfiguration> artifactConfigurationList = getConfiguration();
-        return artifactConfigurationList.stream()
-            .filter(artifactConfiguration -> artifactConfiguration.getType().equals(type))
-            .findFirst();
+        return artifactConfigurationList.stream().filter(artifactConfiguration -> artifactConfiguration.getType().equals(type)).findFirst();
     }
 
     /**
      * Find an artifact configuration by artifact type, that supports the artifact category/group and component type.
      *
-     * @param type the artifact type
+     * @param type          the artifact type
      * @param artifactGroup the artifact category/group
      * @param componentType the component type
      * @return the artifact configuration if it matches the provided filter
      */
-    public Optional<ArtifactConfiguration> find(final String type, final ArtifactGroupTypeEnum artifactGroup,
-                                                final ComponentType componentType) {
+    public Optional<ArtifactConfiguration> find(final String type, final ArtifactGroupTypeEnum artifactGroup, final ComponentType componentType) {
         final ArtifactConfiguration artifactConfiguration = find(type).orElse(null);
         if (artifactConfiguration == null) {
             return Optional.empty();
         }
-
         final boolean hasCategory = artifactConfiguration.hasSupport(artifactGroup);
         if (!hasCategory) {
             return Optional.empty();
@@ -75,7 +69,6 @@ public class ArtifactConfigManager {
         if (!hasComponentType) {
             return Optional.empty();
         }
-
         return Optional.of(artifactConfiguration);
     }
 
@@ -86,14 +79,11 @@ public class ArtifactConfigManager {
      * @param componentType the component type
      * @return the artifact configurations that matches the filter
      */
-    public List<ArtifactConfiguration> findAll(final ArtifactGroupTypeEnum artifactGroup,
-                                               final ComponentType componentType) {
-        final List<ArtifactConfiguration> artifactConfigurationList =
-            ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
-
+    public List<ArtifactConfiguration> findAll(final ArtifactGroupTypeEnum artifactGroup, final ComponentType componentType) {
+        final List<ArtifactConfiguration> artifactConfigurationList = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getArtifacts();
         return artifactConfigurationList.stream()
-            .filter(artifactConfiguration1 ->
-                artifactConfiguration1.hasSupport(artifactGroup) && artifactConfiguration1.hasSupport(componentType))
+            .filter(artifactConfiguration1 -> artifactConfiguration1.hasSupport(artifactGroup) && artifactConfiguration1.hasSupport(componentType))
             .collect(Collectors.toList());
     }
 
@@ -104,11 +94,9 @@ public class ArtifactConfigManager {
      * @return the artifact configurations that matches the filter
      */
     public List<ArtifactConfiguration> findAll(final ArtifactGroupTypeEnum artifactGroup) {
-        final List<ArtifactConfiguration> artifactConfigurationList =
-            ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
-
-        return artifactConfigurationList.stream()
-            .filter(artifactConfiguration1 -> artifactConfiguration1.hasSupport(artifactGroup))
+        final List<ArtifactConfiguration> artifactConfigurationList = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getArtifacts();
+        return artifactConfigurationList.stream().filter(artifactConfiguration1 -> artifactConfiguration1.hasSupport(artifactGroup))
             .collect(Collectors.toList());
     }
 
@@ -119,11 +107,9 @@ public class ArtifactConfigManager {
      * @return the artifact configurations that matches the filter
      */
     public List<ArtifactConfiguration> findAll(final ComponentType componentType) {
-        final List<ArtifactConfiguration> artifactConfigurationList =
-            ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
-
-        return artifactConfigurationList.stream()
-            .filter(artifactConfiguration1 -> artifactConfiguration1.hasSupport(componentType))
+        final List<ArtifactConfiguration> artifactConfigurationList = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getArtifacts();
+        return artifactConfigurationList.stream().filter(artifactConfiguration1 -> artifactConfiguration1.hasSupport(componentType))
             .collect(Collectors.toList());
     }
 

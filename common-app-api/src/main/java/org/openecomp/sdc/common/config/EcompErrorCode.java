@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.config;
 
 import lombok.Getter;
 
 @Getter
 public enum EcompErrorCode {
-
+    //  @formatter:off
     E_100("Authentication problem towards U-EB server. Reason: %s",
         "An Authentication failure occured during access to UEB server. Please check that UEB keys are configured correctly in ASDC BE distribution configuration."),
     E_199("Internal authentication problem. Description: %s"),
@@ -108,7 +107,7 @@ public enum EcompErrorCode {
     E_900("Unexpected error during BE REST API execution"),
     E_901("General error during FE Health Check"),
     E_999("Unexpected error. Description: %s");
-
+    //  @formatter:on
     /*
      * 100-199 Security/Permission Related - Authentication problems (from
      * external client, to external server) - Certification errors -
