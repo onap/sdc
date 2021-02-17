@@ -93,6 +93,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -1556,6 +1557,17 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     log.debug("Failed to delete inputs of the component instance {} from container component. ", componentInstanceId);
                     throw new ByActionStatusComponentException(
                             componentsUtils.convertFromStorageResponse(deleteInputsRes, containerComponentType), componentInstanceId);
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(containerComponent.getOutputs())) {
+            List<OutputDefinition> outputsToDelete = containerComponent.getOutputs().stream().filter(i -> i.getInstanceUniqueId() != null && i.getInstanceUniqueId().equals(componentInstanceId)).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(outputsToDelete)) {
+                StorageOperationStatus deleteOutputsRes = toscaOperationFacade.deleteComponentInstanceOutputsFromTopologyTemplate(containerComponent, outputsToDelete);
+                if (deleteOutputsRes != StorageOperationStatus.OK) {
+                    log.debug("Failed to delete outputs of the component instance {} from container component. ", componentInstanceId);
+                    throw new ByActionStatusComponentException(
+                            componentsUtils.convertFromStorageResponse(deleteOutputsRes, containerComponentType), componentInstanceId);
                 }
             }
         }
@@ -3342,25 +3354,23 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 String sourceAttributeName = sourceAttribute.getName();
                 for (ComponentInstanceAttribute destAttribute : destAttributeList) {
                     if (sourceAttributeName.equals(destAttribute.getName())) {
-//                        if (sourceAttribute.getValue() != null && !sourceAttribute.getValue().isEmpty()) {
-                            log.debug("Start to copy the attribute exists {}", sourceAttributeName);
+                        log.debug("Start to copy the attribute exists {}", sourceAttributeName);
 
-                            sourceAttribute.setUniqueId(
-                                    UniqueIdBuilder.buildResourceInstanceUniuqeId(
-                                            "attribute" , destComponentInstanceId.split("\\.")[1] , sourceAttributeName));
+                        sourceAttribute.setUniqueId(
+                            UniqueIdBuilder.buildResourceInstanceUniuqeId(
+                                "attribute", destComponentInstanceId.split("\\.")[1], sourceAttributeName));
 
-                            Either<ComponentInstanceAttribute, ResponseFormat> updateAttributeValueEither =
-                                    createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum.SERVICE,
-                                            destComponent.getUniqueId(), destComponentInstanceId, sourceAttribute,
-                                            userId);
-                            if (updateAttributeValueEither.isRight()) {
-                                log.error("Failed to copy the attribute");
-                                return Either.right(componentsUtils
-                                        .getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                                                "Failed to paste component instance to the canvas, attribute copy"));
-                            }
-                            break;
-//                        }
+                        Either<ComponentInstanceAttribute, ResponseFormat> updateAttributeValueEither =
+                            createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum.SERVICE,
+                                destComponent.getUniqueId(), destComponentInstanceId, sourceAttribute,
+                                userId);
+                        if (updateAttributeValueEither.isRight()) {
+                            log.error("Failed to copy the attribute");
+                            return Either.right(componentsUtils
+                                .getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
+                                    "Failed to paste component instance to the canvas, attribute copy"));
+                        }
+                        break;
                     }
                 }
             }
