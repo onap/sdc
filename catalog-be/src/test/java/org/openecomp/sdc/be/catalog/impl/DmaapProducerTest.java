@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.catalog.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.catalog.api.IComponentMessage;
@@ -56,7 +57,7 @@ public class DmaapProducerTest {
     private static final Logger LOG = LoggerFactory.getLogger(DmaapProducer.class);
 
     @Autowired
-    ConfigurationManager configurationManager;
+    private ConfigurationManager configurationManager;
  
     @Autowired
     private DmaapProducer dmaapProducer;
@@ -66,6 +67,7 @@ public class DmaapProducerTest {
 
 
     @Test
+    @Ignore("migration to Junit 5 depends on migration to Spring 5")
     public void pushComponentMessageTest() {
         boolean oldVal = isActive();
 
