@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "811543f9_7299af19",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-02-18T09:40:50Z",
+      "side": 1,
+      "message": "For some logs, you have defined a constant string var (e.g. FAILED_TO_FOUND_COMPONENT_ERROR) to define the content, for the others not. Shall we make it consistent?",
+      "revId": "2837d4869b0e79d62329c9c53ceffa37d192f2c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20ac8f05_76308b95",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-02-18T09:40:50Z",
+      "side": 1,
+      "message": "The 2 convertAttributes methods is a bit confusing in names. Probably better to change it to something more meaningful, e.g. converAttributesToTopologyTemplate and converAttributesToComponent",
+      "revId": "2837d4869b0e79d62329c9c53ceffa37d192f2c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
