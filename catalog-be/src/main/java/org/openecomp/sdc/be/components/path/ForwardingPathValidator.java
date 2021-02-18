@@ -114,7 +114,7 @@ public class ForwardingPathValidator {
                                                                  boolean isUpdate, ResponseFormatManager responseFormatManager) {
         boolean isPathNameUnique = false;
         ComponentParametersView filter = new ComponentParametersView(true);
-        filter.setIgnoreForwardingPath(false);
+        filter.setIgnoreServicePath(false);
         Either<Service, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade
                 .getToscaElement(serviceId, filter);
         if (forwardingPathOrigin.isRight()){

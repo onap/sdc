@@ -42,6 +42,10 @@ public class AttributeDefinition extends AttributeDataDefinition implements IOpe
         toscaPresentation = null;
     }
 
+    public AttributeDefinition(final AttributeDataDefinition attributeDataDefinition) {
+        super(attributeDataDefinition);
+    }
+
     public AttributeDefinition(final AttributeDefinition attributeDefinition) {
         this.type = attributeDefinition.getType();
         this.description = attributeDefinition.getDescription();
@@ -52,7 +56,7 @@ public class AttributeDefinition extends AttributeDataDefinition implements IOpe
 
     @Override
     public String getDefaultValue() {
-        return String.valueOf(_default);
+        return _default == null ? null : String.valueOf(_default);
     }
 
     @Override

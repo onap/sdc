@@ -921,7 +921,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         switch (label) {
             case NODE_TYPE:
                 toscaElement = new NodeType();
-                ((NodeType) toscaElement).setAttributes(getAttributesFromComponentV(componentV));
+                toscaElement.setAttributes(getAttributesFromComponentV(componentV));
                 break;
             case TOPOLOGY_TEMPLATE:
                 toscaElement = new TopologyTemplate();
