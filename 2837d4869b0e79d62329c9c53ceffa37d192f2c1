@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "01aa7649_45debf40",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-18T13:15:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "811543f9_7299af19",
+      "revId": "2837d4869b0e79d62329c9c53ceffa37d192f2c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20ac8f05_76308b95",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
         "patchSetId": 13
@@ -33,6 +51,24 @@
       "revId": "2837d4869b0e79d62329c9c53ceffa37d192f2c1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51ca749d_25323ee6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-18T13:15:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "20ac8f05_76308b95",
+      "revId": "2837d4869b0e79d62329c9c53ceffa37d192f2c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
