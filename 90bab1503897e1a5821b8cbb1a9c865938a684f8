@@ -22,6 +22,30 @@
       "revId": "90bab1503897e1a5821b8cbb1a9c865938a684f8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aca8a6c9_411cd2c2",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-02-18T10:51:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09509a38_56f64d61",
+      "range": {
+        "startLine": 36,
+        "startChar": 15,
+        "endLine": 36,
+        "endChar": 20
+      },
+      "revId": "90bab1503897e1a5821b8cbb1a9c865938a684f8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
