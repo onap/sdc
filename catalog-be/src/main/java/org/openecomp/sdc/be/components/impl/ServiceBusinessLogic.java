@@ -1758,14 +1758,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         ActivationRequestInformation activationRequestInformation = activationRequestInformationEither.left().value();
 
-        Either<String, ResponseFormat> result = null;
         String did = ThreadLocalsHolder.getUuid();
         Service service = activationRequestInformation.getServiceToActivate();
-        result = buildAndSendServiceNotification(service, envId, did, activationRequestInformation.getWorkloadContext(), modifier);
-        return result;
+        return buildAndSendServiceNotification(service, envId, did, activationRequestInformation.getWorkloadContext(), modifier);
     }
 
-    public Either<String, ResponseFormat> buildAndSendServiceNotification(Service service, String envId, String did, String workloadContext, User modifier) {
+    private Either<String, ResponseFormat> buildAndSendServiceNotification(Service service, String envId, String did, String workloadContext, User modifier) {
         String envName = getEnvNameFromConfiguration();
         INotificationData notificationData = distributionEngine.buildServiceForDistribution(service, did, workloadContext);
         ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envId, envName, modifier);
