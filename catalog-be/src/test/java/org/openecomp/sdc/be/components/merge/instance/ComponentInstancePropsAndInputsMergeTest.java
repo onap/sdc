@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,19 @@
 
 package org.openecomp.sdc.be.components.merge.instance;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,16 +58,7 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-public class ComponentInstancePropsAndInputsMergeTest {
+class ComponentInstancePropsAndInputsMergeTest {
 
     private static final String INSTANCE_ID1 = "inst1";
     private static final User USER = new User();
@@ -84,16 +85,16 @@ public class ComponentInstancePropsAndInputsMergeTest {
 
     private DataForMergeHolder oldDataHolder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        resourceToUpdate =  new ResourceBuilder().addInstanceInput(INSTANCE_ID1, "instInput1")
-                .addInstanceInput(INSTANCE_ID1, "instInput2")
-                .addInstanceProperty(INSTANCE_ID1, "instProp1")
-                .addInstanceProperty(INSTANCE_ID1, "instProp2")
-                .addInput("input1")
-                .addInput("input2")
-                .setUniqueId("resourceId").build();
+        resourceToUpdate = new ResourceBuilder().addInstanceInput(INSTANCE_ID1, "instInput1")
+            .addInstanceInput(INSTANCE_ID1, "instInput2")
+            .addInstanceProperty(INSTANCE_ID1, "instProp1")
+            .addInstanceProperty(INSTANCE_ID1, "instProp2")
+            .addInput("input1")
+            .addInput("input2")
+            .setUniqueId("resourceId").build();
 
         List<InputDefinition> oldInputs = ObjectGenerator.buildInputs("input1");
         List<ComponentInstanceProperty> oldInstProps = ObjectGenerator.buildInstanceProperties("instProp1", "instProp3");
@@ -107,7 +108,7 @@ public class ComponentInstancePropsAndInputsMergeTest {
     }
 
     @Test
-    public void mergeDataAfterCreate() throws Exception {
+    void mergeDataAfterCreate() {
         List<InputDefinition> oldInputs = ObjectGenerator.buildInputs("input1");
         List<ComponentInstanceProperty> oldInstProps = ObjectGenerator.buildInstanceProperties("instProp1", "instProp3");
         List<ComponentInstanceInput> oldInstInputs = ObjectGenerator.buildInstanceInputs("instInput1", "instInput3");
@@ -121,46 +122,66 @@ public class ComponentInstancePropsAndInputsMergeTest {
 
         ArgumentCaptor<ComponentParametersView> parametersViewCaptor = ArgumentCaptor.forClass(ComponentParametersView.class);
 
-        when(toscaOperationFacade.getToscaElement(Mockito.eq("resourceId"), parametersViewCaptor.capture())).thenReturn(Either.left(resourceToUpdate));
-        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(oldInstInputs, oldInputs, resourceToUpdate, INSTANCE_ID1)).thenReturn(ActionStatus.OK);
-        when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(oldInstProps, oldInputs, resourceToUpdate, INSTANCE_ID1)).thenReturn(ActionStatus.OK);
-        when(componentInstanceInputsRedeclareHandler.redeclareComponentInputsForInstance(resourceToUpdate, INSTANCE_ID1, currInstanceOriginType, oldInputs)).thenReturn(ActionStatus.OK);
+        when(toscaOperationFacade.getToscaElement(Mockito.eq("resourceId"), parametersViewCaptor.capture()))
+            .thenReturn(Either.left(resourceToUpdate));
+        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(oldInstInputs, oldInputs, resourceToUpdate, INSTANCE_ID1))
+            .thenReturn(ActionStatus.OK);
+        when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(oldInstProps, oldInputs, resourceToUpdate, INSTANCE_ID1))
+            .thenReturn(ActionStatus.OK);
+        when(componentInstanceInputsRedeclareHandler
+            .redeclareComponentInputsForInstance(resourceToUpdate, INSTANCE_ID1, currInstanceOriginType, oldInputs)).thenReturn(ActionStatus.OK);
         Component mergeResult = testInstance.mergeDataAfterCreate(USER, dataForMergeHolder, resourceToUpdate, INSTANCE_ID1);
         assertEquals(mergeResult, resourceToUpdate);
         assertComponentFilter(parametersViewCaptor.getValue());
     }
 
-    @Test(expected = ComponentException.class)
-    public void mergeDataAfterCreate_failedToMergeComponentInstanceInputs() throws Exception {
-        ResponseFormat errorResponse = new ResponseFormat();
+    @Test
+    void mergeDataAfterCreate_failedToMergeComponentInstanceInputs() {
+        final ResponseFormat errorResponse = new ResponseFormat();
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(errorResponse);
-        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.GENERAL_ERROR);
-        testInstance.mergeDataAfterCreate(USER, new DataForMergeHolder(), new Service(), "inst1");
+        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString()))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
+        final DataForMergeHolder dataHolder = new DataForMergeHolder();
+        final Service service = new Service();
+        assertThrows(ComponentException.class, () -> {
+            testInstance.mergeDataAfterCreate(USER, dataHolder, service, "inst1");
+        });
         verifyZeroInteractions(componentInstanceInputsRedeclareHandler, componentInstancePropertiesMergeBL, toscaOperationFacade);
     }
 
-    @Test(expected = ComponentException.class)
-    public void mergeDataAfterCreate_failedToMergeComponentInstProps() throws Exception {
-        ResponseFormat errorResponse = new ResponseFormat();
-        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.OK);
-        when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.GENERAL_ERROR);
+    @Test
+    void mergeDataAfterCreate_failedToMergeComponentInstProps() {
+        final ResponseFormat errorResponse = new ResponseFormat();
+        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString()))
+            .thenReturn(ActionStatus.OK);
+        when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(anyList(), anyList(), any(Component.class), anyString()))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(errorResponse);
-        testInstance.mergeDataAfterCreate(USER, new DataForMergeHolder(), new Service(), "inst1");
+        final DataForMergeHolder dataHolder = new DataForMergeHolder();
+        final Service service = new Service();
+        assertThrows(ComponentException.class, () -> {
+            testInstance.mergeDataAfterCreate(USER, dataHolder, service, "inst1");
+        });
         verifyZeroInteractions(componentInstanceInputsRedeclareHandler, toscaOperationFacade);
     }
 
-
-    @Test(expected = ComponentException.class)
-    public void mergeDataAfterCreate_mergeInputs_FailedToFetchResource() throws Exception {
-        ResponseFormat errorResponse = new ResponseFormat();
-        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.OK);
-        when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.OK);
-        when(toscaOperationFacade.getToscaElement(any(), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
+    @Test
+    void mergeDataAfterCreate_mergeInputs_FailedToFetchResource() {
+        final ResponseFormat errorResponse = new ResponseFormat();
+        when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString()))
+            .thenReturn(ActionStatus.OK);
+        when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(anyList(), anyList(), any(Component.class), anyString()))
+            .thenReturn(ActionStatus.OK);
+        when(toscaOperationFacade.getToscaElement(any(), any(ComponentParametersView.class)))
+            .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.GENERAL_ERROR)).thenReturn(ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(errorResponse);
-        DataForMergeHolder dataHolder = new DataForMergeHolder();
+        final DataForMergeHolder dataHolder = new DataForMergeHolder();
         dataHolder.setOrigComponentInputs(ObjectGenerator.buildInputs("input1", "input2"));
-        testInstance.mergeDataAfterCreate(USER, dataHolder, new Service(), "inst1");
+        final Service service = new Service();
+        assertThrows(ComponentException.class, () -> {
+            testInstance.mergeDataAfterCreate(USER, dataHolder, service, "inst1");
+        });
         verifyZeroInteractions(componentInstanceInputsRedeclareHandler);
     }
 
