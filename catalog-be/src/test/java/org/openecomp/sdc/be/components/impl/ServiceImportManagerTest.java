@@ -31,14 +31,16 @@
 package org.openecomp.sdc.be.components.impl;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadServiceInfo;
 
+@ExtendWith(MockitoExtension.class)
+class ServiceImportManagerTest {
 
-
-public class ServiceImportManagerTest {
     @InjectMocks
     private ServiceImportManager serviceImportManager;
 
@@ -47,7 +49,7 @@ public class ServiceImportManagerTest {
     }
 
     @Test
-    public void testGetServiceImportBusinessLogic() {
+    void testGetServiceImportBusinessLogic() {
         ServiceImportManager testSubject;
         ServiceImportBusinessLogic result;
 
@@ -56,17 +58,16 @@ public class ServiceImportManagerTest {
     }
 
     @Test
-    public void testSetServiceImportBusinessLogic() {
+    void testSetServiceImportBusinessLogic() {
         ServiceImportManager testSubject;
-        ServiceImportBusinessLogic serviceImportBusinessLogic=null;
+        ServiceImportBusinessLogic serviceImportBusinessLogic = null;
 
         testSubject = createTestSubject();
         testSubject.setServiceImportBusinessLogic(serviceImportBusinessLogic);
     }
 
-
     @Test
-    public void testGetServiceBusinessLogic() {
+    void testGetServiceBusinessLogic() {
         ServiceImportManager testSubject;
         ServiceBusinessLogic result;
 
@@ -75,7 +76,7 @@ public class ServiceImportManagerTest {
     }
 
     @Test
-    public void testSetServiceBusinessLogic() {
+    void testSetServiceBusinessLogic() {
         ServiceImportManager testSubject;
         ServiceBusinessLogic serviceBusinessLogic = null;
 
@@ -84,7 +85,7 @@ public class ServiceImportManagerTest {
     }
 
     @Test
-    public void testPopulateServiceMetadata() {
+    void testPopulateServiceMetadata() {
         UploadServiceInfo serviceMetaData = null;
         Service service = null;
         if (serviceMetaData != null || service != null) {
