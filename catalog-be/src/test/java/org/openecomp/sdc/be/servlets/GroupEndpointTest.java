@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,28 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.model.operations.api.StorageOperationStatus.NOT_FOUND;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -29,9 +49,10 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvi
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
@@ -60,28 +81,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.model.operations.api.StorageOperationStatus.NOT_FOUND;
-
-public class GroupEndpointTest extends JerseySpringBaseTest {
+class GroupEndpointTest extends JerseySpringBaseTest {
 
     private static final String VALID_USER = "ab001";
     private static final String INVALID_USER = "ab002";
@@ -119,11 +119,12 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initClass() {
         ExternalConfiguration.setAppName("catalog-be");
         String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
         //ComponentsUtils needs configuration singleton to be set
         componentValidations = mock(ComponentValidations.class);
@@ -136,7 +137,7 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
     @Override
     protected void configureClient(ClientConfig config) {
         final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         config.register(jacksonJsonProvider);
     }
 
@@ -144,12 +145,13 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
     protected ResourceConfig configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure(GroupEndpointTestConfig.class)
-                .register(GroupEndpoint.class)
-                .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "WARNING");
+            .register(GroupEndpoint.class)
+            .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "WARNING");
     }
 
-    @Before
-    public void init() {
+    @BeforeEach
+    public void before() throws Exception {
+        super.setUp();
         cr = new Resource();
         cr.setSystemName("CR1");
         g1 = new GroupDefinition();
@@ -167,20 +169,33 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
         unhappyScenarioSetup();
     }
 
+    @AfterEach
+    void after() throws Exception {
+        super.tearDown();
+    }
+
     private void unhappyScenarioSetup() {
-        when(accessValidations.validateUserCanWorkOnComponent(eq(INVALID_COMPONENT_ID), eq(ComponentTypeEnum.RESOURCE), eq(VALID_USER), anyString())).thenThrow(new StorageException(NOT_FOUND, INVALID_COMPONENT_ID));
+        when(accessValidations
+            .validateUserCanWorkOnComponent(eq(INVALID_COMPONENT_ID), eq(ComponentTypeEnum.RESOURCE), eq(VALID_USER),
+                anyString())).thenThrow(new StorageException(NOT_FOUND, INVALID_COMPONENT_ID));
         when(componentValidations.getComponentInstance(cr, A)).thenReturn(Optional.of(ci));
     }
 
-
     private void happyScenarioSetup() {
-        when(accessValidations.validateUserCanWorkOnComponent(eq(VALID_COMPONENT_ID), any(ComponentTypeEnum.class), eq(VALID_USER), anyString())).thenReturn(cr);
-        when(accessValidations.validateUserCanRetrieveComponentData(eq(VALID_COMPONENT_ID), eq("resources"), eq(VALID_USER), anyString()))
-                .thenReturn(cr);
+        when(accessValidations
+            .validateUserCanWorkOnComponent(eq(VALID_COMPONENT_ID), any(ComponentTypeEnum.class), eq(VALID_USER),
+                anyString())).thenReturn(cr);
+        when(accessValidations
+            .validateUserCanRetrieveComponentData(eq(VALID_COMPONENT_ID), eq("resources"), eq(VALID_USER), anyString()))
+            .thenReturn(cr);
         when(componentValidations.getComponentInstance(cr, A)).thenReturn(Optional.of(ci));
-        doNothing().when(groupsOperation).updateGroupOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), any(PromoteVersionEnum.class));
-        when(groupOperation.validateAndUpdatePropertyValue(isA(GroupProperty.class))).thenReturn(StorageOperationStatus.OK);
-        when(groupsOperation.updateGroupPropertiesOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), anyList(), any(PromoteVersionEnum.class))).thenAnswer(new Answer<Either>() {
+        doNothing().when(groupsOperation)
+            .updateGroupOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), any(PromoteVersionEnum.class));
+        when(groupOperation.validateAndUpdatePropertyValue(isA(GroupProperty.class)))
+            .thenReturn(StorageOperationStatus.OK);
+        when(groupsOperation
+            .updateGroupPropertiesOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), anyList(),
+                any(PromoteVersionEnum.class))).thenAnswer(new Answer<Either>() {
             @Override
             public Either answer(InvocationOnMock invocationOnMock) throws Throwable {
                 Object[] args = invocationOnMock.getArguments();
@@ -190,44 +205,44 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
     }
 
     @Test
-    public void updateGroupMembers_success() {
+    void updateGroupMembers_success() {
         List<String> ids = Arrays.asList(A);
         List<String> updatedIds = buildUpdateGroupMembersCall(VALID_COMPONENT_ID, VALID_GROUP_ID, VALID_USER)
-                .post(Entity.entity(ids, MediaType.APPLICATION_JSON), new GenericType<List<String>>() {
-                });
+            .post(Entity.entity(ids, MediaType.APPLICATION_JSON), new GenericType<List<String>>() {
+            });
         assertThat(updatedIds.size()).isEqualTo(ids.size());
         assertThat(updatedIds).containsExactlyInAnyOrder(ids.toArray(new String[ids.size()]));
     }
 
     @Test
-    public void updateGroupMembersWith2IdenticalMembers_success() {
+    void updateGroupMembersWith2IdenticalMembers_success() {
         List<String> ids = Arrays.asList(A, A);
         List<String> updatedIds = buildUpdateGroupMembersCall(VALID_COMPONENT_ID, VALID_GROUP_ID, VALID_USER)
-                .post(Entity.entity(ids, MediaType.APPLICATION_JSON), new GenericType<List<String>>() {
-                });
+            .post(Entity.entity(ids, MediaType.APPLICATION_JSON), new GenericType<List<String>>() {
+            });
         assertThat(updatedIds.size()).isEqualTo(1);
         assertThat(updatedIds).containsExactlyInAnyOrder(String.valueOf(A));
     }
 
     @Test
-    public void updateGroupMembersWithEmptyList_success() {
+    void updateGroupMembersWithEmptyList_success() {
         List<String> ids = new ArrayList<>();
         List<String> updatedIds = buildUpdateGroupMembersCall(VALID_COMPONENT_ID, VALID_GROUP_ID, VALID_USER)
-                .post(Entity.entity(ids, MediaType.APPLICATION_JSON), new GenericType<List<String>>() {
-                });
-        assertThat(updatedIds.size()).isEqualTo(0);
+            .post(Entity.entity(ids, MediaType.APPLICATION_JSON), new GenericType<List<String>>() {
+            });
+        assertThat(updatedIds.size()).isZero();
     }
 
     @Test
-    public void updateGroupMember_InvalidComponentId_failure() {
+    void updateGroupMember_InvalidComponentId_failure() {
         List<String> ids = new ArrayList<>();
         Response response = buildUpdateGroupMembersCall(INVALID_COMPONENT_ID, VALID_GROUP_ID, VALID_USER)
-                .post(Entity.entity(ids, MediaType.APPLICATION_JSON), Response.class);
+            .post(Entity.entity(ids, MediaType.APPLICATION_JSON), Response.class);
         AssertionsForClassTypes.assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
-    public void updateGroupProperty_success() {
+    void updateGroupProperty_success() {
         GroupProperty property = new GroupProperty();
         property.setValue("value1");
         property.setName("prop");
@@ -239,31 +254,33 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
 //                });
 //        assertThat(updatedProperties.size()).isEqualTo(1);
         Response response = buildUpdateGroupPropertiesCall(VALID_COMPONENT_ID, VALID_GROUP_ID, VALID_USER)
-                .put(Entity.entity(propertyStr, MediaType.APPLICATION_JSON));
+            .put(Entity.entity(propertyStr, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
-    public void getGroupProperties_success() {
-        List<PropertyDataDefinition> properties = buildUpdateGroupPropertiesCall(VALID_COMPONENT_ID, VALID_GROUP_ID, VALID_USER)
-                .get(new GenericType<List<PropertyDataDefinition>>(){});
+    void getGroupProperties_success() {
+        List<PropertyDataDefinition> properties = buildUpdateGroupPropertiesCall(VALID_COMPONENT_ID, VALID_GROUP_ID,
+            VALID_USER)
+            .get(new GenericType<List<PropertyDataDefinition>>() {
+            });
         assertThat(properties.size()).isEqualTo(1);
         assertThat(properties.get(0).getValue()).isEqualTo(OLD_VALUE);
     }
 
     private Invocation.Builder buildUpdateGroupMembersCall(String componentId, String groupId, String userId) {
         return target("/v1/catalog/resources/" + componentId + "/groups/" + groupId + "/members")
-                .request(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, userId);
+            .request(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, userId);
     }
 
     private Invocation.Builder buildUpdateGroupPropertiesCall(String componentId, String groupId, String userId) {
         return target("/v1/catalog/resources/" + componentId + "/groups/" + groupId + "/properties")
-                .request(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, userId);
+            .request(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, userId);
     }
-	
+
 
 }
