@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,20 +20,28 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.att.aft.dme2.api.DME2Exception;
 import com.att.aft.dme2.iterator.DME2EndpointIterator;
 import com.att.nsa.apiClient.credentials.ApiCredential;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fj.data.Either;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import fj.data.Either;
+import io.cucumber.junit.Cucumber;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -48,19 +56,14 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+@RunWith(Cucumber.class)
 public class StepsTenantIsolation {
 
     // Notification Fields
     private String operationalEnvironmentId = "28122015552391";
     private String operationalEnvironmentName = "Operational Environment Name";
     private String operationalEnvironmentType;
-    private String tenantContext ;
+    private String tenantContext;
     private String workloadContext;
     private String action;
 
@@ -87,7 +90,7 @@ public class StepsTenantIsolation {
     public void beforeScenario() {
         MockitoAnnotations.initMocks(this);
         when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED))
-                .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
+            .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
         doNothing().when(envEngine).createUebTopicsForEnvironments();
         envEngine.init();
     }
@@ -100,10 +103,10 @@ public class StepsTenantIsolation {
         if (!isNull(notification.getOperationalEnvironmentType())) {
             this.operationalEnvironmentType = notification.getOperationalEnvironmentType().getEventTypenName();
         }
-        if( !isEmpty(notification.getOperationalEnvironmentId()) ){
+        if (!isEmpty(notification.getOperationalEnvironmentId())) {
             this.operationalEnvironmentId = notification.getOperationalEnvironmentId();
         }
-        if( !isNull(notification.getAction()) ){
+        if (!isNull(notification.getAction())) {
             this.action = notification.getAction().getActionName();
         }
 
@@ -112,17 +115,17 @@ public class StepsTenantIsolation {
     @Given("^Cassandra service status is (.*)$")
     public void cassandra_service_status_is(String status) throws Throwable {
         switch (status) {
-        case "UP":
-            this.cassandraUp = true;
-            break;
-        case "DOWN":
-            when(operationalEnvironmentDao.get(operationalEnvironmentId))
+            case "UP":
+                this.cassandraUp = true;
+                break;
+            case "DOWN":
+                when(operationalEnvironmentDao.get(operationalEnvironmentId))
                     .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
-            when(operationalEnvironmentDao.save(Mockito.any(OperationalEnvironmentEntry.class)))
+                when(operationalEnvironmentDao.save(Mockito.any(OperationalEnvironmentEntry.class)))
                     .thenReturn(CassandraOperationStatus.GENERAL_ERROR);
-            break;
-        default:
-            throw new NotImplementedException();
+                break;
+            default:
+                throw new NotImplementedException();
         }
     }
 
@@ -134,28 +137,28 @@ public class StepsTenantIsolation {
         Either<OperationalEnvironmentEntry, CassandraOperationStatus> eitherResult;
         final OperationalEnvironmentEntry entryMock = Mockito.mock(OperationalEnvironmentEntry.class);
         switch (status) {
-        case "FOUND_IN_PROGRESS":
-            when(entryMock.getStatus()).thenReturn(EnvironmentStatusEnum.IN_PROGRESS.getName());
-            eitherResult = Either.left(entryMock);
-            break;
-        case "FOUND_COMPLETED":
-            when(entryMock.getStatus()).thenReturn(EnvironmentStatusEnum.COMPLETED.getName());
-            eitherResult = Either.left(entryMock);
-            break;
-        case "FOUND_FAILED":
-            when(entryMock.getStatus()).thenReturn(EnvironmentStatusEnum.FAILED.getName());
-            eitherResult = Either.left(entryMock);
-            break;
-        case "NOT_FOUND":
-            eitherResult = Either.right(CassandraOperationStatus.NOT_FOUND);
-            break;
-        default:
-            throw new NotImplementedException();
+            case "FOUND_IN_PROGRESS":
+                when(entryMock.getStatus()).thenReturn(EnvironmentStatusEnum.IN_PROGRESS.getName());
+                eitherResult = Either.left(entryMock);
+                break;
+            case "FOUND_COMPLETED":
+                when(entryMock.getStatus()).thenReturn(EnvironmentStatusEnum.COMPLETED.getName());
+                eitherResult = Either.left(entryMock);
+                break;
+            case "FOUND_FAILED":
+                when(entryMock.getStatus()).thenReturn(EnvironmentStatusEnum.FAILED.getName());
+                eitherResult = Either.left(entryMock);
+                break;
+            case "NOT_FOUND":
+                eitherResult = Either.right(CassandraOperationStatus.NOT_FOUND);
+                break;
+            default:
+                throw new NotImplementedException();
         }
 
         when(operationalEnvironmentDao.get(operationalEnvironmentId)).thenReturn(eitherResult);
         when(operationalEnvironmentDao.save(Mockito.any(OperationalEnvironmentEntry.class)))
-                .thenReturn(CassandraOperationStatus.OK);
+            .thenReturn(CassandraOperationStatus.OK);
     }
 
     @Given("^AAI service status is (.*) and Tenant returned is (.*) and worload returned is (.*)$")
@@ -165,9 +168,9 @@ public class StepsTenantIsolation {
         HttpResponse<String> resp = Mockito.mock(HttpResponse.class);
         when(aaiRequestHandler.getOperationalEnvById(operationalEnvironmentId)).thenReturn(resp);
         switch (aaiServiceStatus) {
-        case "UP":
-            when(resp.getStatusCode()).thenReturn(HttpStatus.SC_OK);
-            String aaiResponseTemplate =
+            case "UP":
+                when(resp.getStatusCode()).thenReturn(HttpStatus.SC_OK);
+                String aaiResponseTemplate =
                     //@formatter:off
                     "{\r\n"
                     + "     \"operational-environment-id\": \"%s\",\r\n"
@@ -178,32 +181,32 @@ public class StepsTenantIsolation {
                     + "     \"workload-context\": \"%s\"\r\n"
                     + "    }";
                     //@formatter:on
-            when(resp.getResponse()).thenReturn(String.format(aaiResponseTemplate, operationalEnvironmentId,
+                when(resp.getResponse()).thenReturn(String.format(aaiResponseTemplate, operationalEnvironmentId,
                     operationalEnvironmentName, operationalEnvironmentType, tenantContext, workloadContext));
 
-            break;
-        case "DOWN":
-            when(resp.getStatusCode()).thenReturn(HttpStatus.SC_REQUEST_TIMEOUT);
-            break;
-        default:
-            throw new NotImplementedException();
+                break;
+            case "DOWN":
+                when(resp.getStatusCode()).thenReturn(HttpStatus.SC_REQUEST_TIMEOUT);
+                break;
+            default:
+                throw new NotImplementedException();
         }
     }
 
     @Given("^AFT_DME service status is (.*)$")
     public void aft_dme_service_status_is(String aftDmeStatus) throws Throwable {
         switch (aftDmeStatus) {
-        case "UP":
-            DME2EndpointIterator mockItr = Mockito.mock(DME2EndpointIterator.class);
-            when(mockItr.hasNext()).thenReturn(false);
-            when(epIterCreator.create(Mockito.anyString())).thenReturn(mockItr);
-            break;
-        case "DOWN":
-            when(epIterCreator.create(Mockito.anyString()))
+            case "UP":
+                DME2EndpointIterator mockItr = Mockito.mock(DME2EndpointIterator.class);
+                when(mockItr.hasNext()).thenReturn(false);
+                when(epIterCreator.create(Mockito.anyString())).thenReturn(mockItr);
+                break;
+            case "DOWN":
+                when(epIterCreator.create(Mockito.anyString()))
                     .thenThrow(new DME2Exception("dummyCode", new NotImplementedException()));
-            break;
-        default:
-            throw new NotImplementedException();
+                break;
+            default:
+                throw new NotImplementedException();
         }
     }
 
@@ -213,18 +216,18 @@ public class StepsTenantIsolation {
 
         Either<ApiCredential, CambriaErrorResponse> response;
         switch (status) {
-        case "UP":
-            ApiCredential apiCredential = Mockito.mock(ApiCredential.class);
-            when(apiCredential.getApiKey()).thenReturn("MockAPIKey");
-            when(apiCredential.getApiSecret()).thenReturn("MockSecretKey");
-            response = Either.left(apiCredential);
-            break;
-        case "DOWN":
-            CambriaErrorResponse cambriaError = Mockito.mock(CambriaErrorResponse.class);
-            response = Either.right(cambriaError);
-            break;
-        default:
-            throw new NotImplementedException();
+            case "UP":
+                ApiCredential apiCredential = Mockito.mock(ApiCredential.class);
+                when(apiCredential.getApiKey()).thenReturn("MockAPIKey");
+                when(apiCredential.getApiSecret()).thenReturn("MockSecretKey");
+                response = Either.left(apiCredential);
+                break;
+            case "DOWN":
+                CambriaErrorResponse cambriaError = Mockito.mock(CambriaErrorResponse.class);
+                response = Either.right(cambriaError);
+                break;
+            default:
+                throw new NotImplementedException();
         }
         when(cambriaHandler.createUebKeys(Mockito.anyList())).thenReturn(response);
     }
@@ -243,8 +246,8 @@ public class StepsTenantIsolation {
     @Then("^handle message activates validation of eventType (.*)$")
     public void handle_message_activates_validation_of_eventType(boolean isValidated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isValidated)))
-                .validateEnvironmentType(Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class),
-                        Mockito.any(IDmaapAuditNotificationData.class));
+            .validateEnvironmentType(Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class),
+                Mockito.any(IDmaapAuditNotificationData.class));
     }
 
     @SuppressWarnings("unchecked")
@@ -252,43 +255,43 @@ public class StepsTenantIsolation {
     public void trying_to_write_message_to_audit_log_and_table(boolean isUnsupportedTypeEventRecorded) throws Throwable {
         int count = isUnsupportedTypeEventRecorded ? 2 : 1;
         verify(componentsUtils, Mockito.atLeast(count))
-                .auditEnvironmentEngine(Mockito.any(AuditingActionEnum.class), Mockito.eq(operationalEnvironmentId),
-                        Mockito.any(String.class), Mockito.any(String.class), Mockito.eq(operationalEnvironmentName), Mockito.eq(tenantContext));
+            .auditEnvironmentEngine(Mockito.any(AuditingActionEnum.class), Mockito.eq(operationalEnvironmentId),
+                Mockito.any(String.class), Mockito.any(String.class), Mockito.eq(operationalEnvironmentName), Mockito.eq(tenantContext));
     }
 
     @SuppressWarnings("unchecked")
     @Then("^handle message activates validation of action (.*)$")
     public void handle_message_activates_validation_of_action(boolean isValidated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isValidated)))
-                .validateActionType(Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class));
+            .validateActionType(Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class));
     }
 
     @SuppressWarnings("unchecked")
     @Then("^handle message activates validation of state (.*)$")
     public void handle_message_activates_validation_of_state(boolean isValidated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isValidated)))
-                .validateState(Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class));
+            .validateState(Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class));
     }
 
     @SuppressWarnings("unchecked")
     @Then("^trying to save in-progress record (.*)$")
     public void trying_to_save_in_progress_record(boolean isActivated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated)))
-                .saveEntryWithInProgressStatus(Mockito.any(Wrapper.class), Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class));
+            .saveEntryWithInProgressStatus(Mockito.any(Wrapper.class), Mockito.any(Wrapper.class), Mockito.any(IDmaapNotificationData.class));
     }
 
     @SuppressWarnings("unchecked")
     @Then("^trying to get environment info from A&AI API (.*)$")
     public void trying_to_get_environment_info_from_AAI_AP(boolean isActivated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated)))
-                .retrieveOpEnvInfoFromAAI(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
+            .retrieveOpEnvInfoFromAAI(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
     }
 
     @SuppressWarnings("unchecked")
     @Then("^trying to retrieve Ueb Addresses From AftDme (.*)$")
     public void trying_to_retrieve_ueb_addresses_from_AftDme(boolean isActivated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated))).discoverUebHosts(
-                Mockito.anyString());
+            Mockito.anyString());
 
     }
 
@@ -296,13 +299,13 @@ public class StepsTenantIsolation {
     @Then("^trying to create Ueb keys (.*)$")
     public void trying_to_create_ueb_keys(boolean isActivated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated)))
-                .createUebKeys(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
+            .createUebKeys(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
     }
 
     @Then("^trying to create Ueb Topics (.*)$")
     public void trying_to_create_ueb_topics(boolean isActivated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated)))
-                .createUebTopicsForEnvironment(Mockito.any(OperationalEnvironmentEntry.class));
+            .createUebTopicsForEnvironment(Mockito.any(OperationalEnvironmentEntry.class));
     }
 
     @Then("^handle message finished successfully (.*)$")
@@ -314,12 +317,12 @@ public class StepsTenantIsolation {
 
     private String buildNotification() {
         String notificationTemplate = "{ \"operationalEnvironmentId\": \"%s\",\r\n"
-                + "             \"operationalEnvironmentName\": \"%s\",\r\n"
-                + "             \"operationalEnvironmentType\": \"%s\",\r\n" + "             \"tenantContext\": \"%s\",\r\n"
-                + "             \"workloadContext\": \"%s\",\r\n" + "             \"action\": \"%s\"}";
+            + "             \"operationalEnvironmentName\": \"%s\",\r\n"
+            + "             \"operationalEnvironmentType\": \"%s\",\r\n" + "             \"tenantContext\": \"%s\",\r\n"
+            + "             \"workloadContext\": \"%s\",\r\n" + "             \"action\": \"%s\"}";
 
         return String.format(notificationTemplate, operationalEnvironmentId, operationalEnvironmentName,
-                operationalEnvironmentType, tenantContext, workloadContext, action);
+            operationalEnvironmentType, tenantContext, workloadContext, action);
     }
 
     private int getNumberOfCallsToValidate(boolean isValidated) {

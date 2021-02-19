@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -55,13 +56,21 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 public class ArtifactValidationUtilsTest {
 
+    private static final String ES_ID = "testEsInCassandra";
+    private static final String ES_ID_NOT_IN_CASS = "testEsNotInCassandra";
+    private static final String TASK_NAME = "testTaskName";
+    private static final String UNIQUE_ID = "4321";
+    private static final String UNIQUE_ID_VERTEX = "321";
+    private static final String resourcePath = new File("src/test/resources").getAbsolutePath();
+    private static final String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
+
+    @InjectMocks
+    private ArtifactValidationUtils testSubject;
+
     @Mock
     private ArtifactCassandraDao artifactCassandraDao;
     @Mock
     private TopologyTemplateOperation topologyTemplateOperation;
-    @InjectMocks
-    private ArtifactValidationUtils testSubject;
-
     @Mock
     private GraphVertex vertex;
     @Mock
@@ -75,20 +84,11 @@ public class ArtifactValidationUtilsTest {
     @Mock
     private TopologyTemplate topologyTemplate;
 
-    private static final String ES_ID = "testEsInCassandra";
-    private static final String ES_ID_NOT_IN_CASS = "testEsNotInCassandra";
-    private static final String TASK_NAME = "testTaskName";
-    private static final String UNIQUE_ID = "4321";
-    private static final String UNIQUE_ID_VERTEX = "321";
-
-    private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
-    private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
-
-    ArtifactValidationUtilsTest () {
+    @BeforeEach
+    public void initMocks() {
         MockitoAnnotations.initMocks(this);
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID)).thenReturn(Either.left(1L));
-        when(artifactCassandraDao.getCountOfArtifactById(ES_ID_NOT_IN_CASS))
-            .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
+        when(artifactCassandraDao.getCountOfArtifactById(ES_ID_NOT_IN_CASS)).thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
 
         when(artifactDataDefinition.getEsId()).thenReturn(ES_ID);
         when(artifactDataDefinitionNotInCassandra.getEsId()).thenReturn(ES_ID_NOT_IN_CASS);
