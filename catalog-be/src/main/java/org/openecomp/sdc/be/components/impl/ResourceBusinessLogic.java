@@ -62,8 +62,8 @@ import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -148,7 +148,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ToscaOperationException;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
@@ -1732,19 +1731,16 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			ASDCKpiApi.countCreatedResourcesKPI();
 			return resource;
 
-        } catch (final ComponentException | StorageException e) {
-            rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-            throw e;
-        } catch (final ToscaOperationException e) {
-            log.error("An error has occurred during resource and resource instance creation", e);
-            rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceBusinessLogic.class.getName(),
-				"catalog-be", e.getMessage());
-            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         } catch (final BusinessLogicException e) {
-            log.error("An error has occurred during resource and resource instance creation", e);
+			log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceBusinessLogic.class.getName(),
+				"An error has occurred during resource and resource instance creation", e);
             rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw new ByResponseFormatComponentException(e.getResponseFormat());
+        } catch (final Exception e) {
+			log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceBusinessLogic.class.getName(),
+				"An error has occurred during resource and resource instance creation", e);
+			rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+			throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         } finally {
             if (!inTransaction) {
                 janusGraphDao.commit();
