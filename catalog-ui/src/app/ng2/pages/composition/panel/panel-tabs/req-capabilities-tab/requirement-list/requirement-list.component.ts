@@ -4,6 +4,10 @@ import { CompositionService } from "app/ng2/pages/composition/composition.servic
 import { ResourceNamePipe } from "app/ng2/pipes/resource-name.pipe";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
+import { Store } from "@ngxs/store";
+import {TogglePanelLoadingAction} from "../../../../common/store/graph.actions";
+import { EventListenerService } from "app/services";
+import { GRAPH_EVENTS } from "app/utils";
 
 @Component({
     selector: 'requirement-list',
@@ -18,7 +22,9 @@ export class RequirementListComponent  {
     
     constructor(private compositionService: CompositionService,
                 private workspaceService: WorkspaceService,
-                private componentInstanceServiceNg2: ComponentInstanceServiceNg2) {}
+                private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private store:Store,
+                private eventListenerService:EventListenerService) {}
 
     public getRelation = (requirement:any):any => {
         if (this.isInstanceSelected && this.component.componentInstancesRelations) {
@@ -41,14 +47,16 @@ export class RequirementListComponent  {
     };
 
     onMarkAsExternal(requirement:Requirement) {
-       if (requirement.external){
-	        requirement.external = false;
-       } else {
-	        requirement.external = true;
-       }
-       this.componentInstanceServiceNg2.updateInstanceRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, this.component.uniqueId, requirement).subscribe((response:any) => {
-        }, (error) => { console.log("An error has occured setting external: ", error);  });;
-
+       this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
+       requirement.external = !requirement.external;
+       this.componentInstanceServiceNg2.updateInstanceRequirement(this.workspaceService.metadata.getTypeUrl(), this.workspaceService.metadata.uniqueId, this.component.uniqueId, requirement)
+           .subscribe(() => {
+               this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED, this.component.uniqueId, requirement);
+               this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+           } , (error) => { console.log("An error has occured setting external: ", error);
+               requirement.external = !requirement.external;
+               this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+           });
     }
 
 };

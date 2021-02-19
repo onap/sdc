@@ -24,7 +24,8 @@ import {
     ZoneInstance,
     ZoneInstanceAssignmentType,
     ZoneInstanceMode,
-    ZoneInstanceType
+    ZoneInstanceType,
+    Requirement
 } from 'app/models';
 import { ForwardingPath } from 'app/models/forwarding-path';
 import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
@@ -641,6 +642,11 @@ export class CompositionGraphComponent implements AfterViewInit {
             selectedNode.data().componentInstance.name = component.name;
             selectedNode.data('name', component.name); // used for tooltip
             selectedNode.data('displayName', selectedNode.data().getDisplayName()); // abbreviated
+        });
+
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED, (uniqueId:string, requirement:Requirement) => {
+            this._cy.getElementById(uniqueId).data().componentInstance.requirements[requirement.capability]
+                .find(r => r.uniqueId === requirement.uniqueId).external = requirement.external;
         });
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, (componentInstanceId: string) => {

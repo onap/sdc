@@ -348,6 +348,7 @@ export class GRAPH_EVENTS {
   static ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL = 'onPaletteComponentShowPopupPanel';
   static ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL = 'onPaletteComponentHidePopupPanel';
   static ON_COMPONENT_INSTANCE_NAME_CHANGED = 'onComponentInstanceNameChanged';
+  static ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED = 'onComponentInstanceRequirementExternalChanged'
   static ON_ZONE_INSTANCE_NAME_CHANGED = 'onZoneInstanceNameChanged';
   static ON_DELETE_COMPONENT_INSTANCE = 'onDeleteComponentInstance';
   static ON_DELETE_ZONE_INSTANCE = 'onDeleteZoneInstance';
