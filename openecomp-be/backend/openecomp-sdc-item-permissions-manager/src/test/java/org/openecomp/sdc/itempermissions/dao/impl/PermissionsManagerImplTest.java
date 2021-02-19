@@ -16,7 +16,32 @@
 
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import org.mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_ID_PROP;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_CHANGED;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_GRANTED;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_ITEM;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
@@ -25,123 +50,104 @@ import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.notification.services.SubscriptionService;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.types.Item;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+@ExtendWith(MockitoExtension.class)
+class PermissionsManagerImplTest {
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+    private static final String ITEM1_ID = "1";
+    private static final String PERMISSION = "Contributor";
+    private static final String ACTION = "Change_Item_Permissions";
+    private static final String USER = "user";
+    private static final String AFFECTED_USER1 = "affected_user1";
+    private static final String AFFECTED_USER2 = "affected_user2";
+    private static final String AFFECTED_USER3 = "affected_user3";
+    private static final String tenant = "dox";
 
-/**
- * Created by ayalaben on 7/6/2017
- */
-public class PermissionsManagerImplTest {
+    @Mock
+    private PermissionsServices permissionsServicesMock;
+    @Mock
+    private AsdcItemManager asdcItemManagerMock;
+    @Mock
+    private SubscriptionService subscriptionServiceMock;
+    @Mock
+    private NotificationPropagationManager notifierMock;
+    @Captor
+    private ArgumentCaptor<Event> eventArgumentCaptor;
 
-  private static final String ITEM1_ID = "1";
-  private static final String PERMISSION = "Contributor";
-  private static final String ACTION = "Change_Item_Permissions";
-  private static final String USER = "user";
-  private static final String AFFECTED_USER1 = "affected_user1";
-  private static final String AFFECTED_USER2 = "affected_user2";
-  private static final String AFFECTED_USER3 = "affected_user3";
-  private static final String tenant = "dox";
+    @InjectMocks
+    private PermissionsManagerImpl permissionsManager;
 
-  @Mock
-  private PermissionsServices permissionsServicesMock;
-  @Mock
-  private AsdcItemManager asdcItemManagerMock;
-  @Mock
-  private SubscriptionService subscriptionServiceMock;
-  @Mock
-  private NotificationPropagationManager notifierMock;
-  @Captor
-  private ArgumentCaptor<Event> eventArgumentCaptor;
+    @BeforeEach
+    public void setUp() throws Exception {
+        SessionContextProviderFactory.getInstance().createInterface().create(USER,
+            tenant);
+        MockitoAnnotations.initMocks(this);
+    }
 
-  @InjectMocks
-  private PermissionsManagerImpl permissionsManager;
+    @Test
+    void testUpdateItemPermissionsWhenNotAllowed() {
+        doReturn(false).when(permissionsServicesMock).isAllowed(ITEM1_ID, USER, ACTION);
+        final HashSet<String> removedUsersIds = new HashSet<>();
+        final Set<String> addedUsersIds = Collections.singleton(AFFECTED_USER1);
+        Assertions.assertThrows(CoreException.class, () -> {
+            permissionsManager.updateItemPermissions(ITEM1_ID, PERMISSION, addedUsersIds, removedUsersIds);
+        });
+    }
 
+    @Test
+    void testUpdateItemPermissions() {
+        doReturn(true).when(permissionsServicesMock).isAllowed(ITEM1_ID, USER, ACTION);
+        Item item = new Item();
+        item.setName("Item 1 Name");
+        doReturn(item).when(asdcItemManagerMock).get(ITEM1_ID);
 
-  @BeforeMethod
-  public void setUp() throws Exception {
-    SessionContextProviderFactory.getInstance().createInterface().create(USER,
-        tenant);
-    MockitoAnnotations.initMocks(this);
-  }
-
-  @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp = "Permissions " +
-          "Error. The user does not have permission to perform this action.")
-  public void testUpdateItemPermissionsWhenNotAllowed() {
-    doReturn(false).when(permissionsServicesMock).isAllowed(ITEM1_ID, USER, ACTION);
-
-    permissionsManager
-            .updateItemPermissions(ITEM1_ID, PERMISSION, Collections.singleton(AFFECTED_USER1),
-                    new HashSet<>());
-  }
-
-  @Test
-  public void testUpdateItemPermissions() {
-    doReturn(true).when(permissionsServicesMock).isAllowed(ITEM1_ID, USER, ACTION);
-    Item item = new Item();
-    item.setName("Item 1 Name");
-    doReturn(item).when(asdcItemManagerMock).get(ITEM1_ID);
-
-    Set<String> addedUsersIds =
+        Set<String> addedUsersIds =
             Stream.of(AFFECTED_USER1, AFFECTED_USER2).collect(Collectors.toSet());
-    Set<String> removedUsersIds = Collections.singleton(AFFECTED_USER3);
-    permissionsManager
+        Set<String> removedUsersIds = Collections.singleton(AFFECTED_USER3);
+        permissionsManager
             .updateItemPermissions(ITEM1_ID, PERMISSION, addedUsersIds, removedUsersIds);
 
-    verify(permissionsServicesMock)
+        verify(permissionsServicesMock)
             .updateItemPermissions(ITEM1_ID, PERMISSION, addedUsersIds, removedUsersIds);
 
-    for (String addedUsersId : addedUsersIds) {
-      verifyCallsToNotificationsFramework(addedUsersId, true);
+        for (String addedUsersId : addedUsersIds) {
+            verifyCallsToNotificationsFramework(addedUsersId, true);
+        }
+        for (String removedUsersId : removedUsersIds) {
+            verifyCallsToNotificationsFramework(removedUsersId, false);
+        }
     }
-    for (String removedUsersId : removedUsersIds) {
-      verifyCallsToNotificationsFramework(removedUsersId, false);
-    }
-  }
 
-  @Test
-  public void testListUserPermittedItems(){
-    permissionsManager.listUserPermittedItems(AFFECTED_USER1,PERMISSION);
+    @Test
+    void testListUserPermittedItems() {
+        permissionsManager.listUserPermittedItems(AFFECTED_USER1, PERMISSION);
 
-    verify(permissionsServicesMock)
+        verify(permissionsServicesMock)
             .listUserPermittedItems(AFFECTED_USER1, PERMISSION);
 
-  }
-
-  private void verifyCallsToNotificationsFramework(String affectedUser, boolean permissionGranted) {
-    verifyCallToSubscriptionService(affectedUser, permissionGranted);
-    verifyDirectNotificationCallParameters(affectedUser, permissionGranted);
-  }
-
-  private void verifyDirectNotificationCallParameters(String affectedUser, boolean permissionGranted) {
-    verify(notifierMock).directNotification(eventArgumentCaptor.capture(), Matchers.eq(affectedUser));
-    Event event = eventArgumentCaptor.getValue();
-    assertTrue(event.getEventType().equals(PERMISSION_CHANGED));
-    Map<String, Object> attributes = event.getAttributes();
-    assertEquals(attributes.get(PERMISSION_GRANTED), permissionGranted);
-    assertEquals(attributes.get(ITEM_ID_PROP), ITEM1_ID);
-    assertEquals(attributes.get(PERMISSION_ITEM), PERMISSION);
-  }
-
-  private void verifyCallToSubscriptionService(String affectedUser, boolean permissionGranted) {
-    if (permissionGranted) {
-      verify(subscriptionServiceMock).subscribe(affectedUser, ITEM1_ID);
-    } else {
-      verify(subscriptionServiceMock).unsubscribe(affectedUser, ITEM1_ID);
     }
-  }
 
+    private void verifyCallsToNotificationsFramework(String affectedUser, boolean permissionGranted) {
+        verifyCallToSubscriptionService(affectedUser, permissionGranted);
+        verifyDirectNotificationCallParameters(affectedUser, permissionGranted);
+    }
+
+    private void verifyDirectNotificationCallParameters(String affectedUser, boolean permissionGranted) {
+        verify(notifierMock).directNotification(eventArgumentCaptor.capture(), Matchers.eq(affectedUser));
+        Event event = eventArgumentCaptor.getValue();
+        assertTrue(event.getEventType().equals(PERMISSION_CHANGED));
+        Map<String, Object> attributes = event.getAttributes();
+        assertEquals(attributes.get(PERMISSION_GRANTED), permissionGranted);
+        assertEquals(attributes.get(ITEM_ID_PROP), ITEM1_ID);
+        assertEquals(attributes.get(PERMISSION_ITEM), PERMISSION);
+    }
+
+    private void verifyCallToSubscriptionService(String affectedUser, boolean permissionGranted) {
+        if (permissionGranted) {
+            verify(subscriptionServiceMock).subscribe(affectedUser, ITEM1_ID);
+        } else {
+            verify(subscriptionServiceMock).unsubscribe(affectedUser, ITEM1_ID);
+        }
+    }
 
 }

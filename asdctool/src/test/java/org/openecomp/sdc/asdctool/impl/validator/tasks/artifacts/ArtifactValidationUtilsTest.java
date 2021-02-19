@@ -39,9 +39,11 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
@@ -53,15 +55,22 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-public class ArtifactValidationUtilsTest {
+@ExtendWith(MockitoExtension.class)
+class ArtifactValidationUtilsTest {
 
+    private static final String ES_ID = "testEsInCassandra";
+    private static final String ES_ID_NOT_IN_CASS = "testEsNotInCassandra";
+    private static final String TASK_NAME = "testTaskName";
+    private static final String UNIQUE_ID = "4321";
+    private static final String UNIQUE_ID_VERTEX = "321";
+    private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
+    private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
+    @InjectMocks
+    private ArtifactValidationUtils testSubject;
     @Mock
     private ArtifactCassandraDao artifactCassandraDao;
     @Mock
     private TopologyTemplateOperation topologyTemplateOperation;
-    @InjectMocks
-    private ArtifactValidationUtils testSubject;
-
     @Mock
     private GraphVertex vertex;
     @Mock
@@ -75,16 +84,7 @@ public class ArtifactValidationUtilsTest {
     @Mock
     private TopologyTemplate topologyTemplate;
 
-    private static final String ES_ID = "testEsInCassandra";
-    private static final String ES_ID_NOT_IN_CASS = "testEsNotInCassandra";
-    private static final String TASK_NAME = "testTaskName";
-    private static final String UNIQUE_ID = "4321";
-    private static final String UNIQUE_ID_VERTEX = "321";
-
-    private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
-    private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
-
-    ArtifactValidationUtilsTest () {
+    ArtifactValidationUtilsTest() {
         MockitoAnnotations.initMocks(this);
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID)).thenReturn(Either.left(1L));
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID_NOT_IN_CASS))
@@ -98,7 +98,7 @@ public class ArtifactValidationUtilsTest {
     }
 
     @Test
-    public void testValidateArtifactsAreInCassandra() {
+    void testValidateArtifactsAreInCassandra() {
         // given
         Report report = Report.make();
         List<ArtifactDataDefinition> artifacts = new ArrayList<>();
@@ -119,7 +119,7 @@ public class ArtifactValidationUtilsTest {
     }
 
     @Test
-    public void testValidateArtifactsNotInCassandra() {
+    void testValidateArtifactsNotInCassandra() {
         // given
         Report report = Report.make();
         List<ArtifactDataDefinition> artifacts = new ArrayList<>();
@@ -148,7 +148,7 @@ public class ArtifactValidationUtilsTest {
     }
 
     @Test
-    public void testIsArtifactsInCassandra() {
+    void testIsArtifactsInCassandra() {
         // when
         boolean notInCass = testSubject.isArtifactInCassandra(ES_ID_NOT_IN_CASS);
         boolean inCass = testSubject.isArtifactInCassandra(ES_ID);
@@ -159,7 +159,7 @@ public class ArtifactValidationUtilsTest {
     }
 
     @Test
-    public void testAddRelevantArtifacts() {
+    void testAddRelevantArtifacts() {
         // given
         Map<String, ArtifactDataDefinition> artifactsMap = new HashMap<>();
         artifactsMap.put(ES_ID_NOT_IN_CASS, artifactDataDefinitionNotInCassandra);
@@ -173,7 +173,7 @@ public class ArtifactValidationUtilsTest {
     }
 
     @Test
-    public void testAddRelevantArtifactsWithNullEsId() {
+    void testAddRelevantArtifactsWithNullEsId() {
         // given
         Map<String, ArtifactDataDefinition> artifactsMap = new HashMap<>();
         artifactsMap.put("", artifactDataDefinitionDummy);
@@ -186,7 +186,7 @@ public class ArtifactValidationUtilsTest {
     }
 
     @Test
-    public void testValidateTopologyTemplateArtifacts() {
+    void testValidateTopologyTemplateArtifacts() {
         // given
         Report report = Report.make();
         Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
@@ -223,7 +223,7 @@ public class ArtifactValidationUtilsTest {
     }
 
     @Test
-    public void testValidateTopologyTemplateArtifactsNotFoundToscaElement() {
+    void testValidateTopologyTemplateArtifactsNotFoundToscaElement() {
         // given
         Report report = Report.make();
         when(topologyTemplateOperation.getToscaElement(eq(vertex.getUniqueId()), any()))

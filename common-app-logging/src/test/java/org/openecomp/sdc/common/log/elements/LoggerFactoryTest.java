@@ -24,16 +24,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 
-public class LoggerFactoryTest {
+@ExtendWith(MockitoExtension.class)
+class LoggerFactoryTest {
 
     @Mock
     private Logger logger;
 
     @Test
-    public void getMdcLoggerInstantiateProperly() {
+    void getMdcLoggerInstantiateProperly() {
         assertNotNull(LoggerFactory.getMdcLogger(LoggerAudit.class, logger));
         assertNotNull(LoggerFactory.getMdcLogger(LoggerDebug.class, logger));
         assertNotNull(LoggerFactory.getMdcLogger(LoggerMetric.class, logger));
@@ -42,7 +45,7 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void getLoggerInstantiateProperly() {
+    void getLoggerInstantiateProperly() {
         assertNotNull(LoggerFactory.getLogger(LoggerAudit.class, logger));
         assertNotNull(LoggerFactory.getLogger(LoggerDebug.class, logger));
         assertNotNull(LoggerFactory.getLogger(LoggerMetric.class, logger));
@@ -50,12 +53,12 @@ public class LoggerFactoryTest {
     }
 
     @Test
-    public void getMdcLoggerReturnsNullForSomeInvalidClasses() {
+    void getMdcLoggerReturnsNullForSomeInvalidClasses() {
         assertNull(LoggerFactory.getMdcLogger(Integer.class, logger));
     }
 
     @Test
-    public void getLoggerReturnsNullForSomeInvalidClasses() {
+    void getLoggerReturnsNullForSomeInvalidClasses() {
         assertNull(LoggerFactory.getLogger(Integer.class, logger));
     }
 

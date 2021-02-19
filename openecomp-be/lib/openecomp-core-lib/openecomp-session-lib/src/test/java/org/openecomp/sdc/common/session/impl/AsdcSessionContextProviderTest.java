@@ -19,45 +19,48 @@
 
 package org.openecomp.sdc.common.session.impl;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.session.SessionContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
-public class AsdcSessionContextProviderTest {
+@ExtendWith(MockitoExtension.class)
+class AsdcSessionContextProviderTest {
 
     private static final String USER_ID = "cs0008";
 
     @InjectMocks
     private AsdcSessionContextProvider asdcSessionContextProvider;
 
-    @BeforeMethod
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-
-    @Test(expectedExceptions = CoreException.class)
-    public void testGetUserIdNull() {
+    @Test
+    void testGetUserIdNull() {
         asdcSessionContextProvider.create(null, null);
-        asdcSessionContextProvider.get();
-    }
-
-    @Test(expectedExceptions = CoreException.class)
-    public void testGetTenantNull() {
-        asdcSessionContextProvider.create(USER_ID, null);
-        asdcSessionContextProvider.get();
+        Assertions.assertThrows(CoreException.class, () -> {
+            asdcSessionContextProvider.get();
+        });
     }
 
     @Test
-    public void testGet() {
+    void testGetTenantNull() {
+        asdcSessionContextProvider.create(USER_ID, null);
+        Assertions.assertThrows(CoreException.class, () -> {
+            asdcSessionContextProvider.get();
+        });
+    }
+
+    @Test
+    void testGet() {
         asdcSessionContextProvider.create(USER_ID, "tenant");
         SessionContext sessionContext = asdcSessionContextProvider.get();
 
-        Assert.assertNotNull(sessionContext);
-        Assert.assertSame(USER_ID, sessionContext.getUser().getUserId());
-        Assert.assertSame("tenant", sessionContext.getTenant());
+        assertNotNull(sessionContext);
+        assertSame(USER_ID, sessionContext.getUser().getUserId());
+        assertSame("tenant", sessionContext.getTenant());
     }
 }

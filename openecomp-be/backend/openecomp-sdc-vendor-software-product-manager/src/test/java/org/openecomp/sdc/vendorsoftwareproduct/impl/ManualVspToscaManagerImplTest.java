@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,53 +20,56 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.ManualVspDataCollectionService;
 
+@ExtendWith(MockitoExtension.class)
 public class ManualVspToscaManagerImplTest {
 
-  private static final String USER = "manualVspToscaTestUser";
-  private static final String INVALID_VSP_ID = "Invalid_Vsp_Id";
-  private static final String VSP_ID = "Vsp_Id_1";
-  private static final String VSP_VERSION = "1.0";
+    private static final String USER = "manualVspToscaTestUser";
+    private static final String INVALID_VSP_ID = "Invalid_Vsp_Id";
+    private static final String VSP_ID = "Vsp_Id_1";
+    private static final String VSP_VERSION = "1.0";
 
-  private static final String RELEASE_VENDOR = "Vendor-1";
-  private static final String COMPONENT_ID = "Component_id";
-  private static final String COMPONENT_NAME = "Component_name";
-  private static final String SP_PART_NUMBER_1 = "Part_number_123";
-  private static final String FEATURE_GROUP_ID_1 = "Feature_Group_id_1";
-  private static final String MANUFACTURER_REF_1 = "Manufacturer_Ref_1";
-  private static final String VENDOR_MODEL_1 = "Deployment_Flavor_Model_1";
-  private static final int NUM_CPUS_1 = 1;
-  private static final String DISK_SIZE_1 = "2 GB";
-  private static final String MEM_SIZE_1 = "8 GB";
+    private static final String RELEASE_VENDOR = "Vendor-1";
+    private static final String COMPONENT_ID = "Component_id";
+    private static final String COMPONENT_NAME = "Component_name";
+    private static final String SP_PART_NUMBER_1 = "Part_number_123";
+    private static final String FEATURE_GROUP_ID_1 = "Feature_Group_id_1";
+    private static final String MANUFACTURER_REF_1 = "Manufacturer_Ref_1";
+    private static final String VENDOR_MODEL_1 = "Deployment_Flavor_Model_1";
+    private static final int NUM_CPUS_1 = 1;
+    private static final String DISK_SIZE_1 = "2 GB";
+    private static final String MEM_SIZE_1 = "8 GB";
 
-  private static final String SP_PART_NUMBER_2 = "Part_number_345";
-  private static final String FEATURE_GROUP_ID_2 = "Feature_Group_id_2";
-  private static final String MANUFACTURER_REF_2 = "Manufacturer_Ref_2";
-  private static final String VENDOR_MODEL_2 = "Deployment_Flavor_Model_2";
-  private static final int NUM_CPUS_2 = 4;
-  private static final String DISK_SIZE_2 = "3 GB";
-  private static final String MEM_SIZE_2 = "2 GB";
+    private static final String SP_PART_NUMBER_2 = "Part_number_345";
+    private static final String FEATURE_GROUP_ID_2 = "Feature_Group_id_2";
+    private static final String MANUFACTURER_REF_2 = "Manufacturer_Ref_2";
+    private static final String VENDOR_MODEL_2 = "Deployment_Flavor_Model_2";
+    private static final int NUM_CPUS_2 = 4;
+    private static final String DISK_SIZE_2 = "3 GB";
+    private static final String MEM_SIZE_2 = "2 GB";
 
-  private static final String IMAGE_VERSION_1 = "3.16.1";
-  private static final String IMAGE_HASH_1 = "65edfgye3256hjutve";
-  private static final String IMAGE_FILE_NAME_1 = "image-file-name1";
-  private static final String IMAGE_VERSION_2 = "3.1.9";
-  private static final String IMAGE_HASH_2 = "84rtedfe3256hjutaw";
-  private static final String IMAGE_FILE_NAME_2 = "image-file-name1";
+    private static final String IMAGE_VERSION_1 = "3.16.1";
+    private static final String IMAGE_HASH_1 = "65edfgye3256hjutve";
+    private static final String IMAGE_FILE_NAME_1 = "image-file-name1";
+    private static final String IMAGE_VERSION_2 = "3.1.9";
+    private static final String IMAGE_HASH_2 = "84rtedfe3256hjutaw";
+    private static final String IMAGE_FILE_NAME_2 = "image-file-name1";
 
-  private ManualVspToscaManager manualVspToscaManager = new ManualVspToscaManagerImpl();
+    private ManualVspToscaManager manualVspToscaManager = new ManualVspToscaManagerImpl();
 
-  @Spy
-  @InjectMocks
-  private ManualVspToscaManagerImpl manualVspToscaManagerMock;
+    @Spy
+    @InjectMocks
+    private ManualVspToscaManagerImpl manualVspToscaManagerMock;
 
-  @Mock
-  private ManualVspDataCollectionService manualVspDataCollectionServiceMock;
+    @Mock
+    private ManualVspDataCollectionService manualVspDataCollectionServiceMock;
   /*
 
   @Test
