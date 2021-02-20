@@ -22,9 +22,8 @@ package org.openecomp.sdc.be.components.distribution.engine;
 
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -49,15 +48,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-public class DistributionEngineInitTaskTest {
+class DistributionEngineInitTaskTest {
 
-    @Mock
     private ComponentsUtils componentsUtils;
 
-    @Mock
     private CambriaHandler cambriaHandler;
 
-    @Before
+    @BeforeEach
     public void setup() {
         ExternalConfiguration.setAppName("catalog-be");
         ExternalConfiguration.setConfigDir("src/test/resources/config");
@@ -71,7 +68,7 @@ public class DistributionEngineInitTaskTest {
     }
 
     @Test
-    public void checkIncrement() {
+    void checkIncrement() {
 
         String envName = "PrOD";
 
@@ -93,7 +90,7 @@ public class DistributionEngineInitTaskTest {
     }
     
     @Test
-    public void checkStartTask() {
+    void checkStartTask() {
 
         String envName = "PrOD";
 
@@ -108,7 +105,7 @@ public class DistributionEngineInitTaskTest {
     }
     
     @Test
-    public void checkRestartTask() {
+    void checkRestartTask() {
 
         String envName = "PrOD";
 
@@ -123,7 +120,7 @@ public class DistributionEngineInitTaskTest {
     }
     
     @Test
-    public void checkStopTask() {
+    void checkStopTask() {
 
         String envName = "PrOD";
 
@@ -140,7 +137,7 @@ public class DistributionEngineInitTaskTest {
     }
     
     @Test
-    public void checkDestroy() {
+    void checkDestroy() {
 
         String envName = "PrOD";
 
@@ -155,7 +152,7 @@ public class DistributionEngineInitTaskTest {
     }
     
     @Test
-    public void checkRun() {
+    void checkRun() {
 
     	String notifTopic = "notif";
         String statusTopic = "status";
@@ -200,9 +197,8 @@ public class DistributionEngineInitTaskTest {
         initTask.run();
     }
     
-    @SuppressWarnings("unchecked")
     @Test
-    public void testInitFlowScenarioSuccess() {
+    void testInitFlowScenarioSuccess() {
 
         String notifTopic = "notif";
         String statusTopic = "status";
@@ -247,9 +243,8 @@ public class DistributionEngineInitTaskTest {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testInitFlowScenarioSuccessTopicsAlreadyExists() {
+    void testInitFlowScenarioSuccessTopicsAlreadyExists() {
 
         String envName = "PrOD";
         String notifTopic = "notif";
@@ -297,9 +292,8 @@ public class DistributionEngineInitTaskTest {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testInitFlowScenarioFailToRegister() {
+    void testInitFlowScenarioFailToRegister() {
 
         String notifTopic = "notif";
         String statusTopic = "status";
@@ -347,9 +341,8 @@ public class DistributionEngineInitTaskTest {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testInitFlowScenario1GetTopicsFailed() {
+    void testInitFlowScenario1GetTopicsFailed() {
 
         List<String> uebServers = new ArrayList<>();
         uebServers.add("server1");
