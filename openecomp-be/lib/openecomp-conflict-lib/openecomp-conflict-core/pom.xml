@@ -10,7 +10,6 @@
   </parent>
 
   <properties>
-    <groove-all.version>2.4.10</groove-all.version>
   </properties>
 
   <artifactId>openecomp-conflict-core</artifactId>
@@ -34,12 +33,6 @@
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>openecomp-sdc-vendor-license-core</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <version>${groove-all.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
