@@ -16,11 +16,13 @@
 
 package org.openecomp.sdc.notification.dao.types;
 
-import org.testng.annotations.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
-import static org.testng.Assert.*;
 
 /**
  * @author EVITALIY

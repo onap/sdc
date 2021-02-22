@@ -16,14 +16,14 @@
 
 package org.openecomp.sdc.itempermissions.dao.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_ID_PROP;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_CHANGED;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_GRANTED;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_ITEM;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.HashSet;

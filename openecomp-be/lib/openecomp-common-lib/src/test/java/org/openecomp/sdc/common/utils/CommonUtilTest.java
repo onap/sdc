@@ -20,20 +20,20 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.onap.sdc.tosca.services.CommonUtil.DEFAULT;
 import static org.onap.sdc.tosca.services.CommonUtil.UNDERSCORE_DEFAULT;
-import static org.testng.Assert.assertTrue;
 
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.zip.exception.ZipException;
-import org.testng.annotations.Test;
 
 public class CommonUtilTest {
     private static final String VALID_ZIP_FILE_PATH = "src/test/resources/valid.zip";
@@ -70,7 +70,7 @@ public class CommonUtilTest {
         assertThat(fch.containsFile("file.two.yaml"), is(true));
     }
 
-    @Test(expectedExceptions={CoreException.class})
+    @Test(expected=CoreException.class)
     public void testValidateNoFolders() throws IOException {
         byte[] file = getFileAsBytes(VALID_ZIP_WITH_DIR_FILE_PATH);
 

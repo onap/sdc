@@ -19,10 +19,10 @@
  */
 package org.openecomp.core.tools.model;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.datastax.driver.core.DataType;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 public class ColumnDefinitionTest {
 

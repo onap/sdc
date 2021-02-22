@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.asdctool.migration.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
 import java.math.BigInteger;
 import org.junit.jupiter.api.Test;

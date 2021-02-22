@@ -20,13 +20,14 @@
 
 package org.openecomp.sdc.asdctool.migration.task;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.scanner.ClassScanner;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,7 +41,7 @@ public class MigrationTasksTest  {
     public static final String MIGRATIONS_BASE_PACKAGE = "org.openecomp.sdc.asdctool.migration.tasks";
     private List<Migration> migrations;
 
-    @BeforeMethod
+    @BeforeEach
     public void setUp() throws Exception {
         ClassScanner classScanner = new ClassScanner();
         migrations = classScanner.getAllClassesOfType(MIGRATIONS_BASE_PACKAGE, Migration.class);
@@ -52,7 +53,7 @@ public class MigrationTasksTest  {
         migrationsByVersion.forEach((version, migrations) -> {
             if (migrations.size() > 1) {
                 System.out.println(String.format("the following migration tasks have the same version %s. versions must be unique", version.toString()));
-                Assert.fail(String.format("migration tasks %s has same version %s. migration tasks versions must be unique.", getMigrationsNameAsString(migrations), version.toString()));
+                fail(String.format("migration tasks %s has same version %s. migration tasks versions must be unique.", getMigrationsNameAsString(migrations), version.toString()));
             }
         });
     }
@@ -63,7 +64,7 @@ public class MigrationTasksTest  {
                 .collect(Collectors.toSet());
 
         if (!migrationsWithVersionsGreaterThanCurrent.isEmpty()) {
-            Assert.fail(String.format("migrations tasks %s have version which is greater than DBVersion.DEFAULT_VERSION %s. did you forget to update current version?",
+            fail(String.format("migrations tasks %s have version which is greater than DBVersion.DEFAULT_VERSION %s. did you forget to update current version?",
                     getMigrationsNameAsString(migrationsWithVersionsGreaterThanCurrent),
                     DBVersion.DEFAULT_VERSION.toString()));
         }

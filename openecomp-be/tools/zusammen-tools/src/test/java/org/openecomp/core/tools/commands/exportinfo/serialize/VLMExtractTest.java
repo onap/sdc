@@ -20,13 +20,13 @@
 
 package org.openecomp.core.tools.commands.exportinfo.serialize;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import org.junit.Test;
 import org.openecomp.core.tools.exportinfo.ExportSerializer;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.*;
 public class VLMExtractTest {
-
-
 
     @Test
     public void extractVLM(){
@@ -51,7 +51,7 @@ public class VLMExtractTest {
 
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void failToExtractVLMBecauseJsonIsCorrupted(){
         String elemenet_info_string = "gfhhhghgh";
         assertNull(new CustomExportSerializer().extractVlm(elemenet_info_string));

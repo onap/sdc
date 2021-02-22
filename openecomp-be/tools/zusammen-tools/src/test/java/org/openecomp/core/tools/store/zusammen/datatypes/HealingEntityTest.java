@@ -22,7 +22,7 @@ package org.openecomp.core.tools.store.zusammen.datatypes;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 public class HealingEntityTest {
     @Test

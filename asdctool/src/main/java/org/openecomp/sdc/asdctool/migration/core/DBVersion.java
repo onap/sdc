@@ -21,14 +21,16 @@
 package org.openecomp.sdc.asdctool.migration.core;
 
 import java.math.BigInteger;
+import lombok.Getter;
 
+@Getter
 public class DBVersion implements Comparable<DBVersion>{
 
     private static final String VERSION_PARTS_SEPARATOR = "\\.";
     private static final int MAJOR_PART_IDX = 0;
     private static final int MINOR_PART_IDX = 1;
-    private BigInteger major;
-    private BigInteger minor;
+    private final BigInteger major;
+    private final BigInteger minor;
 
     /**
      * The current db version. should be tested against real db to verify it is compatible to the db version
@@ -43,14 +45,6 @@ public class DBVersion implements Comparable<DBVersion>{
     private DBVersion(int major, int minor) {
         this.major = BigInteger.valueOf(major);
         this.minor = BigInteger.valueOf(minor);
-    }
-
-    public BigInteger getMajor() {
-        return major;
-    }
-
-    public BigInteger getMinor() {
-        return minor;
     }
 
     public static DBVersion from(BigInteger major, BigInteger minor) {
