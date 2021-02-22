@@ -139,6 +139,10 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
+          <artifactId>gremlin-groovy</artifactId>
+          <groupId>org.apache.tinkerpop</groupId>
+        </exclusion>
+        <exclusion>
           <groupId>org.json</groupId>
           <artifactId>json</artifactId>
         </exclusion>

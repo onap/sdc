@@ -78,6 +78,10 @@
           <artifactId>jackson-core</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.openecomp.ecompsdkos</groupId>
           <artifactId>epsdk-fw</artifactId>
         </exclusion>
@@ -137,6 +141,12 @@
       <artifactId>jetty-server</artifactId>
       <version>${jetty.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -165,6 +175,12 @@
       <artifactId>jetty-servlet</artifactId>
       <version>${jetty.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-server</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -186,6 +202,12 @@
       <artifactId>jersey-container-jetty-http</artifactId>
       <version>${jersey-bom.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -243,6 +265,10 @@
       <version>${janusgraph.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>gremlin-groovy</artifactId>
+          <groupId>org.apache.tinkerpop</groupId>
+        </exclusion>
         <exclusion>
           <groupId>org.json</groupId>
           <artifactId>json</artifactId>

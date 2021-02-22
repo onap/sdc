@@ -29,14 +29,30 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.policy.PolicyTargetsUpdateHandler;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
@@ -70,29 +86,14 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+@ExtendWith(MockitoExtension.class)
+class GroupBusinessLogicTest {
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-
-@RunWith(MockitoJUnitRunner.class)
-public class GroupBusinessLogicTest {
-
+    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+        "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
     @InjectMocks
     private GroupBusinessLogic test;
-
     @Mock
     private ApplicationDataTypeCache dataTypeCache;
     @Mock
@@ -110,13 +111,9 @@ public class GroupBusinessLogicTest {
     @Mock
     private JanusGraphDao janusGraphDao;
     @Mock
-    PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
+    private PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
 
-    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-            "src/test/resources/config/catalog-be");
-    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         test.setDataTypeCache(dataTypeCache);
         test.setToscaOperationFacade(toscaOperationFacade);
@@ -126,7 +123,7 @@ public class GroupBusinessLogicTest {
     }
 
     @Test
-    public void testCreateGroups_NoDataType() {
+    void testCreateGroups_NoDataType() {
         Either<List<GroupDefinition>, ResponseFormat> result;
         Component component = new Resource();
         List<GroupDefinition> groupDefinitions = new ArrayList<>();
@@ -138,7 +135,7 @@ public class GroupBusinessLogicTest {
     }
 
     @Test
-    public void testCreateGroups() {
+    void testCreateGroups() {
         Either<List<GroupDefinition>, ResponseFormat> result;
         Component component = new Resource();
         component.setUniqueId("id");
@@ -158,7 +155,7 @@ public class GroupBusinessLogicTest {
     }
 
     @Test
-    public void testValidUpdateVfGrpNameOnGraph() {
+    void testValidUpdateVfGrpNameOnGraph() {
         Either<List<GroupDefinition>, ResponseFormat> result;
         Component component = new Resource();
         component.setSystemName("name");
@@ -175,7 +172,7 @@ public class GroupBusinessLogicTest {
     }
 
     @Test
-    public void testValidAndUpdateGrpInstancePropValues_fail() {
+    void testValidAndUpdateGrpInstancePropValues_fail() {
         Either<GroupInstance, ResponseFormat> result;
         String componentId = "id";
         String instanceId = "id";
@@ -186,13 +183,13 @@ public class GroupBusinessLogicTest {
         oldGroupInstance.setProperties(properties);
         try {
             result = test.validateAndUpdateGroupInstancePropertyValues(componentId, instanceId, oldGroupInstance, newProperties);
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             assertThat(e.getActionStatus()).isEqualTo(ActionStatus.GENERAL_ERROR);
         }
     }
 
     @Test
-    public void testCreateGroup() {
+    void testCreateGroup() {
         GroupDefinition result;
         String componentId = "id";
         String grpType = "grpType";
@@ -214,7 +211,7 @@ public class GroupBusinessLogicTest {
         configurationManager.getConfiguration().setExcludedGroupTypesMapping(excludedGroupTypesMap);
 
         List<PropertyDefinition> properties = asList(
-                buildProperty("network_collection_type", "l3-network", "network collection type, defined with default value"));
+            buildProperty("network_collection_type", "l3-network", "network collection type, defined with default value"));
         groupTypeDefinition.setProperties(properties);
         when(groupTypeOperation.getLatestGroupTypeByType(grpType, false)).thenReturn(Either.left(groupTypeDefinition));
         when(toscaOperationFacade.canAddGroups(componentId)).thenReturn(true);
@@ -238,9 +235,9 @@ public class GroupBusinessLogicTest {
     }
 
     @Test
-    public void testUpdateGroup() throws Exception {
+    void testUpdateGroup() throws Exception {
 
-        Component component= new Resource();
+        Component component = new Resource();
         GroupDefinition updatedGroup = new GroupDefinition();
         List<GroupDefinition> grpdefList = new ArrayList<>();
         updatedGroup.setName("GRP.01");
@@ -251,15 +248,14 @@ public class GroupBusinessLogicTest {
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "UpdateGroup")).thenReturn(component);
         when(groupsOperation.updateGroup(component, updatedGroup)).thenReturn(Either.left(updatedGroup));
         GroupDefinition Gdefinition = test.updateGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
-                "USR01", updatedGroup);
-        Assert.assertEquals(Gdefinition,updatedGroup);
+            "USR01", updatedGroup);
+        Assert.assertEquals(Gdefinition, updatedGroup);
     }
 
+    @Test
+    void testUpdateGroup_Invalidname() throws Exception {
 
-    @Test(expected = ComponentException.class)
-    public void testUpdateGroup_Invalidname() throws Exception {
-
-        Component component= new Resource();
+        Component component = new Resource();
         GroupDefinition updatedGroup = new GroupDefinition();
         List<GroupDefinition> grpdefList = new ArrayList<>();
         updatedGroup.setName("GRP~01");
@@ -268,15 +264,16 @@ public class GroupBusinessLogicTest {
         component.setUniqueId("GRP.01");
         component.setGroups(grpdefList);
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "UpdateGroup")).thenReturn(component);
-        GroupDefinition Gdefinition = test.updateGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
+        assertThrows(ComponentException.class, () -> {
+            GroupDefinition Gdefinition = test.updateGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
                 "USR01", updatedGroup);
-
+        });
     }
 
-    @Test(expected = ComponentException.class)
-    public void testDeleteGroup_exception() throws Exception {
+    @Test
+    void testDeleteGroup_exception() throws Exception {
 
-        Component component= new Resource();
+        Component component = new Resource();
         GroupDefinition updatedGroup = new GroupDefinition();
         List<GroupDefinition> grpdefList = new ArrayList<>();
         updatedGroup.setName("GRP~01");
@@ -285,17 +282,19 @@ public class GroupBusinessLogicTest {
         component.setUniqueId("GRP.01");
         component.setGroups(grpdefList);
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
-        when(groupsOperation.deleteGroups(anyObject(),anyList())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+        when(groupsOperation.deleteGroups(anyObject(), anyList())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
 
         when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
-        GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
+        assertThrows(ComponentException.class, () -> {
+            GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
                 "USR01");
+        });
     }
 
     @Test
-    public void testDeleteGroup(){
+    void testDeleteGroup() {
 
-        Component component= new Resource();
+        Component component = new Resource();
         List<GroupDefinition> groupDefList = new ArrayList<>();
         GroupDefinition updatedGroup = new GroupDefinition();
         updatedGroup.setName("GRP~01");
@@ -306,12 +305,12 @@ public class GroupBusinessLogicTest {
         List<GroupDefinition> groupDefListCopy = new ArrayList<>();
         groupDefListCopy.add(updatedGroup);
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
-        when(groupsOperation.deleteGroups(anyObject(),anyList())).thenReturn(Either.left(groupDefListCopy));
+        when(groupsOperation.deleteGroups(anyObject(), anyList())).thenReturn(Either.left(groupDefListCopy));
         when(groupsOperation.deleteCalculatedCapabilitiesWithProperties(anyString(), anyObject())).thenReturn(StorageOperationStatus.OK);
-        when(policyTargetsUpdateHandler.removePoliciesTargets(anyObject(),anyString(),anyObject())).thenReturn(ActionStatus.OK);
+        when(policyTargetsUpdateHandler.removePoliciesTargets(anyObject(), anyString(), anyObject())).thenReturn(ActionStatus.OK);
 
         GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
-                "USR01");
-        Assert.assertEquals(Gdefinition,updatedGroup);
+            "USR01");
+        Assert.assertEquals(Gdefinition, updatedGroup);
     }
 }

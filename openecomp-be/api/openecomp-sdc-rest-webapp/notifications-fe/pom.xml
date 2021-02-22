@@ -16,7 +16,6 @@
     </parent>
 
     <properties>
-        <jetty.version>9.4.18.v20190429</jetty.version>
     </properties>
 
     <dependencies>
@@ -51,6 +50,12 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
             <version>${jetty.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- START required for websocket -->
         <dependency>

@@ -41,6 +41,12 @@
       <artifactId>catalog-be</artifactId>
       <version>${project.version}</version>
       <classifier>classes</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!--test dependencies-->
