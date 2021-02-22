@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1041,7 +1042,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
         
         Type listTypeSubcat = new TypeToken<List<MetadataKeyDataDefinition>>() {
         }.getType();
-        List<MetadataKeyDataDefinition> metadataKeys = getGson().fromJson((String) subCategoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).value(), listTypeSubcat);
+        List<MetadataKeyDataDefinition> metadataKeys =
+                subCategoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).isPresent() ? getGson().fromJson(
+                        (String) subCategoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).value(),
+                        listTypeSubcat) : Collections.emptyList();
         subcategory.setMetadataKeys(metadataKeys);
         
         Either<Vertex, JanusGraphOperationStatus> parentVertex = janusGraphDao.getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
@@ -1077,7 +1081,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         Type listTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {
         }.getType();
-        List<MetadataKeyDataDefinition> metadataKeys = getGson().fromJson((String) categoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).value(), listTypeCat);
+        List<MetadataKeyDataDefinition> metadataKeys =
+                categoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).isPresent() ? getGson().fromJson(
+                        (String) categoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).value(), listTypeCat)
+                        : Collections.emptyList();
         category.setMetadataKeys(metadataKeys);
         
         categories.add(category);
