@@ -246,6 +246,10 @@ Modifications copyright (c) 2018 Nokia
       <scope>provided</scope>
       <exclusions>
         <exclusion>
+          <artifactId>gremlin-groovy</artifactId>
+          <groupId>org.apache.tinkerpop</groupId>
+        </exclusion>
+        <exclusion>
           <groupId>org.json</groupId>
           <artifactId>json</artifactId>
         </exclusion>
@@ -307,6 +311,12 @@ Modifications copyright (c) 2018 Nokia
       <groupId>com.datastax.oss</groupId>
       <artifactId>java-driver-core</artifactId>
       <version>${java.driver.core.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.tinkerpop</groupId>
+          <artifactId>gremlin-driver</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.cassandraunit</groupId>

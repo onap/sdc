@@ -28,8 +28,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -57,10 +57,7 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-/**
- * Created by chaya on 10/26/2017.
- */
-public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
+class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
 
     private final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
     private final DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
@@ -70,17 +67,14 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     private final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
     private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
 
-
     @InjectMocks
-    ServiceBusinessLogic bl = new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+    private final ServiceBusinessLogic bl = new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
         groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
         artifactsBusinessLogic, distributionEngine, componentInstanceBusinessLogic,
         serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
         artifactToscaOperation, componentContactIdValidator,
         componentNameValidator, componentTagsValidator, componentValidator, componentIconValidator,
         componentProjectCodeValidator, componentDescriptionValidator);
-
-    ComponentsUtils componentsUtils;
 
     private Service serviceToActivate;
     private ActivationRequestInformation activationRequestInformation;
@@ -89,46 +83,42 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     private String DID = "distributionId";
     private User modifier;
 
-
-    public ServiceDistributionBLTest() {
-    }
-
-    @Before
+    @BeforeEach
     public void setup() {
 
         ExternalConfiguration.setAppName("catalog-be");
         MockitoAnnotations.initMocks(this);
-        componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
+        final ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
         bl.setComponentsUtils(componentsUtils);
         serviceToActivate = new Service();
         serviceToActivate.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
         activationRequestInformation = new ActivationRequestInformation(serviceToActivate, WORKLOAD_CONTEXT, TENANT);
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
-                .thenReturn(Either.left(serviceToActivate));
+            .thenReturn(Either.left(serviceToActivate));
         when(distributionEngine.buildServiceForDistribution(any(Service.class), anyString(), anyString()))
-                .thenReturn(new NotificationDataImpl());
+            .thenReturn(new NotificationDataImpl());
         modifier = new User();
         modifier.setUserId("uid");
         modifier.setFirstName("user");
     }
 
     @Test
-    public void testActivateServiceOnTenantValidationFails() {
+    void testActivateServiceOnTenantValidationFails() {
         int VALIDATION_FAIL_STATUS = 666;
         when(serviceDistributionValidation.validateActivateServiceRequest
-                (anyString(), anyString(),any(User.class), any(ServiceDistributionReqInfo.class)))
-                .thenReturn(Either.right(new ResponseFormat(VALIDATION_FAIL_STATUS)));
+            (anyString(), anyString(), any(User.class), any(ServiceDistributionReqInfo.class)))
+            .thenReturn(Either.right(new ResponseFormat(VALIDATION_FAIL_STATUS)));
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
         assertEquals((int) stringResponseFormatEither.right().value().getStatus(), VALIDATION_FAIL_STATUS);
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
-    @Test
-    public void testDistributionAuthenticationFails() {
+    @Test()
+    void testDistributionAuthenticationFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(),any(User.class)))
-                .thenReturn(ActionStatus.AUTHENTICATION_ERROR);
+        when(distributionEngine.notifyService(anyString(), any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
+            .thenReturn(ActionStatus.AUTHENTICATION_ERROR);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
         assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
@@ -136,11 +126,11 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
-    @Test
-    public void testDistributionUnknownHostFails() {
+    @Test()
+    void testDistributionUnknownHostFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
-                .thenReturn(ActionStatus.UNKNOWN_HOST);
+        when(distributionEngine.notifyService(anyString(), any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
+            .thenReturn(ActionStatus.UNKNOWN_HOST);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
         assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
@@ -148,11 +138,11 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
-    @Test
-    public void testDistributionConnectionErrorFails() {
+    @Test()
+    void testDistributionConnectionErrorFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
-                .thenReturn(ActionStatus.CONNNECTION_ERROR);
+        when(distributionEngine.notifyService(anyString(), any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
+            .thenReturn(ActionStatus.CONNNECTION_ERROR);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
         assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
@@ -160,11 +150,22 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     }
 
     //TODO see if we want to add ActionStatus.AUTHENTICATION_ERROR to error-configuration.yaml
-    @Test
-    public void testDistributionObjectNotFoundFails() {
+    @Test()
+    void testDistributionObjectNotFoundFails() {
         mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
-                .thenReturn(ActionStatus.OBJECT_NOT_FOUND);
+        when(distributionEngine.notifyService(anyString(), any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
+            .thenReturn(ActionStatus.OBJECT_NOT_FOUND);
+        Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
+        assertTrue(stringResponseFormatEither.isRight());
+        assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
+        assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
+    }
+
+    @Test()
+    void testDistributionGeneralFails() {
+        mockAllMethodsUntilDENotification();
+        when(distributionEngine.notifyService(anyString(), any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isRight());
         assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
@@ -172,22 +173,12 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     }
 
     @Test
-    public void testDistributionGeneralFails() {
-        mockAllMethodsUntilDENotification();
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), any(User.class)))
-                .thenReturn(ActionStatus.GENERAL_ERROR);
-        Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
-        assertTrue(stringResponseFormatEither.isRight());
-        assertEquals(502, (int) stringResponseFormatEither.right().value().getStatus());
-        assertEquals("SVC4676", stringResponseFormatEither.right().value().getMessageId());
-    }
-
-    @Test
-    public void testDistributionOk() {
+    void testDistributionOk() {
         mockAllMethodsUntilDENotification();
         ThreadLocalsHolder.setUuid(DID);
-        when(distributionEngine.notifyService(anyString(),any(Service.class), any(INotificationData.class), anyString(), anyString(), any(User.class)))
-                .thenReturn(ActionStatus.OK);
+        when(distributionEngine
+            .notifyService(anyString(), any(Service.class), any(INotificationData.class), anyString(), anyString(), any(User.class)))
+            .thenReturn(ActionStatus.OK);
         Either<String, ResponseFormat> stringResponseFormatEither = callActivateServiceOnTenantWIthDefaults();
         assertTrue(stringResponseFormatEither.isLeft());
         assertEquals(stringResponseFormatEither.left().value(), DID);
@@ -195,8 +186,8 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
 
     private void mockAllMethodsUntilDENotification() {
         when(serviceDistributionValidation.validateActivateServiceRequest
-                (anyString(), anyString(),any(User.class), any(ServiceDistributionReqInfo.class)))
-                .thenReturn(Either.left(activationRequestInformation));
+            (anyString(), anyString(), any(User.class), any(ServiceDistributionReqInfo.class)))
+            .thenReturn(Either.left(activationRequestInformation));
         when(healthCheckBusinessLogic.isDistributionEngineUp()).thenReturn(true);
     }
 

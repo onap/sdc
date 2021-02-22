@@ -73,7 +73,6 @@
     <cxf.version>3.3.6</cxf.version>
     <datastax.cassandra.version>3.8.0</datastax.cassandra.version>
     <easymock.version>3.4</easymock.version>
-    <groovy.version>2.4.8</groovy.version>
     <groovy.minimal.version>1.5.8</groovy.minimal.version>
     <fop.version>2.2</fop.version>
     <freemarker.version>2.3.26-incubating</freemarker.version>
@@ -90,7 +89,6 @@
     <jackson.annotations.version>${jackson.version}</jackson.annotations.version>
     <jackson.dataformat.version>${jackson.version}</jackson.dataformat.version>
     <jcommander.version>1.58</jcommander.version>
-    <jetty.servlets.version>9.4.11.v20180605</jetty.servlets.version>
     <jersey.core.version>1.19.1</jersey.core.version>
     <jersey.multipart.version>1.18.1</jersey.multipart.version>
     <logback.version>1.2.3</logback.version>
