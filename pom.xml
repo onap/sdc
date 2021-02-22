@@ -33,7 +33,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <parent>
         <groupId>org.onap.oparent</groupId>
         <artifactId>oparent</artifactId>
-        <version>2.0.0</version>
+        <version>3.2.0</version>
         <relativePath/>
     </parent>
 
