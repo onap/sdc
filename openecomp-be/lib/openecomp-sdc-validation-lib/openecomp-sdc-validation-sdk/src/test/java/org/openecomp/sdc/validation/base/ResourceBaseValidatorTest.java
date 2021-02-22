@@ -15,19 +15,20 @@
  */
 package org.openecomp.sdc.validation.base;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.commons.collections4.MapUtils;
+import org.junit.jupiter.api.Test;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.validation.type.ConfigConstants;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@Test
 public class ResourceBaseValidatorTest {
 private String testValidator = "testValidator";
 
@@ -36,7 +37,7 @@ private String testValidator = "testValidator";
     ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(
         resourceBaseValidator, "/InvalidResourceType");
-    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+    assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
         "WARNING: [RBV1]: A resource has an invalid or unsupported type - null, " +
             "Resource ID [FSB2]");
   }
@@ -46,7 +47,7 @@ private String testValidator = "testValidator";
     ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(resourceBaseValidator,
         "/InvalidHeatStructure");
-    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+    assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
         "ERROR: [RBV2]: Invalid HEAT format problem - [while scanning for the next " +
         "token\n" + "found character '\\t(TAB)' that cannot start any token. " +
         "(Do not use \\t(TAB) for indentation)\n" +
@@ -62,7 +63,7 @@ private String testValidator = "testValidator";
     Map<String, Object> properties = new HashMap<>();
     resourceBaseValidator.init(properties);
 
-    Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
+    assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
   }
 
   @Test
@@ -72,8 +73,8 @@ private String testValidator = "testValidator";
 
     Map<String, ImplementationConfiguration> resourceTypeToImpl =
         resourceBaseValidator.getResourceTypeToImpl();
-    Assert.assertTrue(MapUtils.isNotEmpty(resourceTypeToImpl));
-    Assert.assertTrue(resourceTypeToImpl.containsKey(testValidator));
+    assertTrue(MapUtils.isNotEmpty(resourceTypeToImpl));
+    assertTrue(resourceTypeToImpl.containsKey(testValidator));
   }
 
   @Test
@@ -84,7 +85,7 @@ private String testValidator = "testValidator";
 
     resourceBaseValidator.init(properties);
 
-    Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
+    assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
   }
 
   @Test
@@ -92,7 +93,7 @@ private String testValidator = "testValidator";
     ResourceBaseValidator resourceBaseValidator = new ResourceBaseValidator();
     initProperties(resourceBaseValidator, new HashMap<>());
 
-    Assert.assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
+    assertTrue(MapUtils.isEmpty(resourceBaseValidator.getResourceTypeToImpl()));
   }
 
   public Map<String, Object> getValidImplementationConfiguration() {

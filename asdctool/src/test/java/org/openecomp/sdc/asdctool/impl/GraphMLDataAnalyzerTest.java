@@ -22,11 +22,11 @@ package org.openecomp.sdc.asdctool.impl;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer.EXCEL_EXTENSION;
 import static org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer.GRAPH_ML_EXTENSION;
-import static org.testng.AssertJUnit.assertNotNull;
 
 public class GraphMLDataAnalyzerTest {
 

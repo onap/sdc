@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.asdctool.migration.resolver;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;

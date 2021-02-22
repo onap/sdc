@@ -19,6 +19,9 @@
 
 package org.openecomp.core.util;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +32,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.dao.types.UniqueValueEntity;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.testng.Assert;
 
 @ExtendWith(MockitoExtension.class)
 class UniqueValueUtilTest {
@@ -111,12 +113,12 @@ class UniqueValueUtilTest {
     @Test
     void testIsUniqueValueOccupied() {
         Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(new UniqueValueEntity());
-        Assert.assertTrue(uniqueValueUtil.isUniqueValueOccupied(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME));
+        assertTrue(uniqueValueUtil.isUniqueValueOccupied(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME));
     }
 
     @Test
     void testIsUniqueValueOccupiedFalse() {
         Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(null);
-        Assert.assertFalse(uniqueValueUtil.isUniqueValueOccupied(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME));
+        assertFalse(uniqueValueUtil.isUniqueValueOccupied(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME));
     }
 }
