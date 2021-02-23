@@ -23,9 +23,10 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.janusgraph.core.attribute.Contain.NOT_IN;
 import static org.janusgraph.core.attribute.Text.REGEX;
-import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
+
+import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +59,6 @@ import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
@@ -78,7 +78,6 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -120,14 +119,11 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.utils.GroupUtils;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
-import org.openecomp.sdc.be.resources.data.GroupTypeData;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.vdurmont.semver4j.Semver;
-import com.vdurmont.semver4j.Semver.SemverType;
 
 
 @org.springframework.stereotype.Component("tosca-operation-facade")
@@ -481,18 +477,18 @@ public class ToscaOperationFacade {
     }
      
      private Map<String, Entry<JanusGraphPredicate, Object>> getVendorVersionPredicate(final String vendorRelease) {
-         Map<String, Entry<JanusGraphPredicate,  Object>> predicateCriteria = new HashMap<>();
-         if (vendorRelease != null && vendorRelease != "1.0") {
+         Map<String, Entry<JanusGraphPredicate, Object>> predicateCriteria = new HashMap<>();
+         if (!"1.0".equals(vendorRelease)) {
              String[] vendorReleaseElements = vendorRelease.split("\\.");
              if (vendorReleaseElements.length > 0) {
                  String regex = ".*\"vendorRelease\":\"";
-                 for (int i = 0; i <vendorReleaseElements.length; i++) {
+                 for (int i = 0; i < vendorReleaseElements.length; i++) {
                      regex += vendorReleaseElements[i];
-                     regex += i < vendorReleaseElements.length -1 ? "\\." : "\".*";
+                     regex += i < vendorReleaseElements.length - 1 ? "\\." : "\".*";
                  }
                  predicateCriteria.put("metadata", new HashMap.SimpleEntry<>(REGEX, regex));
              }
-         } 
+         }
          return predicateCriteria;
      }
      
