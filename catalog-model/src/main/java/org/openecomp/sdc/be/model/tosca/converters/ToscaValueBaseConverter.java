@@ -151,14 +151,12 @@ public class ToscaValueBaseConverter {
      * @param convertedValue
      * @return
      */
-    static public boolean isEmptyObjectValue(Object convertedValue) {
-        if (convertedValue == null) {
-            return true;
-        } else if (convertedValue instanceof String && ((String) convertedValue).isEmpty()) {
-            return true;
-        } else if (convertedValue instanceof Map && ((Map) convertedValue).isEmpty()) {
-            return true;
-        } else if (convertedValue instanceof List && ((List) convertedValue).isEmpty()) {
+    public static boolean isEmptyObjectValue(Object convertedValue) {
+        if ((convertedValue == null)
+            || (convertedValue instanceof String && ((String) convertedValue).isEmpty())
+            || (convertedValue instanceof Map && ((Map) convertedValue).isEmpty())
+            || (convertedValue instanceof List && ((List) convertedValue).isEmpty()))
+        {
             return true;
         }
         return false;
