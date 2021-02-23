@@ -16,19 +16,19 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementDescriptorDto;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class MapLicenseAgreementEntityToLicenseAgreementDescriptorDtoTest {
+class MapLicenseAgreementEntityToLicenseAgreementDescriptorDtoTest {
 
     @Test
-    public void testLicenseTerm() {
+    void testLicenseTerm() {
         LicenseAgreementEntity source = new LicenseAgreementEntity();
         LicenseAgreementDescriptorDto target = new LicenseAgreementDescriptorDto();
         MapLicenseAgreementEntityToLicenseAgreementDescriptorDto mapper =
@@ -41,7 +41,7 @@ public class MapLicenseAgreementEntityToLicenseAgreementDescriptorDtoTest {
     }
 
     @Test
-    public void testName() {
+    void testName() {
         LicenseAgreementEntity source = new LicenseAgreementEntity();
         LicenseAgreementDescriptorDto target = new LicenseAgreementDescriptorDto();
         MapLicenseAgreementEntityToLicenseAgreementDescriptorDto mapper =
@@ -53,7 +53,7 @@ public class MapLicenseAgreementEntityToLicenseAgreementDescriptorDtoTest {
     }
 
     @Test
-    public void testDescription() {
+    void testDescription() {
         LicenseAgreementEntity source = new LicenseAgreementEntity();
         LicenseAgreementDescriptorDto target = new LicenseAgreementDescriptorDto();
         MapLicenseAgreementEntityToLicenseAgreementDescriptorDto mapper =
@@ -65,7 +65,7 @@ public class MapLicenseAgreementEntityToLicenseAgreementDescriptorDtoTest {
     }
 
     @Test
-    public void testRequirementsAndConstrains() {
+    void testRequirementsAndConstrains() {
         LicenseAgreementEntity source = new LicenseAgreementEntity();
         LicenseAgreementDescriptorDto target = new LicenseAgreementDescriptorDto();
         MapLicenseAgreementEntityToLicenseAgreementDescriptorDto mapper =

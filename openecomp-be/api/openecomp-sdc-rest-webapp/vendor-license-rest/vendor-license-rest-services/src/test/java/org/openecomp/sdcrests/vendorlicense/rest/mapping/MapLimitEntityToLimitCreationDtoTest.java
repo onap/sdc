@@ -15,15 +15,15 @@
  */
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
-public class MapLimitEntityToLimitCreationDtoTest {
+class MapLimitEntityToLimitCreationDtoTest {
 
     @Test
-    public void testId() {
+    void testId() {
         LimitEntity source = new LimitEntity();
         LimitCreationDto target = new LimitCreationDto();
         MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();

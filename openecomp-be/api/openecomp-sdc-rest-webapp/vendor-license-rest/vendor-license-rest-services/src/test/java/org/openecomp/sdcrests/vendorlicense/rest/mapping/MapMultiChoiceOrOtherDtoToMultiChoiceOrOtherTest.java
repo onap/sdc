@@ -16,19 +16,19 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class MapMultiChoiceOrOtherDtoToMultiChoiceOrOtherTest {
+class MapMultiChoiceOrOtherDtoToMultiChoiceOrOtherTest {
 
     @Test
-    public void testChoices() {
+    void testChoices() {
         MultiChoiceOrOtherDto source = new MultiChoiceOrOtherDto();
         MultiChoiceOrOther target = new MultiChoiceOrOther();
         MapMultiChoiceOrOtherDtoToMultiChoiceOrOther mapper = new MapMultiChoiceOrOtherDtoToMultiChoiceOrOther();
@@ -41,7 +41,7 @@ public class MapMultiChoiceOrOtherDtoToMultiChoiceOrOtherTest {
     }
 
     @Test
-    public void testOther() {
+    void testOther() {
         MultiChoiceOrOtherDto source = new MultiChoiceOrOtherDto();
         MultiChoiceOrOther target = new MultiChoiceOrOther();
         MapMultiChoiceOrOtherDtoToMultiChoiceOrOther mapper = new MapMultiChoiceOrOtherDtoToMultiChoiceOrOther();

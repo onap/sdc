@@ -16,24 +16,25 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
-import org.testng.annotations.Test;
 
 
-public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
+class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
 
     @Test
-    public void testReferencingFeatureGroups() {
+    void testReferencingFeatureGroups() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -45,7 +46,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testDescription() {
+    void testDescription() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -57,7 +58,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testIncrements() {
+    void testIncrements() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -69,7 +70,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testExpiryDate() {
+    void testExpiryDate() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -81,7 +82,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testId() {
+    void testId() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -93,7 +94,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testThresholdValue() {
+    void testThresholdValue() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -105,7 +106,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testName() {
+    void testName() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -119,7 +120,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testOperationalScope() {
+    void testOperationalScope() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -132,7 +133,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testStartDate() {
+    void testStartDate() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
@@ -144,7 +145,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testManufacturerReferenceNumber() {
+    void testManufacturerReferenceNumber() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper = new
@@ -157,7 +158,7 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    public void testType() {
+    void testType() {
         EntitlementPoolEntity source = new EntitlementPoolEntity();
         EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
         MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
