@@ -16,11 +16,12 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdcrests.vendorlicense.types.ChoiceOrOtherDto;
-import org.testng.annotations.Test;
 
 /**
  * Any change to ChoiceOrOther easily break reconstruction of objects of this type.
@@ -29,7 +30,7 @@ import org.testng.annotations.Test;
  * @author EVITALIY
  * @since 28 Dec 17
  */
-public class ChoiceOrOtherMappingTest {
+class ChoiceOrOtherMappingTest {
 
     private static final String UNKNOWN = "Unknown";
 
@@ -38,7 +39,7 @@ public class ChoiceOrOtherMappingTest {
     }
 
     @Test
-    public void testApplyMappingFromDto() {
+    void testApplyMappingFromDto() {
 
         ChoiceOrOtherDto<TestEnum> source = new ChoiceOrOtherDto<>();
         source.setChoice(TestEnum.Yes);
@@ -51,7 +52,7 @@ public class ChoiceOrOtherMappingTest {
     }
 
     @Test
-    public void testApplyMappingToDto() {
+    void testApplyMappingToDto() {
 
         ChoiceOrOther<TestEnum> source = new ChoiceOrOther<>(TestEnum.Yes, UNKNOWN);
 
