@@ -16,6 +16,24 @@
       "revId": "2b609a313cfa4ab4b523f20627541264ad1e30f5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f545db6_b7c9c7b5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ComponentsUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1369,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-02-23T14:30:27Z",
+      "side": 0,
+      "message": "Sorry, didn\u0027t get you. Please, could you clarify?",
+      "parentUuid": "f650d504_0de01aa8",
+      "revId": "2b609a313cfa4ab4b523f20627541264ad1e30f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }

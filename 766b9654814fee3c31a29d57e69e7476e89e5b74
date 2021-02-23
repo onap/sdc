@@ -16,6 +16,24 @@
       "revId": "766b9654814fee3c31a29d57e69e7476e89e5b74",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30fbe82b_a63853a3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/AttributeConverter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-02-23T14:30:27Z",
+      "side": 1,
+      "message": "Sorry Julien, but what do you mean by a token object?\nAn optional? Or maybe an enum that represents an error?\nIn fact I believe in this place the conversion should fail (an exception should be thrown), as returning null means that SDC could not parse that value, which will lead to a broken TOSCA generation.\nFor now I\u0027m just following what we have for properties handling.",
+      "parentUuid": "19cd8757_3cf81866",
+      "revId": "766b9654814fee3c31a29d57e69e7476e89e5b74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
