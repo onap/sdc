@@ -20,32 +20,21 @@
 
 package org.openecomp.sdc.be.resources.data.auditing.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class ResourceCommonInfo {
 
     private String resourceName;
     private String resourceType;
 
-    public ResourceCommonInfo(){}
-
-    public ResourceCommonInfo(String resourceName, String resourceType) {
-        this.resourceName = resourceName;
-        this.resourceType = resourceType;
-    }
-
     public ResourceCommonInfo(String resourceType) {
         this.resourceType = resourceType;
     }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public String getResourceType() {
-        return resourceType;
-    }
-
-    public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
-    }
-
 }
