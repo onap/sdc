@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05e27589_68715243",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/converters/ToscaValueBaseConverterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-23T17:52:34Z",
+      "side": 1,
+      "message": "all new TCs should use Junit 5",
+      "range": {
+        "startLine": 23,
+        "startChar": 37,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "0c195154fd90b8e5dbff5d5c2b77ac44e56653d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6de8a9cd_15a74b13",
+        "filename": "common/onap-tosca-datatype/src/test/java/org/onap/sdc/tosca/datatypes/model/NodeTemplateTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-23T17:52:34Z",
+      "side": 1,
+      "message": "all new TCs should use Junit 5",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 22
+      },
+      "revId": "0c195154fd90b8e5dbff5d5c2b77ac44e56653d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5dc23a2e_ecbaba76",
+        "filename": "common/onap-tosca-datatype/src/test/java/org/onap/sdc/tosca/services/YamlUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-23T17:52:34Z",
+      "side": 1,
+      "message": "all new TCs should use Junit 5",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 22
+      },
+      "revId": "0c195154fd90b8e5dbff5d5c2b77ac44e56653d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
