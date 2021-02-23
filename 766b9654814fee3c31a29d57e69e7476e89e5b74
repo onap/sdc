@@ -34,6 +34,24 @@
       "revId": "766b9654814fee3c31a29d57e69e7476e89e5b74",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43732c0c_dda1f9d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/AttributeConverter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-02-23T14:53:13Z",
+      "side": 1,
+      "message": "Yes either one of those. I think that generally using nulls to convey meaning is not the best solution. But again, my opinion :)",
+      "parentUuid": "30fbe82b_a63853a3",
+      "revId": "766b9654814fee3c31a29d57e69e7476e89e5b74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
