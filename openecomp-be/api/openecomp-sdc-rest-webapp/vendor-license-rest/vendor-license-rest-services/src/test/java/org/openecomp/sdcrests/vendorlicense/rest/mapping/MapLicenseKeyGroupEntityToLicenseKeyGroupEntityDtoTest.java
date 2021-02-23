@@ -16,7 +16,7 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,13 +27,13 @@ import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupEntityDto;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
+class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
 
     @Test
-    public void testReferencingFeatureGroups() {
+    void testReferencingFeatureGroups() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -45,7 +45,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testDescription() {
+    void testDescription() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -57,7 +57,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testType() {
+    void testType() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -69,7 +69,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testIncrements() {
+    void testIncrements() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -81,7 +81,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testExpiryDate() {
+    void testExpiryDate() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -93,7 +93,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testId() {
+    void testId() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -105,7 +105,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testThresholdUnits() {
+    void testThresholdUnits() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -117,7 +117,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testThresholdValue() {
+    void testThresholdValue() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -129,7 +129,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testName() {
+    void testName() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -141,7 +141,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testOperationalScope() {
+    void testOperationalScope() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -156,7 +156,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testStartDate() {
+    void testStartDate() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
@@ -168,7 +168,7 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    public void testManufacturerReferenceNumber() {
+    void testManufacturerReferenceNumber() {
         LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
         LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper = new

@@ -16,17 +16,18 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupDescriptorDto;
-import org.testng.annotations.Test;
 
 
-public class MapFeatureGroupDescriptorDtoToFeatureGroupEntityTest {
+class MapFeatureGroupDescriptorDtoToFeatureGroupEntityTest {
 
     @Test
-    public void testName() {
+    void testName() {
         FeatureGroupDescriptorDto source = new FeatureGroupDescriptorDto();
         FeatureGroupEntity target = new FeatureGroupEntity();
         MapFeatureGroupDescriptorDtoToFeatureGroupEntity mapper =
@@ -38,7 +39,7 @@ public class MapFeatureGroupDescriptorDtoToFeatureGroupEntityTest {
     }
 
     @Test
-    public void testDescription() {
+    void testDescription() {
         FeatureGroupDescriptorDto source = new FeatureGroupDescriptorDto();
         FeatureGroupEntity target = new FeatureGroupEntity();
         MapFeatureGroupDescriptorDtoToFeatureGroupEntity mapper =
@@ -50,7 +51,7 @@ public class MapFeatureGroupDescriptorDtoToFeatureGroupEntityTest {
     }
 
     @Test
-    public void testPartNumber() {
+    void testPartNumber() {
         FeatureGroupDescriptorDto source = new FeatureGroupDescriptorDto();
         FeatureGroupEntity target = new FeatureGroupEntity();
         MapFeatureGroupDescriptorDtoToFeatureGroupEntity mapper =

@@ -16,19 +16,19 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitType;
 import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class MapLimitEntityToLimitDtoTest {
+class MapLimitEntityToLimitDtoTest {
 
     @Test
-    public void testDescription() {
+    void testDescription() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -39,7 +39,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testAggregationFunction() {
+    void testAggregationFunction() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -50,7 +50,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testType() {
+    void testType() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -61,7 +61,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testUnit() {
+    void testUnit() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -72,7 +72,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testMetric() {
+    void testMetric() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -83,7 +83,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testName() {
+    void testName() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -94,7 +94,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testId() {
+    void testId() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -105,7 +105,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testTime() {
+    void testTime() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();
@@ -116,7 +116,7 @@ public class MapLimitEntityToLimitDtoTest {
     }
 
     @Test
-    public void testValue() {
+    void testValue() {
         LimitEntity source = new LimitEntity();
         LimitEntityDto target = new LimitEntityDto();
         MapLimitEntityToLimitDto mapper = new MapLimitEntityToLimitDto();

@@ -16,17 +16,17 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelEntityDto;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class MapVendorLicenseModelEntityToDtoTest {
+class MapVendorLicenseModelEntityToDtoTest {
 
     @Test
-    public void testIconRef() {
+    void testIconRef() {
         VendorLicenseModelEntity source = new VendorLicenseModelEntity();
         VendorLicenseModelEntityDto target = new VendorLicenseModelEntityDto();
         MapVendorLicenseModelEntityToDto mapper = new MapVendorLicenseModelEntityToDto();
@@ -37,7 +37,7 @@ public class MapVendorLicenseModelEntityToDtoTest {
     }
 
     @Test
-    public void testDescription() {
+    void testDescription() {
         VendorLicenseModelEntity source = new VendorLicenseModelEntity();
         VendorLicenseModelEntityDto target = new VendorLicenseModelEntityDto();
         MapVendorLicenseModelEntityToDto mapper = new MapVendorLicenseModelEntityToDto();
@@ -48,7 +48,7 @@ public class MapVendorLicenseModelEntityToDtoTest {
     }
 
     @Test
-    public void testId() {
+    void testId() {
         VendorLicenseModelEntity source = new VendorLicenseModelEntity();
         VendorLicenseModelEntityDto target = new VendorLicenseModelEntityDto();
         MapVendorLicenseModelEntityToDto mapper = new MapVendorLicenseModelEntityToDto();
@@ -59,7 +59,7 @@ public class MapVendorLicenseModelEntityToDtoTest {
     }
 
     @Test
-    public void testVendorName() {
+    void testVendorName() {
         VendorLicenseModelEntity source = new VendorLicenseModelEntity();
         VendorLicenseModelEntityDto target = new VendorLicenseModelEntityDto();
         MapVendorLicenseModelEntityToDto mapper = new MapVendorLicenseModelEntityToDto();
