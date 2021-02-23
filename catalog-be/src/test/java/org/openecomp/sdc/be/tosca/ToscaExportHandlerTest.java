@@ -360,7 +360,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         componentInstanceList.add(ci);
         component.setComponentInstances(componentInstanceList);
 
-        when(toscaOperationFacade.getToscaFullElement(eq("name"))).thenReturn(Either.left(component));
+        when(toscaOperationFacade.getToscaFullElement("name")).thenReturn(Either.left(component));
 
         Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> result;
         result = Deencapsulation.invoke(testSubject, "fillImports", component, toscaTemplate);
@@ -368,11 +368,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         verify(toscaOperationFacade, times(1)).getToscaFullElement("name");
         Assert.assertTrue(result.isLeft());
         ToscaTemplate toscaTemplateRes = result.left().value().left;
-        Assert.assertTrue(toscaTemplateRes.getImports().size() == 8);
+        Assert.assertEquals(8 , toscaTemplateRes.getImports().size());
         Assert.assertNotNull(toscaTemplateRes.getImports().get(6).get("resource-TestResourceName-interface"));
         Assert.assertNotNull(toscaTemplateRes.getImports().get(7).get("resource-TestResourceName"));
-        Assert.assertTrue(toscaTemplateRes.getDependencies().size() == 1);
-        Assert.assertNotNull(toscaTemplateRes.getDependencies().get(0).getLeft().equals("name.name2"));
+        Assert.assertEquals(1 , toscaTemplateRes.getDependencies().size());
+        Assert.assertEquals("name.name2",toscaTemplateRes.getDependencies().get(0).getLeft());
     }
 
     @Test
@@ -530,10 +530,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         ci.setOriginType(OriginTypeEnum.ServiceProxy);
         ci.setSourceModelUid("modelName");
 
-        when(toscaOperationFacade.getToscaFullElement(eq("name"))).thenReturn(Either.left(component));
+        when(toscaOperationFacade.getToscaFullElement("name")).thenReturn(Either.left(component));
 
-        when(toscaOperationFacade.getToscaFullElement(eq("modelName")))
-            .thenReturn(Either.left(new Service()));
+        when(toscaOperationFacade.getToscaFullElement("modelName")).thenReturn(Either.left(new Service()));
 
         // default test
         Deencapsulation.invoke(testSubject, "createDependency", componentCache, imports, dependecies, ci);
@@ -1486,7 +1485,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // test return false
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToRelation", originComponent,
             reqAndRelationshipPair, requirement, fromInstanceId);
-        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
     }
 
     @Test
@@ -1501,7 +1500,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // default test return true
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToRelation", originComponent,
             reqAndRelationshipPair, requirement, fromInstanceId);
-        Assert.assertNotNull(result);
+        Assert.assertTrue(result);
     }
 
     @Test
@@ -1519,7 +1518,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // default test
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToOwner", reqAndRelationshipPair, requirement,
             fromInstanceId, originComponent);
-        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
     }
 
     @Test
@@ -1531,7 +1530,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         component = new Service();
 
         result = Deencapsulation.invoke(testSubject, "isCvfc", component);
-        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
     }
 
     @Test
@@ -1577,8 +1576,8 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         result = Deencapsulation.invoke(testSubject, "convertToNodeTemplateArtifacts", container);
         Assert.assertNotNull(result);
         Assert.assertTrue(MapUtils.isNotEmpty(result));
-        Assert.assertTrue(result.get("test_art").getFile().equals("test_file"));
-        Assert.assertTrue(result.get("test_art").getType().equals("test_type"));
+        Assert.assertEquals("test_file",result.get("test_art").getFile());
+        Assert.assertEquals("test_type",result.get("test_art").getType());
     }
 
     @Test
