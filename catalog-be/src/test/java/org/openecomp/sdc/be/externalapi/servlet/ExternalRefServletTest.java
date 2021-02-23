@@ -144,6 +144,8 @@ class ExternalRefServletTest extends JerseyTest {
         System.currentTimeMillis());
 
     @Mock
+    private IdMapper idMapper;
+    @Mock
     public WebAppContextWrapper webAppContextWrapper;
     @Mock
     private ServletContext servletContext;
@@ -182,7 +184,6 @@ class ExternalRefServletTest extends JerseyTest {
 
     @BeforeAll
     public void setup() {
-        MockitoAnnotations.initMocks(this);
 
         //Needed for User Authorization
         //========================================================================================================================
@@ -238,6 +239,7 @@ class ExternalRefServletTest extends JerseyTest {
     @BeforeEach
     public void before() throws Exception {
         super.setUp();
+        MockitoAnnotations.openMocks(this);
 
         when(resourceComponentMock.getVersion()).thenReturn(VERSION);
         when(resourceComponentMock.getUniqueId()).thenReturn(resourceVertexUuid);
@@ -663,8 +665,6 @@ class ExternalRefServletTest extends JerseyTest {
         private GraphVertex resourceVertex;
         private ExternalReferencesOperation externalReferenceOperation;
         private HealingJanusGraphDao janusGraphDao;
-        @Mock
-        private IdMapper idMapper;
 
         @Bean
         ExternalRefsServlet externalRefsServlet() {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,17 +21,17 @@
 package org.openecomp.sdc.asdctool.migration.core.execution;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.migration.DummyMigrationFactory;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 
-public class MigrationExecutorImplTest {
+class MigrationExecutorImplTest {
 
     @Test
-    public void testExecuteMigration() {
+    void testExecuteMigration() {
         MigrationExecutionResult execute = new MigrationExecutorImpl().execute(DummyMigrationFactory.SUCCESSFUL_MIGRATION);
         assertMigrationTaskEntryByMigrationExecutionResult(execute, DummyMigrationFactory.SUCCESSFUL_MIGRATION);
     }
@@ -43,7 +43,7 @@ public class MigrationExecutorImplTest {
         assertEquals(executionResult.getTaskName(), migration.getClass().getName());
         assertEquals(executionResult.getVersion(), migration.getVersion());
         assertEquals(executionResult.getDescription(), migration.description());
-        assertNotNull(executionResult.getExecutionTime());
+        assertTrue(executionResult.getExecutionTime() >= 0);
     }
 
 }
