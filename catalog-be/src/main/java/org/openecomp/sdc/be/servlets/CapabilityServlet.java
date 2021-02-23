@@ -266,7 +266,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
                     = getMappedCapabilitiesData(data, modifier, ComponentTypeEnum.findByParamName(componentType));
             if(mappedCapabilitiesDataEither.isRight()) {
                 LOGGER.error("Failed to create or update capabilities");
-                buildErrorResponse(mappedCapabilitiesDataEither.right().value());
+                return buildErrorResponse(mappedCapabilitiesDataEither.right().value());
             }
             List<CapabilityDefinition> mappedCapabilitiesData = mappedCapabilitiesDataEither.left().value();
             Either<List<CapabilityDefinition>, ResponseFormat> actionResponse;
@@ -350,6 +350,10 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         Either<UiComponentDataTransfer, ResponseFormat> mappedData = getComponentsUtils()
                 .convertJsonToObjectUsingObjectMapper(inputJson, user, UiComponentDataTransfer.class,
                         AuditingActionEnum.CREATE_RESOURCE, componentTypeEnum);
+        if (mappedData.isRight()) {
+            return Either.right(getComponentsUtils()
+                .getResponseFormat(ActionStatus.INVALID_CONTENT));
+        }
         Optional<List<CapabilityDefinition>> capabilityDefinitionList =
                 mappedData.left().value().getCapabilities().values().stream().findFirst();
         return capabilityDefinitionList.<Either<List<CapabilityDefinition>, ResponseFormat>>
