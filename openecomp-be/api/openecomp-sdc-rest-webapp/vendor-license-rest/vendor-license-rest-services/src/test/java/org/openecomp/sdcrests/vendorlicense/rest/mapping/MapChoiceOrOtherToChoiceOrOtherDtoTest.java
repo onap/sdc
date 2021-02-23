@@ -16,18 +16,19 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdcrests.vendorlicense.types.ChoiceOrOtherDto;
-import org.testng.annotations.Test;
 
 
-public class MapChoiceOrOtherToChoiceOrOtherDtoTest {
+class MapChoiceOrOtherToChoiceOrOtherDtoTest {
 
     @Test
-    public void testOther() {
+    void testOther() {
         ChoiceOrOther source = new ChoiceOrOther();
         ChoiceOrOtherDto target = new ChoiceOrOtherDto();
         MapChoiceOrOtherToChoiceOrOtherDto mapper = new MapChoiceOrOtherToChoiceOrOtherDto();
@@ -38,7 +39,7 @@ public class MapChoiceOrOtherToChoiceOrOtherDtoTest {
     }
 
     @Test
-    public void testChoice() {
+    void testChoice() {
         ChoiceOrOther source = new ChoiceOrOther();
         ChoiceOrOtherDto target = new ChoiceOrOtherDto();
         MapChoiceOrOtherToChoiceOrOtherDto mapper = new MapChoiceOrOtherToChoiceOrOtherDto();
