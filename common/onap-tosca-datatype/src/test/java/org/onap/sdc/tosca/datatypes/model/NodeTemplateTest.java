@@ -14,6 +14,7 @@
  * limitations under the License.
  *
  * Modifications copyright (c) 2019 Nokia
+ * Modifications copyright (c) 2021 AT&T Intellectual Property
  */
 
 package org.onap.sdc.tosca.datatypes.model;
@@ -21,10 +22,14 @@ package org.onap.sdc.tosca.datatypes.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.onap.sdc.tosca.error.ToscaRuntimeException;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEqualsExcluding;
@@ -86,6 +91,84 @@ public class NodeTemplateTest {
     @Test
     public void shouldHaveValidHashCode() {
         assertThat(NodeTemplate.class, hasValidBeanHashCodeExcluding("requirements", "normalizeInterfaces"));
+    }
+
+    @Test
+    public void setRequirementsTest() throws IOException {
+        ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
+        ServiceTemplate expectedServiceTemplateFromYaml = getServiceTemplate(INTERFACE_DEFINITION_FOR_UPD_RESULT);
+        ServiceTemplate serviceTemplateForUpdate = getServiceTemplate(INTERFACE_DEFINITION_FOR_UPD);
+        NodeTemplate nodeTemplate =
+                serviceTemplateForUpdate.getTopology_template().getNode_templates().get(NODE_WITH_INTERFACE);
+        nodeTemplate.addInterface(INTERFACE_KEY, createInterfaceDefinitionTemplate());
+
+        List<RequirementAssignment> requirementAssignmentList = new LinkedList<>();
+        RequirementAssignment requirement1 = new RequirementAssignment();
+        requirement1.setNode("node1");
+        requirement1.setCapability("cap1");
+        requirementAssignmentList.add(requirement1);
+        nodeTemplate.setRequirements(requirementAssignmentList);
+
+        List<Map<String, RequirementAssignment>> res = nodeTemplate.getRequirements();
+        Assert.assertNotNull(res);
+        Assert.assertEquals(res.size(), 0);
+
+        RequirementAssignment requirement2 = new RequirementAssignment();
+        requirement2.setNode("node2");
+        requirement2.setCapability("cap2");
+        HashMap<String, RequirementAssignment> map = new HashMap<>();
+        map.put("value2", requirement2);
+        nodeTemplate.addRequirements(map);
+        List<Map<String, RequirementAssignment>> res2 = nodeTemplate.getRequirements();
+        Assert.assertNotNull(res2);
+        Assert.assertEquals(res2.size(), 1);
+        Assert.assertEquals(res2.get(0), requirement2);
+    }
+
+    @Test
+    public void addInterfaceTest() throws IOException {
+        ServiceTemplate serviceTemplateForUpdate = getServiceTemplate(INTERFACE_DEFINITION_FOR_UPD);
+        NodeTemplate nodeTemplate =
+                serviceTemplateForUpdate.getTopology_template().getNode_templates().get(NODE_WITH_INTERFACE);
+        nodeTemplate.addInterface(INTERFACE_KEY, createInterfaceDefinitionTemplate());
+
+        Map<String, Object> res = nodeTemplate.getInterfaces();
+        Assert.assertEquals(res.size(), 2);
+        Assert.assertNotNull(res.get("Standard"));
+        Assert.assertNotNull(res.get(INTERFACE_KEY));
+    }
+
+    @Test
+    public void cloneTest() throws IOException {
+        ServiceTemplate serviceTemplateForUpdate = getServiceTemplate(INTERFACE_DEFINITION_FOR_UPD);
+        NodeTemplate nodeTemplate =
+                serviceTemplateForUpdate.getTopology_template().getNode_templates().get(NODE_WITH_INTERFACE);
+
+        NodeTemplate res = nodeTemplate.clone();
+        Assert.assertEquals(res, nodeTemplate);
+    }
+
+    @Test
+    public void convertToscaRequirementAssignmentTest() throws IOException {
+        List<?> requirementAssignmentObj = new LinkedList<>();
+        List<Map<String, RequirementAssignment>> res = NodeTemplate.convertToscaRequirementAssignment(requirementAssignmentObj);
+        Assert.assertNull(res);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("value1", new RequirementAssignment());
+        Map<String, Object> requirementMap = new HashMap<>();
+        requirementMap.put("capability", "capabilityValue");
+        requirementMap.put("node", "nodeValue");
+        requirementMap.put("relationship", "relationshipValue");
+        requirementMap.put("node_filter", new NodeFilter());
+        Object[] objectArr = {};
+        requirementMap.put("occurrences", objectArr);
+        map.put("value2", requirementMap);
+        ((List<Map<String, Object>>)requirementAssignmentObj).add(map);
+        List<Map<String, RequirementAssignment>> res2 = NodeTemplate.convertToscaRequirementAssignment(requirementAssignmentObj);
+        Assert.assertNotNull(res2);
+        Assert.assertEquals(res2.size(), 2);
+        Assert.assertEquals(res2.get(0), new RequirementAssignment());
     }
 
     private InterfaceDefinitionTemplate createInterfaceDefinitionTemplate() {
