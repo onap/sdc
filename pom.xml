@@ -115,8 +115,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <commons-jci-core.version>1.1</commons-jci-core.version>
 
         <!--TESTING-->
-        <mockito.version>3.3.3</mockito.version>
-        <mockitoJupiter.version>3.3.3</mockitoJupiter.version>
+        <mockito.version>3.7.7</mockito.version>
+        <mockitoJupiter.version>${mockito.version}</mockitoJupiter.version>
         <jmockit.version>1.35</jmockit.version>
         <junit.version>4.13.1</junit.version>
         <junit.platform.version>1.7.1</junit.platform.version>
