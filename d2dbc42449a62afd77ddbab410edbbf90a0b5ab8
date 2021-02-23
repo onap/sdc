@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "16f862c5_1059a2db",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/MyPropertyUtils.java",
+        "patchSetId": 30
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-02-23T12:47:15Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0c940b25_af1006e5",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "d2dbc42449a62afd77ddbab410edbbf90a0b5ab8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6a218f03_679d85d5",
         "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/StrictMapAppenderConstructor.java",
         "patchSetId": 30
@@ -45,6 +69,30 @@
       "revId": "d2dbc42449a62afd77ddbab410edbbf90a0b5ab8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b82e6401_b9d809bd",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/services/StrictMapAppenderConstructor.java",
+        "patchSetId": 30
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-02-23T12:47:15Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6a218f03_679d85d5",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "d2dbc42449a62afd77ddbab410edbbf90a0b5ab8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
