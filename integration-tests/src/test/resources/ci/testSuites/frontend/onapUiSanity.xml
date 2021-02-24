@@ -19,6 +19,7 @@
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.OnboardingFlowsUi">
         <methods>
           <include name="onapOnboardVNFflow"/>
+          <include name="onboardCNFTest"/>
           <include name="onapOnboardVSPValidationsSanityFlow"/>
           <include name="onboardPNFSoftwareInformationFlow"/>
         </methods>

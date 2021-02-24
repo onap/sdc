@@ -145,6 +145,9 @@ public class FileHandling {
     public static String getVnfRepositoryPath() {
         return getFilePath("VNFs");
     }
+    public static String getCnfRepositoryPath() {
+        return getFilePath("CNFs");
+    }
 
     public static String getUpdateVSPVnfRepositoryPath() {
         return getFilePath("UpdateVSP");

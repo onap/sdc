@@ -134,8 +134,24 @@ public class FileHandling {
 		return getFilePath("VNFs");
 	}
 
+	private static String getPnfRepositoryPath() {
+		return getFilePath("PNFs");
+	}
+
+	private static String getCnfRepositoryPath() {
+		return getFilePath("CNFs");
+	}
+
 	public static String getXnfRepositoryPath(XnfTypeEnum xnfTypeEnum) {
-		return xnfTypeEnum.getValue().equals(XnfTypeEnum.PNF.name()) ? getFilePath("PNFs") : getFilePath("VNFs");
+		switch (xnfTypeEnum){
+			case PNF:
+				return getPnfRepositoryPath();
+			case CNF:
+				return getCnfRepositoryPath();
+			case VNF:
+			default:
+				return getVnfRepositoryPath();
+		}
 	}
 
 	public static String getPortMirroringRepositoryPath() {

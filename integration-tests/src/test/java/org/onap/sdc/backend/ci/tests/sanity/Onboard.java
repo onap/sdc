@@ -78,6 +78,12 @@ public class Onboard extends ComponentBaseTest {
 		runOnboardToDistributionFlow(filePath, pnfFile, ResourceTypeEnum.PNF);
 	}
 
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "CNF_List")
+	public void onboardCNFFlow(String filePath, String cnfFile) throws Exception {
+		setLog(cnfFile);
+		runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF);
+	}
+
 	private void runOnboardToDistributionFlow(String packageFilePath, String packageFileName, ResourceTypeEnum resourceTypeEnum) throws Exception {
 		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the %s %s", resourceTypeEnum.getValue(), packageFileName));
 		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);

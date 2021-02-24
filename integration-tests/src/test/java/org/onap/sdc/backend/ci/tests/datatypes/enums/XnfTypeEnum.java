@@ -23,7 +23,8 @@ package org.onap.sdc.backend.ci.tests.datatypes.enums;
 public enum XnfTypeEnum {
 
     VNF ("VNF"),
-    PNF ("PNF");
+    PNF ("PNF"),
+    CNF ("CNF");
 
     private String value;
 
