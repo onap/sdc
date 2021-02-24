@@ -60,7 +60,6 @@
     <mvn.antrun.version>1.8</mvn.antrun.version>
 
     <!-- Onboarding 3rd party versions -->
-    <aspectj.version>1.8.9</aspectj.version>
     <aspectjrt.version>${aspectj.version}</aspectjrt.version>
     <bsh.version>2.0b6</bsh.version>
     <cglib.nodep.version>3.2.4</cglib.nodep.version>
@@ -72,15 +71,12 @@
     <commons.lang3.version>3.4</commons.lang3.version>
     <cxf.version>3.3.6</cxf.version>
     <datastax.cassandra.version>3.8.0</datastax.cassandra.version>
-    <easymock.version>3.4</easymock.version>
     <groovy.minimal.version>1.5.8</groovy.minimal.version>
-    <fop.version>2.2</fop.version>
     <freemarker.version>2.3.26-incubating</freemarker.version>
     <hibernate.validator.version>5.3.6.Final</hibernate.validator.version>
     <http.client.version>4.5.3</http.client.version>
     <http.core.version>4.4.1</http.core.version>
     <httpasyncclient.version>4.1.2</httpasyncclient.version>
-    <janino.version>2.7.7</janino.version>
     <com.sun.xml.version>2.3.3</com.sun.xml.version>
     <javax.el.version>2.2.4</javax.el.version>
     <javax.el-api.version>3.0.1-b04</javax.el-api.version>
@@ -91,13 +87,9 @@
     <jcommander.version>1.58</jcommander.version>
     <jersey.core.version>1.19.1</jersey.core.version>
     <jersey.multipart.version>1.18.1</jersey.multipart.version>
-    <logback.version>1.2.3</logback.version>
-    <mockito.all.version>1.10.19</mockito.all.version>
     <org.everit.json.schema.version>1.5.1</org.everit.json.schema.version>
-    <org.reflections.version>0.9.10</org.reflections.version>
-    <servlet.version>2.5</servlet.version>
     <slf4j.version>1.7.21</slf4j.version>
-    <spring.framework.version>4.3.18.RELEASE</spring.framework.version>
+    <spring.framework.version>${spring.version}</spring.framework.version>
     <swagger.version>2.0.8</swagger.version>
     <woodstox.version>4.4.1</woodstox.version>
     <zusammen.version>1.0.2</zusammen.version>
@@ -106,7 +98,6 @@
     <zusammen-index-store.version>1.0.0</zusammen-index-store.version>
     <zusammen-common-utilities.version>1.0.3</zusammen-common-utilities.version>
     <build.tools.version>${project.version}</build.tools.version>
-    <bouncycastle.version>1.61</bouncycastle.version>
   </properties>
 
   <dependencyManagement>
