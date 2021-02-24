@@ -52,6 +52,24 @@
       "revId": "2b609a313cfa4ab4b523f20627541264ad1e30f5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9aef8abc_912ef22a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ComponentsUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1369,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-02-24T12:06:59Z",
+      "side": 0,
+      "message": "Ack. For now I\u0027m just following the existing logic.",
+      "parentUuid": "4f063656_1e7341af",
+      "revId": "2b609a313cfa4ab4b523f20627541264ad1e30f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

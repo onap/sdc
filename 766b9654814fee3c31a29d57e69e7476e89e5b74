@@ -52,6 +52,24 @@
       "revId": "766b9654814fee3c31a29d57e69e7476e89e5b74",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5db36547_019346bb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/AttributeConverter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-02-24T12:06:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43732c0c_dda1f9d0",
+      "revId": "766b9654814fee3c31a29d57e69e7476e89e5b74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
