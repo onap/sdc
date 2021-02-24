@@ -69,6 +69,13 @@ public final class OnboardingDataProviders {
             FileHandling.getXnfRepositoryPath(XnfTypeEnum.PNF));
     }
 
+    @DataProvider(name = "CNF_List", parallel = true)
+    private static Object[][] cnfList() {
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF);
+        LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF));
+    }
+
     @DataProvider(name = "Single_VNF", parallel = true)
     private static Object[][] singleVNF() {
         final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);

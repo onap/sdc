@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -130,12 +131,27 @@ public class FileHandling {
 		return getCiFilesPath() + File.separator + "conf" + File.separator;
 	}
 
+
+	private static EnumMap<XnfTypeEnum, String> XNF_REPOSITORY_PATHS_MAP = new EnumMap<>(Map.of(
+		XnfTypeEnum.PNF, getPnfRepositoryPath(),
+		XnfTypeEnum.CNF, getCnfRepositoryPath(),
+		XnfTypeEnum.VNF, getVnfRepositoryPath()
+	));
+
 	public static String getVnfRepositoryPath() {
 		return getFilePath("VNFs");
 	}
 
+	private static String getPnfRepositoryPath() {
+		return getFilePath("PNFs");
+	}
+
+	private static String getCnfRepositoryPath() {
+		return getFilePath("CNFs");
+	}
+
 	public static String getXnfRepositoryPath(XnfTypeEnum xnfTypeEnum) {
-		return xnfTypeEnum.getValue().equals(XnfTypeEnum.PNF.name()) ? getFilePath("PNFs") : getFilePath("VNFs");
+		return XNF_REPOSITORY_PATHS_MAP.get(xnfTypeEnum);
 	}
 
 	public static String getPortMirroringRepositoryPath() {
