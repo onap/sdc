@@ -31,7 +31,6 @@
     </parent>
 
     <properties>
-        <janino.version>2.7.7</janino.version>
     </properties>
 
     <dependencies>
