@@ -465,6 +465,14 @@ public class OnboardingFlowsUi extends SetupCDTest {
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_List")
+    public void onboardCNFTest(String filePath, String cnfFile) throws Exception {
+        setLog(cnfFile);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
+    }
+
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
     public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception {
         setLog(vnfFile);
