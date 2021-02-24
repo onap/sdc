@@ -25,6 +25,8 @@ import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareVersion;
 import org.openecomp.sdc.be.csar.pnf.SoftwareInformationArtifactYamlParser;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -42,6 +44,7 @@ public class SoftwareInformationBusinessLogic {
 
     private final PropertyBusinessLogic propertyBusinessLogic;
     private static final String SOFTWARE_VERSION_PROPERTY_NAME = "software_versions";
+    private static final String DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME = "default_software_version";
 
     @Autowired
     public SoftwareInformationBusinessLogic(final PropertyBusinessLogic propertyBusinessLogic) {
@@ -84,6 +87,15 @@ public class SoftwareInformationBusinessLogic {
 
         final PropertyDefinition updatedPropertyDefinition =
             propertyBusinessLogic.updateComponentProperty(resource.getUniqueId(), propertyDefinition);
+
+        // set default-software-version as first entry of software version list for resource type pnf
+        if(resource.getResourceType() == ResourceTypeEnum.PNF && !versionList.isEmpty()){
+            final String sw_version = versionList.get(0);
+            Optional<InputDefinition> default_Sw_Ver_PropertyDefinition = resource.safeGetInputs().stream().filter(s->DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME.equals(s.getName())).findFirst();
+            if(default_Sw_Ver_PropertyDefinition.isPresent()) {
+                default_Sw_Ver_PropertyDefinition.get().setDefaultValue(sw_version);
+            }
+        }
         return Optional.ofNullable(updatedPropertyDefinition);
     }
 
