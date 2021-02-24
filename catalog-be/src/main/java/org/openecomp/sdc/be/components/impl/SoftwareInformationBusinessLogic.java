@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareVersion;
 import org.openecomp.sdc.be.csar.pnf.SoftwareInformationArtifactYamlParser;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -42,6 +43,7 @@ public class SoftwareInformationBusinessLogic {
 
     private final PropertyBusinessLogic propertyBusinessLogic;
     private static final String SOFTWARE_VERSION_PROPERTY_NAME = "software_versions";
+    private static final String DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME = "default_software_version";
 
     @Autowired
     public SoftwareInformationBusinessLogic(final PropertyBusinessLogic propertyBusinessLogic) {
@@ -84,6 +86,13 @@ public class SoftwareInformationBusinessLogic {
 
         final PropertyDefinition updatedPropertyDefinition =
             propertyBusinessLogic.updateComponentProperty(resource.getUniqueId(), propertyDefinition);
+
+        // set default-software-version as first entry of software version list for resource type pnf
+        if(resource.getResourceType() == ResourceTypeEnum.PNF && versionList.size()>0){
+            final PropertyDefinition default_Sw_Ver_PropertyDefinition = findDefaultSoftwareVersionPropertyDefinition(resource).orElse(null);
+            default_Sw_Ver_PropertyDefinition.setDefaultValue(versionList.get(0));
+            propertyBusinessLogic.updateInputPropertyObjectValue(default_Sw_Ver_PropertyDefinition);
+        }
         return Optional.ofNullable(updatedPropertyDefinition);
     }
 
@@ -110,6 +119,20 @@ public class SoftwareInformationBusinessLogic {
         return resource.getProperties().stream()
             .filter(propertyDefinition -> propertyDefinition.getName().equals(SOFTWARE_VERSION_PROPERTY_NAME))
             .findFirst();
+    }
+
+    /**
+     * Finds the {@link SoftwareInformationBusinessLogic#SOFTWARE_VERSION_PROPERTY_NAME} property in a Resource
+     * @param resource the resource to search for the property
+     * @return an {@code Optional<PnfSoftwareInformation>} if the property was found, otherwise {@code Optional.empty()}
+     */
+    private Optional<PropertyDefinition> findDefaultSoftwareVersionPropertyDefinition(final Resource resource) {
+        if (CollectionUtils.isEmpty(resource.getProperties())) {
+            return Optional.empty();
+        }
+        return resource.getProperties().stream()
+                .filter(propertyDefinition -> propertyDefinition.getName().equals(DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME))
+                .findFirst();
     }
 
     /**
