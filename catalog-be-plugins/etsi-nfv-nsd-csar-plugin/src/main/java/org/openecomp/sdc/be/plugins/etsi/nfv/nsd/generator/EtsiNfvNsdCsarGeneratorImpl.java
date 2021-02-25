@@ -18,6 +18,7 @@
  */
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
+import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.security.NsdCsarEtsiOption2Signer.SIGNATURE_EXTENSION;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ETSI_PACKAGE;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ONBOARDED_PACKAGE;
 
@@ -80,7 +81,7 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
     private static final String MANIFEST_EXT = "mf";
     private static final String SLASH = "/";
     private static final String DOT = ".";
-    private static final String SIGNATURE_EXTENSION = ".sig.cms";
+    private static final String CSAR_SIGNATURE_EXTENSION = ".cms";
     private static final String CSAR_EXTENSION = ".csar";
     private static final String DOT_YAML = DOT + "yaml";
     private static final String DEFINITION = "Definitions";
@@ -423,7 +424,7 @@ public class EtsiNfvNsdCsarGeneratorImpl implements EtsiNfvNsdCsarGenerator {
             final ZipOutputStream zip = new ZipOutputStream(out)) {
             zip.putNextEntry(new ZipEntry(csarFileName + CSAR_EXTENSION));
             zip.write(csarPackageBytes);
-            zip.putNextEntry(new ZipEntry(csarFileName + SIGNATURE_EXTENSION));
+            zip.putNextEntry(new ZipEntry(csarFileName + CSAR_SIGNATURE_EXTENSION));
             zip.write(signature);
             final File certificateFile = certificateInfo.getCertificateFile();
             zip.putNextEntry(new ZipEntry(csarFileName + "." + FilenameUtils.getExtension(certificateFile.getName())));
