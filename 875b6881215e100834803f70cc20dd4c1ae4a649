@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a7e4ef6_4239c712",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-25T15:45:43Z",
+      "side": 1,
+      "message": "Collection.isEmpty() should be used to test for emptiness",
+      "range": {
+        "startLine": 91,
+        "startChar": 76,
+        "endLine": 91,
+        "endChar": 86
+      },
+      "revId": "875b6881215e100834803f70cc20dd4c1ae4a649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8aca8d21_d243c9f4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-25T15:45:43Z",
+      "side": 1,
+      "message": "reuse DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME instead",
+      "range": {
+        "startLine": 92,
+        "startChar": 52,
+        "endLine": 92,
+        "endChar": 79
+      },
+      "revId": "875b6881215e100834803f70cc20dd4c1ae4a649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d385d17_9f333d71",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-25T15:45:43Z",
+      "side": 1,
+      "message": "Optional value should only be accessed after calling isPresent()",
+      "range": {
+        "startLine": 94,
+        "startChar": 156,
+        "endLine": 94,
+        "endChar": 175
+      },
+      "revId": "875b6881215e100834803f70cc20dd4c1ae4a649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0666a912_4fcfe424",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-25T15:45:43Z",
+      "side": 1,
+      "message": "invert equals() and reuse DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME",
+      "range": {
+        "startLine": 94,
+        "startChar": 108,
+        "endLine": 94,
+        "endChar": 154
+      },
+      "revId": "875b6881215e100834803f70cc20dd4c1ae4a649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
