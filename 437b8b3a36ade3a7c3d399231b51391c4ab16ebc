@@ -34,6 +34,24 @@
       "revId": "437b8b3a36ade3a7c3d399231b51391c4ab16ebc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efac6774_5e0d0295",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/utils/general/FileHandling.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-02-25T10:51:10Z",
+      "side": 1,
+      "message": "Done, is that ok?",
+      "parentUuid": "53e1267d_b560222f",
+      "revId": "437b8b3a36ade3a7c3d399231b51391c4ab16ebc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
