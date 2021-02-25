@@ -20,38 +20,57 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import java.util.List;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
-import java.util.List;
-
 public interface IDistributionEngine {
 
-    boolean isActive();
+    default boolean isActive() {
+        return false;
+    }
 
-    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, User modifier);
+    default ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, User modifier) {
+        return null;
+    }
 
-    ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName, User modifier);
+    default ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName,
+                                       User modifier) {
+        return null;
+    }
 
-    StorageOperationStatus isEnvironmentAvailable(String envName);
+    default StorageOperationStatus isEnvironmentAvailable(String envName) {
+        return null;
+    }
 
-    StorageOperationStatus isEnvironmentAvailable();
+    default StorageOperationStatus isEnvironmentAvailable() {
+        return null;
+    }
 
     /**
      * Currently, it used for tests. For real implementation we need cancel the initialization task and the polling task.
      *
      * @param envName
      */
-    void disableEnvironment(String envName);
+    default void disableEnvironment(String envName) {
+    }
 
-    StorageOperationStatus isReadyForDistribution(String envName);
+    default StorageOperationStatus isReadyForDistribution(String envName) {
+        return null;
+    }
 
-    INotificationData buildServiceForDistribution(Service service, String distributionId, String workloadContext);
+    default INotificationData buildServiceForDistribution(Service service, String distributionId, String workloadContext) {
+        return null;
+    }
 
-    OperationalEnvironmentEntry getEnvironmentById(String opEnvId);
+    default OperationalEnvironmentEntry getEnvironmentById(String opEnvId) {
+        return null;
+    }
 
-    OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress);
+    default OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
+        return null;
+    }
 }
