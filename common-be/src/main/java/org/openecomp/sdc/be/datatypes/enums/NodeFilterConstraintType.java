@@ -32,11 +32,10 @@ public enum NodeFilterConstraintType {
     PROPERTIES(NodeFilterConstraintType.PROPERTIES_PARAM_NAME),
     CAPABILITIES(NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
 
-    private final String type;
-
     // Those values are needed as constants for Swagger allowedValues param
     public static final String PROPERTIES_PARAM_NAME = "properties";
     public static final String CAPABILITIES_PARAM_NAME = "capabilities";
+    private final String type;
 
     /**
      * Parse a String to the related {@link NodeFilterConstraintType}.

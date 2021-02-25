@@ -15,6 +15,9 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum CreatedFrom {
 
     UI,

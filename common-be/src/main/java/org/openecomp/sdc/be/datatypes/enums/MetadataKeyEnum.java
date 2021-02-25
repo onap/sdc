@@ -18,19 +18,17 @@
  */
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public enum MetadataKeyEnum {
-    METADATA_KEYS("metadataKeys"), 
-    NAME("name"), 
+    METADATA_KEYS("metadataKeys"),
+    NAME("name"),
     MANDATORY("mandatory"),
     VALID_VALUES("validValues");
 
-    @Getter
     private final String name;
-
-    MetadataKeyEnum(final String name) {
-        this.name = name;
-    }
 
 }

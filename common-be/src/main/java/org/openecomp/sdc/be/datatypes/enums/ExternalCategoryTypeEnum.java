@@ -15,31 +15,22 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
- * Category Type Enum
- * Any service category to be supported by SDC Ext API can be added here
+ * Category Type Enum Any service category to be supported by SDC Ext API can be added here
  *
  * @author atifhusain
  */
+@Getter
+@AllArgsConstructor
 public enum ExternalCategoryTypeEnum {
 
     PARTNER_DOMAIN_SERVICE("Partner Domain Service", true);
 
-    private String value;
-    private boolean isAtomicType;
-
-    ExternalCategoryTypeEnum(String value, boolean isAtomicType) {
-        this.value = value;
-        this.isAtomicType = isAtomicType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public boolean isAtomicType() {
-        return isAtomicType;
-    }
+    private final String value;
+    private final boolean isAtomicType;
 
     public static ExternalCategoryTypeEnum getType(String type) {
         for (ExternalCategoryTypeEnum e : ExternalCategoryTypeEnum.values()) {

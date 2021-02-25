@@ -16,12 +16,16 @@
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.Arrays;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Resource Type Enum
  *
  * @author mshitrit
  */
+@Getter
+@AllArgsConstructor
 public enum ResourceTypeEnum {
 
     VFC("VFC"/* (Virtual Function Component)"*/, true),
@@ -36,23 +40,10 @@ public enum ResourceTypeEnum {
     ServiceProxy("ServiceProxy", true),
     //Generic VFC/VF/PNF/Service Type
     ABSTRACT("Abstract", true),
-	SERVICE("Service"/*(Network Service)"*/,false);
+    SERVICE("Service"/*(Network Service)"*/, false);
 
     private final String value;
     private final boolean isAtomicType;
-
-    ResourceTypeEnum(final String value, final boolean isAtomicType) {
-        this.value = value;
-        this.isAtomicType = isAtomicType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public boolean isAtomicType() {
-        return isAtomicType;
-    }
 
     public static ResourceTypeEnum getType(final String type) {
         if (type == null) {

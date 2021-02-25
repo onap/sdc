@@ -24,14 +24,14 @@ package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class JsonPresentationFieldsExtractor {
 
-    private Map<String, Object> properties;
-
-    public JsonPresentationFieldsExtractor(Map<String, Object> properties) {
-        this.properties = properties;
-    }
+    private final Map<String, Object> properties;
 
     public String getUniqueId() {
         return (String) properties.get(JsonPresentationFields.UNIQUE_ID.getPresentation());
@@ -148,7 +148,7 @@ public class JsonPresentationFieldsExtractor {
     }
 
     public ResourceTypeEnum getResourceType() {
-        return ResourceTypeEnum.valueOf((String)properties.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation()));
+        return ResourceTypeEnum.valueOf((String) properties.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation()));
     }
 
     public String getToscaResourceName() {

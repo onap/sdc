@@ -105,9 +105,7 @@ public enum JsonPresentationFields {
     HEAT_PARAMETERS("heatParameters", null),
     GENERATED_FROM_ID("generatedFromId", null),
 
-
     // end artifacts
-
 
     //property
     DEFINITION("definition", null),
@@ -236,20 +234,20 @@ public enum JsonPresentationFields {
     IS_VSP_ARCHIVED("isVspArchived", GraphPropertyEnum.IS_VSP_ARCHIVED),
     CI_IS_ORIGIN_ARCHIVED("isOriginArchived", null),
 
-	//Interface Operation
-	IO_OPERATION_TYPE("operationType",null),
-	IO_INPUT_PARAMETERS("inputParams",null),
-	IO_OUTPUT_PARAMETERS("outputParams",null),
+    //Interface Operation
+    IO_OPERATION_TYPE("operationType", null),
+    IO_INPUT_PARAMETERS("inputParams", null),
+    IO_OUTPUT_PARAMETERS("outputParams", null),
     IO_PARAM_NAME("paramName", null),
     IO_PARAM_ID("paramId", null),
     IO_NAME("name", null),
-	IO_MANDATORY("mandatory", null),
-	IO_TYPE("type", null),
-	IO_PROPERTY("property", null),
-	IO_WORKFLOW_NAME("workflowName", null),
-	IO_WORKFLOW_VERSION("workflowVersion", null),
-	IO_WORKFLOW_ID("workflowId", null),
-	IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
+    IO_MANDATORY("mandatory", null),
+    IO_TYPE("type", null),
+    IO_PROPERTY("property", null),
+    IO_WORKFLOW_NAME("workflowName", null),
+    IO_WORKFLOW_VERSION("workflowVersion", null),
+    IO_WORKFLOW_ID("workflowId", null),
+    IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
     IO_WORKFLOW_ASSOCIATION_TYPE("workflowAssociationType", null),
 
     //Interface
@@ -274,11 +272,6 @@ public enum JsonPresentationFields {
     @ToString.Exclude
     private final GraphPropertyEnum storedAs;
 
-    @JsonValue
-    public String getPresentation() {
-        return presentation;
-    }
-
     public static String getPresentationByGraphProperty(GraphPropertyEnum property) {
         for (JsonPresentationFields currPresentation : JsonPresentationFields.values()) {
             if (currPresentation.getStoredAs() == property) {
@@ -296,6 +289,11 @@ public enum JsonPresentationFields {
             }
         }
         return null;
+    }
+
+    @JsonValue
+    public String getPresentation() {
+        return presentation;
     }
 
 }

@@ -16,21 +16,17 @@
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public enum InstantiationTypes {
 
     A_LA_CARTE("A-la-carte"),
     MACRO("Macro");
 
-    private String value;
-
-    InstantiationTypes(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
+    private final String value;
 
     /**
      * Checks if enum with the given type exists.
@@ -41,6 +37,6 @@ public enum InstantiationTypes {
 
     public static boolean containsName(String type) {
         return Stream.of(InstantiationTypes.values())
-                .anyMatch(instType -> type.equals(instType.getValue()));
+            .anyMatch(instType -> type.equals(instType.getValue()));
     }
 }

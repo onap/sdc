@@ -15,6 +15,11 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum OriginTypeEnum {
     PRODUCT("Product", "Product", "product instance", ComponentTypeEnum.PRODUCT, false),
     SERVICE("Service", "Service", "service instance", ComponentTypeEnum.SERVICE, false),
@@ -30,39 +35,11 @@ public enum OriginTypeEnum {
     ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE, false),
     ServiceSubstitution("Service Substitution", "Service Substitution", "service substitution", ComponentTypeEnum.RESOURCE, false);
 
-    private String value;
-    private String displayValue;
-    private String instanceType;
-    private ComponentTypeEnum componentType;
-	private boolean isAtomicType;
-
-    OriginTypeEnum(String value, String displayValue, String instanceType, ComponentTypeEnum componentType, boolean isAtomicType) {
-        this.value = value;
-        this.displayValue = displayValue;
-        this.instanceType = instanceType;
-        this.componentType = componentType;
-		this.isAtomicType = isAtomicType;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getDisplayValue() {
-        return displayValue;
-    }
-
-    public String getInstanceType() {
-        return instanceType;
-    }
-
-    public ComponentTypeEnum getComponentType() {
-        return componentType;
-    }
-
-	public boolean isAtomicType() {
-		return isAtomicType;
-	}
+    private final String value;
+    private final String displayValue;
+    private final String instanceType;
+    private final ComponentTypeEnum componentType;
+    private final boolean isAtomicType;
 
     public static OriginTypeEnum findByValue(String value) {
         OriginTypeEnum ret = null;

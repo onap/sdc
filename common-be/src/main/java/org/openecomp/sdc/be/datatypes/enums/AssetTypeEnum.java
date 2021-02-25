@@ -15,25 +15,16 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum AssetTypeEnum {
     RESOURCES("resources", "Resource"), SERVICES("services", "Service"), PRODUCTS("products", "Product");
 
-    private String value;
-
-    public String getValue() {
-        return value;
-    }
-
-    public String getCorrespondingComponent() {
-        return correspondingComponent;
-    }
-
-    private String correspondingComponent;
-
-    AssetTypeEnum(String value, String correspondingComponent) {
-        this.value = value;
-        this.correspondingComponent = correspondingComponent;
-    }
+    private final String value;
+    private final String correspondingComponent;
 
     public static ComponentTypeEnum convertToComponentTypeEnum(String assetType) {
         ComponentTypeEnum ret = null;

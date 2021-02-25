@@ -15,6 +15,11 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum EnvironmentStatusEnum {
     UNKNOWN("unknown"),
     IN_PROGRESS("in_progress"),
@@ -22,14 +27,6 @@ public enum EnvironmentStatusEnum {
     COMPLETED("completed");
 
     private final String name;
-
-    EnvironmentStatusEnum(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public static EnvironmentStatusEnum getByName(final String name) {
         switch (name) {

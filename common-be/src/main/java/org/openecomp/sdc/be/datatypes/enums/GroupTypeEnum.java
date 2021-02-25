@@ -16,16 +16,14 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum GroupTypeEnum {
     VF_MODULE("org.openecomp.groups.VfModule"), HEAT_STACK("org.openecomp.groups.HeatStack");
 
-    private String groupTypeName;
+    private final String groupTypeName;
 
-    GroupTypeEnum(String groupTypeName) {
-        this.groupTypeName = groupTypeName;
-    }
-
-    public String getGroupTypeName() {
-        return groupTypeName;
-    }
 }

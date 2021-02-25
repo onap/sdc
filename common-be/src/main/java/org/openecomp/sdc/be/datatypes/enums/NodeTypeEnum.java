@@ -15,6 +15,11 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum NodeTypeEnum {
     User("user"),
     Service("service"),
@@ -60,15 +65,7 @@ public enum NodeTypeEnum {
     AnnotationType("annotationType"),
     Component("component");
 
-    private String name;
-
-    NodeTypeEnum(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+    private final String name;
 
     public static NodeTypeEnum getByName(String name) {
         for (NodeTypeEnum inst : NodeTypeEnum.values()) {

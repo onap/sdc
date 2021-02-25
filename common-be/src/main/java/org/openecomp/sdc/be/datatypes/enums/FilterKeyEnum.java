@@ -18,21 +18,18 @@ package org.openecomp.sdc.be.datatypes.enums;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public enum FilterKeyEnum {
-    RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus"), NAME_FRAGMENT("nameFragment");
+    RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus"), NAME_FRAGMENT(
+        "nameFragment");
 
     private static final int NUMBER_OF_RESOURCES_FILTERED = 3;
     private static final int NUMBER_OF_SERVICES_FILTERED = 4;
-    private String name;
-
-    FilterKeyEnum(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+    private final String name;
 
     public static List<String> getAllFilters() {
         return Arrays.stream(FilterKeyEnum.values()).map(FilterKeyEnum::getName).collect(Collectors.toList());
