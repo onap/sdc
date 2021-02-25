@@ -16,6 +16,24 @@
       "revId": "437b8b3a36ade3a7c3d399231b51391c4ab16ebc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53e1267d_b560222f",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/utils/general/FileHandling.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-02-25T10:00:46Z",
+      "side": 1,
+      "message": "Agree with Julien, use EnumMap",
+      "parentUuid": "9cd9a7aa_42155474",
+      "revId": "437b8b3a36ade3a7c3d399231b51391c4ab16ebc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
