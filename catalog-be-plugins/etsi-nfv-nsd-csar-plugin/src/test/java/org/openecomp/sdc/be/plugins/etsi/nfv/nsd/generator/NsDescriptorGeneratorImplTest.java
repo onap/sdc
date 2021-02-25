@@ -129,10 +129,12 @@ class NsDescriptorGeneratorImplTest {
         final HashMap<String, ToscaNodeTemplate> nodeTemplateMap = new HashMap<>();
         final ToscaNodeTemplate vnfAmfNodeTemplate = new ToscaNodeTemplate();
         vnfAmfNodeTemplate.setType("com.ericsson.resource.abstract.Ericsson.AMF");
+        final Map<String, Object> propertyMap = new HashMap<>();
         //a property to be excluded
-        vnfAmfNodeTemplate.setProperties(ImmutableMap.of("nf_naming_code", new ToscaProperty()));
+        propertyMap.put("nf_naming_code", new ToscaProperty());
         //a property that wont be excluded
-        vnfAmfNodeTemplate.setProperties(ImmutableMap.of("will_not_be_excluded", new ToscaProperty()));
+        propertyMap.put("will_not_be_excluded", new ToscaProperty());
+        vnfAmfNodeTemplate.setProperties(propertyMap);
         nodeTemplateMap.put(VNFD_AMF_NODE_NAME, vnfAmfNodeTemplate);
         final Map<String, ToscaTemplateCapability> vnfAmfCapabilities = new HashMap<>();
         vnfAmfCapabilities.put("myCapability", new ToscaTemplateCapability());
@@ -196,9 +198,12 @@ class NsDescriptorGeneratorImplTest {
     private ToscaNodeType createDefaultInterfaceToscaNodeType(final String designerPropertyValue, final String versionPropertyValue,
                                                               final String namePropertyValue, final String invariantIdPropertyValue) {
         final ToscaNodeType interfaceToscaNodeType = new ToscaNodeType();
-        interfaceToscaNodeType.setProperties(ImmutableMap
-            .of("designer", createToscaProperty(designerPropertyValue), "version", createToscaProperty(versionPropertyValue), "name",
-                createToscaProperty(namePropertyValue), "invariant_id", createToscaProperty(invariantIdPropertyValue)));
+        final Map<String, ToscaProperty> propertyMap = new HashMap<>();
+        propertyMap.put("designer", createToscaProperty(designerPropertyValue));
+        propertyMap.put("version", createToscaProperty(versionPropertyValue));
+        propertyMap.put("name", createToscaProperty(namePropertyValue));
+        propertyMap.put("invariant_id", createToscaProperty(invariantIdPropertyValue));
+        interfaceToscaNodeType.setProperties(propertyMap);
         return interfaceToscaNodeType;
     }
 

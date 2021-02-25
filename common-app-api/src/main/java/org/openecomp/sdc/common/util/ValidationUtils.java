@@ -331,7 +331,7 @@ public class ValidationUtils {
 
 	public static boolean validateIsAscii(String input) {
 
-		return CharMatcher.ASCII.matchesAllOf(input);
+		return CharMatcher.ascii().matchesAllOf(input);
 	}
 
 	public static String convertHtmlTagsToEntities(String input) {
