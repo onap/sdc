@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "18da195f_7425b676",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/utils/general/FileHandling.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2021-02-25T16:20:32Z",
+      "side": 1,
+      "message": "Just one clarification. Here when it is initialized, the value will get populated and won\u0027t be updated. Is it what we want ? Just checking :)",
+      "revId": "e01f4a5f5e4258e5b02593bda5cb0c5ec87b1899",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
