@@ -16,6 +16,24 @@
       "revId": "e01f4a5f5e4258e5b02593bda5cb0c5ec87b1899",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57bbcd64_7f47d913",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/utils/general/FileHandling.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-02-26T08:33:41Z",
+      "side": 1,
+      "message": "Yes, don\u0027t think the values should ever be changed/updated in runtime. It\u0027s just a map that points to directories with files of specific type (for tests).",
+      "parentUuid": "18da195f_7425b676",
+      "revId": "e01f4a5f5e4258e5b02593bda5cb0c5ec87b1899",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
