@@ -128,7 +128,7 @@ public class Service extends SetupCDTest {
         List<WebElement> ddOptions = ServiceGeneralPage.getCategories();
 
         for (WebElement opt: ddOptions) {
-            assertFalse("Hidden Category visible", ServiceCategoriesEnum.PARTNERSERVICE.equals(opt.getText()));
+            assertFalse("Hidden Category visible", ServiceCategoriesEnum.PARTNER_SERVICE.equals(opt.getText()));
         }
 
     }

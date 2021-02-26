@@ -33,6 +33,7 @@ import java.util.Optional;
 public class CreateResourceFlow extends AbstractUiTestFlow {
 
     private final String resourceName;
+    private ResourceCreatePage resourceCreatePage;
 
     public CreateResourceFlow(final WebDriver webDriver, final String resourceName) {
         super(webDriver);
@@ -40,13 +41,18 @@ public class CreateResourceFlow extends AbstractUiTestFlow {
     }
 
     @Override
-    public Optional<PageObject> run(final PageObject... pageObjects) {
-        final ResourceCreatePage resourceCreatePage = findParameter(pageObjects, ResourceCreatePage.class);
+    public Optional<ResourceCreatePage> run(final PageObject... pageObjects) {
+        resourceCreatePage = findParameter(pageObjects, ResourceCreatePage.class);
         extendTest.log(Status.INFO, String.format("Creating the Resource '%s'", resourceName));
         resourceCreatePage.createResource();
         ExtentTestActions.takeScreenshot(Status.INFO, "resource-created",
             String.format("Resource '%s' was created", resourceName));
-        return Optional.empty();
+        return Optional.ofNullable(resourceCreatePage);
+    }
+
+    @Override
+    public Optional<ResourceCreatePage> getLandedPage() {
+        return Optional.ofNullable(resourceCreatePage);
     }
 
 }

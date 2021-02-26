@@ -19,25 +19,24 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.IMPORT_VSP_BTN;
+import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.MODAL_DIV;
+import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.RESULTS_CONTAINER_DIV;
+import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.SEARCH_TXT;
+
+import java.util.List;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
-import org.onap.sdc.frontend.ci.tests.utilities.NotificationHelper;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertThat;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.IMPORT_VSP_BTN;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.MODAL_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.RESULTS_CONTAINER_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.SEARCH_TXT;
 
 /**
  * Handles the VSP Repository Modal UI actions
@@ -73,7 +72,7 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
             findSubElements(wrappingElement, By.className(RESULTS_CONTAINER_DIV.getId()));
         vspResultList.get(listPosition).click();
         GeneralUIUtils.clickOnElementByTestId(IMPORT_VSP_BTN.getId());
-        return new ResourceCreatePage(webDriver, new LoaderHelper(), new NotificationHelper());
+        return new ResourceCreatePage(webDriver, new LoaderHelper(), new NotificationComponent(webDriver));
     }
 
     /**

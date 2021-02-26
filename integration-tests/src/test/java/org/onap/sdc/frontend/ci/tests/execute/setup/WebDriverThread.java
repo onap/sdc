@@ -20,30 +20,20 @@
 
 package org.onap.sdc.frontend.ci.tests.execute.setup;
 
-import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.client.ClientUtil;
-import net.lightbody.bmp.proxy.CaptureType;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.frontend.ci.tests.exception.WebDriverThreadRuntimeException;
-import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.UUID;
 
 public class WebDriverThread {
 
@@ -94,7 +84,10 @@ public class WebDriverThread {
             LOGGER.info("Opening LOCAL browser");
             System.setProperty("webdriver.gecko.driver", "target/gecko/geckodriver");
             FirefoxOptions firefoxOptions = new FirefoxOptions();
-            firefoxOptions.setProfile(initFirefoxProfile(config));
+            final FirefoxProfile firefoxProfile = initFirefoxProfile(config);
+            firefoxProfile.setPreference("browser.download.dir", config.getDownloadAutomationFolder());
+            firefoxProfile.setPreference("browser.download.folderList", 2);
+            firefoxOptions.setProfile(firefoxProfile);
             firefoxOptions.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
             firefoxOptions.setHeadless(false);
             webdriver = new FirefoxDriver(firefoxOptions);

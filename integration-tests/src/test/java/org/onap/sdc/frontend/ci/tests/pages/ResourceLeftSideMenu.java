@@ -19,13 +19,16 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import static org.onap.sdc.frontend.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.GENERAL_MENU;
 import static org.onap.sdc.frontend.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.MAIN_DIV;
 import static org.onap.sdc.frontend.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.PROPERTIES_ASSIGNMENT_MENU;
+import static org.onap.sdc.frontend.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.TOSCA_ARTIFACTS_MENU;
 
 /**
  * Handles the Resource Page Left Side Menu UI actions
@@ -65,11 +68,33 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     }
 
     /**
+     * Clicks on the TOSCA artifacts menu item.
+     *
+     * @return the next page object
+     */
+    public ToscaArtifactsPage clickOnToscaArtifactsMenuItem() {
+        wrappingElement.findElement(By.xpath(TOSCA_ARTIFACTS_MENU.getXpath())).click();
+        return new ToscaArtifactsPage(webDriver);
+    }
+
+    /**
+     * Clicks on the TOSCA artifacts menu item.
+     *
+     * @return the next page object
+     */
+    public ServiceCreatePage clickOnGeneralMenuItem() {
+        wrappingElement.findElement(By.xpath(GENERAL_MENU.getXpath())).click();
+        return new ServiceCreatePage(webDriver);
+    }
+
+    /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     public enum XpathSelector {
         MAIN_DIV("w-sdc-left-sidebar", "//div[@class='%s']"),
-        PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//*[@data-tests-id='%s']");
+        PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//*[@data-tests-id='%s']"),
+        GENERAL_MENU("GeneralLeftSideMenu", "//*[@data-tests-id='%s']"),
+        TOSCA_ARTIFACTS_MENU("TOSCA ArtifactsLeftSideMenu", "//*[@data-tests-id='%s']");
 
         private final String id;
         private final String xpathFormat;

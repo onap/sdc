@@ -21,39 +21,48 @@
 
 package org.onap.sdc.frontend.ci.tests.execute.sanity;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.fail;
+
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.onap.sdc.backend.ci.tests.data.providers.OnboardingDataProviders;
-import org.onap.sdc.frontend.ci.tests.dataProvider.OnbordingDataProviders;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
-import org.onap.sdc.frontend.ci.tests.flow.CheckSoftwareVersionPropertyFlow;
-import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFlow;
-import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
-import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
-import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
-import org.onap.sdc.frontend.ci.tests.pages.*;
-import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
-import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
-import org.onap.sdc.frontend.ci.tests.utilities.OnboardingUiUtils;
-import org.onap.sdc.frontend.ci.tests.utilities.ServiceUIUtils;
-import org.onap.sdc.backend.ci.tests.utils.Utils;
-import org.onap.sdc.frontend.ci.tests.verificator.ServiceVerificator;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.onap.sdc.frontend.ci.tests.datatypes.CanvasElement;
-import org.onap.sdc.frontend.ci.tests.datatypes.CanvasManager;
-import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.VendorLicenseModel;
 import org.onap.sdc.backend.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
+import org.onap.sdc.backend.ci.tests.utils.Utils;
+import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
+import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
+import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtils;
+import org.onap.sdc.backend.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.onap.sdc.backend.ci.tests.utils.general.VendorSoftwareProductRestUtils;
+import org.onap.sdc.frontend.ci.tests.dataProvider.OnbordingDataProviders;
+import org.onap.sdc.frontend.ci.tests.datatypes.CanvasElement;
+import org.onap.sdc.frontend.ci.tests.datatypes.CanvasManager;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.onap.sdc.frontend.ci.tests.flow.CheckSoftwareVersionPropertyFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
+import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
+import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.DeploymentArtifactPage;
+import org.onap.sdc.frontend.ci.tests.pages.GeneralPageElements;
 import org.onap.sdc.frontend.ci.tests.pages.GovernorOperationPage;
 import org.onap.sdc.frontend.ci.tests.pages.HomePage;
 import org.onap.sdc.frontend.ci.tests.pages.OpsOperationPage;
@@ -64,11 +73,14 @@ import org.onap.sdc.frontend.ci.tests.pages.TesterOperationPage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
 import org.onap.sdc.frontend.ci.tests.pages.VspValidationPage;
 import org.onap.sdc.frontend.ci.tests.pages.VspValidationResultsPage;
-import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
-import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
-import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtils;
-import org.onap.sdc.backend.ci.tests.utils.general.VendorLicenseModelRestUtils;
-import org.onap.sdc.backend.ci.tests.utils.general.VendorSoftwareProductRestUtils;
+import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
+import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
+import org.onap.sdc.frontend.ci.tests.utilities.OnboardingUiUtils;
+import org.onap.sdc.frontend.ci.tests.utilities.ServiceUIUtils;
+import org.onap.sdc.frontend.ci.tests.verificator.ServiceVerificator;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -79,19 +91,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.fail;
 
 public class OnboardingFlowsUi extends SetupCDTest {
 
@@ -395,10 +394,8 @@ public class OnboardingFlowsUi extends SetupCDTest {
         createVspFlow.run(new TopNavComponent(webDriver));
 
         final ImportVspFlow importVspFlow = new ImportVspFlow(webDriver, resourceName);
-        final ResourceCreatePage resourceCreatePage =
-            (ResourceCreatePage) importVspFlow.run()
-                .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
-
+        final ResourceCreatePage resourceCreatePage = importVspFlow.run()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
         final CreateResourceFlow createResourceFlow = new CreateResourceFlow(webDriver, resourceName);
         createResourceFlow.run(resourceCreatePage);
 

@@ -26,6 +26,11 @@
         </methods>
       </class>
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.GAB"/>
+      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.EtsiNetworkServiceUiTests">
+        <methods>
+          <include name="createEtsiNetworkService"/>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>

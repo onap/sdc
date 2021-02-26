@@ -22,9 +22,14 @@ package org.onap.sdc.frontend.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import org.apache.commons.io.FileUtils;
 import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtils;
+import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
@@ -243,6 +248,57 @@ public class FileHandling {
 
     }
 
+    public static Map<String, byte[]> getFilesFromZip(byte[] zipFileBytes) throws UnzipException {
+        final Map<String, byte[]> pathAndByteMap = new HashMap<>();
+        try (final ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipFileBytes))) {
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+            final byte[] buffer = new byte[1024];
+            while (zipEntry != null) {
+                final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                try (final ByteArrayOutputStream baos = byteArrayOutputStream) {
+                    int length;
+                    while ((length = zipInputStream.read(buffer)) >= 0) {
+                        baos.write(buffer, 0, length);
+                    }
+                }
+                final byte[] bytes = byteArrayOutputStream.toByteArray();
+                pathAndByteMap.put(zipEntry.getName(), bytes);
+                zipEntry = zipInputStream.getNextEntry();
+            }
+        } catch (final IOException e) {
+            throw new UnzipException("Could not unzip file", e);
+        }
+
+        return pathAndByteMap;
+    }
+
+    public static Map<String, byte[]> getFilesFromZip(final String filepath, final String zipFilename) throws UnzipException {
+        final Path zipFilePath = Path.of(filepath, zipFilename);
+        final Map<String, byte[]> pathAndByteMap = new HashMap<>();
+        try (final ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath.toString()))) {
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+            final byte[] buffer = new byte[1024];
+            while (zipEntry != null) {
+                final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                try (final ByteArrayOutputStream baos = byteArrayOutputStream) {
+                    int length;
+                    while ((length = zipInputStream.read(buffer)) >= 0) {
+                        baos.write(buffer, 0, length);
+                    }
+                }
+                final byte[] bytes = byteArrayOutputStream.toByteArray();
+                pathAndByteMap.put(zipEntry.getName(), bytes);
+                zipEntry = zipInputStream.getNextEntry();
+            }
+        } catch (final FileNotFoundException e) {
+            throw new UnzipException("Could not find given file " + zipFilename, e);
+        } catch (final IOException e) {
+            throw new UnzipException("Could not unzip file " + zipFilename, e);
+        }
+
+        return pathAndByteMap;
+    }
+
     public static List<String> getZipFileNamesFromFolder(String filepath) {
         return filterFileNamesListFromFolder(filepath, ".zip");
     }
@@ -261,9 +317,8 @@ public class FileHandling {
 
     /**
      * @return last modified file name from default directory
-     * @throws Exception
      */
-    public static synchronized File getLastModifiedFileNameFromDir() throws Exception {
+    public static synchronized File getLastModifiedFileNameFromDir() {
         return getLastModifiedFileNameFromDir(SetupCDTest.getWindowTest().getDownloadDirectory());
     }
 
@@ -274,8 +329,7 @@ public class FileHandling {
     public static synchronized File getLastModifiedFileNameFromDir(String dirPath) {
         File dir = new File(dirPath);
         File[] files = dir.listFiles();
-        if (files == null) {
-            assertTrue("File not found under directory " + dirPath, false);
+        if (files == null || files.length == 0) {
             return null;
         }
 
