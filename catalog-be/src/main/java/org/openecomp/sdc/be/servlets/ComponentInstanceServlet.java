@@ -180,7 +180,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Component Instance");
             log.debug("create component instance failed with exception", e);
-            throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
+            return buildErrorResponse(
+                getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT, containerComponentType));
         }
 
         loggerSupportability.log(LoggerSupportabilityActions.CREATE_INSTANCE, StatusCode.STARTED,
