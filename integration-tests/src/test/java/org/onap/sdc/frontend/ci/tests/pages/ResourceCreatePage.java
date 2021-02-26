@@ -21,8 +21,8 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
-import org.onap.sdc.frontend.ci.tests.utilities.NotificationHelper;
-import org.onap.sdc.frontend.ci.tests.utilities.NotificationHelper.NotificationType;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,9 +30,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage.XpathSelector.FORM_LIFE_CYCLE_STATE;
 
 /**
@@ -42,14 +42,14 @@ public class ResourceCreatePage extends AbstractPageObject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCreatePage.class);
     private final LoaderHelper loaderHelper;
-    private final NotificationHelper notificationHelper;
+    private final NotificationComponent notificationComponent;
     private WebElement createBtn;
 
     public ResourceCreatePage(final WebDriver webDriver, final LoaderHelper loaderHelper,
-                              final NotificationHelper notificationHelper) {
+                              final NotificationComponent notificationComponent) {
         super(webDriver);
         this.loaderHelper = loaderHelper;
-        this.notificationHelper = notificationHelper;
+        this.notificationComponent = notificationComponent;
         timeoutInSeconds = 5;
     }
 
@@ -69,7 +69,7 @@ public class ResourceCreatePage extends AbstractPageObject {
     public void createResource() {
         createBtn.click();
         loaderHelper.waitForLoader(60);
-        notificationHelper.waitForNotification(NotificationType.SUCCESS, 60);
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 60);
     }
 
     /**

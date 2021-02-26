@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,27 +17,11 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.frontend.ci.tests.flow;
+package org.onap.sdc.frontend.ci.tests.exception;
 
-import java.util.Optional;
-import org.onap.sdc.frontend.ci.tests.pages.PageObject;
+public class UnzipException extends Exception {
 
-/**
- * Represents a UI test flow
- */
-public interface UiTestFlow {
-
-    /**
-     * Runs the flow
-     * @param pageObjects any required page object for the flow
-     * @return an optional page object representing the page that the flow has ended
-     */
-    Optional<? extends PageObject> run(final PageObject... pageObjects);
-
-    /**
-     * Gets the page where the flow finished.
-     * @return the page where the flow finished
-     */
-    Optional<? extends PageObject> getLandedPage();
-
+    public UnzipException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

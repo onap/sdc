@@ -19,20 +19,20 @@
 
 package org.onap.sdc.frontend.ci.tests.flow;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
 import com.aventstack.extentreports.Status;
+import java.util.Optional;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.OnboardHomePage;
+import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
 import org.onap.sdc.frontend.ci.tests.pages.VspCreationModal;
-import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
-import org.onap.sdc.frontend.ci.tests.pages.PageObject;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.WebDriver;
-
-import java.util.Optional;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 /**
  * UI Flow for VSP creation
@@ -42,6 +42,7 @@ public class CreateVspFlow extends AbstractUiTestFlow {
     private final String resourceName;
     private final String packageFile;
     private final String rootFolder;
+    private HomePage homePage;
 
     public CreateVspFlow(final WebDriver webDriver, final String resourceName, final String packageFile,
                          final String rootFolder) {
@@ -62,6 +63,11 @@ public class CreateVspFlow extends AbstractUiTestFlow {
         submitVsp(softwareProductOnboarding);
         goToHomePage(topNavComponent);
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<HomePage> getLandedPage() {
+        return Optional.ofNullable(homePage);
     }
 
     /**
@@ -136,7 +142,8 @@ public class CreateVspFlow extends AbstractUiTestFlow {
         topNavComponent.isLoaded();
         topNavComponent.clickOnHome();
         GeneralUIUtils.ultimateWait();
-        topNavComponent.isLoaded();
+        homePage = new HomePage(webDriver, topNavComponent);
+        homePage.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "home-is-loaded", "The Home page is loaded.");
     }
 }

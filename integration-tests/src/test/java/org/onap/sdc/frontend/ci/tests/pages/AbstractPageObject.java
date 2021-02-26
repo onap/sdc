@@ -163,4 +163,34 @@ public abstract class AbstractPageObject implements PageObject {
             .until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
 
+    /**
+     * Waits for element invisibility with the provided timeout.
+     *
+     * @param locator the By locator to search for the element
+     * @param timeoutInSeconds the wait timeout in seconds
+     * @return the WebElement if invisible before timeout, false otherwise
+     */
+    protected Boolean waitForElementInvisibility(final By locator, final int timeoutInSeconds) {
+        return getWait(timeoutInSeconds)
+            .until(ExpectedConditions.invisibilityOfElementLocated(locator));
+    }
+
+    /**
+     * Waits elements to be clickable with the default timeout.
+     * @param xpath the xpath to find the element(s)
+     * @return the WebElement if clickable before timeout, otherwise throws an exception
+     */
+    protected WebElement waitToBeClickable(final String xpath) {
+        return waitToBeClickable(By.xpath(xpath));
+    }
+
+    /**
+     * Waits elements to be clickable with the default timeout.
+     * @param locator the By locator to search for the element(s)
+     * @return the WebElement if clickable before timeout, otherwise throws an exception
+     */
+    protected WebElement waitToBeClickable(final By locator) {
+        return getWait().until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
 }

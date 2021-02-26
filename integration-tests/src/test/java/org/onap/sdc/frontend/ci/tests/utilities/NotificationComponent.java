@@ -19,25 +19,30 @@
 
 package org.onap.sdc.frontend.ci.tests.utilities;
 
-import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import static org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.XpathSelector.MAIN_CONTAINER_DIV;
+import static org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.XpathSelector.MESSAGE_CONTENT_DIV;
+import static org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.XpathSelector.MESSAGE_SUCCESS_DIV;
+
+import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onap.sdc.frontend.ci.tests.utilities.NotificationHelper.XpathSelector.MAIN_CONTAINER_DIV;
-import static org.onap.sdc.frontend.ci.tests.utilities.NotificationHelper.XpathSelector.MESSAGE_CONTENT_DIV;
-import static org.onap.sdc.frontend.ci.tests.utilities.NotificationHelper.XpathSelector.MESSAGE_SUCCESS_DIV;
+public class NotificationComponent extends AbstractPageObject {
 
-public class NotificationHelper {
+    public NotificationComponent(final WebDriver webDriver) {
+        super(webDriver);
+    }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationComponent.class);
 
     public void waitForNotification(final NotificationType notificationType, final int timeout) {
         final By messageLocator = getMessageLocator(notificationType);
-        waitForVisibility(messageLocator, timeout);
-        waitForInvisibility(messageLocator, timeout);
+        final WebElement webElement = waitForElementVisibility(messageLocator, timeout);
+        webElement.click();
+        waitForElementInvisibility(messageLocator, 5);
     }
 
     private By getMessageLocator(final NotificationType notificationType) {
@@ -49,28 +54,19 @@ public class NotificationHelper {
             return String.format("%s%s%s", MAIN_CONTAINER_DIV.getXpath(), MESSAGE_CONTENT_DIV.getXpath(), MESSAGE_SUCCESS_DIV.getXpath());
         }
 
-        LOGGER.warn("Xpath for NotificationType {} not yet implemented. Returning empty Xpath.", notificationType);
-        return "";
+        LOGGER.warn("Xpath for NotificationType {} not yet implemented.", notificationType);
+        return "notYetImplemented";
     }
 
-    private void waitForVisibility(By messageLocator, final int timeout) {
-        getWait(timeout)
-            .until(ExpectedConditions.visibilityOfElementLocated(messageLocator));
-    }
-
-    private void waitForInvisibility(By messageLocator, int timeout) {
-        getWait(timeout)
-            .until(ExpectedConditions.invisibilityOfElementLocated(messageLocator));
-    }
-
-    private WebDriverWait getWait(final int timeout) {
-        return new WebDriverWait(DriverFactory.getDriver(), timeout);
+    @Override
+    public void isLoaded() {
+        //will not be loaded when needed
     }
 
     public enum XpathSelector {
         MAIN_CONTAINER_DIV("notification-container", "//div[@class='%s']"),
         MESSAGE_CONTENT_DIV("msg-content", "//div[@class='%s']"),
-        MESSAGE_SUCCESS_DIV("message", "//div[contains(@class, '%s') and contains(text(),'successfully')]");
+        MESSAGE_SUCCESS_DIV("message", "//div[contains(@class, 'message') and (contains(text(),'successfully') or contains(text(), 'Successfully'))]");
 
         private final String id;
         private final String xpath;

@@ -13,7 +13,7 @@ uiSimulator: true
 #remoteTesting: false
 #useBrowserMobProxy: false
 #captureTraffic: false
-#downloadAutomationFolder: /home/seb/Downloads
+#downloadAutomationFolder: /tmp/sdc-integration-tests/downloadAutomation
 #uiSimulator: true
 
 #### Backend Testing

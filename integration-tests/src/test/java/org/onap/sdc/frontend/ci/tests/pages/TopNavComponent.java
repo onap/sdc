@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.*;
 import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.ARROW_DROPDOWN;
 import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.MAIN_MENU_ONBOARD_BTN;
 import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.NAV;
@@ -79,6 +80,15 @@ public class TopNavComponent extends AbstractPageObject {
             .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(REPOSITORY_ICON.getXpath())));
     }
 
+    public boolean isHomeSelected() {
+        final By homeLinkLocator = By.xpath(MAIN_MENU_LINK_HOME.getXpath());
+        getWait().until(ExpectedConditions.visibilityOfElementLocated(homeLinkLocator));
+        final WebElement homeLinkElement = findElement(homeLinkLocator);
+        final WebElement homeLinkParentElement = homeLinkElement.findElement(By.xpath("./.."));
+        final String aClass = homeLinkParentElement.getAttribute("class");
+        return "selected".equals(aClass);
+    }
+
     /**
      * Clicks on the VSP repository icon.
      *
@@ -122,6 +132,7 @@ public class TopNavComponent extends AbstractPageObject {
     public enum XpathSelector {
         NAV("top-nav", "//nav[@class='%s']"),
         SUB_MENU_BUTTON_HOME("sub-menu-button-home", "//*[@data-tests-id='%s']"),
+        MAIN_MENU_LINK_HOME("main-menu-button-home", "//*[@data-tests-id='%s']"),
         ARROW_DROPDOWN("triangle-dropdown", "//li[contains(@class, '%s')]"),
         MAIN_MENU_ONBOARD_BTN("main-menu-button-onboard", "//a[@data-tests-id='%s']"),
         REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']");

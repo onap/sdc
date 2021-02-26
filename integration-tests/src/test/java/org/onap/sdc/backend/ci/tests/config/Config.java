@@ -31,7 +31,7 @@ import java.util.List;
 
 public class Config {
 
-    private static String SDC_DEFAULT_CONFIG_FILE = "src/test/resources/ci/conf/sdc-conf.yaml";
+    private static final String SDC_DEFAULT_CONFIG_FILE = "src/test/resources/ci/conf/sdc-conf.yaml";
     private String downloadAutomationFolder;
     private boolean systemUnderDebug;
     private boolean rerun;
@@ -104,8 +104,7 @@ public class Config {
 
     private static Config configIt = null;
 
-    private static Yaml yaml = new Yaml();
-
+    private static final Yaml yaml = new Yaml();
 
     private Config() {
         super();
@@ -169,18 +168,17 @@ public class Config {
 
     private static Config init() throws IOException {
 
-        Config config = null;
-
         String configFile = System.getProperty("config.resource");
         if (configFile == null) {
             configFile = SDC_DEFAULT_CONFIG_FILE;
         }
 
-        File file = new File(configFile);
-        if (false == file.exists()) {
+        final File file = new File(configFile);
+        if (!file.exists()) {
             throw new RuntimeException("The config file " + configFile + " cannot be found.");
         }
 
+        final Config config;
         InputStream in = null;
         try {
 
@@ -199,10 +197,6 @@ public class Config {
                 }
             }
         }
-
-        // JsonReader jsonReader = new JsonReader(new FileReader(configFile));
-        // Config configAttOdlIt = new Gson().fromJson(jsonReader,
-        // Config.class);
 
         return config;
     }

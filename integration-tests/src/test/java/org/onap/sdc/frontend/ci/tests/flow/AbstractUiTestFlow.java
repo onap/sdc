@@ -20,11 +20,15 @@
 package org.onap.sdc.frontend.ci.tests.flow;
 
 import com.aventstack.extentreports.ExtentTest;
-import org.onap.sdc.frontend.ci.tests.flow.exception.MissingParameterRuntimeException;
+import java.util.Optional;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestManager;
+import org.onap.sdc.frontend.ci.tests.flow.exception.MissingParameterRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.openqa.selenium.WebDriver;
 
+/**
+ * The base class for a UI test flow.
+ */
 public abstract class AbstractUiTestFlow implements UiTestFlow {
 
     protected final WebDriver webDriver;
@@ -34,15 +38,40 @@ public abstract class AbstractUiTestFlow implements UiTestFlow {
         this.webDriver = webDriver;
     }
 
+    /**
+     * Find a page object within the the page objects array, based on the given class. If the page object is not found, throws an error.
+     *
+     * @param pageObjects           the page object array
+     * @param expectedParameterType the class of the page object to find
+     * @param <T>                   a child class of the page object
+     * @return the found page object
+     * @throws MissingParameterRuntimeException when the page object is not found
+     */
     public <T extends PageObject> T findParameter(final PageObject[] pageObjects,
                                                   final Class<T> expectedParameterType) {
+        final Optional<T> parameter = getParameter(pageObjects, expectedParameterType);
+        if (parameter.isEmpty()) {
+            throw new MissingParameterRuntimeException(expectedParameterType.getName());
+        }
+        return parameter.get();
+    }
+
+    /**
+     * Find a page object within the the page objects array, based on the given class.
+     *
+     * @param pageObjects           the page object array
+     * @param expectedParameterType the class of the page object to find
+     * @param <T>                   a child class of the page object
+     * @return an optional page object
+     */
+    public <T extends PageObject> Optional<T> getParameter(final PageObject[] pageObjects,
+                                                           final Class<T> expectedParameterType) {
         for (final PageObject uiTestFlow : pageObjects) {
-            if(expectedParameterType.isInstance(uiTestFlow)) {
-                return (T) uiTestFlow;
+            if (expectedParameterType.isInstance(uiTestFlow)) {
+                return Optional.of((T) uiTestFlow);
             }
         }
 
-        throw new MissingParameterRuntimeException(expectedParameterType.getName());
+        return Optional.empty();
     }
-
 }

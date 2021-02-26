@@ -19,12 +19,21 @@
 
 package org.onap.sdc.frontend.ci.tests.utilities;
 
+import lombok.NoArgsConstructor;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+@NoArgsConstructor
 public class LoaderHelper {
+
+    private WebDriver webDriver;
+
+    public LoaderHelper(final WebDriver webDriver) {
+        this.webDriver = webDriver;
+    }
 
     private final By locator = By.className("tlv-loader");
 
@@ -43,7 +52,7 @@ public class LoaderHelper {
     }
 
     private WebDriverWait getWait(final int timeout) {
-        return new WebDriverWait(DriverFactory.getDriver(), timeout);
+        return new WebDriverWait(webDriver == null ? DriverFactory.getDriver() : webDriver, timeout);
     }
 
 }
