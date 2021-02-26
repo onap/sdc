@@ -20,9 +20,12 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -31,17 +34,25 @@ import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.SERVICE_PAR
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import fj.data.Either;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import javax.servlet.ReadListener;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -51,6 +62,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -58,24 +71,32 @@ import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
+import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -87,31 +108,43 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * The test suite designed for test functionality of ComponentInstanceServlet class
  */
+@TestInstance(Lifecycle.PER_CLASS)
 class ComponentInstanceServletTest extends JerseyTest {
 
-    private final static String USER_ID = "jh0003";
-    private static HttpServletRequest request;
-    private static HttpSession session;
-    private static ServletContext servletContext;
-    private static WebAppContextWrapper webAppContextWrapper;
-    private static WebApplicationContext webApplicationContext;
-    private static ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    private static ComponentsUtils componentsUtils;
-    private static ServletUtils servletUtils;
-    private static ResponseFormat responseFormat;
-    private static UserBusinessLogic userBusinessLogic;
-    private static GroupBusinessLogic groupBusinessLogic;
-    private static ResourceImportManager resourceImportManager;
-    private static ServiceBusinessLogic serviceBusinessLogic;
-    private static ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
-    private static ConfigurationManager configurationManager;
+    private static final String USER_ID = "jh0003";
+    private static final String componentId = "componentId";
+    private static final String componentInstanceId = "componentInstanceIdInstanceId";
+    public static final String INVALID_CONTENT = "InvalidContent";
+    private HttpServletRequest request;
+    private HttpSession session;
+    private ServletContext servletContext;
+    private WebAppContextWrapper webAppContextWrapper;
+    private WebApplicationContext webApplicationContext;
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private ComponentsUtils componentsUtils;
+    private ServletUtils servletUtils;
+    private ResponseFormat responseFormat;
+    private UserBusinessLogic userBusinessLogic;
+    private UserValidations userValidations;
+    private GroupBusinessLogic groupBusinessLogic;
+    private ResourceImportManager resourceImportManager;
+    private ServiceBusinessLogic serviceBusinessLogic;
+    private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
+    private ConfigurationManager configurationManager;
+    private User user;
+    private String inputData;
+    private ComponentInstance componentInstance;
+    private CINodeFilterDataDefinition ciNodeFilterDataDefinition;
+    private RequirementCapabilityRelDef requirementCapabilityRelDef;
 
     @BeforeAll
-    public static void setup() {
+    public void setup() {
         createMocks();
         stubMethods();
-        String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        initTestData();
+        final String appConfigDir = "src/test/resources/config/catalog-be";
+        final ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
         configurationManager = new ConfigurationManager(configurationSource);
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
@@ -127,6 +160,25 @@ class ComponentInstanceServletTest extends JerseyTest {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
+    }
+
+    private void initTestData() {
+        componentInstance = getComponentInstance();
+        inputData = getInputData(componentInstance);
+        ciNodeFilterDataDefinition = getCiNodeFilterDataDefinition();
+
+        user = new User();
+        user.setUserId(USER_ID);
+        user.setRole(Role.ADMIN.name());
+
+        requirementCapabilityRelDef = new RequirementCapabilityRelDef();
+        final CapabilityRequirementRelationship capabilityRequirementRelationship = new CapabilityRequirementRelationship();
+        final RelationshipInfo relationInfo = new RelationshipInfo();
+        relationInfo.setId("RELATION_ID");
+        capabilityRequirementRelationship.setRelation(relationInfo);
+        requirementCapabilityRelDef.setRelationships(Lists.newArrayList(capabilityRequirementRelationship));
+        requirementCapabilityRelDef.setToNode("TO_INSTANCE_ID");
+        requirementCapabilityRelDef.setFromNode("FROM_INSTANCE_ID");
     }
 
     @Test
@@ -157,7 +209,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     void testGetRelationByIdFailure() {
 
         String containerComponentType = "unknown_type";
-        String componentId = "componentId";
         String relationId = "relationId";
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/" + relationId + "/relationId";
         when(responseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST_400);
@@ -175,7 +226,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     @Test
     void testBatchDeleteResourceInstancesSuccess() {
 
-        String componentId = "componentId";
         String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
         String compId1 = "compId1";
         String[] delCompIds = new String[1];
@@ -231,7 +281,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     @Test
     void testBatchDissociateRIFromRISuccess() {
 
-        String componentId = "componentId";
         String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance/batchDissociate";
         RequirementCapabilityRelDef[] refs = new RequirementCapabilityRelDef[1];
@@ -261,7 +310,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     @Test
     void testBatchDissociateRIFromRIFailure() {
 
-        String componentId = "componentId";
         String containerComponentType = ComponentTypeEnum.SERVICE_PARAM_NAME;
         String path = "/v1/catalog/" + containerComponentType + "/" + componentId + "/resourceInstance/batchDissociate";
 
@@ -299,7 +347,7 @@ class ComponentInstanceServletTest extends JerseyTest {
             .property("contextConfig", context);
     }
 
-    private static void createMocks() {
+    private void createMocks() {
         request = Mockito.mock(HttpServletRequest.class);
         session = Mockito.mock(HttpSession.class);
         servletContext = Mockito.mock(ServletContext.class);
@@ -314,9 +362,10 @@ class ComponentInstanceServletTest extends JerseyTest {
         responseFormat = Mockito.mock(ResponseFormat.class);
         serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
         componentNodeFilterBusinessLogic = Mockito.mock(ComponentNodeFilterBusinessLogic.class);
+        userValidations = Mockito.mock(UserValidations.class);
     }
 
-    private static void stubMethods() {
+    private void stubMethods() {
         when(request.getSession()).thenReturn(session);
         when(session.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
@@ -333,7 +382,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     void testUpdateResourceInstancePropertiesSuccess() {
 
         String containerComponentType = "services";
-        String componentId = "componentId";
         String resourceInstanceId = "resourceInstanceId";
         ComponentInstanceProperty[] properties = new ComponentInstanceProperty[1];
         ComponentInstanceProperty property = new ComponentInstanceProperty();
@@ -370,7 +418,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     void testUpdateResourceInstanceInputsSuccess() {
 
         String containerComponentType = "services";
-        String componentId = "componentId";
         String resourceInstanceId = "resourceInstanceId";
         ComponentInstanceInput[] inputs = new ComponentInstanceInput[1];
         ComponentInstanceInput input = new ComponentInstanceInput();
@@ -406,7 +453,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     void testUpdateResourceInstancePropertiesFailure() {
 
         String containerComponentType = "services";
-        String componentId = "componentId";
         String resourceInstanceId = "resourceInstanceId";
         ComponentInstanceProperty[] properties = new ComponentInstanceProperty[1];
         ComponentInstanceProperty property = new ComponentInstanceProperty();
@@ -443,7 +489,6 @@ class ComponentInstanceServletTest extends JerseyTest {
     void testUpdateResourceInstanceInputsFailure() {
 
         String containerComponentType = "services";
-        String componentId = "componentId";
         String resourceInstanceId = "resourceInstanceId";
         ComponentInstanceInput[] inputs = new ComponentInstanceInput[1];
         ComponentInstanceInput input = new ComponentInstanceInput();
@@ -477,10 +522,7 @@ class ComponentInstanceServletTest extends JerseyTest {
 
     @Test
     void testUpdateInstanceRequirement() {
-
         String containerComponentType = "services";
-        String componentId = "componentId";
-        String componentInstanceId = "componentInstanceIdInstanceId";
         String capabilityType = "capabilityType";
         String requirementName = "requirementName";
         RequirementDefinition requirementDefinition = new RequirementDefinition();
@@ -498,7 +540,7 @@ class ComponentInstanceServletTest extends JerseyTest {
                 eq(AuditingActionEnum.GET_TOSCA_MODEL), eq(ComponentTypeEnum.SERVICE)))
             .thenReturn(Either.left(requirementDefinition));
         when(componentInstanceBusinessLogic.updateInstanceRequirement(ComponentTypeEnum.SERVICE,
-                componentId, componentInstanceId, requirementDefinition, USER_ID))
+            componentId, componentInstanceId, requirementDefinition, USER_ID))
             .thenReturn(Either.left(requirementDefinition));
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
@@ -508,5 +550,482 @@ class ComponentInstanceServletTest extends JerseyTest {
             .request(MediaType.APPLICATION_JSON)
             .header("USER_ID", USER_ID).put(Entity.entity(requirementDefinition, MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void createComponentInstanceSuccessTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(componentInstanceBusinessLogic.
+            createComponentInstance(anyString(), anyString(), anyString(), any(ComponentInstance.class)))
+            .thenReturn(componentInstance);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.CREATED_201);
+        when(componentsUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED_201);
+    }
+
+    @Test
+    void createComponentInstanceFailWithEmptyContentTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.MISSING_BODY)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity("", MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void createComponentInstanceFailWithInvalidContentTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(INVALID_CONTENT, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void updateComponentInstanceMetadataSuccessTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance.class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(componentInstance));
+        when(componentInstanceBusinessLogic
+            .updateComponentInstanceMetadata(anyString(), anyString(), anyString(), anyString(),
+                any(ComponentInstance.class))).thenReturn(Either.left(componentInstance));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void updateComponentInstanceMetadataFailWithInvalidContentTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(""));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(INVALID_CONTENT, new User(), ComponentInstance.class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(componentInstance));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.NO_CONTENT_204);
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(INVALID_CONTENT, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT_204);
+    }
+
+    @Test
+    void updateComponentInstanceMetadataFailConvertJsonDataTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance.class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.right(new ResponseFormat()));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void updateComponentInstanceMetadataAndCreateNodeFilterSuccessTest() throws IOException, BusinessLogicException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        componentInstance.setDirectives(singletonList("substitutable"));
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance.class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(componentInstance));
+        when(componentInstanceBusinessLogic
+            .updateComponentInstanceMetadata(anyString(), anyString(), anyString(), anyString(),
+                any(ComponentInstance.class))).thenReturn(Either.left(componentInstance));
+
+        when(componentNodeFilterBusinessLogic.createNodeFilterIfNotExist(componentId, componentInstanceId,
+            true, ComponentTypeEnum.SERVICE)).thenReturn(Optional.of(ciNodeFilterDataDefinition));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void updateComponentInstanceMetadataAndCreateNodeFilterFailTest() throws IOException, BusinessLogicException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        componentInstance.setDirectives(singletonList("substitutable"));
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance.class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(componentInstance));
+        when(componentInstanceBusinessLogic
+            .updateComponentInstanceMetadata(anyString(), anyString(), anyString(), anyString(),
+                any(ComponentInstance.class))).thenReturn(Either.left(componentInstance));
+        when(componentNodeFilterBusinessLogic.createNodeFilterIfNotExist(componentId, componentInstanceId,
+            true, ComponentTypeEnum.SERVICE)).thenReturn(Optional.empty());
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void updateComponentInstanceMetadataAndDeleteNodeFilterSuccessTest() throws IOException, BusinessLogicException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance.class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(componentInstance));
+        when(componentInstanceBusinessLogic
+            .updateComponentInstanceMetadata(anyString(), anyString(), anyString(), anyString(),
+                any(ComponentInstance.class))).thenReturn(Either.left(componentInstance));
+        when(componentNodeFilterBusinessLogic
+            .deleteNodeFilterIfExists(componentId, componentInstanceId, true, ComponentTypeEnum.SERVICE))
+            .thenReturn(Optional.of(ciNodeFilterDataDefinition.getName()));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void updateComponentInstanceMetadataAndDeleteNodeFilterFailTest() throws IOException, BusinessLogicException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance.class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(componentInstance));
+        when(componentInstanceBusinessLogic
+            .updateComponentInstanceMetadata(anyString(), anyString(), anyString(), anyString(),
+                any(ComponentInstance.class))).thenReturn(Either.left(componentInstance));
+        when(componentNodeFilterBusinessLogic
+            .deleteNodeFilterIfExists(componentId, componentInstanceId, true, ComponentTypeEnum.SERVICE))
+            .thenReturn(Optional.empty());
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void updateMultipleComponentInstanceSuccessTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/multipleComponentInstance";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        final ComponentInstance[] componentInstances = new ComponentInstance[1];
+        componentInstances[0] = componentInstance;
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance[].class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.left(componentInstances));
+        when(componentInstanceBusinessLogic
+            .updateComponentInstance(anyString(), any(Component.class), anyString(), anyString(), anyList(),
+                anyBoolean())).thenReturn(
+            singletonList(componentInstance));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void updateMultipleComponentInstanceFailTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/multipleComponentInstance";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(inputData));
+        when(componentsUtils
+            .convertJsonToObjectUsingObjectMapper(inputData, new User(), ComponentInstance[].class,
+                null, ComponentTypeEnum.RESOURCE_INSTANCE)).thenReturn(Either.right(new ResponseFormat()));
+        when(componentInstanceBusinessLogic
+            .updateComponentInstance(anyString(), any(Component.class), anyString(), anyString(), anyList(),
+                anyBoolean())).thenReturn(
+            singletonList(componentInstance));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void deleteResourceInstanceSuccessTest() throws BusinessLogicException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/%s";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId, componentInstanceId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(componentInstanceBusinessLogic.deleteComponentInstance(anyString(), anyString(), anyString(), anyString()))
+            .thenReturn(componentInstance);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).delete();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void associateRIToRISuccessTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/associate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(componentInstanceBusinessLogic
+            .associateRIToRI(anyString(), anyString(), any(RequirementCapabilityRelDef.class),
+                any(ComponentTypeEnum.class))).thenReturn(requirementCapabilityRelDef);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(getInputData(requirementCapabilityRelDef), MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void associateRIToRIFailWithInvalidContentTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/associate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void dissociateRIFromRISuccessTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/dissociate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(componentInstanceBusinessLogic
+            .dissociateRIFromRI(anyString(), anyString(), any(RequirementCapabilityRelDef.class),
+                any(ComponentTypeEnum.class))).thenReturn(requirementCapabilityRelDef);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).put(Entity.entity(getInputData(requirementCapabilityRelDef), MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    @Test
+    void dissociateRIFromRIFailWithInvalidContentTest() {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/dissociate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(componentInstanceBusinessLogic
+            .dissociateRIFromRI(anyString(), anyString(), any(RequirementCapabilityRelDef.class),
+                any(ComponentTypeEnum.class))).thenReturn(requirementCapabilityRelDef);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).put(Entity.entity(inputData, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void createAndAssociateRIToRISuccessTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/createAndAssociate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        final CreateAndAssotiateInfo createAndAssociateInfo = new CreateAndAssotiateInfo(componentInstance, requirementCapabilityRelDef);
+        final String data = getInputData(createAndAssociateInfo);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(data));
+        when(componentInstanceBusinessLogic.createAndAssociateRIToRI(anyString(), anyString(), anyString(), any(
+            CreateAndAssotiateInfo.class))).thenReturn(Either.left(createAndAssociateInfo));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.CREATED_201);
+        when(componentsUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(data, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED_201);
+    }
+
+    @Test
+    void createAndAssociateRIToRIFailTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/createAndAssociate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        final String data = getInputData(new CreateAndAssotiateInfo(componentInstance, requirementCapabilityRelDef));
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(data));
+        when(componentInstanceBusinessLogic.createAndAssociateRIToRI(anyString(), anyString(), anyString(), any(
+            CreateAndAssotiateInfo.class))).thenReturn(Either.right(new ResponseFormat()));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(data, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void createAndAssociateRIToRIFailWithInvalidContentTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/createAndAssociate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(INVALID_CONTENT));
+        when(componentInstanceBusinessLogic.createAndAssociateRIToRI(anyString(), anyString(), anyString(), any(
+            CreateAndAssotiateInfo.class))).thenReturn(Either.right(new ResponseFormat()));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(INVALID_CONTENT, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    @Test
+    void createAndAssociateRIToRIFailWithEmptyContentTest() throws IOException {
+        final String pathFormat = "/v1/catalog/%s/%s/resourceInstance/createAndAssociate";
+        final String path = String.format(pathFormat, SERVICE_PARAM_NAME, componentId);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
+        final String data = StringUtils.EMPTY;
+        when(request.getInputStream()).thenReturn(new TestServletInputStream(data));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
+
+        final Response response = target()
+            .path(path)
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID).post(Entity.entity(data, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    }
+
+    private CINodeFilterDataDefinition getCiNodeFilterDataDefinition() {
+        final CINodeFilterDataDefinition ciNodeFilterDataDefinition = new CINodeFilterDataDefinition();
+        ciNodeFilterDataDefinition.setProperties(new ListDataDefinition<>());
+        ciNodeFilterDataDefinition.setID("MyNodeFilter");
+        ciNodeFilterDataDefinition.setName("NODE_FILTER_UID");
+        return ciNodeFilterDataDefinition;
+    }
+
+    private ComponentInstance getComponentInstance() {
+        final ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setName("InstanceName");
+        componentInstance.setUniqueId(componentInstanceId);
+        componentInstance.setComponentUid("ComponentInstanceUUID");
+        componentInstance.setInvariantName("ComponentInstanceInvariantName");
+        return componentInstance;
+    }
+
+    private <T> String getInputData(final T elementToRepresent) {
+        try {
+            return new ObjectMapper().writeValueAsString(elementToRepresent);
+        } catch (final JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    class TestServletInputStream extends ServletInputStream {
+
+        private InputStream inputStream;
+
+        TestServletInputStream(String testJson) {
+            inputStream = new ByteArrayInputStream(testJson.getBytes());
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+        }
+
+        @Override
+        public int read() throws IOException {
+            return inputStream.read();
+        }
     }
 }
