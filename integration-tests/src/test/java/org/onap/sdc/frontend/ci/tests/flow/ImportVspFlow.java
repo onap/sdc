@@ -20,14 +20,13 @@
 package org.onap.sdc.frontend.ci.tests.flow;
 
 import com.aventstack.extentreports.Status;
+import java.util.Optional;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
+import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
 import org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent;
-import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
-import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.openqa.selenium.WebDriver;
-
-import java.util.Optional;
 
 /**
  * UI Flow for importing a VSP
@@ -35,6 +34,7 @@ import java.util.Optional;
 public class ImportVspFlow extends AbstractUiTestFlow {
 
     private final String resourceName;
+    private ResourceCreatePage resourceCreatePage;
 
     public ImportVspFlow(final WebDriver webDriver, final String resourceName) {
         super(webDriver);
@@ -42,10 +42,16 @@ public class ImportVspFlow extends AbstractUiTestFlow {
     }
 
     @Override
-    public Optional<PageObject> run(final PageObject... pageObjects) {
+    public Optional<ResourceCreatePage> run(final PageObject... pageObjects) {
         final VspRepositoryModalComponent vspRepositoryModalComponent = openVspRepository();
         searchForVsp(vspRepositoryModalComponent);
-        return Optional.of(importVsp(vspRepositoryModalComponent));
+        resourceCreatePage = importVsp(vspRepositoryModalComponent);
+        return Optional.of(resourceCreatePage);
+    }
+
+    @Override
+    public Optional<ResourceCreatePage> getLandedPage() {
+        return Optional.ofNullable(resourceCreatePage);
     }
 
     /**

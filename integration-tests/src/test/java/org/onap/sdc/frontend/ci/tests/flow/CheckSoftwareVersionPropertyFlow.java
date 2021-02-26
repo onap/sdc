@@ -28,9 +28,9 @@ import org.openqa.selenium.WebDriver;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 
 /**
  * UI Flow for checking the software version property in a resource
@@ -38,6 +38,7 @@ import static org.junit.Assert.assertThat;
 public class CheckSoftwareVersionPropertyFlow extends AbstractUiTestFlow {
 
     private final List<String> expectedSoftwareVersionList;
+    private ResourcePropertiesAssignmentPage resourcePropertiesAssignmentPage;
 
     public CheckSoftwareVersionPropertyFlow(final WebDriver webDriver, final List<String> expectedSoftwareVersionList) {
         super(webDriver);
@@ -49,10 +50,15 @@ public class CheckSoftwareVersionPropertyFlow extends AbstractUiTestFlow {
         final ResourceLeftSideMenu resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
         resourceLeftSideMenu.isLoaded();
 
-        final ResourcePropertiesAssignmentPage resourcePropertiesAssignmentPage = accessPropertiesAssignmentPage();
+        resourcePropertiesAssignmentPage = accessPropertiesAssignmentPage();
 
         checkSoftwareVersionProperty(resourcePropertiesAssignmentPage);
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<ResourcePropertiesAssignmentPage> getLandedPage() {
+        return Optional.ofNullable(resourcePropertiesAssignmentPage);
     }
 
     /**
