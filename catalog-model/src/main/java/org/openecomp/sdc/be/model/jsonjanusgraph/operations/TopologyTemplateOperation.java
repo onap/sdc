@@ -215,13 +215,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return associateForwardingPathToComponent(topologyTemplateVertex,forwardingPaths);
     }
 
-    private StorageOperationStatus associateNodeFilterToResource(GraphVertex topologyTemplateVertex,
-            TopologyTemplate topologyTemplate) {
-        Map<String, CINodeFilterDataDefinition> nodeFilters =
-                topologyTemplate.getNodeFilterComponents();
-        return associateNodeFiltersToComponent(topologyTemplateVertex, nodeFilters);
-    }
-
     private StorageOperationStatus associateCapPropertiesToResource(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
         Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate
                 .getCalculatedCapabilitiesProperties();
@@ -880,19 +873,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         Map<String, InterfaceDataDefinition> interfaceMap = topologyTemplate.getInterfaces();
         if (interfaceMap != null && !interfaceMap.isEmpty()) {
             Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(topologyTemplateVertex, VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceMap);
-            if (assosiateElementToData.isRight()) {
-                return assosiateElementToData.right().value();
-            }
-        }
-        return StorageOperationStatus.OK;
-    }
-
-    public StorageOperationStatus associateNodeFiltersToComponent(GraphVertex nodeTypeVertex,
-            Map<String, CINodeFilterDataDefinition> filterMaps) {
-        if (filterMaps != null && !filterMaps.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData
-                                                                                         (nodeTypeVertex, VertexTypeEnum.NODE_FILTER_TEMPLATE,
-                                                                                                 EdgeLabelEnum.NODE_FILTER_TEMPLATE, filterMaps);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }

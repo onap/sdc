@@ -22,14 +22,15 @@ package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.mapping.annotations.Column;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 public class UserAccessEventTableDescription implements ITableDescription {
 	@Override
@@ -67,36 +68,20 @@ public class UserAccessEventTableDescription implements ITableDescription {
 		return AuditingTypesConstants.USER_ACCESS_EVENT_TYPE;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	enum UAEFieldsDescription {
-		REQUEST_ID("request_Id", DataType.varchar(), false), USER("USER", DataType.varchar(), false), ACTION("action",
-				DataType.varchar(), true), STATUS("status", DataType.varchar(), false), DESCRIPTION("description",
-						DataType.varchar(),
-						false), SERVICE_INSTANCE_ID("service_instance_id", DataType.varchar(), false);
+		REQUEST_ID("request_Id", DataType.varchar(), false),
+		USER("USER", DataType.varchar(), false),
+		ACTION("action", DataType.varchar(), true),
+		STATUS("status", DataType.varchar(), false),
+		DESCRIPTION("description", DataType.varchar(), false),
+		SERVICE_INSTANCE_ID("service_instance_id", DataType.varchar(), false);
 
-		@Column
-		private String modifier;
+		private final String name;
+		private final DataType type;
+		private final boolean indexed;
 
-		private String name;
-		private DataType type;
-		private boolean indexed;
-
-		UAEFieldsDescription(String name, DataType type, boolean indexed) {
-			this.name = name;
-			this.type = type;
-			this.indexed = indexed;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public DataType getType() {
-			return type;
-		}
-
-		public boolean isIndexed() {
-			return indexed;
-		}
 	}
 
 }

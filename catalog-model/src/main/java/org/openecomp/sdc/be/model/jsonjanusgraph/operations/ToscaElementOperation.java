@@ -993,34 +993,6 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return dataType;
     }
 
-    private Map<String, AttributeDataDefinition> getAttributesFromComponentV(final GraphVertex componentV) {
-        final Map<String, Object> jsonMetada = componentV.getMetadataJson();
-        final Map<String, AttributeDataDefinition> attributeDataDefinitionMap = new HashMap<>();
-        if (MapUtils.isNotEmpty(jsonMetada)) {
-            final Object attributes = jsonMetada.get(ToscaTagNamesEnum.ATTRIBUTES.getElementName());
-            if (attributes instanceof Map) {
-                final Map<String, Object> map = (Map<String, Object>) attributes;
-                attributeDataDefinitionMap.putAll(map.values().stream().map(attributeMap -> {
-                    final AttributeDataDefinition attributeDef = new AttributeDataDefinition();
-                    final String name = (String) ((Map<String, Object>) attributeMap).get("name");
-                    attributeDef.setName(name);
-                    final String type = (String) ((Map<String, Object>) attributeMap).get("type");
-                    attributeDef.setType(type);
-                    final String description = (String) ((Map<String, Object>) attributeMap).get("description");
-                    attributeDef.setDescription(description);
-                    final Object _default = ((Map<String, Object>) attributeMap).get("_default");
-                    attributeDef.set_default(_default);
-                    final String status = (String) ((Map<String, Object>) attributeMap).get("status");
-                    attributeDef.setStatus(status);
-                    final EntrySchema entry_schema = (EntrySchema) ((Map<String, Object>) attributeMap).get("entry_schema");
-                    attributeDef.setEntry_schema(entry_schema);
-                    return attributeDef;
-                }).collect(Collectors.toMap(AttributeDataDefinition::getName, a -> a)));
-            }
-        }
-        return attributeDataDefinitionMap;
-    }
-
     protected JanusGraphOperationStatus setResourceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
         List<CategoryDefinition> categories = new ArrayList<>();
         SubCategoryDefinition subcategory;

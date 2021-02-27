@@ -148,19 +148,6 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
 
     /**
      *
-     * convert between graph Node object to Java object
-     *
-     * @param capabilityTypeData
-     * @return
-     */
-    protected CapabilityTypeDefinition convertCTDataToCTDefinition(CapabilityTypeData capabilityTypeData) {
-        log.debug("The object returned after create capability is {}", capabilityTypeData);
-
-        return new CapabilityTypeDefinition(capabilityTypeData.getCapabilityTypeDataDefinition());
-    }
-
-    /**
-     *
      * Add capability type to graph.
      *
      * 1. Add capability type node

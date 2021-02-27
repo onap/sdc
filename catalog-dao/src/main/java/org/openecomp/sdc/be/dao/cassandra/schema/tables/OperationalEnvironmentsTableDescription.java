@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -63,6 +65,8 @@ public class OperationalEnvironmentsTableDescription implements ITableDescriptio
         return OPERATIONAL_ENVIRONMENT_TABLE;
     }
 
+    @Getter
+    @AllArgsConstructor
     enum SdcOperationalEnvironmentFieldsDescription {
         //there is also PK field "environmentID"
         TENANT("tenant", DataType.varchar(), false),
@@ -74,26 +78,9 @@ public class OperationalEnvironmentsTableDescription implements ITableDescriptio
         STATUS("status",DataType.varchar() ,true),
         LAST_MODIFIED("last_modified",DataType.timestamp() ,false);
 
-        private String fieldName;
-        private boolean isIndexed;
-        private DataType fieldType;
+        private final String fieldName;
+        private final DataType fieldType;
+        private final boolean isIndexed;
 
-        SdcOperationalEnvironmentFieldsDescription(String fieldName, DataType dataType, boolean indexed ) {
-            this.fieldName = fieldName;
-            this.fieldType = dataType;
-            this.isIndexed = indexed;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public boolean isIndexed() {
-            return isIndexed;
-        }
-
-        public DataType getFieldType() {
-            return fieldType;
-        }
     }
 }

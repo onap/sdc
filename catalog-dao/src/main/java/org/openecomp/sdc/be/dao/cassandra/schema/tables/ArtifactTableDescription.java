@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -60,30 +62,15 @@ public class ArtifactTableDescription implements ITableDescription {
 		return "resources";
 	}
 
+	@Getter
+	@AllArgsConstructor
 	enum ArtifactFieldsDescription {
 		DATA("data", DataType.blob(), false);
 
-		private String name;
-		private DataType type;
-		private boolean indexed;
+		private final String name;
+		private final DataType type;
+		private final boolean indexed;
 
-		ArtifactFieldsDescription(String name, DataType type, boolean indexed) {
-			this.name = name;
-			this.type = type;
-			this.indexed = indexed;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public DataType getType() {
-			return type;
-		}
-
-		public boolean isIndexed() {
-			return indexed;
-		}
 	}
 
 	@Override

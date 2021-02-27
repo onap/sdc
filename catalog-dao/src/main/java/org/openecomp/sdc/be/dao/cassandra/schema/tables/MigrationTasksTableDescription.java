@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -63,6 +65,8 @@ public class MigrationTasksTableDescription implements ITableDescription {
         return MIGRATION_TASKS_TABLE;
     }
 
+    @Getter
+    @AllArgsConstructor
     enum SdcRepoFieldsDescription {
         MAJOR_VERSION("major_version", DataType.bigint(), true),
         MINOR_VERSION("minor_version", DataType.bigint(), false),
@@ -73,26 +77,9 @@ public class MigrationTasksTableDescription implements ITableDescription {
         DESCRIPTION("description", DataType.varchar(), false),
         EXECUTION_TIME("execution_time", DataType.cdouble(), false);
 
-        private String fieldName;
-        private boolean isIndexed;
-        private DataType fieldType;
+        private final String fieldName;
+        private final DataType fieldType;
+        private final boolean isIndexed;
 
-        SdcRepoFieldsDescription(String fieldName, DataType dataType, boolean indexed ) {
-            this.fieldName = fieldName;
-            this.fieldType = dataType;
-            this.isIndexed = indexed;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public boolean isIndexed() {
-            return isIndexed;
-        }
-
-        public DataType getFieldType() {
-            return fieldType;
-        }
     }
 }

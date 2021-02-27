@@ -2010,11 +2010,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return result;
 	}
 
-	private Either<DataTypeDefinition, JanusGraphOperationStatus> getDataTypeUsingName(String name) {
-		String uid = UniqueIdBuilder.buildDataTypeUid(name);
-		return getDataTypeByUid(uid);
-	}
-
 	public Either<String, JanusGraphOperationStatus> checkInnerType(PropertyDataDefinition propDataDef) {
 
 		String propertyType = propDataDef.getType();

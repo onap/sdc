@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
@@ -43,6 +45,8 @@ public class DistribNotifEventTableDesc extends DistribBaseEventTableDesc {
 		return AuditingTypesConstants.DISTRIBUTION_NOTIFICATION_EVENT_TYPE;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	enum DNEFieldsDescription {
 		TOPIC_NAME("topic_name", DataType.varchar(), false),
 		MODIFIER("modifier", DataType.varchar(), false), 
@@ -55,27 +59,10 @@ public class DistribNotifEventTableDesc extends DistribBaseEventTableDesc {
 		VNF_WORKLOAD_CONTEXT("vnf_workload_context", DataType.varchar(), false),
 		TENANT("tenant", DataType.varchar(), false);
 
-		private String name;
-		private DataType type;
-		private boolean indexed;
+		private final String name;
+		private final DataType type;
+		private final boolean indexed;
 
-		DNEFieldsDescription(String name, DataType type, boolean indexed) {
-			this.name = name;
-			this.type = type;
-			this.indexed = indexed;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public DataType getType() {
-			return type;
-		}
-
-		public boolean isIndexed() {
-			return indexed;
-		}
 	}
 
 }

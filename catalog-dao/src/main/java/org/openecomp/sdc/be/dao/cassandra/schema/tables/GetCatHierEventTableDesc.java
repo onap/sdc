@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -66,6 +68,8 @@ public class GetCatHierEventTableDesc implements ITableDescription {
 		return AuditingTypesConstants.GET_CATEGORY_HIERARCHY_EVENT_TYPE;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	enum DEEFieldsDescription {
 		ACTION("action", DataType.varchar(), true), 
 		STATUS("status", DataType.varchar(), false), 
@@ -74,27 +78,10 @@ public class GetCatHierEventTableDesc implements ITableDescription {
 		REQUEST_ID("request_id", DataType.varchar(), false), 
 		MODIFIER("modifier", DataType.varchar(), false);
 
-		private String name;
-		private DataType type;
-		private boolean indexed;
+		private final String name;
+		private final DataType type;
+		private final boolean indexed;
 
-		DEEFieldsDescription(String name, DataType type, boolean indexed) {
-			this.name = name;
-			this.type = type;
-			this.indexed = indexed;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public DataType getType() {
-			return type;
-		}
-
-		public boolean isIndexed() {
-			return indexed;
-		}
 	}
 
 }

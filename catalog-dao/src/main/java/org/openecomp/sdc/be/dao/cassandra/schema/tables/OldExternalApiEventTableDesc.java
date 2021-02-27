@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -68,6 +70,8 @@ public class OldExternalApiEventTableDesc implements ITableDescription {
 		return AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	enum EGAEFieldsDescription {
 		ACTION("action", DataType.varchar(), true), 
 		STATUS("status", DataType.varchar(), false), 
@@ -87,27 +91,10 @@ public class OldExternalApiEventTableDesc implements ITableDescription {
 		CURR_ARTIFACT_UUID( "curr_artifact_uuid", DataType.varchar(), false),
 		ARTIFACT_DATA( "artifact_data", DataType.varchar(), false);
 
-		private String name;
-		private DataType type;
-		private boolean indexed;
+		private final String name;
+		private final DataType type;
+		private final boolean indexed;
 
-		EGAEFieldsDescription(String name, DataType type, boolean indexed) {
-			this.name = name;
-			this.type = type;
-			this.indexed = indexed;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public DataType getType() {
-			return type;
-		}
-
-		public boolean isIndexed() {
-			return indexed;
-		}
 	}
 
 }

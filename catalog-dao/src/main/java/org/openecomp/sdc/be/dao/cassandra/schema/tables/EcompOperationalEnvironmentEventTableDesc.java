@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -64,6 +66,8 @@ public class EcompOperationalEnvironmentEventTableDesc implements ITableDescript
         return AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE;
     }
 
+    @Getter
+    @AllArgsConstructor
     enum EcompOpEnvFieldsDescription {
         ACTION("action", DataType.varchar(), false),
         OPERATIONAL_ENVIRONMENT_NAME("operational_environment_name", DataType.varchar(), false),
@@ -71,26 +75,9 @@ public class EcompOperationalEnvironmentEventTableDesc implements ITableDescript
         OPERATIONAL_ENVIRONMENT_ACTION("operational_environment_action", DataType.varchar(), false),
         TENANT_CONTEXT("tenant_context", DataType.varchar(), false);
 
-        private String name;
-        private DataType type;
-        private boolean indexed;
+        private final String name;
+        private final DataType type;
+        private final boolean indexed;
 
-        EcompOpEnvFieldsDescription(String name, DataType type, boolean indexed) {
-            this.name = name;
-            this.type = type;
-            this.indexed = indexed;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public DataType getType() {
-            return type;
-        }
-
-        public boolean isIndexed() {
-            return indexed;
-        }
     }
 }
