@@ -42,18 +42,18 @@ public class YamlUtilTest {
         InputStream is = yamlUtil.loadYamlFileIs("/yamlMap.yaml");
         Map<String, LinkedHashMap<String, Object>> res = yamlUtil.yamlToMap(is);
         assertNotNull(res);
-        assertEquals(res.size(), 3);
-        assertEquals(res.get("parameter1"), "value1");
-        assertEquals(res.get("parameter2"), "value2");
-        assertEquals(res.get("parameter3"), "value3");
+        assertEquals(1, res.size());
+        assertEquals("value1", (String)res.get("complex-mapping").get("parameter1"));
+        assertEquals("value2", (String)res.get("complex-mapping").get("parameter2"));
+        assertEquals("value3", (String)res.get("complex-mapping").get("parameter3"));
     }
 
     @Test
     public void testYamlToList() {
         InputStream is = yamlUtil.loadYamlFileIs("/yamlList.yaml");
         Optional<List<Object>> res = yamlUtil.yamlToList(is);
-        assertEquals(res.get().size(), 3);
-        assertEquals(res.get().get(0), "value1");
+        assertEquals(3, res.get().size());
+        assertEquals("value1", res.get().get(0));
 
         InputStream is2 = yamlUtil.loadYamlFileIs("/yamlListError.yaml");
         Optional<List<Object>> res2 = yamlUtil.yamlToList(is2);
