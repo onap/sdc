@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fb350cc_93ad0016",
+        "filename": "common/onap-tosca-datatype/src/test/java/org/onap/sdc/tosca/services/YamlUtilTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-01T09:30:24Z",
+      "side": 1,
+      "message": "swap \u0027actual\u0027 and \u0027expected\u0027",
+      "range": {
+        "startLine": 44,
+        "startChar": 27,
+        "endLine": 48,
+        "endChar": 85
+      },
+      "revId": "5cf79d344500069f0c543e9112114a9779db635a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
