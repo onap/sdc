@@ -133,6 +133,12 @@ Modifications copyright (c) 2018 Nokia
       <artifactId>json-simple</artifactId>
       <version>${json-simple.version}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -292,7 +298,7 @@ Modifications copyright (c) 2018 Nokia
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
-      <version>${cassandra.driver.version}</version>
+      <version>${cassandra.driver.core.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -324,6 +330,10 @@ Modifications copyright (c) 2018 Nokia
       <version>${cassandra.unit.version}</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.apache.cassandra</groupId>
           <artifactId>cassandra-all</artifactId>

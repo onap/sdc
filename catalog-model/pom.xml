@@ -204,7 +204,7 @@
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
-      <version>${cassandra.driver.version}</version>
+      <version>${cassandra.driver.core.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
