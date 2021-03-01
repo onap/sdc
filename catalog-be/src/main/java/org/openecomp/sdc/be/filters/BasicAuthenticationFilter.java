@@ -22,20 +22,16 @@ package org.openecomp.sdc.be.filters;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import fj.data.Either;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.glassfish.jersey.server.ContainerRequest;
-import org.onap.sdc.security.Passwords;
-import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.LogLevel;
 import org.openecomp.sdc.common.log.enums.Severity;
@@ -63,7 +59,6 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
 	private static LoggerSdcAudit audit = new LoggerSdcAudit(BasicAuthenticationFilter.class);
     private static final Logger log = Logger.getLogger(BasicAuthenticationFilter.class);
     private static final String COMPONENT_UTILS_FAILED = "Authentication Filter Failed to get component utils.";
-    private static final String CONSUMER_BL_FAILED = "Authentication Filter Failed to get consumerBL.";
     private static final ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
     private static final Configuration.BasicAuthConfig basicAuthConf = configurationManager.getConfiguration().getBasicAuth();
 
@@ -129,21 +124,6 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
         }
     }
 
-    private void validatePassword(ContainerRequestContext requestContext, String userName, String password, Either<ConsumerDefinition, ResponseFormat> result) {
-        if (result.isRight()) {
-            Integer status = result.right().value().getStatus();
-            if (status == Status.NOT_FOUND.getStatusCode()) {
-                log.error("Authentication Filter Failed Couldn't find user");
-                authUserNotFoundError(requestContext, userName);
-            } else {
-				abortWith(requestContext, CONSUMER_BL_FAILED, Response.serverError().status(Status.INTERNAL_SERVER_ERROR).build());
-            }
-        } else {
-            ConsumerDefinition consumerCredentials = result.left().value();
-
-        }
-    }
-
     private void authSuccessful(ContainerRequestContext requestContext, String userName) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
@@ -165,16 +145,6 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
             abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, false));
         }
-    }
-
-    private void authUserNotFoundError(ContainerRequestContext requestContext, String userName) {
-        ComponentsUtils componentUtils = getComponentsUtils();
-        if (componentUtils == null) {
-			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
-        }
-        getComponentsUtils().auditAuthEvent(requestContext.getUriInfo().getPath(), userName, AuthStatus.AUTH_FAILED_USER_NOT_FOUND.toString(), realm);
-        ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
-		abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, false));
     }
 
     private void authInvalidHeaderError(ContainerRequestContext requestContext) {
@@ -202,13 +172,6 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
         WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ComponentsUtils.class);
-    }
-
-    private ConsumerBusinessLogic getConsumerBusinessLogic() {
-        ServletContext context = sr.getSession().getServletContext();
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ConsumerBusinessLogic.class);
     }
 
     public enum AuthStatus {

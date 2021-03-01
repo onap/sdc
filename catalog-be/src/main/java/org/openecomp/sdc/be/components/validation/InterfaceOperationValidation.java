@@ -121,33 +121,6 @@ public class InterfaceOperationValidation {
         return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> validateAllowedOperationCountOnLocalInterfaceType(
-            InterfaceDefinition inputInterfaceDefinition, InterfaceDefinition storedInterfaceDefinition,
-            Map<String, InterfaceDefinition> globalInterfaceTypes, boolean isUpdate) {
-
-        boolean isInterfaceTypeExistInGlobalType =
-                globalInterfaceTypes.values().stream().map(InterfaceDefinition::getType)
-                        .anyMatch(type -> type.equalsIgnoreCase(inputInterfaceDefinition.getType()));
-        if (!isInterfaceTypeExistInGlobalType
-                && isValidOperationOnLocalInterfaceType(inputInterfaceDefinition, storedInterfaceDefinition,
-                isUpdate)) {
-            return Either.right(getResponseFormatManager()
-                    .getResponseFormat(ActionStatus.INTERFACE_OPERATION_INVALID_FOR_LOCAL_TYPE,
-                            inputInterfaceDefinition.getType()));
-        }
-
-        return Either.left(Boolean.TRUE);
-    }
-
-    private boolean isValidOperationOnLocalInterfaceType(InterfaceDefinition inputInterfaceDefinition,
-                                                         InterfaceDefinition storedInterfaceDefinition,
-                                                         boolean isUpdate) {
-        return inputInterfaceDefinition.getOperations().size() > 1
-                || (!isUpdate && storedInterfaceDefinition != null
-                && storedInterfaceDefinition.getType()
-                .equalsIgnoreCase(inputInterfaceDefinition.getType()));
-    }
-
     private Either<Boolean, ResponseFormat> validateAllowedOperationsOnGlobalInterfaceType(
             InterfaceDefinition interfaceDefinition, Map<String, InterfaceDefinition> globalInterfaceTypes) {
 

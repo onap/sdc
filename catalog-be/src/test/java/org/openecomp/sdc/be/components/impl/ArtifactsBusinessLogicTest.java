@@ -1253,19 +1253,6 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         testSubject.fillArtifactPayload(payloadWrapper, artifactDefinition);
     }
 
-
-
-    @Test
-    public void testIsValidXml() throws Exception {
-        ArtifactsBusinessLogic testSubject;
-        byte[] xmlToParse = new byte[]{' '};
-        boolean result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "isValidXml", new Object[]{xmlToParse});
-    }
-
     @Test(expected = ByActionStatusComponentException.class)
     public void testHeatTimeoutValue() {
         final ArtifactsBusinessLogic artifactsBusinessLogic = createTestSubject();

@@ -20,16 +20,11 @@
 
 package org.openecomp.sdc.be.filters;
 
-import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.lang.StringUtils;
-import org.onap.portalsdk.core.onboarding.util.PortalApiProperties;
 import org.onap.sdc.security.IPortalConfiguration;
 import org.onap.sdc.security.PortalClient;
 
-import java.security.InvalidParameterException;
-
 public class PortalConfiguration implements IPortalConfiguration {
-    private static final String PROPERTY_NOT_SET = "%s property value is not set in portal.properties file";
+
     private String portalUser;
     private String portalPassword;
     private String ecompPortalRestURL;
@@ -42,15 +37,6 @@ public class PortalConfiguration implements IPortalConfiguration {
         this.portalAppName = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(PortalClient.PortalPropertiesEnum.APP_NAME.value());
         this.ecompPortalRestURL = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.ECOMP_REST_URL.value());
         this.uebKey = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.UEB_APP_KEY.value());
-    }
-
-    @VisibleForTesting
-    String getPortalProperty(String key) {
-        String value = PortalApiProperties.getProperty(key);
-        if (StringUtils.isEmpty(value)) {
-            throw new InvalidParameterException(String.format(PROPERTY_NOT_SET, key));
-        }
-        return value;
     }
 
     @Override

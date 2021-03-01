@@ -376,12 +376,6 @@ public class ArtifactsOperations extends BaseOperation {
         }
     }
 
-    // @TODO add implementation
-
-    public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(String parentId, NodeTypeEnum parentType) {
-        return null;
-    }
-
     public Either<ArtifactDefinition, StorageOperationStatus> addHeatEnvArtifact(ArtifactDefinition artifactHeatEnv,
            ArtifactDefinition artifactHeat, Component component, NodeTypeEnum parentType, boolean failIfExist, String instanceId) {
         artifactHeatEnv.setGeneratedFromId(artifactHeat.getUniqueId());

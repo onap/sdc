@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,9 +25,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 
 import java.io.IOException;
 import java.util.List;
@@ -58,7 +55,6 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.*;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
@@ -74,8 +70,8 @@ import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC External APIs")})
-@Servers({@Server(url = "/sdc")})
+@Tag(name = "SDC External APIs")
+@Server(url = "/sdc")
 @Controller
 
 public class AbstractTemplateServlet extends AbstractValidationsServlet {
@@ -103,17 +99,6 @@ public class AbstractTemplateServlet extends AbstractValidationsServlet {
         this.abstractTemplateBusinessLogic = abstractTemplateBusinessLogic;
         this.serviceBusinessLogic = serviceBusinessLogic;
         this.resourceBusinessLogic = resourceBusinessLogic;
-    }
-
-    private Wrapper<ResponseFormat> validateRequestHeaders(String instanceIdHeader, String userId) {
-        Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
-        if (responseWrapper.isEmpty()) {
-            validateXECOMPInstanceIDHeader(instanceIdHeader, responseWrapper);
-        }
-        if (responseWrapper.isEmpty()) {
-            validateHttpCspUserIdHeader(userId, responseWrapper);
-        }
-        return responseWrapper;
     }
 
     /**
@@ -306,13 +291,4 @@ public class AbstractTemplateServlet extends AbstractValidationsServlet {
         return getComponentsUtils().convertJsonToObjectUsingObjectMapper(serviceJson, user, CopyServiceInfo.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
     }
 
-    private CopyServiceInfo convertJsonToServiceInfo(String data) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(data, CopyServiceInfo.class);
-        } catch (IOException e) {
-            log.error("#convertJsonToServiceInfo - json deserialization failed with error: ", e);
-            return new CopyServiceInfo();
-        }
-    }
 }

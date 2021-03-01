@@ -21,10 +21,8 @@
 package org.openecomp.sdc.be.filters;
 
 import org.apache.http.HttpStatus;
-import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.common.api.FilterDecisionEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -38,11 +36,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
@@ -78,13 +74,6 @@ public class GatewayFilter implements Filter {
                 ThreadLocalsHolder.setApiType(FilterDecisionEnum.NA);
                 threadLocalUtils.setUserContextFromDB(httpRequest);
                 filterChain.doFilter(httpRequest, res);
-//            } else if (isCookieExist(httpRequest, authCookieConf.getCookieName())) {
-//                ThreadLocalsHolder.setApiType(FilterDecisionEnum.INTERNAL);
-//                filterChain.doFilter(httpRequest, res);
-//            } else {
-//                validateAuthHeaderExist(httpRequest);
-//                ThreadLocalsHolder.setApiType(FilterDecisionEnum.EXTERNAL);
-//                filterChain.doFilter(httpRequest, res);
             }
         } catch (ComponentException ce) {
             componentExceptionMapper.writeToResponse(ce, httpResponse);
@@ -104,27 +93,6 @@ public class GatewayFilter implements Filter {
     private void setDefaultHttpParams(HttpServletResponse httpResponse) {
         httpResponse.setContentType("application/json");
         httpResponse.setCharacterEncoding("UTF-8");
-    }
-
-    private boolean isCookieExist(HttpServletRequest httpRequest, String cookieName) {
-        Cookie[] cookies = httpRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(cookieName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isHeaderExist(HttpServletRequest req, String headerName) {
-        return req.getHeader(headerName) != null;
-    }
-
-    private void validateAuthHeaderExist(HttpServletRequest req) {
-        boolean authHeader = isHeaderExist(req, HttpHeaders.AUTHORIZATION);
-        if (!authHeader) throw new ByActionStatusComponentException(ActionStatus.AUTH_FAILED);
     }
 
     private boolean isUrlFromWhiteList(HttpServletRequest httpRequest) {

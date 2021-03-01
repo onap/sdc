@@ -336,7 +336,7 @@ public class CsarUtils {
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
             format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            //String createDate = format.format(new Date(component.getCreationDate()));
+
             Date date = new Date();
             String releaseTime = format.format(date);
 
@@ -1317,9 +1317,6 @@ public class CsarUtils {
         public Map<String, ArtifactsInfo> getComponentInstancesArtifacts() {
             return componentInstancesArtifacts;
         }
-        public void setComponentInstancesArtifacts(Map<String, ArtifactsInfo> componentInstancesArtifacts) {
-            this.componentInstancesArtifacts = componentInstancesArtifacts;
-        }
 
         public void addComponentInstancesArtifacts(String normalizedName, ArtifactsInfo artifactsInfo) {
             componentInstancesArtifacts.put(normalizedName, artifactsInfo);
@@ -1350,9 +1347,6 @@ public class CsarUtils {
             return componentTypeArtifacts;
         }
 
-        public void setComponentTypeArtifacts(Map<String, ComponentTypeArtifacts> componentTypeArtifacts) {
-            this.componentTypeArtifacts = componentTypeArtifacts;
-        }
     }
 
     private class CsarDefinition {

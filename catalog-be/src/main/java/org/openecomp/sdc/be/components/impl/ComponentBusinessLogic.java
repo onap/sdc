@@ -23,7 +23,6 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-import io.vavr.Function3;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
@@ -184,8 +183,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     private static final Logger log = Logger.getLogger(ComponentBusinessLogic.class.getName());
-
-    private static final String TAG_FIELD_LABEL = "tag";
 
     public abstract Either<List<String>, ResponseFormat> deleteMarkedComponents();
 
@@ -422,23 +419,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         finally{
             janusGraphDao.commit();
         }
-    }
-
-    private Boolean isHighest(HighestFilterEnum highestFilter) {
-        Boolean isHighest = null;
-        switch (highestFilter) {
-        case ALL:
-            break;
-        case HIGHEST_ONLY:
-            isHighest = true;
-            break;
-        case NON_HIGHEST_ONLY:
-            isHighest = false;
-            break;
-        default:
-            break;
-        }
-        return isHighest;
     }
 
     public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponentsMetadata(boolean isAbstractAbstract, HighestFilterEnum highestFilter, ComponentTypeEnum componentTypeEnum, String internalComponentType, String userId) {

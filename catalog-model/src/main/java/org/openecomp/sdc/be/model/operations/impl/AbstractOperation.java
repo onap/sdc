@@ -197,10 +197,6 @@ public abstract class AbstractOperation {
         return value == null;
     }
 
-    public boolean isNullParam(String value) {
-        return value == null;
-    }
-
     protected StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType,
 
             String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> dataTypes) {

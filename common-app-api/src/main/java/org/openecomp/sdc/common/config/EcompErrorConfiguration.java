@@ -156,7 +156,4 @@ public class EcompErrorConfiguration extends BasicConfiguration {
 		I, W, E, F;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(Arrays.asList(EcompErrorType.values()));
-	}
 }

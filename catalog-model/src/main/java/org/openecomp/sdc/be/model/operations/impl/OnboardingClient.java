@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 import fj.data.Either;
 import java.util.Map;
 import java.util.Properties;
+import lombok.NoArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -33,6 +34,7 @@ import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.zip.ZipUtils;
 
+@NoArgsConstructor
 @org.springframework.stereotype.Component("onboarding-client")
 public class OnboardingClient {
 
@@ -42,20 +44,6 @@ public class OnboardingClient {
 
     static {
         downloadCsarHeaders.put("Accept", "application/octet-stream");
-    }
-
-    public OnboardingClient() {
-        super();
-    }
-
-    public static void main(String[] args) {
-
-        OnboardingClient csarOperation = new OnboardingClient();
-
-        String csarUuid = "70025CF6081B489CA7B1CBA583D5278D";
-        Either<Map<String, byte[]>, StorageOperationStatus> csar = csarOperation.getCsar(csarUuid, null);
-        System.out.println(csar.left().value());
-
     }
 
     public Either<Map<String, byte[]>, StorageOperationStatus> getCsar(String csarUuid, String userId) {

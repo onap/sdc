@@ -24,9 +24,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.ui.model.UiCombination;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class CombinationTest {
 
     @Test
@@ -35,8 +32,4 @@ public class CombinationTest {
         new Combination(uiComb);
     }
 
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(Combination.class, hasValidGettersAndSetters());
-    }
 }

@@ -50,7 +50,7 @@ public class ComponentBusinessLogicProvider {
             case RESOURCE_INSTANCE:
                return resourceBusinessLogic;
             default:
-                BeEcompErrorManager.getInstance().logBeSystemError("getComponentBL");
+                BeEcompErrorManager.getInstance().logBeSystemError("getInstance");
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT, componentTypeEnum.getValue());
         }
     }

@@ -24,10 +24,6 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.TechnicalException
 
 public class ApplicationVersionException extends TechnicalException {
 
-    public ApplicationVersionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public ApplicationVersionException(String message) {
         super(message);
     }

@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.common.api;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class HealthCheckInfo {
@@ -97,11 +93,6 @@ public class HealthCheckInfo {
 		this.description = description;
 	}
 
-	/*public enum HealthCheckComponent {
-		FE, BE, JANUSGRAPH, DE, ON_BOARDING, CASSANDRA, DCAE,
-		CAS, ZU;//Amdocs components
-	}*/
-
 	public enum HealthCheckStatus {
 		UP, DOWN, UNKNOWN;
 	}
@@ -113,10 +104,4 @@ public class HealthCheckInfo {
 				+ componentsInfo + "]";
 	}
 	
-	public static void main(String[] args) {
-		String des = "[{healthCheckComponent=BE4, healthCheckStatus=UP, version=0.0.1-SNAPSHOT, description=OK}, {healthCheckComponent=BE, healthCheckStatus=UP, version=1710.0.0-SNAPSHOT, description=OK}, {healthCheckComponent=BE5, healthCheckStatus=UP, version=2.1.9, description=OK}]";
-		Type listType = new TypeToken<List<HealthCheckInfo>>(){}.getType();
-		List<HealthCheckInfo> componentsInfo = new Gson().fromJson(des.toString(), listType);
-		System.out.println(componentsInfo.toString());
-	}
 }

@@ -28,7 +28,6 @@ import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Component;
@@ -234,19 +233,6 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         ResponseFormat errorResponse = componentsUtils.getResponseFormat(status, params);
         componentsUtils.auditResource(errorResponse, user, resource, auditingAction);
         throw new ByResponseFormatComponentException(errorResponse, params);
-    }
-
-    private Map<String, byte[]> getCsar(User user, Map<String, byte[]> payload, String csarUUID) {
-        if (payload != null) {
-            return payload;
-        }
-        Either<Map<String, byte[]>, StorageOperationStatus> csar = csarOperation.getCsar(csarUUID, user);
-        if (csar.isRight()) {
-            StorageOperationStatus value = csar.right().value();
-            log.debug("#getCsar - failed to fetch csar with ID {}, error: {}", csarUUID, value);
-            throw new StorageException(value);
-        }
-        return csar.left().value();
     }
 
     private Either<ImmutablePair<String, String>, ResponseFormat> validateAndParseCsar(Service service, User user,

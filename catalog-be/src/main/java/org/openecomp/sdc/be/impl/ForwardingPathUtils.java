@@ -25,7 +25,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import org.apache.commons.collections.CollectionUtils;
 import org.javatuples.Pair;
-import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.datamodel.NameIdPair;
 import org.openecomp.sdc.be.datamodel.NameIdPairWrapper;
@@ -126,10 +125,6 @@ public class ForwardingPathUtils {
         return retVal;
     }
 
-
-    protected ResponseFormatManager getResponseFormatManager() {
-        return ResponseFormatManager.getInstance();
-    }
 
     public Set<String> findForwardingPathNamesToDeleteOnComponentInstanceDeletion(Service containerService,
         String componentInstanceId) {

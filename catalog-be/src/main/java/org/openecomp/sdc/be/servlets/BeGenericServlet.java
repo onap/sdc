@@ -37,31 +37,21 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
-import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.OutputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
-import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.RequirementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
-import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
-import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
@@ -196,49 +186,16 @@ public class BeGenericServlet extends BasicServlet {
         return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
     }
 
-    InterfaceOperationBusinessLogic getInterfaceOperationBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> InterfaceOperationBusinessLogic.class);
-    }
-
-    protected CapabilitiesBusinessLogic getCapabilitiesBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> CapabilitiesBusinessLogic.class);
-    }
-
-    protected RelationshipTypeBusinessLogic getRelationshipTypeBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> RelationshipTypeBusinessLogic.class);
-    }
-    protected RequirementBusinessLogic getRequirementBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> RequirementBusinessLogic.class);
-    }
-    ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
-    }
-
     protected ServiceBusinessLogic getServiceBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ServiceBusinessLogic.class);
-    }
-
-    ProductBusinessLogic getProductBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> ProductBusinessLogic.class);
     }
 
     protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
     }
-    protected UpgradeBusinessLogic getUpgradeBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> UpgradeBusinessLogic.class);
-    }
 
     protected ElementBusinessLogic getElementBL(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
-    }
-
-    protected AssetMetadataConverter getAssetUtils(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> AssetMetadataConverter.class);
-    }
-
-    protected LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
-        return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
     }
 
     <T> T getClassFromWebAppContext(final ServletContext context, final Supplier<Class<T>> businessLogicClassGen) {
@@ -272,28 +229,6 @@ public class BeGenericServlet extends BasicServlet {
 
     protected String getContentDispositionValue(String artifactFileName) {
         return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
-    }
-
-    protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
-        ComponentBusinessLogic businessLogic;
-        switch (componentTypeEnum) {
-            case RESOURCE:
-                businessLogic = getResourceBL(context);
-                break;
-            case SERVICE:
-                businessLogic = getServiceBL(context);
-                break;
-            case PRODUCT:
-                businessLogic = getProductBL(context);
-                break;
-            case RESOURCE_INSTANCE:
-                businessLogic = getResourceBL(context);
-                break;
-            default:
-                BeEcompErrorManager.getInstance().logBeSystemError("getComponentBL");
-                throw new IllegalArgumentException("Illegal component type:" + componentTypeEnum.getValue());
-        }
-        return businessLogic;
     }
 
     <T> T convertJsonToObjectOfClass(String json, Class<T> clazz) {

@@ -85,17 +85,6 @@ public class ForwardingPathUtilsTest {
 	}
 
 	@Test
-	public void testGetResponseFormatManager() {
-		ForwardingPathUtils testSubject;
-		ResponseFormatManager result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "getResponseFormatManager");
-		assertThat(result).isInstanceOf(ResponseFormatManager.class);
-	}
-
-	@Test
 	public void testFindForwardingPathNamesToDeleteOnComponentInstanceDeletion() throws Exception {
 		ForwardingPathUtils testSubject;
 		Service containerService = new Service();

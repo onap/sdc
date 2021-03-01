@@ -111,11 +111,4 @@ public class HealthCheckInfoTest {
 		result = testSubject.toString();
 	}
 
-	@Test
-	public void testMain() throws Exception {
-		String[] args = new String[] { "" };
-
-		// default test
-		HealthCheckInfo.main(args);
-	}
 }

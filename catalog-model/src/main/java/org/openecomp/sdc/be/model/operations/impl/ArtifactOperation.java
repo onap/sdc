@@ -77,22 +77,6 @@ public class ArtifactOperation {
         super();
     }
 
-    public JanusGraphGenericDao getJanusGraphGenericDao() {
-        return janusGraphGenericDao;
-    }
-
-    public void setJanusGraphGenericDao(JanusGraphGenericDao janusGraphGenericDao) {
-        this.janusGraphGenericDao = janusGraphGenericDao;
-    }
-
-    public HeatParametersOperation getHeatParametersOperation() {
-        return heatParametersOperation;
-    }
-
-    public void setHeatParametersOperation(HeatParametersOperation heatParametersOperation) {
-        this.heatParametersOperation = heatParametersOperation;
-    }
-
     public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, boolean inTransaction) {
 
         Either<ArtifactData, StorageOperationStatus> status = addArtifactToGraph(artifactInfo, parentId, type, failIfExist);
@@ -115,79 +99,6 @@ public class ArtifactOperation {
             return Either.left(artifactDefResult);
         }
 
-    }
-
-    public StorageOperationStatus addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, JanusGraphVertex parentVertex) {
-
-        StorageOperationStatus status = addArtifactToGraph(artifactInfo, parentId, type, failIfExist, parentVertex);
-
-        if (status.equals(StorageOperationStatus.OK)) {
-            log.debug("Failed to add artifact {} {} to {}", artifactInfo.getArtifactName(), type, parentId);
-        }
-        return status;
-    }
-
-    private StorageOperationStatus addArtifactToGraph(ArtifactDefinition artifactInfo, String id, NodeTypeEnum type, boolean failIfexist, JanusGraphVertex parentVertex) {
-
-        if (artifactInfo.getUniqueId() == null || artifactInfo.getUniqueId().isEmpty()) {
-            String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(id, artifactInfo.getArtifactLabel());
-            artifactInfo.setUniqueId(uniqueId);
-        }
-
-        if (!validateParentType(type)) {
-            return StorageOperationStatus.GENERAL_ERROR;
-        }
-
-        ArtifactData artifactData = new ArtifactData(artifactInfo);
-
-        Either<JanusGraphVertex, JanusGraphOperationStatus> existArtifact = janusGraphGenericDao
-            .getVertexByProperty(artifactData.getUniqueIdKey(), artifactData.getUniqueId());
-        if (existArtifact.isRight()) {
-            if (existArtifact.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
-                // create new node
-                log.debug("Before adding artifact to graph {}", artifactData);
-                if (artifactData.getArtifactDataDefinition().getArtifactUUID() == null || artifactData.getArtifactDataDefinition().getArtifactUUID().isEmpty())
-                    updateUUID(artifactData.getArtifactDataDefinition(), null, artifactData.getArtifactDataDefinition().getArtifactVersion());
-                Either<JanusGraphVertex, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao.createNode(artifactData);
-
-                if (createNodeResult.isRight()) {
-                    JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
-                    log.debug("Failed to add artifact {} to graph. status is {}", artifactData.getArtifactDataDefinition().getArtifactName(), operationStatus);
-                    BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add artifact", artifactData.getArtifactDataDefinition().getArtifactName(), String.valueOf(operationStatus));
-                    return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus);
-                }
-
-                // add heat parameters
-                if (artifactInfo.getHeatParameters() != null && !artifactInfo.getHeatParameters().isEmpty() && !artifactInfo.getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.getType())) {
-                    StorageOperationStatus addPropertiesStatus = heatParametersOperation.addPropertiesToGraph(artifactInfo.getListHeatParameters(), artifactData.getUniqueId().toString(), NodeTypeEnum.ArtifactRef);
-                    if (addPropertiesStatus != StorageOperationStatus.OK) {
-                        log.debug("Failed to create heat parameters on graph for artifact {}", artifactInfo.getArtifactName());
-                        return addPropertiesStatus;
-                    }
-                }
-
-            } else {
-                log.debug("Failed to check existance of artifact in graph for id {}", artifactData.getUniqueId());
-                return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(existArtifact.right().value());
-            }
-        } else if (failIfexist) {
-            log.debug("Artifact {} already exist", artifactData.getUniqueId());
-            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ALREADY_EXIST);
-        }
-
-        // save logical artifact ref name on edge as property
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(GraphEdgePropertiesDictionary.NAME.getProperty(), artifactInfo.getArtifactLabel());
-        if (artifactInfo.getArtifactGroupType() != null)
-            properties.put(GraphEdgePropertiesDictionary.GROUP_TYPE.getProperty(), artifactInfo.getArtifactGroupType().getType());
-        JanusGraphOperationStatus relation = janusGraphGenericDao
-            .createEdge(parentVertex, artifactData, GraphEdgeLabels.ARTIFACT_REF, properties);
-        if (!relation.equals(JanusGraphOperationStatus.OK)) {
-            log.debug("Failed to create relation in graph for id {} to new artifact", id);
-            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(relation);
-        }
-
-        return StorageOperationStatus.OK;
     }
 
     private Either<ArtifactData, StorageOperationStatus> addArtifactToGraph(ArtifactDefinition artifactInfo, String id, NodeTypeEnum type, boolean failIfexist) {

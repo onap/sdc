@@ -43,23 +43,6 @@ public class GenerateEcompErrorsCsv {
 
 	private static String NEW_LINE = System.getProperty("line.separator");
 
-	private static void usage() {
-		System.out.println("java org.openecomp.sdc.common.config.generation.GenerateEcompErrorsCsv <target folder>");
-		System.exit(1);
-	}
-
-	public static void main(String[] args) {
-
-		String targetFolder = "target";
-		if (args.length > 1) {
-			targetFolder = args[0];
-		}
-
-		GenerateEcompErrorsCsv ecompErrorsCsv = new GenerateEcompErrorsCsv();
-
-		ecompErrorsCsv.generateEcompErrorsCsvFile(targetFolder, true);
-	}
-
 	public static class EcompErrorRow {
 
 		String errorName;

@@ -29,7 +29,6 @@ import static org.openecomp.sdc.be.utils.TypeUtils.setField;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -243,17 +242,6 @@ public class ResourceImportManager {
         }
 
         return responsePair;
-    }
-
-    private ResponseFormat getResponseFormatFromComponentException(RuntimeException e) {
-        if (e instanceof ComponentException) {
-            return ((ComponentException) e).getResponseFormat() == null ?
-                componentsUtils
-                    .getResponseFormat(((ComponentException) e).getActionStatus(), ((ComponentException) e).getParams())
-                :
-                    ((ComponentException) e).getResponseFormat();
-        }
-        return null;
     }
 
     private String getLatestCertifiedResourceId(Resource resource) {
@@ -887,17 +875,6 @@ public class ResourceImportManager {
             return findFirstToscaStringElement.left().value();
         } else {
             return null;
-        }
-    }
-
-    private Map<String, Object> getDataTypes(final String payloadData) {
-        final Map<String, Object> mappedToscaTemplate = decodePayload(payloadData);
-        final Either<Map<String, Object>, ResultStatusEnum> findFirstToscaStringElement =
-            ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.DATA_TYPES);
-        if (findFirstToscaStringElement.isLeft()) {
-            return findFirstToscaStringElement.left().value();
-        } else {
-            return Collections.EMPTY_MAP;
         }
     }
 

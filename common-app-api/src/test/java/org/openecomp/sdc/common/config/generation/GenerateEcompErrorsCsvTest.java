@@ -41,12 +41,4 @@ public class GenerateEcompErrorsCsvTest {
 		result = testSubject.generateEcompErrorsCsvFile(targetFolder, addTimeToFileName);
 	}
 
-	
-	@Test
-	public void testMain() throws Exception {
-		String[] args = new String[] { "" };
-
-		// default test
-		GenerateEcompErrorsCsv.main(args);
-	}
 }

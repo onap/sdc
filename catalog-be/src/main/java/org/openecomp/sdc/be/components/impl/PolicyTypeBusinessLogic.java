@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -31,8 +30,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +42,6 @@ import static java.util.Collections.emptySet;
 @Component
 public class PolicyTypeBusinessLogic {
 
-    private static final Logger log = Logger.getLogger(PolicyTypeBusinessLogic.class);
     private PolicyTypeOperation policyTypeOperation;
     private JanusGraphDao janusGraphDao;
     private ComponentsUtils componentsUtils;
@@ -82,11 +78,6 @@ public class PolicyTypeBusinessLogic {
 
     private List<PolicyTypeDefinition> getPolicyTypes(Set<String> excludedTypes) {
         return policyTypeOperation.getAllPolicyTypes(excludedTypes);
-    }
-
-    private Either<List<PolicyTypeDefinition>, ResponseFormat> convertToResponseFormatOrNotFoundErrorToEmptyList(StorageOperationStatus err) {
-        log.debug("error when trying to fetch policy types: {}", err);
-        return componentsUtils.convertToResponseFormatOrNotFoundErrorToEmptyList(err);
     }
 
     private PolicyTypeDefinition failOnPolicyType(StorageOperationStatus status, String policyType) {
