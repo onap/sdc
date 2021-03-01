@@ -29,8 +29,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
 import io.vavr.control.Option;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,10 +47,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -145,11 +139,6 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLReader;
 import org.yaml.snakeyaml.Yaml;
 
 @org.springframework.stereotype.Component("artifactBusinessLogic")
@@ -2065,33 +2054,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (!isYamlValid) {
             log.debug("Yaml is not valid for artifact : {}", artifactInfo.getArtifactName());
             throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML, artifactInfo.getArtifactType());
-        }
-    }
-
-    private boolean isValidXml(byte[] xmlToParse) {
-        boolean isXmlValid = true;
-        try {
-            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            XMLReader reader = saxParser.getXMLReader();
-            setFeatures(reader);
-            reader.parse(new InputSource(new ByteArrayInputStream(xmlToParse)));
-        }
-        catch (ParserConfigurationException | IOException | SAXException e) {
-            log.debug("Xml is invalid : {}", e.getMessage(), e);
-            isXmlValid = false;
-        }
-        return isXmlValid;
-    }
-
-    private void setFeatures(XMLReader reader) throws SAXNotSupportedException {
-        try {
-            reader.setFeature("http://apache.org/xml/features/validation/schema", false);
-            reader.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        }
-        catch (SAXNotRecognizedException e) {
-            log.debug("Xml parser couldn't set feature: \"http://apache.org/xml/features/validation/schema\", false", e.getMessage(), e);
         }
     }
 

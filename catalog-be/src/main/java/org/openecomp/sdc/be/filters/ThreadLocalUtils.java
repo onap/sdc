@@ -81,11 +81,6 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
         } else log.debug("user_id value in req header is null, userContext will not be initialized");
     }
 
-    protected void setUserContextFromDB(AuthenticationCookie authenticationCookie) {
-        String user_id = authenticationCookie.getUserID();
-        updateUserContext(user_id);
-    }
-
     private void updateUserContext(String user_id) {
         User user = userBusinessLogic.getUser(user_id, false);
         Set<String> roles = new HashSet<>(Arrays.asList(user.getRole()));

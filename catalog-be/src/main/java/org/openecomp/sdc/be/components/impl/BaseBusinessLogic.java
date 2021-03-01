@@ -38,7 +38,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
@@ -767,16 +766,6 @@ public abstract class BaseBusinessLogic {
     }
 
 
-    protected void rollbackWithException(StorageException e) {
-        janusGraphDao.rollback();
-        throw e;
-    }
-
-    protected void rollbackWithException(ComponentException e) {
-        janusGraphDao.rollback();
-        throw e;
-    }
-
     protected void unlockRollbackWithException(Component component, RuntimeException e) {
         janusGraphDao.rollback();
         graphLockOperation.unlockComponent(component.getUniqueId(), component.getComponentType().getNodeType());
@@ -798,15 +787,7 @@ public abstract class BaseBusinessLogic {
         throw new StorageException(storageOperationStatus);
     }
 
-    protected PolicyDefinition storageExceptionPolicyDefinition(StorageOperationStatus storageOperationStatus) {
-        throw new StorageException(storageOperationStatus);
-    }
-
     protected PolicyDefinition componentExceptionPolicyDefinition(ResponseFormat responseFormat) {
-        throw new ByResponseFormatComponentException(responseFormat);
-    }
-
-    protected Component componentException(ResponseFormat responseFormat) {
         throw new ByResponseFormatComponentException(responseFormat);
     }
 

@@ -29,22 +29,18 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -60,14 +56,14 @@ import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
-@Tags({@Tag(name = "SDC Internal APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDC Internal APIs")
+@Server(url = "/sdc2/rest")
 @Controller
 public class BeMonitoringServlet extends BeGenericServlet {
 
-    Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+    private final Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final Logger log = Logger.getLogger(ConfigServlet.class);
+    private static final Logger log = Logger.getLogger(BeMonitoringServlet.class);
     private final HealthCheckBusinessLogic healthCheckBusinessLogic;
 
     @Inject
@@ -111,48 +107,9 @@ public class BeMonitoringServlet extends BeGenericServlet {
         }
     }
 
-
-    //TODO remove after UI alignment and tests after API consolidation ASDC-191
-    /*@GET
-    @Path("/version")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "return the ASDC application version", notes = "return the ASDC application version", response = String.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "return ASDC version"), @ApiResponse(code = 500, message = "Internal Error") })
-    public Response getSdcVersion(@Context final HttpServletRequest request) {
-        try {
-            String url = request.getMethod() + " " + request.getRequestURI();
-            log.debug("Start handle request of {}", url);
-
-            String version = getVersionFromContext(request);
-            log.debug("asdc version from manifest is: {}", version);
-            if (version == null || version.isEmpty()) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.ASDC_VERSION_NOT_FOUND));
-            }
-
-            HealthCheckInfo versionInfo = new HealthCheckInfo();
-            versionInfo.setVersion(version);
-
-            // The response can be either with 200 or 500 aggregate status - the
-            // body of individual statuses is returned either way
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), versionInfo);
-
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getSDCVersion");
-            log.debug("BE get ASDC version unexpected exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-    }*/
-
     private String getVersionFromContext(HttpServletRequest request) {
         ServletContext servletContext = request.getSession().getServletContext();
         return (String) servletContext.getAttribute(Constants.ASDC_RELEASE_VERSION_ATTR);
-    }
-
-    private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
 
 }

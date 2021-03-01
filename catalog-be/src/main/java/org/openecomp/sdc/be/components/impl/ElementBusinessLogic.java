@@ -208,10 +208,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return response;
     }
 
-    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleGovernor() {
-        return handleFollowedCertifiedServices(null);
-    }
-
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleProductStrategist() {
         // Should be empty list according to Ella, 13/03/16
         Map<String, Set<? extends Component>> result = new HashMap<>();
@@ -230,20 +226,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         lastStateStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         response = getFollowedProducts(userId, lifecycleStates, lastStateStates);
         return response;
-    }
-
-    private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleFollowedCertifiedServices(Set<DistributionStatusEnum> distStatus) {
-
-        Either<List<Service>, StorageOperationStatus> services = toscaOperationFacade.getCertifiedServicesWithDistStatus(distStatus);
-        if (services.isLeft()) {
-            Map<String, Set<? extends Component>> result = new HashMap<>();
-            Set<Service> set = new HashSet<>();
-            set.addAll(services.left().value());
-            result.put(SERVICES, set);
-            return Either.left(result);
-        } else {
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(services.right().value())));
-        }
     }
 
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> getFollowedResourcesAndServices(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {

@@ -291,7 +291,6 @@ public abstract class BaseOperation {
     }
 
     protected Either<GraphVertex, JanusGraphOperationStatus> updateOrCopyOnUpdate(GraphVertex dataVertex, GraphVertex toscaElementVertex, EdgeLabelEnum label) {
-//        healingPipelineDao.setHealingVersion(dataVertex);
         Iterator<Edge> edges = dataVertex.getVertex().edges(Direction.IN, label.name());
         int edgeCount = 0;
         Edge edgeToRemove = null;
@@ -384,45 +383,6 @@ public abstract class BaseOperation {
         List<T> toscaDataList = new ArrayList<>();
         toscaDataList.add(toscaData);
         return addToscaDataToToscaElement(toscaElement, edgeLabel, vertexLabel, toscaDataList, mapKeyField);
-    }
-
-    /**
-     * Adds tosca data deep element to tosca element according received labels
-     *
-     * @param toscaElement
-     * @param edgeLabel
-     * @param vertexLabel
-     * @param toscaData
-     * @param pathKeys
-     * @param mapKeyField
-     * @return
-     */
-    public <T extends ToscaDataDefinition> StorageOperationStatus addToscaDataDeepElementToToscaElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel, T toscaData, List<String> pathKeys,
-            JsonPresentationFields mapKeyField) {
-
-        List<T> toscaDataList = new ArrayList<>();
-        toscaDataList.add(toscaData);
-        return addToscaDataDeepElementsToToscaElement(toscaElement, edgeLabel, vertexLabel, toscaDataList, pathKeys, mapKeyField);
-    }
-
-    /**
-     * Converts recieved map of tosca data deep elements to list and adds it to tosca element according received labels
-     *
-     * @param toscaElement
-     * @param edgeLabel
-     * @param vertexLabel
-     * @param toscaDataMap
-     * @param pathKeys
-     * @param mapKeyField
-     * @return
-     */
-    public <T extends ToscaDataDefinition> StorageOperationStatus addToscaDataDeepElementsToToscaElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel, Map<String, T> toscaDataMap, List<String> pathKeys,
-            JsonPresentationFields mapKeyField) {
-
-        if (toscaDataMap != null) {
-            return addToscaDataDeepElementsToToscaElement(toscaElement, edgeLabel, vertexLabel, toscaDataMap.values().stream().collect(Collectors.toList()), pathKeys, mapKeyField);
-        }
-        return StorageOperationStatus.OK;
     }
 
     /**

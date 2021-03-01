@@ -32,11 +32,6 @@ public class ActivationRequestInformationTest {
     private static final String WORKLOAD_CONTEXT = "workloadContext";
 
     @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(ActivationRequestInformation.class, hasValidGettersAndSetters());
-    }
-
-    @Test
     public void testFullArgConstructor() {
         Service serviceToActivate = new Service();
         ActivationRequestInformation activationRequestInformation = new ActivationRequestInformation(serviceToActivate,

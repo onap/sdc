@@ -24,23 +24,19 @@ import com.google.gson.JsonElement;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
@@ -58,20 +54,16 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.EntryData;
-import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 
 @org.springframework.stereotype.Component("propertyBusinessLogic")
@@ -93,14 +85,6 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         ArtifactsOperations artifactToscaOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
-    }
-
-    protected static IElementOperation getElementDao(Class<IElementOperation> class1, ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-
-        return webApplicationContext.getBean(class1);
     }
 
     public Map<String, DataTypeDefinition> getAllDataTypes() {
@@ -604,76 +588,6 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         return propertyCandidate.isPresent();
     }
 
-    private StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
-
-        log.trace("Going to validate property type and value. {}", propertyDefinition);
-
-        String propertyType = propertyDefinition.getType();
-        String value = propertyDefinition.getDefaultValue();
-
-        ToscaPropertyType type = getType(propertyType);
-
-        if (type == null) {
-            DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
-            if (dataTypeDefinition == null) {
-                log.debug("The type {} of property cannot be found.", propertyType);
-                return StorageOperationStatus.INVALID_TYPE;
-            }
-            return validateAndUpdateComplexValue(propertyDefinition, propertyType, value, dataTypeDefinition, dataTypes);
-        }
-        String innerType;
-
-        Either<String, JanusGraphOperationStatus> checkInnerType = getInnerType(type, propertyDefinition::getSchema);
-        if (checkInnerType.isRight()) {
-            return StorageOperationStatus.INVALID_TYPE;
-        }
-        innerType = checkInnerType.left().value();
-
-        log.trace("After validating property type {}", propertyType);
-
-        boolean isValidProperty = isValidValue(type, value, innerType, dataTypes);
-        if (!isValidProperty) {
-            log.info("The value {} of property from type {} is invalid", value, type);
-            return StorageOperationStatus.INVALID_VALUE;
-        }
-
-        PropertyValueConverter converter = type.getConverter();
-
-        if (isEmptyValue(value)) {
-            log.debug("Default value was not sent for property {}. Set default value to {}", propertyDefinition.getName(), EMPTY_VALUE);
-            propertyDefinition.setDefaultValue(EMPTY_VALUE);
-        } else if (!isEmptyValue(value)) {
-            String convertedValue = converter.convert(value, innerType, dataTypes);
-            propertyDefinition.setDefaultValue(convertedValue);
-        }
-        return StorageOperationStatus.OK;
-    }
-
-    private StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType,
-                                                                 String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> dataTypes) {
-
-        ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
-
-        if (validateResult.right) {
-            log.debug("The value {} of property from type {} is invalid", propertyType, propertyType);
-            return StorageOperationStatus.INVALID_VALUE;
-        }
-
-        JsonElement jsonElement = validateResult.left;
-
-        log.trace("Going to update value in property definition {} {}" , propertyDefinition.getName() , jsonElement);
-
-        updateValue(propertyDefinition, jsonElement);
-
-        return StorageOperationStatus.OK;
-    }
-
-    private void updateValue(IComplexDefaultValue propertyDefinition, JsonElement jsonElement) {
-
-        propertyDefinition.setDefaultValue(getValueFromJsonElement(jsonElement));
-
-    }
-
     @Override
     protected String getValueFromJsonElement(JsonElement jsonElement) {
         if (jsonElement == null || jsonElement.isJsonNull()) {
@@ -683,25 +597,6 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
             return "";
         }
         return jsonElement.toString();
-    }
-
-    private Either<String, JanusGraphOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
-        String innerType = null;
-        if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
-
-            SchemaDefinition def = schemeGen.get();
-            if (def == null) {
-                log.debug("Schema doesn't exists for property of type {}", type);
-                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
-            }
-            PropertyDataDefinition propDef = def.getProperty();
-            if (propDef == null) {
-                log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
-            }
-            innerType = propDef.getType();
-        }
-        return Either.left(innerType);
     }
 
     @Override

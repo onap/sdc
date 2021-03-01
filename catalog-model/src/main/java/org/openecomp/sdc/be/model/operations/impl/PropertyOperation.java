@@ -118,21 +118,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final String PROPERTY = "Property";
     private static final String UPDATE_DATA_TYPE = "UpdateDataType";
 
-	public static void main(String[] args) {
-
-		List<Pattern> buildFunctionPatterns = buildFunctionPatterns();
-
-		for (Pattern pattern : buildFunctionPatterns) {
-
-			String[] strs = { "str_replace", "{ str_replace:", " {str_replace:", " {   str_replace:", "{str_replace:" };
-			for (String str : strs) {
-				Matcher m = pattern.matcher(str);
-				System.out.println(pattern.pattern() + " " + str + " " + m.find());
-			}
-		}
-
-	}
-
 	@Autowired
 	public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation) {
 		this.janusGraphGenericDao = janusGraphGenericDao;
@@ -140,27 +125,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	}
 
 	private static Logger log = Logger.getLogger(PropertyOperation.class.getName());
-
-	/**
-	 * The value of functions is in a json format. Build pattern for each function name
-	 * 
-	 * { str_replace: .... } {str_replace: .... } {str_replace: .... } { str_replace: .... }
-	 * 
-	 * @return
-	 */
-	private static List<Pattern> buildFunctionPatterns() {
-
-		List<Pattern> functionPatterns = new ArrayList<>();
-
-		String[] functions = { "get_input", "get_property" };
-
-		for (String function : functions) {
-			Pattern pattern = Pattern.compile("^[ ]*\\{[ ]*" + function + ":");
-			functionPatterns.add(pattern);
-		}
-
-		return functionPatterns;
-	}
 
 	public PropertyDefinition convertPropertyDataToPropertyDefinition(PropertyData propertyDataResult, String propertyName, String resourceId) {
 		log.debug("The object returned after create property is {}", propertyDataResult);

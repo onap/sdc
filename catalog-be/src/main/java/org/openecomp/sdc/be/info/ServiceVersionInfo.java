@@ -20,18 +20,16 @@
 
 package org.openecomp.sdc.be.info;
 
-import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ServiceVersionInfo {
     private String version;
     private String url;
-
-    @VisibleForTesting
-    ServiceVersionInfo() {}
 
     public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
         super();

@@ -62,87 +62,12 @@ public class PropertyOperationTest extends ModelTestBase {
 
     }
 
-    /*
-     * @Test public void addPropertyToResourceTest() {
-     *
-     * String propName = "myProp"; PropertyDefinition property = buildPropertyDefinition(); List<PropertyConstraint> constraints = buildConstraints(); property.setConstraints(constraints);
-     *
-     * PropertyData propertyData = new PropertyData(property, propertyOperation.convertConstraintsToString(constraints));
-     *
-     * Either<PropertyData, JanusGraphOperationStatus> either = Either.left(propertyData); //when(propertyDao.create((GraphNeighbourTable)anyObject(), eq(PropertyData.class), eq(NodeTypeEnum.Property))).thenReturn(either); GraphRelation graphRelation =
-     * new GraphRelation(); Either<GraphRelation, JanusGraphOperationStatus> relationResult = Either.left(graphRelation);
-     *
-     * when(janusGraphGenericDao.createNode((PropertyData)anyObject(), eq(PropertyData.class))).thenReturn(either); when(janusGraphGenericDao.createRelation((GraphNode)anyObject(), (GraphNode)anyObject(), eq(GraphEdgeLabels.PROPERTY),
-     * anyMap())).thenReturn(relationResult);
-     *
-     * Either<PropertyDefinition, StorageOperationStatus> result = propertyOperation.addPropertyToResource(propName, property, NodeTypeEnum.Resource, "my-resource.1.0");
-     *
-     * assertTrue(result.isLeft()); System.out.println(result.left().value()); PropertyDefinition propertyDefinition = result.left().value();
-     *
-     * List<PropertyConstraint> originalConstraints = property.getConstraints(); List<PropertyConstraint> propertyConstraintsResult = propertyDefinition.getConstraints(); assertEquals(propertyConstraintsResult.size(), originalConstraints.size());
-     *
-     * }
-     */
     private PropertyDefinition buildPropertyDefinition() {
         PropertyDefinition property = new PropertyDefinition();
         property.setDefaultValue("10");
         property.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
         property.setType(ToscaType.INTEGER.name().toLowerCase());
         return property;
-    }
-
-    @Test
-    public void addPropertiesToGraphTableTest() {
-
-        // Map<String, PropertyDefinition> properties = new HashMap<String,
-        // PropertyDefinition>();
-        // String propName = "myProp";
-        // PropertyDefinition property = buildPropertyDefinition();
-        //
-        // List<PropertyConstraint> constraints = buildConstraints();
-        // property.setConstraints(constraints);
-        //
-        // properties.put(propName, property);
-        //
-        // GraphNeighbourTable graphNeighbourTable = new GraphNeighbourTable();
-        // ResourceData resourceData = new ResourceData();
-        // String resourceName = "my-resource";
-        // String resourceVersion = "1.0";
-        // String resourceId = resourceName + "." + resourceVersion;
-        // resourceData.setUniqueId(resourceId);
-        // int resourceIndex = graphNeighbourTable.addNode(resourceData);
-        //
-        // heatParametersOperation.addPropertiesToGraphTable(properties,
-        // graphNeighbourTable, resourceIndex, resourceId);
-        //
-        // assertEquals(2, graphNeighbourTable.getNodes().size());
-        // assertEquals(1, graphNeighbourTable.getDirectedEdges().size());
-        // List<GraphNode> nodes = graphNeighbourTable.getNodes();
-        // boolean nodeFound = false;
-        // for (GraphNode neo4jNode : nodes) {
-        // if (neo4jNode instanceof PropertyData) {
-        // PropertyData propertyData = (PropertyData)neo4jNode;
-        // assertEquals("check property unique id", resourceId + "." + propName,
-        // propertyData.getUniqueId());
-        // assertEquals(property.getDescription(),
-        // propertyData.getPropertyDataDefinition().getDescription());
-        // nodeFound = true;
-        // }
-        // }
-        // assertEquals("looking for PropertyData object in table", true,
-        // nodeFound);
-        //
-        // NodeRelation nodeRelation =
-        // graphNeighbourTable.getDirectedEdges().get(0);
-        // assertEquals("check from index to index edge", 0,
-        // nodeRelation.getFromIndex());
-        // assertEquals("check from index to index edge", 1,
-        // nodeRelation.getToIndex());
-        // assertEquals("check edge type",
-        // GraphEdgePropertiesDictionary.PROPERTY,
-        // nodeRelation.getEdge().getEdgeType());
-        // assertEquals("check propert name on edge", true,
-        // nodeRelation.getEdge().getProperties().values().contains(propName));
     }
 
     @Test
@@ -516,16 +441,6 @@ public class PropertyOperationTest extends ModelTestBase {
 		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
 	}
 
-	
-	@Test
-	public void testMain() throws Exception {
-		String[] args = new String[] { "" };
-
-		// default test
-		PropertyOperation.main(args);
-	}
-
-	
 	@Test
 	public void testConvertPropertyDataToPropertyDefinition() throws Exception {
 		PropertyOperation testSubject;

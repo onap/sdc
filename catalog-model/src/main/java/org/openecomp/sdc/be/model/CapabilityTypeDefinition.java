@@ -28,7 +28,6 @@ import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Specifies the capabilities that the Node Type exposes.
@@ -47,14 +46,6 @@ public class CapabilityTypeDefinition extends CapabilityTypeDataDefinition {
     public CapabilityTypeDefinition(CapabilityTypeDataDefinition p) {
         super(p);
     }
-	
-	public CapabilityTypeDefinition(CapabilityDefinition cp) {
-		this.setUniqueId(cp.getUniqueId());
-		this.setDescription ( cp.getDescription());
-		this.setType(cp.getType());
-		this.setValidSourceTypes( cp.getValidSourceTypes()); 
-		this.setProperties(cp.getProperties().stream().collect(Collectors.toMap(ComponentInstanceProperty::getName, PropertyDefinition::new)));
-	}
 
 	public CapabilityTypeDefinition(CapabilityTypeData ctd) {
 		this.setUniqueId(ctd.getUniqueId());

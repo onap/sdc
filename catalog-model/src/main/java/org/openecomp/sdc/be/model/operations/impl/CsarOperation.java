@@ -40,17 +40,6 @@ public class CsarOperation {
     @javax.annotation.Resource
     private OnboardingClient onboardingClient;
 
-    public static void main(String[] args) {
-
-        CsarOperation csarOperation = new CsarOperation();
-        csarOperation.init();
-
-        String csarUuid = "70025CF6081B489CA7B1CBA583D5278D";
-        Either<Map<String, byte[]>, StorageOperationStatus> csar = csarOperation.getCsar(csarUuid, null);
-        System.out.println(csar.left().value());
-
-    }
-
     @PostConstruct
     public void init() {
 

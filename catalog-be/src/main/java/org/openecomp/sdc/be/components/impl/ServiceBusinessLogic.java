@@ -54,6 +54,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -67,7 +68,6 @@ import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
@@ -114,7 +114,6 @@ import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.DistributionTransitionEnum;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -170,7 +169,6 @@ import org.springframework.web.context.WebApplicationContext;
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
-    private static final String CHANGE_SERVICE_DISTRIBUTION = "Change Service Distribution";
     private static final String THE_SERVICE_WITH_SYSTEM_NAME_LOCKED = "The service with system name {} locked. ";
     private static final String FAILED_TO_LOCK_SERVICE_RESPONSE_IS = "Failed to lock service {}. Response is {}. ";
     private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
@@ -1698,51 +1696,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return artifactInfo;
     }
 
-    private DistributionTransitionEnum validateTransitionEnum(String distributionTransition) {
-        DistributionTransitionEnum transitionEnum;
-
-        transitionEnum = DistributionTransitionEnum.getFromDisplayName(distributionTransition);
-        if (transitionEnum == null) {
-            BeEcompErrorManager.getInstance().logBeSystemError(CHANGE_SERVICE_DISTRIBUTION);
-            log.info("state operation is not valid. operations allowed are: {}", DistributionTransitionEnum.valuesAsString());
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_DISTRIBUTION_STATUS, distributionTransition));
-        }
-
-        return transitionEnum;
-    }
-
-    private String validateComment(LifecycleChangeInfoWithAction comment) {
-        if (comment==null || StringUtils.isEmpty(comment.getUserRemarks())) {
-            return "";
-        }
-        String data = comment.getUserRemarks();
-        data = ValidationUtils.removeNoneUtf8Chars(data);
-        data = ValidationUtils.removeHtmlTags(data);
-        data = ValidationUtils.normaliseWhitespace(data);
-        data = ValidationUtils.stripOctets(data);
-
-        if (!ValidationUtils.validateLength(data, ValidationUtils.COMMENT_MAX_LENGTH)) {
-            BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CHANGE_SERVICE_DISTRIBUTION);
-            log.debug("user comment exceeds limit.");
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.EXCEEDS_LIMIT, "comment", String.valueOf(ValidationUtils.COMMENT_MAX_LENGTH)));
-        }
-        if (!ValidationUtils.validateCommentPattern(data)) {
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
-        }
-
-        return data;
-    }
-
-    private void createAudit(User user, AuditingActionEnum auditAction, String comment, Service component, ResponseFormat responseFormat) {
-        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
-        componentsUtils.auditComponent(responseFormat, user, component, auditAction, new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()),
-                ResourceVersionInfo.newBuilder()
-                        .state(component.getLifecycleState().name())
-                        .version(component.getVersion())
-                        .build(),
-                comment);
-    }
-
     private String getEnvNameFromConfiguration() {
         String configuredEnvName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getEnvironments().get(0);
         log.trace("Update environment name to be {}", configuredEnvName);
@@ -2101,14 +2054,15 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     }
 
+    @Getter
     class HeatEnvArtifactGenerator extends ArtifactGenerator<ArtifactDefinition> {
-        ArtifactDefinition artifactDefinition;
-        Service service;
-        String resourceInstanceName;
-        User modifier;
-        String instanceId;
-        boolean shouldLock;
-        boolean inTransaction;
+        private ArtifactDefinition artifactDefinition;
+        private Service service;
+        private String resourceInstanceName;
+        private User modifier;
+        private String instanceId;
+        private boolean shouldLock;
+        private boolean inTransaction;
 
         HeatEnvArtifactGenerator(ArtifactDefinition artifactDefinition, Service service, String resourceInstanceName, User modifier, boolean shouldLock, boolean inTransaction, String instanceId) {
             this.artifactDefinition = artifactDefinition;
@@ -2123,10 +2077,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         @Override
         public Either<ArtifactDefinition, ResponseFormat> call() throws Exception {
             return artifactsBusinessLogic.forceGenerateHeatEnvArtifact(artifactDefinition, ComponentTypeEnum.RESOURCE_INSTANCE, service, resourceInstanceName, modifier, shouldLock, inTransaction, instanceId);
-        }
-
-        public ArtifactDefinition getArtifactDefinition() {
-            return artifactDefinition;
         }
 
     }

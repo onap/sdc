@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import fj.data.Either;
 import java.util.ArrayList;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
-import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
@@ -68,12 +66,7 @@ public class CapabilityOperation extends AbstractOperation {
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.propertyOperation = propertyOperation;
     }
-    
-    
-    @VisibleForTesting
-    public void setJanusGraphGenericDao(HealingJanusGraphGenericDao janusGraphGenericDao) {
-        this.janusGraphGenericDao = janusGraphGenericDao;
-    }
+
 
     public Either<CapabilityData, JanusGraphOperationStatus> addCapabilityToGraph(String resourceId, CapabilityTypeData capTypeData, CapabilityDefinition capabilityDefinition) {
 

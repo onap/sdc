@@ -92,12 +92,4 @@ public class EcompErrorConfigurationTest {
         assertEquals(ecompErrorConfiguration.getErrors(), errors);
     }
 
-    @Test
-    public void testMain() throws Exception {
-        String[] args = new String[] {""};
-
-        // default test
-        EcompErrorConfiguration.main(args);
-    }
-
 }

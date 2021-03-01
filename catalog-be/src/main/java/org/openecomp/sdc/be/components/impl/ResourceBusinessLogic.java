@@ -50,7 +50,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.servlet.ServletContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -107,7 +106,6 @@ import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
@@ -186,7 +184,6 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -3768,17 +3765,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		resourcesInstancesMap.put(componentInstance, origResource);
 	}
 
-	private ComponentParametersView getComponentWithInstancesFilter() {
-		ComponentParametersView parametersView = new ComponentParametersView();
-		parametersView.disableAll();
-		parametersView.setIgnoreComponentInstances(false);
-		parametersView.setIgnoreInputs(false);
-		// inputs are read when creating
-		// property values on instances
-		parametersView.setIgnoreUsers(false);
-		return parametersView;
-	}
-
 	private void setCapabilityNamesTypes(Map<String, List<CapabilityDefinition>> originCapabilities,
 										 Map<String, List<UploadCapInfo>> uploadedCapabilities) {
 		for (Entry<String, List<UploadCapInfo>> currEntry : uploadedCapabilities.entrySet()) {
@@ -5630,17 +5616,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         janusGraphDao.commit();
 		return Either.left(true);
 
-	}
-
-	/**** Auditing *******************/
-
-	protected static IElementOperation getElementDao(Class<IElementOperation> class1, ServletContext context) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
-				.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-
-		return webApplicationContext.getBean(class1);
 	}
 
 	public ICapabilityTypeOperation getCapabilityTypeOperation() {

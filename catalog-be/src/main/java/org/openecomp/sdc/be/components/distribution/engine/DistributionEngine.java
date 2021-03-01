@@ -32,15 +32,12 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.YamlToObjectConverter;
-import org.openecomp.sdc.exception.YamlConversionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,26 +69,6 @@ public class DistributionEngine implements IDistributionEngine {
     private Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
     private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
     private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-
-    /**
-     * The main method for testing only
-     * @param args
-     */
-    public static void main(String[] args) throws YamlConversionException {
-
-        List<String> servers = new ArrayList<>();
-        String server = "uebsb91kcdc.it.att.com:3904";
-        servers.add(server);
-        servers.add(server);
-        servers.add(server);
-
-        YamlToObjectConverter converter = new YamlToObjectConverter();
-        DistributionEngineConfiguration distributionEngineConfiguration = converter.convert("src/test/resources/config/catalog-be/distribEngine1/distribution-engine-configuration.yaml", DistributionEngineConfiguration.class);
-
-        DistributionEngineInitTask distributionEngineInitTask = new DistributionEngineInitTask(2l, distributionEngineConfiguration, "PROD", new AtomicBoolean(false), null, null, null);
-        distributionEngineInitTask.startTask();
-
-    }
 
     @Override
     public boolean isActive() {
