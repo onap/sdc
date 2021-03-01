@@ -42,10 +42,10 @@ public class YamlUtilTest {
         InputStream is = yamlUtil.loadYamlFileIs("/yamlMap.yaml");
         Map<String, LinkedHashMap<String, Object>> res = yamlUtil.yamlToMap(is);
         assertNotNull(res);
-        assertEquals(res.size(), 3);
-        assertEquals(res.get("parameter1"), "value1");
-        assertEquals(res.get("parameter2"), "value2");
-        assertEquals(res.get("parameter3"), "value3");
+        assertEquals(res.size(), 1);
+        assertEquals((String)res.get("complex-mapping").get("parameter1"), "value1");
+        assertEquals((String)res.get("complex-mapping").get("parameter2"), "value2");
+        assertEquals((String)res.get("complex-mapping").get("parameter3"), "value3");
     }
 
     @Test
