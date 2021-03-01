@@ -14,7 +14,6 @@
 
     <properties>
         <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
-        <swagger.version>2.1.1</swagger.version>
         <swagger-ui.version>3.25.0</swagger-ui.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
@@ -428,7 +427,12 @@
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
             <scope>compile</scope>
-
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- functional java -->
@@ -472,7 +476,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20131018</version>
+            <version>20201115</version>
             <scope>compile</scope>
         </dependency>
 
@@ -480,7 +484,7 @@
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>${cassandra.driver.version}</version>
+            <version>${cassandra.driver.core.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -495,7 +499,7 @@
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <version>2.2.0.0</version>
+            <version>${org.owasp.esapi.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>xerces</groupId>
@@ -772,7 +776,7 @@
         <dependency>
             <groupId>com.google.code.bean-matchers</groupId>
             <artifactId>bean-matchers</artifactId>
-            <version>0.11</version>
+            <version>${bean-matchers.version}</version>
             <scope>test</scope>
         </dependency>
 
