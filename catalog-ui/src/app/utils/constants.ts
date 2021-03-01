@@ -27,7 +27,7 @@ export let DEFAULT_ICON = 'defaulticon';
 export let CP_END_POINT = 'CpEndPoint';
 export let CHANGE_COMPONENT_CSAR_VERSION_FLAG = 'changeComponentCsarVersion';
 export let PREVIOUS_CSAR_COMPONENT = 'previousCsarComponent'
-
+export let CATEGORY_SERVICE_METADATA_KEYS = ["Naming Policy","Service Type","Service Function","Service Role"];
 
 export class GeneralStatus {
   static OK = 'OK';

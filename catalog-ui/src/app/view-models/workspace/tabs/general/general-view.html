@@ -119,7 +119,7 @@
 
                     <div ng-if="component.selectedCategory">
                         <ng-container ng-repeat="(key, value) in component.categorySpecificMetadata"-->
-                            <div ng-if="isMetadataKeyForComponentCategory(key) && getMetadataKeyValidValues(key) && isMetadataKeyMandatory(key)"
+                            <div ng-if="isMetadataKeyForComponentCategory(key) && !isCategoryServiceMetadataKey(key) && getMetadataKeyValidValues(key) && isMetadataKeyMandatory(key)"
                                  class="i-sdc-form-item"
                                  data-ng-class="{'error': validateField(editForm['{{key}}'])}">
                                 <label class="i-sdc-form-label required" translate="{{key}}"></label>
@@ -135,7 +135,7 @@
                                     <span ng-show="editForm['{{key}}'].$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_REQUIRED"></span>
                                 </div>
                             </div>
-                            <div ng-if="isMetadataKeyForComponentCategory(key) && getMetadataKeyValidValues(key) && !isMetadataKeyMandatory(key)"
+                            <div ng-if="isMetadataKeyForComponentCategory(key) && !isCategoryServiceMetadataKey(key) && getMetadataKeyValidValues(key) && !isMetadataKeyMandatory(key)"
                                  class="i-sdc-form-item">
                                 <label class="i-sdc-form-label" translate="{{key}}"></label>
                                 <select class="i-sdc-form-select"
@@ -146,7 +146,7 @@
                                    <option ng-repeat="value in getMetadataKeyValidValues(key)">{{value}}</option>
                                 </select>
                             </div>
-                            <div ng-if="isMetadataKeyForComponentCategory(key) && !getMetadataKeyValidValues(key) && isMetadataKeyMandatory(key)"
+                            <div ng-if="isMetadataKeyForComponentCategory(key) && !isCategoryServiceMetadataKey(key) && !getMetadataKeyValidValues(key) && isMetadataKeyMandatory(key)"
                                  class="i-sdc-form-item"
                                  data-ng-class="{'error': validateField(editForm['{{key}}'])}">
                                 <label class="i-sdc-form-label required" translate="{{key}}"></label>
@@ -161,7 +161,7 @@
                                     <span ng-show="editForm['{{key}}'].$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_REQUIRED"></span>
                                 </div>
                             </div>
-                            <div ng-if="isMetadataKeyForComponentCategory(key) && !getMetadataKeyValidValues(key) && !isMetadataKeyMandatory(key)"
+                            <div ng-if="isMetadataKeyForComponentCategory(key) && !isCategoryServiceMetadataKey(key) && !getMetadataKeyValidValues(key) && !isMetadataKeyMandatory(key)"
                                  class="i-sdc-form-item">
                                 <label class="i-sdc-form-label" translate="{{key}}"></label>
                                 <input class="i-sdc-form-input" type="text"
@@ -375,20 +375,40 @@
 
                     <!--------------------- NAMING POLICY  -------------------->
                     <div ng-if="component.isService()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.namingPolicy)}">
-                        <label class="i-sdc-form-label">Naming Policy</label>
-                        <input class="i-sdc-form-input"
-                               name="namingPolicy"
-                               data-ng-class="{'view-mode': isViewMode() || !component.ecompGeneratedNaming}"
-                               data-ng-maxlength="100"
-                               data-ng-model="component.namingPolicy"
-                               type="text"
-                               data-ng-model-options="{ debounce: 500 }"
-                               data-ng-pattern="validation.commentValidationPattern"
-                               data-tests-id="namingPolicy"
-                               autofocus
-                               ng-readonly="isViewMode() || !component.ecompGeneratedNaming"
-                        />
-
+                        <div ng-if="component.selectedCategory && isMetadataKeyForComponentCategory('Naming Policy')">
+	                        <div ng-if="isMetadataKeyMandatory('Naming Policy')">
+                                <label class="i-sdc-form-label required">Naming Policy</label>
+	                        </div>
+	                        <div ng-if="!isMetadataKeyMandatory('Naming Policy')">
+                                <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_NAMING_POLICY"></label>
+	                        </div>
+	                        <select class="i-sdc-form-input" type="text"
+	                               ng-required="isMetadataKeyMandatory('Naming Policy')"
+	                               data-ng-class="{'view-mode': isViewMode()}"
+	                               data-ng-model="component.namingPolicy"
+	                               data-ng-model-options="{ debounce: 500 }"
+	                               name="namingPolicy"
+	                               data-tests-id="namingPolicy"
+	                               data-ng-maxlength="256"
+                                   data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+	                        > <option ng-repeat="value in getMetadataKeyValidValues('Naming Policy')">{{value}}</option>
+                            </select>
+                        </div>
+                        <div ng-if="!component.selectedCategory || !isMetadataKeyForComponentCategory('Naming Policy')">
+	                        <label class="i-sdc-form-label">Naming Policy</label>
+	                        <input class="i-sdc-form-input"
+	                               name="namingPolicy"
+	                               data-ng-class="{'view-mode': isViewMode() || !component.ecompGeneratedNaming}"
+	                               data-ng-maxlength="100"
+	                               data-ng-model="component.namingPolicy"
+	                               type="text"
+	                               data-ng-model-options="{ debounce: 500 }"
+	                               data-ng-pattern="validation.commentValidationPattern"
+	                               data-tests-id="namingPolicy"
+	                               autofocus
+	                               ng-readonly="isViewMode() || !component.ecompGeneratedNaming"
+	                        />
+                        </div>
                         <div class="input-error" data-ng-show="validateField(editForm.namingPolicy)">
                             <span ng-show="editForm.namingPolicy.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '100' }"></span>
                             <span ng-show="editForm.namingPolicy.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
@@ -399,17 +419,38 @@
                     <!--------------------- Service Type -------------------->
                     <div ng-if="component.isService()"
                          class="i-sdc-form-item"
-                         data-ng-class="{'error': validateField(editForm.serviceType)}">
-                        <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_TYPE"></label>
-                        <input class="i-sdc-form-input" type="text"
-                               data-ng-class="{'view-mode': isViewMode()}"
-                               data-ng-model="component.serviceType"
-                               data-ng-model-options="{ debounce: 500 }"
-                               name="serviceType"
-                               data-tests-id="serviceType"
-                               data-ng-maxlength="256"
-                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
-                        />
+                         data-ng-class="{'error': validateField(editForm.serviceFunctionType)}">
+                        <div ng-if="component.selectedCategory && isMetadataKeyForComponentCategory('Service Type')">
+	                        <div ng-if="isMetadataKeyMandatory('Service Type')">
+                                <label class="i-sdc-form-label required" translate="GENERAL_TAB_LABEL_SERVICE_TYPE"></label>
+                            </div>
+	                        <div ng-if="!isMetadataKeyMandatory('Service Type')">
+                                <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_TYPE"></label>
+	                        </div>
+	                        <select class="i-sdc-form-input" type="text"
+	                               ng-required="isMetadataKeyMandatory('Service Type')"
+	                               data-ng-class="{'view-mode': isViewMode()}"
+	                               data-ng-model="component.serivceType"
+	                               data-ng-model-options="{ debounce: 500 }"
+	                               name="serviceType"
+	                               data-tests-id="serviceType"
+	                               data-ng-maxlength="256"
+                                   data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+	                        > <option ng-repeat="value in getMetadataKeyValidValues('Service Type')">{{value}}</option>
+                            </select>
+                        </div>
+                        <div ng-if="!component.selectedCategory || !isMetadataKeyForComponentCategory('Service Type')">
+	                        <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_TYPE"></label>
+	                        <input class="i-sdc-form-input" type="text"
+	                               data-ng-class="{'view-mode': isViewMode()}"
+	                               data-ng-model="component.serviceType"
+	                               data-ng-model-options="{ debounce: 500 }"
+	                               name="serviceType"
+	                               data-tests-id="serviceType"
+	                               data-ng-maxlength="256"
+                                   data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+	                        />
+                        </div>
                         <div class="input-error" data-ng-show="validateField(editForm.serviceType)">
                             <span ng-show="editForm.serviceType.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
                             <span ng-show="editForm.serviceType.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
@@ -421,37 +462,70 @@
                     <div ng-if="component.isService()"
                          class="i-sdc-form-item"
                          data-ng-class="{'error': validateField(editForm.serviceRole)}">
-                        <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_ROLE"></label>
-                        <input class="i-sdc-form-input" type="text"
-                               data-ng-class="{'view-mode': isViewMode()}"
-                               data-ng-model="component.serviceRole"
-                               data-ng-model-options="{ debounce: 500 }"
-                               name="serviceRole"
-                               data-tests-id="serviceRole"
-                               data-ng-maxlength="256"
-                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
-                        />
+                        <div ng-if="component.selectedCategory && isMetadataKeyForComponentCategory('Service Role')">
+	                        <div ng-if="isMetadataKeyMandatory('Service Role')">
+                                <label class="i-sdc-form-label required" translate="GENERAL_TAB_LABEL_SERVICE_ROLE"></label>
+	                        </div>
+	                        <div ng-if="!isMetadataKeyMandatory('Service Role')">
+                                <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_ROLE"></label>
+	                        </div>
+	                        <select class="i-sdc-form-input" type="text"
+	                               ng-required="isMetadataKeyMandatory('Service Role')"
+	                               data-ng-class="{'view-mode': isViewMode()}"
+	                               data-ng-model="component.serviceRole"
+	                               data-ng-model-options="{ debounce: 500 }"
+	                               name="serviceRole"
+	                               data-tests-id="serviceRole"
+	                               data-ng-maxlength="256"
+	                        > <option ng-repeat="value in getMetadataKeyValidValues('Service Role')">{{value}}</option>
+	                        </select>
+                        </div>
+                        <div ng-if="!component.selectedCategory || !isMetadataKeyForComponentCategory('Service Role')">
+		                    <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_ROLE"></label>
+		                    <input class="i-sdc-form-input" type="text"
+	                               data-ng-class="{'view-mode': isViewMode()}"
+	                               data-ng-model="component.serviceRole"
+	                               data-ng-model-options="{ debounce: 500 }"
+	                               name="serviceRole"
+	                               data-tests-id="serviceRole"
+	                               data-ng-maxlength="256"
+	                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+	                        />
+                        </div>
                         <div class="input-error" data-ng-show="validateField(editForm.serviceRole)">
                             <span ng-show="editForm.serviceRole.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
                             <span ng-show="editForm.serviceRole.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
                         </div>
                     </div>
                     <!--------------------- Service Role -------------------->
-
                     <!--------------------- Service Function -------------------->
                     <div ng-if="component.isService()"
                          class="i-sdc-form-item"
                          data-ng-class="{'error': validateField(editForm.serviceFunction)}">
-                        <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_FUNCTION"></label>
-                        <input class="i-sdc-form-input" type="text"
-                               data-ng-class="{'view-mode': isViewMode()}"
-                               data-ng-model="component.serviceFunction"
-                               data-ng-model-options="{ debounce: 500 }"
-                               name="serviceFunction"
-                               data-tests-id="serviceFunction"
-                               data-ng-maxlength="256"
-                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
-                        />
+                        <label class="i-sdc-form-label required" translate="GENERAL_TAB_LABEL_SERVICE_FUNCTION"></label>
+                        <div ng-if="component.selectedCategory && isMetadataKeyForComponentCategory('Service Function')">
+	                        <select class="i-sdc-form-input" type="text"
+	                               data-required
+	                               data-ng-class="{'view-mode': isViewMode()}"
+	                               data-ng-model="component.serviceFunction"
+	                               data-ng-model-options="{ debounce: 500 }"
+	                               name="serviceFunction"
+	                               data-tests-id="serviceFunction"
+	                               data-ng-maxlength="256"
+	                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+	                        > <option ng-repeat="value in getMetadataKeyValidValues('Service Function')">{{value}}</option>
+	                        </select>
+                        </div>
+                        <div ng-if="!component.selectedCategory || !isMetadataKeyForComponentCategory('Service Function')">
+                              <input class="i-sdc-form-input" type="text"
+                                      data-ng-class="{'view-mode': isViewMode()}"
+                                      data-ng-model="component.serviceFunction"
+                                      name="serviceFunction"
+                                      data-tests-id="serviceFunction"
+				       data-ng-maxlength="256"
+				       data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+                               />
+                        </div>
                         <div class="input-error" data-ng-show="validateField(editForm.serviceFunction)">
                             <span ng-show="editForm.serviceFunction.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
                             <span ng-show="editForm.serviceFunction.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
