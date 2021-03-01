@@ -27,7 +27,7 @@ import {CacheService, OnboardingService, ImportVSPService} from "app/services-ng
 import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent, Component, IMetadataKey} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {Dictionary} from "lodash";
-import { PREVIOUS_CSAR_COMPONENT } from "../../../../utils/constants";
+import { PREVIOUS_CSAR_COMPONENT, CATEGORY_SERVICE_METADATA_KEYS } from "../../../../utils/constants";
 import { Observable, Subject } from "rxjs";
 import { MetadataEntry } from "app/models/metadataEntry";
 import { Metadata } from "app/models/metadata";
@@ -678,6 +678,9 @@ export class GeneralViewModel {
             return this.getMetadataKey(this.$scope.component.categories, key) != null;
         }
 
+       this.$scope.isCategoryServiceMetadataKey = (key: string): boolean => {
+            return this.isServiceMetadataKey(key);
+        }
     }
 
     private setUnsavedChanges = (hasChanges: boolean): void => {
@@ -704,6 +707,10 @@ export class GeneralViewModel {
             return categories[0].metadataKeys.find(metadataKey => metadataKey.name == key);
         }
         return null;
+    }
+
+    private isServiceMetadataKey(key: string) : boolean {
+        return CATEGORY_SERVICE_METADATA_KEYS.indexOf(key) > -1;
     }
 
 }
