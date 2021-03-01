@@ -52,6 +52,7 @@ limitations under the License.
         <it.docker.version>latest</it.docker.version>
         <it.ui.firefox.version>2.53.1</it.ui.firefox.version>
 
+        <clearspring.version>2.9.8</clearspring.version>
         <!-- parser-->
         <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
     </properties>
@@ -231,7 +232,7 @@ limitations under the License.
             <!-- To use the legacy, Jetty-based implementation, change the artifactId
               to browsermob-core -->
             <artifactId>browsermob-core</artifactId>
-            <version>2.1.4</version>
+            <version>2.1.5</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -243,25 +244,25 @@ limitations under the License.
         <dependency>
             <groupId>com.paulhammant</groupId>
             <artifactId>ngwebdriver</artifactId>
-            <version>0.9.7</version>
+            <version>1.1.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.markusbernhardt</groupId>
             <artifactId>proxy-vole</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.3</version>
+            <version>3.8.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.13.1</version>
+            <version>2.14.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -394,7 +395,7 @@ limitations under the License.
                     <dependency>
                         <groupId>org.apache.httpcomponents</groupId>
                         <artifactId>httpclient</artifactId>
-                        <version>4.5.5</version>
+                        <version>${httpclient.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
