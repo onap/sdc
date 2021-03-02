@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,8 @@
 
 package org.onap.sdc.backend.ci.tests.sanity;
 
+
+import static org.testng.Assert.assertThrows;
 
 import com.aventstack.extentreports.Status;
 import fj.data.Either;
@@ -82,6 +85,12 @@ public class Onboard extends ComponentBaseTest {
 	public void onboardCNFFlow(String filePath, String cnfFile) throws Exception {
 		setLog(cnfFile);
 		runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF);
+	}
+
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Invalid_CNF_List")
+	public void onboardCNFFlowShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
+		setLog(cnfFile);
+		assertThrows(() -> runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF));
 	}
 
 	private void runOnboardToDistributionFlow(String packageFilePath, String packageFileName, ResourceTypeEnum resourceTypeEnum) throws Exception {

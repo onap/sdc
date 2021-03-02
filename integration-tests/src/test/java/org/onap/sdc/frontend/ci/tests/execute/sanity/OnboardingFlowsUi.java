@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +73,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
@@ -471,6 +473,14 @@ public class OnboardingFlowsUi extends SetupCDTest {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
+    }
+
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_List")
+    public void onboardCNFTestShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
+        setLog(cnfFile);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        Assert.assertThrows(() -> runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile));
     }
 
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")

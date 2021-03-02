@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,7 @@
 
 package org.onap.sdc.backend.ci.tests.utils.general;
 
+import java.io.File;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
@@ -104,7 +106,9 @@ public class OnboardingUtils {
 		"1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip",
 		"1-2017389vtsbc4vf-(VOIP)_v11.0.zip"
 	);
-	
+
+	private static final String INVALID_XNFS_SUBPATH = "invalid";
+
 	public static String handleFilename(String heatFileName) {
 		final String namePrefix = String.format("%sVF%s", ElementFactory.getResourcePrefix(), "Onboarded-");
 		final String nameSuffix = "-" + getShortUUID();
@@ -123,7 +127,7 @@ public class OnboardingUtils {
 		String vnfName = namePrefix + subHeatFileName + nameSuffix;
 		return vnfName;
 	}
-	
+
 
 	public static String getShortUUID() {
 		return UUID.randomUUID().toString().split("-")[0];
@@ -190,6 +194,15 @@ public class OnboardingUtils {
 	}
 
 	/**
+	 * @return
+	 * The method returns names list of invalid XNF packages from Files directory under sdc repository
+	 */
+	public static List<String> getInvalidXnfNamesFileList(XnfTypeEnum xnfTypeEnum) {
+		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + INVALID_XNFS_SUBPATH;
+		return FileHandling.getZipFileNamesFromFolder(filepath);
+	}
+
+	/**
 	 * @param vnfNamesFileList
 	 * @return divide List according to day of month, if day of month is even as get first half part of the List, else - second
 	 */
@@ -238,4 +251,3 @@ public class OnboardingUtils {
 	}
 }
 
-	

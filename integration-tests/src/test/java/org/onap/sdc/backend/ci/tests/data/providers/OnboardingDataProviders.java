@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nokia. All rights reserved.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,6 +73,13 @@ public final class OnboardingDataProviders {
     @DataProvider(name = "CNF_List", parallel = true)
     private static Object[][] cnfList() {
         final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF);
+        LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF));
+    }
+
+    @DataProvider(name = "Invalid_CNF_List", parallel = true)
+    private static Object[][] invalidCnfList() {
+        final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
         return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF));
     }
