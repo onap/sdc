@@ -955,6 +955,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 }
             }
 
+            newInputDefinition.setMappedToComponentProperty(false);
             Either<InputDefinition, StorageOperationStatus> addInputEither =
                 toscaOperationFacade.addInputToComponent(inputName, newInputDefinition, component);
 

@@ -64,6 +64,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String label;
     protected Boolean hidden = Boolean.FALSE;
     private Boolean immutable = Boolean.FALSE;
+    private Boolean mappedToComponentProperty = Boolean.TRUE;
 
     private String inputPath;
     private String status;
@@ -113,6 +114,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setHidden(propertyDataDefinition.isHidden());
         this.setLabel(propertyDataDefinition.getLabel());
         this.setImmutable(propertyDataDefinition.isImmutable());
+        this.setMappedToComponentProperty(propertyDataDefinition.isMappedToComponentProperty());
         this.setParentUniqueId(propertyDataDefinition.getParentUniqueId());
         this.setOwnerId(propertyDataDefinition.getOwnerId());
         this.setGetInputValues(propertyDataDefinition.getGetInputValues());
@@ -177,6 +179,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     public Boolean isImmutable() {
         return immutable;
     }
+
+    public Boolean isMappedToComponentProperty() { return mappedToComponentProperty; }
 
     public String getParentUniqueId() {
         return getOwnerId();

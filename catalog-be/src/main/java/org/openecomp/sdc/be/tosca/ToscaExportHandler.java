@@ -1858,7 +1858,7 @@ public class ToscaExportHandler {
         if (component == null || CollectionUtils.isEmpty(component.getInputs())) {
             return Collections.emptyMap();
         }
-        return component.getInputs().stream()
+        return component.getInputs().stream().filter(input -> input.isMappedToComponentProperty())
             .map(PropertyDataDefinition::getName)
             .collect(
                 Collectors.toMap(
