@@ -21,6 +21,8 @@
 package org.onap.sdc.backend.ci.tests.sanity;
 
 
+import static org.testng.Assert.assertThrows;
+
 import com.aventstack.extentreports.Status;
 import fj.data.Either;
 import org.junit.Rule;
@@ -82,6 +84,12 @@ public class Onboard extends ComponentBaseTest {
 	public void onboardCNFFlow(String filePath, String cnfFile) throws Exception {
 		setLog(cnfFile);
 		runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF);
+	}
+
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Invalid_CNF_List")
+	public void onboardCNFFlowShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
+		setLog(cnfFile);
+		assertThrows(() -> runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF));
 	}
 
 	private void runOnboardToDistributionFlow(String packageFilePath, String packageFileName, ResourceTypeEnum resourceTypeEnum) throws Exception {

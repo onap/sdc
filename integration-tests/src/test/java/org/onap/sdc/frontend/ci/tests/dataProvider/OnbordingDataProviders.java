@@ -65,6 +65,15 @@ public class OnbordingDataProviders {
         return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
     }
 
+    @DataProvider(name = "Invalid_CNF_List", parallel = true)
+    private static Object[][] invalidCnfList() {
+
+        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF);
+
+        System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
+    }
+
     @DataProvider(name = "updateList")
     private static Object[][] updateList() throws Exception {
 
