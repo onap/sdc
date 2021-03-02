@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b22bee8f_e2eb8deb",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/utils/general/OnboardingUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-03-02T11:23:41Z",
+      "side": 1,
+      "message": "Optional - move private constant under public.",
+      "range": {
+        "startLine": 38,
+        "startChar": 1,
+        "endLine": 38,
+        "endChar": 62
+      },
+      "revId": "6c63581450a81cf6ea69868b759744833ea6aeca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af0d74f4_11c78d57",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/dataProvider/OnbordingDataProviders.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-03-02T11:23:41Z",
+      "side": 1,
+      "message": "Switch to logger - if possible",
+      "range": {
+        "startLine": 73,
+        "startChar": 8,
+        "endLine": 73,
+        "endChar": 26
+      },
+      "revId": "6c63581450a81cf6ea69868b759744833ea6aeca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
