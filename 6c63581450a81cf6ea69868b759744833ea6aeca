@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "db265de4_ed6d20e4",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/backend/ci/tests/utils/general/OnboardingUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-03-02T12:06:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b22bee8f_e2eb8deb",
+      "range": {
+        "startLine": 38,
+        "startChar": 1,
+        "endLine": 38,
+        "endChar": 62
+      },
+      "revId": "6c63581450a81cf6ea69868b759744833ea6aeca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "af0d74f4_11c78d57",
         "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/dataProvider/OnbordingDataProviders.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "6c63581450a81cf6ea69868b759744833ea6aeca",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19dcf292_f4168db0",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/dataProvider/OnbordingDataProviders.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-03-02T12:06:58Z",
+      "side": 1,
+      "message": "I followed convention from other methods. I think use of System.out should be refactored separately if needed.",
+      "parentUuid": "af0d74f4_11c78d57",
+      "range": {
+        "startLine": 73,
+        "startChar": 8,
+        "endLine": 73,
+        "endChar": 26
+      },
+      "revId": "6c63581450a81cf6ea69868b759744833ea6aeca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
