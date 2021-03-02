@@ -74,6 +74,10 @@
 
       <exclusions>
         <exclusion>
+          <groupId>org.owasp.esapi</groupId>
+          <artifactId>esapi</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-core</artifactId>
         </exclusion>
@@ -115,6 +119,10 @@
       <version>${ecomp.version}</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <groupId>org.owasp.esapi</groupId>
+          <artifactId>esapi</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>com.att.nsa</groupId>
           <artifactId>cambriaClient</artifactId>
@@ -297,6 +305,12 @@
       <artifactId>json-simple</artifactId>
       <version>${json-simple.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -407,7 +421,7 @@
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
-      <version>3.2.4</version>
+      <version>${cglib.nodep.version}</version>
       <scope>compile</scope>
     </dependency>
 
@@ -441,7 +455,7 @@
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
-      <version>${cassandra.driver.version}</version>
+      <version>${cassandra.driver.core.version}</version>
       <scope>compile</scope>
     </dependency>
 
