@@ -20,6 +20,7 @@
 
 package org.onap.sdc.backend.ci.tests.utils.general;
 
+import java.io.File;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
@@ -34,6 +35,7 @@ import java.util.*;
 
 public class OnboardingUtils {
 
+	private static final String INVALID_XNFS_SUBPATH = "invalid";
 	/**
 	 * excluded VNF or PNF file list
 	 */
@@ -190,6 +192,15 @@ public class OnboardingUtils {
 	}
 
 	/**
+	 * @return
+	 * The method returns names list of invalid XNF packages from Files directory under sdc repository
+	 */
+	public static List<String> getInvalidXnfNamesFileList(XnfTypeEnum xnfTypeEnum) {
+		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + INVALID_XNFS_SUBPATH;
+		return FileHandling.getZipFileNamesFromFolder(filepath);
+	}
+
+	/**
 	 * @param vnfNamesFileList
 	 * @return divide List according to day of month, if day of month is even as get first half part of the List, else - second
 	 */
@@ -238,4 +249,3 @@ public class OnboardingUtils {
 	}
 }
 
-	
