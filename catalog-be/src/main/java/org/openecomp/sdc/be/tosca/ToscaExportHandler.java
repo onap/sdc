@@ -143,6 +143,7 @@ import org.yaml.snakeyaml.representer.Representer;
 public class ToscaExportHandler {
 
     private static final Logger log = Logger.getLogger(ToscaExportHandler.class);
+    private static final String INVARIANT_UUID = "invariantUUID";
 
     private ApplicationDataTypeCache dataTypeCache;
     private ToscaOperationFacade toscaOperationFacade;
@@ -444,7 +445,7 @@ public class ToscaExportHandler {
     private Map<String, String> convertMetadata(Component component, boolean isInstance,
                                                 ComponentInstance componentInstance) {
         Map<String, String> toscaMetadata = new LinkedHashMap<>();
-        toscaMetadata.put(JsonPresentationFields.INVARIANT_UUID.getPresentation(), component.getInvariantUUID());
+        toscaMetadata.put(convertMetadataKey(JsonPresentationFields.INVARIANT_UUID), component.getInvariantUUID());
         toscaMetadata.put(JsonPresentationFields.UUID.getPresentation(), component.getUUID());
         toscaMetadata
             .put(JsonPresentationFields.NAME.getPresentation(), component.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
@@ -514,6 +515,13 @@ public class ToscaExportHandler {
             toscaMetadata.put(key, component.getCategorySpecificMetadata().get(key));
         }
         return toscaMetadata;
+    }
+    
+    private String convertMetadataKey(JsonPresentationFields jsonPresentationField) {
+        if (JsonPresentationFields.INVARIANT_UUID.equals(jsonPresentationField)) {
+            return INVARIANT_UUID;
+        }
+        return jsonPresentationField.getPresentation();
     }
 
     private Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> fillImports(Component component,
