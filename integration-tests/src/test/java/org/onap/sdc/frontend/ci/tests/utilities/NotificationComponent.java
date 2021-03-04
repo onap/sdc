@@ -19,6 +19,7 @@
 
 package org.onap.sdc.frontend.ci.tests.utilities;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
@@ -48,9 +49,14 @@ public class NotificationComponent extends AbstractPageObject {
     }
 
     private String getMessageXpath(final NotificationType notificationType) {
+        final String messageContainerPath = String
+            .format("%s%s", XpathSelector.MAIN_CONTAINER_DIV.getXpath(), XpathSelector.MESSAGE_CONTENT_DIV.getXpath());
         if (notificationType == NotificationType.SUCCESS) {
-            return String.format("%s%s%s", XpathSelector.MAIN_CONTAINER_DIV.getXpath(), XpathSelector.MESSAGE_CONTENT_DIV.getXpath(),
-                XpathSelector.MESSAGE_SUCCESS_DIV.getXpath());
+            return String.format("%s%s", messageContainerPath, XpathSelector.MESSAGE_SUCCESS_DIV.getXpath());
+        }
+
+        if (notificationType == NotificationType.CREATE_OR_UPDATE) {
+            return String.format("%s%s", messageContainerPath, XpathSelector.MESSAGE_CREATE_UPDATE_DIV.getXpath());
         }
 
         LOGGER.warn("Xpath for NotificationType {} not yet implemented.", notificationType);
@@ -66,8 +72,8 @@ public class NotificationComponent extends AbstractPageObject {
     private enum XpathSelector {
         MAIN_CONTAINER_DIV("notification-container", "//div[@class='%s']"),
         MESSAGE_CONTENT_DIV("msg-content", "//div[@class='%s']"),
-        MESSAGE_SUCCESS_DIV("message",
-            "//div[contains(@class, 'message') and (contains(text(),'successfully') or contains(text(), 'Successfully'))]");
+        MESSAGE_SUCCESS_DIV("message", "//div[contains(@class, 'message') and (contains(text(),'successfully') or contains(text(), 'Successfully'))]"),
+        MESSAGE_CREATE_UPDATE_DIV("message", "//div[contains(@class, '%s') and (contains(text(), 'Create/Update') or contains(text(), 'created'))]");
 
         @Getter
         private final String id;
@@ -79,7 +85,7 @@ public class NotificationComponent extends AbstractPageObject {
     }
 
     public enum NotificationType {
-        SUCCESS;
+        SUCCESS, CREATE_OR_UPDATE;
     }
 
 }

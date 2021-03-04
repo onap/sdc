@@ -25,7 +25,7 @@ import org.openqa.selenium.WebDriver;
 
 public class LoaderHelper extends AbstractPageObject {
 
-    private final By loaderLocator = By.xpath("//*[@data-tests-id='loader' or @class='tlv-loader']");
+    private final By loaderLocator = By.xpath("//*[@data-tests-id='loader' or @class='tlv-loader' or @class='sdc-loader' or @class='sdc-loader-global-wrapper sdc-loader-background']");
 
     public LoaderHelper(final WebDriver webDriver) {
         super(webDriver);
@@ -33,6 +33,10 @@ public class LoaderHelper extends AbstractPageObject {
 
     public void waitForLoader(final int timeout) {
         waitForElementVisibility(loaderLocator, 5);
+        waitForElementInvisibility(loaderLocator, timeout);
+    }
+
+    public void waitForLoaderInvisibility(final int timeout) {
         waitForElementInvisibility(loaderLocator, timeout);
     }
 
