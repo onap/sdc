@@ -19,40 +19,30 @@
 
 package org.onap.sdc.frontend.ci.tests.utilities;
 
-import lombok.NoArgsConstructor;
-import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-@NoArgsConstructor
-public class LoaderHelper {
+public class LoaderHelper extends AbstractPageObject {
 
-    private WebDriver webDriver;
+    private final By loaderLocator = By.xpath("//*[@data-tests-id='loader' or @class='tlv-loader' or @class='sdc-loader' or @class='sdc-loader-global-wrapper sdc-loader-background']");
 
     public LoaderHelper(final WebDriver webDriver) {
-        this.webDriver = webDriver;
+        super(webDriver);
     }
-
-    private final By locator = By.className("tlv-loader");
 
     public void waitForLoader(final int timeout) {
-        waitForLoaderVisibility(5);
-        waitForLoaderInvisibility(timeout);
+        waitForElementVisibility(loaderLocator, 5);
+        waitForElementInvisibility(loaderLocator, timeout);
     }
 
-    private void waitForLoaderVisibility(final int timeout) {
-        getWait(timeout)
-            .until(ExpectedConditions.visibilityOfElementLocated(locator));
+    public void waitForLoaderInvisibility(final int timeout) {
+        waitForElementInvisibility(loaderLocator, timeout);
     }
 
-    private void waitForLoaderInvisibility(int timeout) {
-        getWait(timeout).until(ExpectedConditions.invisibilityOfElementLocated(locator));
-    }
+    @Override
+    public void isLoaded() {
 
-    private WebDriverWait getWait(final int timeout) {
-        return new WebDriverWait(webDriver == null ? DriverFactory.getDriver() : webDriver, timeout);
     }
 
 }

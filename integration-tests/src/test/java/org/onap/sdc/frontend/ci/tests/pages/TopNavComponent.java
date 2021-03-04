@@ -23,6 +23,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -65,22 +66,21 @@ public class TopNavComponent extends AbstractPageObject {
     /**
      * Clicks on home link inside the first breadcrumb arrow.
      */
-    public void clickOnHome() {
+    public HomePage clickOnHome() {
         hoverToBreadcrumbArrow(0);
         final By homeButtonLocator = By.xpath(XpathSelector.SUB_MENU_BUTTON_HOME.getXpath());
-        getWait().until(ExpectedConditions.visibilityOfElementLocated(homeButtonLocator));
-        getWait().until(ExpectedConditions.elementToBeClickable(homeButtonLocator)).click();
-        getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.REPOSITORY_ICON.getXpath())));
+        waitForElementVisibility(homeButtonLocator);
+        waitToBeClickable(homeButtonLocator).click();
+        return new HomePage(webDriver, this);
     }
 
     public boolean isHomeSelected() {
         final By homeLinkLocator = By.xpath(XpathSelector.MAIN_MENU_LINK_HOME.getXpath());
-        getWait().until(ExpectedConditions.visibilityOfElementLocated(homeLinkLocator));
-        final WebElement homeLinkElement = findElement(homeLinkLocator);
+        final WebElement homeLinkElement = waitToBeClickable(homeLinkLocator);
         final WebElement homeLinkParentElement = homeLinkElement.findElement(By.xpath("./.."));
-        final String aClass = homeLinkParentElement.getAttribute("class");
-        return "selected".equals(aClass);
+        final String homeLinkClass = homeLinkParentElement.getAttribute("class");
+        LOGGER.debug(String.format("Home link class '%s'", homeLinkClass));
+        return homeLinkClass != null && homeLinkClass.contains("selected");
     }
 
     /**
@@ -100,6 +100,7 @@ public class TopNavComponent extends AbstractPageObject {
      * @return the next page object
      */
     public OnboardHomePage clickOnOnboard() {
+        waitForElementInvisibility(By.xpath(XpathSelector.SDC_LOADER_BACKGROUND.getXpath()));
         wrappingElement.findElement(By.xpath(XpathSelector.MAIN_MENU_ONBOARD_BTN.getXpath())).click();
         return new OnboardHomePage(DriverFactory.getDriver(), new OnboardHeaderComponent(DriverFactory.getDriver()));
     }
@@ -120,6 +121,10 @@ public class TopNavComponent extends AbstractPageObject {
         return selectedArrowElement;
     }
 
+    public void waitRepositoryToBeClickable() {
+        waitToBeClickable(XpathSelector.REPOSITORY_ICON.getXpath());
+    }
+
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
@@ -130,7 +135,8 @@ public class TopNavComponent extends AbstractPageObject {
         MAIN_MENU_LINK_HOME("main-menu-button-home", "//*[@data-tests-id='%s']"),
         ARROW_DROPDOWN("triangle-dropdown", "//li[contains(@class, '%s')]"),
         MAIN_MENU_ONBOARD_BTN("main-menu-button-onboard", "//a[@data-tests-id='%s']"),
-        REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']");
+        REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']"),
+        SDC_LOADER_BACKGROUND("sdc-loader-global-wrapper sdc-loader-background", "//div[@class='%s']");
 
         @Getter
         private final String id;

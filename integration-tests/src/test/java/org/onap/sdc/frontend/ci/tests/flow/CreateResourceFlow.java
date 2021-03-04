@@ -23,6 +23,8 @@ import com.aventstack.extentreports.Status;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Optional;
@@ -45,6 +47,7 @@ public class CreateResourceFlow extends AbstractUiTestFlow {
         resourceCreatePage = findParameter(pageObjects, ResourceCreatePage.class);
         extendTest.log(Status.INFO, String.format("Creating the Resource '%s'", resourceName));
         resourceCreatePage.createResource();
+        new NotificationComponent(webDriver).waitForNotification(NotificationType.CREATE_OR_UPDATE, 10);
         ExtentTestActions.takeScreenshot(Status.INFO, "resource-created",
             String.format("Resource '%s' was created", resourceName));
         return Optional.ofNullable(resourceCreatePage);

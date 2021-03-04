@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,54 +21,34 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handles the VSP Commit Modal UI actions
+ * Handles the VLM Submit Modal UI actions
  */
-public class VspCommitModal extends AbstractPageObject {
+public class VlmSubmitModal extends AbstractPageObject {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VspCommitModal.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VlmSubmitModal.class);
 
-    private WebElement wrappingElement;
 
-    public VspCommitModal(final WebDriver webDriver) {
+    public VlmSubmitModal(final WebDriver webDriver) {
         super(webDriver);
     }
 
     public void isLoaded() {
         LOGGER.debug("Finding element with xpath '{}'", XpathSelector.MODAL_DIV.getXpath());
-        wrappingElement = waitForElementVisibility(XpathSelector.MODAL_DIV.getXpath());
-    }
-
-    /**
-     * Fills the comment text area with a default message.
-     */
-    public void fillCommentWithDefaulMessage() {
-        final WebElement commentTxt = wrappingElement.findElement(By.xpath(XpathSelector.COMMIT_COMMENT_TXT.getXpath()));
-        commentTxt.sendKeys("First VSP version");
-    }
-
-    /**
-     * Clicks on the modal submit and confirms success.
-     */
-    public void submit() {
-        final WebElement commitAndSubmitBtn = wrappingElement.findElement(By.xpath(XpathSelector.COMMIT_AND_SUBMIT_BTN.getXpath()));
-        commitAndSubmitBtn.click();
-        confirmSuccess();
+        waitForElementVisibility(XpathSelector.MODAL_DIV.getXpath());
     }
 
     /**
      * Confirms the success of the modal submission.
      */
-    private void confirmSuccess() {
-        final WebElement successModal = waitForElementVisibility(By.xpath(XpathSelector.SUCCESS_MODAL_DIV.getXpath()), 60);
+    public void confirmSuccess() {
+        final WebElement successModal = waitForElementVisibility(XpathSelector.SUCCESS_MODAL_DIV.getXpath());
         successModal.findElement(By.xpath(XpathSelector.MODAL_CANCEL_BTN.getXpath())).click();
     }
 
@@ -77,9 +57,8 @@ public class VspCommitModal extends AbstractPageObject {
      */
     @AllArgsConstructor
     private enum XpathSelector {
-        MODAL_DIV("sdc-modal-type-custom", "//div[contains(@class, '%s')]"),
-        COMMIT_AND_SUBMIT_BTN("form-submit-button", "//button[@data-test-id='%s']"),
-        COMMIT_COMMENT_TXT("commit-comment-text", "//textarea[@data-test-id='%s']"),
+        MODAL_DIV("sdc-modal", "//div[contains(@class, '%s')]"),
+        SUBMIT_BTN("vc-submit-btn", "//div[@data-test-id='%s']"),
         SUCCESS_MODAL_DIV("sdc-modal-type-info", "//div[contains(@class, '%s')]"),
         MODAL_CANCEL_BTN("sdc-modal-cancel-button", "//button[@data-test-id='%s']");
 

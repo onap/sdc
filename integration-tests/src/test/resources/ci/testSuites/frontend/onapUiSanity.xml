@@ -31,6 +31,12 @@
           <include name="createEtsiNetworkService"/>
         </methods>
       </class>
+      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.EtsiOnboardVnfCnfUiTests">
+        <methods>
+          <include name="createVlm"/>
+          <include name="onboardEtsiVnfCnfFlow"/>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>

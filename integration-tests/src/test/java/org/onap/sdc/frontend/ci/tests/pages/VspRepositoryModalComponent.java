@@ -70,7 +70,7 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
             findSubElements(wrappingElement, By.className(XpathSelector.RESULTS_CONTAINER_DIV.getId()));
         vspResultList.get(listPosition).click();
         GeneralUIUtils.clickOnElementByTestId(XpathSelector.IMPORT_VSP_BTN.getId());
-        return new ResourceCreatePage(webDriver, new LoaderHelper(), new NotificationComponent(webDriver));
+        return new ResourceCreatePage(webDriver, new LoaderHelper(webDriver), new NotificationComponent(webDriver));
     }
 
     /**
