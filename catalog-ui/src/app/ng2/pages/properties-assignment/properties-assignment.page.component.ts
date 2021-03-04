@@ -841,8 +841,6 @@ export class PropertiesAssignmentComponent {
             handleReverseItem = (changedItem) => {
                 changedItem = <PropertyFEModel>changedItem;
                 this.propertiesUtils.resetPropertyValue(changedItem, changedItem.value);
-                this.checkedPropertiesCount = 0;
-                this.checkedChildPropertiesCount = 0;
             };
         } else if (this.isInputsTabSelected) {
             handleReverseItem = (changedItem) => {
@@ -879,10 +877,6 @@ export class PropertiesAssignmentComponent {
                     title: 'Saved'
                 });
                 if(onSuccessFunction) onSuccessFunction();
-                if(this.isPropertiesTabSelected){
-                    this.checkedPropertiesCount = 0;
-                    this.checkedChildPropertiesCount = 0;
-                }
             },
             () => {
                 this.Notification.error({
