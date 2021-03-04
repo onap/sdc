@@ -717,7 +717,7 @@ public final class GeneralUIUtils {
         getDriver().navigate().to(url);
     }
 
-    public static void refreshWebpage() throws Exception {
+    public static void refreshWebpage() {
         getExtendTest().log(Status.INFO, "Refreshing Webpage");
         getDriver().navigate().refresh();
         ultimateWait();

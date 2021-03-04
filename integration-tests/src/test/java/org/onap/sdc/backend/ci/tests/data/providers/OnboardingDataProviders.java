@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.FileHandling;
@@ -111,6 +112,29 @@ public final class OnboardingDataProviders {
         final Object[][] parametersArray = new Object[1][];
         parametersArray[0] = new Object[]{folderPath, softwareInformationPnfPackage.get(),
             Arrays.asList("5gDUv18.05.201", "5gDUv18.06.205")};
+        return parametersArray;
+    }
+
+    @DataProvider(name = "etsiVnfCnfOnboardPackages", parallel = true)
+    private static Object[][] etsiVnf() {
+        final List<String> vnfPackageFileNameList = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
+        if (CollectionUtils.isEmpty(vnfPackageFileNameList)) {
+            fail("Could not create etsiSingleVnfCnf datasource");
+        }
+        final String etsiVnfPackageName = "ETSI-VNF-SAMPLE.csar";
+        final String etsiCnfPackageName = "ETSI-CNF-SAMPLE.csar";
+        final List<String> etsiPackages = vnfPackageFileNameList.stream()
+            .filter(packageName -> packageName.equals(etsiVnfPackageName) || packageName.equals(etsiCnfPackageName))
+            .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(etsiPackages) || etsiPackages.size() < 2) {
+            fail(String.format("Could not create etsiSingleVnfCnf datasource, one of the package '%s' was not found",
+                etsiPackages));
+        }
+
+        final String folderPath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.VNF);
+        final Object[][] parametersArray = new Object[2][];
+        parametersArray[0] = new Object[]{folderPath, etsiPackages.get(0)};
+        parametersArray[1] = new Object[]{folderPath, etsiPackages.get(1)};
         return parametersArray;
     }
 
