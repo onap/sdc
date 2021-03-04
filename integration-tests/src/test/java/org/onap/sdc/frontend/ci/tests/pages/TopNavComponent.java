@@ -76,10 +76,11 @@ public class TopNavComponent extends AbstractPageObject {
 
     public boolean isHomeSelected() {
         final By homeLinkLocator = By.xpath(XpathSelector.MAIN_MENU_LINK_HOME.getXpath());
-        final WebElement homeLinkElement = waitForElementVisibility(homeLinkLocator);
+        final WebElement homeLinkElement = waitToBeClickable(homeLinkLocator);
         final WebElement homeLinkParentElement = homeLinkElement.findElement(By.xpath("./.."));
-        final String aClass = homeLinkParentElement.getAttribute("class");
-        return "selected".equals(aClass);
+        final String homeLinkClass = homeLinkParentElement.getAttribute("class");
+        LOGGER.debug(String.format("Home link class '%s'", homeLinkClass));
+        return homeLinkClass != null && homeLinkClass.contains("selected");
     }
 
     /**
@@ -116,6 +117,7 @@ public class TopNavComponent extends AbstractPageObject {
      * @return the next page object
      */
     public OnboardHomePage clickOnOnboard() {
+        waitForElementInvisibility(By.xpath(XpathSelector.SDC_LOADER_BACKGROUND.getXpath()));
         wrappingElement.findElement(By.xpath(XpathSelector.MAIN_MENU_ONBOARD_BTN.getXpath())).click();
         return new OnboardHomePage(DriverFactory.getDriver(), new OnboardHeaderComponent(DriverFactory.getDriver()));
     }
@@ -146,7 +148,8 @@ public class TopNavComponent extends AbstractPageObject {
         MAIN_MENU_LINK_HOME("main-menu-button-home", "//*[@data-tests-id='%s']"),
         ARROW_DROPDOWN("triangle-dropdown", "//li[contains(@class, '%s')]"),
         MAIN_MENU_ONBOARD_BTN("main-menu-button-onboard", "//a[@data-tests-id='%s']"),
-        REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']");
+        REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']"),
+        SDC_LOADER_BACKGROUND("sdc-loader-global-wrapper sdc-loader-background", "//div[@class='%s']");
 
         @Getter
         private final String id;

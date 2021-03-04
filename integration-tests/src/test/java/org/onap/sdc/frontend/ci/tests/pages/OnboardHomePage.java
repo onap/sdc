@@ -19,6 +19,7 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.openqa.selenium.By;
@@ -33,6 +34,7 @@ public class OnboardHomePage extends AbstractPageObject {
 
     private final OnboardHeaderComponent onboardHeaderComponent;
     private WebElement createNewVspBtn;
+    private WebElement createNewVlmBtn;
 
     public OnboardHomePage(final WebDriver webDriver,
                            final OnboardHeaderComponent onboardHeaderComponent) {
@@ -45,7 +47,8 @@ public class OnboardHomePage extends AbstractPageObject {
         onboardHeaderComponent.isLoaded();
         createNewVspBtn = getWait()
             .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.ADD_NEW_VSP_BTN.getXpath())));
-        getWait()
+
+        createNewVlmBtn = getWait()
             .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.ADD_NEW_VLM_BTN.getXpath())));
     }
 
@@ -55,8 +58,21 @@ public class OnboardHomePage extends AbstractPageObject {
      * @return returns the next vsp creation page object
      */
     public VspCreationModal clickOnCreateNewVsp() {
+        waitForElementInvisibility(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
         createNewVspBtn.click();
         return new VspCreationModal(webDriver);
+    }
+
+
+    /**
+     * Clicks on the button create new vlm.
+     *
+     * @return returns the next vlm creation page object
+     */
+    public VlmCreationModal clickOnCreateNewVlm() {
+        waitForElementInvisibility(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
+        createNewVlmBtn.click();
+        return new VlmCreationModal(webDriver);
     }
 
     /**
@@ -65,7 +81,8 @@ public class OnboardHomePage extends AbstractPageObject {
     @AllArgsConstructor
     private enum XpathSelector {
         ADD_NEW_VSP_BTN("catalog-add-new-vsp", "//div[@data-test-id='%s']"),
-        ADD_NEW_VLM_BTN("catalog-add-new-vlm", "//div[@data-test-id='%s']");
+        ADD_NEW_VLM_BTN("catalog-add-new-vlm", "//div[@data-test-id='%s']"),
+        ONBOARDING_LOADER_DIV("onboarding-loader-backdrop","//div[@class='%s']");
 
         @Getter
         private final String id;

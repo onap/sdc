@@ -31,7 +31,6 @@ import org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
 import org.onap.sdc.frontend.ci.tests.pages.VspCreationModal;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
-import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -140,8 +139,7 @@ public class CreateVspFlow extends AbstractUiTestFlow {
     private void goToHomePage(final TopNavComponent topNavComponent) {
         extendTest.log(Status.INFO, "Accessing the Home page to import the created VSP");
         topNavComponent.isLoaded();
-        homePage = topNavComponent.clickOnHome();
-        GeneralUIUtils.ultimateWait();
+        this.homePage = topNavComponent.clickOnHome();
         homePage.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "home-is-loaded", "The Home page is loaded.");
     }
