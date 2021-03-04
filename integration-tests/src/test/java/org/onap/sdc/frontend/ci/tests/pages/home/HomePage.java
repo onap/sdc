@@ -22,11 +22,13 @@ package org.onap.sdc.frontend.ci.tests.pages.home;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
+import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
+import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -47,7 +49,12 @@ public class HomePage extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
+        new Actions(webDriver).pause(Duration.ofSeconds(2)).perform();
+        new LoaderHelper(webDriver).waitForLoaderInvisibility(5);
+        waitToBeClickable(XpathSelector.HOME_RIGHT_CONTAINER.getXpath());
+        waitToBeClickable(XpathSelector.HOME_SIDE_BAR.getXpath());
         topNavComponent.isLoaded();
+        topNavComponent.waitRepositoryToBeClickable();
         assertThat("The Home tab should be selected", topNavComponent.isHomeSelected(), is(true));
     }
 
@@ -83,6 +90,8 @@ public class HomePage extends AbstractPageObject {
      */
     @AllArgsConstructor
     private enum XpathSelector {
+        HOME_RIGHT_CONTAINER("w-sdc-main-right-container", "//div[@class='%s']"),
+        HOME_SIDE_BAR("w-sdc-left-sidebar", "//div[@class='%s']"),
         ADD_SERVICE_BTN("createServiceButton", "//*[@data-tests-id='%s']"),
         ADD_BUTTONS_AREA("AddButtonsArea", "//*[@data-tests-id='%s']");
 

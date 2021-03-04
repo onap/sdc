@@ -22,6 +22,7 @@ package org.onap.sdc.backend.ci.tests.datatypes.enums;
 
 public enum XnfTypeEnum {
 
+    ETSI ("ETSI"),
     VNF ("VNF"),
     PNF ("PNF"),
     CNF ("CNF");

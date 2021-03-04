@@ -112,12 +112,14 @@ public class OnboardingFlowsUi extends SetupCDTest {
 
     protected static String filePath = FileHandling.getVnfRepositoryPath();
     private Boolean makeDistributionValue;
+    private WebDriver webDriver;
 
     @Parameters({"makeDistribution"})
     @BeforeMethod
     public void beforeTestReadParams(@Optional("true") String makeDistributionReadValue) {
         LOGGER.debug("makeDistribution parameter is '{}'", makeDistributionReadValue);
         makeDistributionValue = Boolean.valueOf(makeDistributionReadValue);
+        webDriver = DriverFactory.getDriver();
     }
 
     @Test
@@ -387,8 +389,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
 
         extendTest.log(Status.INFO,
             String.format("Creating VSP '%s' by onboarding package '%s' with software version '%s'",
-                resourceName, pnfFile, swVersionsToString)
-        );
+                resourceName, pnfFile, swVersionsToString));
         final WebDriver webDriver = DriverFactory.getDriver();
         final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, pnfFile, rootFolder);
         createVspFlow.run(new TopNavComponent(webDriver));
