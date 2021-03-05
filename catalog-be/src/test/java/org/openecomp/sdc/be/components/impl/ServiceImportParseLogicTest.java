@@ -17,7 +17,12 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -33,14 +38,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
@@ -58,7 +62,31 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.UploadCapInfo;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadPropInfo;
+import org.openecomp.sdc.be.model.UploadReqInfo;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
@@ -71,41 +99,7 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
-
-    ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
-    ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
-    ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
-    IElementOperation elementDao = Mockito.mock(IElementOperation.class);
-    IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
-    InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
-    LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
 
     private static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
@@ -116,17 +110,22 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     private static final String RESOURCE_SUBCATEGORY = "Router";
 
-    @InjectMocks
-    private ServiceImportParseLogic serviceImportParseLogic;
-    ResponseFormatManager responseManager = null;
-    User user = null;
+    private final ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
+    private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
+    private final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
+    private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
+    private final IElementOperation elementDao = Mockito.mock(IElementOperation.class);
+    private final IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
+    private final InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
+    private final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
+
+    private ResponseFormatManager responseManager = null;
+    private User user = null;
+    private ServiceImportParseLogic testSubject;
 
     private ServiceImportParseLogic createTestSubject() {
         return new ServiceImportParseLogic();
     }
-
-    ServiceImportParseLogic bl;
-
 
     @BeforeEach
     public void setup() {
@@ -143,83 +142,30 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         user.setRole(Role.ADMIN.name());
         responseManager = ResponseFormatManager.getInstance();
 
-        bl = new ServiceImportParseLogic();
-        bl.setComponentsUtils(componentsUtils);
-        bl.setToscaOperationFacade(toscaOperationFacade);
+        testSubject = createTestSubject();
+        testSubject.setComponentsUtils(componentsUtils);
+        testSubject.setToscaOperationFacade(toscaOperationFacade);
         serviceBusinessLogic.setElementDao(elementDao);
-        bl.setServiceBusinessLogic(serviceBusinessLogic);
-        bl.setCapabilityTypeOperation(capabilityTypeOperation);
-        bl.setInterfaceTypeOperation(interfaceTypeOperation);
-        bl.setInputsBusinessLogic(inputsBusinessLogic);
-        bl.setLifecycleBusinessLogic(lifecycleBusinessLogic);
-    }
-
-    @Test
-    public void testGetServiceBusinessLogic() {
-        ServiceImportParseLogic testSubject;
-        ServiceBusinessLogic result;
-
-        testSubject = createTestSubject();
-        result = testSubject.getServiceBusinessLogic();
-        assertNull(result);
-    }
-
-    @Test
-    public void testSetServiceBusinessLogic() {
-        ServiceImportParseLogic testSubject;
-        ServiceBusinessLogic serviceBusinessLogic = null;
-
-        testSubject = createTestSubject();
         testSubject.setServiceBusinessLogic(serviceBusinessLogic);
-        assertNotNull(testSubject);
+        testSubject.setCapabilityTypeOperation(capabilityTypeOperation);
+        testSubject.setInterfaceTypeOperation(interfaceTypeOperation);
+        testSubject.setInputsBusinessLogic(inputsBusinessLogic);
+        testSubject.setLifecycleBusinessLogic(lifecycleBusinessLogic);
     }
 
     @Test
-    public void testGetCapabilityTypeOperation() {
-        ServiceImportParseLogic testSubject;
-        ICapabilityTypeOperation result;
-
+    void testFindNodeTypesArtifactsToHandle() {
         testSubject = createTestSubject();
-        result = testSubject.getCapabilityTypeOperation();
-        assertNull(result);
-    }
-
-    @Test
-    public void testSetCapabilityTypeOperation() {
-        ServiceImportParseLogic testSubject;
-        ICapabilityTypeOperation iCapabilityTypeOperation = null;
-
-        testSubject = createTestSubject();
-        testSubject.setCapabilityTypeOperation(iCapabilityTypeOperation);
-        assertNotNull(testSubject);
-    }
-
-    private CsarInfo createCsarInfo() {
-        Map<String, byte[]> csar = new HashMap<>();
-        User user = new User();
-        CsarInfo csarInfo = new CsarInfo(user, "csar_UUID", csar, "vfResourceName", "mainTemplateName",
-                "mainTemplateContent", true);
-        csarInfo.setVfResourceName("vfResourceName");
-        csarInfo.setCsar(csar);
-        csarInfo.setCsarUUID("csarUUID");
-        csarInfo.setModifier(user);
-        csarInfo.setUpdate(true);
-        return csarInfo;
-    }
-
-    @Test
-    public void testFindNodeTypesArtifactsToHandle() {
-        ServiceImportParseLogic testSubject = createTestSubject();
         Map<String, NodeTypeInfo> nodeTypesInfo = new HashedMap();
         final Service service = createServiceObject(false);
         Assertions.assertNotNull(
-                bl.findNodeTypesArtifactsToHandle(
-                        nodeTypesInfo, getCsarInfo(), service));
+            this.testSubject.findNodeTypesArtifactsToHandle(
+                nodeTypesInfo, getCsarInfo(), service));
 
     }
 
     @Test
-    public void testBuildNodeTypeYaml() {
+    void testBuildNodeTypeYaml() {
         Map.Entry<String, Object> nodeNameValue = new Entry<String, Object>() {
             @Override
             public String getKey() {
@@ -239,14 +185,14 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Map<String, Object> mapToConvert = new HashMap<>();
         String nodeResourceType = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX;
 
+        final CsarInfo csarInfo = getCsarInfo();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.buildNodeTypeYaml(
-                        nodeNameValue, mapToConvert, nodeResourceType, getCsarInfo()));
+            testSubject.buildNodeTypeYaml(nodeNameValue, mapToConvert, nodeResourceType, csarInfo));
 
     }
 
     @Test
-    public void testFindAddNodeTypeArtifactsToHandle() {
+    void testFindAddNodeTypeArtifactsToHandle() {
 
         Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = new HashMap<>();
         Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
@@ -258,16 +204,17 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Resource resource = new Resource();
         Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(resource);
         when(toscaOperationFacade.getLatestByToscaResourceName(anyString()))
-                .thenReturn(getCompLatestResult);
+            .thenReturn(getCompLatestResult);
 
+        final CsarInfo csarInfo = getCsarInfo();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.findAddNodeTypeArtifactsToHandle(getCsarInfo(), nodeTypesArtifactsToHandle, service,
-                        extractedVfcsArtifacts, namespace, p1));
+            testSubject.findAddNodeTypeArtifactsToHandle(csarInfo, nodeTypesArtifactsToHandle, service,
+                extractedVfcsArtifacts, namespace, p1));
 
     }
 
     @Test
-    public void testFindAddNodeTypeArtifactsToHandleNotNull() {
+    void testFindAddNodeTypeArtifactsToHandleNotNull() {
 
         Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = new HashMap<>();
         Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
@@ -285,12 +232,12 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         when(toscaOperationFacade.getLatestByToscaResourceName(anyString()))
             .thenReturn(getCompLatestResult);
         Assertions.assertNotNull(extractedVfcsArtifacts);
-        bl.findAddNodeTypeArtifactsToHandle(getCsarInfo(), nodeTypesArtifactsToHandle, service,
-                extractedVfcsArtifacts, namespace, p1);
+        testSubject.findAddNodeTypeArtifactsToHandle(getCsarInfo(), nodeTypesArtifactsToHandle, service,
+            extractedVfcsArtifacts, namespace, p1);
     }
 
     @Test
-    public void testHandleAndAddExtractedVfcsArtifacts() {
+    void testHandleAndAddExtractedVfcsArtifacts() {
         List<ArtifactDefinition> vfcArtifacts = new ArrayList<>();
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setArtifactName("artifactDefinitionName");
@@ -301,29 +248,29 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         artifactsToAdd.add(artifactDefinitionToAdd);
         Assertions.assertNotNull(vfcArtifacts);
 
-        bl.handleAndAddExtractedVfcsArtifacts(vfcArtifacts, artifactsToAdd);
+        testSubject.handleAndAddExtractedVfcsArtifacts(vfcArtifacts, artifactsToAdd);
     }
 
     @Test
-    public void testFindNodeTypeArtifactsToHandle() {
+    void testFindNodeTypeArtifactsToHandle() {
 
         Resource curNodeType = createParseResourceObject(true);
         List<ArtifactDefinition> extractedArtifacts = new ArrayList<>();
 
         Assertions.assertNull(
-                bl.findNodeTypeArtifactsToHandle(curNodeType, extractedArtifacts));
+            testSubject.findNodeTypeArtifactsToHandle(curNodeType, extractedArtifacts));
     }
 
     @Test
-    public void testCollectExistingArtifacts() {
+    void testCollectExistingArtifacts() {
 
         Resource curNodeType = createParseResourceObject(true);
         Assertions.assertNotNull(
-                bl.collectExistingArtifacts(curNodeType));
+            testSubject.collectExistingArtifacts(curNodeType));
     }
 
     @Test
-    public void testPutFoundArtifacts() {
+    void testPutFoundArtifacts() {
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         List<ArtifactDefinition> artifactsToUpload = new ArrayList<>();
         artifactsToUpload.add(artifactDefinition);
@@ -332,11 +279,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
         artifactsToDelete.add(artifactDefinition);
         Assertions.assertNotNull(
-                bl.putFoundArtifacts(artifactsToUpload, artifactsToUpdate, artifactsToDelete));
+            testSubject.putFoundArtifacts(artifactsToUpload, artifactsToUpdate, artifactsToDelete));
     }
 
     @Test
-    public void testProcessExistingNodeTypeArtifacts() {
+    void testProcessExistingNodeTypeArtifacts() {
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         List<ArtifactDefinition> extractedArtifacts = new ArrayList<>();
         extractedArtifacts.add(artifactDefinition);
@@ -349,13 +296,13 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Map<String, ArtifactDefinition> existingArtifacts = new HashMap<>();
         existingArtifacts.put("test", artifactDefinition);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.processExistingNodeTypeArtifacts(extractedArtifacts, artifactsToUpload, artifactsToUpdate,
-                        artifactsToDelete, existingArtifacts));
+            testSubject.processExistingNodeTypeArtifacts(extractedArtifacts, artifactsToUpload, artifactsToUpdate,
+                artifactsToDelete, existingArtifacts));
 
     }
 
     @Test
-    public void testProcessNodeTypeArtifact() {
+    void testProcessNodeTypeArtifact() {
         List<ArtifactDefinition> artifactsToUpload = new ArrayList<>();
         List<ArtifactDefinition> artifactsToUpdate = new ArrayList<>();
         Map<String, ArtifactDefinition> existingArtifacts = new HashMap<>();
@@ -369,11 +316,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         currNewArtifact.setArtifactType("ArtifactType");
         currNewArtifact.setPayload("Payload".getBytes());
         Assertions.assertNotNull(existingArtifact);
-        bl.processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, currNewArtifact);
+        testSubject.processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, currNewArtifact);
     }
 
     @Test
-    public void testUpdateFoundArtifact() {
+    void testUpdateFoundArtifact() {
         List<ArtifactDefinition> artifactsToUpdate = new ArrayList<>();
         ArtifactDefinition currNewArtifact = new ArtifactDefinition();
         currNewArtifact.setArtifactChecksum("090909");
@@ -382,53 +329,51 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         foundArtifact.setArtifactChecksum("08767");
         Assertions.assertNotNull(currNewArtifact);
 
-        bl.updateFoundArtifact(artifactsToUpdate, currNewArtifact, foundArtifact);
+        testSubject.updateFoundArtifact(artifactsToUpdate, currNewArtifact, foundArtifact);
     }
 
     @Test
-    public void testIsArtifactDeletionRequired() {
+    void testIsArtifactDeletionRequired() {
         String artifactId = "artifactId";
         byte[] artifactFileBytes = new byte[100];
         boolean isFromCsar = true;
-        Assertions.assertNotNull(
-                bl.isArtifactDeletionRequired(artifactId, artifactFileBytes, isFromCsar));
+        Assertions.assertFalse(testSubject.isArtifactDeletionRequired(artifactId, artifactFileBytes, isFromCsar));
     }
 
     @Test
-    public void testFillGroupsFinalFields() {
+    void testFillGroupsFinalFields() {
         List<GroupDefinition> groupsAsList = new ArrayList<>();
         GroupDefinition groupDefinition = new GroupDefinition();
         groupDefinition.setName("groupDefinitionName");
         groupsAsList.add(groupDefinition);
         Assertions.assertNotNull(groupsAsList);
-        bl.fillGroupsFinalFields(groupsAsList);
+        testSubject.fillGroupsFinalFields(groupsAsList);
     }
 
     @Test
-    public void testGetComponentTypeForResponse() {
+    void testGetComponentTypeForResponse() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertNotNull(
-                bl.getComponentTypeForResponse(resource));
+            testSubject.getComponentTypeForResponse(resource));
     }
 
     @Test
-    public void testGetComponentTypeForResponseByService() {
+    void testGetComponentTypeForResponseByService() {
         Service service = createServiceObject(true);
         Assertions.assertNotNull(
-                bl.getComponentTypeForResponse(service));
+            testSubject.getComponentTypeForResponse(service));
     }
 
     @Test
-    public void testIsfillGroupMemebersRecursivlyStopCondition() {
+    void testIsfillGroupMemebersRecursivlyStopCondition() {
         String groupName = "groupName";
         Map<String, GroupDefinition> allGroups = new HashMap<>();
         Set<String> allGroupMembers = new HashSet<>();
-        Assertions.assertNotNull(
-                bl.isfillGroupMemebersRecursivlyStopCondition(groupName, allGroups, allGroupMembers));
+        Assertions.assertTrue(testSubject.isfillGroupMemebersRecursivlyStopCondition(groupName, allGroups, allGroupMembers));
     }
 
     @Test
-    public void testIsfillGroupMemebersRecursivlyStopCondition2() {
+    void testIsfillGroupMemebersRecursivlyStopCondition2() {
         String groupName = "groupName";
         Map<String, GroupDefinition> allGroups = new HashMap<>();
         GroupDefinition groupDefinition = new GroupDefinition();
@@ -437,12 +382,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         groupDefinition.setMembers(members);
         allGroups.put(groupName, groupDefinition);
         Set<String> allGroupMembers = new HashSet<>();
-        Assertions.assertNotNull(
-                bl.isfillGroupMemebersRecursivlyStopCondition(groupName, allGroups, allGroupMembers));
+        Assertions.assertTrue(testSubject.isfillGroupMemebersRecursivlyStopCondition(groupName, allGroups, allGroupMembers));
     }
 
     @Test
-    public void testBuildValidComplexVfc() {
+    void testBuildValidComplexVfc() {
         Resource resource = createParseResourceObject(true);
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
         Map<String, NodeTypeInfo> nodesInfo = new HashMap<>();
@@ -451,38 +395,40 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         derivedFrom.add("derivedFrom");
         nodeTypeInfo.setDerivedFrom(derivedFrom);
         nodesInfo.put(nodeName, nodeTypeInfo);
+        final CsarInfo csarInfo = getCsarInfo();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.buildValidComplexVfc(resource, getCsarInfo(), nodeName, nodesInfo));
+            testSubject.buildValidComplexVfc(resource, csarInfo, nodeName, nodesInfo));
 
     }
 
     @Test
-    public void testValidateResourceBeforeCreate() {
+    void testValidateResourceBeforeCreate() {
         Resource resource = createParseResourceObject(true);
 
-        bl.getServiceBusinessLogic().setElementDao(elementDao);
+        testSubject.getServiceBusinessLogic().setElementDao(elementDao);
+        final CsarInfo csarInfo = getCsarInfo();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateResourceBeforeCreate(resource, user, AuditingActionEnum.IMPORT_RESOURCE, false, getCsarInfo()));
+            testSubject.validateResourceBeforeCreate(resource, user, AuditingActionEnum.IMPORT_RESOURCE, false, csarInfo));
 
     }
 
     @Test
-    public void testValidateResourceType() {
+    void testValidateResourceType() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertNotNull(
-                bl.validateResourceType(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateResourceType(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
     }
 
     @Test
-    public void testValidateResourceTypeIsEmpty() {
+    void testValidateResourceTypeIsEmpty() {
         Resource resource = new Resource();
         resource.setResourceType(null);
         Assertions.assertNotNull(
-                bl.validateResourceType(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateResourceType(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
     }
 
     @Test
-    public void testValidateLifecycleTypesCreate() {
+    void testValidateLifecycleTypesCreate() {
         Resource resource = createParseResourceObject(true);
         Map<String, InterfaceDefinition> mapInterfaces = new HashMap<>();
         InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
@@ -493,11 +439,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         when(interfaceTypeOperation.getInterface(anyString()))
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Assertions.assertNotNull(
-                bl.validateLifecycleTypesCreate(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateLifecycleTypesCreate(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
     }
 
     @Test
-    public void testValidateCapabilityTypesCreate() {
+    void testValidateCapabilityTypesCreate() {
         Resource resource = createParseResourceObject(true);
         Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
         String uniqueId = "18982938994";
@@ -507,15 +453,15 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         capabilities.put(uniqueId, capabilityDefinitionList);
         resource.setCapabilities(capabilities);
         when(capabilityTypeOperation.getCapabilityType(anyString(), anyBoolean())).
-                thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+            thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Assertions.assertNotNull(
-                bl.validateCapabilityTypesCreate(user, bl.getCapabilityTypeOperation(), resource,
-                        AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCapabilityTypesCreate(user, testSubject.getCapabilityTypeOperation(), resource,
+                AuditingActionEnum.IMPORT_RESOURCE, true));
 
     }
 
     @Test
-    public void testValidateCapabilityTypesCreateWhenHaveCapability() {
+    void testValidateCapabilityTypesCreateWhenHaveCapability() {
         Resource resource = createParseResourceObject(true);
         Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
         String uniqueId = "18982938994";
@@ -526,29 +472,29 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         resource.setCapabilities(capabilities);
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
         when(capabilityTypeOperation.getCapabilityType(anyString(), anyBoolean())).
-                thenReturn(Either.left(capabilityTypeDefinition));
+            thenReturn(Either.left(capabilityTypeDefinition));
 
         Assertions.assertNotNull(
-                bl.validateCapabilityTypesCreate(user, bl.getCapabilityTypeOperation(), resource,
-                        AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCapabilityTypesCreate(user, testSubject.getCapabilityTypeOperation(), resource,
+                AuditingActionEnum.IMPORT_RESOURCE, true));
 
     }
 
     @Test
-    public void testValidateCapabilityTypeExists() {
+    void testValidateCapabilityTypeExists() {
         Resource resource = createParseResourceObject(true);
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         for (Map.Entry<String, List<CapabilityDefinition>> typeEntry : resource.getCapabilities().entrySet()) {
 
             Assertions.assertNotNull(
-                    bl.validateCapabilityTypeExists(user, bl.getCapabilityTypeOperation(), resource,
-                            AuditingActionEnum.IMPORT_RESOURCE,
-                            eitherResult, typeEntry, false));
+                testSubject.validateCapabilityTypeExists(user, testSubject.getCapabilityTypeOperation(), resource,
+                    AuditingActionEnum.IMPORT_RESOURCE,
+                    eitherResult, typeEntry, false));
         }
     }
 
     @Test
-    public void testValidateCapabilityTypeExistsWhenPropertiesIsNull() {
+    void testValidateCapabilityTypeExistsWhenPropertiesIsNull() {
         Resource resource = createParseResourceObject(true);
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
@@ -567,18 +513,18 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         resource.setCapabilities(capabilities);
 
         when(capabilityTypeOperation.getCapabilityType(anyString(), anyBoolean())).
-                thenReturn(Either.left(capabilityTypeDefinition));
+            thenReturn(Either.left(capabilityTypeDefinition));
         for (Map.Entry<String, List<CapabilityDefinition>> typeEntry : resource.getCapabilities().entrySet()) {
 
             Assertions.assertNotNull(
-                    bl.validateCapabilityTypeExists(user, bl.getCapabilityTypeOperation(), resource,
-                            AuditingActionEnum.IMPORT_RESOURCE,
-                            eitherResult, typeEntry, false));
+                testSubject.validateCapabilityTypeExists(user, testSubject.getCapabilityTypeOperation(), resource,
+                    AuditingActionEnum.IMPORT_RESOURCE,
+                    eitherResult, typeEntry, false));
         }
     }
 
     @Test
-    public void testValidateCapabilityTypeExistsWhenPropertiesNotNull() {
+    void testValidateCapabilityTypeExistsWhenPropertiesNotNull() {
         Resource resource = createParseResourceObject(true);
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
@@ -606,158 +552,135 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         resource.setCapabilities(capabilities);
 
         when(capabilityTypeOperation.getCapabilityType(anyString(), anyBoolean())).
-                thenReturn(Either.left(capabilityTypeDefinition));
+            thenReturn(Either.left(capabilityTypeDefinition));
         for (Map.Entry<String, List<CapabilityDefinition>> typeEntry : resource.getCapabilities().entrySet()) {
 
             Assertions.assertNotNull(
-                    bl.validateCapabilityTypeExists(user, bl.getCapabilityTypeOperation(), resource,
-                            AuditingActionEnum.IMPORT_RESOURCE,
-                            eitherResult, typeEntry, false));
+                testSubject.validateCapabilityTypeExists(user, testSubject.getCapabilityTypeOperation(), resource,
+                    AuditingActionEnum.IMPORT_RESOURCE,
+                    eitherResult, typeEntry, false));
         }
     }
 
     @Test
-    public void testValidateCapabilityTypeExists2() {
+    void testValidateCapabilityTypeExists2() {
         Resource resource = createParseResourceObject(true);
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         when(capabilityTypeOperation.getCapabilityType(anyString(), anyBoolean())).
-                thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+            thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         for (String type : resource.getRequirements().keySet()) {
             Assertions.assertNotNull(
-                    bl.validateCapabilityTypeExists(user, bl.getCapabilityTypeOperation(), resource,
-                            resource.getRequirements().get(type), AuditingActionEnum.IMPORT_RESOURCE, eitherResult, type,
-                            false));
+                testSubject.validateCapabilityTypeExists(user, testSubject.getCapabilityTypeOperation(), resource,
+                    resource.getRequirements().get(type), AuditingActionEnum.IMPORT_RESOURCE, eitherResult, type,
+                    false));
 
         }
     }
 
     @Test
-    public void testValidateResourceFieldsBeforeCreate() {
+    void testValidateResourceFieldsBeforeCreate() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateResourceFieldsBeforeCreate(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateResourceFieldsBeforeCreate(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
     }
 
     @Test
-    public void testValidateDerivedFromExist() {
+    void testValidateDerivedFromExist() {
         Resource resource = createParseResourceObject(true);
-        when(toscaOperationFacade.validateToscaResourceNameExists(anyString()))
-                .thenReturn(Either.left(true));
+        when(toscaOperationFacade.validateToscaResourceNameExists(anyString())).thenReturn(Either.left(true));
         Assertions.assertNotNull(resource);
 
-        bl.validateDerivedFromExist(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+        testSubject.validateDerivedFromExist(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
     }
 
     @Test
-    public void testValidateDerivedFromExistFailure1() {
-        Resource resource = createParseResourceObject(true);
-
-        when(toscaOperationFacade.validateToscaResourceNameExists(anyString()))
-                .thenReturn(Either.left(true));
-        Assertions.assertNotNull(resource);
-
-        bl.validateDerivedFromExist(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
-    }
-
-    @Test
-    public void testValidateDerivedFromExistFailure2() {
-        Resource resource = createParseResourceObject(true);
-
-        when(toscaOperationFacade.validateToscaResourceNameExists(anyString()))
-                .thenReturn(Either.left(true));
-        Assertions.assertNotNull(resource);
-
-        bl.validateDerivedFromExist(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
-    }
-
-    @Test
-    public void testValidateLicenseType() {
+    void testValidateLicenseType() {
         Resource resource = createParseResourceObject(true);
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateLicenseType(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateLicenseType(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
 
 
     }
 
     @Test
-    public void testValidateCost() {
+    void testValidateCost() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCost(resource));
+            testSubject.validateCost(resource));
     }
 
     @Test
-    public void testValidateResourceVendorModelNumber() {
+    void testValidateResourceVendorModelNumber() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertNotNull(resource);
 
-        bl.validateResourceVendorModelNumber(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+        testSubject.validateResourceVendorModelNumber(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
     }
 
     @Test
-    public void testValidateResourceVendorModelNumberWrongLen() {
+    void testValidateResourceVendorModelNumberWrongLen() {
         Resource resource = createParseResourceObject(true);
         resource.setResourceVendorModelNumber("000000000011122221111222333444443222556677788778889999998776554332340");
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateResourceVendorModelNumber(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateResourceVendorModelNumber(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
     }
 
     @Test
-    public void testValidateResourceVendorModelNumberWrongValue() {
+    void testValidateResourceVendorModelNumberWrongValue() {
         Resource resource = createParseResourceObject(true);
         resource.setResourceVendorModelNumber("");
         Assertions.assertNotNull(resource);
 
-        bl.validateResourceVendorModelNumber(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+        testSubject.validateResourceVendorModelNumber(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
     }
 
     @Test
-    public void testValidateVendorReleaseName() {
+    void testValidateVendorReleaseName() {
         Resource resource = createParseResourceObject(true);
         resource.setVendorRelease("0.1");
         Assertions.assertNotNull(resource);
 
-        bl.validateVendorReleaseName(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+        testSubject.validateVendorReleaseName(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
     }
 
     @Test
-    public void testValidateVendorReleaseNameFailure() {
+    void testValidateVendorReleaseNameFailure() {
         Resource resource = createParseResourceObject(true);
         resource.setVendorRelease("");
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateVendorReleaseName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateVendorReleaseName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
 
     }
 
     @Test
-    public void testValidateVendorReleaseNameWrongLen() {
+    void testValidateVendorReleaseNameWrongLen() {
         Resource resource = createParseResourceObject(true);
         resource.setVendorRelease("000000000011122221111222333444443222556677788778889999998776554332340");
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateVendorReleaseName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateVendorReleaseName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
 
     }
 
     @Test
-    public void testValidateCategory() {
+    void testValidateCategory() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
     }
 
     @Test
-    public void testValidateEmptyCategory() {
+    void testValidateEmptyCategory() {
         Resource resource = createParseResourceObject(true);
         resource.setCategories(null);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
 
     }
 
     @Test
-    public void testValidateCategorySizeBiggerThan1() {
+    void testValidateCategorySizeBiggerThan1() {
         Resource resource = createParseResourceObject(true);
         List<CategoryDefinition> categories = new ArrayList<>();
         CategoryDefinition categoryDefinition1 = new CategoryDefinition();
@@ -767,24 +690,24 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
 
         resource.setCategories(categories);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
 
     }
 
     @Test
-    public void testValidateEmptySubCategory() {
+    void testValidateEmptySubCategory() {
         Resource resource = createParseResourceObject(true);
         List<CategoryDefinition> categories = resource.getCategories();
         CategoryDefinition categoryDefinition = categories.get(0);
         categoryDefinition.setSubcategories(null);
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
 
     }
 
     @Test
-    public void testValidateEmptySubCategorySizeBiggerThan1() {
+    void testValidateEmptySubCategorySizeBiggerThan1() {
         Resource resource = createParseResourceObject(true);
         List<CategoryDefinition> categories = resource.getCategories();
         CategoryDefinition categoryDefinition = categories.get(0);
@@ -795,23 +718,23 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         subcategories.add(subCategoryDefinition2);
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
 
     }
 
     @Test
-    public void testValidateEmptyCategoryName() {
+    void testValidateEmptyCategoryName() {
         Resource resource = createParseResourceObject(true);
         List<CategoryDefinition> categories = resource.getCategories();
         CategoryDefinition categoryDefinition = categories.get(0);
         categoryDefinition.setName(null);
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
     }
 
     @Test
-    public void testValidateEmptySubCategoryName() {
+    void testValidateEmptySubCategoryName() {
         Resource resource = createParseResourceObject(true);
         List<CategoryDefinition> categories = resource.getCategories();
         CategoryDefinition categoryDefinition = categories.get(0);
@@ -820,106 +743,106 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         subCategoryDefinition1.setName(null);
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
     }
 
     @Test
-    public void testValidateCategoryListed() {
+    void testValidateCategoryListed() {
         Resource resource = createParseResourceObject(true);
         CategoryDefinition category = resource.getCategories().get(0);
         SubCategoryDefinition subcategory = category.getSubcategories().get(0);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCategoryListed(category, subcategory, user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
+            testSubject.validateCategoryListed(category, subcategory, user, resource, AuditingActionEnum.IMPORT_RESOURCE, true));
     }
 
     @Test
-    public void testFailOnInvalidCategory() {
+    void testFailOnInvalidCategory() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.failOnInvalidCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.failOnInvalidCategory(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
 
     }
 
     @Test
-    public void testValidateVendorName() {
+    void testValidateVendorName() {
         Resource resource = createParseResourceObject(true);
         Assertions.assertNotNull(resource);
-        bl.validateVendorName(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+        testSubject.validateVendorName(user, resource, AuditingActionEnum.IMPORT_RESOURCE);
     }
 
     @Test
-    public void testValidateVendorNameEmpty() {
+    void testValidateVendorNameEmpty() {
         Resource resource = createParseResourceObject(true);
         resource.setVendorName(null);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateVendorName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateVendorName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
     }
 
     @Test
-    public void testValidateVendorNameWrongLen() {
+    void testValidateVendorNameWrongLen() {
         Resource resource = createParseResourceObject(true);
         resource.setVendorName("000000000011122221111222333444443222556677788778889999998776554332340");
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateVendorName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateVendorName(user, resource, AuditingActionEnum.IMPORT_RESOURCE));
     }
 
     @Test
-    public void testValidateVendorName2() {
+    void testValidateVendorName2() {
         Resource resource = createParseResourceObject(true);
         CategoryDefinition category = resource.getCategories().get(0);
         SubCategoryDefinition subcategory = category.getSubcategories().get(0);
         String vendorName = "vendorName";
         Assertions.assertNotNull(resource);
 
-        bl.validateVendorName(vendorName, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
+        testSubject.validateVendorName(vendorName, user, resource, AuditingActionEnum.IMPORT_RESOURCE);
     }
 
     @Test
-    public void testFillResourceMetadata2() {
+    void testFillResourceMetadata2() {
         String yamlName = "yamlName";
         Resource resourceVf = createParseResourceObject(true);
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "test";
         resourceVf.setSystemName("systemName");
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
+            testSubject.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
     }
 
     @Test
-    public void testFillResourceMetadataWrongStart() {
+    void testFillResourceMetadataWrongStart() {
         String yamlName = "yamlName";
         Resource resourceVf = createParseResourceObject(true);
         String nodeName = "WrongStart" + "test";
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
+            testSubject.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
     }
 
     @Test
-    public void testFillResourceMetadataResourceTypeIsAbs() {
+    void testFillResourceMetadataResourceTypeIsAbs() {
         String yamlName = "yamlName";
         Resource resourceVf = createParseResourceObject(true);
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + Constants.ABSTRACT;
         Assertions.assertNotNull(
-                bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
+            testSubject.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
     }
 
     @Test
-    public void testGetNodeTypeActualName() {
+    void testGetNodeTypeActualName() {
         String fullName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "test";
         Assertions.assertNotNull(
-                bl.getNodeTypeActualName(fullName));
+            testSubject.getNodeTypeActualName(fullName));
     }
 
     @Test
-    public void testAddInput() {
+    void testAddInput() {
         Map<String, InputDefinition> currPropertiesMap = new HashMap<>();
         InputDefinition prop = new InputDefinition();
         Assertions.assertNotNull(currPropertiesMap);
 
-        bl.addInput(currPropertiesMap, prop);
+        testSubject.addInput(currPropertiesMap, prop);
     }
 
     @Test
-    public void testFindAviableRequirement() {
+    void testFindAviableRequirement() {
         String uniqueId = "101929382910";
         String regName = uniqueId;
         String yamlName = uniqueId;
@@ -939,11 +862,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         String capName = "capName";
 
         Assertions.assertNotNull(
-                bl.findAviableRequiremen(regName, yamlName, uploadComponentInstanceInfo, currentCompInstance, capName));
+            testSubject.findAviableRequiremen(regName, yamlName, uploadComponentInstanceInfo, currentCompInstance, capName));
     }
 
     @Test
-    public void testFindAviableRequirementSameCapName() {
+    void testFindAviableRequirementSameCapName() {
         String uniqueId = "101929382910";
         String regName = uniqueId;
         String yamlName = uniqueId;
@@ -962,22 +885,21 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
 
         String capName = uniqueId;
         Assertions.assertNotNull(
-                bl.findAviableRequiremen(regName, yamlName, uploadComponentInstanceInfo, currentCompInstance, capName));
+            testSubject.findAviableRequiremen(regName, yamlName, uploadComponentInstanceInfo, currentCompInstance, capName));
     }
 
     @Test
-    public void testFindAvailableCapabilityByTypeOrName() {
+    void testFindAvailableCapabilityByTypeOrName() {
         RequirementDefinition validReq = new RequirementDefinition();
         ComponentInstance currentCapCompInstance = new ComponentInstance();
         UploadReqInfo uploadReqInfo = new UploadReqInfo();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.findAvailableCapabilityByTypeOrName(validReq, currentCapCompInstance, uploadReqInfo));
+            testSubject.findAvailableCapabilityByTypeOrName(validReq, currentCapCompInstance, uploadReqInfo));
     }
 
-
     @Test
-    public void testFindAvailableCapability() {
+    void testFindAvailableCapability() {
         String uniqueId = "23422345677";
         RequirementDefinition validReq = new RequirementDefinition();
         validReq.setCapability(uniqueId);
@@ -992,11 +914,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         instance.setCapabilities(capabilityMap);
 
         Assertions.assertNotNull(
-                bl.findAvailableCapability(validReq, instance));
+            testSubject.findAvailableCapability(validReq, instance));
     }
 
     @Test
-    public void testfindAvailableCapability2() {
+    void testfindAvailableCapability2() {
         String uniqueId = "23422345677";
         RequirementDefinition validReq = new RequirementDefinition();
         validReq.setCapability(uniqueId);
@@ -1014,18 +936,18 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         uploadReqInfo.setCapabilityName(uniqueId);
 
         Assertions.assertNotNull(
-                bl.findAvailableCapability(validReq, instance, uploadReqInfo));
+            testSubject.findAvailableCapability(validReq, instance, uploadReqInfo));
     }
 
     @Test
-    public void testGetComponentWithInstancesFilter() {
+    void testGetComponentWithInstancesFilter() {
 
         Assertions.assertNotNull(
-                bl.getComponentWithInstancesFilter());
+            testSubject.getComponentWithInstancesFilter());
     }
 
     @Test
-    public void testCreateParseResourceObject() {
+    void testCreateParseResourceObject() {
         String key = "0923928394";
         List<UploadCapInfo> capabilities = new ArrayList<>();
         UploadCapInfo uploadCapInfo = new UploadCapInfo();
@@ -1048,16 +970,16 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         capabilitiesMap.put(key, capabilityDefinitionList);
 
         when(toscaOperationFacade.getToscaFullElement(anyString()))
-                .thenReturn(Either.left(resource));
+            .thenReturn(Either.left(resource));
 
         Assertions.assertNotNull(resource);
 
-        bl.addValidComponentInstanceCapabilities(key, capabilities, resourceId, defaultCapabilities,
-                validCapabilitiesMap);
+        testSubject.addValidComponentInstanceCapabilities(key, capabilities, resourceId, defaultCapabilities,
+            validCapabilitiesMap);
     }
 
     @Test
-    public void testGetCapabilityFailure() {
+    void testGetCapabilityFailure() {
         String resourceId = "resourceId";
         String key = "0923928394";
         Map<String, List<CapabilityDefinition>> defaultCapabilities = new HashMap<>();
@@ -1068,14 +990,13 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         defaultCapabilities.put(key, capabilityDefinitionList);
         String capabilityType = key;
         when(toscaOperationFacade.getToscaFullElement(anyString()))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.getCapability(resourceId, defaultCapabilities, capabilityType));
+            testSubject.getCapability(resourceId, defaultCapabilities, capabilityType));
     }
 
-
     @Test
-    public void testValidateCapabilityProperties() {
+    void testValidateCapabilityProperties() {
         List<UploadCapInfo> capabilities = new ArrayList<>();
         UploadCapInfo uploadCapInfo = new UploadCapInfo();
         List<UploadPropInfo> properties = new ArrayList<>();
@@ -1089,11 +1010,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         defaultCapability.setName("test");
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateCapabilityProperties(capabilities, resourceId, defaultCapability));
+            testSubject.validateCapabilityProperties(capabilities, resourceId, defaultCapability));
     }
 
     @Test
-    public void testValidateUniquenessUpdateUploadedComponentInstanceCapability() {
+    void testValidateUniquenessUpdateUploadedComponentInstanceCapability() {
         String key = "02124568";
         List<UploadCapInfo> capabilities = new ArrayList<>();
         UploadCapInfo uploadCapInfo = new UploadCapInfo();
@@ -1113,29 +1034,29 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
 
         Assertions.assertNotNull(defaultCapability);
 
-        bl.validateUniquenessUpdateUploadedComponentInstanceCapability(defaultCapability, uploadCapInfo);
+        testSubject.validateUniquenessUpdateUploadedComponentInstanceCapability(defaultCapability, uploadCapInfo);
     }
 
     @Test
-    public void testSetDeploymentArtifactsPlaceHolderByResource() {
+    void testSetDeploymentArtifactsPlaceHolderByResource() {
         Resource resource = createParseResourceObject(true);
 
         Assertions.assertNotNull(resource);
 
-        bl.setDeploymentArtifactsPlaceHolder(resource, user);
+        testSubject.setDeploymentArtifactsPlaceHolder(resource, user);
     }
 
     @Test
-    public void testSetDeploymentArtifactsPlaceHolderByService() {
+    void testSetDeploymentArtifactsPlaceHolderByService() {
         Service Service = createServiceObject(true);
 
         Assertions.assertNotNull(Service);
 
-        bl.setDeploymentArtifactsPlaceHolder(Service, user);
+        testSubject.setDeploymentArtifactsPlaceHolder(Service, user);
     }
 
     @Test
-    public void testProcessDeploymentResourceArtifacts() {
+    void testProcessDeploymentResourceArtifacts() {
         Resource resource = createParseResourceObject(true);
         resource.setResourceType(ResourceTypeEnum.VF);
         Map<String, ArtifactDefinition> artifactMap = new HashMap<>();
@@ -1148,21 +1069,21 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         v = artifactDetails;
         Assertions.assertNotNull(resource);
 
-        bl.processDeploymentResourceArtifacts(user, resource, artifactMap, k, v);
+        testSubject.processDeploymentResourceArtifacts(user, resource, artifactMap, k, v);
     }
 
     @Test
-    public void testMergeOldResourceMetadataWithNew() {
+    void testMergeOldResourceMetadataWithNew() {
         Resource oldResource = createParseResourceObject(true);
         Resource newResource = new Resource();
 
         Assertions.assertNotNull(oldResource);
 
-        bl.mergeOldResourceMetadataWithNew(oldResource, newResource);
+        testSubject.mergeOldResourceMetadataWithNew(oldResource, newResource);
     }
 
     @Test
-    public void testBuildComplexVfcMetadata() {
+    void testBuildComplexVfcMetadata() {
         Resource resource = createParseResourceObject(true);
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
         Map<String, NodeTypeInfo> nodesInfo = new HashMap<>();
@@ -1172,31 +1093,29 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         nodeTypeInfo.setDerivedFrom(derivedFrom);
         nodesInfo.put(nodeName, nodeTypeInfo);
 
-
         Assertions.assertNotNull(
-                bl.buildComplexVfcMetadata(getCsarInfo(), nodeName, nodesInfo));
+            testSubject.buildComplexVfcMetadata(getCsarInfo(), nodeName, nodesInfo));
     }
 
     @Test
-    public void testValidateResourceCreationFromNodeType() {
+    void testValidateResourceCreationFromNodeType() {
         Resource resource = createParseResourceObject(true);
         resource.setDerivedFrom(null);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateResourceCreationFromNodeType(resource, user));
+            testSubject.validateResourceCreationFromNodeType(resource, user));
     }
 
     @Test
-    public void testCreateInputsOnResource() {
+    void testCreateInputsOnResource() {
         Resource resource = createParseResourceObject(true);
         Map<String, InputDefinition> inputs = new HashMap<>();
 
-
         Assertions.assertNotNull(
-                bl.createInputsOnResource(resource, inputs));
+            testSubject.createInputsOnResource(resource, inputs));
     }
 
     @Test
-    public void testCreateInputsOnResourceWhenIsNotEmpty() {
+    void testCreateInputsOnResourceWhenIsNotEmpty() {
         String key = "12345667";
         Resource resource = createParseResourceObject(true);
         List<InputDefinition> inputDefinitionList = new ArrayList<>();
@@ -1206,15 +1125,15 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Map<String, InputDefinition> inputs = new HashMap<>();
         inputs.put(key, inputDefinition);
         when(inputsBusinessLogic.createInputsInGraph(anyMap(),
-                any(Component.class))).thenReturn(Either.left(inputDefinitionList));
+            any(Component.class))).thenReturn(Either.left(inputDefinitionList));
         when(toscaOperationFacade
-                .getToscaElement(anyString())).thenReturn(Either.left(resource));
+            .getToscaElement(anyString())).thenReturn(Either.left(resource));
         Assertions.assertNotNull(
-                bl.createInputsOnResource(resource, inputs));
+            testSubject.createInputsOnResource(resource, inputs));
     }
 
     @Test
-    public void testCreateInputsOnService() {
+    void testCreateInputsOnService() {
         Service service = createServiceObject(true);
         List<InputDefinition> resourceProperties = new ArrayList<>();
         InputDefinition inputDefinition = new InputDefinition();
@@ -1228,29 +1147,29 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Service newService = new Service();
 
         when(inputsBusinessLogic.createInputsInGraph(any(Map.class), any(Component.class)))
-                .thenReturn(Either.left(inputDefinitionList));
+            .thenReturn(Either.left(inputDefinitionList));
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
-        Service inputsOnService = bl.createInputsOnService(service, inputs);
+        Service inputsOnService = testSubject.createInputsOnService(service, inputs);
         assertNotNull(inputsOnService);
     }
 
     @Test
-    public void testCreateServiceTransaction() {
+    void testCreateServiceTransaction() {
         Service service = createServiceObject(true);
         List<ComponentInstance> list = new ArrayList<>();
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setName("name");
         service.setComponentInstances(list);
         when(toscaOperationFacade.validateComponentNameExists(
-                anyString(), any(ResourceTypeEnum.class), any(ComponentTypeEnum.class))).thenReturn(Either.left(false));
+            anyString(), any(ResourceTypeEnum.class), any(ComponentTypeEnum.class))).thenReturn(Either.left(false));
 
         when(toscaOperationFacade.createToscaComponent(any(Service.class))).thenReturn(Either.left(service));
 
-        Assertions.assertThrows(NullPointerException.class, () -> bl.createServiceTransaction(service, user, true));
+        Assertions.assertThrows(NullPointerException.class, () -> testSubject.createServiceTransaction(service, user, true));
     }
 
     @Test
-    public void testCreateArtifactsPlaceHolderData() {
+    void testCreateArtifactsPlaceHolderData() {
         Service service = createServiceObject(true);
         CategoryDefinition category = new CategoryDefinition();
         category.setName("");
@@ -1259,22 +1178,22 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         service.setCategories(categories);
         Assertions.assertNotNull(service);
 
-        bl.createArtifactsPlaceHolderData(service, user);
+        testSubject.createArtifactsPlaceHolderData(service, user);
 
     }
 
     @Test
-    public void testSetInformationalArtifactsPlaceHolder() {
+    void testSetInformationalArtifactsPlaceHolder() {
         Service service = createServiceObject(true);
 
         Assertions.assertNotNull(service);
 
-        bl.setInformationalArtifactsPlaceHolder(service, user);
+        testSubject.setInformationalArtifactsPlaceHolder(service, user);
 
     }
 
     @Test
-    public void testValidateNestedDerivedFromDuringUpdate() {
+    void testValidateNestedDerivedFromDuringUpdate() {
         Resource currentResource = createParseResourceObject(true);
         Resource updateInfoResource = createParseResourceObject(true);
         String key = "2323456";
@@ -1287,103 +1206,101 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         updateInfoResource.setDerivedFrom(updatedDerivedFromList);
 
         when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString()))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         Assertions.assertNotNull(
-                bl.validateNestedDerivedFromDuringUpdate(currentResource, updateInfoResource, true));
+            testSubject.validateNestedDerivedFromDuringUpdate(currentResource, updateInfoResource, true));
 
     }
 
     @Test
-    public void testValidateDerivedFromExtending() {
+    void testValidateDerivedFromExtending() {
         Resource currentResource = createParseResourceObject(true);
         Resource updateInfoResource = createParseResourceObject(true);
 
         when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString()))
-                .thenReturn(Either.left(false));
+            .thenReturn(Either.left(false));
 
         Assertions.assertNotNull(
-                bl.validateDerivedFromExtending(user, currentResource, updateInfoResource,
-                        AuditingActionEnum.IMPORT_RESOURCE));
+            testSubject.validateDerivedFromExtending(user, currentResource, updateInfoResource,
+                AuditingActionEnum.IMPORT_RESOURCE));
 
     }
 
     @Test
-    public void testValidateResourceFieldsBeforeUpdate() {
+    void testValidateResourceFieldsBeforeUpdate() {
         Resource currentResource = createParseResourceObject(true);
         Resource updateInfoResource = createParseResourceObject(true);
 
         Assertions.assertNotNull(currentResource);
 
-        bl.validateResourceFieldsBeforeUpdate(currentResource, updateInfoResource, true, true);
+        testSubject.validateResourceFieldsBeforeUpdate(currentResource, updateInfoResource, true, true);
 
     }
 
     @Test
-    public void testValidateResourceName() {
+    void testValidateResourceName() {
         Resource currentResource = createParseResourceObject(true);
         Resource updateInfoResource = createParseResourceObject(true);
         currentResource.setName("test1");
         updateInfoResource.setName("test2");
 
-
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.validateResourceName(currentResource, updateInfoResource, true, false));
+            testSubject.validateResourceName(currentResource, updateInfoResource, true, false));
 
     }
 
     @Test
-    public void testIsResourceNameEquals() {
+    void testIsResourceNameEquals() {
         Resource currentResource = createParseResourceObject(true);
         Resource updateInfoResource = createParseResourceObject(true);
 
-        boolean resourceNameEquals = bl.isResourceNameEquals(currentResource, updateInfoResource);
+        boolean resourceNameEquals = testSubject.isResourceNameEquals(currentResource, updateInfoResource);
         assertTrue(resourceNameEquals);
     }
 
     @Test
-    public void testPrepareResourceForUpdate() {
+    void testPrepareResourceForUpdate() {
         Resource oldResource = createParseResourceObject(true);
         Resource newResource = createParseResourceObject(true);
         when(lifecycleBusinessLogic.changeState(anyString(), any(User.class), any(LifeCycleTransitionEnum.class),
-                any(LifecycleChangeInfoWithAction.class), anyBoolean(), anyBoolean())).thenReturn(Either.left(oldResource));
+            any(LifecycleChangeInfoWithAction.class), anyBoolean(), anyBoolean())).thenReturn(Either.left(oldResource));
 
         Assertions.assertNotNull(
-                bl.prepareResourceForUpdate(oldResource, newResource, user, true, true));
+            testSubject.prepareResourceForUpdate(oldResource, newResource, user, true, true));
 
     }
 
     @Test
-    public void testFailOnChangeState() {
+    void testFailOnChangeState() {
         ResponseFormat response = new ResponseFormat();
         Resource oldResource = createParseResourceObject(true);
         oldResource.setUniqueId("123");
         Resource newResource = createParseResourceObject(true);
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.failOnChangeState(response, user, oldResource, newResource));
+            testSubject.failOnChangeState(response, user, oldResource, newResource));
     }
 
     @Test
-    public void testHandleResourceGenericType() {
+    void testHandleResourceGenericType() {
         Resource resource = createParseResourceObject(true);
 
-        Resource resource1 = bl.handleResourceGenericType(resource);
+        Resource resource1 = testSubject.handleResourceGenericType(resource);
         assertNotEquals(resource, resource1);
     }
 
     @Test
-    public void testUpdateOrCreateGroups() {
+    void testUpdateOrCreateGroups() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
         Assertions.assertNotNull(resource);
 
-        bl.updateOrCreateGroups(resource, groups);
+        testSubject.updateOrCreateGroups(resource, groups);
     }
 
     @Test
-    public void testAddGroupsToCreateOrUpdate() {
+    void testAddGroupsToCreateOrUpdate() {
         List<GroupDefinition> groupsFromResource = new ArrayList<>();
         GroupDefinition groupDefinition = new GroupDefinition();
         groupDefinition.setInvariantName("groupDefinitionName");
@@ -1395,11 +1312,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         List<GroupDefinition> groupsToCreate = new ArrayList<>();
         Assertions.assertNotNull(groupDefinition);
 
-        bl.addGroupsToCreateOrUpdate(groupsFromResource, groupsAsList, groupsToUpdate, groupsToCreate);
+        testSubject.addGroupsToCreateOrUpdate(groupsFromResource, groupsAsList, groupsToUpdate, groupsToCreate);
     }
 
     @Test
-    public void testAddGroupsToDelete() {
+    void testAddGroupsToDelete() {
         List<GroupDefinition> groupsFromResource = new ArrayList<>();
         GroupDefinition groupDefinition = new GroupDefinition();
         groupDefinition.setName("groupDefinitionName");
@@ -1411,11 +1328,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         List<GroupDefinition> groupsToDelete = new ArrayList<>();
         Assertions.assertNotNull(groupsFromResource);
 
-        bl.addGroupsToDelete(groupsFromResource, groupsAsList, groupsToDelete);
+        testSubject.addGroupsToDelete(groupsFromResource, groupsAsList, groupsToDelete);
     }
 
     @Test
-    public void testUpdateGroupsMembersUsingResource() {
+    void testUpdateGroupsMembersUsingResource() {
         Service component = createServiceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
         GroupDefinition groupDefinition = getGroupDefinition();
@@ -1423,11 +1340,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         groups.put("groupsMap", groupDefinition);
 
         Assertions.assertNotNull(
-                bl.updateGroupsMembersUsingResource(groups, component));
+            testSubject.updateGroupsMembersUsingResource(groups, component));
     }
 
     @Test
-    public void testupdateGroupMembers() {
+    void testupdateGroupMembers() {
         Service component = createServiceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
         GroupDefinition updatedGroupDefinition = new GroupDefinition();
@@ -1436,11 +1353,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Map<String, String> members = new HashMap<>();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members));
+            testSubject.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members));
     }
 
     @Test
-    public void testupdateGroupMembersNotNull() {
+    void testupdateGroupMembersNotNull() {
         Service component = createServiceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
         GroupDefinition updatedGroupDefinition = new GroupDefinition();
@@ -1455,34 +1372,33 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         members.put("componentInstanceName", "members");
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members));
+            testSubject.updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members));
     }
 
     @Test
-    public void testValidateCyclicGroupsDependencies() {
+    void testValidateCyclicGroupsDependencies() {
         Service component = createServiceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
         String key = "098738485";
         GroupDefinition groupDefinition = new GroupDefinition();
         groups.put(key, groupDefinition);
 
-
         Assertions.assertNotNull(
-                bl.validateCyclicGroupsDependencies(groups));
+            testSubject.validateCyclicGroupsDependencies(groups));
     }
 
     @Test
-    public void testFillAllGroupMemebersRecursivly() {
+    void testFillAllGroupMemebersRecursivly() {
         Map<String, GroupDefinition> allGroups = new HashMap<>();
         Set<String> allGroupMembers = new HashSet<>();
         String groupName = "groupName";
         Assertions.assertNotNull(groupName);
 
-        bl.fillAllGroupMemebersRecursivly(groupName, allGroups, allGroupMembers);
+        testSubject.fillAllGroupMemebersRecursivly(groupName, allGroups, allGroupMembers);
     }
 
     @Test
-    public void testFillAllGroupMemebersRecursivlyAllGroups() {
+    void testFillAllGroupMemebersRecursivlyAllGroups() {
         String groupName = "groupName";
         Map<String, GroupDefinition> allGroups = new HashMap<>();
         GroupDefinition groupDefinition = new GroupDefinition();
@@ -1495,65 +1411,63 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         allGroupMembers.add("allGroupMembers");
         Assertions.assertNotNull(allGroups);
 
-        bl.fillAllGroupMemebersRecursivly(groupName, allGroups, allGroupMembers);
+        testSubject.fillAllGroupMemebersRecursivly(groupName, allGroups, allGroupMembers);
     }
 
     @Test
-    public void testFillResourceMetadataForServiceFailure() {
+    void testFillResourceMetadataForServiceFailure() {
         String yamlName = "yamlName";
         Service resourceVf = createServiceObject(true);
         String nodeName = "nodeName";
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
+            testSubject.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
     }
 
     @Test
-    public void testFillResourceMetadataForServiceWrongType() {
+    void testFillResourceMetadataForServiceWrongType() {
         String yamlName = "yamlName";
         Service resourceVf = createServiceObject(true);
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "nodeName";
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
+            testSubject.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
     }
 
     @Test
-    public void testFillResourceMetadataForServiceSuccess() {
+    void testFillResourceMetadataForServiceSuccess() {
         String yamlName = "yamlName";
         Service resourceVf = createServiceObject(true);
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "VFC";
 
-
         Assertions.assertNotNull(
-                bl.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
+            testSubject.fillResourceMetadata(yamlName, resourceVf, nodeName, user));
     }
 
     @Test
-    public void testpropagateStateToCertified() {
+    void testpropagateStateToCertified() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
         LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
 
-
         Assertions.assertNotNull(
-                bl.propagateStateToCertified(user, resource, lifecycleChangeInfo, true, true, true));
+            testSubject.propagateStateToCertified(user, resource, lifecycleChangeInfo, true, true, true));
     }
 
     @Test
-    public void testpropagateStateToCertifiedIsTrue() {
+    void testpropagateStateToCertifiedIsTrue() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
         resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 
         Assertions.assertNotNull(
-                bl.propagateStateToCertified(user, resource, lifecycleChangeInfo, true, true, true));
+            testSubject.propagateStateToCertified(user, resource, lifecycleChangeInfo, true, true, true));
     }
 
     @Test
-    public void testBuildValidComplexVfc2() {
+    void testBuildValidComplexVfc2() {
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
         Map<String, NodeTypeInfo> nodesInfo = new HashMap<>();
         NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
@@ -1562,22 +1476,22 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         nodeTypeInfo.setDerivedFrom(derivedFrom);
         nodesInfo.put(nodeName, nodeTypeInfo);
 
+        final CsarInfo csarInfo = getCsarInfo();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.buildValidComplexVfc(getCsarInfo(), nodeName, nodesInfo));
+            testSubject.buildValidComplexVfc(csarInfo, nodeName, nodesInfo));
     }
 
     @Test
-    public void testUpdateGroupsOnResourceEmptyGroups() {
+    void testUpdateGroupsOnResourceEmptyGroups() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
 
-
         Assertions.assertNotNull(
-                bl.updateGroupsOnResource(resource, groups));
+            testSubject.updateGroupsOnResource(resource, groups));
     }
 
     @Test
-    public void testSetInformationalArtifactsPlaceHolder2() {
+    void testSetInformationalArtifactsPlaceHolder2() {
         Resource resource = createParseResourceObject(true);
         List<CategoryDefinition> categoryDefinitions = new ArrayList<>();
         CategoryDefinition categoryDefinition = new CategoryDefinition();
@@ -1586,11 +1500,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         resource.setCategories(categoryDefinitions);
         Assertions.assertNotNull(resource);
 
-        bl.setInformationalArtifactsPlaceHolder(resource, user);
+        testSubject.setInformationalArtifactsPlaceHolder(resource, user);
     }
 
     @Test
-    public void testRollback() {
+    void testRollback() {
         Resource resource = createParseResourceObject(true);
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
@@ -1599,11 +1513,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         nodeTypesNewCreatedArtifacts.add(artifactDefinition);
         Assertions.assertNotNull(resource);
 
-        bl.rollback(true, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+        testSubject.rollback(true, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
     }
 
     @Test
-    public void testRollback_NotNull() {
+    void testRollback_NotNull() {
         Resource resource = createParseResourceObject(true);
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
@@ -1615,38 +1529,38 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         nodeTypesNewCreatedArtifacts.add(artifactDefinition2);
         Assertions.assertNotNull(resource);
 
-        bl.rollback(true, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+        testSubject.rollback(true, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
     }
 
     @Test
-    public void testCreateArtifactsPlaceHolderData2() {
+    void testCreateArtifactsPlaceHolderData2() {
         Resource resource = createParseResourceObject(true);
 
         Assertions.assertNotNull(resource);
 
-        bl.createArtifactsPlaceHolderData(resource, user);
+        testSubject.createArtifactsPlaceHolderData(resource, user);
     }
 
     @Test
-    public void testHandleGroupsProperties() {
+    void testHandleGroupsProperties() {
         Service service = createServiceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
         Assertions.assertNotNull(service);
 
-        bl.handleGroupsProperties(service, groups);
+        testSubject.handleGroupsProperties(service, groups);
     }
 
     @Test
-    public void testHandleGroupsProperties2() {
+    void testHandleGroupsProperties2() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
         Assertions.assertNotNull(resource);
 
-        bl.handleGroupsProperties(resource, groups);
+        testSubject.handleGroupsProperties(resource, groups);
     }
 
     @Test
-    public void testHandleGetInputs() {
+    void testHandleGetInputs() {
         PropertyDataDefinition property = new PropertyDataDefinition();
         List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
         GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
@@ -1665,11 +1579,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         inputs.add(inputDefinition);
         Assertions.assertNotNull(inputs);
 
-        bl.handleGetInputs(property, inputs);
+        testSubject.handleGetInputs(property, inputs);
     }
 
     @Test
-    public void testHandleGetInputs_null() {
+    void testHandleGetInputs_null() {
         PropertyDataDefinition property = new PropertyDataDefinition();
         List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
         GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
@@ -1679,11 +1593,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         property.setGetInputValues(getInputValues);
         List<InputDefinition> inputs = new ArrayList<>();
         Assertions.assertThrows(NoSuchElementException.class, () ->
-                bl.handleGetInputs(property, inputs));
+            testSubject.handleGetInputs(property, inputs));
     }
 
     @Test
-    public void testFindInputByName() {
+    void testFindInputByName() {
         GetInputValueDataDefinition getInput = new GetInputValueDataDefinition();
         getInput.setInputId("inputId");
         getInput.setInputName("inputName");
@@ -1694,20 +1608,20 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         inputs.add(inputDefinition);
 
         Assertions.assertNotNull(
-                bl.findInputByName(inputs, getInput));
+            testSubject.findInputByName(inputs, getInput));
     }
 
     @Test
-    public void testAssociateComponentInstancePropertiesToComponent() {
+    void testAssociateComponentInstancePropertiesToComponent() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties));
+            testSubject.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties));
     }
 
     @Test
-    public void testAssociateComponentInstanceInputsToComponent() {
+    void testAssociateComponentInstanceInputsToComponent() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1717,79 +1631,79 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         componentInstanceInputList.add(componentInstanceInput);
         Assertions.assertNotNull(resource);
 
-        bl.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
+        testSubject.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
     }
 
     @Test
-    public void testAssociateDeploymentArtifactsToInstances() {
+    void testAssociateDeploymentArtifactsToInstances() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts));
+            testSubject.associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts));
     }
 
     @Test
-    public void testAssociateArtifactsToInstances() {
+    void testAssociateArtifactsToInstances() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts));
+            testSubject.associateDeploymentArtifactsToInstances(user, yamlName, resource, instDeploymentArtifacts));
     }
 
     @Test
-    public void testAssociateArtifactsToInstances2() {
+    void testAssociateArtifactsToInstances2() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateArtifactsToInstances(yamlName, resource, instDeploymentArtifacts));
+            testSubject.associateArtifactsToInstances(yamlName, resource, instDeploymentArtifacts));
     }
 
     @Test
-    public void testAssociateOrAddCalculatedCapReq() {
+    void testAssociateOrAddCalculatedCapReq() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements));
+            testSubject.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements));
     }
 
     @Test
-    public void testAssociateInstAttributeToComponentToInstances() {
+    void testAssociateInstAttributeToComponentToInstances() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes));
+            testSubject.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes));
     }
 
     @Test
-    public void testThrowComponentExceptionByResource() {
+    void testThrowComponentExceptionByResource() {
         StorageOperationStatus status = StorageOperationStatus.OK;
         Resource resource = createParseResourceObject(true);
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.throwComponentExceptionByResource(status, resource));
+            testSubject.throwComponentExceptionByResource(status, resource));
     }
 
     @Test
-    public void testGetResourceAfterCreateRelations() {
+    void testGetResourceAfterCreateRelations() {
         Resource resource = createParseResourceObject(true);
         Resource newResource = new Resource();
 
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
-                .thenReturn(Either.left(newResource));
-        Resource resourceAfterCreateRelations = bl.getResourceAfterCreateRelations(resource);
+            .thenReturn(Either.left(newResource));
+        Resource resourceAfterCreateRelations = testSubject.getResourceAfterCreateRelations(resource);
         assertNotNull(resourceAfterCreateRelations);
     }
 
     @Test
-    public void testSetCapabilityNamesTypes() {
+    void testSetCapabilityNamesTypes() {
         Map<String, List<CapabilityDefinition>> originCapabilities = new HashMap<>();
         List<CapabilityDefinition> capabilityDefinitionList = new ArrayList<>();
         CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
@@ -1804,22 +1718,22 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         uploadedCapabilities.put("Capability", uploadCapInfoList);
         Assertions.assertNotNull(originCapabilities);
 
-        bl.setCapabilityNamesTypes(originCapabilities, uploadedCapabilities);
+        testSubject.setCapabilityNamesTypes(originCapabilities, uploadedCapabilities);
     }
 
     @Test
-    public void testAssociateComponentInstanceInputsToComponent2() {
+    void testAssociateComponentInstanceInputsToComponent2() {
         String yamlName = "yamlName";
         Service service = createServiceObject(true);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
         Assertions.assertNotNull(service);
 
-        bl.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
+        testSubject.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
     }
 
     @Test
-    public void testAssociateComponentInstanceInputsNotNullToComponent2() {
+    void testAssociateComponentInstanceInputsNotNullToComponent2() {
         String yamlName = "yamlName";
         Service service = createServiceObject(true);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1829,105 +1743,105 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         componentInstanceInputs.add(componentInstanceInput);
         instInputs.put("instInputs", componentInstanceInputs);
         when(toscaOperationFacade.associateComponentInstanceInputsToComponent(any(Map.class),
-                anyString())).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+            anyString())).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateComponentInstanceInputsToComponent(yamlName, service, instInputs));
+            testSubject.associateComponentInstanceInputsToComponent(yamlName, service, instInputs));
     }
 
     @Test
-    public void testAssociateComponentInstancePropertiesToComponent2() {
+    void testAssociateComponentInstancePropertiesToComponent2() {
         String yamlName = "yamlName";
         Service service = createServiceObject(true);
         Map<String, List<ComponentInstanceProperty>> instInputs = new HashMap<>();
         Map<String, List<ComponentInstanceProperty>> instInputMap = new HashMap<>();
         when(toscaOperationFacade.associateComponentInstancePropertiesToComponent(any(), anyString()))
-                .thenReturn(Either.left(instInputMap));
+            .thenReturn(Either.left(instInputMap));
         Assertions.assertNotNull(service);
 
-        bl.associateComponentInstancePropertiesToComponent(yamlName, service, instInputs);
+        testSubject.associateComponentInstancePropertiesToComponent(yamlName, service, instInputs);
     }
 
     @Test
-    public void testAssociateDeploymentArtifactsToInstances2() {
+    void testAssociateDeploymentArtifactsToInstances2() {
         String yamlName = "yamlName";
         Service service = createServiceObject(true);
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateDeploymentArtifactsToInstances(user, yamlName, service, instDeploymentArtifacts));
+            testSubject.associateDeploymentArtifactsToInstances(user, yamlName, service, instDeploymentArtifacts));
     }
 
     @Test
-    public void testAssociateArtifactsToInstances3() {
+    void testAssociateArtifactsToInstances3() {
         String yamlName = "yamlName";
         Service service = createServiceObject(true);
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateArtifactsToInstances(yamlName, service, instArtifacts));
+            testSubject.associateArtifactsToInstances(yamlName, service, instArtifacts));
     }
 
     @Test
-    public void testAssociateOrAddCalculatedCapReq2() {
+    void testAssociateOrAddCalculatedCapReq2() {
         String yamlName = "yamlName";
         Service resource = createServiceObject(true);
         Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities = new HashMap<>();
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements));
+            testSubject.associateOrAddCalculatedCapReq(yamlName, resource, instCapabilities, instRequirements));
     }
 
     @Test
-    public void testAssociateInstAttributeToComponentToInstances2() {
+    void testAssociateInstAttributeToComponentToInstances2() {
         String yamlName = "yamlName";
         Service resource = createServiceObject(true);
         Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes));
+            testSubject.associateInstAttributeToComponentToInstances(yamlName, resource, instAttributes));
     }
 
     @Test
-    public void testAssociateRequirementsToService() {
+    void testAssociateRequirementsToService() {
         String yamlName = "yamlName";
         Service resource = createServiceObject(true);
         Map<String, ListRequirementDataDefinition> requirements = new HashMap<>();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateRequirementsToService(yamlName, resource, requirements));
+            testSubject.associateRequirementsToService(yamlName, resource, requirements));
     }
 
     @Test
-    public void testAssociateCapabilitiesToService() {
+    void testAssociateCapabilitiesToService() {
         String yamlName = "yamlName";
         Service resource = createServiceObject(true);
         Map<String, ListCapabilityDataDefinition> capabilities = new HashMap<>();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateCapabilitiesToService(yamlName, resource, capabilities));
+            testSubject.associateCapabilitiesToService(yamlName, resource, capabilities));
     }
 
     @Test
-    public void testAssociateResourceInstances() {
+    void testAssociateResourceInstances() {
         String yamlName = "yamlName";
         Service resource = createServiceObject(true);
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         when(toscaOperationFacade.associateResourceInstances(any(Component.class),
-                anyString(), any(ArrayList.class))).thenReturn(Either.left(relations));
+            anyString(), any(ArrayList.class))).thenReturn(Either.left(relations));
         Assertions.assertNotNull(resource);
 
-        bl.associateResourceInstances(yamlName, resource, relations);
+        testSubject.associateResourceInstances(yamlName, resource, relations);
     }
 
     @Test
-    public void testAddCapabilities() {
+    void testAddCapabilities() {
         Map<String, List<CapabilityDefinition>> originCapabilities = new HashMap<>();
         String type = "type";
         List<CapabilityDefinition> capabilities = new ArrayList<>();
         Assertions.assertNotNull(type);
 
-        bl.addCapabilities(originCapabilities, type, capabilities);
+        testSubject.addCapabilities(originCapabilities, type, capabilities);
     }
 
     @Test
-    public void testAddCapabilitiesProperties() {
+    void testAddCapabilitiesProperties() {
         Map<String, Map<String, UploadPropInfo>> newPropertiesMap = new HashMap<>();
         List<UploadCapInfo> capabilities = new ArrayList<>();
         UploadCapInfo capability = new UploadCapInfo();
@@ -1940,42 +1854,42 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         capabilities.add(capability);
         Assertions.assertNotNull(capabilities);
 
-        bl.addCapabilitiesProperties(newPropertiesMap, capabilities);
+        testSubject.addCapabilitiesProperties(newPropertiesMap, capabilities);
     }
 
     @Test
-    public void testGetServiceWithGroups() {
+    void testGetServiceWithGroups() {
         String resourceId = "resourceId";
         Service service = createServiceObject(true);
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
-                .thenReturn(Either.left(service));
+            .thenReturn(Either.left(service));
         Assertions.assertNotNull(
-                bl.getServiceWithGroups(resourceId));
+            testSubject.getServiceWithGroups(resourceId));
     }
 
     @Test
-    public void testGetResourceWithGroups() {
+    void testGetResourceWithGroups() {
         String resourceId = "resourceId";
         Resource resource = createParseResourceObject(false);
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
-                .thenReturn(Either.left(resource));
+            .thenReturn(Either.left(resource));
         Assertions.assertNotNull(
-                bl.getResourceWithGroups(resourceId));
+            testSubject.getResourceWithGroups(resourceId));
     }
 
     @Test
-    public void testAssociateResourceInstances2() {
+    void testAssociateResourceInstances2() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         when(toscaOperationFacade.associateResourceInstances(any(Resource.class),
-                anyString(), any(ArrayList.class))).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+            anyString(), any(ArrayList.class))).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.associateResourceInstances(yamlName, resource, relations));
+            testSubject.associateResourceInstances(yamlName, resource, relations));
     }
 
     @Test
-    public void testAddRelationsToRI() {
+    void testAddRelationsToRI() {
         String yamlName = "group.yml";
         Resource resource = createResourceObject(false);
 
@@ -2004,11 +1918,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         responseFormat.setStatus(200);
         Assertions.assertNotNull(resource);
 
-        bl.addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList, relations);
+        testSubject.addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList, relations);
     }
 
     @Test
-    public void testAddRelationsToRI_null() {
+    void testAddRelationsToRI_null() {
         String yamlName = "group.yml";
         Resource resource = createParseResourceObject(true);
         Map<String, UploadComponentInstanceInfo> uploadResInstancesMap = new HashMap<>();
@@ -2018,12 +1932,12 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
 
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList,
-                        relations));
+            testSubject.addRelationsToRI(yamlName, resource, uploadResInstancesMap, componentInstancesList,
+                relations));
     }
 
     @Test
-    public void testAddRelationToRI() {
+    void testAddRelationToRI() {
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         resource.setComponentInstances(creatComponentInstances());
@@ -2031,11 +1945,11 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
 
         Assertions.assertNotNull(
-                bl.addRelationToRI(yamlName, resource, nodesInfoValue, relations));
+            testSubject.addRelationToRI(yamlName, resource, nodesInfoValue, relations));
     }
 
     @Test
-    public void testAddRelationToRI_null() {
+    void testAddRelationToRI_null() {
         String yamlName = "yamlName.yml";
         Resource resource = createParseResourceObject(false);
         List<ComponentInstance> componentInstancesList = new ArrayList<>();
@@ -2043,22 +1957,23 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Assertions.assertNotNull(
-                bl.addRelationToRI(yamlName, resource, nodesInfoValue, relations));
+            testSubject.addRelationToRI(yamlName, resource, nodesInfoValue, relations));
     }
 
     @Test
-    public void testFindVfcResource() {
+    void testFindVfcResource() {
         Service service = createServiceObject(true);
         String currVfcToscaName = "currVfcToscaName";
         String previousVfcToscaName = "previousVfcToscaName";
         UploadComponentInstanceInfo nodesInfoValue = new UploadComponentInstanceInfo();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
+        final CsarInfo csarInfo = getCsarInfo();
         Assertions.assertThrows(ComponentException.class, () ->
-                bl.findVfcResource(getCsarInfo(), service, currVfcToscaName, previousVfcToscaName,
-                        StorageOperationStatus.OK));
+            testSubject.findVfcResource(csarInfo, service, currVfcToscaName, previousVfcToscaName,
+                StorageOperationStatus.OK));
     }
 
-    protected GroupDefinition getGroupDefinition() {
+    private GroupDefinition getGroupDefinition() {
         GroupDefinition groupDefinition = new GroupDefinition();
         Map<String, String> members = new HashMap<>();
         members.put("members", "members");
@@ -2106,7 +2021,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
             resource.setName(resource.getName());
             resource.setVersion("0.1");
             resource.setUniqueId(resource.getName()
-                    .toLowerCase() + ":" + resource.getVersion());
+                .toLowerCase() + ":" + resource.getVersion());
             resource.setCreatorUserId(user.getUserId());
             resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
             resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -2126,17 +2041,15 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         } catch (IOException e) {
             e.printStackTrace();
         }
-        CsarInfo csarInfo = new CsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent,
-                false);
-        return csarInfo;
+        return new CsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
     }
 
-    public static String loadFileNameToJsonString(String fileName) throws IOException {
+    private String loadFileNameToJsonString(String fileName) throws IOException {
         String sourceDir = "src/test/resources/normativeTypes";
         return loadFileNameToJsonString(sourceDir, fileName);
     }
 
-    private static String loadFileNameToJsonString(String sourceDir, String fileName) throws IOException {
+    private String loadFileNameToJsonString(String sourceDir, String fileName) throws IOException {
         java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir, fileName);
         byte[] fileContent = Files.readAllBytes(filePath);
         return new String(fileContent);
@@ -2174,7 +2087,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
 
     protected void assertComponentException(ComponentException e, ActionStatus expectedStatus, String... variables) {
         ResponseFormat actualResponse = e.getResponseFormat() != null ?
-                e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
         assertParseResponse(actualResponse, expectedStatus, variables);
     }
 
@@ -2183,4 +2096,5 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         assertThat(expectedResponse.getStatus()).isEqualTo(actualResponse.getStatus());
         assertThat(expectedResponse.getFormattedMessage()).isEqualTo(actualResponse.getFormattedMessage());
     }
+
 }
