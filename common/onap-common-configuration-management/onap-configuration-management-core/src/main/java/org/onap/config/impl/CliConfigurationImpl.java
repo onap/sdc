@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import lombok.NoArgsConstructor;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.Hint;
@@ -40,15 +40,13 @@ import org.onap.config.type.ConfigurationQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@NoArgsConstructor
 public final class CliConfigurationImpl extends ConfigurationImpl implements ConfigurationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CliConfigurationImpl.class);
     private static final List<String> KEYS_TO_FILTER = Arrays.asList(NAMESPACE_KEY, MODE_KEY, LOAD_ORDER_KEY);
 
-    public CliConfigurationImpl() {
-        super();
-    }
-
+    @Override
     public String getConfigurationValue(Map<String, Object> input) {
         return getConfigurationValue((ConfigurationQuery) getInput(input));
     }
@@ -62,7 +60,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                     value = get(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class, hints);
                 } else {
                     value = getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
-                            hints);
+                        hints);
                 }
                 return ConfigurationUtils.getCommaSeparatedList(value);
             } catch (Exception exception) {
@@ -88,7 +86,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
             return toReturn;
         }
         try {
-            toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
+            toReturn = Class.forName(input.get("ImplClass").toString()).getDeclaredConstructor().newInstance();
             Method[] methods = toReturn.getClass().getMethods();
             for (Method method : methods) {
                 if (input.containsKey(method.getName())) {
@@ -101,6 +99,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
         return toReturn;
     }
 
+    @Override
     public Map<String, String> listConfiguration(Map<String, Object> input) {
         return listConfiguration((ConfigurationQuery) getInput(input));
     }
@@ -132,9 +131,9 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
             }
         } catch (Exception exception) {
             LOGGER.warn("Error occurred while searching for in-memory keys for namespace: '{}' and tenant: '{}'",
-                    namespace,
-                    tenant,
-                    exception
+                namespace,
+                tenant,
+                exception
             );
         }
         return keys;

@@ -39,7 +39,8 @@ import org.onap.config.util.TestUtil;
  * Created by sheetalm on 10/19/2016. Scenario 19 Pre-requisite - set -Dnode.config.location=${"user.home"}/TestResources/ while running test Verify
  * node specific override using CLI
  */
-@Disabled("Investigate instability (random failures)")
+@Disabled("Investigate instability (random failures)"
+    + "[ERROR]   NodeSpecificCliTest.testCliApi:73 » FileNotFound /home/jenkins/TestResources/c...")
 class NodeSpecificCliTest {
 
     private static final String NAMESPACE = "NodeCLI";

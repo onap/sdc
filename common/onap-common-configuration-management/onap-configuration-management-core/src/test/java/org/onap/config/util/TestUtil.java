@@ -56,10 +56,10 @@ public class TestUtil {
     public static void validateConfiguration(String nameSpace) {
         Configuration config = ConfigurationManager.lookup();
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
+        Assert.assertEquals("14", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
 
         // First value from list is picked from Merge properties
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MAXSIZE), "1048576");
+        Assert.assertEquals("1048576", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MAXSIZE));
 
         List<String> expectedExtList = new ArrayList<>();
         expectedExtList.add("pdf");
@@ -77,9 +77,9 @@ public class TestUtil {
         List<String> encList = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_ENC);
         Assert.assertEquals(expectedEncList, encList);
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_UPPER), "a-zA-Z_0-9");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_LOWER), "a-zA-Z");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_STATUS), "deleted");
+        Assert.assertEquals("a-zA-Z_0-9", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_UPPER));
+        Assert.assertEquals("a-zA-Z", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_LOWER));
+        Assert.assertEquals("deleted", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_STATUS));
 
         List<String> expectedLocList = new ArrayList<>();
         expectedLocList.add("/opt/spool");
@@ -87,8 +87,8 @@ public class TestUtil {
         List<String> locList = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_LOC);
         Assert.assertEquals(expectedLocList, locList);
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_JSON_SCHEMA),
-                "@GeneratorList.json");
+        Assert.assertEquals("@GeneratorList.json",
+                config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_JSON_SCHEMA));
 
         Assert.assertEquals("@" + getenv(ConfigTestConstant.PATH) + "/myschema.json",
                 config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
@@ -97,9 +97,9 @@ public class TestUtil {
         Assert.assertEquals(config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER_APPC),
                 artifactConsumer);
 
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH), "6");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MANDATORY_NAME), "true");
-        Assert.assertEquals(config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_ENCODED), "true");
+        Assert.assertEquals("6", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH));
+        Assert.assertEquals("true", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MANDATORY_NAME));
+        Assert.assertEquals("true", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_ENCODED));
     }
 
     /**
