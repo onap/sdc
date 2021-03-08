@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import lombok.AllArgsConstructor;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
@@ -29,14 +30,11 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 
 import javax.validation.constraints.NotNull;
 
+@AllArgsConstructor
 public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
     @NotNull
     private String lessThan;
-
-    public LessThanConstraint(String lessThan) {
-        this.lessThan = lessThan;
-    }
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {

@@ -20,43 +20,18 @@
 
 package org.openecomp.sdc.common.api;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class HealthCheckWrapper {
 
 	String sdcVersion;
 	String siteMode;
 	List<HealthCheckInfo> componentsInfo;
-
-	public HealthCheckWrapper(List<HealthCheckInfo> componentsInfo, String sdcVersion, String siteMode) {
-		super();
-		this.componentsInfo = componentsInfo;
-		this.sdcVersion = sdcVersion;
-		this.siteMode = siteMode;
-	}
-
-	public List<HealthCheckInfo> getComponentsInfo() {
-		return componentsInfo;
-	}
-
-	public void setComponentsInfo(List<HealthCheckInfo> componentsInfo) {
-		this.componentsInfo = componentsInfo;
-	}
-
-	public String getSdcVersion() {
-		return sdcVersion;
-	}
-
-	public void setSdcVersion(String sdcVersion) {
-		this.sdcVersion = sdcVersion;
-	}
-
-	public String getSiteMode() {
-		return siteMode;
-	}
-
-	public void setSiteMode(String siteMode) {
-		this.siteMode = siteMode;
-	}
-
 }

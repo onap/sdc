@@ -27,6 +27,7 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
+import lombok.AllArgsConstructor;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
@@ -41,13 +42,9 @@ import java.util.stream.Collectors;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.*;
 
-
+@AllArgsConstructor
 public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
   private ZusammenAdaptor zusammenAdaptor;
-
-  public LicenseKeyGroupZusammenDaoImpl(ZusammenAdaptor zusammenAdaptor) {
-    this.zusammenAdaptor = zusammenAdaptor;
-  }
 
   @Override
   public void registerVersioning(String versionableEntityType) {
