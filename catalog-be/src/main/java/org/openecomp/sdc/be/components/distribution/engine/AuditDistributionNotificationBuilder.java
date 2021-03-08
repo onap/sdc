@@ -19,9 +19,11 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import lombok.Getter;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 
+@Getter
 public class AuditDistributionNotificationBuilder {
 
     private String topicName;
@@ -33,17 +35,9 @@ public class AuditDistributionNotificationBuilder {
     private String workloadContext;
     private String tenant;
 
-    public String getTopicName() {
-        return topicName;
-    }
-
     public AuditDistributionNotificationBuilder setTopicName(String topicName) {
         this.topicName = topicName;
         return this;
-    }
-
-    public String getDistributionId() {
-        return distributionId;
     }
 
     public AuditDistributionNotificationBuilder setDistributionId(String distributionId) {
@@ -51,17 +45,9 @@ public class AuditDistributionNotificationBuilder {
         return this;
     }
 
-    public CambriaErrorResponse getStatus() {
-        return status;
-    }
-
     public AuditDistributionNotificationBuilder setStatus(CambriaErrorResponse status) {
         this.status = status;
         return this;
-    }
-
-    public Service getService() {
-        return service;
     }
 
     public AuditDistributionNotificationBuilder setService(Service service) {
@@ -69,17 +55,9 @@ public class AuditDistributionNotificationBuilder {
         return this;
     }
 
-    public String getEnvId() {
-        return envId;
-    }
-
     public AuditDistributionNotificationBuilder setEnvId(String envId) {
         this.envId = envId;
         return this;
-    }
-
-    public User getModifier() {
-        return modifier;
     }
 
     public AuditDistributionNotificationBuilder setModifier(User modifier) {
@@ -87,17 +65,9 @@ public class AuditDistributionNotificationBuilder {
         return this;
     }
 
-    public String getWorkloadContext() {
-        return workloadContext;
-    }
-
     public AuditDistributionNotificationBuilder setWorkloadContext(String workloadContext) {
         this.workloadContext = workloadContext;
         return this;
-    }
-
-    public String getTenant() {
-        return tenant;
     }
 
     public AuditDistributionNotificationBuilder setTenant(String tenant) {

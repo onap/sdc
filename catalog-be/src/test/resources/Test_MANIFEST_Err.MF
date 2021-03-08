@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: catalog-be
+Implementation-Version: APPLICATION_VERSION
+Implementation-Vendor-Id: org.openecomp.sdc
+Built-By: esofer
+Build-Jdk: 1.7.0_45
+Created-By: Apache Maven 3.2.1
+Archiver-Version: Plexus Archiver
+
