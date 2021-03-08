@@ -25,111 +25,72 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "sdcartifact", name = "sdcschemafiles")
 public class SdcSchemaFilesData {
-	@PartitionKey(0)
-	@Column(name = "sdcreleasenum")
-	private String sdcReleaseNum;
-	
-	@ClusteringColumn
-	@Column(name = "timestamp")
-	private Date timestamp;
-	
-	@PartitionKey(1)
-	@Column(name = "conformanceLevel")
-	private String conformanceLevel;
+    @PartitionKey(0)
+    @Column(name = "sdcreleasenum")
+    private String sdcReleaseNum;
 
-	@Column(name = "fileName")
-	private String fileName;
+    @ClusteringColumn
+    @Column(name = "timestamp")
+    private Date timestamp;
 
-	@Column(name = "payload")
-	private ByteBuffer payload;
-	
-	@Column(name = "checksum")
-	private String checksum;
-	
-	public SdcSchemaFilesData() {
-	
-	}
-	
-	public SdcSchemaFilesData(String sdcReleaseNum, Date timestamp, String conformanceLevel, String fileName, byte[] payload, String checksum){
-		this.sdcReleaseNum = sdcReleaseNum;
-		this.timestamp = timestamp;
-		this.conformanceLevel = conformanceLevel;
-		this.fileName = fileName;
-		if(payload != null) {
-			this.payload = ByteBuffer.wrap(payload.clone());
-		}
-		this.checksum = checksum;
-	}
-	
-	public String getSdcReleaseNum() {
-		return sdcReleaseNum;
-	}
+    @PartitionKey(1)
+    @Column(name = "conformanceLevel")
+    private String conformanceLevel;
 
-	public void setSdcReleaseNum(String sdcReleaseNum) {
-		this.sdcReleaseNum = sdcReleaseNum;
-	}
+    @Column(name = "fileName")
+    private String fileName;
 
-	public String getConformanceLevel() {
-		return conformanceLevel;
-	}
+    @Column(name = "payload")
+	@Setter(AccessLevel.NONE)private ByteBuffer payload;
 
-	public void setConformanceLevel(String conformanceLevel) {
-		this.conformanceLevel = conformanceLevel;
-	}
+    @Column(name = "checksum")
+    private String checksum;
 
-	public String getFileName() {
-		return fileName;
-	}
+    public SdcSchemaFilesData(String sdcReleaseNum, Date timestamp, String conformanceLevel, String fileName, byte[] payload, String checksum){
+        this.sdcReleaseNum = sdcReleaseNum;
+        this.timestamp = timestamp;
+        this.conformanceLevel = conformanceLevel;
+        this.fileName = fileName;
+        if(payload != null) {
+            this.payload = ByteBuffer.wrap(payload.clone());
+        }
+        this.checksum = checksum;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
 
-	public ByteBuffer getPayload() {
-		return payload;
-	}
+    public void setPayload(ByteBuffer payload) {
+        if(payload != null) {
+            this.payload = payload.duplicate();
+        }
+    }
 
-	public void setPayload(ByteBuffer payload) {
-		if(payload != null){
-			this.payload = payload.duplicate();
-		}
-	}
-	
-	public void setPayloadAsArray(byte[] payload) {
-		if(payload != null){
-			this.payload = ByteBuffer.wrap(payload.clone());
-		}
-	}
+    public void setPayloadAsArray(byte[] payload) {
+        if(payload != null) {
+            this.payload = ByteBuffer.wrap(payload.clone());
+        }
+    }
 
-	@Transient
-	public byte[] getPayloadAsArray() {
+    @Transient
+    public byte[] getPayloadAsArray() {
 		return payload != null ? payload.array() : null;
 	}
 
-	public Date getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	public String getChecksum() {
-		return checksum;
-	}
-
-	public void setChecksum(String checksum) {
-		this.checksum = checksum;
-	}
-
-	@Override
-	public String toString() {
-		return "SdcSchemaFilesData [sdcReleaseNum=" + sdcReleaseNum + ", timestamp=" + timestamp + ", conformanceLevel="
-				+ conformanceLevel + ", fileName=" + fileName + ", checksum=" + checksum + "]";
-	}
+    @Override
+    public String toString() {
+        return "SdcSchemaFilesData [sdcReleaseNum=" + sdcReleaseNum + ", timestamp=" + timestamp + ", conformanceLevel="
+            + conformanceLevel + ", fileName=" + fileName + ", checksum=" + checksum + "]";
+    }
 }

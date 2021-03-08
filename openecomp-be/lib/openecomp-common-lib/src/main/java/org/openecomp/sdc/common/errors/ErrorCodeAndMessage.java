@@ -21,12 +21,19 @@
 package org.openecomp.sdc.common.errors;
 
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.ws.rs.core.Response;
 
 /**
  * This class represents an error object to be returned in failed REST instead of just returning one
  * of HTTP fail statuses.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class ErrorCodeAndMessage {
 
   /**
@@ -44,9 +51,6 @@ public class ErrorCodeAndMessage {
    */
   private String message;
 
-  public ErrorCodeAndMessage() {
-  }
-
   /**
    * Instantiates a new Error code and message.
    *
@@ -58,30 +62,4 @@ public class ErrorCodeAndMessage {
     this.message = errorCode.message();
     this.errorCode = errorCode.id();
   }
-
-
-  public Response.Status getStatus() {
-    return status;
-  }
-
-  public void setStatus(Response.Status status) {
-    this.status = status;
-  }
-
-  public String getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(String errorCode) {
-    this.errorCode = errorCode;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
 }
