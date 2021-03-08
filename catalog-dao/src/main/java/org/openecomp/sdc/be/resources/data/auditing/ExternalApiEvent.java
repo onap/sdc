@@ -25,6 +25,8 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
@@ -40,6 +42,8 @@ import java.util.UUID;
  * This class Represents the Audit for External API 
  *
  */
+@Getter
+@Setter
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE)
 public class ExternalApiEvent extends AuditingGenericEvent {
     @PartitionKey
@@ -154,126 +158,6 @@ public class ExternalApiEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_ARTIFACT_DATA.getDisplayName(), getArtifactData());
     }
 
-    public UUID getTimebaseduuid() {
-        return timebaseduuid;
-    }
-
-    public void setTimebaseduuid(UUID timebaseduuid) {
-        this.timebaseduuid = timebaseduuid;
-    }
-
-    public Date getTimestamp1() {
-        return timestamp1;
-    }
-
-    public void setTimestamp1(Date timestamp1) {
-        this.timestamp1 = timestamp1;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getConsumerId() {
-        return consumerId;
-    }
-
-    public void setConsumerId(String consumerId) {
-        this.consumerId = consumerId;
-    }
-
-    public String getResourceURL() {
-        return resourceURL;
-    }
-
-    public void setResourceURL(String resourceURL) {
-        this.resourceURL = resourceURL;
-    }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
-    }
-
-    public String getResourceType() {
-        return resourceType;
-    }
-
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
-    }
-
-    public String getServiceInstanceId() {
-        return serviceInstanceId;
-    }
-
-    public void setServiceInstanceId(String serviceInstanceId) {
-        this.serviceInstanceId = serviceInstanceId;
-    }
-
-    public String getInvariantUuid() {
-        return invariantUuid;
-    }
-
-    public void setInvariantUuid(String invariantUuid) {
-        this.invariantUuid = invariantUuid;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
-
-    public String getPrevArtifactUuid() {
-        return prevArtifactUuid;
-    }
-
-    public void setPrevArtifactUuid(String prevArtifactUuid) {
-        this.prevArtifactUuid = prevArtifactUuid;
-    }
-
-    public String getCurrArtifactUuid() {
-        return currArtifactUuid;
-    }
-
-    public void setCurrArtifactUuid(String currArtifactUuid) {
-        this.currArtifactUuid = currArtifactUuid;
-    }
-
-    public String getArtifactData() {
-        return artifactData;
-    }
-
-    public void setArtifactData(String artifactData) {
-        this.artifactData = artifactData;
-    }
-
     @Override
     public String toString() {
         return "ExternalApiEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", action=" + action
@@ -284,37 +168,5 @@ public class ExternalApiEvent extends AuditingGenericEvent {
                 + ", prevState=" + prevState + ", currState=" + currState
                 + ", prevArtifactUuid="
                 + prevArtifactUuid + ", currArtifactUuid=" + currArtifactUuid + ", artifactData=" + artifactData + "]";
-    }
-
-    public String getPrevVersion() {
-        return prevVersion;
-    }
-
-    public void setPrevVersion(String prevVersion) {
-        this.prevVersion = prevVersion;
-    }
-
-    public String getCurrVersion() {
-        return currVersion;
-    }
-
-    public void setCurrVersion(String currVersion) {
-        this.currVersion = currVersion;
-    }
-
-    public String getPrevState() {
-        return prevState;
-    }
-
-    public void setPrevState(String prevState) {
-        this.prevState = prevState;
-    }
-
-    public String getCurrState() {
-        return currState;
-    }
-
-    public void setCurrState(String currState) {
-        this.currState = currState;
     }
 }
