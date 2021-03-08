@@ -21,6 +21,7 @@
 package org.openecomp.sdc.enrichment.inter;
 
 
+import lombok.Setter;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.AsdcModel;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
@@ -28,19 +29,12 @@ import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import java.util.List;
 import java.util.Map;
 
+@Setter
 public abstract class Enricher {
 
 
     protected EnrichmentInfo data;
     protected AsdcModel model;
-
-    public void setData(EnrichmentInfo data) {
-        this.data = data;
-    }
-
-    public void setModel(AsdcModel model) {
-        this.model = model;
-    }
 
     public abstract Map<String, List<ErrorMessage>> enrich() throws Exception;
 }
