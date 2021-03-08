@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,35 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.vendorlicense.dao.types.xml;
+package org.openecomp.sdc.be.datatypes.enums;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.junit.jupiter.api.Test;
 
-@Getter
-@Setter
-public class LimitXml {
-  String description;
-  String metric;
-  String values;
-  String unit;
-  String time;
-  String aggregationFunction;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-  public EntitlementTimeForXml getTimeForArtifact() {
-    EntitlementTimeForXml timeForXml = new EntitlementTimeForXml();
-    if (time != null) {
-      timeForXml.setValue(time);
-    }
+public class InstantiationTypesTest {
 
-    return timeForXml;
-  }
-
-  public AggregationFunctionForXml getAggregationFunctionForArtifact() {
-    AggregationFunctionForXml aggregationFunctionForXml = new AggregationFunctionForXml();
-    if (aggregationFunction != null) {
-      aggregationFunctionForXml.setValue(aggregationFunction);
-    }
-    return aggregationFunctionForXml;
-  }
+	@Test
+	public void testContainsName() {
+		assertTrue(InstantiationTypes.containsName("A-la-carte"));
+		assertTrue(InstantiationTypes.containsName("Macro"));
+		assertFalse(InstantiationTypes.containsName("test"));
+	}
 }
