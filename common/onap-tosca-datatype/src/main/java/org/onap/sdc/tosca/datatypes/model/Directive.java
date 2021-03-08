@@ -21,7 +21,11 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public enum Directive {
 
 
@@ -29,14 +33,5 @@ public enum Directive {
   SUBSTITUTABLE("substitutable");
 
   private String displayName;
-
-  Directive(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
 
 }

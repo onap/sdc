@@ -20,30 +20,15 @@
 
 package org.openecomp.core.utilities.applicationconfig.type;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class ConfigurationData {
 
   private String value;
   private long timeStamp;
-
-  public ConfigurationData(String value, long timeStamp) {
-    this.value = value;
-    this.timeStamp = timeStamp;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public long getTimeStamp() {
-    return timeStamp;
-  }
-
-  public void setTimeStamp(long timeStamp) {
-    this.timeStamp = timeStamp;
-  }
 }
