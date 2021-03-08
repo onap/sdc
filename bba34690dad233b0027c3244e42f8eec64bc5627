@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41f319d4_c9cf7494",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/SdcSchemaFilesData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-08T21:22:02Z",
+      "side": 1,
+      "message": "should replaced by @Setter too",
+      "range": {
+        "startLine": 70,
+        "startChar": 1,
+        "endLine": 73,
+        "endChar": 0
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbd269c3_8d459be7",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/SdcSchemaFilesData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-08T21:22:02Z",
+      "side": 1,
+      "message": "should replaced by @Setter too",
+      "range": {
+        "startLine": 75,
+        "startChar": 1,
+        "endLine": 77,
+        "endChar": 2
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da31994f_cb99a319",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/SdcSchemaFilesData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-08T21:22:02Z",
+      "side": 1,
+      "message": "should replaced by @Setter too",
+      "range": {
+        "startLine": 79,
+        "startChar": 1,
+        "endLine": 82,
+        "endChar": 0
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e20066fb_3c019263",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/SdcSchemaFilesData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-08T21:22:02Z",
+      "side": 1,
+      "message": "should replaced by @Setter too",
+      "range": {
+        "startLine": 100,
+        "startChar": 1,
+        "endLine": 103,
+        "endChar": 0
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b9fdfd6_f807fb0b",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/SdcSchemaFilesData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-08T21:22:02Z",
+      "side": 1,
+      "message": "should replaced by @Setter too",
+      "range": {
+        "startLine": 104,
+        "startChar": 1,
+        "endLine": 107,
+        "endChar": 0
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
