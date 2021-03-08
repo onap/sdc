@@ -15,6 +15,11 @@
 */
 package org.openecomp.core.zusammen.impl;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ItemElementLoggerTargetServiceName {
   ITEM_CREATION("Item Creation"),
   ITEM_VERSION_CREATION("Item Version Creation"),
@@ -27,12 +32,4 @@ public enum ItemElementLoggerTargetServiceName {
   ITEM_VERSION_RETRIEVAL("Item version retrieval)");
 
   private final String description;
-
-  ItemElementLoggerTargetServiceName(String description) {
-    this.description = description;
-  }
-
-  public String getDescription() {
-    return description;
-  }
 }
