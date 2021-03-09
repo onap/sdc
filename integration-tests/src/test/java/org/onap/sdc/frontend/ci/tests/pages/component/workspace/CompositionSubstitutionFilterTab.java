@@ -19,11 +19,13 @@
 
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
+import org.onap.sdc.frontend.ci.tests.pages.ServiceDependenciesEditor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Represents the composition page, details panel, Substitution Filters tab
@@ -36,15 +38,29 @@ public class CompositionSubstitutionFilterTab extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
-        waitForElementVisibility(By.xpath(XpathSelector.SUBSTITUTION_FILTER_TAB.getXPath()));
-        waitForElementVisibility(By.xpath(XpathSelector.ADD_SUBSTITUTION_FILTER_BTN.getXPath()));
+        waitForElementVisibility(By.xpath(XpathSelector.SUBSTITUTION_FILTER_TAB.xPath));
+        waitForElementVisibility(By.xpath(XpathSelector.SUBSTITUTION_FILTER_ADD_BTN.xPath));
+    }
+
+    public ServiceDependenciesEditor clickAddSubstitutionFilter() {
+        findElement(By.xpath(XpathSelector.SUBSTITUTION_FILTER_ADD_BTN.xPath)).click();
+        return new ServiceDependenciesEditor(webDriver);
+    }
+
+    public boolean isSubstitutionFilterPresent(final String propertyName) {
+        try {
+            return waitForElementVisibility(By.xpath(String.format(XpathSelector.SUBSTITUTION_FILTER_DESC.xPath, propertyName))) != null;
+        } catch (final Exception ignored) {
+            return false;
+        }
     }
 
     @AllArgsConstructor
     @Getter
     private enum XpathSelector {
         SUBSTITUTION_FILTER_TAB("//substitution-filter-tab"),
-        ADD_SUBSTITUTION_FILTER_BTN("//button[@data-tests-id='add-substitution-filter-button']");
+        SUBSTITUTION_FILTER_ADD_BTN("//button[@data-tests-id='add-substitution-filter-button']"),
+        SUBSTITUTION_FILTER_DESC("//*[@class='rule-desc' and contains(text(),'%s')]");
 
         private final String xPath;
 
