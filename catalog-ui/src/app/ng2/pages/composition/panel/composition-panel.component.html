@@ -12,7 +12,8 @@
             <sdc-tab *ngFor="let tab of tabs"
                      [titleIcon]="tab.titleIcon"
                      [active]="tab.isActive"
-                     [tooltipText]="tab.tooltipText">
+                     [tooltipText]="tab.tooltipText"
+                     [testId]="tab.testId">
 
                 <panel-tab [isActive]="tab.isActive"
                            [component]="selectedComponent"

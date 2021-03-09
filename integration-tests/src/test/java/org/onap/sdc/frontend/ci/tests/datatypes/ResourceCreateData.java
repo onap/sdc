@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,27 +17,29 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.frontend.ci.tests.utilities;
+package org.onap.sdc.frontend.ci.tests.datatypes;
 
-import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import java.util.List;
+import java.util.UUID;
+import lombok.Data;
 
-public class LoaderHelper extends AbstractPageObject {
+/**
+ * Represents the necessary data to create a resource (VF, VFC or similar)
+ */
+@Data
+public class ResourceCreateData {
 
-    private final By loaderLocator = By.xpath("//*[@data-tests-id='loader' or @class='tlv-loader']");
+    private String name;
+    private String category;
+    private List<String> tagList;
+    private String description;
+    private String contactId;
+    private String vendorName;
+    private String vendorRelease;
+    private String vendorModelNumber;
 
-    public LoaderHelper(final WebDriver webDriver) {
-        super(webDriver);
-    }
-
-    public void waitForLoader(final int timeout) {
-        waitForElementVisibility(loaderLocator, 5);
-        waitForElementInvisibility(loaderLocator, timeout);
-    }
-
-    @Override
-    public void isLoaded() {
-
+    public void setRandomName(final String prefix) {
+        final String randomPart = UUID.randomUUID().toString().split("-")[0];
+        this.name = String.format("%s%s", prefix == null ? "" : prefix, randomPart);
     }
 }

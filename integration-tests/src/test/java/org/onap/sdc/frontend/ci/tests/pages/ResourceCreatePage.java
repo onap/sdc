@@ -26,51 +26,102 @@ import static org.hamcrest.core.Is.is;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * Handles the Resource Create Page UI actions
  */
 public class ResourceCreatePage extends AbstractPageObject {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCreatePage.class);
     private final LoaderHelper loaderHelper;
     private final NotificationComponent notificationComponent;
-    private WebElement createBtn;
+    private final ResourceWorkspaceTopBarComponent topBarComponent;
 
-    public ResourceCreatePage(final WebDriver webDriver, final LoaderHelper loaderHelper,
-                              final NotificationComponent notificationComponent) {
+    public ResourceCreatePage(final WebDriver webDriver) {
         super(webDriver);
-        this.loaderHelper = loaderHelper;
-        this.notificationComponent = notificationComponent;
+        loaderHelper = new LoaderHelper(webDriver);
+        notificationComponent = new NotificationComponent(webDriver);
+        topBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
         timeoutInSeconds = 5;
     }
 
     @Override
     public void isLoaded() {
-        LOGGER.debug("Waiting for element visibility with xpath '{}'", XpathSelector.FORM_LIFE_CYCLE_STATE.getXpath());
-        final WebElement lifeCycleState = waitForElementVisibility(XpathSelector.FORM_LIFE_CYCLE_STATE.getXpath());
+        topBarComponent.isLoaded();
+        final String lifeCycleState = topBarComponent.getLifecycleState();
         assertThat("Life cycle state should be as expected",
-            lifeCycleState.getText(), is(equalToIgnoringCase(LifeCycleStateEnum.IN_DESIGN.getValue())));
-        createBtn = getWait()
-            .until(ExpectedConditions.elementToBeClickable(By.xpath(XpathSelector.CREATE_BTN.getXpath())));
+            lifeCycleState, is(equalToIgnoringCase(LifeCycleStateEnum.IN_DESIGN.getValue())));
     }
 
     /**
      * Creates the resource and wait for success notification.
      */
-    public void createResource() {
-        createBtn.click();
-        loaderHelper.waitForLoader(60);
-        notificationComponent.waitForNotification(NotificationType.SUCCESS, 60);
+    public void clickOnCreate() {
+        topBarComponent.clickOnCreate();
+        loaderHelper.waitForLoader(20);
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
+    }
+
+    public void fillForm(final ResourceCreateData resourceCreateData) {
+        fillName(resourceCreateData.getName());
+        setCategory(resourceCreateData.getCategory());
+        fillDescription(resourceCreateData.getDescription());
+        fillContactId(resourceCreateData.getContactId());
+        fillVendorName(resourceCreateData.getVendorName());
+        fillVendorRelease(resourceCreateData.getVendorRelease());
+        fillVendorModelNumber(resourceCreateData.getVendorModelNumber());
+    }
+
+    public void fillName(final String name) {
+        setInputField(By.xpath(XpathSelector.NAME_INPUT.getXpath()), name);
+    }
+
+    public void setCategory(final String category) {
+        setSelectField(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath()), category);
+    }
+
+    public void fillDescription(final String description) {
+        setTextAreaField(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()), description);
+    }
+
+    public void fillContactId(final String contactId) {
+        setInputField(By.xpath(XpathSelector.CONTACT_ID_INPUT.getXpath()), contactId);
+    }
+
+    public void fillVendorName(final String vendorName) {
+        setInputField(By.xpath(XpathSelector.VENDOR_NAME_INPUT.getXpath()), vendorName);
+    }
+
+    public void fillVendorRelease(final String vendorRelease) {
+        setInputField(By.xpath(XpathSelector.VENDOR_RELEASE_INPUT.getXpath()), vendorRelease);
+    }
+
+    public void fillVendorModelNumber(final String vendorModelNumber) {
+        setInputField(By.xpath(XpathSelector.VENDOR_MODEL_NUMBER_INPUT.getXpath()), vendorModelNumber);
+    }
+
+    private void setSelectField(final By locator, final String value) {
+        if (value == null) {
+            return;
+        }
+        new Select(findElement(locator)).selectByVisibleText(value);
+    }
+
+    private void setInputField(final By locator, final String value) {
+        if (value == null) {
+            return;
+        }
+        findElement(locator).sendKeys(value);
+    }
+
+    private void setTextAreaField(final By locator, final String value) {
+        setInputField(locator, value);
     }
 
     /**
@@ -78,8 +129,13 @@ public class ResourceCreatePage extends AbstractPageObject {
      */
     @AllArgsConstructor
     private enum XpathSelector {
-        CREATE_BTN("create/save", "//button[@data-tests-id='%s']"),
-        FORM_LIFE_CYCLE_STATE("formlifecyclestate", "//span[@data-tests-id='%s']");
+        NAME_INPUT("name", "//input[@data-tests-id='%s']"),
+        CATEGORY_SELECT("selectGeneralCategory", "//select[@data-tests-id='%s']"),
+        DESCRIPTION_TEXT_AREA("description", "//textarea[@data-tests-id='%s']"),
+        CONTACT_ID_INPUT("contactId", "//input[@data-tests-id='%s']"),
+        VENDOR_NAME_INPUT("vendorName", "//input[@data-tests-id='%s']"),
+        VENDOR_RELEASE_INPUT("vendorRelease", "//input[@data-tests-id='%s']"),
+        VENDOR_MODEL_NUMBER_INPUT("resourceVendorModelNumber", "//input[@data-tests-id='%s']");
 
         @Getter
         private final String id;

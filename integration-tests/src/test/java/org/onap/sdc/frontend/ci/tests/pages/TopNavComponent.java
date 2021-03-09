@@ -23,6 +23,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -65,22 +66,37 @@ public class TopNavComponent extends AbstractPageObject {
     /**
      * Clicks on home link inside the first breadcrumb arrow.
      */
-    public void clickOnHome() {
+    public HomePage clickOnHome() {
         hoverToBreadcrumbArrow(0);
         final By homeButtonLocator = By.xpath(XpathSelector.SUB_MENU_BUTTON_HOME.getXpath());
-        getWait().until(ExpectedConditions.visibilityOfElementLocated(homeButtonLocator));
-        getWait().until(ExpectedConditions.elementToBeClickable(homeButtonLocator)).click();
-        getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.REPOSITORY_ICON.getXpath())));
+        waitForElementVisibility(homeButtonLocator);
+        waitToBeClickable(homeButtonLocator).click();
+        return new HomePage(webDriver, this);
     }
 
     public boolean isHomeSelected() {
         final By homeLinkLocator = By.xpath(XpathSelector.MAIN_MENU_LINK_HOME.getXpath());
-        getWait().until(ExpectedConditions.visibilityOfElementLocated(homeLinkLocator));
-        final WebElement homeLinkElement = findElement(homeLinkLocator);
+        final WebElement homeLinkElement = waitForElementVisibility(homeLinkLocator);
         final WebElement homeLinkParentElement = homeLinkElement.findElement(By.xpath("./.."));
         final String aClass = homeLinkParentElement.getAttribute("class");
         return "selected".equals(aClass);
+    }
+
+    /**
+     * Click on one of the items of the top nav breadcrumb based on the given position.
+     * The first item in the breadcrumb is position 0.
+     *
+     * @param position the position of the breadcrumb item
+     */
+    public void clickOnBreadCrumb(final int position) {
+        if (position < 0) {
+            throw new IllegalStateException("The position cannot be less that zero");
+        }
+        waitForElementVisibility(By.xpath(String.format("//*[@data-tests-id='breadcrumbs-button-%s']", position))).click();
+    }
+
+    public void waitRepositoryToBeClickable() {
+        waitToBeClickable(XpathSelector.REPOSITORY_ICON.getXpath());
     }
 
     /**

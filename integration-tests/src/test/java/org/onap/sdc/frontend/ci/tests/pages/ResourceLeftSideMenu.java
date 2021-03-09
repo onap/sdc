@@ -21,6 +21,7 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -84,6 +85,11 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
         return new ServiceCreatePage(webDriver);
     }
 
+    public CompositionPage clickOnCompositionMenuItem() {
+        wrappingElement.findElement(By.xpath(XpathSelector.COMPOSITION_MENU.getXpath())).click();
+        return new CompositionPage(webDriver);
+    }
+
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
@@ -92,6 +98,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
         MAIN_DIV("w-sdc-left-sidebar", "//div[@class='%s']"),
         PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//*[@data-tests-id='%s']"),
         GENERAL_MENU("GeneralLeftSideMenu", "//*[@data-tests-id='%s']"),
+        COMPOSITION_MENU("CompositionLeftSideMenu", "//*[@data-tests-id='%s']"),
         TOSCA_ARTIFACTS_MENU("TOSCA ArtifactsLeftSideMenu", "//*[@data-tests-id='%s']");
 
         @Getter

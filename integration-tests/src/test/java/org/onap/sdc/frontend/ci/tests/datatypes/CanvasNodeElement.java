@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,27 +17,38 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.frontend.ci.tests.utilities;
+package org.onap.sdc.frontend.ci.tests.datatypes;
 
-import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionCanvasComponent;
 
-public class LoaderHelper extends AbstractPageObject {
+/**
+ * Represents a node in the {@link CompositionCanvasComponent}
+ */
+@Getter
+@AllArgsConstructor
+public final class CanvasNodeElement {
 
-    private final By loaderLocator = By.xpath("//*[@data-tests-id='loader' or @class='tlv-loader']");
+    private final String name;
+    private final int positionX;
+    private final int positionY;
 
-    public LoaderHelper(final WebDriver webDriver) {
-        super(webDriver);
-    }
-
-    public void waitForLoader(final int timeout) {
-        waitForElementVisibility(loaderLocator, 5);
-        waitForElementInvisibility(loaderLocator, timeout);
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CanvasNodeElement that = (CanvasNodeElement) o;
+        return name.equals(that.name);
     }
 
     @Override
-    public void isLoaded() {
-
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

@@ -19,6 +19,7 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.openqa.selenium.WebDriver;
 
@@ -27,6 +28,13 @@ public class ServiceComponentPage extends AbstractPageObject {
     private final TopNavComponent topNavComponent;
     private final ResourceLeftSideMenu resourceLeftSideMenu;
     private final ResourceWorkspaceTopBarComponent workspaceTopBarComponent;
+
+    public ServiceComponentPage(final WebDriver webDriver) {
+        super(webDriver);
+        this.topNavComponent = new TopNavComponent(webDriver);
+        this.resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
+        this.workspaceTopBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
+    }
 
     public ServiceComponentPage(final WebDriver webDriver, final TopNavComponent topNavComponent,
                                 final ResourceLeftSideMenu resourceLeftSideMenu,
@@ -50,6 +58,10 @@ public class ServiceComponentPage extends AbstractPageObject {
 
     public ToscaArtifactsPage goToToscaArtifacts() {
         return resourceLeftSideMenu.clickOnToscaArtifactsMenuItem();
+    }
+
+    public CompositionPage goToComposition() {
+        return resourceLeftSideMenu.clickOnCompositionMenuItem();
     }
 
 }

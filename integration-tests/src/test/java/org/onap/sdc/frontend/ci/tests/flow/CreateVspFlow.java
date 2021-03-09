@@ -140,9 +140,8 @@ public class CreateVspFlow extends AbstractUiTestFlow {
     private void goToHomePage(final TopNavComponent topNavComponent) {
         extendTest.log(Status.INFO, "Accessing the Home page to import the created VSP");
         topNavComponent.isLoaded();
-        topNavComponent.clickOnHome();
+        homePage = topNavComponent.clickOnHome();
         GeneralUIUtils.ultimateWait();
-        homePage = new HomePage(webDriver, topNavComponent);
         homePage.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "home-is-loaded", "The Home page is loaded.");
     }
