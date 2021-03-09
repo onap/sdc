@@ -22,9 +22,10 @@ package org.onap.sdc.frontend.ci.tests.pages;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.util.Map;
+
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
@@ -32,6 +33,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Handles the Resource Properties Assignment Page UI actions
@@ -159,6 +163,22 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
     }
 
     /**
+     * Creates a map based on property names and data types
+     */
+    public Map<String, String> getPropertyNamesAndTypes() {
+        waitPropertiesToLoad();
+        final Map<String, String> namesAndTypes = new HashMap<String, String>();
+        final List<WebElement> names = findElements(By.xpath(XpathSelector.PROPERTY_NAMES.getXpath()));
+        final List<WebElement> types = findElements(By.xpath(XpathSelector.PROPERTY_TYPES.getXpath()));
+
+        for (int i = 0;i < names.size();i++) {
+            namesAndTypes.put(names.get(i).getAttribute("innerText"), types.get(i).getAttribute("innerText"));
+        }
+
+        return namesAndTypes;
+    }
+
+    /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     @AllArgsConstructor
@@ -171,7 +191,9 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
         SOFTWARE_VERSION_INPUT("value-prop-software_versions", "//input[starts-with(@data-tests-id,'%s')]"),
         PROPERTY_CHECKBOX("//checkbox[@data-tests-id='%s']"),
         PROPERTY_SAVE_BTN("properties-save-button", "//button[@data-tests-id='%s']"),
-        INPUT_PROPERTY("//input[@data-tests-id='value-prop-%s']");
+        INPUT_PROPERTY("//input[@data-tests-id='value-prop-%s']"),
+        PROPERTY_TYPES("//*[contains(@data-tests-id, 'propertyType')]"),
+        PROPERTY_NAMES("//*[contains(@data-tests-id, 'propertyName')]");
 
         @Getter
         private String id;

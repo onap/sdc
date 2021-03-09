@@ -53,7 +53,7 @@
                         <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly"
                             (checkedChange)="propertyChecked(property)" [attr.data-tests-id]="property.name"></checkbox>
                         <div class="inner-cell-div-multiline" tooltip="{{property.name}}">
-                            <multiline-ellipsis className="table-cell-multiline-ellipsis" [lines]="2">{{property.name}}</multiline-ellipsis>
+                            <multiline-ellipsis data-tests-id="propertyName" className="table-cell-multiline-ellipsis" [lines]="2">{{property.name}}</multiline-ellipsis>
                         </div>
                     </div>
                     <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}"
@@ -65,7 +65,7 @@
                 <!-- Property Type -->
                 <div class="table-cell col2" *ngIf="!hidePropertyType">
                     <div class="inner-cell-div" tooltip="{{property.type | contentAfterLastDot}}">
-                        <span>{{property.type | contentAfterLastDot}}</span>
+                        <span data-tests-id="propertyType">{{property.type | contentAfterLastDot}}</span>
                     </div>
                 </div>
                 <!-- Property ES (Entry Schema) -->
