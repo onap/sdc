@@ -521,6 +521,17 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(toscaOperationFacade.getToscaFullElement(any(String.class)))
             .thenReturn(Either.left(component));
+        
+        Resource baseType = getNewResource();
+        Map<String, ArtifactDefinition> baseTypeToscaArtifacts = new HashMap<>();
+        ArtifactDefinition baseTypeArtifact = new ArtifactDefinition();
+        baseTypeArtifact.setArtifactName("typeA");
+        baseTypeToscaArtifacts.put("assettoscatemplate", baseTypeArtifact);
+        baseType.setToscaArtifacts(baseTypeToscaArtifacts);
+        
+        component.setDerivedFromGenericType("org.typeA");
+        component.setDerivedFromGenericVersion("1.0");
+        when(toscaOperationFacade.getByToscaResourceNameAndVersion("org.typeA", "1.0")).thenReturn(Either.left(baseType));
 
         // default test
         result = Deencapsulation.invoke(testSubject, "fillImports", component, toscaTemplate);

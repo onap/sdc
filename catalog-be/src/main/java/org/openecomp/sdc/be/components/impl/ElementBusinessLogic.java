@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.CatalogUpdateTimestamp;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -1334,5 +1335,13 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             janusGraphDao.commit();
         }
 
+    }
+    
+    public Either<List<BaseType>, ActionStatus> getBaseTypes(final String categoryName, final String userId) {
+        final ActionStatus status = validateUserExistsActionStatus(userId);
+        if (ActionStatus.OK != status) {
+            return Either.right(status);
+        }
+        return Either.left(elementOperation.getBaseTypes(categoryName));
     }
 }

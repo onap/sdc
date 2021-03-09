@@ -27,10 +27,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.BaseType;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Tag;
@@ -44,12 +54,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -123,7 +137,7 @@ public class ElementOperationTest extends ModelTestBase {
 	}
 
 	private ElementOperation createTestSubject() {
-		return new ElementOperation(new JanusGraphGenericDao(new JanusGraphClient()));
+		return new ElementOperation(new JanusGraphGenericDao(new JanusGraphClient()), new HealingJanusGraphDao(new HealingPipelineDao(), new JanusGraphClient()));
 	}
 
 	
@@ -453,5 +467,92 @@ public class ElementOperationTest extends ModelTestBase {
 		testSubject = createTestSubject();
 		name = "";
 		result = testSubject.getNewCategoryData(name, type, null);
+    }
+	
+    @Test
+    public void testBaseTypes_serviceSpecific() {
+        Map<String, String> preExistingServiceNodeTypes = configurationManager.getConfiguration().getServiceNodeTypes();
+        Map<String, String> preExistingGenericNodeTypes =
+                configurationManager.getConfiguration().getGenericAssetNodeTypes();
+
+        try {
+            Map<String, String> serviceNodeTypes = new HashMap<>();
+            serviceNodeTypes.put("serviceCategoryA", "org.base.type");
+            configurationManager.getConfiguration().setServiceNodeTypes(serviceNodeTypes);
+
+            Map<String, String> genericNodeTypes = new HashMap<>();
+            genericNodeTypes.put("service", "org.service.default");
+            configurationManager.getConfiguration().setGenericAssetNodeTypes(genericNodeTypes);
+
+            HealingJanusGraphDao healingJanusGraphDao = mock(HealingJanusGraphDao.class);
+            ElementOperation elementOperation =
+                    new ElementOperation(new JanusGraphGenericDao(new JanusGraphClient()), healingJanusGraphDao);
+
+            GraphVertex baseTypeVertex = mock(GraphVertex.class);
+            when(baseTypeVertex.getMetadataProperty(GraphPropertyEnum.VERSION)).thenReturn("1.0");
+            when(healingJanusGraphDao.getByCriteria(any(), any(), any()))
+                    .thenReturn(Either.left(Collections.singletonList(baseTypeVertex)));
+
+            GraphVertex derivedTypeVertex = mock(GraphVertex.class);
+            when(derivedTypeVertex.getMetadataProperty(GraphPropertyEnum.STATE)).thenReturn(LifecycleStateEnum.CERTIFIED.name());
+            when(derivedTypeVertex.getMetadataProperty(GraphPropertyEnum.VERSION)).thenReturn("1.0");
+            
+            GraphVertex derivedTypeVertexUncertified = mock(GraphVertex.class);
+            when(derivedTypeVertexUncertified.getMetadataProperty(GraphPropertyEnum.STATE)).thenReturn(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.name());
+            when(derivedTypeVertexUncertified.getMetadataProperty(GraphPropertyEnum.VERSION)).thenReturn("1.1");
+            
+            when(healingJanusGraphDao.getParentVertices(baseTypeVertex, EdgeLabelEnum.DERIVED_FROM,
+                    JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(Collections.singletonList(derivedTypeVertex)));
+            when(healingJanusGraphDao.getParentVertices(derivedTypeVertex, EdgeLabelEnum.DERIVED_FROM,
+                    JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+            when(derivedTypeVertex.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME))
+                    .thenReturn("org.parent.type");
+
+            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA");
+
+            assertEquals(2, baseTypes.size());
+            assertEquals("org.base.type", baseTypes.get(0).getToscaResourceName());
+            assertEquals(1, baseTypes.get(0).getVersions().size());
+            assertEquals("1.0", baseTypes.get(0).getVersions().get(0));
+            assertEquals("org.parent.type", baseTypes.get(1).getToscaResourceName());
+        } finally {
+            configurationManager.getConfiguration().setServiceNodeTypes(preExistingServiceNodeTypes);
+            configurationManager.getConfiguration().setGenericAssetNodeTypes(preExistingGenericNodeTypes);
+        }
+    }
+	
+    @Test
+    public void testBaseTypes_default() {
+        Map<String, String> preExistingServiceNodeTypes = configurationManager.getConfiguration().getServiceNodeTypes();
+        Map<String, String> preExistingGenericNodeTypes =
+                configurationManager.getConfiguration().getGenericAssetNodeTypes();
+
+        try {
+            Map<String, String> genericNodeTypes = new HashMap<>();
+            genericNodeTypes.put("Service", "org.service.default");
+            configurationManager.getConfiguration().setGenericAssetNodeTypes(genericNodeTypes);
+            configurationManager.getConfiguration().setServiceNodeTypes(null);
+
+            HealingJanusGraphDao healingJanusGraphDao = mock(HealingJanusGraphDao.class);
+            ElementOperation elementOperation =
+                    new ElementOperation(new JanusGraphGenericDao(new JanusGraphClient()), healingJanusGraphDao);
+
+            GraphVertex baseTypeVertex = mock(GraphVertex.class);
+            when(baseTypeVertex.getMetadataProperty(GraphPropertyEnum.VERSION)).thenReturn("1.0");
+            when(healingJanusGraphDao.getByCriteria(any(), any(), any()))
+                    .thenReturn(Either.left(Collections.singletonList(baseTypeVertex)));
+
+            when(healingJanusGraphDao.getParentVertices(baseTypeVertex, EdgeLabelEnum.DERIVED_FROM,
+                    JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+
+            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA");
+
+            assertEquals(1, baseTypes.size());
+            assertEquals("org.service.default", baseTypes.get(0).getToscaResourceName());
+            assertEquals(1, baseTypes.get(0).getVersions().size());
+        } finally {
+            configurationManager.getConfiguration().setServiceNodeTypes(preExistingServiceNodeTypes);
+            configurationManager.getConfiguration().setGenericAssetNodeTypes(preExistingGenericNodeTypes);
+        }
     }
 }

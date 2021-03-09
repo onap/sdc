@@ -83,5 +83,7 @@ public class UiComponentDataTransfer {
     private List<PropertyDefinition> properties;
     private List<AttributeDefinition> attributes;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
+    private String derivedFromGenericType;
+    private String derivedFromGenericVersion;
 
 }

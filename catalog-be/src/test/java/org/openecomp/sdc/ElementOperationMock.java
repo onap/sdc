@@ -26,6 +26,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.Category;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Tag;
@@ -276,6 +277,12 @@ public class ElementOperationMock implements IElementOperation {
     
     @Override
     public Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<BaseType> getBaseTypes(String categoryName) {
         // TODO Auto-generated method stub
         return null;
     }
