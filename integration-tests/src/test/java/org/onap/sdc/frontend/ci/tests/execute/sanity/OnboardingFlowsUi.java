@@ -52,11 +52,12 @@ import org.onap.sdc.frontend.ci.tests.dataProvider.OnbordingDataProviders;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasElement;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasManager;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.CheckSoftwareVersionPropertyFlow;
-import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFromVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
@@ -396,7 +397,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
         final ImportVspFlow importVspFlow = new ImportVspFlow(webDriver, resourceName);
         final ResourceCreatePage resourceCreatePage = importVspFlow.run()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
-        final CreateResourceFlow createResourceFlow = new CreateResourceFlow(webDriver, resourceName);
+        final CreateResourceFromVspFlow createResourceFlow = new CreateResourceFromVspFlow(webDriver, resourceName);
         createResourceFlow.run(resourceCreatePage);
 
         final CheckSoftwareVersionPropertyFlow checkSoftwareVersionPropertyFlow =

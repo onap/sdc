@@ -27,7 +27,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
 
-import com.aventstack.extentreports.Status;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,7 +34,6 @@ import java.util.Optional;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Assertions;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
@@ -231,3 +229,4 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     }
 
 }
+

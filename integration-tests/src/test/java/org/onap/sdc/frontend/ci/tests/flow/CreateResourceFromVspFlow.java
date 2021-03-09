@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,38 +20,35 @@
 package org.onap.sdc.frontend.ci.tests.flow;
 
 import com.aventstack.extentreports.Status;
-import java.util.Optional;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
+import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
-import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.openqa.selenium.WebDriver;
+
+import java.util.Optional;
 
 /**
  * UI Flow for Resource creation
  */
-public class CreateResourceFlow extends AbstractUiTestFlow {
+public class CreateResourceFromVspFlow extends AbstractUiTestFlow {
 
-    private final ResourceCreateData resourceCreateData;
+    private final String resourceName;
     private ResourceCreatePage resourceCreatePage;
 
-    public CreateResourceFlow(final WebDriver webDriver, final ResourceCreateData resourceCreateData) {
+    public CreateResourceFromVspFlow(final WebDriver webDriver, final String resourceName) {
         super(webDriver);
-        this.resourceCreateData = resourceCreateData;
+        this.resourceName = resourceName;
     }
 
     @Override
     public Optional<ResourceCreatePage> run(final PageObject... pageObjects) {
-        extendTest.log(Status.INFO, String.format("Creating the Resource '%s' from home page", resourceCreateData.getName()));
-        final HomePage homePage = findParameter(pageObjects, HomePage.class);
-        homePage.isLoaded();
-        resourceCreatePage = homePage.clickOnAddVf();
-        resourceCreatePage.fillForm(resourceCreateData);
+        resourceCreatePage = findParameter(pageObjects, ResourceCreatePage.class);
+        extendTest.log(Status.INFO, String.format("Creating the Resource '%s'", resourceName));
         resourceCreatePage.clickOnCreate();
         ExtentTestActions.takeScreenshot(Status.INFO, "resource-created",
-            String.format("Resource '%s' was created", resourceCreateData.getName()));
-        return Optional.ofNullable(this.resourceCreatePage);
+            String.format("Resource '%s' was created", resourceName));
+        return Optional.ofNullable(resourceCreatePage);
     }
 
     @Override

@@ -27,49 +27,113 @@ describe('composition-panel component', () => {
     let store: Store;
 
     const tabs = {
-            infoTab : {titleIcon: 'info-circle', component: InfoTabComponent, input: {}, isActive: true, tooltipText: 'Information'},
-            policyProperties: {
-                titleIcon: 'settings-o', component: GroupOrPolicyPropertiesTab, input: {type: 'policy'}, isActive: false, tooltipText: 'Properties'
-            },
-            policyTargets: {titleIcon: 'inputs-o', component: PolicyTargetsTabComponent, input: {}, isActive: false, tooltipText: 'Targets'},
-            groupMembers: {titleIcon: 'inputs-o', component: GroupMembersTabComponent, input: {}, isActive: false, tooltipText: 'Members'},
-            groupProperties: {
-                titleIcon: 'settings-o', component: GroupOrPolicyPropertiesTab, input: {type: 'group'}, isActive: false, tooltipText: 'Properties'
-            },
-            deploymentArtifacts: {
-                titleIcon: 'deployment-artifacts-o', component: ArtifactsTabComponent,
-                input: { type: ArtifactGroupType.DEPLOYMENT}, isActive: false, tooltipText: 'Deployment Artifacts'
-            },
-            apiArtifacts: {
-                titleIcon: 'api-o', component: ArtifactsTabComponent,
-                input: { type:  ArtifactGroupType.SERVICE_API}, isActive: false, tooltipText: 'API Artifacts'
-            },
-            infoArtifacts: {
-                titleIcon: 'info-square-o', component: ArtifactsTabComponent,
-                input: { type: ArtifactGroupType.INFORMATION}, isActive: false, tooltipText: 'Information Artifacts'
-            },
-            properties: {
-                titleIcon: 'settings-o', component: PropertiesTabComponent,
-                input: {title: 'Properties and Attributes'}, isActive: false, tooltipText: 'Properties'
-            },
-            reqAndCapabilities : {
-                titleIcon: 'req-capabilities-o', component: ReqAndCapabilitiesTabComponent, input: {},
-                isActive: false, tooltipText: 'Requirements and Capabilities'
-            },
-            substitutionFilter: {
-                titleIcon: 'composition-o', component: SubstitutionFilterTabComponent, input: {title: 'SUBSTITUTION FILTER'},
-                isActive: false, tooltipText: 'Substitution Filter'
-            },
-            inputs: {titleIcon: 'inputs-o', component: PropertiesTabComponent, input: {title: 'Inputs'}, isActive: false, tooltipText: 'Inputs'},
-            settings: {titleIcon: 'settings-o', component: PropertiesTabComponent, input: {}, isActive: false, tooltipText: 'Settings'},
-            interfaceOperations: {
-                titleIcon: 'composition-o',
-                component: InterfaceOperationsComponent,
-                input: {title: 'Interface Operations'},
-                isActive: false,
-                tooltipText: 'Interface Operations'
-            }
-        };
+        infoTab: {
+            titleIcon: 'info-circle',
+            component: InfoTabComponent,
+            input: {},
+            isActive: true,
+            tooltipText: 'Information',
+            testId: 'detail-tab-information'
+        },
+        policyProperties: {
+            titleIcon: 'settings-o',
+            component: GroupOrPolicyPropertiesTab,
+            input: {type: 'policy'},
+            isActive: false,
+            tooltipText: 'Properties',
+            testId: 'detail-tab-policy-properties'
+        },
+        policyTargets: {
+            titleIcon: 'inputs-o',
+            component: PolicyTargetsTabComponent,
+            input: {},
+            isActive: false,
+            tooltipText: 'Targets',
+            testId: 'detail-tab-policy-targets'
+        },
+        groupMembers: {
+            titleIcon: 'inputs-o',
+            component: GroupMembersTabComponent,
+            input: {},
+            isActive: false,
+            tooltipText: 'Members',
+            testId: 'detail-tab-group-members'
+        },
+        groupProperties: {
+            titleIcon: 'settings-o',
+            component: GroupOrPolicyPropertiesTab,
+            input: {type: 'group'},
+            isActive: false,
+            tooltipText: 'Properties',
+            testId: 'detail-tab-group-properties'
+        },
+        deploymentArtifacts: {
+            titleIcon: 'deployment-artifacts-o',
+            component: ArtifactsTabComponent,
+            input: {type: ArtifactGroupType.DEPLOYMENT},
+            isActive: false,
+            tooltipText: 'Deployment Artifacts',
+            testId: 'detail-tab-deployment-artifacts'
+        },
+        apiArtifacts: {
+            titleIcon: 'api-o',
+            component: ArtifactsTabComponent,
+            input: {type: ArtifactGroupType.SERVICE_API},
+            isActive: false,
+            tooltipText: 'API Artifacts',
+            testId: 'detail-tab-api-artifacts'
+        },
+        infoArtifacts: {
+            titleIcon: 'info-square-o',
+            component: ArtifactsTabComponent,
+            input: {type: ArtifactGroupType.INFORMATION},
+            isActive: false,
+            tooltipText: 'Information Artifacts',
+            testId: 'detail-tab-information-artifacts'
+        },
+        properties: {
+            titleIcon: 'settings-o', component: PropertiesTabComponent,
+            input: {title: 'Properties and Attributes'}, isActive: false, tooltipText: 'Properties',
+            testId: 'detail-tab-properties-attributes'
+        },
+        reqAndCapabilities: {
+            titleIcon: 'req-capabilities-o', component: ReqAndCapabilitiesTabComponent, input: {},
+            isActive: false, tooltipText: 'Requirements and Capabilities',
+            testId: 'detail-tab-requirements-capabilities'
+        },
+        substitutionFilter: {
+            titleIcon: 'composition-o',
+            component: SubstitutionFilterTabComponent,
+            input: {title: 'SUBSTITUTION FILTER'},
+            isActive: false,
+            tooltipText: 'Substitution Filter',
+            testId: 'detail-tab-substitution-filter'
+        },
+        inputs: {
+            titleIcon: 'inputs-o',
+            component: PropertiesTabComponent,
+            input: {title: 'Inputs'},
+            isActive: false,
+            tooltipText: 'Inputs',
+            testId: 'detail-tab-inputs'
+        },
+        settings: {
+            titleIcon: 'settings-o',
+            component: PropertiesTabComponent,
+            input: {},
+            isActive: false,
+            tooltipText: 'Settings',
+            testId: 'detail-tab-settings'
+        },
+        interfaceOperations: {
+            titleIcon: 'composition-o',
+            component: InterfaceOperationsComponent,
+            input: {title: 'Interface Operations'},
+            isActive: false,
+            tooltipText: 'Interface Operations',
+            testId: 'detail-tab-interface-operations'
+        }
+    };
 
     beforeEach(
         async(() => {
@@ -95,7 +159,6 @@ describe('composition-panel component', () => {
         const testInstance = new PolicyInstance();
 
         fixture.componentInstance.initTabs(testInstance);
-
         expect (fixture.componentInstance.tabs.length).toBe(3);
         expect (fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
         expect (fixture.componentInstance.tabs[1]).toEqual(tabs.policyTargets);

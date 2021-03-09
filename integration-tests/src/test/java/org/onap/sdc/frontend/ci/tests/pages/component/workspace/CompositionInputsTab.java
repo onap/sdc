@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,27 +17,34 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.frontend.ci.tests.utilities;
+package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class LoaderHelper extends AbstractPageObject {
+/**
+ * Represents the composition page, details panel, Inputs tab
+ */
+public class CompositionInputsTab extends AbstractPageObject {
 
-    private final By loaderLocator = By.xpath("//*[@data-tests-id='loader' or @class='tlv-loader']");
-
-    public LoaderHelper(final WebDriver webDriver) {
+    public CompositionInputsTab(final WebDriver webDriver) {
         super(webDriver);
-    }
-
-    public void waitForLoader(final int timeout) {
-        waitForElementVisibility(loaderLocator, 5);
-        waitForElementInvisibility(loaderLocator, timeout);
     }
 
     @Override
     public void isLoaded() {
+        waitForElementVisibility(By.xpath(XpathSelector.INPUTS_TAB.getXPath()));
+    }
+
+    @AllArgsConstructor
+    @Getter
+    private enum XpathSelector {
+        INPUTS_TAB("//properties-tab[.//header[contains(text(), 'Inputs')]]");
+
+        private final String xPath;
 
     }
 }

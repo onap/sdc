@@ -472,6 +472,9 @@ public final class AtomicOperationUtils {
 			ComponentInstanceReqDetails componentInstanceDetails = ElementFactory.getComponentInstance(compInstParent);
 			componentInstanceDetails.setPosX(positionX);
 			componentInstanceDetails.setPosY(positionY);
+			if (componentInstanceDetails.getOriginType() == null){
+				componentInstanceDetails.setOriginType(((Resource) compInstParent).getResourceType().toString());
+			}
 			RestResponse createComponentInstance = ComponentInstanceRestUtils.createComponentInstance(componentInstanceDetails, defaultUser, compContainer);
 
 			if (validateState) {

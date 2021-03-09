@@ -28,8 +28,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
-import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
-import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -70,7 +68,7 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
             findSubElements(wrappingElement, By.className(XpathSelector.RESULTS_CONTAINER_DIV.getId()));
         vspResultList.get(listPosition).click();
         GeneralUIUtils.clickOnElementByTestId(XpathSelector.IMPORT_VSP_BTN.getId());
-        return new ResourceCreatePage(webDriver, new LoaderHelper(), new NotificationComponent(webDriver));
+        return new ResourceCreatePage(webDriver);
     }
 
     /**
