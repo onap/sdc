@@ -163,6 +163,30 @@
     },
     {
       "key": {
+        "uuid": "0ddcedeb_e9593ebf",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/DmaapProducerConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d149041b_c3d6e79a",
+      "range": {
+        "startLine": 54,
+        "startChar": 2,
+        "endLine": 65,
+        "endChar": 3
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57ee0ebf_e16cebd3",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/HealthCheckWrapper.java",
         "patchSetId": 3
@@ -183,6 +207,30 @@
       "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c83517b4_23e11d11",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/HealthCheckWrapper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57ee0ebf_e16cebd3",
+      "range": {
+        "startLine": 34,
+        "startChar": 1,
+        "endLine": 36,
+        "endChar": 38
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +257,30 @@
     },
     {
       "key": {
+        "uuid": "cdc32548_72a2f330",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/log/interceptors/ApacheClientLogResponseInterceptorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7fce4f2c_aed151ce",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 80
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fbc8d30_3a158079",
         "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/log/interceptors/ApacheClientLogResponseInterceptorTest.java",
         "patchSetId": 3
@@ -229,6 +301,30 @@
       "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8aa82862_2567a235",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/log/interceptors/ApacheClientLogResponseInterceptorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1fbc8d30_3a158079",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 79
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -255,6 +351,30 @@
     },
     {
       "key": {
+        "uuid": "16916e00_44f5c3d0",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/common/log/interceptors/ApacheClientLogResponseInterceptorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "484ba916_4812fe6c",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 69
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b96f2046_42fdc4ea",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/MapAttributesDataDefinition.java",
         "patchSetId": 3
@@ -266,6 +386,30 @@
       "writtenOn": "2021-03-09T00:12:54Z",
       "side": 1,
       "message": "replace with @NoArgsConstructor",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 0
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "747a5b12_702175e9",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/MapAttributesDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "But @NoArgsConstructor will not generate super(). So I don\u0027t think we could use annotation here.",
+      "parentUuid": "b96f2046_42fdc4ea",
       "range": {
         "startLine": 57,
         "startChar": 4,
@@ -324,6 +468,30 @@
     },
     {
       "key": {
+        "uuid": "6d85cf54_fe117098",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/test/java/org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat/AnalyzedZipHeatFilesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2fe5deb_cfd9db84",
+      "range": {
+        "startLine": 49,
+        "startChar": 85,
+        "endLine": 51,
+        "endChar": 65
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "11d38edc_a8e54fa7",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/test/java/org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat/AnalyzedZipHeatFilesTest.java",
         "patchSetId": 3
@@ -344,6 +512,30 @@
       "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2128e40f_80dd4939",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/test/java/org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat/AnalyzedZipHeatFilesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-09T08:02:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11d38edc_a8e54fa7",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 36
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
