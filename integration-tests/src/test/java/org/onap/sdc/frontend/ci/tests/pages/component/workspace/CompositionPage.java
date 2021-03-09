@@ -81,6 +81,11 @@ public class CompositionPage extends AbstractPageObject {
         return new ResourceCreatePage(webDriver);
     }
 
+    public ServiceComponentPage goToServiceGeneral() {
+        topNavComponent.clickOnBreadCrumb(1);
+        return new ServiceComponentPage(webDriver);
+    }
+
     /**
      * Get the composition page detail sidebar component
      *
