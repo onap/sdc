@@ -422,6 +422,30 @@
     },
     {
       "key": {
+        "uuid": "ec1921c4_ce95c680",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/MapAttributesDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-09T09:37:39Z",
+      "side": 1,
+      "message": "Calling super() in no-argument constructor is redundant, bcz will be invoked implicitly.\nso, it is safe to replace with @NoArgsConstructor",
+      "parentUuid": "747a5b12_702175e9",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 0
+      },
+      "revId": "bba34690dad233b0027c3244e42f8eec64bc5627",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "63dce632_b0e27787",
         "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/errors/ErrorCodeAndMessage.java",
         "patchSetId": 3
