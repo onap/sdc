@@ -19,14 +19,12 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import static org.onap.sdc.frontend.ci.tests.pages.OnboardHeaderComponent.XpathSelector.MAIN_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.OnboardHeaderComponent.XpathSelector.ONBOARD_TAB_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.OnboardHeaderComponent.XpathSelector.WORKSPACE_TAB_DIV;
 
 /**
  * Handles the Onboard Header Component UI test actions
@@ -42,46 +40,39 @@ public class OnboardHeaderComponent extends AbstractPageObject {
     @Override
     public void isLoaded() {
         wrappingElement = getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(MAIN_DIV.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.MAIN_DIV.getXpath())));
         getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(WORKSPACE_TAB_DIV.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.WORKSPACE_TAB_DIV.getXpath())));
         getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(ONBOARD_TAB_DIV.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.ONBOARD_TAB_DIV.getXpath())));
     }
 
     /**
      * Clicks on the workspace tab.
      */
     public void clickOnWorkspaceTab() {
-        wrappingElement.findElement(By.xpath(WORKSPACE_TAB_DIV.getXpath()));
+        wrappingElement.findElement(By.xpath(XpathSelector.WORKSPACE_TAB_DIV.getXpath()));
     }
 
     /**
      * Clicks on the workspace tab.
      */
     public void clickOnOnboardTab() {
-        wrappingElement.findElement(By.xpath(ONBOARD_TAB_DIV.getXpath()));
+        wrappingElement.findElement(By.xpath(XpathSelector.ONBOARD_TAB_DIV.getXpath()));
     }
 
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         MAIN_DIV("onboard-header", "//div[contains(@class, '%s')]"),
         WORKSPACE_TAB_DIV("onboard-workspace-tab", "//div[@data-test-id='%s']"),
         ONBOARD_TAB_DIV("onboard-onboard-tab", "//div[@data-test-id='%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

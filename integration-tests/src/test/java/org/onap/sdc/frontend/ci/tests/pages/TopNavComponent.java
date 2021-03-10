@@ -19,6 +19,9 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
@@ -29,15 +32,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.*;
-import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.ARROW_DROPDOWN;
-import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.MAIN_MENU_ONBOARD_BTN;
-import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.NAV;
-import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.REPOSITORY_ICON;
-import static org.onap.sdc.frontend.ci.tests.pages.TopNavComponent.XpathSelector.SUB_MENU_BUTTON_HOME;
-
 /**
  * Handles the Top Navigation Component UI actions
  */
@@ -46,7 +40,7 @@ public class TopNavComponent extends AbstractPageObject {
     private static final Logger LOGGER = LoggerFactory.getLogger(TopNavComponent.class);
 
     private WebElement wrappingElement;
-    private By navLocator = By.xpath(NAV.getXpath());
+    private By navLocator = By.xpath(XpathSelector.NAV.getXpath());
 
     public TopNavComponent(final WebDriver webDriver) {
         super(webDriver);
@@ -64,7 +58,7 @@ public class TopNavComponent extends AbstractPageObject {
      * @return the enclosing element
      */
     public WebElement getWrappingElement() {
-        LOGGER.debug("Finding element with xpath '{}'", NAV.getXpath());
+        LOGGER.debug("Finding element with xpath '{}'", XpathSelector.NAV.getXpath());
         return waitForElementVisibility(navLocator);
     }
 
@@ -73,15 +67,15 @@ public class TopNavComponent extends AbstractPageObject {
      */
     public void clickOnHome() {
         hoverToBreadcrumbArrow(0);
-        final By homeButtonLocator = By.xpath(SUB_MENU_BUTTON_HOME.getXpath());
+        final By homeButtonLocator = By.xpath(XpathSelector.SUB_MENU_BUTTON_HOME.getXpath());
         getWait().until(ExpectedConditions.visibilityOfElementLocated(homeButtonLocator));
         getWait().until(ExpectedConditions.elementToBeClickable(homeButtonLocator)).click();
         getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(REPOSITORY_ICON.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.REPOSITORY_ICON.getXpath())));
     }
 
     public boolean isHomeSelected() {
-        final By homeLinkLocator = By.xpath(MAIN_MENU_LINK_HOME.getXpath());
+        final By homeLinkLocator = By.xpath(XpathSelector.MAIN_MENU_LINK_HOME.getXpath());
         getWait().until(ExpectedConditions.visibilityOfElementLocated(homeLinkLocator));
         final WebElement homeLinkElement = findElement(homeLinkLocator);
         final WebElement homeLinkParentElement = homeLinkElement.findElement(By.xpath("./.."));
@@ -95,7 +89,7 @@ public class TopNavComponent extends AbstractPageObject {
      * @return the next page object
      */
     public VspRepositoryModalComponent clickOnRepositoryIcon() {
-        wrappingElement.findElement(By.xpath(REPOSITORY_ICON.getXpath())).click();
+        wrappingElement.findElement(By.xpath(XpathSelector.REPOSITORY_ICON.getXpath())).click();
 
         return new VspRepositoryModalComponent(webDriver);
     }
@@ -106,7 +100,7 @@ public class TopNavComponent extends AbstractPageObject {
      * @return the next page object
      */
     public OnboardHomePage clickOnOnboard() {
-        wrappingElement.findElement(By.xpath(MAIN_MENU_ONBOARD_BTN.getXpath())).click();
+        wrappingElement.findElement(By.xpath(XpathSelector.MAIN_MENU_ONBOARD_BTN.getXpath())).click();
         return new OnboardHomePage(DriverFactory.getDriver(), new OnboardHeaderComponent(DriverFactory.getDriver()));
     }
 
@@ -120,7 +114,7 @@ public class TopNavComponent extends AbstractPageObject {
         final Actions actions = new Actions(GeneralUIUtils.getDriver());
         final List<WebElement> arrowElementList = getWait()
             .until(
-                    ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(ARROW_DROPDOWN.getXpath())));
+                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(XpathSelector.ARROW_DROPDOWN.getXpath())));
         final WebElement selectedArrowElement = arrowElementList.get(arrowPosition);
         actions.moveToElement(selectedArrowElement).perform();
         return selectedArrowElement;
@@ -129,7 +123,8 @@ public class TopNavComponent extends AbstractPageObject {
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         NAV("top-nav", "//nav[@class='%s']"),
         SUB_MENU_BUTTON_HOME("sub-menu-button-home", "//*[@data-tests-id='%s']"),
         MAIN_MENU_LINK_HOME("main-menu-button-home", "//*[@data-tests-id='%s']"),
@@ -137,17 +132,9 @@ public class TopNavComponent extends AbstractPageObject {
         MAIN_MENU_ONBOARD_BTN("main-menu-button-onboard", "//a[@data-tests-id='%s']"),
         REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

@@ -23,12 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.IMPORT_VSP_BTN;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.MODAL_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.RESULTS_CONTAINER_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.SEARCH_TXT;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
@@ -57,7 +55,7 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
         wrappingElement = getWrappingElement();
         GeneralUIUtils.ultimateWait();
         final List<WebElement> vspResultList = wrappingElement
-            .findElements(By.className(RESULTS_CONTAINER_DIV.getId()));
+            .findElements(By.className(XpathSelector.RESULTS_CONTAINER_DIV.getId()));
         assertThat("VSP Repository should contain at least one result", vspResultList, is(not(empty())));
     }
 
@@ -69,9 +67,9 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
      */
     public ResourceCreatePage clickOnImportVsp(final int listPosition) {
         final List<WebElement> vspResultList =
-            findSubElements(wrappingElement, By.className(RESULTS_CONTAINER_DIV.getId()));
+            findSubElements(wrappingElement, By.className(XpathSelector.RESULTS_CONTAINER_DIV.getId()));
         vspResultList.get(listPosition).click();
-        GeneralUIUtils.clickOnElementByTestId(IMPORT_VSP_BTN.getId());
+        GeneralUIUtils.clickOnElementByTestId(XpathSelector.IMPORT_VSP_BTN.getId());
         return new ResourceCreatePage(webDriver, new LoaderHelper(), new NotificationComponent(webDriver));
     }
 
@@ -81,7 +79,7 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
      * @param vspName the VSP name to search
      */
     public void searchForVSP(final String vspName) {
-        final WebElement searchTxtElement = findSubElement(wrappingElement, By.xpath(SEARCH_TXT.getXpath()));
+        final WebElement searchTxtElement = findSubElement(wrappingElement, By.xpath(XpathSelector.SEARCH_TXT.getXpath()));
         searchTxtElement.sendKeys(vspName);
         GeneralUIUtils.ultimateWait();
     }
@@ -92,30 +90,23 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
      * @return the enclosing element
      */
     public WebElement getWrappingElement() {
-        LOGGER.debug("Finding element with xpath '{}'", MODAL_DIV.getXpath());
-        return waitForElementVisibility(MODAL_DIV.getXpath());
+        LOGGER.debug("Finding element with xpath '{}'", XpathSelector.MODAL_DIV.getXpath());
+        return waitForElementVisibility(XpathSelector.MODAL_DIV.getXpath());
     }
 
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         MODAL_DIV("importVspTable", "//*[@data-tests-id='%s']"),
         SEARCH_TXT("onboarding-search-input", "//input[@data-tests-id='%s']"),
         IMPORT_VSP_BTN("import-csar", "//*[@data-tests-id='%s']"),
         RESULTS_CONTAINER_DIV("datatable-body-cell-label", "//datatable-body[contains(@class,'%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

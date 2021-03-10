@@ -20,15 +20,9 @@
 package org.onap.sdc.frontend.ci.tests.pages;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.ATTACHMENT_VIEW;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.BNT_SUBMIT;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.FILE_INPUT;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.NAV_BAR_GROUP_ITEM_ATTACHMENT;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.NAV_BAR_GROUP_NAME_XPATH;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.ONBOARDING_LOADER_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.PAGE_MAIN_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.SELECTED_NAV_BAR_GROUP_ITEM;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.hamcrest.core.Is;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -57,35 +51,35 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
     }
 
     public String getResourceName() {
-        return wrappingElement.findElement(By.xpath(NAV_BAR_GROUP_NAME_XPATH.getXpath())).getText();
+        return wrappingElement.findElement(By.xpath(XpathSelector.NAV_BAR_GROUP_NAME_XPATH.getXpath())).getText();
     }
 
     public void uploadFile(final String resourceFilePath) {
         LOGGER.debug("Uploading file '{}'", resourceFilePath);
-        setInputValue(FILE_INPUT, resourceFilePath);
+        setInputValue(XpathSelector.FILE_INPUT, resourceFilePath);
     }
 
     public void attachmentScreenIsLoaded() {
-        final String attachmentViewXpath = String.format("%s%s", PAGE_MAIN_DIV.getXpath(), ATTACHMENT_VIEW.getXpath());
+        final String attachmentViewXpath = String.format("%s%s", XpathSelector.PAGE_MAIN_DIV.getXpath(), XpathSelector.ATTACHMENT_VIEW.getXpath());
         waitForElementVisibility(By.xpath(attachmentViewXpath));
-        waitForElementInvisibility(By.xpath(ONBOARDING_LOADER_DIV.getXpath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.ONBOARDING_LOADER_DIV.getXpath()));
         final WebElement selectedNavBarGroupItem =
-            findSubElement(wrappingElement, SELECTED_NAV_BAR_GROUP_ITEM.getXpath());
+            findSubElement(wrappingElement, XpathSelector.SELECTED_NAV_BAR_GROUP_ITEM.getXpath());
         final String selectedNavBarGroupItemTestId = selectedNavBarGroupItem.getAttribute("data-test-id");
         assertThat("Attachment menu should be selected", selectedNavBarGroupItemTestId,
-            Is.is(NAV_BAR_GROUP_ITEM_ATTACHMENT.getId()));
+            Is.is(XpathSelector.NAV_BAR_GROUP_ITEM_ATTACHMENT.getId()));
     }
 
     public void submit() {
-        findSubElement(wrappingElement, BNT_SUBMIT.getXpath()).click();
+        findSubElement(wrappingElement, XpathSelector.BNT_SUBMIT.getXpath()).click();
         vspCommitModal.isLoaded();
         vspCommitModal.fillCommentWithDefaulMessage();
         vspCommitModal.submit();
     }
 
     public WebElement getWrappingElement() {
-        LOGGER.debug("Finding element with xpath '{}'", PAGE_MAIN_DIV.getXpath());
-        return waitForElementVisibility(PAGE_MAIN_DIV.getXpath());
+        LOGGER.debug("Finding element with xpath '{}'", XpathSelector.PAGE_MAIN_DIV.getXpath());
+        return waitForElementVisibility(XpathSelector.PAGE_MAIN_DIV.getXpath());
 
     }
 
@@ -96,7 +90,8 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         PAGE_MAIN_DIV("software-product-view", DIV_CLASS_XPATH_FORMAT),
         UPLOAD_CSAR("upload-btn", "//input[@data-test-id='%s']"),
         FILE_INPUT("fileInput", "//input[@name='%s']"),
@@ -107,17 +102,9 @@ public class SoftwareProductOnboarding extends AbstractPageObject {
         ONBOARDING_LOADER_DIV("onboarding-loader-backdrop", DIV_CLASS_XPATH_FORMAT),
         ATTACHMENT_VIEW("vsp-attachments-view", DIV_CLASS_XPATH_FORMAT);
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

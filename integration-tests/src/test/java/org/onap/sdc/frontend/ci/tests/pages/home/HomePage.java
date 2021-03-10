@@ -21,9 +21,8 @@ package org.onap.sdc.frontend.ci.tests.pages.home;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.onap.sdc.frontend.ci.tests.pages.home.HomePage.XpathSelector.ADD_BUTTONS_AREA;
-import static org.onap.sdc.frontend.ci.tests.pages.home.HomePage.XpathSelector.ADD_SERVICE_BTN;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage;
@@ -59,7 +58,7 @@ public class HomePage extends AbstractPageObject {
      */
     public ServiceCreatePage clickOnAddService() {
         hoverToAddArea();
-        final By addServiceBtnLocator = By.xpath(ADD_SERVICE_BTN.getXpath());
+        final By addServiceBtnLocator = By.xpath(XpathSelector.ADD_SERVICE_BTN.getXpath());
         waitForElementVisibility(addServiceBtnLocator);
         final WebElement addServiceBtn = findElement(addServiceBtnLocator);
         addServiceBtn.click();
@@ -73,7 +72,7 @@ public class HomePage extends AbstractPageObject {
      */
     public WebElement hoverToAddArea() {
         final Actions actions = new Actions(webDriver);
-        final By addButtonsAreaLocator = By.xpath(ADD_BUTTONS_AREA.getXpath());
+        final By addButtonsAreaLocator = By.xpath(XpathSelector.ADD_BUTTONS_AREA.getXpath());
         final WebElement addButtonsAreaElement = findElement(addButtonsAreaLocator);
         actions.moveToElement(addButtonsAreaElement).build().perform();
         return addButtonsAreaElement;
@@ -82,21 +81,14 @@ public class HomePage extends AbstractPageObject {
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         ADD_SERVICE_BTN("createServiceButton", "//*[@data-tests-id='%s']"),
         ADD_BUTTONS_AREA("AddButtonsArea", "//*[@data-tests-id='%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

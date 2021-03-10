@@ -124,7 +124,7 @@ public abstract class SetupCDTest extends DriverFactory {
         return HAR_FILES_FOLDER;
     }
 
-    protected UserRoleEnum getRole(){
+    protected UserRoleEnum getRole() {
         return UserRoleEnum.DESIGNER;
     }
 

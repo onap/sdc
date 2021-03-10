@@ -19,10 +19,8 @@
 
 package org.onap.sdc.frontend.ci.tests.utilities;
 
-import static org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.XpathSelector.MAIN_CONTAINER_DIV;
-import static org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.XpathSelector.MESSAGE_CONTENT_DIV;
-import static org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.XpathSelector.MESSAGE_SUCCESS_DIV;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -32,11 +30,11 @@ import org.slf4j.LoggerFactory;
 
 public class NotificationComponent extends AbstractPageObject {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationComponent.class);
+
     public NotificationComponent(final WebDriver webDriver) {
         super(webDriver);
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationComponent.class);
 
     public void waitForNotification(final NotificationType notificationType, final int timeout) {
         final By messageLocator = getMessageLocator(notificationType);
@@ -51,7 +49,8 @@ public class NotificationComponent extends AbstractPageObject {
 
     private String getMessageXpath(final NotificationType notificationType) {
         if (notificationType == NotificationType.SUCCESS) {
-            return String.format("%s%s%s", MAIN_CONTAINER_DIV.getXpath(), MESSAGE_CONTENT_DIV.getXpath(), MESSAGE_SUCCESS_DIV.getXpath());
+            return String.format("%s%s%s", XpathSelector.MAIN_CONTAINER_DIV.getXpath(), XpathSelector.MESSAGE_CONTENT_DIV.getXpath(),
+                XpathSelector.MESSAGE_SUCCESS_DIV.getXpath());
         }
 
         LOGGER.warn("Xpath for NotificationType {} not yet implemented.", notificationType);
@@ -63,22 +62,16 @@ public class NotificationComponent extends AbstractPageObject {
         //will not be loaded when needed
     }
 
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         MAIN_CONTAINER_DIV("notification-container", "//div[@class='%s']"),
         MESSAGE_CONTENT_DIV("msg-content", "//div[@class='%s']"),
-        MESSAGE_SUCCESS_DIV("message", "//div[contains(@class, 'message') and (contains(text(),'successfully') or contains(text(), 'Successfully'))]");
+        MESSAGE_SUCCESS_DIV("message",
+            "//div[contains(@class, 'message') and (contains(text(),'successfully') or contains(text(), 'Successfully'))]");
 
+        @Getter
         private final String id;
         private final String xpath;
-
-        XpathSelector(String id, String xpath) {
-            this.id = id;
-            this.xpath = xpath;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpath, id);

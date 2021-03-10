@@ -22,11 +22,9 @@ package org.onap.sdc.frontend.ci.tests.pages;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.Is.is;
-import static org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage.XpathSelector.CATEGORY_SELECT;
-import static org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage.XpathSelector.DESCRIPTION_TEXT_AREA;
-import static org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage.XpathSelector.ETSI_VERSION_SELECT;
-import static org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage.XpathSelector.NAME_INPUT;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
@@ -62,6 +60,7 @@ public class ServiceCreatePage extends AbstractPageObject {
 
     /**
      * Fill the service create form based on the given ServiceCreateData
+     *
      * @param serviceCreateData the form data
      */
     public void fillForm(final ServiceCreateData serviceCreateData) {
@@ -75,7 +74,7 @@ public class ServiceCreatePage extends AbstractPageObject {
         if (etsiVersion == null) {
             return;
         }
-        final Select categorySelect = new Select(waitForElementVisibility(By.xpath(ETSI_VERSION_SELECT.getXpath())));
+        final Select categorySelect = new Select(waitForElementVisibility(By.xpath(XpathSelector.ETSI_VERSION_SELECT.getXpath())));
         categorySelect.selectByVisibleText(etsiVersion);
     }
 
@@ -83,7 +82,7 @@ public class ServiceCreatePage extends AbstractPageObject {
         if (category == null) {
             return;
         }
-        final Select categorySelect = new Select(findElement(By.xpath(CATEGORY_SELECT.getXpath())));
+        final Select categorySelect = new Select(findElement(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath())));
         categorySelect.selectByVisibleText(category);
     }
 
@@ -91,7 +90,7 @@ public class ServiceCreatePage extends AbstractPageObject {
         if (description == null) {
             return;
         }
-        findElement(By.xpath(DESCRIPTION_TEXT_AREA.getXpath()))
+        findElement(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()))
             .sendKeys(description);
     }
 
@@ -99,7 +98,7 @@ public class ServiceCreatePage extends AbstractPageObject {
         if (name == null) {
             return;
         }
-        findElement(By.xpath(NAME_INPUT.getXpath()))
+        findElement(By.xpath(XpathSelector.NAME_INPUT.getXpath()))
             .sendKeys(name);
     }
 
@@ -112,25 +111,16 @@ public class ServiceCreatePage extends AbstractPageObject {
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
-        CREATE_BTN("create/save", "//button[@data-tests-id='%s']"),
-        FORM_LIFE_CYCLE_STATE("formlifecyclestate", "//span[@data-tests-id='%s']"),
+    @AllArgsConstructor
+    private enum XpathSelector {
         NAME_INPUT("name", "//input[@data-tests-id='%s']"),
         CATEGORY_SELECT("selectGeneralCategory", "//select[@data-tests-id='%s']"),
         ETSI_VERSION_SELECT("ETSI Version", "//select[@data-tests-id='%s']"),
         DESCRIPTION_TEXT_AREA("description", "//textarea[@data-tests-id='%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

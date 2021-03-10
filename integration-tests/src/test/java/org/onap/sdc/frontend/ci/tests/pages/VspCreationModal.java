@@ -19,15 +19,14 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onap.sdc.frontend.ci.tests.pages.VspCreationModal.XpathSelector.METHOD_RADIO;
-import static org.onap.sdc.frontend.ci.tests.pages.VspCreationModal.XpathSelector.MODAL_XPATH;
 
 /**
  * Handles the VSP Creation Modal UI actions
@@ -45,8 +44,8 @@ public class VspCreationModal extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
-        LOGGER.debug("Finding element with xpath '{}'", MODAL_XPATH.getXpath());
-        wrappingElement = waitForElementVisibility(MODAL_XPATH.getXpath());
+        LOGGER.debug("Finding element with xpath '{}'", XpathSelector.MODAL_XPATH.getXpath());
+        wrappingElement = waitForElementVisibility(XpathSelector.MODAL_XPATH.getXpath());
     }
 
     /**
@@ -110,7 +109,7 @@ public class VspCreationModal extends AbstractPageObject {
      * Selects the network package onboarding procedure option.
      */
     public void selectNetworkPackageOnboardingProcedure() {
-        wrappingElement.findElement(By.xpath(METHOD_RADIO.getXpath())).click();
+        wrappingElement.findElement(By.xpath(XpathSelector.METHOD_RADIO.getXpath())).click();
     }
 
     private void setInputValue(final XpathSelector inputTestId, final String value) {
@@ -132,7 +131,8 @@ public class VspCreationModal extends AbstractPageObject {
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         MODAL_XPATH("software-product-creation-page", "//div[@class='%s']"),
         NAME_TXT("new-vsp-name", "//input[@data-test-id='%s']"),
         VENDOR_SELECT("new-vsp-vendor", "//select[@data-test-id='%s']"),
@@ -141,17 +141,9 @@ public class VspCreationModal extends AbstractPageObject {
         METHOD_RADIO("new-vsp-creation-procedure-heat", "//input[@data-test-id='%s']/parent::label"),
         CREATE_BTN("form-submit-button", "//*[@data-test-id='%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

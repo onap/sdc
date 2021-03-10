@@ -19,13 +19,12 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import static org.onap.sdc.frontend.ci.tests.pages.OnboardHomePage.XpathSelector.ADD_NEW_VLM_BTN;
-import static org.onap.sdc.frontend.ci.tests.pages.OnboardHomePage.XpathSelector.ADD_NEW_VSP_BTN;
 
 /**
  * Handles the Onboard Home Page UI test actions
@@ -45,9 +44,9 @@ public class OnboardHomePage extends AbstractPageObject {
     public void isLoaded() {
         onboardHeaderComponent.isLoaded();
         createNewVspBtn = getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(ADD_NEW_VSP_BTN.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.ADD_NEW_VSP_BTN.getXpath())));
         getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(ADD_NEW_VLM_BTN.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.ADD_NEW_VLM_BTN.getXpath())));
     }
 
     /**
@@ -63,21 +62,14 @@ public class OnboardHomePage extends AbstractPageObject {
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         ADD_NEW_VSP_BTN("catalog-add-new-vsp", "//div[@data-test-id='%s']"),
         ADD_NEW_VLM_BTN("catalog-add-new-vlm", "//div[@data-test-id='%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

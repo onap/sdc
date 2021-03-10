@@ -19,6 +19,12 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.core.Is.is;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
@@ -29,11 +35,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.core.Is.is;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage.XpathSelector.FORM_LIFE_CYCLE_STATE;
 
 /**
  * Handles the Resource Create Page UI actions
@@ -55,8 +56,8 @@ public class ResourceCreatePage extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
-        LOGGER.debug("Waiting for element visibility with xpath '{}'", FORM_LIFE_CYCLE_STATE.getXpath());
-        final WebElement lifeCycleState = waitForElementVisibility(FORM_LIFE_CYCLE_STATE.getXpath());
+        LOGGER.debug("Waiting for element visibility with xpath '{}'", XpathSelector.FORM_LIFE_CYCLE_STATE.getXpath());
+        final WebElement lifeCycleState = waitForElementVisibility(XpathSelector.FORM_LIFE_CYCLE_STATE.getXpath());
         assertThat("Life cycle state should be as expected",
             lifeCycleState.getText(), is(equalToIgnoringCase(LifeCycleStateEnum.IN_DESIGN.getValue())));
         createBtn = getWait()
@@ -75,21 +76,14 @@ public class ResourceCreatePage extends AbstractPageObject {
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
-    public enum XpathSelector {
+    @AllArgsConstructor
+    private enum XpathSelector {
         CREATE_BTN("create/save", "//button[@data-tests-id='%s']"),
         FORM_LIFE_CYCLE_STATE("formlifecyclestate", "//span[@data-tests-id='%s']");
 
+        @Getter
         private final String id;
         private final String xpathFormat;
-
-        XpathSelector(final String id, final String xpathFormat) {
-            this.id = id;
-            this.xpathFormat = xpathFormat;
-        }
-
-        public String getId() {
-            return id;
-        }
 
         public String getXpath() {
             return String.format(xpathFormat, id);

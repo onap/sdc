@@ -19,10 +19,6 @@
 
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
-import static org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage.XpathSelector.DATA_TABLE_BODY;
-import static org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage.XpathSelector.DOWNLOAD_LINK;
-import static org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage.XpathSelector.MAIN_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage.XpathSelector.TITLE_DIV;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +31,9 @@ import org.openqa.selenium.WebElement;
 
 public class ToscaArtifactsPage extends AbstractPageObject {
 
+    private final List<String> downloadedArtifactList = new ArrayList<>();
     private WebElement wrappingElement;
     private WebElement artifactsTableBody;
-    private final List<String> downloadedArtifactList = new ArrayList<>();
 
     public ToscaArtifactsPage(final WebDriver webDriver) {
         super(webDriver);
@@ -45,13 +41,13 @@ public class ToscaArtifactsPage extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
-        wrappingElement = waitForElementVisibility(By.xpath(MAIN_DIV.getXpath()), 5);
-        waitForElementVisibility(By.xpath(TITLE_DIV.getXpath()), 5);
-        artifactsTableBody = waitForElementVisibility(By.xpath(DATA_TABLE_BODY.getXpath()), 5);
+        wrappingElement = waitForElementVisibility(By.xpath(XpathSelector.MAIN_DIV.getXpath()), 5);
+        waitForElementVisibility(By.xpath(XpathSelector.TITLE_DIV.getXpath()), 5);
+        artifactsTableBody = waitForElementVisibility(By.xpath(XpathSelector.DATA_TABLE_BODY.getXpath()), 5);
     }
 
     public void clickOnDownload(final String artifactName) {
-        artifactsTableBody.findElement(By.xpath(DOWNLOAD_LINK.getXpath(artifactName))).click();
+        artifactsTableBody.findElement(By.xpath(XpathSelector.DOWNLOAD_LINK.getXpath(artifactName))).click();
     }
 
     public void addToDownloadedArtifactList(final String downloadedArtifactName) {
@@ -69,7 +65,7 @@ public class ToscaArtifactsPage extends AbstractPageObject {
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     @AllArgsConstructor
-    public enum XpathSelector {
+    private enum XpathSelector {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
         TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'TOSCA Artifacts')]"),
         DATA_TABLE_BODY("//datatable-body"),
@@ -77,7 +73,6 @@ public class ToscaArtifactsPage extends AbstractPageObject {
 
         @Getter
         private String id;
-
         private final String xpathFormat;
 
         XpathSelector(final String xpathFormat) {

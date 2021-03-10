@@ -19,13 +19,6 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
-import static org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent.XpathSelector.FORM_LIFE_CYCLE_STATE;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent.XpathSelector.ACTION_BUTTON_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent.XpathSelector.LIFECYCLE_STATE_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent.XpathSelector.MAIN_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent.XpathSelector.VERSION_CONTAINER_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage.XpathSelector.CREATE_BTN;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.openqa.selenium.By;
@@ -52,26 +45,26 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
-        LOGGER.debug("Waiting for element visibility with xpath '{}'", MAIN_DIV.getXpath());
-        wrappingElement = waitForElementVisibility(By.xpath(MAIN_DIV.getXpath()), 5);
-        lifecycleStateDiv = wrappingElement.findElement(By.xpath(LIFECYCLE_STATE_DIV.getXpath()));
-        versionContainerDiv = wrappingElement.findElement(By.xpath(VERSION_CONTAINER_DIV.getXpath()));
-        actionButtonsDiv = wrappingElement.findElement(By.xpath(ACTION_BUTTON_DIV.getXpath()));
+        LOGGER.debug("Waiting for element visibility with xpath '{}'", XpathSelector.MAIN_DIV.getXpath());
+        wrappingElement = waitForElementVisibility(By.xpath(XpathSelector.MAIN_DIV.getXpath()), 5);
+        lifecycleStateDiv = wrappingElement.findElement(By.xpath(XpathSelector.LIFECYCLE_STATE_DIV.getXpath()));
+        versionContainerDiv = wrappingElement.findElement(By.xpath(XpathSelector.VERSION_CONTAINER_DIV.getXpath()));
+        actionButtonsDiv = wrappingElement.findElement(By.xpath(XpathSelector.ACTION_BUTTON_DIV.getXpath()));
     }
 
     public void clickOnCreate() {
-        waitToBeClickable(CREATE_BTN.getXpath()).click();
+        waitToBeClickable(XpathSelector.CREATE_BTN.getXpath()).click();
     }
 
     public String getLifecycleState() {
-        return lifecycleStateDiv.findElement(By.xpath(FORM_LIFE_CYCLE_STATE.getXpath())).getText();
+        return lifecycleStateDiv.findElement(By.xpath(XpathSelector.FORM_LIFE_CYCLE_STATE.getXpath())).getText();
     }
 
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     @AllArgsConstructor
-    public enum XpathSelector {
+    private enum XpathSelector {
         MAIN_DIV("sdc-workspace-top-bar", "//div[@class='%s']"),
         LIFECYCLE_STATE_DIV("lifecycle-state", "//div[@class='%s']"),
         VERSION_CONTAINER_DIV("version-container", "//div[@class='%s']"),

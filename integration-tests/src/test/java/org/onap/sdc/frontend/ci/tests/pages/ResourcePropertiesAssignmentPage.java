@@ -20,15 +20,6 @@
 package org.onap.sdc.frontend.ci.tests.pages;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.INPUT_PROPERTY;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.MAIN_DIV;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.NO_DATA_MESSAGE;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.PROPERTIES_TABLE;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.PROPERTY_CHECKBOX;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.PROPERTY_SAVE_BTN;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.SOFTWARE_VERSION_INPUT;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.SOFTWARE_VERSION_PROPERTY_CHECKBOX;
-import static org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.TITLE_DIV;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,9 +51,9 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
     @Override
     public void isLoaded() {
         wrappingElement = getWait(5)
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(MAIN_DIV.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.MAIN_DIV.getXpath())));
         getWait(5)
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TITLE_DIV.getXpath())));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XpathSelector.TITLE_DIV.getXpath())));
     }
 
     /**
@@ -72,11 +63,11 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
      */
     public List<String> getSoftwareVersionProperty() {
         waitPropertiesToLoad();
-        final By swVersionCheckboxLocator = By.xpath(SOFTWARE_VERSION_PROPERTY_CHECKBOX.getXpath());
+        final By swVersionCheckboxLocator = By.xpath(XpathSelector.SOFTWARE_VERSION_PROPERTY_CHECKBOX.getXpath());
         waitForElementVisibility(swVersionCheckboxLocator, 5);
 
         final List<String> softwareVersionList = new ArrayList<>();
-        final List<WebElement> elements = wrappingElement.findElements(By.xpath(SOFTWARE_VERSION_INPUT.getXpath()));
+        final List<WebElement> elements = wrappingElement.findElements(By.xpath(XpathSelector.SOFTWARE_VERSION_INPUT.getXpath()));
         for (final WebElement element : elements) {
             softwareVersionList.add(element.getAttribute("value"));
         }
@@ -91,10 +82,10 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
      */
     public String getStringPropertyValue(final String propertyName) {
         waitPropertiesToLoad();
-        final By propertyCheckboxLocator = By.xpath(PROPERTY_CHECKBOX.getXpath(propertyName));
+        final By propertyCheckboxLocator = By.xpath(XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName));
         final WebElement propertyCheckbox = waitForElementVisibility(propertyCheckboxLocator, 5);
         final WebElement propertyRow = propertyCheckbox.findElement(By.xpath("./../../.."));
-        final WebElement propertyInput = propertyRow.findElement(By.xpath(INPUT_PROPERTY.getXpath(propertyName)));
+        final WebElement propertyInput = propertyRow.findElement(By.xpath(XpathSelector.INPUT_PROPERTY.getXpath(propertyName)));
         return propertyInput.getAttribute("value");
     }
 
@@ -106,10 +97,10 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
             return;
         }
         waitPropertiesToLoad();
-        final By propertyCheckboxLocator = By.xpath(PROPERTY_CHECKBOX.getXpath(propertyName));
+        final By propertyCheckboxLocator = By.xpath(XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName));
         final WebElement propertyCheckbox = waitForElementVisibility(propertyCheckboxLocator, 5);
         final WebElement propertyRow = propertyCheckbox.findElement(By.xpath("./../../.."));
-        final WebElement propertyInput = propertyRow.findElement(By.xpath(INPUT_PROPERTY.getXpath(propertyName)));
+        final WebElement propertyInput = propertyRow.findElement(By.xpath(XpathSelector.INPUT_PROPERTY.getXpath(propertyName)));
         propertyInput.sendKeys(value);
     }
 
@@ -144,7 +135,7 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
     public boolean isPropertyPresent(final String propertyName) {
         waitPropertiesToLoad();
         try {
-            waitForElementVisibility(By.xpath(PROPERTY_CHECKBOX.getXpath(propertyName)), 5);
+            waitForElementVisibility(By.xpath(XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName)), 5);
         } catch (final Exception ignored) {
             return false;
         }
@@ -155,12 +146,12 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
      * Waits for the properties loading.
      */
     private void waitPropertiesToLoad() {
-        waitForElementVisibility(By.xpath(PROPERTIES_TABLE.getXpath()), 5);
-        waitForElementInvisibility(By.xpath(NO_DATA_MESSAGE.getXpath()), 5);
+        waitForElementVisibility(By.xpath(XpathSelector.PROPERTIES_TABLE.getXpath()), 5);
+        waitForElementInvisibility(By.xpath(XpathSelector.NO_DATA_MESSAGE.getXpath()), 5);
     }
 
     public void saveProperties() {
-        final WebElement saveBtn = waitForElementVisibility(By.xpath(PROPERTY_SAVE_BTN.getXpath()));
+        final WebElement saveBtn = waitForElementVisibility(By.xpath(XpathSelector.PROPERTY_SAVE_BTN.getXpath()));
         assertTrue(saveBtn.isEnabled(), "Property save button should be enabled.");
         saveBtn.click();
         loaderHelper.waitForLoader(20);
@@ -171,7 +162,7 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     @AllArgsConstructor
-    public enum XpathSelector {
+    private enum XpathSelector {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
         TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'Properties Assignment')]"),
         PROPERTIES_TABLE("properties-table", "//div[contains(@class,'%s')]"),
