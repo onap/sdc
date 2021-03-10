@@ -236,9 +236,4 @@ public class CatalogLeftPanelTest extends SetupCDTest {
         assertTrue(String.format("Wrong element name, Expected : %s , Actual: %s", resourceMetadata.getName(), firstElementName), resourceMetadata.getName().equals(firstElementName));
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

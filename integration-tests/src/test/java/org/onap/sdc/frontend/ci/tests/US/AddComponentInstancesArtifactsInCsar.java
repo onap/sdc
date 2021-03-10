@@ -332,9 +332,4 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         return ElementFactory.getArtifactByType("ci", artifactType.get(random.nextInt(artifactType.size())), true, false);
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

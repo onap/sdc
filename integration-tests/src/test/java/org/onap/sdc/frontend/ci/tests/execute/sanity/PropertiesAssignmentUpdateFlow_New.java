@@ -916,11 +916,4 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnInputTab();
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }
-
-

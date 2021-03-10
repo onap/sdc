@@ -728,8 +728,4 @@ ElementsChanges extends SetupCDTest {
         TesterOperationPage.certifyComponent(serviceMetaData.getName());
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
 }

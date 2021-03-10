@@ -451,9 +451,4 @@ public class UpgradeServices extends SetupCDTest {
         return vfMetaData;
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

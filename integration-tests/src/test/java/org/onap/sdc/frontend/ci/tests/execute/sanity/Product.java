@@ -66,9 +66,4 @@ public class Product extends SetupCDTest {
         reloginWithNewRole(UserRoleEnum.PRODUCT_STRATEGIST1);
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

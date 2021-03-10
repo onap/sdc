@@ -767,10 +767,4 @@ public class VfAPI extends SetupCDTest {
         VfModuleVerificator.validateSpecificModulePropertiesFromFile(toscaDefinition);
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

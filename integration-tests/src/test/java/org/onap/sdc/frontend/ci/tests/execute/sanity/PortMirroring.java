@@ -604,10 +604,4 @@ public class PortMirroring extends SetupCDTest {
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 3);
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
 }
-
-

@@ -361,10 +361,4 @@ public class ImportVFCAsset extends SetupCDTest {
         assertTrue(GeneralUIUtils.checkForDisabledAttribute(DataTestIdEnum.GeneralElementsEnum.CREATE_BUTTON.getValue()));
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

@@ -677,12 +677,4 @@ public class PropertiesAssignmentUpdateFlow extends SetupCDTest {
         DeploymentArtifactPage.clickCloseEnvParameters();
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }
-
-

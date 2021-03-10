@@ -281,10 +281,4 @@ public class DeploymentViewTests extends SetupCDTest {
         DeploymentViewVerificator.validateModuleNameUpadate();
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

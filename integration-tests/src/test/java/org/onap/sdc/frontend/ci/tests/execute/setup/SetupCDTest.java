@@ -124,11 +124,11 @@ public abstract class SetupCDTest extends DriverFactory {
         return HAR_FILES_FOLDER;
     }
 
-
-    protected abstract UserRoleEnum getRole();
+    protected UserRoleEnum getRole(){
+        return UserRoleEnum.DESIGNER;
+    }
 
     /**************** BEFORE ****************/
-
     @BeforeSuite(alwaysRun = true)
     public void setupBeforeSuite(ITestContext context) throws Exception {
         RestCDUtils.deleteOnDemand();

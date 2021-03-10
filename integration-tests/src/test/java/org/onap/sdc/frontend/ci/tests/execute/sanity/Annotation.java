@@ -72,9 +72,4 @@ public class Annotation extends SetupCDTest {
         assertThat(toscaMainVfDefinition.getTopology_template().getInputs().get("availabilityzone_name").getAnnotations().get("source").getProperties().get("source_type")).isEqualTo("HEAT");
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

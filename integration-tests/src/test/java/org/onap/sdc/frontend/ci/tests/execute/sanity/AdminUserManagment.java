@@ -256,10 +256,4 @@ public class AdminUserManagment extends SetupCDTest {
         }
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.ADMIN;
-    }
-
 }

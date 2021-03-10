@@ -258,10 +258,4 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
         }
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

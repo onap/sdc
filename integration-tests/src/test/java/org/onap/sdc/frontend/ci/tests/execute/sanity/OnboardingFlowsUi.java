@@ -632,10 +632,4 @@ public class OnboardingFlowsUi extends SetupCDTest {
         OpsOperationPage.waitUntilArtifactsDistributed(0);
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

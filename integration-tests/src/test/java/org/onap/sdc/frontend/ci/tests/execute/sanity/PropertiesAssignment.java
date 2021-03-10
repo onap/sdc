@@ -572,10 +572,4 @@ public class PropertiesAssignment extends SetupCDTest {
         PropertiesAssignmentVerificator.validateFilteredPropertiesCount(propertiesCountWithoutFilter, propertyLocation);
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }
-

@@ -205,10 +205,4 @@ public class Inputs extends SetupCDTest {
         return normalizedName;
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

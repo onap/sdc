@@ -128,9 +128,4 @@ public class PathName extends SetupCDTest {
         return vspName;
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

@@ -230,8 +230,4 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         return new Yaml().load(new String(mainDefinitionFileBytes));
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
 }

@@ -108,9 +108,4 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
         ResourceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

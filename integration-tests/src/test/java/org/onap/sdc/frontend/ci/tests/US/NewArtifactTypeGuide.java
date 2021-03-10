@@ -112,10 +112,4 @@ public class NewArtifactTypeGuide extends SetupCDTest {
         InformationalArtifactPage.clickOK();
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

@@ -87,12 +87,6 @@ public class VfArtifacts extends SetupCDTest {
         createdEnvFilePath = config.getDownloadAutomationFolder();
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
-
     @DataProvider(name = "heatEnvAndVersion", parallel = false)
 //	parameters: VSP, updatedVsp, expectedHeatVersion, expectedHeatEnvVersion
     public Object[][] provideData() {

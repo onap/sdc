@@ -234,8 +234,4 @@ public class ArchiveRestoreTest extends SetupCDTest {
         GeneralPageElements.clickSubmitForTestingButton(service.getName());
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
 }

@@ -291,9 +291,4 @@ public class CreatePath extends SetupCDTest {
         SetupCDTest.getExtendTest().log(Status.INFO, "Path has been created");
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

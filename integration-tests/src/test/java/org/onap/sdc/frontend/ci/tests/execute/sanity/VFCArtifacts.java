@@ -335,12 +335,6 @@ public class VFCArtifacts extends SetupCDTest {
 
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
     private Map<String, LinkedList<HeatMetaFirstLevelDefinition>> verifyVfcArtifacts(String filepath, String csarFile,
                                                                                      ResourceReqDetails resourceMetaData, RestResponse getResponse) throws Exception {
 
@@ -378,4 +372,5 @@ public class VFCArtifacts extends SetupCDTest {
         VFCArtifactVerificator.verifyVfcArtifacts(resourceMetaData, getUser(), key, expectedArtifactMap, getResponse);
         return expectedArtifactMap;
     }
+
 }

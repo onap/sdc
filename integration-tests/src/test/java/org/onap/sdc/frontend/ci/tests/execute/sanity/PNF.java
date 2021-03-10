@@ -423,9 +423,4 @@ public class PNF extends SetupCDTest {
         assertTrue(GeneralUIUtils.isElementInvisibleByTestId("BlockStorage"));
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

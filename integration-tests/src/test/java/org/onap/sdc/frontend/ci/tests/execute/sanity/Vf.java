@@ -514,9 +514,4 @@ public class Vf extends SetupCDTest {
         }
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

@@ -671,9 +671,4 @@ public class ImportDCAE extends SetupCDTest {
         return resourceMetaData;
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

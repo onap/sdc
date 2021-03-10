@@ -774,9 +774,4 @@ public class Service extends SetupCDTest {
         ServiceVerificator.verifyVersionUI(previousVersion);
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }

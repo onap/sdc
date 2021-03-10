@@ -688,13 +688,6 @@ public class ToscaValidationTest extends SetupCDTest {
         return resourceInstanceNormalizedName + ".." + resourceGroupName;
     }
 
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
-
     public static ToscaDefinition addGenericInputsToToscaObject(ToscaDefinition toscaDefinition, String genericName) throws Exception {
         Resource genericResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, genericName, "1.0");
         ToscaTopologyTemplateDefinition topologyTemplate = toscaDefinition.getTopology_template();
@@ -939,7 +932,4 @@ public class ToscaValidationTest extends SetupCDTest {
         return ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + vfCsarFileName));
     }
 
-
 }
-
-

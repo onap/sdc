@@ -492,9 +492,4 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }
 
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
-    }
-
 }
