@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a302b38a_ad0287ca",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/CadiFilterParams.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-11T19:17:21Z",
+      "side": 1,
+      "message": "check if Setter need here, could not find any Setter\u0027s usage",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "6169f2cd87f4050ea3ce9aaca66b42a6f6494cb8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9bfca41_9ec2626f",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Directive.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-11T19:17:21Z",
+      "side": 1,
+      "message": "should be final",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 29
+      },
+      "revId": "6169f2cd87f4050ea3ce9aaca66b42a6f6494cb8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
