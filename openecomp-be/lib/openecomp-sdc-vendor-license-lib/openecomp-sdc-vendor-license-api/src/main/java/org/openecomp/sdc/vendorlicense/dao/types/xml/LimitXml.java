@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.vendorlicense.dao.types.xml;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class LimitXml {
   String description;
   String metric;
@@ -27,54 +32,6 @@ public class LimitXml {
   String unit;
   String time;
   String aggregationFunction;
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getMetric() {
-    return metric;
-  }
-
-  public void setMetric(String metric) {
-    this.metric = metric;
-  }
-
-  public String getValues() {
-    return values;
-  }
-
-  public void setValues(String values) {
-    this.values = values;
-  }
-
-  public String getUnit() {
-    return unit;
-  }
-
-  public void setUnit(String unit) {
-    this.unit = unit;
-  }
-
-  public String getTime() {
-    return time;
-  }
-
-  public void setTime(String time) {
-    this.time = time;
-  }
-
-  public String getAggregationFunction() {
-    return aggregationFunction;
-  }
-
-  public void setAggregationFunction(String aggregationFunction) {
-    this.aggregationFunction = aggregationFunction;
-  }
 
   public EntitlementTimeForXml getTimeForArtifact() {
     EntitlementTimeForXml timeForXml = new EntitlementTimeForXml();
