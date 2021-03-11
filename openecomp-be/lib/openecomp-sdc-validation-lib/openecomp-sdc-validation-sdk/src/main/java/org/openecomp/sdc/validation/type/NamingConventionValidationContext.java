@@ -15,6 +15,7 @@
  */
 package org.openecomp.sdc.validation.type;
 
+import lombok.AllArgsConstructor;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.validation.ValidationContext;
 
@@ -26,15 +27,9 @@ import lombok.EqualsAndHashCode;
  */
 @Getter
 @EqualsAndHashCode
+@AllArgsConstructor
 public class NamingConventionValidationContext implements ValidationContext {
 
   private HeatOrchestrationTemplate heatOrchestrationTemplate;
   private String envFileName;
-
-  public NamingConventionValidationContext(
-      HeatOrchestrationTemplate heatOrchestrationTemplate,
-      String envFileName) {
-    this.heatOrchestrationTemplate = heatOrchestrationTemplate;
-    this.envFileName = envFileName;
-  }
 }
