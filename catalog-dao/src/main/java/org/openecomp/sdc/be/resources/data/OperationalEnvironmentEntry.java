@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,12 +23,16 @@ package org.openecomp.sdc.be.resources.data;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
 @Table(keyspace = "sdcrepository", name = "operationalEnvironment")
 public class OperationalEnvironmentEntry {
 
@@ -57,70 +61,17 @@ public class OperationalEnvironmentEntry {
     @Column(name = "status")
     private String status;
 
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
-
     @Column(name = "last_modified")
     private Date lastModified;
 
-
-    public String getEnvironmentId() {
-        return environmentId;
-    }
-
-    //must be unique, add any validation if neccessary
-    public void setEnvironmentId(String environmentId) {
-        this.environmentId = environmentId;
-    }
-
-    public String getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
-
-    public Boolean getIsProduction() {
-        return isProduction;
-    }
-
-    public void setIsProduction(Boolean production) {
-        isProduction = production;
-    }
-
-    public String getEcompWorkloadContext() {
-        return ecompWorkloadContext;
-    }
-
-    public void setEcompWorkloadContext(String ecompWorkloadContext) {
-        this.ecompWorkloadContext = ecompWorkloadContext;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        //log if status doesn't exists in EnvironmentStatusEnum
-        this.status = status;
-    }
 
     public void setStatus(EnvironmentStatusEnum status) {
         this.status = status.getName();
     }
 
-    public Set<String> getDmaapUebAddress() {
-        return dmaapUebAddress;
-    }
-
-    public void setDmaapUebAddress(Set<String> dmaapUebAddress) {
-        this.dmaapUebAddress = dmaapUebAddress;
+    public void setStatus(String status) {
+        //log if status doesn't exists in EnvironmentStatusEnum
+        this.status = status;
     }
 
     public void addDmaapUebAddress(String address) {
@@ -129,29 +80,13 @@ public class OperationalEnvironmentEntry {
         dmaapUebAddress.add(address);
     }
 
-    public String getUebApikey() {
-        return uebApikey;
-    }
-
-    public void setUebApikey(String uebApikey) {
-        this.uebApikey = uebApikey;
-    }
-
-    public String getUebSecretKey() {
-        return uebSecretKey;
-    }
-
-    public void setUebSecretKey(String uebSecretKey) {
-        this.uebSecretKey = uebSecretKey;
-    }
-    
     @Override
-	public String toString() {
-		return "OperationalEnvironmentEntry [environmentId=" + environmentId + ", tenant=" + tenant + ", isProduction="
-				+ isProduction + ", ecompWorkloadContext=" + ecompWorkloadContext + ", dmaapUebAddress="
-				+ dmaapUebAddress + ", uebApikey=" + uebApikey + ", status=" + status
-				+ ", lastModified=" + lastModified + "]";
-	}
+    public String toString() {
+        return "OperationalEnvironmentEntry [environmentId=" + environmentId + ", tenant=" + tenant + ", isProduction="
+                + isProduction + ", ecompWorkloadContext=" + ecompWorkloadContext + ", dmaapUebAddress="
+                + dmaapUebAddress + ", uebApikey=" + uebApikey + ", status=" + status
+                + ", lastModified=" + lastModified + "]";
+    }
 
 
 }
