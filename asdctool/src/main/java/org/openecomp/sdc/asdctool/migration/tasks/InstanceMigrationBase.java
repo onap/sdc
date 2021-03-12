@@ -24,7 +24,6 @@ import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.janusgraph.core.JanusGraphVertex;
-import org.openecomp.sdc.asdctool.migration.tasks.mig2002.SdcCollapsingRolesRFCstateMigration;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -150,21 +149,6 @@ public abstract class InstanceMigrationBase {
             }
         }
         return false;
-    }
-
-    protected List<JanusGraphVertex> getVertexByEdgeSide(Iterator<Edge> edges, SdcCollapsingRolesRFCstateMigration.EdgeSide side) {
-        List<JanusGraphVertex> vertexList = new ArrayList();
-        while (edges.hasNext()) {
-            Edge edge = edges.next();
-
-            if (side == SdcCollapsingRolesRFCstateMigration.EdgeSide.OUT) {
-                vertexList.add((JanusGraphVertex) edge.outVertex());
-            } else {
-                vertexList.add((JanusGraphVertex) edge.inVertex());
-            }
-        }
-
-        return vertexList;
     }
 
     protected Iterator<Edge> getVertexEdge(GraphVertex containerV, Direction direction, EdgeLabelEnum edgeLabel) {
