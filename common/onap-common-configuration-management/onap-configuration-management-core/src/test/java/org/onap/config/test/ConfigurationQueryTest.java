@@ -16,31 +16,32 @@
 
 package org.onap.config.test;
 
-import org.junit.Test;
-import org.onap.config.type.ConfigurationQuery;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ConfigurationQueryTest {
+import org.junit.jupiter.api.Test;
+import org.onap.config.type.ConfigurationQuery;
+
+class ConfigurationQueryTest {
+
     private static String TENANT = "OPENECOMP";
     private static String NAMESPACE = "tetsNamepspace";
     private static String KEY = "testKey";
 
     @Test
-    public void testConfigurationQueryBuild() {
+    void testConfigurationQueryBuild() {
         // given
         ConfigurationQuery configurationQuery = new ConfigurationQuery();
 
         // when
         configurationQuery = configurationQuery
-                .externalLookup(true)
-                .fallback(true)
-                .latest(true)
-                .nodeSpecific(true)
-                .namespace(NAMESPACE)
-                .tenant(TENANT)
-                .key(KEY);
+            .externalLookup(true)
+            .fallback(true)
+            .latest(true)
+            .nodeSpecific(true)
+            .namespace(NAMESPACE)
+            .tenant(TENANT)
+            .key(KEY);
 
         // then
         assertEquals(TENANT.toUpperCase(), configurationQuery.getTenant());

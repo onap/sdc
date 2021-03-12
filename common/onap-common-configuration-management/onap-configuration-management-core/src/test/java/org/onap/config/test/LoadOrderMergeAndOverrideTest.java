@@ -16,13 +16,11 @@
 
 package org.onap.config.test;
 
-import static org.onap.config.util.TestUtil.writeFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.util.ConfigTestConstant;
@@ -33,27 +31,25 @@ import org.onap.config.util.TestUtil;
  * Check load order for merge and override. Higher load order takes precedence for override
  * Lower load order takes precedence for merge.
  */
-public class LoadOrderMergeAndOverrideTest {
+class LoadOrderMergeAndOverrideTest {
 
     private static final String NAMESPACE = "LoadOrderConfiguration";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
     }
 
     @Test
-    public void testConfigurationWithPropertiesFileFormat() {
+    void testConfigurationWithPropertiesFileFormat() {
         Configuration config = ConfigurationManager.lookup();
 
-        Assert.assertEquals(config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
-        Assert.assertEquals("5", config.getAsString(NAMESPACE, "artifact.length"));
-        Assert.assertEquals("56", config.getAsString(NAMESPACE, "artifact.size"));
+        assertEquals("14", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
+        assertEquals("5", config.getAsString(NAMESPACE, "artifact.length"));
+        assertEquals("56", config.getAsString(NAMESPACE, "artifact.size"));
     }
 
-
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }

@@ -19,8 +19,8 @@ package org.onap.config.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -30,27 +30,33 @@ import java.util.List;
 import org.junit.Assert;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by sheetalm on 10/13/2016.
  */
 public class TestUtil {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestUtil.class);
+
     public static final String jsonSchemaLoc = System.getProperty("user.home") + "/TestResources/";
 
     public static void cleanUp() throws Exception {
-        String data = "{name:\"SCM\"}";
-        TestUtil.writeFile(data);
+        writeFile("{name:\"SCM\"}");
     }
 
-    public static void writeFile(String data) throws IOException {
-        File dir = new File(jsonSchemaLoc);
+    private static void writeFile(final String data) {
+        final File dir = new File(jsonSchemaLoc);
         dir.mkdirs();
-        File file = new File(jsonSchemaLoc + "/GeneratorsList.json");
-        file.createNewFile();
-        FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(data);
-        fileWriter.close();
+        final File file = new File(jsonSchemaLoc + "/GeneratorsList.json");
+        String canonicalPath = "";
+        try (final FileWriter fileWriter = new FileWriter(file)) {
+            canonicalPath = file.getCanonicalPath();
+            fileWriter.write(data);
+        } catch (final IOException e) {
+            LOGGER.warn("Failed to write file {}", canonicalPath, e);
+        }
     }
 
     public static void validateConfiguration(String nameSpace) {
@@ -88,14 +94,14 @@ public class TestUtil {
         Assert.assertEquals(expectedLocList, locList);
 
         Assert.assertEquals("@GeneratorList.json",
-                config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_JSON_SCHEMA));
+            config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_JSON_SCHEMA));
 
         Assert.assertEquals("@" + getenv(ConfigTestConstant.PATH) + "/myschema.json",
-                config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
+            config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
 
         List<String> artifactConsumer = config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER);
         Assert.assertEquals(config.getAsStringValues(nameSpace, ConfigTestConstant.ARTIFACT_CONSUMER_APPC),
-                artifactConsumer);
+            artifactConsumer);
 
         Assert.assertEquals("6", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH));
         Assert.assertEquals("true", config.getAsString(nameSpace, ConfigTestConstant.ARTIFACT_MANDATORY_NAME));
@@ -122,13 +128,13 @@ public class TestUtil {
         Path tmpPath = Files.createTempDirectory(tmpDirPrefix);
         Path dir0 = Paths.get(tmpPath.toString(), "dir0", "dir1", "dir2");
         Files.createDirectories(dir0);
-        Path[] files= {
-                Paths.get(tmpPath.toString(), "file001"),
-                Paths.get(tmpPath.toString(), "dir0", "file002"),
-                Paths.get(tmpPath.toString(), "dir0", "dir1", "file003"),
-                Paths.get(tmpPath.toString(), "dir0", "dir1", "dir2", "file004"),
+        Path[] files = {
+            Paths.get(tmpPath.toString(), "file001"),
+            Paths.get(tmpPath.toString(), "dir0", "file002"),
+            Paths.get(tmpPath.toString(), "dir0", "dir1", "file003"),
+            Paths.get(tmpPath.toString(), "dir0", "dir1", "dir2", "file004"),
         };
-        for (Path file : files ) {
+        for (Path file : files) {
             Files.createFile(file);
         }
         return tmpPath;

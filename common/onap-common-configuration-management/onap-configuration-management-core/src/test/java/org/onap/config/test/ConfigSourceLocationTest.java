@@ -16,15 +16,15 @@
 
 package org.onap.config.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.util.ConfigTestConstant;
@@ -36,14 +36,13 @@ import org.onap.config.util.TestUtil;
  * Validate conventional and configurational source location.
  * Pre-requisite - set -Dconfig.location=${"user.home"}/TestResources/ while running test
  */
-public class ConfigSourceLocationTest {
+class ConfigSourceLocationTest {
 
     private static final String NAMESPACE = "SourceLocation";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        TestUtil.writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
 
         Properties props = new Properties();
         props.setProperty("maxCachedBufferSize", "1024");
@@ -55,13 +54,13 @@ public class ConfigSourceLocationTest {
     }
 
     @Test
-    public void testMergeStrategyInConfig() {
+    void testMergeStrategyInConfig() {
         Configuration config = ConfigurationManager.lookup();
-        Assert.assertEquals("a-zA-Z_0-9", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_UPPER));
-        Assert.assertEquals("1024", config.getAsString(ConfigTestConstant.ARTIFACT_MAXSIZE));
+        assertEquals("a-zA-Z_0-9", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_UPPER));
+        assertEquals("1024", config.getAsString(ConfigTestConstant.ARTIFACT_MAXSIZE));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }

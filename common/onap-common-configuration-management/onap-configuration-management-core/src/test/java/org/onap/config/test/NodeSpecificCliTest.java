@@ -27,7 +27,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.onap.config.api.ConfigurationManager;
@@ -36,8 +37,10 @@ import org.onap.config.util.ConfigTestConstant;
 import org.onap.config.util.TestUtil;
 
 /**
- * Created by sheetalm on 10/19/2016. Scenario 19 Pre-requisite - set -Dnode.config.location=${"user.home"}/TestResources/ while running test Verify
- * node specific override using CLI
+ * Created by sheetalm on 10/19/2016.
+ * Scenario 19
+ * Pre-requisite - set -Dnode.config.location=${"user.home"}/TestResources/ while running test
+ * Verify node specific override using CLI
  */
 @Disabled("Investigate instability (random failures)"
     + "[ERROR]   NodeSpecificCliTest.testCliApi:73 » FileNotFound /home/jenkins/TestResources/c...")
@@ -46,12 +49,9 @@ class NodeSpecificCliTest {
     private static final String NAMESPACE = "NodeCLI";
     private static final File FILE = new File(TestUtil.jsonSchemaLoc + "config.properties");
 
-    @AfterAll
-    public static void tearDown() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         TestUtil.cleanUp();
-        if (FILE.exists()) {
-            assertTrue(FILE.delete());
-        }
     }
 
     @Test
@@ -87,4 +87,13 @@ class NodeSpecificCliTest {
             assertTrue(FILE.delete());
         }
     }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        TestUtil.cleanUp();
+        if (FILE.exists()) {
+            assertTrue(FILE.delete());
+        }
+    }
+
 }

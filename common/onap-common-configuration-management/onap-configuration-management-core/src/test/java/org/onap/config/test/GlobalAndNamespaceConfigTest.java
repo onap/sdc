@@ -16,11 +16,11 @@
 
 package org.onap.config.test;
 
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.util.ConfigTestConstant;
@@ -30,24 +30,23 @@ import org.onap.config.util.TestUtil;
  * Created by sheetalm on 10/13/2016.
  * Scenario 10 Verify configuration present in both global and defined namespace
  */
-public class GlobalAndNamespaceConfigTest {
+class GlobalAndNamespaceConfigTest {
 
     private static final String NAMESPACE = "GlobalAndNSConfig";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        TestUtil.writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
     }
 
     @Test
-    public void testNamespaceInConfig() {
+    void testNamespaceInConfig() {
         Configuration config = ConfigurationManager.lookup();
-        Assert.assertEquals("a-zA-Z", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_UPPER));
-        Assert.assertEquals("a-zA-Z_0-9", config.getAsString(ConfigTestConstant.ARTIFACT_NAME_UPPER));
+        assertEquals("a-zA-Z", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_UPPER));
+        assertEquals("a-zA-Z_0-9", config.getAsString(ConfigTestConstant.ARTIFACT_NAME_UPPER));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }

@@ -16,55 +16,52 @@
 
 package org.onap.config.test;
 
-import static org.onap.config.util.TestUtil.writeFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.util.ConfigTestConstant;
+import org.onap.config.util.TestUtil;
 
 /**
  * Created by ARR on 10/17/2016.
  * Scenario 22 - Validate the default mode if the mode is not set
  */
-public class ValidateDefaultModeTest {
+class ValidateDefaultModeTest {
 
     private static final String NAMESPACE = "defaultmode";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
     }
 
     @Test
-    public void testConfigurationWithValidateDefaultMode() {
+    void testConfigurationWithValidateDefaultMode() {
         Configuration config = ConfigurationManager.lookup();
 
-        Assert.assertEquals(config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
+        assertEquals("14", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
 
-        Assert.assertEquals(config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_MAXSIZE), "1048");
+        assertEquals("1048", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_MAXSIZE));
 
         List<String> expectedExtList = new ArrayList<>();
         expectedExtList.add("pdf");
         expectedExtList.add("tgz");
         expectedExtList.add("xls");
         List<String> extList = config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_EXT);
-        Assert.assertEquals(expectedExtList, extList);
+        assertEquals(expectedExtList, extList);
 
-        Assert.assertEquals(config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH), "6");
+        assertEquals("6", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH));
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        String data = "{name:\"SCM\"}";
-        writeFile(data);
+        TestUtil.cleanUp();
     }
 }

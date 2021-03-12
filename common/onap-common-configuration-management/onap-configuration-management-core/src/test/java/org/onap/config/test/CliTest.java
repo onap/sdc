@@ -16,13 +16,13 @@
 
 package org.onap.config.test;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.impl.CliConfigurationImpl;
 import org.onap.config.util.ConfigTestConstant;
@@ -33,19 +33,18 @@ import org.onap.config.util.TestUtil;
  * Scenario 17
  * Verify Configuration Management System - Command Line Interface for query, update and list operations
  */
-public class CliTest {
+class CliTest {
 
     private static final String NAMESPACE = "CLI";
     private static final String TENANT = "OPENECOMP";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        TestUtil.writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
     }
 
     @Test
-    public void testCliApi() throws Exception {
+    void testCliApi() throws Exception {
         //Verify without fallback
         Map<String, Object> input = new HashMap<>();
         input.put("ImplClass", "org.onap.config.type.ConfigurationQuery");
@@ -55,7 +54,7 @@ public class CliTest {
 
         ConfigurationManager conf = new CliConfigurationImpl();
         String maxLength = conf.getConfigurationValue(input);
-        Assert.assertEquals("14", maxLength);
+        assertEquals("14", maxLength);
 
         Map<String, String> outputMap = conf.listConfiguration(input);
         validateCliListConfig(outputMap);
@@ -63,23 +62,20 @@ public class CliTest {
 
     private void validateCliListConfig(Map<String, String> outputMap) {
 
-        Assert.assertEquals("@" + System.getProperty("user.home") + "/TestResources/GeneratorsList.json",
-                outputMap.get(ConfigTestConstant.ARTIFACT_JSON_SCHEMA));
-        Assert.assertEquals("appc,catalog", outputMap.get(ConfigTestConstant.ARTIFACT_CONSUMER));
-        Assert.assertEquals("6", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_MINLENGTH));
-        Assert.assertEquals("true", outputMap.get(ConfigTestConstant.ARTIFACT_ENCODED));
-        Assert.assertEquals("14", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
-        Assert.assertEquals("pdf,zip,xml,pdf,tgz,xls", outputMap.get(ConfigTestConstant.ARTIFACT_EXT));
-        Assert.assertEquals("Base64,MD5", outputMap.get(ConfigTestConstant.ARTIFACT_ENC));
-        Assert.assertEquals("@" + TestUtil.getenv(ConfigTestConstant.PATH) + "/myschema.json",
-                outputMap.get(ConfigTestConstant.ARTIFACT_XML_SCHEMA));
-        Assert.assertEquals("a-zA-Z_0-9", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_UPPER));
-        Assert.assertEquals("/opt/spool," + System.getProperty("user.home") + "/asdc",
-                outputMap.get(ConfigTestConstant.ARTIFACT_LOC));
-        Assert.assertEquals("deleted,Deleted", outputMap.get(ConfigTestConstant.ARTIFACT_STATUS));
+        assertEquals("@" + System.getProperty("user.home") + "/TestResources/GeneratorsList.json", outputMap.get(ConfigTestConstant.ARTIFACT_JSON_SCHEMA));
+        assertEquals("appc,catalog", outputMap.get(ConfigTestConstant.ARTIFACT_CONSUMER));
+        assertEquals("6", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_MINLENGTH));
+        assertEquals("true", outputMap.get(ConfigTestConstant.ARTIFACT_ENCODED));
+        assertEquals("14", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
+        assertEquals("pdf,zip,xml,pdf,tgz,xls", outputMap.get(ConfigTestConstant.ARTIFACT_EXT));
+        assertEquals("Base64,MD5", outputMap.get(ConfigTestConstant.ARTIFACT_ENC));
+        assertEquals("@" + TestUtil.getenv(ConfigTestConstant.PATH) + "/myschema.json", outputMap.get(ConfigTestConstant.ARTIFACT_XML_SCHEMA));
+        assertEquals("a-zA-Z_0-9", outputMap.get(ConfigTestConstant.ARTIFACT_NAME_UPPER));
+        assertEquals("/opt/spool," + System.getProperty("user.home") + "/asdc", outputMap.get(ConfigTestConstant.ARTIFACT_LOC));
+        assertEquals("deleted,Deleted", outputMap.get(ConfigTestConstant.ARTIFACT_STATUS));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }

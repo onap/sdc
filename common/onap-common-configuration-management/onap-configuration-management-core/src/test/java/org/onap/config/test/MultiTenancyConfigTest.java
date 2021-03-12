@@ -16,11 +16,11 @@
 
 package org.onap.config.test;
 
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.util.ConfigTestConstant;
@@ -30,30 +30,26 @@ import org.onap.config.util.TestUtil;
  * Created by ARR on 10/14/2016.
  * Scenario 17 - Verify Configuration management System - Support for Multi-Tenancy.
  */
-public class MultiTenancyConfigTest {
+class MultiTenancyConfigTest {
 
     private static final String NAMESPACE = "tenancy";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        TestUtil.writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
     }
 
     @Test
-    public void testConfigurationWithMultiTenancyFileFormat() {
+    void testConfigurationWithMultiTenancyFileFormat() {
         Configuration config = ConfigurationManager.lookup();
 
-        Assert.assertEquals(config.getAsString("OPENECOMP", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH),
-                "20");
-
-        Assert.assertEquals(config.getAsString("Telefonica", NAMESPACE, ConfigTestConstant.ARTIFACT_STATUS), "Deleted");
-
-        Assert.assertEquals(config.getAsString("TID", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH), "14");
+        assertEquals("20", config.getAsString("OPENECOMP", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
+        assertEquals("Deleted", config.getAsString("Telefonica", NAMESPACE, ConfigTestConstant.ARTIFACT_STATUS));
+        assertEquals("14", config.getAsString("TID", NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }

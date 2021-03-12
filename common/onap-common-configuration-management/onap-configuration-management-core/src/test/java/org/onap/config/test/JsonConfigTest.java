@@ -17,35 +17,32 @@
 package org.onap.config.test;
 
 import static org.onap.config.util.TestUtil.validateConfiguration;
-import static org.onap.config.util.TestUtil.writeFile;
 
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.util.TestUtil;
 
 /**
  * Created by ARR on 10/14/2016.
  * Scenario 3 Validate configuration with JSON file format with mode.
  */
-public class JsonConfigTest {
+class JsonConfigTest {
 
     private static final String NAMESPACE = "JSONConfig";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
     }
 
     @Test
-    public void testConfigurationWithJsonFileFormat() {
+    void testConfigurationWithJsonFileFormat() {
         validateConfiguration(NAMESPACE);
     }
 
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }

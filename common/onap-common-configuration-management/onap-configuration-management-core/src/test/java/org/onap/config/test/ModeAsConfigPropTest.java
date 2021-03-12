@@ -16,13 +16,14 @@
 
 package org.onap.config.test;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.util.ConfigTestConstant;
@@ -31,23 +32,22 @@ import org.onap.config.util.TestUtil;
 /**
  * Scenario 8 Validate configuration with mode specified as a configuration property.
  */
-public class ModeAsConfigPropTest {
+class ModeAsConfigPropTest {
 
     private static final String NAMESPACE = "ModeAsConfigProp";
 
-    @Before
-    public void setUp() throws IOException {
-        String data = "{name:\"SCM\"}";
-        TestUtil.writeFile(data);
+    @BeforeEach
+    public void setUp() throws Exception {
+        TestUtil.cleanUp();
     }
 
     @Test
-    public void testMergeStrategyInConfig() {
+    void testMergeStrategyInConfig() {
         Configuration config = ConfigurationManager.lookup();
 
-        Assert.assertEquals("14", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
+        assertEquals("14", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH));
 
-        Assert.assertEquals("1048", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_MAXSIZE));
+        assertEquals("1048", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_MAXSIZE));
 
         List<String> expectedExtList = new ArrayList<>();
         expectedExtList.add("pdf");
@@ -57,41 +57,41 @@ public class ModeAsConfigPropTest {
         expectedExtList.add("tgz");
         expectedExtList.add("xls");
         List<String> extList = config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_EXT);
-        Assert.assertEquals(expectedExtList, extList);
+        assertEquals(expectedExtList, extList);
 
         List<String> expectedEncList = new ArrayList<>();
         expectedEncList.add("Base64");
         expectedEncList.add("MD5");
         List<String> encList = config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_ENC);
-        Assert.assertEquals(expectedEncList, encList);
+        assertEquals(expectedEncList, encList);
 
-        Assert.assertEquals("{name:\"SCM\"}", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_JSON_SCHEMA));
+        assertEquals("{name:\"SCM\"}", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_JSON_SCHEMA));
 
-        Assert.assertEquals("a-zA-Z_0-9", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_UPPER));
+        assertEquals("a-zA-Z_0-9", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_UPPER));
 
-        Assert.assertEquals("Deleted", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_STATUS));
+        assertEquals("Deleted", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_STATUS));
 
         List<String> expectedLocList = new ArrayList<>();
         expectedLocList.add("/opt/spool");
         expectedLocList.add(System.getProperty("user.home") + "/asdc");
         List<String> locList = config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_LOC);
-        Assert.assertEquals(expectedLocList, locList);
+        assertEquals(expectedLocList, locList);
 
-        Assert.assertEquals("@" + TestUtil.getenv(ConfigTestConstant.PATH) + "/myschema.json",
-                config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
+        assertEquals("@" + TestUtil.getenv(ConfigTestConstant.PATH) + "/myschema.json",
+            config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_XML_SCHEMA));
 
         List<String> artifactConsumer = config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_CONSUMER);
-        Assert.assertEquals(config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_CONSUMER_APPC),
-                artifactConsumer);
+        assertEquals(config.getAsStringValues(NAMESPACE, ConfigTestConstant.ARTIFACT_CONSUMER_APPC),
+            artifactConsumer);
 
-        Assert.assertEquals(config.getAsBooleanValue(NAMESPACE, ConfigTestConstant.ARTIFACT_MANDATORY_NAME), true);
+        assertTrue(config.getAsBooleanValue(NAMESPACE, ConfigTestConstant.ARTIFACT_MANDATORY_NAME));
 
-        Assert.assertEquals(config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH), "6");
+        assertEquals("6", config.getAsString(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MINLENGTH));
 
-        Assert.assertEquals(config.getAsBooleanValue(NAMESPACE, ConfigTestConstant.ARTIFACT_ENCODED), true);
+        assertTrue(config.getAsBooleanValue(NAMESPACE, ConfigTestConstant.ARTIFACT_ENCODED));
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         TestUtil.cleanUp();
     }
