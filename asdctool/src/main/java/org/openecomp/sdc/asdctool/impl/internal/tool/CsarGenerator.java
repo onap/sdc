@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,15 @@
  */
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -40,19 +49,8 @@ import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("csarGenerator")
 public class CsarGenerator extends CommonInternalTool {
@@ -65,8 +63,8 @@ public class CsarGenerator extends CommonInternalTool {
 
     @Autowired
     public CsarGenerator(JanusGraphDao janusGraphDao, CsarUtils csarUtils,
-        ToscaOperationFacade toscaOperationFacade,
-        ArtifactCassandraDao artifactCassandraDao, ToscaExportHandler toscaExportHandler) {
+                         ToscaOperationFacade toscaOperationFacade,
+                         ArtifactCassandraDao artifactCassandraDao, ToscaExportHandler toscaExportHandler) {
         super("generate");
         this.janusGraphDao = janusGraphDao;
         this.csarUtils = csarUtils;
@@ -74,8 +72,6 @@ public class CsarGenerator extends CommonInternalTool {
         this.artifactCassandraDao = artifactCassandraDao;
         this.toscaExportHandler = toscaExportHandler;
     }
-
-    private static Logger log = Logger.getLogger(CsarGenerator.class.getName());
 
     public void generateCsar(String uuid, Scanner scanner) {
         JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
@@ -98,7 +94,7 @@ public class CsarGenerator extends CommonInternalTool {
                 ConsoleWriter.dataLine("\nGenerate CSAR (yes/no)?");
                 String input = scanner.nextLine();
                 if (input.equalsIgnoreCase("yes")) {
-                    
+
                     status = handleService(metadataV, uuid);
                 }
             }
@@ -119,47 +115,51 @@ public class CsarGenerator extends CommonInternalTool {
 
             Supplier<byte[]> supplier = () -> generateToscaPayload(component);
             generateArtifact(component, ArtifactTypeEnum.TOSCA_TEMPLATE, supplier);
-            
+
             supplier = () -> generateCsarPayload(component);
             generateArtifact(component, ArtifactTypeEnum.TOSCA_CSAR, supplier);
-            
+
             GraphVertex toscaArtifactV = janusGraphDao
-                .getChildVertex(metadataV, EdgeLabelEnum.TOSCA_ARTIFACTS, JsonParseFlagEnum.ParseJson).either(l->l, r->null);
-            if ( toscaArtifactV != null ){
-                Map<String, ArtifactDataDefinition> copy = component.getToscaArtifacts().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ArtifactDataDefinition(e.getValue())));
+                .getChildVertex(metadataV, EdgeLabelEnum.TOSCA_ARTIFACTS, JsonParseFlagEnum.ParseJson).either(l -> l, r -> null);
+            if (toscaArtifactV != null) {
+                Map<String, ArtifactDataDefinition> copy = component.getToscaArtifacts().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> new ArtifactDataDefinition(e.getValue())));
                 toscaArtifactV.setJson(copy);
                 janusGraphDao.updateVertex(toscaArtifactV);
             }
-           
+
         } else {
             ConsoleWriter.dataLine("Failed to fetch certified service with UUID ", uuid);
         }
         return status;
     }
 
-    private JanusGraphOperationStatus generateArtifact(Component component, ArtifactTypeEnum artifactType, Supplier<byte[]> supplier){
+    private JanusGraphOperationStatus generateArtifact(Component component, ArtifactTypeEnum artifactType, Supplier<byte[]> supplier) {
         JanusGraphOperationStatus status = JanusGraphOperationStatus.GENERAL_ERROR;
         ArtifactDefinition csarArtifact;
-        Optional<ArtifactDefinition> op = component.getToscaArtifacts().values().stream().filter(p -> p.getArtifactType().equals(artifactType.getType())).findAny();
+        Optional<ArtifactDefinition> op = component.getToscaArtifacts().values().stream()
+            .filter(p -> p.getArtifactType().equals(artifactType.getType())).findAny();
         if (op.isPresent()) {
             csarArtifact = op.get();
-              
+
             status = savePayload(component, csarArtifact, supplier);
         }
         return status;
     }
-    
+
     private byte[] generateCsarPayload(org.openecomp.sdc.be.model.Component component) {
-        return csarUtils.createCsar(component, true, true).either( l -> l, r -> null);
-    }
-    private byte[] generateToscaPayload(Component component){
-       return toscaExportHandler.exportComponent(component).either(ToscaRepresentation::getMainYaml, r -> null);
+        return csarUtils.createCsar(component, true, true).either(l -> l, r -> null);
     }
 
-    private JanusGraphOperationStatus savePayload(org.openecomp.sdc.be.model.Component component, ArtifactDefinition csarArtifact, Supplier<byte[]> supplier) {
+    private byte[] generateToscaPayload(Component component) {
+        return toscaExportHandler.exportComponent(component).either(ToscaRepresentation::getMainYaml, r -> null);
+    }
+
+    private JanusGraphOperationStatus savePayload(org.openecomp.sdc.be.model.Component component, ArtifactDefinition csarArtifact,
+                                                  Supplier<byte[]> supplier) {
         byte[] payload = supplier.get();
 
-        if ( payload == null ) {
+        if (payload == null) {
             ConsoleWriter.dataLine("create artifact failed ", csarArtifact.getArtifactLabel());
             return JanusGraphOperationStatus.GENERAL_ERROR;
         }
@@ -170,10 +170,9 @@ public class CsarGenerator extends CommonInternalTool {
         String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(component.getUniqueId(), csarArtifact.getArtifactLabel());
         csarArtifact.setUniqueId(uniqueId);
         csarArtifact.setEsId(csarArtifact.getUniqueId());
-        
+
         ConsoleWriter.dataLine("create artifact unique id ", uniqueId);
-        
-        
+
         csarArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
         DAOArtifactData artifactData = new DAOArtifactData(csarArtifact.getEsId(), decodedPayload);
         artifactCassandraDao.saveArtifact(artifactData);
