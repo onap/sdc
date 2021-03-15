@@ -21,9 +21,17 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import com.datastax.driver.mapping.annotations.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
+@EqualsAndHashCode
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_component_dependency_model")
 public class ComponentDependencyModelEntity implements VersionableEntity {
 
@@ -44,14 +52,6 @@ public class ComponentDependencyModelEntity implements VersionableEntity {
   @Column(name = "relation")
   private String relation;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public ComponentDependencyModelEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
 
   /**
    * Instantiates a new ComponentDependencyModelEntity entity.
@@ -74,103 +74,5 @@ public class ComponentDependencyModelEntity implements VersionableEntity {
   @Override
   public String getFirstClassCitizenId() {
     return getVspId();
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public Version getVersion() {
-    return version;
-  }
-
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
-  }
-
-  public String getVspId() {
-    return vspId;
-  }
-
-  public void setVspId(String vspId) {
-    this.vspId = vspId;
-  }
-
-  public String getTargetComponentId() {
-    return targetComponentId;
-  }
-
-  public void setTargetComponentId(String targetComponentId) {
-    this.targetComponentId = targetComponentId;
-  }
-
-  public String getSourceComponentId() {
-    return sourceComponentId;
-  }
-
-  public void setSourceComponentId(String sourceComponentId) {
-        this.sourceComponentId = sourceComponentId;
-  }
-
-  public String getRelation() {
-    return relation;
-  }
-
-  public void setRelation(String relation) {
-    this.relation = relation;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    ComponentDependencyModelEntity that = (ComponentDependencyModelEntity) o;
-
-    if (vspId != null ? !vspId.equals(that.vspId) : that.vspId != null) {
-      return false;
-    }
-    if (version != null ? !version.equals(that.version) : that.version != null) {
-      return false;
-    }
-    if (id != null ? !id.equals(that.id) : that.id != null) {
-      return false;
-    }
-    if (sourceComponentId != null ? !sourceComponentId.equals(that.sourceComponentId)
-        : that.sourceComponentId != null) {
-      return false;
-    }
-    if (targetComponentId != null ? !targetComponentId.equals(that.targetComponentId)
-        : that.targetComponentId != null) {
-      return false;
-    }
-    if (relation != null ? !relation.equals(that.relation) : that.relation != null) {
-      return false;
-    }
-
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = vspId != null ? vspId.hashCode() : 0;
-    result = 31 * result + (version != null ? version.hashCode() : 0);
-    result = 31 * result + (id != null ? id.hashCode() : 0);
-    result = 31 * result + (sourceComponentId != null ? sourceComponentId.hashCode() : 0);
-    result = 31 * result + (targetComponentId != null ? targetComponentId.hashCode() : 0);
-    result = 31 * result + (relation != null ? relation.hashCode() : 0);
-    return result;
   }
 }

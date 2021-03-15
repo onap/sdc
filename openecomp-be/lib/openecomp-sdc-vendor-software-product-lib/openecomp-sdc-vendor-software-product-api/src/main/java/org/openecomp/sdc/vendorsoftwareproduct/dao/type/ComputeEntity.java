@@ -21,12 +21,18 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import com.datastax.driver.mapping.annotations.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_component_compute")
 public class ComputeEntity implements CompositionEntity {
   public static final String ENTITY_TYPE = "Vendor Software Product Component Compute Flavor";
@@ -48,15 +54,6 @@ public class ComputeEntity implements CompositionEntity {
   @Column(name = "questionnaire_data")
   private String questionnaireData;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public ComputeEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
   public ComputeEntity(String vspId, Version version, String componentId, String id) {
     this.vspId = vspId;
     this.version = version;
@@ -75,26 +72,6 @@ public class ComputeEntity implements CompositionEntity {
   }
 
   @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public Version getVersion() {
-    return version;
-  }
-
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
-  }
-
-  @Override
   public CompositionEntityType getType() {
     return CompositionEntityType.compute;
   }
@@ -103,42 +80,6 @@ public class ComputeEntity implements CompositionEntity {
   public CompositionEntityId getCompositionEntityId() {
     return new CompositionEntityId(getId(),
         new CompositionEntityId(getComponentId(), new CompositionEntityId(getVspId(), null)));
-  }
-
-  @Override
-  public String getCompositionData() {
-    return compositionData;
-  }
-
-  @Override
-  public void setCompositionData(String compositionData) {
-    this.compositionData = compositionData;
-  }
-
-  @Override
-  public String getQuestionnaireData() {
-    return questionnaireData;
-  }
-
-  @Override
-  public void setQuestionnaireData(String questionnaireData) {
-    this.questionnaireData = questionnaireData;
-  }
-
-  public String getVspId() {
-    return vspId;
-  }
-
-  public void setVspId(String vspId) {
-    this.vspId = vspId;
-  }
-
-  public String getComponentId() {
-    return componentId;
-  }
-
-  public void setComponentId(String componentId) {
-    this.componentId = componentId;
   }
 
   public ComputeData getComputeCompositionData() {

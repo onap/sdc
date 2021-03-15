@@ -23,8 +23,16 @@ package org.openecomp.sdc.action.dao.types;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.action.types.OpenEcompComponent;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(keyspace = "dox", name = "EcompComponent")
 public class OpenEcompComponentEntity {
 
@@ -35,35 +43,6 @@ public class OpenEcompComponentEntity {
   @Column(name = "name")
   private String name;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public OpenEcompComponentEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
-  public OpenEcompComponentEntity(String id, String name) {
-    this.id = id;
-    this.name = name;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
 
   /**
    * To dto OPENECOMP component.
