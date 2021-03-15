@@ -21,11 +21,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.google.common.collect.Lists;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 /**
  * Represents the capability of the component or component instance
@@ -168,14 +167,6 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
     }
 
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-    }
-
-    public void setName(String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
-    }
-
     public String getParentName() {
         return (String) getToscaPresentationValue(JsonPresentationFields.PARENT_NAME);
     }
@@ -192,10 +183,12 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.PREVIOUS_NAME, previousName);
     }
 
+    @Override
     public String getType() {
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
+    @Override
     public void setType(String type) {
         setToscaPresentationValue(JsonPresentationFields.TYPE, type);
     }
@@ -218,21 +211,21 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.CAPABILITY_SOURCES, capabilitySources);
     }
 
-    public void setPath(List<String> path) {
-        setToscaPresentationValue(JsonPresentationFields.PATH, path);
-    }
-
     @SuppressWarnings("unchecked")
     public List<String> getPath() {
         return (List<String>) getToscaPresentationValue(JsonPresentationFields.PATH);
     }
 
-    public void setSource(String source) {
-        setToscaPresentationValue(JsonPresentationFields.SOURCE, source);
+    public void setPath(List<String> path) {
+        setToscaPresentationValue(JsonPresentationFields.PATH, path);
     }
 
     public String getSource() {
         return (String) getToscaPresentationValue(JsonPresentationFields.SOURCE);
+    }
+
+    public void setSource(String source) {
+        setToscaPresentationValue(JsonPresentationFields.SOURCE, source);
     }
 
     /**
@@ -422,11 +415,10 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         String maxOccurrences = this.getMaxOccurrences();
         String source = this.getSource();
 
-
         return "CapabilityDefinition [uniqueId=" + uniqueId + ", description=" + description + ", name=" + name
-                + ", type=" + type + ", validSourceTypes=" + validSourceTypes + ", capabilitySources="
-                + capabilitySources + ", ownerId=" + ownerId + ", ownerName=" + ownerName
-                + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + ", path=" + path + ", source=" + source + "]";
+            + ", type=" + type + ", validSourceTypes=" + validSourceTypes + ", capabilitySources="
+            + capabilitySources + ", ownerId=" + ownerId + ", ownerName=" + ownerName
+            + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + ", path=" + path + ", source=" + source + "]";
     }
 
     public enum OwnerType {
@@ -440,10 +432,6 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
             this.value = value;
         }
 
-        public String getValue() {
-            return value;
-        }
-
         public static OwnerType getByValue(String value) {
             for (OwnerType type : values()) {
                 if (type.getValue().equals(value)) {
@@ -451,6 +439,10 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
                 }
             }
             return null;
+        }
+
+        public String getValue() {
+            return value;
         }
 
     }

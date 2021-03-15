@@ -29,6 +29,9 @@ import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -52,18 +55,19 @@ public class MapAttributesDataDefinition extends MapDataDefinition<AttributeData
      */
     public MapAttributesDataDefinition(MapAttributesDataDefinition toBeDeepCopiedMapPropertiesDataDefinition) {
         this.parentName = toBeDeepCopiedMapPropertiesDataDefinition.parentName;
-        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
-        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
+        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
+        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
     }
-
     @JsonValue
     @Override
     public Map<String, AttributeDataDefinition> getMapToscaDataDefinition() {
         return mapToscaDataDefinition;
     }
 
-
     public void setMapToscaDataDefinition(Map<String, AttributeDataDefinition> mapToscaDataDefinition) {
         this.mapToscaDataDefinition = mapToscaDataDefinition;
     }
+
 }

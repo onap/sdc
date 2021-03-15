@@ -16,10 +16,9 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.io.Serializable;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-import java.io.Serializable;
 
 public class CINodeFilterDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -36,17 +35,17 @@ public class CINodeFilterDataDefinition extends ToscaDataDefinition implements S
         this.setCapabilities(inData.getCapabilities());
     }
 
-    public void setTosca_id(Object tosca_id) {
-        setToscaPresentationValue(JsonPresentationFields.TOSCA_ID, tosca_id);
-    }
-
     public Object getTosca_id() {
         return getToscaPresentationValue(JsonPresentationFields.TOSCA_ID);
     }
 
+    public void setTosca_id(Object tosca_id) {
+        setToscaPresentationValue(JsonPresentationFields.TOSCA_ID, tosca_id);
+    }
+
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
         return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.PROPERTIES);
+            JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {
@@ -55,19 +54,11 @@ public class CINodeFilterDataDefinition extends ToscaDataDefinition implements S
 
     public ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> getCapabilities() {
         return (ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.NODE_FILTER_CAPABILITIES);
+            JsonPresentationFields.NODE_FILTER_CAPABILITIES);
     }
 
     public void setCapabilities(ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities) {
         setToscaPresentationValue(JsonPresentationFields.NODE_FILTER_CAPABILITIES, capabilities);
-    }
-
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-    }
-
-    public void setName(String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
     }
 
     public String getID() {
@@ -77,6 +68,5 @@ public class CINodeFilterDataDefinition extends ToscaDataDefinition implements S
     public void setID(String name) {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, name);
     }
-
 
 }

@@ -33,13 +33,17 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class AnnotationTypeDataDefinition extends ToscaDataDefinition {
 
     protected String uniqueId;
+
+    @ToString.Exclude
     protected String type;
-    protected String version;
-    protected boolean highestVersion;
+
     protected String description;
 
     protected Long creationTime;
     protected Long modificationTime;
+
+    protected String version;
+    protected boolean highestVersion;
 
     public AnnotationTypeDataDefinition(AnnotationTypeDataDefinition other) {
         uniqueId = other.uniqueId;
@@ -50,4 +54,5 @@ public class AnnotationTypeDataDefinition extends ToscaDataDefinition {
         modificationTime = other.modificationTime;
         highestVersion = other.highestVersion;
     }
+
 }

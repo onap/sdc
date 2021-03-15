@@ -20,27 +20,29 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static java.util.Collections.emptyMap;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import static java.util.Collections.emptyMap;
-
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class GroupDataDefinition extends ToscaDataDefinition {
+
     @JsonInclude
     private String typeUid;
     @JsonInclude
     private Integer propertyValueCounter = 0;
-
-    public GroupDataDefinition() {
-    }
 
     public GroupDataDefinition(Map<String, Object> gr) {
         super(gr);
@@ -75,15 +77,6 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         this.setTypeUid(other.typeUid);
     }
 
-
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-    }
-
-    public void setName(String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
-    }
-
     public String getInvariantName() {
         String invariantName = (String) getToscaPresentationValue(JsonPresentationFields.CI_INVARIANT_NAME);
         return invariantName == null ? getName() : invariantName;
@@ -110,14 +103,17 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
     }
 
+    @Override
     public String getType() {
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
+    @Override
     public void setType(String type) {
         setToscaPresentationValue(JsonPresentationFields.TYPE, type);
     }
 
+    @Override
     public String getVersion() {
         return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
     }
@@ -142,14 +138,6 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
     }
 
-    public Integer getPropertyValueCounter() {
-        return propertyValueCounter;
-    }
-
-    public void setPropertyValueCounter(Integer propertyValueCounter) {
-        this.propertyValueCounter = propertyValueCounter;
-    }
-
     public String getGroupUUID() {
         return (String) getToscaPresentationValue(JsonPresentationFields.GROUP_UUID);
     }
@@ -162,6 +150,10 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         return (Map<String, String>) getToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER);
     }
 
+    public void setMembers(Map<String, String> members) {
+        setToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER, members);
+    }
+
     //this is used by GroupCompositionMixin
     public Map<String, String> resolveMembersList() {
         Map<String, String> members = getMembers();
@@ -170,10 +162,6 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         }
         return emptyMap();
 
-    }
-
-    public void setMembers(Map<String, String> members) {
-        setToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER, members);
     }
 
     public List<String> getArtifacts() {
@@ -200,14 +188,6 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.GROUP_PROPERTIES, properties);
     }
 
-    public String getTypeUid() {
-        return typeUid;
-    }
-
-    public void setTypeUid(String typeUid) {
-        this.typeUid = typeUid;
-    }
-
     public boolean isUserDefined() {
         return CreatedFrom.UI.equals(getCreatedFrom());
     }
@@ -218,12 +198,14 @@ public class GroupDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "GroupDataDefinition [propertyValueCounter=" + propertyValueCounter + ", toscaPresentation=" + toscaPresentation + ", getName()=" + getName() + ", getUniqueId()=" + getUniqueId() + ", getType()=" + getType() + ", getVersion()="
-                + getVersion() + ", getInvariantUUID()=" + getInvariantUUID() + ", getDescription()=" + getDescription() + ", getPropertyValueCounter()=" + getPropertyValueCounter() + ", getGroupUUID()=" + getGroupUUID() + ", getMembers()="
-                + getMembers() + ", getArtifacts()=" + getArtifacts() + ", getArtifactsUuid()=" + getArtifactsUuid() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-                + super.toString() + "]";
+        return "GroupDataDefinition [propertyValueCounter=" + propertyValueCounter + ", toscaPresentation=" + toscaPresentation + ", getName()="
+            + getName() + ", getUniqueId()=" + getUniqueId() + ", getType()=" + getType() + ", getVersion()="
+            + getVersion() + ", getInvariantUUID()=" + getInvariantUUID() + ", getDescription()=" + getDescription() + ", getPropertyValueCounter()="
+            + getPropertyValueCounter() + ", getGroupUUID()=" + getGroupUUID() + ", getMembers()="
+            + getMembers() + ", getArtifacts()=" + getArtifacts() + ", getArtifactsUuid()=" + getArtifactsUuid() + ", getClass()=" + getClass()
+            + ", hashCode()=" + hashCode() + ", toString()="
+            + super.toString() + "]";
     }
-
 
     public boolean containsInstanceAsMember(String instanceId) {
         return getMembers() != null && getMembers().values().contains(instanceId);

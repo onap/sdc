@@ -20,20 +20,18 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
-import java.io.Serializable;
-
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ASSOCIATION_TYPE;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ID;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_NAME;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_VERSION_ID;
 
-public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import java.io.Serializable;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
+public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
     @JsonCreator
     public OperationDataDefinition() {
@@ -77,7 +75,7 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 
     public ListDataDefinition<OperationInputDefinition> getInputs() {
         return (ListDataDefinition<OperationInputDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.OPERATION_INPUTS);
+            JsonPresentationFields.OPERATION_INPUTS);
     }
 
     public void setInputs(ListDataDefinition<OperationInputDefinition> inputs) {
@@ -86,15 +84,11 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 
     public ListDataDefinition<OperationOutputDefinition> getOutputs() {
         return (ListDataDefinition<OperationOutputDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.OPERATION_OUTPUTS);
+            JsonPresentationFields.OPERATION_OUTPUTS);
     }
 
     public void setOutputs(ListDataDefinition<OperationOutputDefinition> outputs) {
         setToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUTS, outputs);
-    }
-
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
     }
 
     public String getUniqueId() {
@@ -143,10 +137,6 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
 
     public void setWorkflowAssociationType(String workflowAssociationType) {
         setToscaPresentationValue(IO_WORKFLOW_ASSOCIATION_TYPE, workflowAssociationType);
-    }
-
-    public void setName(String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
     }
 
     public Long getCreationDate() {

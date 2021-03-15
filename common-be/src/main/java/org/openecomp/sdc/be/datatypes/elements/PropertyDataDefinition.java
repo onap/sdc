@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,37 +30,28 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class PropertyDataDefinition extends ToscaDataDefinition {
 
+    protected boolean definition = false;
+    protected Boolean hidden = Boolean.FALSE;
     private String uniqueId;
-
     // "boolean", "string", "float", "integer", "version" })
     private String type;
-
     private Boolean required = Boolean.FALSE;
-
-    protected boolean definition = false;
-
     private String defaultValue;
-
     private String description;
-
     private SchemaDefinition schema;
-
     private boolean password;
-
     private String name;
-
     private String value;
-
     private String label;
-    protected Boolean hidden = Boolean.FALSE;
     private Boolean immutable = Boolean.FALSE;
 
     private String inputPath;
@@ -86,7 +75,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private List<GetPolicyValueDataDefinition> getPolicyValues;
 
     private List<String> propertyConstraints;
-    
+
     private Map<String, String> metadata;
 
     public PropertyDataDefinition() {
@@ -130,7 +119,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         if (MapUtils.isNotEmpty(propertyDataDefinition.getMetadata())) {
             setMetadata(new HashMap<>(propertyDataDefinition.getMetadata()));
         }
-        if(isNotEmpty(propertyDataDefinition.getPropertyConstraints())){
+        if (isNotEmpty(propertyDataDefinition.getPropertyConstraints())) {
             setPropertyConstraints(new ArrayList<>(propertyDataDefinition.getPropertyConstraints()));
         }
         this.setIsDeclaredListInput(propertyDataDefinition.getIsDeclaredListInput());
@@ -149,17 +138,17 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return required;
     }
 
-    public void setSchemaType(String schemaType) {
-        if (schema != null && schema.getProperty() != null) {
-            schema.getProperty().setType(schemaType);
-        }
-    }
-
     public String getSchemaType() {
         if (schema != null && schema.getProperty() != null) {
             return schema.getProperty().getType();
         }
         return null;
+    }
+
+    public void setSchemaType(String schemaType) {
+        if (schema != null && schema.getProperty() != null) {
+            schema.getProperty().setType(schemaType);
+        }
     }
 
     public PropertyDataDefinition getSchemaProperty() {
@@ -268,18 +257,19 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     }
 
     private <T extends ToscaDataDefinition> boolean compareSchemaType(T other) {
-        return !"list".equals(type) && !"map".equals(type) || this.getSchema().getProperty().getType().equals(((PropertyDataDefinition) other).getSchema().getProperty().getType());
+        return !"list".equals(type) && !"map".equals(type) || this.getSchema().getProperty().getType()
+            .equals(((PropertyDataDefinition) other).getSchema().getProperty().getType());
     }
 
     @Override
     public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride) {
         if (this.getType() != null
-                && this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE))
-                && compareSchemaType(other)) {
+            && this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE))
+            && compareSchemaType(other)) {
             other.setOwnerId(getOwnerId());
             if (allowDefaultValueOverride
-                    && getDefaultValue() != null
-                    && !getDefaultValue().isEmpty()) {
+                && getDefaultValue() != null
+                && !getDefaultValue().isEmpty()) {
                 other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
             }
             return other;
@@ -297,6 +287,10 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return this.getGetInputValues() != null && !this.getGetInputValues().isEmpty();
     }
 
+    public List<Annotation> getAnnotations() {
+        return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
+    }
+
     public void setAnnotations(List<Annotation> newAnnotations) {
         Set<Annotation> annotationSet = isNotEmpty(newAnnotations) ? new HashSet<>(newAnnotations) : new HashSet<>();
         //We would to prioritize the new valid annotations over the old ones if the same one existed.
@@ -306,9 +300,5 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
         this.annotations = new ArrayList<>(annotationSet);
         setToscaPresentationValue(JsonPresentationFields.ANNOTATIONS, this.annotations);
-    }
-
-    public List<Annotation> getAnnotations() {
-        return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
     }
 }

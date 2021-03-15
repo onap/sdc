@@ -34,7 +34,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 @NoArgsConstructor
 public class AttributeDataDefinition extends ToscaDataDefinition {
 
-    private transient List<GetOutputValueDataDefinition> getOutputValues;
+    private List<GetOutputValueDataDefinition> getOutputValues;
     private String outputId;
     private String value;
     private String outputPath;
@@ -80,14 +80,6 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
     @Override
     public void setOwnerId(final String ownerId) {
         setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
-    }
-
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-    }
-
-    public void setName(final String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
     }
 
     @Override

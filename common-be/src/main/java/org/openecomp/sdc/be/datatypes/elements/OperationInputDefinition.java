@@ -17,10 +17,14 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
-
+@Getter
+@Setter
 public class OperationInputDefinition extends InputDataDefinition {
+
     private String source;
     private String sourceProperty;
     private String toscaDefaultValue;
@@ -52,35 +56,14 @@ public class OperationInputDefinition extends InputDataDefinition {
         setType(type);
     }
 
+    @Override
     public String getLabel() {
         return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL);
     }
 
+    @Override
     public void setLabel(String name) {
         setToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL, name);
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getSourceProperty() {
-        return sourceProperty;
-    }
-
-    public void setSourceProperty(String sourceProperty) {
-        this.sourceProperty = sourceProperty;
-    }
-
-    public String getToscaDefaultValue() {
-        return toscaDefaultValue;
-    }
-
-    public void setToscaDefaultValue(String toscaDefaultValue) {
-        this.toscaDefaultValue = toscaDefaultValue;
-    }
 }

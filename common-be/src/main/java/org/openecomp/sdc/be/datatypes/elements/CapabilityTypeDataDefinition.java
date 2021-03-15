@@ -20,11 +20,12 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.List;
+import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.util.List;
-
+@NoArgsConstructor
 public class CapabilityTypeDataDefinition extends ToscaDataDefinition {
 
     public CapabilityTypeDataDefinition(CapabilityTypeDataDefinition cdt) {
@@ -35,10 +36,6 @@ public class CapabilityTypeDataDefinition extends ToscaDataDefinition {
         this.setVersion(cdt.getVersion());
         this.setCreationTime(cdt.getCreationTime());
         this.setModificationTime(cdt.getModificationTime());
-    }
-
-    public CapabilityTypeDataDefinition() {
-        super();
     }
 
     public String getUniqueId() {
@@ -57,10 +54,12 @@ public class CapabilityTypeDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
     }
 
+    @Override
     public String getType() {
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
+    @Override
     public void setType(String type) {
         setToscaPresentationValue(JsonPresentationFields.TYPE, type);
     }
@@ -73,6 +72,7 @@ public class CapabilityTypeDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.VALID_SOURCE_TYPE, validSourceTypes);
     }
 
+    @Override
     public String getVersion() {
         return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
     }
@@ -108,8 +108,8 @@ public class CapabilityTypeDataDefinition extends ToscaDataDefinition {
         Long modificationTime = getModificationTime();
 
         return "CapabilityTypeDataDefinition [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type
-                + ", validSourceTypes=" + validSourceTypes + ", version=" + version + ", creationTime=" + creationTime
-                + ", modificationTime=" + modificationTime + "]";
+            + ", validSourceTypes=" + validSourceTypes + ", version=" + version + ", creationTime=" + creationTime
+            + ", modificationTime=" + modificationTime + "]";
     }
 
 }
