@@ -25,6 +25,9 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -35,6 +38,9 @@ import com.datastax.driver.mapping.annotations.Transient;
 
 import java.util.Map;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = AuditingTypesConstants.REPO_KEYSPACE, name = AuditingTypesConstants.FEATURE_TOGGLE_STATE)
 public class FeatureToggleEvent {
     private static final Logger logger = Logger.getLogger(FeatureToggleEvent.class);
@@ -51,40 +57,6 @@ public class FeatureToggleEvent {
 
     @Column(name = "parameters")
     private String parameters;
-
-    public void setFeatureName(String featureName) {
-        this.featureName = featureName;
-    }
-
-    public void setEnabled(String enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setStrategyId(String strategyId) {
-        this.strategyId = strategyId;
-    }
-
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
-    }
-
-    public String getFeatureName() {
-        return featureName;
-    }
-
-    public String getEnabled() {
-        return enabled;
-    }
-
-    public String getStrategyId() {
-        return strategyId;
-    }
-
-    public String getParameters() {
-        return parameters;
-    }
-
-    public FeatureToggleEvent() {}
 
     public FeatureToggleEvent(FeatureState featureState) {
         this();

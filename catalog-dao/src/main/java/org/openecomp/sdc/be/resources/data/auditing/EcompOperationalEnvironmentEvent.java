@@ -24,14 +24,19 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-//import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
+@Getter
+@Setter
+@ToString
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE)
 public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
 
@@ -74,64 +79,6 @@ public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
         this.tenantContext = tenantContext;
     }
 
-    public String getOperationalEnvironmentId() {
-        return operationalEnvironmentId;
-    }
-
-    public void setOperationalEnvironmentId(String operationalEnvironmentId) {
-        this.operationalEnvironmentId = operationalEnvironmentId;
-    }
-
-    public String getOperationalEnvironmentAction() {
-        return operationalEnvironmentAction;
-    }
-
-    public void setOperationalEnvironmentAction(String operationalEnvironmentAction) {
-        this.operationalEnvironmentAction = operationalEnvironmentAction;
-    }
-
-    public String getOperationalEnvironmentName() {
-        return operationalEnvironmentName;
-    }
-
-    public void setOperationalEnvironmentName(String operationalEnvironmentName) {
-        this.operationalEnvironmentName = operationalEnvironmentName;
-    }
-
-    public String getOperationalEnvironmentType() {
-        return operationalEnvironmentType;
-    }
-
-    public void setOperationalEnvironmentType(String operationalEnvironmentType) {
-        this.operationalEnvironmentType = operationalEnvironmentType;
-    }
-
-    public String getTenantContext() {
-        return tenantContext;
-    }
-
-    public void setTenantContext(String tenantContext) {
-        this.tenantContext = tenantContext;
-    }
-
-    public Date getTimestamp1() {
-        return timestamp1;
-    }
-
-    public void setTimestamp1(Date timestamp) {
-        this.timestamp1 = timestamp;
-    }
-
-    @Override
-    public String getAction() {
-        return action;
-    }
-
-    @Override
-    public void setAction(String action) {
-        this.action = action;
-    }
-
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
@@ -144,13 +91,4 @@ public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
     }
-
-    @Override
-    public String toString() {
-        return "EcompOperationalEnvironmentEvent [timestamp1=" + timestamp1 + ", action = " + action
-                + ", operational_environment_id=" + operationalEnvironmentId + ", operational_environment_name=" + operationalEnvironmentName
-                + ", operational_environment_type=" + operationalEnvironmentType + ", operational_environment_action=" + operationalEnvironmentAction
-                + ", tenant_context=" + tenantContext + "]";
-    }
-
 }
