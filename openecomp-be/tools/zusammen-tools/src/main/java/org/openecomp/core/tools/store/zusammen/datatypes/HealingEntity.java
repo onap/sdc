@@ -18,10 +18,18 @@ package org.openecomp.core.tools.store.zusammen.datatypes;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Created by ayalaben on 10/15/2017
  */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "healing")
 public class HealingEntity {
 
@@ -42,62 +50,4 @@ public class HealingEntity {
 
   @Column(name = "old_version")
   private String oldVersion;
-
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public HealingEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
-  public HealingEntity(String space, String itemId, String versionId, boolean healingFlag,
-                       String oldVersion) {
-    this.space = space;
-    this.itemId = itemId;
-    this.versionId = versionId;
-    this.healingFlag = healingFlag;
-    this.oldVersion = oldVersion;
-  }
-
-  public String getSpace() {
-    return space;
-  }
-
-  public void setSpace(String space) {
-    this.space = space;
-  }
-
-  public String getItemId() {
-    return itemId;
-  }
-
-  public void setItemId(String itemId) {
-    this.itemId = itemId;
-  }
-
-  public String getVersionId() {
-    return versionId;
-  }
-
-  public void setVersionId(String versionId) {
-    this.versionId = versionId;
-  }
-
-  public boolean getHealingFlag() {
-    return healingFlag;
-  }
-
-  public void setHealingFlag(boolean healingFlag) {
-    this.healingFlag = healingFlag;
-  }
-
-  public String getOldVersion() {
-    return oldVersion;
-  }
-
-  public void setOldVersion(String oldVersion) {
-    this.oldVersion = oldVersion;
-  }
 }

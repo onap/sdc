@@ -20,11 +20,16 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Date;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "activity_log")
 public class ActivityLogEntity {
   @PartitionKey
@@ -43,15 +48,6 @@ public class ActivityLogEntity {
   private String message;
   private String comment;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public ActivityLogEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
   public ActivityLogEntity(String itemId, Version version) {
     this.itemId = itemId;
     this.versionId = version == null ? null : version.getId();
@@ -66,77 +62,5 @@ public class ActivityLogEntity {
     this.message = message;
     this.comment = comment;
     this.timestamp = new Date();
-  }
-
-  public String getItemId() {
-    return itemId;
-  }
-
-  public void setItemId(String itemId) {
-    this.itemId = itemId;
-  }
-
-  public String getVersionId() {
-    return versionId;
-  }
-
-  public void setVersionId(String versionId) {
-    this.versionId = versionId;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public ActivityType getType() {
-    return type;
-  }
-
-  public void setType(ActivityType type) {
-    this.type = type;
-  }
-
-  public String getUser() {
-    return user;
-  }
-
-  public void setUser(String user) {
-    this.user = user;
-  }
-
-  public Date getTimestamp() {
-    return timestamp;
-  }
-
-  public void setTimestamp(Date timestamp) {
-    this.timestamp = timestamp;
-  }
-
-  public boolean isSuccess() {
-    return success;
-  }
-
-  public void setSuccess(boolean success) {
-    this.success = success;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 }
