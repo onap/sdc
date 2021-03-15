@@ -21,20 +21,19 @@
 package org.onap.sdc.frontend.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
+import java.util.ArrayList;
+import java.util.List;
 import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
+import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.pages.GeneralPageElements;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceGeneralPage;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
-import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServiceUIUtils {
 
@@ -61,6 +60,7 @@ public class ServiceUIUtils {
         ServiceGeneralPage.defineNamingPolicy(service.getNamingPolicy());
         defineTagsList2(service.getTags());
         ServiceGeneralPage.defineContactId(service.getContactId());
+        GeneralUIUtils.waitForElementInVisibilityBy(By.className("notification-container"), 10000);
         GeneralUIUtils.clickSomewhereOnPage();
     }
 

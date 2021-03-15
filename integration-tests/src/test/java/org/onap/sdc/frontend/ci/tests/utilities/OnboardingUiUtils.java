@@ -165,7 +165,7 @@ public class OnboardingUiUtils {
 
         DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.getVspId());
         File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
-
+        ExtentTestActions.log(Status.INFO, String.format("Downloaded CSAR file '%s'", latestFilefromDir));
         ExtentTestActions.log(Status.INFO, String.format("Going to import %s", vnfFile.substring(0, vnfFile.indexOf("."))));
         importVSP(createVendorSoftwareProduct);
 

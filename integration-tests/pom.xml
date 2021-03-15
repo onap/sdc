@@ -37,7 +37,7 @@ limitations under the License.
 
     <properties>
         <selenium.version>3.141.59</selenium.version>
-        <gecko.driver.version>0.27.0</gecko.driver.version>
+        <gecko.driver.version>0.29.0</gecko.driver.version>
         <!-- SDC Startup parameters -->
         <it.env.name>integration-test</it.env.name>
         <it.cassandra.port>9042</it.cassandra.port>
@@ -50,7 +50,7 @@ limitations under the License.
         <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>latest</it.docker.version>
-        <it.ui.firefox.version>2.53.1</it.ui.firefox.version>
+        <it.ui.firefox.version>86.0</it.ui.firefox.version>
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
@@ -216,7 +216,7 @@ limitations under the License.
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-server</artifactId>
-            <version>4.0.0-alpha-2</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -740,12 +740,10 @@ limitations under the License.
                                             <!--<port>5900</port>-->
                                             <!-- VNC port for viewing the browser result -->
                                             <!-- password to access is "secret" -->
-
                                         </ports>
                                     </tcp>
                                 </wait>
                                 <env>
-                                    <SE_OPTS>-debug</SE_OPTS>
                                     <JAVA_OPTS>-Xmx512m</JAVA_OPTS>
                                     <!--<START_XVFB>false</START_XVFB>-->
                                     <SCREEN_WIDTH>1920</SCREEN_WIDTH>
