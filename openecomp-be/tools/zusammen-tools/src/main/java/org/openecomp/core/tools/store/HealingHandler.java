@@ -42,11 +42,11 @@ public class HealingHandler {
   public void populateHealingTable(List<HealingEntity> healingEntities) {
     healingEntities.forEach(healingEntity -> {
       if (isHealingRecordExist(healingEntity)) {
-        accessor.updateFlag(healingEntity.getHealingFlag(), healingEntity.getSpace(),
+        accessor.updateFlag(healingEntity.isHealingFlag(), healingEntity.getSpace(),
             healingEntity.getItemId(), healingEntity.getVersionId());
       } else {
         accessor.create(healingEntity.getSpace(), healingEntity.getItemId(),
-            healingEntity.getVersionId(), healingEntity.getHealingFlag(),
+            healingEntity.getVersionId(), healingEntity.isHealingFlag(),
             healingEntity.getOldVersion());
       }
     });
