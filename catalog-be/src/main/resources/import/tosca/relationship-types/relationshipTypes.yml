@@ -142,3 +142,7 @@ tosca.relationships.nfv.ForwardTo:
   derived_from: tosca.relationships.Root
   valid_target_types: [ tosca.capabilities.nfv.Forwarding ]
 
+tosca.relationships.nfv.ContainerBindsTo:
+  derived_from: tosca.relationships.DependsOn
+  description: Represents an association relationship between Vdu.OsContainerGroup and VduCp node types 
+  valid_target_types: [ tosca.capabilities.nfv.VirtualBindable ]
