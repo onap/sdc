@@ -135,7 +135,8 @@ export class OnboardingModalComponent implements OnInit {
             (file: any): void => {
                 this.isLoading = false;
                 if (file.body) {
-                    this.fileUtilsService.downloadFile(file.body, packageId + '.csar');
+                    this.fileUtilsService.downloadFile(new Blob([file.body],
+                        {type: 'application/octet-stream'}), packageId + '.csar');
                 }
             }, (): void => {
                 this.isLoading = false;

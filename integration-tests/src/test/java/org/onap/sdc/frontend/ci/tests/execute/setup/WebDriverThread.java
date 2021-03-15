@@ -104,7 +104,9 @@ public class WebDriverThread {
         //firefoxProfile.setPreference("browser.download.dir", config.getContainerDownloadAutomationFolder());
         //firefoxProfile.setPreference("app.update.notifyDuringDownload", false);
         //firefoxProfile.setPreference("browser.download.lastDir", config.getContainerDownloadAutomationFolder());
-        firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream, application/xml, text/plain, text/xml, image/jpeg");
+        final String contentType = "application/zip, application/octet-stream, application/xml, text/plain, text/xml, image/jpeg";
+        firefoxProfile.setPreference("browser.helperApps.neverAsk.saveToDisk", contentType);
+        firefoxProfile.setPreference("browser.helperApps.neverAsk.openFile", contentType);
         firefoxProfile.setPreference("network.proxy.type", 4);
         firefoxProfile.setAcceptUntrustedCertificates(true);
         firefoxProfile.setAssumeUntrustedCertificateIssuer(true);

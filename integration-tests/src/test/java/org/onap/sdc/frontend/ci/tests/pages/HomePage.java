@@ -29,6 +29,7 @@ import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+import static org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory.getDriver;
 import static org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest.getExtendTest;
 import static org.onap.sdc.frontend.ci.tests.pages.HomePage.PageElement.REPOSITORY_ICON;
 
@@ -103,6 +105,10 @@ public class HomePage {
             GeneralUIUtils.closeErrorMessage();
             WebElement homeButton = GeneralUIUtils
                 .getInputElement(DataTestIdEnum.MainMenuButtons.HOME_BUTTON.getValue());
+            if (homeButton != null) {
+                //making sure that the mouse it is not on the add/import area
+                new Actions(getDriver()).moveToElement(homeButton).perform();
+            }
             return homeButton != null && homeButton.isDisplayed();
 
         } catch (final Exception e) {

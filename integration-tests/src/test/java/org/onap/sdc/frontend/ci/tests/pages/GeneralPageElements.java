@@ -141,7 +141,6 @@ public class GeneralPageElements {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Component %s archived successfully", componentName));
     }
 
-    //TODO should implement real code
     public static void clickCertifyButton(String componentName) throws Exception {
         try {
             SetupCDTest.getExtendTest().log(Status.INFO, "Clicking on certify button");
@@ -150,8 +149,7 @@ public class GeneralPageElements {
                     .sendKeys("resource " + componentName + " certified successfully");
             clickOKButton();
             GeneralUIUtils.ultimateWait();
-            HomePage.navigateToHomePage();
-            GeneralUIUtils.ultimateWait();
+            GeneralUIUtils.waitForElementInVisibilityBy(By.className("notification-container"), 10000);
             HomePage.navigateToHomePage();
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), GeneralUIUtils.getTimeOut() / WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER);
             GeneralUIUtils.ultimateWait();
