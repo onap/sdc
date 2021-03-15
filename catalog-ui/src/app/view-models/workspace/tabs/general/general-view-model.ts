@@ -634,14 +634,14 @@ export class GeneralViewModel {
             if (this.$scope.component.categories[0].metadataKeys) {
                 for (let metadataKey of this.$scope.component.categories[0].metadataKeys) {
                     if (!this.$scope.component.categorySpecificMetadata[metadataKey.name]) {
-                        this.$scope.component.categorySpecificMetadata[metadataKey.name] = "";
+                        this.$scope.component.categorySpecificMetadata[metadataKey.name] = metadataKey.defaultValue ? metadataKey.defaultValue : "";
                    }
                 }
             }
             if (this.$scope.component.categories[0].subcategories && this.$scope.component.categories[0].subcategories[0].metadataKeys) {
                 for (let metadataKey of this.$scope.component.categories[0].subcategories[0].metadataKeys) {
                     if (!this.$scope.component.categorySpecificMetadata[metadataKey.name]) {
-                        this.$scope.component.categorySpecificMetadata[metadataKey.name] = "";
+                        this.$scope.component.categorySpecificMetadata[metadataKey.name] = metadataKey.defaultValue ? metadataKey.defaultValue : "";
                    }
                 }
             }
@@ -678,9 +678,17 @@ export class GeneralViewModel {
             return this.getMetadataKey(this.$scope.component.categories, key) != null;
         }
 
-       this.$scope.isCategoryServiceMetadataKey = (key: string): boolean => {
+        this.$scope.isCategoryServiceMetadataKey = (key: string): boolean => {
             return this.isServiceMetadataKey(key);
         }
+
+        this.$scope.isMetadataKeyForComponentCategoryService = (key: string, attribute: string): boolean => {
+            let metadatakey = this.getMetadataKey(this.$scope.component.categories, key);
+            if (metadatakey && (!this.$scope.component[attribute] || !metadatakey.validValues.find(v => v === this.$scope.component[attribute]))) {
+                this.$scope.component[attribute] = metadatakey.defaultValue;
+            }
+            return metadatakey != null;
+         }
     }
 
     private setUnsavedChanges = (hasChanges: boolean): void => {
