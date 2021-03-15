@@ -334,27 +334,22 @@ public abstract class SetupCDTest extends DriverFactory {
         getWindowTest().setUser(credentials);
     }
 
-    private void goToHomePage(UserRoleEnum role) throws Exception {
-        final int gettingButtonTimeOut = 10;
+    private void goToHomePage(final UserRoleEnum role) {
+        if (UserRoleEnum.ADMIN.equals(role)) {
+            return;
+        }
         try {
             getWindowTest().setRefreshAttempts(getWindowTest().getRefreshAttempts() == 0 ? NUM_OF_ATTEMPTS_TO_REFTRESH : getWindowTest().getRefreshAttempts());
-            if (!role.equals(UserRoleEnum.ADMIN)) {
-
-                WebElement closeButton = GeneralUIUtils.getClickableButtonBy(By.className("sdc-welcome-close"), gettingButtonTimeOut);
-                if (closeButton != null) {
-                    closeButton.click();
-                }
-
-                if (!GeneralUIUtils.isElementVisibleByTestId(DataTestIdEnum.MainMenuButtons.HOME_BUTTON.getValue())) {
-                    restartBrowser(role);
-                }
+            if (!GeneralUIUtils.isElementVisibleByTestId(DataTestIdEnum.MainMenuButtons.HOME_BUTTON.getValue())) {
+                restartBrowser(role);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
+            LOGGER.debug("An error has occurred while loading the home page", e);
             restartBrowser(role);
         }
     }
 
-    private void restartBrowser(UserRoleEnum role) throws Exception {
+    private void restartBrowser(UserRoleEnum role) {
         getWindowTest().setRefreshAttempts(getWindowTest().getRefreshAttempts() - 1);
         if (getWindowTest().getRefreshAttempts() <= 0) {
             System.out.println("ERR : Something is wrong with browser!");
