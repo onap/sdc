@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87b16d4c_92025975",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/togglz/FeatureToggleEvent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-15T15:42:09Z",
+      "side": 1,
+      "message": "missing usage",
+      "range": {
+        "startLine": 27,
+        "startChar": 39,
+        "endLine": 30,
+        "endChar": 23
+      },
+      "revId": "f4fbf2b9edcc051d60a8999281c5906b97b06237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
