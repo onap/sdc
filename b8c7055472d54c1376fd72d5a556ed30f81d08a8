@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a9561a2_9be7c429",
+        "filename": "openecomp-be/lib/openecomp-item-permissions-lib/openecomp-item-permissions-api/src/main/java/org/openecomp/sdc/itempermissions/type/ItemPermissionsEntity.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-15T15:47:06Z",
+      "side": 1,
+      "message": "add \n@NoArgsConstructor\nto be \u0027covered\u0027 by lombok",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 6
+      },
+      "revId": "b8c7055472d54c1376fd72d5a556ed30f81d08a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
