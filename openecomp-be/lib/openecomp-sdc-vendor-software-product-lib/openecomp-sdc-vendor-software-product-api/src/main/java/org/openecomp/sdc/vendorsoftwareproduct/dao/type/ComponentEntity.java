@@ -21,6 +21,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import com.datastax.driver.mapping.annotations.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
@@ -30,7 +34,10 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@EqualsAndHashCode
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_component")
 public class ComponentEntity implements CompositionEntity {
   public static final String ENTITY_TYPE = "Vendor Software Product Component";
@@ -50,15 +57,6 @@ public class ComponentEntity implements CompositionEntity {
   private String questionnaireData;
   @Transient
   private List<NicEntity> nics = new ArrayList<>();
-
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public ComponentEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
 
   /**
    * Instantiates a new Component entity.
@@ -84,34 +82,6 @@ public class ComponentEntity implements CompositionEntity {
   }
 
   @Override
-  public String getCompositionData() {
-    return compositionData;
-  }
-
-  @Override
-  public void setCompositionData(String compositionData) {
-    this.compositionData = compositionData;
-  }
-
-  @Override
-  public String getQuestionnaireData() {
-    return questionnaireData;
-  }
-
-  @Override
-  public void setQuestionnaireData(String questionnaireData) {
-    this.questionnaireData = questionnaireData;
-  }
-
-  public String getVspId() {
-    return vspId;
-  }
-
-  public void setVspId(String vspId) {
-    this.vspId = vspId;
-  }
-
-  @Override
   public String getEntityType() {
     return ENTITY_TYPE;
   }
@@ -121,26 +91,6 @@ public class ComponentEntity implements CompositionEntity {
     return getVspId();
   }
 
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public Version getVersion() {
-    return version;
-  }
-
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
-  }
-
   public ComponentData getComponentCompositionData() {
     return compositionData == null ? null
         : JsonUtil.json2Object(compositionData, ComponentData.class);
@@ -148,52 +98,5 @@ public class ComponentEntity implements CompositionEntity {
 
   public void setComponentCompositionData(ComponentData component) {
     this.compositionData = component == null ? null : JsonUtil.object2Json(component);
-  }
-
-  public List<NicEntity> getNics() {
-    return nics;
-  }
-
-  public void setNics(List<NicEntity> nics) {
-    this.nics = nics;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = vspId != null ? vspId.hashCode() : 0;
-    result = 31 * result + (version != null ? version.hashCode() : 0);
-    result = 31 * result + (id != null ? id.hashCode() : 0);
-    result = 31 * result + (compositionData != null ? compositionData.hashCode() : 0);
-    result = 31 * result + (questionnaireData != null ? questionnaireData.hashCode() : 0);
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (this == object) {
-      return true;
-    }
-    if (object == null || getClass() != object.getClass()) {
-      return false;
-    }
-
-    ComponentEntity that = (ComponentEntity) object;
-
-    if (vspId != null ? !vspId.equals(that.vspId) : that.vspId != null) {
-      return false;
-    }
-    if (version != null ? !version.equals(that.version) : that.version != null) {
-      return false;
-    }
-    if (id != null ? !id.equals(that.id) : that.id != null) {
-      return false;
-    }
-    if (compositionData != null ? !compositionData.equals(that.compositionData)
-        : that.compositionData != null) {
-      return false;
-    }
-    return questionnaireData != null ? questionnaireData.equals(that.questionnaireData)
-        : that.questionnaireData == null;
-
   }
 }

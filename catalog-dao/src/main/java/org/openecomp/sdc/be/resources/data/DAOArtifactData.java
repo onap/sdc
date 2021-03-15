@@ -24,9 +24,14 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.nio.ByteBuffer;
 
+@Getter
+@NoArgsConstructor
 @Table(keyspace = "sdcartifact", name = "resources")
 public class DAOArtifactData {
 	public static final String RRESOURCE_ID_FIELD = "resourceId";
@@ -39,6 +44,7 @@ public class DAOArtifactData {
 
 	@PartitionKey
 	@Column(name = "id")
+	@Setter
 	private String id;
 
 	/*
@@ -48,11 +54,6 @@ public class DAOArtifactData {
 	@Column
 	private ByteBuffer data;
 
-	// private byte[] data;
-
-	public DAOArtifactData() {
-
-	}
 
 	public DAOArtifactData(String id) {
 
@@ -85,24 +86,10 @@ public class DAOArtifactData {
 		}
 	}
 
-	public ByteBuffer getData() {
-		// return data;
-		return data;
-	}
-
 	public void setData(ByteBuffer data) {
 		if (data != null) {
 			// this.data = data.clone();
 			this.data = data.duplicate();
 		}
 	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 }

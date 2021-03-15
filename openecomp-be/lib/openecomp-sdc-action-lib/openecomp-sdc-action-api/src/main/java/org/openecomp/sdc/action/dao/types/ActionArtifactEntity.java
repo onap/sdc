@@ -23,10 +23,16 @@ package org.openecomp.sdc.action.dao.types;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.action.types.ActionArtifact;
 
 import java.nio.ByteBuffer;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "action_artifact")
 public class ActionArtifactEntity {
 
@@ -41,42 +47,9 @@ public class ActionArtifactEntity {
   @Column(name = "artifact")
   private ByteBuffer artifact;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public ActionArtifactEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
   public ActionArtifactEntity(String artifactUuId, int effectiveVersion) {
     this.artifactUuId = artifactUuId;
     this.effectiveVersion = effectiveVersion;
-  }
-
-  public String getArtifactUuId() {
-    return artifactUuId;
-  }
-
-  public void setArtifactUuId(String artifactUuId) {
-    this.artifactUuId = artifactUuId;
-  }
-
-  public int getEffectiveVersion() {
-    return effectiveVersion;
-  }
-
-  public void setEffectiveVersion(int effectiveVersion) {
-    this.effectiveVersion = effectiveVersion;
-  }
-
-  public ByteBuffer getArtifact() {
-    return artifact;
-  }
-
-  public void setArtifact(ByteBuffer artifact) {
-    this.artifact = artifact;
   }
 
   /**
