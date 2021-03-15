@@ -22,13 +22,16 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
 @EqualsAndHashCode
 public class GetPolicyValueDataDefinition {
+
     private String policyId;
     private String propertyName;
     private String origPropertyValue;

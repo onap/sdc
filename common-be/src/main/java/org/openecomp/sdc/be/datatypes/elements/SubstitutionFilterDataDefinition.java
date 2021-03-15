@@ -38,17 +38,17 @@ public class SubstitutionFilterDataDefinition extends ToscaDataDefinition implem
         this.setCapabilities(substitutionFilterDataDefinition.getCapabilities());
     }
 
-    public void setTosca_id(final Object tosca_id) {
-        setToscaPresentationValue(JsonPresentationFields.TOSCA_ID, tosca_id);
-    }
-
     public Object getTosca_id() {
         return getToscaPresentationValue(JsonPresentationFields.TOSCA_ID);
     }
 
+    public void setTosca_id(final Object tosca_id) {
+        setToscaPresentationValue(JsonPresentationFields.TOSCA_ID, tosca_id);
+    }
+
     public ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> getProperties() {
         return (ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.PROPERTIES);
+            JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> properties) {
@@ -57,19 +57,11 @@ public class SubstitutionFilterDataDefinition extends ToscaDataDefinition implem
 
     public ListDataDefinition<RequirementSubstitutionFilterCapabilityDataDefinition> getCapabilities() {
         return (ListDataDefinition<RequirementSubstitutionFilterCapabilityDataDefinition>) getToscaPresentationValue(
-                JsonPresentationFields.NODE_FILTER_CAPABILITIES);
+            JsonPresentationFields.NODE_FILTER_CAPABILITIES);
     }
 
     public void setCapabilities(ListDataDefinition<RequirementSubstitutionFilterCapabilityDataDefinition> capabilities) {
         setToscaPresentationValue(JsonPresentationFields.NODE_FILTER_CAPABILITIES, capabilities);
-    }
-
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-    }
-
-    public void setName(final String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
     }
 
     public String getID() {
@@ -79,6 +71,5 @@ public class SubstitutionFilterDataDefinition extends ToscaDataDefinition implem
     public void setID(final String name) {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, name);
     }
-
 
 }

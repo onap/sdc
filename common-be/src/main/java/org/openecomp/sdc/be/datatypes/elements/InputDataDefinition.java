@@ -21,12 +21,10 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.Map;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class InputDataDefinition extends PropertyDataDefinition {
-
-    InputDataDefinition() {
-        super();
-    }
 
     InputDataDefinition(Map<String, Object> pr) {
         super(pr);

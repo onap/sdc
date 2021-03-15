@@ -23,10 +23,11 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.HashMap;
 import java.util.Map;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class MapListCapabilityDataDefinition extends MapDataDefinition<ListCapabilityDataDefinition> {
 
     public MapListCapabilityDataDefinition(MapListCapabilityDataDefinition cdt) {
@@ -37,11 +38,6 @@ public class MapListCapabilityDataDefinition extends MapDataDefinition<ListCapab
     @JsonCreator
     public MapListCapabilityDataDefinition(Map<String, ListCapabilityDataDefinition> mapToscaDataDefinition) {
         super(mapToscaDataDefinition);
-    }
-
-    public MapListCapabilityDataDefinition() {
-        super();
-
     }
 
     @JsonValue

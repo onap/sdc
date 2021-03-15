@@ -23,9 +23,14 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class MapGroupsDataDefinition extends MapDataDefinition<GroupInstanceDataDefinition> {
 
     private String parentName;
@@ -40,11 +45,6 @@ public class MapGroupsDataDefinition extends MapDataDefinition<GroupInstanceData
         super(mapToscaDataDefinition);
     }
 
-    public MapGroupsDataDefinition() {
-        super();
-
-    }
-
     @JsonValue
     @Override
     public Map<String, GroupInstanceDataDefinition> getMapToscaDataDefinition() {
@@ -55,14 +55,5 @@ public class MapGroupsDataDefinition extends MapDataDefinition<GroupInstanceData
     public void setMapToscaDataDefinition(Map<String, GroupInstanceDataDefinition> mapToscaDataDefinition) {
         this.mapToscaDataDefinition = mapToscaDataDefinition;
     }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
-    }
-
 
 }

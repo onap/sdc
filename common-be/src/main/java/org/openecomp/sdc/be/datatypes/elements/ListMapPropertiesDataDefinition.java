@@ -22,9 +22,14 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ListMapPropertiesDataDefinition extends ListDataDefinition<MapPropertiesDataDefinition> {
 
     public ListMapPropertiesDataDefinition(ListMapPropertiesDataDefinition cdt) {
@@ -35,11 +40,6 @@ public class ListMapPropertiesDataDefinition extends ListDataDefinition<MapPrope
     @JsonCreator
     public ListMapPropertiesDataDefinition(List<MapPropertiesDataDefinition> listToscaDataDefinition) {
         super(listToscaDataDefinition);
-    }
-
-    public ListMapPropertiesDataDefinition() {
-        super();
-
     }
 
     @JsonValue

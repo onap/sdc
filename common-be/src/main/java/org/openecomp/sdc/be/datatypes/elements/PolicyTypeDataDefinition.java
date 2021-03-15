@@ -22,7 +22,13 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class PolicyTypeDataDefinition extends ToscaTypeDataDefinition {
 
     private String uniqueId;
@@ -43,9 +49,6 @@ public class PolicyTypeDataDefinition extends ToscaTypeDataDefinition {
     private Long modificationTime;
     private boolean highestVersion;
 
-    public PolicyTypeDataDefinition() {
-    }
-
     public PolicyTypeDataDefinition(PolicyTypeDataDefinition p) {
         super(p);
         this.uniqueId = p.uniqueId;
@@ -59,82 +62,12 @@ public class PolicyTypeDataDefinition extends ToscaTypeDataDefinition {
         this.highestVersion = p.highestVersion;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public List<String> getTargets() {
-        return targets;
-    }
-
-    public void setTargets(List<String> members) {
-        this.targets = members;
-    }
-
-    public Map<String, String> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public Long getCreationTime() {
-        return creationTime;
-    }
-
-    public void setCreationTime(Long creationTime) {
-        this.creationTime = creationTime;
-    }
-
-    public Long getModificationTime() {
-        return modificationTime;
-    }
-
-    public void setModificationTime(Long modificationTime) {
-        this.modificationTime = modificationTime;
-    }
-
     @Override
     public String toString() {
-        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version=" + version
-                + ", targets=" + targets + ", metadata=" + metadata + ", description=" + description + ", creationTime="
-                + creationTime + ", modificationTime=" + modificationTime + "]";
+        return "PolicyTypeDataDefinition [uniqueId=" + uniqueId + ", type=" + getType() + ", name=" + getName() + ", icon=" + getIcon() + ", version="
+            + version
+            + ", targets=" + targets + ", metadata=" + metadata + ", description=" + description + ", creationTime="
+            + creationTime + ", modificationTime=" + modificationTime + "]";
     }
 
-    public String getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(String derivedFrom) {
-        this.derivedFrom = derivedFrom;
-    }
-
-    public boolean isHighestVersion() {
-        return highestVersion;
-    }
-
-    public void setHighestVersion(boolean isLatestVersion) {
-        this.highestVersion = isLatestVersion;
-    }
 }

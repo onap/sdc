@@ -23,12 +23,14 @@ package org.openecomp.sdc.be.datatypes.elements;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class GetOutputValueDataDefinition extends ToscaDataDefinition {
@@ -39,10 +41,6 @@ public class GetOutputValueDataDefinition extends ToscaDataDefinition {
     private Integer indexValue;
     private GetOutputValueDataDefinition getOutputIndex;
     private boolean isList;
-
-    public GetOutputValueDataDefinition() {
-        super();
-    }
 
     public GetOutputValueDataDefinition(Map<String, Object> pr) {
         super(pr);

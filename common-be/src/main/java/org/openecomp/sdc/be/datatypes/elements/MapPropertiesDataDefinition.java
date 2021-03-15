@@ -23,10 +23,15 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class MapPropertiesDataDefinition extends MapDataDefinition<PropertyDataDefinition> {
 
     private String parentName;
@@ -46,13 +51,10 @@ public class MapPropertiesDataDefinition extends MapDataDefinition<PropertyDataD
      */
     public MapPropertiesDataDefinition(MapPropertiesDataDefinition toBeDeepCopiedMapPropertiesDataDefinition) {
         this.parentName = toBeDeepCopiedMapPropertiesDataDefinition.parentName;
-        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
-        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
-    }
-
-    public MapPropertiesDataDefinition() {
-        super();
-
+        this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
+        this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null
+            : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
     }
 
     @JsonValue
@@ -61,17 +63,8 @@ public class MapPropertiesDataDefinition extends MapDataDefinition<PropertyDataD
         return mapToscaDataDefinition;
     }
 
-
     public void setMapToscaDataDefinition(Map<String, PropertyDataDefinition> mapToscaDataDefinition) {
         this.mapToscaDataDefinition = mapToscaDataDefinition;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
     }
 
 

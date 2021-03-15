@@ -20,9 +20,16 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class InputsValueDataDefinition extends ToscaDataDefinition {
+
     private String name;
     private String value;
     private String uniqueId;
@@ -30,34 +37,6 @@ public class InputsValueDataDefinition extends ToscaDataDefinition {
     public InputsValueDataDefinition(String name, String value) {
         super();
         this.name = name;
-        this.value = value;
-    }
-
-    public InputsValueDataDefinition() {
-        super();
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
         this.value = value;
     }
 

@@ -20,11 +20,12 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.List;
+import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.util.List;
-
+@NoArgsConstructor
 public class RelationshipInstDataDefinition extends ToscaDataDefinition {
 
     public RelationshipInstDataDefinition(RelationshipInstDataDefinition cdt) {
@@ -47,71 +48,68 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
         this.setCapability(cdt.getCapability());
     }
 
-    public void setRequirement(String requirement) {
-        setToscaPresentationValue(JsonPresentationFields.REQUIREMENT, requirement);
-    }
-
     public String getRequirement() {
         return (String) getToscaPresentationValue(JsonPresentationFields.REQUIREMENT);
     }
 
-    public void setCapability(String capability) {
-        setToscaPresentationValue(JsonPresentationFields.CAPABILITY, capability);
+    public void setRequirement(String requirement) {
+        setToscaPresentationValue(JsonPresentationFields.REQUIREMENT, requirement);
     }
 
     public String getCapability() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILITY);
     }
 
-    public void setToId(Object toId) {
-        setToscaPresentationValue(JsonPresentationFields.TO_ID, toId);
-    }
-
-    public void setFromId(Object fromId) {
-        setToscaPresentationValue(JsonPresentationFields.FROM_ID, fromId);
+    public void setCapability(String capability) {
+        setToscaPresentationValue(JsonPresentationFields.CAPABILITY, capability);
     }
 
     public String getToId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.TO_ID);
     }
 
+    public void setToId(Object toId) {
+        setToscaPresentationValue(JsonPresentationFields.TO_ID, toId);
+    }
+
     public String getFromId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.FROM_ID);
     }
 
-    public void setRequirementId(Object requirementId) {
-        setToscaPresentationValue(JsonPresentationFields.REQUIREMENT_ID, requirementId);
-    }
-
-    public void setCapabilityId(Object capabilityId) {
-        setToscaPresentationValue(JsonPresentationFields.CAPABILITY_ID, capabilityId);
+    public void setFromId(Object fromId) {
+        setToscaPresentationValue(JsonPresentationFields.FROM_ID, fromId);
     }
 
     public String getRequirementId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.REQUIREMENT_ID);
     }
 
+    public void setRequirementId(Object requirementId) {
+        setToscaPresentationValue(JsonPresentationFields.REQUIREMENT_ID, requirementId);
+    }
+
     public String getCapabilityId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILITY_ID);
     }
 
-    public void setRequirementOwnerId(Object requirementOwnerId) {
-        setToscaPresentationValue(JsonPresentationFields.REQUIREMENT_OWNER_ID, requirementOwnerId);
+    public void setCapabilityId(Object capabilityId) {
+        setToscaPresentationValue(JsonPresentationFields.CAPABILITY_ID, capabilityId);
     }
 
     public String getRequirementOwnerId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.REQUIREMENT_OWNER_ID);
     }
 
-    public void setCapabilityOwnerId(Object capabilityOwnerId) {
-        setToscaPresentationValue(JsonPresentationFields.CAPABILTY_OWNER_ID, capabilityOwnerId);
+    public void setRequirementOwnerId(Object requirementOwnerId) {
+        setToscaPresentationValue(JsonPresentationFields.REQUIREMENT_OWNER_ID, requirementOwnerId);
     }
 
     public String getCapabilityOwnerId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILTY_OWNER_ID);
     }
 
-    public RelationshipInstDataDefinition() {
+    public void setCapabilityOwnerId(Object capabilityOwnerId) {
+        setToscaPresentationValue(JsonPresentationFields.CAPABILTY_OWNER_ID, capabilityOwnerId);
     }
 
     public String getUniqueId() {
@@ -133,10 +131,12 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
     /**
      * Identifies the type of the capability.
      */
+    @Override
     public String getType() {
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
+    @Override
     public void setType(String type) {
         setToscaPresentationValue(JsonPresentationFields.TYPE, type);
     }
@@ -157,6 +157,7 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.VALID_TARGET_TYPES, validTargetTypes);
     }
 
+    @Override
     public String getVersion() {
         return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
     }
@@ -190,13 +191,13 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME, modificationTime);
     }
 
-    public void setInterfaces(final ListDataDefinition<InterfaceDataDefinition> operations) {
-        setToscaPresentationValue(JsonPresentationFields.INTERFACES, operations);
-    }
-
     @SuppressWarnings("unchecked")
     public ListDataDefinition<InterfaceDataDefinition> getInterfaces() {
         return (ListDataDefinition<InterfaceDataDefinition>) getToscaPresentationValue(JsonPresentationFields.INTERFACES);
+    }
+
+    public void setInterfaces(final ListDataDefinition<InterfaceDataDefinition> operations) {
+        setToscaPresentationValue(JsonPresentationFields.INTERFACES, operations);
     }
 
     @Override
@@ -210,8 +211,9 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
         Long creationTime = getCreationTime();
         Long modificationTime = getModificationTime();
 
-        return "RelationshipTypeDataDefinition [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type + ", validSourceTypes=" + validSourceTypes
-                + ", version=" + version + ", originUI=" + originUI + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
+        return "RelationshipTypeDataDefinition [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type + ", validSourceTypes="
+            + validSourceTypes
+            + ", version=" + version + ", originUI=" + originUI + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
     }
 
 }
