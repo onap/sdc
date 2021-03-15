@@ -255,6 +255,7 @@ public class CategoriesImportManager {
             metadataKeyDef.setMandatory(mandatory);
             List<String> validValues = (List<String>) metadataKeyInfo.get(MetadataKeyEnum.VALID_VALUES.getName());
             metadataKeyDef.setValidValues(validValues);
+            metadataKeyDef.setDefaultValue((String) metadataKeyInfo.get(MetadataKeyEnum.DEFAULT.getName()));
             metadataKeyDefs.add(metadataKeyDef);
         }
         return metadataKeyDefs;

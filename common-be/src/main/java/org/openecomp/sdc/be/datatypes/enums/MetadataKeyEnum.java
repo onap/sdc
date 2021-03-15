@@ -27,7 +27,8 @@ public enum MetadataKeyEnum {
     METADATA_KEYS("metadataKeys"),
     NAME("name"),
     MANDATORY("mandatory"),
-    VALID_VALUES("validValues");
+    VALID_VALUES("validValues"),
+    DEFAULT("default");
 
     private final String name;
 
