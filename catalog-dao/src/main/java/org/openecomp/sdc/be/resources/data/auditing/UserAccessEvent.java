@@ -25,6 +25,9 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
@@ -33,6 +36,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
+@Getter
+@Setter
+@ToString
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.USER_ACCESS_EVENT_TYPE)
 public class UserAccessEvent extends AuditingGenericEvent {
 
@@ -80,6 +86,10 @@ public class UserAccessEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
+    public void setTimestamp1(Date timestamp) {
+        this.timestamp1 = timestamp;
+    }
+
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
@@ -93,76 +103,4 @@ public class UserAccessEvent extends AuditingGenericEvent {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
     }
-
-    public String getUserUid() {
-        return userUid;
-    }
-
-    public void setUserUid(String userUid) {
-        this.userUid = userUid;
-    }
-
-    public UUID getTimebaseduuid() {
-        return timebaseduuid;
-    }
-
-    public void setTimebaseduuid(UUID timebaseduuid) {
-        this.timebaseduuid = timebaseduuid;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
-    @Override
-    public String getServiceInstanceId() { return serviceInstanceId; }
-
-    @Override
-    public void setServiceInstanceId(String serviceInstanceId) {
-        this.serviceInstanceId = serviceInstanceId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public Date getTimestamp1() {
-        return timestamp1;
-    }
-
-    public void setTimestamp1(Date timestamp) {
-        this.timestamp1 = timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return "UserAccessEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId="
-                + requestId + ", userUid=" + userUid + ", status=" + status + ", desc=" + desc + ", action=" + action
-                + ", serviceInstanceId=" + serviceInstanceId + "]";
-    }
-
 }

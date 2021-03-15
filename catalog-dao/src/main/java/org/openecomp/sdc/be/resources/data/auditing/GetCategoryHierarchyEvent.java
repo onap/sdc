@@ -25,6 +25,9 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
@@ -33,6 +36,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
+@Getter
+@Setter
+@ToString
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.GET_CATEGORY_HIERARCHY_EVENT_TYPE)
 public class GetCategoryHierarchyEvent extends AuditingGenericEvent {
     @PartitionKey
@@ -78,6 +84,10 @@ public class GetCategoryHierarchyEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
+    public void setTimestamp1(Date timestamp1) {
+        this.timestamp1 = timestamp1;
+    }
+
         @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
@@ -91,76 +101,4 @@ public class GetCategoryHierarchyEvent extends AuditingGenericEvent {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
     }
-
-    public UUID getTimebaseduuid() {
-        return timebaseduuid;
-    }
-
-    public void setTimebaseduuid(UUID timebaseduuid) {
-        this.timebaseduuid = timebaseduuid;
-    }
-
-    public Date getTimestamp1() {
-        return timestamp1;
-    }
-
-    public void setTimestamp1(Date timestamp1) {
-        this.timestamp1 = timestamp1;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    @Override
-    public String toString() {
-        return "GetCategoryHierarchyEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1
-                + ", requestId=" + requestId + ", action=" + action + ", status=" + status + ", desc=" + desc
-                + ", modifier=" + modifier + ", details=" + details + "]";
-    }
-
 }

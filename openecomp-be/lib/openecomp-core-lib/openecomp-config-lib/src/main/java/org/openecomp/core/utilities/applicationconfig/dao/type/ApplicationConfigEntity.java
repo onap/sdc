@@ -24,7 +24,15 @@ package org.openecomp.core.utilities.applicationconfig.dao.type;
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "application_config")
 public class ApplicationConfigEntity {
 
@@ -33,51 +41,4 @@ public class ApplicationConfigEntity {
   @ClusteringColumn
   private String key;
   private String value;
-
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public ApplicationConfigEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
-
-  /**
-   * Instantiates a new Application config entity.
-   *
-   * @param namespace the namespace
-   * @param key       the key
-   * @param value     the value
-   */
-  public ApplicationConfigEntity(String namespace, String key, String value) {
-    this.namespace = namespace;
-    this.key = key;
-    this.value = value;
-  }
-
-  public String getNamespace() {
-    return namespace;
-  }
-
-  public void setNamespace(String namespace) {
-    this.namespace = namespace;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
 }

@@ -25,6 +25,9 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
@@ -35,6 +38,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
+@Getter
+@Setter
+@ToString
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE)
 public class ResourceAdminEvent extends AuditingGenericEvent {
 
@@ -142,6 +148,10 @@ public class ResourceAdminEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
+    public void setTimestamp1(Date timestamp1) {
+        this.timestamp1 = timestamp1;
+    }
+
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
@@ -171,200 +181,4 @@ public class ResourceAdminEvent extends AuditingGenericEvent {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), timestamp1.getTime());
     }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
-    }
-
-    public String getResourceType() {
-        return resourceType;
-    }
-
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
-    }
-
-    public String getPrevVersion() {
-        return prevVersion;
-    }
-
-    public void setPrevVersion(String prevVersion) {
-        this.prevVersion = prevVersion;
-    }
-
-    public String getCurrVersion() {
-        return currVersion;
-    }
-
-    public void setCurrVersion(String currVersion) {
-        this.currVersion = currVersion;
-    }
-
-    public String getPrevState() {
-        return prevState;
-    }
-
-    public void setPrevState(String prevState) {
-        this.prevState = prevState;
-    }
-
-    public String getCurrState() {
-        return currState;
-    }
-
-    public void setCurrState(String currState) {
-        this.currState = currState;
-    }
-
-    public UUID getTimebaseduuid() {
-        return timebaseduuid;
-    }
-
-    public void setTimebaseduuid(UUID timebaseduuid) {
-        this.timebaseduuid = timebaseduuid;
-    }
-
-    public Date getTimestamp1() {
-        return timestamp1;
-    }
-
-    public void setTimestamp1(Date timestamp1) {
-        this.timestamp1 = timestamp1;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
-    public String getServiceInstanceId() {
-        return serviceInstanceId;
-    }
-
-    public void setServiceInstanceId(String serviceInstanceId) {
-        this.serviceInstanceId = serviceInstanceId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
-
-    public String getPrevArtifactUUID() {
-        return prevArtifactUUID;
-    }
-
-    public void setPrevArtifactUUID(String prevArtifactUUID) {
-        this.prevArtifactUUID = prevArtifactUUID;
-    }
-
-    public String getCurrArtifactUUID() {
-        return currArtifactUUID;
-    }
-
-    public void setCurrArtifactUUID(String currArtifactUUID) {
-        this.currArtifactUUID = currArtifactUUID;
-    }
-
-    public String getArtifactData() {
-        return artifactData;
-    }
-
-    public void setArtifactData(String artifactData) {
-        this.artifactData = artifactData;
-    }
-
-    public String getDid() {
-        return did;
-    }
-
-    public void setDid(String did) {
-        this.did = did;
-    }
-
-    public String getDprevStatus() {
-        return dprevStatus;
-    }
-
-    public void setDprevStatus(String dprevStatus) {
-        this.dprevStatus = dprevStatus;
-    }
-
-    public String getDcurrStatus() {
-        return dcurrStatus;
-    }
-
-    public void setDcurrStatus(String dcurrStatus) {
-        this.dcurrStatus = dcurrStatus;
-    }
-
-    public String getToscaNodeType() {
-        return toscaNodeType;
-    }
-
-    public void setToscaNodeType(String toscaNodeType) {
-        this.toscaNodeType = toscaNodeType;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getInvariantUUID() {
-        return invariantUUID;
-    }
-
-    public void setInvariantUUID(String invariantUUID) {
-        this.invariantUUID = invariantUUID;
-    }
-
-    @Override
-    public String toString() {
-        return "ResourceAdminEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", action="
-                + action + ", resourceType=" + resourceType + ", prevVersion=" + prevVersion + ", prevState="
-                + prevState + ", currState=" + currState + ", resourceName=" + resourceName + ", currVersion="
-                + currVersion + ", requestId=" + requestId + ", serviceInstanceId=" + serviceInstanceId + ", status="
-                + status + ", desc=" + desc + ", modifier=" + modifier + ", prevArtifactUUID=" + prevArtifactUUID
-                + ", currArtifactUUID=" + currArtifactUUID + ", artifactData=" + artifactData + ", invariantUUID="
-                + invariantUUID + "]";
-    }
-
 }

@@ -25,6 +25,9 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
@@ -34,6 +37,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
+@Getter
+@Setter
+@ToString
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_STATUS_EVENT_TYPE)
 public class DistributionStatusEvent extends AuditingGenericEvent {
 
@@ -98,6 +104,10 @@ public class DistributionStatusEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
+    public void setTimestamp1(Date timestamp) {
+        this.timestamp1 = timestamp;
+    }
+
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
@@ -117,109 +127,4 @@ public class DistributionStatusEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
 
     }
-
-    public String getDid() {
-        return did;
-    }
-
-    public void setDid(String did) {
-        this.did = did;
-    }
-
-    public String getConsumerId() {
-        return consumerId;
-    }
-
-    public void setConsumerId(String consumerId) {
-        this.consumerId = consumerId;
-    }
-
-    public String getTopicName() {
-        return topicName;
-    }
-
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
-    }
-
-    public String getResoureURL() {
-        return resoureURL;
-    }
-
-    public void setResoureURL(String resoureURL) {
-        this.resoureURL = resoureURL;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
-    public String getServiceInstanceId() {
-        return serviceInstanceId;
-    }
-
-    public void setServiceInstanceId(String serviceInstanceId) {
-        this.serviceInstanceId = serviceInstanceId;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public UUID getTimebaseduuid() {
-        return timebaseduuid;
-    }
-
-    public void setTimebaseduuid(UUID timebaseduuid) {
-        this.timebaseduuid = timebaseduuid;
-    }
-
-    public Date getTimestamp1() {
-        return timestamp1;
-    }
-
-    public void setTimestamp1(Date timestamp) {
-        this.timestamp1 = timestamp;
-    }
-
-    public String getStatusTime() {
-        return statusTime;
-    }
-
-    public void setStatusTime(String statusTime) {
-        this.statusTime = statusTime;
-    }
-
-     @Override
-    public String toString() {
-        return "DistributionStatusEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId="
-                + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status
-                + ", desc=" + desc + ", did=" + did + ", consumerId=" + consumerId + ", topicName=" + topicName
-                + ", resoureURL=" + resoureURL + ", statusTime=" + statusTime + "]";
-    }
-
 }
