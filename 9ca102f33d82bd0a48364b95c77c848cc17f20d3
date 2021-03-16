@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "afadf999_ede89198",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/health/HealthCheckBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-16T16:19:19Z",
+      "side": 1,
+      "message": "unused in production code, could be removed together with TC",
+      "range": {
+        "startLine": 439,
+        "startChar": 4,
+        "endLine": 451,
+        "endChar": 5
+      },
+      "revId": "9ca102f33d82bd0a48364b95c77c848cc17f20d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
