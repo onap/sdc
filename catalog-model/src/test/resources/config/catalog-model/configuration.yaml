@@ -269,12 +269,6 @@ onboarding:
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
-dcae:
-    protocol: http
-    host: 127.0.0.1
-    port: 8080
-    healthCheckUri: "/dcae/healthCheck"
-
 switchoverDetector:
     gBeFqdn: AIO-BE.ecomp.idns.cip.com
     gFeFqdn: AIO-FE.ecomp.idns.cip.com

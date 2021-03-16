@@ -45,7 +45,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DCAE;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -216,17 +215,6 @@ public class HealthCheckBusinessLogicHealthTest extends BeConfDependentTest {
 		Assert.assertEquals("PORTAL", hci.getHealthCheckComponent());
 		Assert.assertEquals(HealthCheckInfo.HealthCheckStatus.DOWN, hci.getHealthCheckStatus());
 		Assert.assertEquals("PORTAL is not available", hci.getDescription());
-	}
-
-	@Test
-	public void testGetDcaeHealthCheck() throws Exception {
-		HealthCheckBusinessLogic testSubject;
-		List<HealthCheckInfo> healthCheckInfos = new LinkedList<>();
-
-		// default test
-		testSubject = createTestSubject();
-		String url = testSubject.buildDcaeHealthCheckUrl();
-		Deencapsulation.invoke(testSubject, "getHostedComponentsBeHealthCheck", HC_COMPONENT_DCAE, url);
 	}
 
 	@Test

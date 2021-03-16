@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CATALOG_FACADE_MS;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DCAE;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
 
 public class HealthCheckScheduledTask implements Runnable {
@@ -67,7 +66,6 @@ public class HealthCheckScheduledTask implements Runnable {
     private static final String LOG_TARGET_ENTITY_BE = "SDC.BE";
     private static final String LOG_TARGET_ENTITY_CONFIG = "SDC.FE.Configuration";
     private static final String LOG_TARGET_SERVICE_NAME_OB = "getOnboardingConfig";
-    private static final String LOG_TARGET_SERVICE_NAME_DCAE = "getDCAEConfig";
     private static final String LOG_TARGET_SERVICE_NAME_FACADE = "getCatalogFacadeConfig";
     private static final String LOG_SERVICE_NAME = "/rest/healthCheck";
     private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
@@ -75,12 +73,11 @@ public class HealthCheckScheduledTask implements Runnable {
     private static final String URL = "%s://%s:%s/sdc2/rest/healthCheck";
 
     private final List<String> healthCheckFeComponents =
-            Arrays.asList(HC_COMPONENT_ON_BOARDING, HC_COMPONENT_DCAE, HC_COMPONENT_CATALOG_FACADE_MS);
+            Arrays.asList(HC_COMPONENT_ON_BOARDING, HC_COMPONENT_CATALOG_FACADE_MS);
     private static final HealthCheckUtil healthCheckUtil = new HealthCheckUtil();
     private static final String DEBUG_CONTEXT = "HEALTH_FE";
     private static final String EXTERNAL_HC_URL = "%s://%s:%s%s";
     private static String ONBOARDING_HC_URL;
-    private static String DCAE_HC_URL;
     private static String CATALOG_FACADE_MS_HC_URL;
 
     private final HealthCheckService service;
@@ -91,10 +88,6 @@ public class HealthCheckScheduledTask implements Runnable {
 
     static String getOnboardingHcUrl() {
         return ONBOARDING_HC_URL;
-    }
-
-    static String getDcaeHcUrl() {
-        return DCAE_HC_URL;
     }
 
     static String getCatalogFacadeMsHcUrl() {
@@ -163,9 +156,6 @@ public class HealthCheckScheduledTask implements Runnable {
             case HC_COMPONENT_ON_BOARDING:
                 healthCheckUri = service.getConfig().getOnboarding().getHealthCheckUriFe();
                 break;
-            case HC_COMPONENT_DCAE:
-                healthCheckUri = service.getConfig().getDcae().getHealthCheckUri();
-                break;
             case HC_COMPONENT_CATALOG_FACADE_MS:
                 healthCheckUri = service.getConfig().getCatalogFacadeMs().getHealthCheckUri();
                 break;
@@ -183,9 +173,6 @@ public class HealthCheckScheduledTask implements Runnable {
         switch (baseComponent) {
             case HC_COMPONENT_ON_BOARDING:
                 healthCheckUrl = getOnboardingHealthCheckUrl();
-                break;
-            case HC_COMPONENT_DCAE:
-                healthCheckUrl = getDcaeHealthCheckUrl();
                 break;
             case HC_COMPONENT_CATALOG_FACADE_MS:
                 healthCheckUrl = getCatalogFacadeHealthCheckUrl();
@@ -345,7 +332,6 @@ public class HealthCheckScheduledTask implements Runnable {
         healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_CASSANDRA, HealthCheckInfo.HealthCheckStatus.UNKNOWN, null, null));
         healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckInfo.HealthCheckStatus.UNKNOWN, null, null));
         healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_ON_BOARDING, HealthCheckInfo.HealthCheckStatus.UNKNOWN, null, null));
-        healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_DCAE, HealthCheckInfo.HealthCheckStatus.UNKNOWN, null, null));
         healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CATALOG_FACADE_MS, HealthCheckInfo.HealthCheckStatus.UNKNOWN, null, null));
         return new HealthCheckWrapper(healthCheckInfos, "UNKNOWN", "UNKNOWN");
     }
@@ -371,25 +357,6 @@ public class HealthCheckScheduledTask implements Runnable {
             }
         }
         return ONBOARDING_HC_URL;
-    }
-
-    private String getDcaeHealthCheckUrl() {
-        Configuration.DcaeConfig dcaeConfig = service.getConfig().getDcae();
-        ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(LOG_TARGET_ENTITY_CONFIG)
-                .targetServiceName(LOG_TARGET_SERVICE_NAME_DCAE).build();
-
-        if (StringUtils.isEmpty(DCAE_HC_URL)) {
-            if (dcaeConfig != null) {
-                DCAE_HC_URL = buildHealthCheckUrl(
-                        dcaeConfig.getProtocol(), dcaeConfig.getHost(),
-                        dcaeConfig.getPort(), dcaeConfig.getHealthCheckUri());
-            }
-            else {
-                log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, LOG_SERVICE_NAME, errorLogOptionalData,
-                        "DCAE health check configuration is missing.");
-            }
-        }
-        return DCAE_HC_URL;
     }
 
     private String getCatalogFacadeHealthCheckUrl() {
