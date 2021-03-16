@@ -57,14 +57,6 @@ public class ConfigurationTest {
 	}
 
 	@Test
-	public void validateDcaeConfigBean() {
-		assertThat(Configuration.DcaeConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters()
-		));
-	}
-
-	@Test
 	public void validateGetHealthCheckSocketTimeoutInMsReturnsProperTime() {
 		final int defaultTestTimeout = 100;
 		final int setTestTimeout = 1000;

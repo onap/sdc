@@ -150,7 +150,6 @@ public final class Constants {
 
 	//external HealthCheck components
 	public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";
-	public static final String HC_COMPONENT_DCAE = "DCAE";
 	public static final String HC_COMPONENT_ECOMP_PORTAL = "PORTAL";
 
 	

@@ -55,8 +55,6 @@ public class HealthCheckScheduledTaskTest {
     @Mock
     private Configuration.CatalogFacadeMsConfig catalogFacadeMsConfig;
     @Mock
-    private Configuration.DcaeConfig dcaeConfig;
-    @Mock
     private Configuration.OnboardingConfig onboardingConfig;
     @Mock
     private Configuration configuration;
@@ -104,14 +102,6 @@ public class HealthCheckScheduledTaskTest {
         healthCheckScheduledTaskSpy.getExternalComponentHcUrl(Constants.HC_COMPONENT_CATALOG_FACADE_MS);
         verify(healthCheckScheduledTaskSpy, times(1)).
                 buildHealthCheckUrl(any(String.class), any(String.class), any(Integer.class), any(String.class));
-    }
-
-    @Test
-    public void getDcaeUrlWhenConfigurationIsProvided() {
-        when(configuration.getDcae()).thenReturn(dcaeConfig);
-        assertNull(HealthCheckScheduledTask.getDcaeHcUrl());
-        healthCheckScheduledTask.getExternalComponentHcUrl(Constants.HC_COMPONENT_DCAE);
-        assertEquals(HC_URL, HealthCheckScheduledTask.getDcaeHcUrl());
     }
 
     @Test
@@ -171,11 +161,6 @@ public class HealthCheckScheduledTaskTest {
         when(onboardingConfig.getHostFe()).thenReturn(HOST);
         when(onboardingConfig.getPortFe()).thenReturn(PORT);
         when(onboardingConfig.getHealthCheckUriFe()).thenReturn(URI);
-
-        when(dcaeConfig.getProtocol()).thenReturn(PROTOCOL);
-        when(dcaeConfig.getHost()).thenReturn(HOST);
-        when(dcaeConfig.getPort()).thenReturn(PORT);
-        when(dcaeConfig.getHealthCheckUri()).thenReturn(URI);
 
         when(catalogFacadeMsConfig.getProtocol()).thenReturn(PROTOCOL);
         when(catalogFacadeMsConfig.getHost()).thenReturn(HOST);
