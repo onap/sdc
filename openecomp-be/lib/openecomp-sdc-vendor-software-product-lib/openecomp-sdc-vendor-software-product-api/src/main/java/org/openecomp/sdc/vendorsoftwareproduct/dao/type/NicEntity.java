@@ -21,13 +21,20 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import com.datastax.driver.mapping.annotations.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_component_nic")
 public class NicEntity implements CompositionEntity {
   private static final String ENTITY_TYPE = "Vendor Software Product NIC";
@@ -48,15 +55,6 @@ public class NicEntity implements CompositionEntity {
   private String compositionData;
   @Column(name = "questionnaire_data")
   private String questionnaireData;
-
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public NicEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
 
   /**
    * Instantiates a new Nic entity.
@@ -85,34 +83,6 @@ public class NicEntity implements CompositionEntity {
   }
 
   @Override
-  public String getCompositionData() {
-    return compositionData;
-  }
-
-  @Override
-  public void setCompositionData(String compositionData) {
-    this.compositionData = compositionData;
-  }
-
-  @Override
-  public String getQuestionnaireData() {
-    return questionnaireData;
-  }
-
-  @Override
-  public void setQuestionnaireData(String questionnaireData) {
-    this.questionnaireData = questionnaireData;
-  }
-
-  public String getVspId() {
-    return vspId;
-  }
-
-  public void setVspId(String vspId) {
-    this.vspId = vspId;
-  }
-
-  @Override
   public String getEntityType() {
     return ENTITY_TYPE;
   }
@@ -122,83 +92,11 @@ public class NicEntity implements CompositionEntity {
     return getVspId();
   }
 
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  @Override
-  public Version getVersion() {
-    return version;
-  }
-
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
-  }
-
-  public String getComponentId() {
-    return componentId;
-  }
-
-  public void setComponentId(String componentId) {
-    this.componentId = componentId;
-  }
-
   public Nic getNicCompositionData() {
     return compositionData == null ? null : JsonUtil.json2Object(compositionData, Nic.class);
   }
 
   public void setNicCompositionData(Nic nic) {
     this.compositionData = nic == null ? null : JsonUtil.object2Json(nic);
-  }
-
-  @Override
-  public int hashCode() {
-    int result = vspId != null ? vspId.hashCode() : 0;
-    result = 31 * result + (version != null ? version.hashCode() : 0);
-    result = 31 * result + (componentId != null ? componentId.hashCode() : 0);
-    result = 31 * result + (id != null ? id.hashCode() : 0);
-    result = 31 * result + (compositionData != null ? compositionData.hashCode() : 0);
-    result = 31 * result + (questionnaireData != null ? questionnaireData.hashCode() : 0);
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (this == object) {
-      return true;
-    }
-    if (object == null || getClass() != object.getClass()) {
-      return false;
-    }
-
-    NicEntity nicEntity = (NicEntity) object;
-
-    if (vspId != null ? !vspId.equals(nicEntity.vspId) : nicEntity.vspId != null) {
-      return false;
-    }
-    if (version != null ? !version.equals(nicEntity.version) : nicEntity.version != null) {
-      return false;
-    }
-    if (componentId != null ? !componentId.equals(nicEntity.componentId)
-        : nicEntity.componentId != null) {
-      return false;
-    }
-    if (id != null ? !id.equals(nicEntity.id) : nicEntity.id != null) {
-      return false;
-    }
-    if (compositionData != null ? !compositionData.equals(nicEntity.compositionData)
-        : nicEntity.compositionData != null) {
-      return false;
-    }
-    return questionnaireData != null ? questionnaireData.equals(nicEntity.questionnaireData)
-        : nicEntity.questionnaireData == null;
-
   }
 }
