@@ -57,8 +57,6 @@ public class Configuration extends BasicConfiguration {
 
     private OnboardingConfig onboarding;
 
-    private DcaeConfig dcae;
-
     private CookieConfig authCookie;
 
     private BasicAuthConfig basicAuth;
@@ -251,14 +249,6 @@ public class Configuration extends BasicConfiguration {
         this.onboarding = onboarding;
     }
 
-    public DcaeConfig getDcae() {
-        return dcae;
-    }
-
-    public void setDcae(DcaeConfig dcae) {
-        this.dcae = dcae;
-    }
-
     public CookieConfig getAuthCookie() {
         return authCookie;
     }
@@ -385,46 +375,6 @@ public class Configuration extends BasicConfiguration {
 
         public void setHealthCheckUriFe(String healthCheckUriFe) {
             this.healthCheckUriFe = healthCheckUriFe;
-        }
-    }
-
-    public static class DcaeConfig {
-
-        String protocol = "http";
-        String host;
-        Integer port;
-        String healthCheckUri;
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public void setProtocol(String protocol) {
-            this.protocol = protocol;
-        }
-
-        public String getHost() {
-            return host;
-        }
-
-        public void setHost(String host) {
-            this.host = host;
-        }
-
-        public Integer getPort() {
-            return port;
-        }
-
-        public void setPort(Integer port) {
-            this.port = port;
-        }
-
-        public String getHealthCheckUri() {
-            return healthCheckUri;
-        }
-
-        public void setHealthCheckUri(String healthCheckUri) {
-            this.healthCheckUri = healthCheckUri;
         }
     }
 
