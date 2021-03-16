@@ -19,11 +19,6 @@ default['jetty'][:keymanager_pwd] = "?(kP!Yur![*!Y5!E^f(ZKc31"
 # MUST BE ALSO CHANGE IN THE startup.sh FILE
 default['jetty'][:truststore_pwd] = "z+KEj;t+,KN^iimSiS89e#p0"
 
-#Reserved for DCAE backend
-default['DCAE']['BE'][:http_port] = 8082
-default['DCAE']['BE'][:https_port] = 8444
-default['DCAE_BE_VIP'] = "dcae-be"
-
 #BasicAuth
 default['basic_auth']['enabled'] = false
 default['basic_auth'][:user_name] = "testName"

@@ -10,9 +10,6 @@
       "BE_VIP": "sdc-BE",
       "ONBOARDING_BE_VIP": "sdc-onboard-BE",
       "FE_VIP": "sdc-FE",
-      "DCAE_BE_VIP": "localhost",
-      "DCAE_FE_VIP": "localhost",
-      "DCAE_TOSCA_LAB_VIP": "localhost",
       "interfaces": {
          "application": "eth0",
          "private": "eth1"

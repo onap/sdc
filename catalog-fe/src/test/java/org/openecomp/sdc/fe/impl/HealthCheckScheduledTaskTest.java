@@ -107,14 +107,6 @@ public class HealthCheckScheduledTaskTest {
     }
 
     @Test
-    public void getDcaeUrlWhenConfigurationIsProvided() {
-        when(configuration.getDcae()).thenReturn(dcaeConfig);
-        assertNull(HealthCheckScheduledTask.getDcaeHcUrl());
-        healthCheckScheduledTask.getExternalComponentHcUrl(Constants.HC_COMPONENT_DCAE);
-        assertEquals(HC_URL, HealthCheckScheduledTask.getDcaeHcUrl());
-    }
-
-    @Test
     public void getExcludedComponentListWhenCatalogFacadeMsConfigExists() {
         when(configuration.getCatalogFacadeMs()).thenReturn(catalogFacadeMsConfig);
         when(catalogFacadeMsConfig.getPath()).thenReturn("/uicache");
@@ -171,11 +163,6 @@ public class HealthCheckScheduledTaskTest {
         when(onboardingConfig.getHostFe()).thenReturn(HOST);
         when(onboardingConfig.getPortFe()).thenReturn(PORT);
         when(onboardingConfig.getHealthCheckUriFe()).thenReturn(URI);
-
-        when(dcaeConfig.getProtocol()).thenReturn(PROTOCOL);
-        when(dcaeConfig.getHost()).thenReturn(HOST);
-        when(dcaeConfig.getPort()).thenReturn(PORT);
-        when(dcaeConfig.getHealthCheckUri()).thenReturn(URI);
 
         when(catalogFacadeMsConfig.getProtocol()).thenReturn(PROTOCOL);
         when(catalogFacadeMsConfig.getHost()).thenReturn(HOST);
