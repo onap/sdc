@@ -948,17 +948,6 @@ onboarding:
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
-dcae:
-    host: <%= @dcae_be_vip %>
-    <% if node[:disableHttp] -%>
-    protocol: https
-    port: <%= node['DCAE']['BE'][:https_port] %>
-    <% else %>
-    protocol: http
-    port: <%= node['DCAE']['BE'][:http_port] %>
-    <% end -%>
-    healthCheckUri: "/dcae/healthCheck"
-
 # #GSS IDNS
 switchoverDetector:
     gBeFqdn:

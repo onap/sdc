@@ -38,8 +38,6 @@ environment.json
             "FE_VIP": "yyy",
             "ES_VIP": "yyy",
             "KB_VIP": "yyy",
-            "DCAE_BE_VIP": "yyy",
-            "DCAE_FE_VIP": "yyy",
             "interfaces": {
                 "application": "eth0",
                 "private": "eth1"
@@ -803,17 +801,6 @@ BE-configuration.yaml
 
         # Url for onboarding health check
         healthCheckUri: "/onboarding-api/v1.0/healthcheck"
-
-    dcae:
-        # The ip of the onboarding docker
-        host: <%= @dcae_be_vip %>
-        # The protocol to use
-        protocol: <https/http>
-        # The port the docker is listening on
-        port: <port>
-        # The url of the health check to use
-        healthCheckUri: "/dcae/healthCheck"
-
 
     #GSS IDNS
     # Switchover configuration is used for Geo redundancy to provide automatic failovers

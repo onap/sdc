@@ -14,11 +14,6 @@ default['jetty'][:truststore_pwd] = "z+KEj;t+,KN^iimSiS89e#p0"
 default['ONBOARDING_BE'][:http_port] = 8081
 default['ONBOARDING_BE'][:https_port] = 8445
 
-#Reserved for DCAE backend
-default['DCAE']['FE'][:http_port] = 8183
-default['DCAE']['FE'][:https_port] = 9444
-default['DCAE_FE_VIP'] = "dcaed-fe"
-
 #BasicAuth
 default['basic_auth']['enabled'] = true
 default['basic_auth'][:user_name] = "testName"

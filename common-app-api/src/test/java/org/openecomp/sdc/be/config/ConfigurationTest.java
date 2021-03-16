@@ -77,13 +77,6 @@ public class ConfigurationTest {
 		));
 	}
 	@Test
-	public void validateBeanForDcaeConfig() {
-		assertThat(Configuration.DcaeConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSettersExcluding()
-		));
-	}
-	@Test
 	public void validateBeanForEcompPortalConfig() {
 		assertThat(Configuration.EcompPortalConfig.class, allOf(
 				hasValidBeanConstructor(),
