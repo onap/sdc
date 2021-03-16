@@ -22,6 +22,30 @@
       "revId": "9ca102f33d82bd0a48364b95c77c848cc17f20d3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e2f4e3d_6bce5b0f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/health/HealthCheckBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2021-03-16T17:31:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afadf999_ede89198",
+      "range": {
+        "startLine": 439,
+        "startChar": 4,
+        "endLine": 451,
+        "endChar": 5
+      },
+      "revId": "9ca102f33d82bd0a48364b95c77c848cc17f20d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
