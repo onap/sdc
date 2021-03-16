@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
@@ -29,14 +32,13 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 
 import javax.validation.constraints.NotNull;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstraint {
 
     @NotNull
     private String greaterOrEqual;
-
-    public GreaterOrEqualConstraint(String greaterOrEqual) {
-        this.greaterOrEqual = greaterOrEqual;
-    }
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
@@ -64,13 +66,4 @@ public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstrai
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
         return getErrorMessage(toscaType, e, propertyName, "%f property value must be >= %f", greaterOrEqual);
     }
-
-    public String getGreaterOrEqual() {
-        return greaterOrEqual;
-    }
-
-    public void setGreaterOrEqual(String greaterOrEqual) {
-        this.greaterOrEqual = greaterOrEqual;
-    }
-
 }
