@@ -19,10 +19,15 @@
  */
 package org.openecomp.sdc.versioning.types;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author avrahamg
  * @since July 10, 2017
  */
+@Getter
+@AllArgsConstructor
 public enum NotificationEventTypes {
     SUBMIT("submit"),
     DELETE("delete"),
@@ -30,13 +35,5 @@ public enum NotificationEventTypes {
     RESTORE("restore"),
     COMMIT("commit");
 
-    private String eventName;
-
-    NotificationEventTypes(String eventName) {
-        this.eventName = eventName;
-    }
-
-    public String getEventName() {
-        return eventName;
-    }
+    private final String eventName;
 }
