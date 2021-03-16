@@ -66,7 +66,6 @@ import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_BE;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CASSANDRA;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DCAE;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_DMAAP_PRODUCER;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ECOMP_PORTAL;
 import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_JANUSGRAPH;
@@ -163,10 +162,7 @@ public class HealthCheckBusinessLogic {
         // Amdocs
         healthCheckInfos.add(getHostedComponentsBeHealthCheck(HC_COMPONENT_ON_BOARDING, buildOnBoardingHealthCheckUrl()));
 
-        //DCAE
-        healthCheckInfos.add(getHostedComponentsBeHealthCheck(HC_COMPONENT_DCAE, buildDcaeHealthCheckUrl()));
-
-        //ECOMP Portal
+         //ECOMP Portal
         healthCheckInfos.add(portalHealthCheck.getHealthCheckInfo());
 
         //CADI
@@ -437,20 +433,6 @@ public class HealthCheckBusinessLogic {
                     onboardingConfig.getPort(),onboardingConfig.getHealthCheckUri());
         }
         log.error("Onboarding health check configuration is missing.");
-        return null;
-    }
-
-    @VisibleForTesting
-    String buildDcaeHealthCheckUrl() {
-
-        Configuration.DcaeConfig dcaeConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getDcae();
-
-        if (dcaeConfig != null) {
-            return String.format(hcUrl, dcaeConfig.getProtocol(), dcaeConfig.getHost(),
-                    dcaeConfig.getPort(),dcaeConfig.getHealthCheckUri());
-        }
-
-        log.error("DCAE health check configuration is missing.");
         return null;
     }
 

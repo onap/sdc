@@ -63,18 +63,7 @@ onboarding:
     portBe: <%= node['ONBOARDING_BE'][:http_port] %>
     <% end -%>
 
-dcae:
-    host: <%= @dcae_fe_vip %>
-    <% if node[:disableHttp] -%>
-    protocol: https
-    port: <%= node['DCAE']['FE'][:https_port] %>
-    <% else %>
-    protocol: http
-    port: <%= node['DCAE']['FE'][:http_port] %>
-    <% end -%>
-    healthCheckUri: "/dcaed/healthCheck"
-
-identificationHeaderFields: 
+identificationHeaderFields:
    -
         - &HTTP_IV_USER HTTP_IV_USER
         - &iv-user iv-user
