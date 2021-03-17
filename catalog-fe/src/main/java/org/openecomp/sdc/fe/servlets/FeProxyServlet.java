@@ -107,7 +107,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 			return;
 		}
 		BasicAuthConfig basicAuth = config.getBasicAuth();
-		if (basicAuth.getEnabled()) {
+		if (basicAuth.isEnabled()) {
 			proxyRequest.header(HttpHeader.AUTHORIZATION,
 				"Basic " + Base64.getEncoder().encodeToString((basicAuth.getUserName() + ":" + basicAuth.getUserPass()).getBytes()));
 		}
