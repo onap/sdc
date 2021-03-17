@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a015535e_4a5c7423",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ComponentDependency.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-17T10:16:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b2aff872_ce5dca4a",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 6
+      },
+      "revId": "8c0e5116ac739713dca202c382258076f1e0d125",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c8cba40_0991fb03",
         "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/main/java/org/openecomp/sdc/versioning/types/NotificationEventTypes.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "8c0e5116ac739713dca202c382258076f1e0d125",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "672ba1aa_0608d570",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-api/src/main/java/org/openecomp/sdc/versioning/types/NotificationEventTypes.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-03-17T10:16:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c8cba40_0991fb03",
+      "range": {
+        "startLine": 38,
+        "startChar": 9,
+        "endLine": 38,
+        "endChar": 14
+      },
+      "revId": "8c0e5116ac739713dca202c382258076f1e0d125",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
