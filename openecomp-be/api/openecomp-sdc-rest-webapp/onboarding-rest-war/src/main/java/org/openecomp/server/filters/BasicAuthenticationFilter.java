@@ -69,7 +69,7 @@ public class BasicAuthenticationFilter implements Filter {
       HttpServletRequestWrapper servletRequest = new HttpServletRequestWrapper(httpRequest);
 
       // BasicAuth is disabled
-      if (!basicAuthConfig.getEnabled()) {
+      if (!basicAuthConfig.isEnabled()) {
          arg2.doFilter(servletRequest, arg1);
          return;
       }

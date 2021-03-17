@@ -69,12 +69,11 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
 
     private String realm = "ASDC";
 
-
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         audit.startLog(requestContext);
 
-        if (!basicAuthConf.getEnabled()) {
+        if (!basicAuthConf.isEnabled()) {
             return;
         }
         List<String> excludedUrls = Arrays.asList(basicAuthConf.getExcludedUrls().split(","));
