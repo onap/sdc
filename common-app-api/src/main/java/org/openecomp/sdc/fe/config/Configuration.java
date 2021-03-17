@@ -20,14 +20,20 @@
 
 package org.openecomp.sdc.fe.config;
 
-import org.openecomp.sdc.common.api.BasicConfiguration;
+import static java.lang.String.format;
 
 import java.util.Date;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.openecomp.sdc.common.api.BasicConfiguration;
 
-import static java.lang.String.format;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class Configuration extends BasicConfiguration {
+
     /**
      * fe FQDN
      */
@@ -81,427 +87,90 @@ public class Configuration extends BasicConfiguration {
 
     private List<String> forwardHeaderFields;
 
-    public CatalogFacadeMsConfig getCatalogFacadeMs() {
-        return catalogFacadeMs;
-    }
-
-    public void setCatalogFacadeMs(CatalogFacadeMsConfig catalogFacadeMs) {
-        this.catalogFacadeMs = catalogFacadeMs;
-    }
-
-    public FeMonitoringConfig getSystemMonitoring() {
-        return systemMonitoring;
-    }
-
-    public void setSystemMonitoring(FeMonitoringConfig systemMonitoring) {
-        this.systemMonitoring = systemMonitoring;
-    }
-
-    public Integer getHealthCheckSocketTimeoutInMs() {
-        return healthCheckSocketTimeoutInMs;
-    }
-
-    public void setHealthCheckSocketTimeoutInMs(Integer healthCheckSocketTimeout) {
-        this.healthCheckSocketTimeoutInMs = healthCheckSocketTimeout;
-    }
-
     public Integer getHealthCheckSocketTimeoutInMs(int defaultVal) {
         return healthCheckSocketTimeoutInMs == null ? defaultVal : healthCheckSocketTimeoutInMs;
-    }
-
-    public Integer getHealthCheckIntervalInSeconds() {
-        return healthCheckIntervalInSeconds;
-    }
-
-    public void setHealthCheckIntervalInSeconds(Integer healthCheckInterval) {
-        this.healthCheckIntervalInSeconds = healthCheckInterval;
     }
 
     public Integer getHealthCheckIntervalInSeconds(int defaultVal) {
         return healthCheckIntervalInSeconds == null ? defaultVal : healthCheckIntervalInSeconds;
     }
 
-    public Date getReleased() {
-        return released;
-    }
-
-    public void setReleased(Date released) {
-        this.released = released;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    public List<String> getProtocols() {
-        return protocols;
-    }
-
-    public void setProtocols(List<String> protocols) {
-        this.protocols = protocols;
-    }
-
-    public String getBeHost() {
-        return beHost;
-    }
-
-    public void setBeHost(String beHost) {
-        this.beHost = beHost;
-    }
-
-    public Integer getBeHttpPort() {
-        return beHttpPort;
-    }
-
-    public void setBeHttpPort(Integer beHttpPort) {
-        this.beHttpPort = beHttpPort;
-    }
-
-    public Integer getBeSslPort() {
-        return beSslPort;
-    }
-
-    public void setBeSslPort(Integer beSslPort) {
-        this.beSslPort = beSslPort;
-    }
-
-    public String getBeContext() {
-        return beContext;
-    }
-
-    public void setBeContext(String beContext) {
-        this.beContext = beContext;
-    }
-
-    public String getBeProtocol() {
-        return beProtocol;
-    }
-
-    public void setBeProtocol(String beProtocol) {
-        this.beProtocol = beProtocol;
-    }
-
-    public int getThreadpoolSize() {
-        return threadpoolSize;
-    }
-
-    public void setThreadpoolSize(int threadpoolSize) {
-        this.threadpoolSize = threadpoolSize;
-    }
-
-    public int getRequestTimeout() {
-        return requestTimeout;
-    }
-
-    public void setRequestTimeout(int requestTimeout) {
-        this.requestTimeout = requestTimeout;
-    }
-
-    public List<List<String>> getIdentificationHeaderFields() {
-        return identificationHeaderFields;
-    }
-
-    public void setIdentificationHeaderFields(List<List<String>> identificationHeaderFields) {
-        this.identificationHeaderFields = identificationHeaderFields;
-    }
-
-    public List<List<String>> getOptionalHeaderFields() {
-        return optionalHeaderFields;
-    }
-
-    public void setOptionalHeaderFields(List<List<String>> optionalHeaderFields) {
-        this.optionalHeaderFields = optionalHeaderFields;
-    }
-
-    public List<String> getForwardHeaderFields() {
-        return forwardHeaderFields;
-    }
-
-    public void setForwardHeaderFields(List<String> forwardHeaderFields) {
-        this.forwardHeaderFields = forwardHeaderFields;
-    }
-
-    public String getFeFqdn() {
-        return feFqdn;
-    }
-
-    public void setFeFqdn(String feFqdn) {
-        this.feFqdn = feFqdn;
-    }
-
-    public OnboardingConfig getOnboarding() {
-        return onboarding;
-    }
-
-    public void setOnboarding(OnboardingConfig onboarding) {
-        this.onboarding = onboarding;
-    }
-
-    public CookieConfig getAuthCookie() {
-        return authCookie;
-    }
-
-    public void setAuthCookie(CookieConfig authCookie) {
-        this.authCookie = authCookie;
-    }
-
-    public BasicAuthConfig getBasicAuth() {
-        return basicAuth;
-    }
-
-    public void setBasicAuth(BasicAuthConfig basicAuth) {
-        this.basicAuth = basicAuth;
-    }
-
     @Override
     public String toString() {
         return new StringBuilder().append(format("backend host: %s%n", beHost))
-                .append(format("backend http port: %s%n", beHttpPort))
-                .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
-                .append(format("backend protocol: %s%n", beProtocol))
-                .append(format("onboarding forward context: %s%n", onboardingForwardContext))
-                .append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
-                .append(format("Connecting to database: %s%n", connection))
-                .append(format("Supported protocols: %s%n", protocols)).toString();
+            .append(format("backend http port: %s%n", beHttpPort))
+            .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
+            .append(format("backend protocol: %s%n", beProtocol))
+            .append(format("onboarding forward context: %s%n", onboardingForwardContext))
+            .append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
+            .append(format("Connecting to database: %s%n", connection))
+            .append(format("Supported protocols: %s%n", protocols)).toString();
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class FeMonitoringConfig {
 
-        Boolean enabled;
-        Boolean isProxy;
-        Integer probeIntervalInSeconds;
-
-        public Boolean getEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(Boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public Boolean getIsProxy() {
-            return isProxy;
-        }
-
-        public void setIsProxy(Boolean isProxy) {
-            this.isProxy = isProxy;
-        }
-
-        public Integer getProbeIntervalInSeconds() {
-            return probeIntervalInSeconds;
-        }
-
-        public void setProbeIntervalInSeconds(Integer probeIntervalInSeconds) {
-            this.probeIntervalInSeconds = probeIntervalInSeconds;
-        }
+        private Boolean enabled;
+        private Boolean isProxy;
+        private Integer probeIntervalInSeconds;
 
         public Integer getProbeIntervalInSeconds(int defaultVal) {
             return probeIntervalInSeconds == null ? defaultVal : probeIntervalInSeconds;
         }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class OnboardingConfig {
-        String protocolFe = "http";
-        String hostFe;
-        Integer portFe;
-        String protocolBe = "http";
-        String hostBe;
-        Integer portBe;
-        String healthCheckUriFe;
 
-        public String getProtocolFe() {
-            return protocolFe;
-        }
+        private String protocolFe = "http";
+        private String hostFe;
+        private Integer portFe;
+        private String protocolBe = "http";
+        private String hostBe;
+        private Integer portBe;
+        private String healthCheckUriFe;
 
-        public void setProtocolFe(String protocolFe) {
-            this.protocolFe = protocolFe;
-        }
-
-        public String getProtocolBe() {
-            return protocolBe;
-        }
-
-        public void setProtocolBe(String protocolBe) {
-            this.protocolBe = protocolBe;
-        }
-
-        public String getHostFe() {
-            return hostFe;
-        }
-
-        public void setHostFe(String hostFe) {
-            this.hostFe = hostFe;
-        }
-
-        public String getHostBe() {
-            return hostBe;
-        }
-
-        public void setHostBe(String hostBe) {
-            this.hostBe = hostBe;
-        }
-
-        public Integer getPortFe() {
-            return portFe;
-        }
-
-        public void setPortFe(Integer portFe) {
-            this.portFe = portFe;
-        }
-
-        public Integer getPortBe() {
-            return portBe;
-        }
-
-        public void setPortBe(Integer portBe) {
-            this.portBe = portBe;
-        }
-
-        public String getHealthCheckUriFe() {
-            return healthCheckUriFe;
-        }
-
-        public void setHealthCheckUriFe(String healthCheckUriFe) {
-            this.healthCheckUriFe = healthCheckUriFe;
-        }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class CookieConfig {
-        String cookieName = "AuthenticationCookie";
-        String path = "";
-        String domain = "";
-        String securityKey = "";
 
-        public String getPath() {
-            return path;
-        }
+        private String cookieName = "AuthenticationCookie";
+        private String path = "";
+        private String domain = "";
+        private String securityKey = "";
 
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public String getDomain() {
-            return domain;
-        }
-
-        public void setDomain(String domain) {
-            this.domain = domain;
-        }
-
-        public String getSecurityKey() {return securityKey;
-        }
-
-        public void setSecurityKey(String securityKey) {
-            this.securityKey = securityKey;
-        }
-
-        public String getCookieName() {
-            return cookieName;
-        }
-
-        public void setCookieName(String cookieName) {
-            this.cookieName = cookieName;
-        }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class BasicAuthConfig {
-        boolean enabled = false;
-        String userName = "";
-        String userPass = "";
 
-        public boolean getEnabled() {
-            return enabled;
-        }
+        private boolean enabled = false;
+        private String userName = "";
+        private String userPass = "";
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public String getUserName() {
-            return userName;
-        }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public String getUserPass() {return userPass;
-        }
-
-        public void setUserPass(String userPass) {
-            this.userPass = userPass;
-        }
 
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class CatalogFacadeMsConfig {
-        String protocol;
-        String host;
-        Integer port;
-        String healthCheckUri;
-        String path;
 
-        public void setProtocol(String protocol) {
-            this.protocol = protocol;
-        }
+        private String protocol;
+        private String host;
+        private Integer port;
+        private String healthCheckUri;
+        private String path;
 
-        public void setHost(String host) {
-            this.host = host;
-        }
-
-        public void setPort(Integer port) {
-            this.port = port;
-        }
-
-        public void setHealthCheckUri(String healthCheckUri) {
-            this.healthCheckUri = healthCheckUri;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public String getHost() {
-            return host;
-        }
-
-        public Integer getPort() {
-            return port;
-        }
-
-        public String getHealthCheckUri() {
-            return healthCheckUri;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-
-    }
-
-    public List<String> getHealthStatusExclude() {
-        return healthStatusExclude;
-    }
-
-    public void setHealthStatusExclude(List<String> healthStatusExclude) {
-        this.healthStatusExclude = healthStatusExclude;
     }
 
 }
