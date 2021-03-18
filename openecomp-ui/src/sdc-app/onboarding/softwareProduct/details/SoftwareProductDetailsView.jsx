@@ -237,7 +237,7 @@ class LicensesSection extends React.Component {
                         label={i18n('Licensing Version')}
                         disabled={
                             this.props.isVendorArchived ||
-                            this.props.licenseType !== 'internal'
+                            this.props.licenseType !== 'INTERNAL'
                         }
                         type="select">
                         {this.props.licensingVersionsList.map(version => (
@@ -254,7 +254,7 @@ class LicensesSection extends React.Component {
                         type="select"
                         disabled={
                             this.props.isVendorArchived ||
-                            this.props.licenseType !== 'internal'
+                            this.props.licenseType !== 'INTERNAL'
                         }
                         value={
                             this.props.licensingData.licenseAgreement
@@ -281,7 +281,7 @@ class LicensesSection extends React.Component {
                             onInputChange={() => {}}
                             disabled={
                                 this.props.isVendorArchived ||
-                                this.props.licenseType !== 'internal'
+                                this.props.licenseType !== 'INTERNAL'
                             }
                             onEnumChange={featureGroups =>
                                 this.props.onFeatureGroupsChanged({
