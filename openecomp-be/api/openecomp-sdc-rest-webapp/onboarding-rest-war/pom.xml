@@ -252,11 +252,11 @@
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.0.8</version>
                 <configuration>
                     <outputPath>${project.build.directory}/generated/swagger-ui</outputPath>
-                    <outputFileName>swagger</outputFileName>
+                    <outputFileName>swagger-sdce-1</outputFileName>
                     <outputFormat>JSON</outputFormat>
+                    <configurationFilePath>${project.basedir}/src/main/resources/swagger-config.yaml</configurationFilePath>  
                 </configuration>
                 <executions>
                     <execution>

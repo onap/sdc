@@ -50,7 +50,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/config")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 public class ConfigServlet extends BasicServlet {
 

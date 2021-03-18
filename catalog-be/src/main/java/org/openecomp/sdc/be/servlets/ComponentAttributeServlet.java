@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tag(name = "SDC Internal APIs")
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Server(url = "/sdc2/rest")
 @Singleton
 public class ComponentAttributeServlet extends BeGenericServlet {

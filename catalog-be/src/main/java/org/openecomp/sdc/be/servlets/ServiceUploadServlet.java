@@ -71,7 +71,7 @@ import org.springframework.web.context.WebApplicationContext;
 //upload Service model by Shiyong1989@hotmail.com
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/uploadservice")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Singleton
 
 public class ServiceUploadServlet extends AbstractValidationsServlet {

@@ -70,7 +70,7 @@ import java.util.Optional;
 @Path("/v1/catalog")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class CapabilityServlet extends AbstractValidationsServlet {

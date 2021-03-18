@@ -82,7 +82,7 @@ import static org.openecomp.sdc.common.util.GeneralUtility.getCategorizedCompone
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ComponentServlet extends BeGenericServlet {

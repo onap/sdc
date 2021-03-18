@@ -28,9 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.servers.Server;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -86,9 +83,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-@OpenAPIDefinition(info = @Info(title = "SDC API", description = "SDC External, Distribution and Internal APIs"),
-        servers = {@Server(url = "/sdc", description = "SDC External and Distribution APIs"),
-                @Server(url = "/sdc2/rest", description = "SDC Internal APIs")})
 public class BeGenericServlet extends BasicServlet {
 
     public BeGenericServlet(UserBusinessLogic userAdminManager,

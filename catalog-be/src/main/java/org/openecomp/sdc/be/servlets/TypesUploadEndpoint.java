@@ -68,7 +68,7 @@ import java.util.Map;
 @Path("/v1/catalog/uploadType")
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class TypesUploadEndpoint extends BeGenericServlet{

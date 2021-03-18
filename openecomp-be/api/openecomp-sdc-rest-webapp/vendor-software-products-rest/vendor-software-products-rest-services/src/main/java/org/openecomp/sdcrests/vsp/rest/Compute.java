@@ -20,7 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -28,6 +27,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeDetailsDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
@@ -47,7 +48,7 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
     "}/compute-flavors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title= "Vendor Software Product Component Compute-flavors"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor Software Product Component Compute-flavors")})
 @Validated
 public interface Compute extends VspEntities {
 

@@ -1,0 +1,25 @@
+resourcePackages:
+- org.openecomp.sdc.be.externalapi.servlet
+- org.openecomp.sdc.be.distribution.servlet
+ignoredRoutes:
+- /v1/distributionUebCluster
+- /v1/registerForDistribution
+- /v1/artifactTypes
+- /v1/unRegisterForDistribution
+prettyPrint: true
+sortOutput: true
+openAPI:
+  info:
+    title: "SPC API: SDCE-7"
+    description: "SDC API for retrieval for service models (SDCE-7)"
+    contact:
+      name: ONAP
+      url: https://onap.readthedocs.io
+      email: onap-discuss@lists.onap.org
+    license:
+      name: Apache 2.0
+      url: http://www.apache.org/licenses/LICENSE-2.0
+    version: "1.0"
+  servers:
+  - url: /sdc
+    description: "SDCE-7 APIs"

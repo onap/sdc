@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -56,7 +57,7 @@ import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
-@Tag(name = "SDC Internal APIs")
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Server(url = "/sdc2/rest")
 @Controller
 public class BeMonitoringServlet extends BeGenericServlet {

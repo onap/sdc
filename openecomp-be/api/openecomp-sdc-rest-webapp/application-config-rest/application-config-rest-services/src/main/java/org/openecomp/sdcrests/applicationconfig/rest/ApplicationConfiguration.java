@@ -20,13 +20,14 @@
 
 package org.openecomp.sdcrests.applicationconfig.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.applicationconfiguration.types.ApplicationConfigDto;
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
@@ -42,7 +43,7 @@ import java.util.List;
 @Path("/v1.0/application-configuration")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Application Configuration"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Application Configuration")})
 @Validated
 public interface ApplicationConfiguration {
 

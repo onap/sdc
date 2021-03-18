@@ -47,7 +47,7 @@
                         <configuration>
                             <tasks>
                                 <echo message="Copy api json files"/>
-                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${basedir}/target/${plugin.name}/${api.json.file}"/>
+                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger-sdce-1.json" tofile="${basedir}/target/${plugin.name}/${api.json.file}"/>
                             </tasks>
                         </configuration>
                         <goals>

@@ -20,7 +20,6 @@
 
 package org.openecomp.sdcrests.notifications.rest.services;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -28,6 +27,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdcrests.notifications.types.NotificationsStatusDto;
 import org.openecomp.sdcrests.notifications.types.UpdateNotificationResponseStatus;
 import org.springframework.validation.annotation.Validated;
@@ -44,7 +45,7 @@ import static org.openecomp.sdcrests.common.RestConstants.*;
 @Path("/v1.0/notifications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Notifications"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Notifications")})
 @Validated
 public interface Notifications {
   String LIMIT_QUERY_PARAM = "NOTIFICATION_ROWS_LIMIT";

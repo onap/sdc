@@ -17,9 +17,10 @@
 package org.openecomp.sdcrests.validation.rest;
 
 import com.sun.jersey.multipart.FormDataParam;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.springframework.validation.annotation.Validated;
 
 import javax.ws.rs.*;
@@ -31,7 +32,7 @@ import java.io.InputStream;
 @Path("/v1.0/validation")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title="Validation"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Validation")})
 @Validated
 
 public interface ValidationForSwaggerUsage {

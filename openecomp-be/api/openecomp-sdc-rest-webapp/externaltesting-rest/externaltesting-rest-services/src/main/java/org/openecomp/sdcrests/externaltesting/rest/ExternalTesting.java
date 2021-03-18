@@ -16,8 +16,9 @@
 
 package org.openecomp.sdcrests.externaltesting.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -38,7 +39,7 @@ import org.springframework.validation.annotation.Validated;
 @Path("/v1.0/externaltesting")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "External-Testing"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "External-Testing")})
 @Validated
 
 public interface ExternalTesting {

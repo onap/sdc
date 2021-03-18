@@ -62,7 +62,7 @@ import javax.ws.rs.core.Response;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-5 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class DistributionServiceServlet extends BeGenericServlet {
