@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Singleton
 public class ServiceConsumptionServlet extends BeGenericServlet {

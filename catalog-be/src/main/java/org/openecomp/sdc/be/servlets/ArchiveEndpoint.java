@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)

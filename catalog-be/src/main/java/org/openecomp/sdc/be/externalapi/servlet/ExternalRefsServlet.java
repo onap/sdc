@@ -53,7 +53,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
 
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC External APIs")})
+@Tags({@Tag(name = "SDCE-7 APIs")})
 @Servers({@Server(url = "/sdc")})
 @Controller
 public class ExternalRefsServlet extends BeGenericServlet {

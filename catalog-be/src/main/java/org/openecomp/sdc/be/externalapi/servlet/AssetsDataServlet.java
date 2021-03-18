@@ -91,7 +91,7 @@ import org.springframework.stereotype.Controller;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC External APIs")})
+@Tags({@Tag(name = "SDCE-7 APIs")})
 @Servers({@Server(url = "/sdc")})
 @Controller
 public class AssetsDataServlet extends AbstractValidationsServlet {

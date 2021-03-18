@@ -20,7 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -28,6 +27,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRequestDto;
@@ -49,7 +50,7 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title="Vendor Software Product Components"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor Software Product Components")})
 @Validated
 public interface Components extends VspEntities {
   @GET

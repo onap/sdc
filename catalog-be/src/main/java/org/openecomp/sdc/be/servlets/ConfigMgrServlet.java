@@ -47,7 +47,7 @@ import org.openecomp.sdc.common.servlets.BasicServlet;
  * Root resource (exposed at "/" path)
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Path("/configmgr")
 public class ConfigMgrServlet extends BasicServlet {

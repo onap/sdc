@@ -20,7 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -28,6 +27,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessEntityDto;
@@ -48,7 +49,7 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/processes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info =  @Info(title = "Vendor Software Product Component Processes"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor Software Product Component Processes")})
 @Validated
 public interface ComponentProcesses extends VspEntities {
   @GET

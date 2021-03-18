@@ -27,9 +27,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.servers.Server;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -84,8 +81,6 @@ import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
-@OpenAPIDefinition(info = @Info(title = "SDC API", description = "SDC External, Distribution and Internal APIs"), servers = {
-    @Server(url = "/sdc", description = "SDC External and Distribution APIs"), @Server(url = "/sdc2/rest", description = "SDC Internal APIs")})
 public class BeGenericServlet extends BasicServlet {
 
     private static final Logger log = Logger.getLogger(BeGenericServlet.class);

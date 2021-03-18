@@ -59,7 +59,7 @@ import org.springframework.stereotype.Controller;
 @Path("/v1/catalog/gab")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class GenericArtifactBrowserServlet extends BeGenericServlet {

@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -54,7 +55,7 @@ import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
-@Tag(name = "SDC Internal APIs")
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Server(url = "/sdc2/rest")
 @Controller
 public class BeMonitoringServlet extends BeGenericServlet {

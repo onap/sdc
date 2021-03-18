@@ -17,7 +17,6 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -25,6 +24,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdcrests.common.RestConstants;
 import org.openecomp.sdcrests.item.types.ItemDto;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto;
@@ -44,7 +45,7 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/vendor-license-models")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition( info = @Info(title = "Vendor License Models"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor License Models")})
 @Validated
 public interface VendorLicenseModels {
 

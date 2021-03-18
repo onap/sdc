@@ -1029,6 +1029,68 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sdce-2-sdce-5</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                            <contextId>sdce-2-sdce-5</contextId>
+                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
+                            <outputFileName>swagger-sdce-2-sdce-5</outputFileName>
+                            <outputFormat>JSON</outputFormat>
+                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-2-sdce-5.yaml</configurationFilePath>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sdce-4</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                            <contextId>sdce-4</contextId>
+                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
+                            <outputFileName>swagger-sdce-4</outputFileName>
+                            <outputFormat>JSON</outputFormat>
+                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-4.yaml</configurationFilePath>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sdce-6</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                            <contextId>sdce-6</contextId>
+                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
+                            <outputFileName>swagger-sdce-6</outputFileName>
+                            <outputFormat>JSON</outputFormat>
+                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-6.yaml</configurationFilePath>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sdce-7</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                            <contextId>sdce-7</contextId>
+                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
+                            <outputFileName>swagger-sdce-7</outputFileName>
+                            <outputFormat>JSON</outputFormat>
+                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-7.yaml</configurationFilePath>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <pluginManagement>
