@@ -80,7 +80,7 @@ import java.util.Set;
 @Path("/v1/catalog/services/{serviceId}/paths")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ServiceForwardingPathServlet extends AbstractValidationsServlet {

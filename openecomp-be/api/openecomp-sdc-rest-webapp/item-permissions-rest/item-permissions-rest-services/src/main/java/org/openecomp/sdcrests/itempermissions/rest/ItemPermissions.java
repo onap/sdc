@@ -21,13 +21,14 @@
 package org.openecomp.sdcrests.itempermissions.rest;
 
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdcrests.itempermissions.types.ItemPermissionsDto;
 import org.openecomp.sdcrests.itempermissions.types.ItemPermissionsRequestDto;
 import org.springframework.validation.annotation.Validated;
@@ -47,7 +48,7 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Path("/v1.0/items/{itemId}/permissions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Item Permissions"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Item Permissions")})
 @Validated
 public interface ItemPermissions {
 

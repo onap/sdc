@@ -62,7 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/user")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class UserAdminServlet extends BeGenericServlet {

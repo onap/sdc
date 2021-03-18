@@ -32,6 +32,27 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+<<<<<<< HEAD   (dbcffb Release 1.8.4)
+=======
+import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+>>>>>>> CHANGE (e020ca Publish swagger files for SDC APIs)
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
@@ -84,7 +105,7 @@ import java.util.List;
 import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Tag(name = "SDC Internal APIs")
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Server(url = "/sdc2/rest")
 @Path("/v1/catalog")
 @Controller

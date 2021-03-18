@@ -20,12 +20,13 @@
 
 package org.openecomp.sdcrests.health.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdcrests.health.types.HealthInfoDtos;
 import org.springframework.validation.annotation.Validated;
 
@@ -39,7 +40,7 @@ import javax.ws.rs.core.Response;
 @Path("/v1.0/healthcheck")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Health Check"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Health Check")})
 @Validated
 public interface HealthCheck {
 

@@ -21,9 +21,10 @@
 package org.openecomp.sdcrests.action.rest;
 
 import com.sun.jersey.multipart.FormDataParam;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.springframework.validation.annotation.Validated;
 
@@ -38,7 +39,7 @@ import java.io.InputStream;
 @Path("/workflow/v1.0/actions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info =  @Info(title = "Actions"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Actions")})
 @Validated
 public interface ActionsForSwaggerFileUpload {
 

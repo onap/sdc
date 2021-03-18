@@ -16,13 +16,14 @@
 
 package org.openecomp.sdcrests.togglz.rest;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +36,7 @@ import javax.ws.rs.core.Response;
 @Path("/v1.0/togglz")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Togglz"))
+@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Togglz")})
 @Validated
 public interface TogglzFeatures {
 

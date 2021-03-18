@@ -93,7 +93,7 @@ import java.util.Map;
  *
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Tags({@io.swagger.v3.oas.annotations.tags.Tag(name = "SDC Internal APIs")})
+@Tags({@io.swagger.v3.oas.annotations.tags.Tag(name = "SDCE-2 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ElementServlet extends BeGenericServlet {

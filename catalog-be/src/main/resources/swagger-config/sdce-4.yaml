@@ -1,0 +1,19 @@
+resourceClasses:
+- org.openecomp.sdc.be.servlets.LifecycleServlet
+prettyPrint: true
+sortOutput: true
+openAPI:
+  info:
+    title: "SPC API: SDCE-4"
+    description: "SDC API for certifying services (SDCE-4)"
+    contact:
+      name: ONAP
+      url: https://onap.readthedocs.io
+      email: onap-discuss@lists.onap.org
+    license:
+      name: Apache 2.0
+      url: http://www.apache.org/licenses/LICENSE-2.0
+    version: "1.0"
+  servers:
+  - url: /sdc
+    description: "SDCE-4 APIs"

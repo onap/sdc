@@ -100,7 +100,6 @@ import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ServiceServlet extends AbstractValidationsServlet {
@@ -128,6 +127,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Service", method = "POST", summary = "Returns created service", responses = {
@@ -172,6 +172,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/validate-name/{serviceName}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "validate service name", method = "GET",
@@ -207,6 +208,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/audit-records/{componentType}/{componentUniqueId}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "get component audit records", method = "GET",
@@ -284,6 +286,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/services/{serviceId}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Operation(description = "Delete Service", method = "DELETE", summary = "Return no content", responses = {
             @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
             @ApiResponse(responseCode = "204", description = "Service deleted"),
@@ -322,6 +325,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/services/{serviceName}/{version}")
+<<<<<<< HEAD   (dbcffb Release 1.8.4)
     @Operation(description = "Delete Service By Name And Version", method = "DELETE", summary = "Returns no content",
             responses = {@ApiResponse(
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
@@ -329,6 +333,14 @@ public class ServiceServlet extends AbstractValidationsServlet {
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
                     @ApiResponse(responseCode = "404", description = "Service not found")})
+=======
+    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Operation(description = "Delete Service By Name And Version", method = "DELETE", summary = "Returns no content", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "204", description = "Service deleted"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Service not found")})
+>>>>>>> CHANGE (e020ca Publish swagger files for SDC APIs)
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteServiceByNameAndVersion(@PathParam("serviceName") final String serviceName,
                                                   @PathParam("version") final String version,
@@ -364,6 +376,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @PUT
     @Path("/services/{serviceId}/metadata")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Service Metadata", method = "PUT", summary = "Returns updated service",
@@ -423,6 +436,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
      */
     @PUT
     @Path("/{containerComponentType}/{serviceId}/resourceInstance/{componentInstanceId}/groupInstance/{groupInstanceId}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Group Instance Property Values", method = "PUT",
@@ -477,6 +491,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/{serviceId}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service", method = "GET", summary = "Returns service according to serviceId",
@@ -521,6 +536,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/serviceName/{serviceName}/serviceVersion/{serviceVersion}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service", method = "GET",
@@ -560,6 +576,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/{serviceId}/distribution/{env}/activate")
+    @Tags({@Tag(name = "SDCE-5 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Activate distribution", method = "POST", summary = "activate distribution",
@@ -599,6 +616,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/{serviceId}/distribution/{did}/markDeployed")
+    @Tags({@Tag(name = "SDCE-5 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Mark distribution as deployed", method = "POST",
@@ -640,6 +658,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/{serviceId}/tempUrlToBeDeleted")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(responses = {@ApiResponse(responseCode = "200", description = "OK"),
@@ -673,6 +692,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/{serviceId}/linksMap")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service component relations map", method = "GET",
@@ -718,6 +738,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/importService")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Import Service", method = "POST", summary = "Returns imported service", responses = {
@@ -783,6 +804,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
      */
     @POST
     @Path("/services/serviceUUID/{uuid}/importReplaceService")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Import Service", method = "POST", summary = "Returns imported service", responses = {
             @ApiResponse(responseCode = "201", description = "Service created"),

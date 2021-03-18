@@ -1,0 +1,21 @@
+resourcePackages:
+- org.openecomp.sdc.be.servlets
+ignoredRoutes:
+- /v1/catalog/{componentCollection}/{componentId}/lifecycleState/{lifecycleOperation}
+prettyPrint: true
+sortOutput: true
+openAPI:
+  info:
+    title: "SPC API: SDCE-2 and SDCE-5"
+    description: "SDC API for designing services and resources (SDCE-2) and distributing services (SDCE-5)"
+    contact:
+      name: ONAP
+      url: https://onap.readthedocs.io
+      email: onap-discuss@lists.onap.org
+    license:
+      name: Apache 2.0
+      url: http://www.apache.org/licenses/LICENSE-2.0
+    version: "1.0"
+  servers:
+  - url: /sdc
+    description: "SDCE-2 and SDCE-5 APIs"

@@ -72,7 +72,7 @@ import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
+@Tags({@Tag(name = "SDCE-4 APIs")})
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class LifecycleServlet extends BeGenericServlet {

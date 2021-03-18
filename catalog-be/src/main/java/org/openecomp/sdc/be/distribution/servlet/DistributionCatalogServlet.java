@@ -74,7 +74,7 @@ import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Distribution APIs")})
+@Tags({@Tag(name = "SDCE-7 APIs")})
 @Servers({@Server(url = "/sdc")})
 @Singleton
 public class DistributionCatalogServlet extends BeGenericServlet {

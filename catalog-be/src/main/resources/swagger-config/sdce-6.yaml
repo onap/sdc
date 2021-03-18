@@ -1,0 +1,19 @@
+resourceClasses:
+- org.openecomp.sdc.be.distribution.servlet.DistributionServlet
+prettyPrint: true
+sortOutput: true
+openAPI:
+  info:
+    title: "SPC API: SDCE-6"
+    description: "SDC API for distribution subscription (SDCE-6)"
+    contact:
+      name: ONAP
+      url: https://onap.readthedocs.io
+      email: onap-discuss@lists.onap.org
+    license:
+      name: Apache 2.0
+      url: http://www.apache.org/licenses/LICENSE-2.0
+    version: "1.0"
+  servers:
+  - url: /sdc
+    description: "SDCE-6 APIs"

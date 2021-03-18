@@ -30,6 +30,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+<<<<<<< HEAD   (dbcffb Release 1.8.4)
+=======
+import io.swagger.v3.oas.annotations.tags.Tags;
+import java.util.List;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+>>>>>>> CHANGE (e020ca Publish swagger files for SDC APIs)
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -56,7 +71,7 @@ import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
-@Tag(name = "SDC Internal APIs")
+@Tags({@Tag(name = "SDCE-2 APIs")})
 @Server(url = "/sdc2/rest")
 @Controller
 public class BeMonitoringServlet extends BeGenericServlet {

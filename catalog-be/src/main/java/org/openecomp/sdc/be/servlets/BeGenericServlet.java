@@ -28,9 +28,27 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
+<<<<<<< HEAD   (dbcffb Release 1.8.4)
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
+=======
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+>>>>>>> CHANGE (e020ca Publish swagger files for SDC APIs)
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -70,6 +88,7 @@ import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
+<<<<<<< HEAD   (dbcffb Release 1.8.4)
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -89,6 +108,8 @@ import java.util.function.Supplier;
 @OpenAPIDefinition(info = @Info(title = "SDC API", description = "SDC External, Distribution and Internal APIs"),
         servers = {@Server(url = "/sdc", description = "SDC External and Distribution APIs"),
                 @Server(url = "/sdc2/rest", description = "SDC Internal APIs")})
+=======
+>>>>>>> CHANGE (e020ca Publish swagger files for SDC APIs)
 public class BeGenericServlet extends BasicServlet {
 
     public BeGenericServlet(UserBusinessLogic userAdminManager,

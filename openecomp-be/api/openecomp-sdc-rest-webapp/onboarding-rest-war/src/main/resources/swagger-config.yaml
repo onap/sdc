@@ -1,0 +1,17 @@
+prettyPrint: true
+sortOutput: true
+openAPI:
+  info:
+    title: "SPC API: SDCE-1"
+    description: "SDC API for onboarding (SDCE-1)"
+    contact:
+      name: ONAP
+      url: https://onap.readthedocs.io
+      email: onap-discuss@lists.onap.org
+    license:
+      name: Apache 2.0
+      url: http://www.apache.org/licenses/LICENSE-2.0
+    version: "1.0"
+  servers:
+  - url: /sdc
+    description: "SDCE-1 APIs"
