@@ -20,12 +20,34 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AuditingGenericEventTest {
 
 	private AuditingGenericEvent createTestSubject() {
 		return new AuditingGenericEvent();
+	}
+
+	@Test
+	public void testTimestamp() throws Exception {
+		AuditingGenericEvent testSubject = createTestSubject();
+		testSubject.setTimestamp("timestamp");
+		assertEquals("timestamp", testSubject.getTimestamp());
+	}
+
+	@Test
+	public void testFields() throws Exception {
+		AuditingGenericEvent testSubject = createTestSubject();
+		Map<String, Object> map = new HashMap<>();
+		testSubject.setFields(map);
+		assertNotNull(testSubject.getFields());
 	}
 
 	@Test

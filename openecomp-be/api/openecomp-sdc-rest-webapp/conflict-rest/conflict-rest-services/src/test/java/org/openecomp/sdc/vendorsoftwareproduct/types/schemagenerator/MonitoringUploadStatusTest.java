@@ -20,14 +20,22 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MonitoringUploadStatusTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(MonitoringUploadStatus.class, hasValidGettersAndSetters());
+    }
+
+    @Test
+    public void constructorTest() {
+        MonitoringUploadStatus status = new MonitoringUploadStatus("test1", "test2");
+        assertEquals("test1", status.getSnmpTrap());
+        assertEquals("test2", status.getSnmpPoll());
     }
 }

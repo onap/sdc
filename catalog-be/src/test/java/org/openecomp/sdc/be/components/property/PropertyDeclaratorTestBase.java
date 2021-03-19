@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.components.property;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
@@ -50,7 +50,7 @@ public class PropertyDeclaratorTestBase {
     PropertyDataDefinition prop1, prop2, complexProperty;
     Resource resource;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         prop1 = new PropertyDataDefinitionBuilder()
                 .setUniqueId("prop1")

@@ -20,36 +20,27 @@
 
 package org.openecomp.sdc.be.auditing.impl.usersadmin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 
-public class AuditUserAccessEventFactoryTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-	private AuditUserAccessEventFactory createTestSubject() {
-		org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder newBuilder = CommonAuditData.newBuilder();
-		CommonAuditData commonAuData = newBuilder.build();
-		return new AuditUserAccessEventFactory(commonAuData, new User());
-	}
+public class AuditUserAccessEventFactoryTest {
+	private org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder newBuilder = CommonAuditData.newBuilder();
+	private CommonAuditData commonAuData = newBuilder.build();
 
 	@Test
 	public void testGetLogMessage() throws Exception {
-		AuditUserAccessEventFactory testSubject;
-		String result;
+		AuditUserAccessEventFactory testSubject = new AuditUserAccessEventFactory(commonAuData, new User());
+		assertEquals("ACTION = \"Access\" USER = \"\" STATUS = \"\" DESC = \"\"", testSubject.getLogMessage());
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLogMessage();
 	}
 
 	@Test
 	public void testGetDbEvent() throws Exception {
-		AuditUserAccessEventFactory testSubject;
-		AuditingGenericEvent result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDbEvent();
+		AuditUserAccessEventFactory testSubject = new AuditUserAccessEventFactory(commonAuData, "user", "");
+		assertNotNull(testSubject.getDbEvent());
 	}
 }
