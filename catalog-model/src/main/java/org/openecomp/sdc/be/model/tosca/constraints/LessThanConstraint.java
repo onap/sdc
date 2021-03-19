@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -27,8 +27,6 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunction
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
-
-import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 public class LessThanConstraint extends AbstractComparablePropertyConstraint {
@@ -48,7 +46,6 @@ public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
     @Override
     public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
-
     }
 
     @Override

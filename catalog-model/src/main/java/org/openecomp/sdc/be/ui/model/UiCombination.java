@@ -15,7 +15,6 @@
  *
  *
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import lombok.AllArgsConstructor;
@@ -27,5 +26,4 @@ public class UiCombination {
 
     private final String name;
     private final String description;
-
 }

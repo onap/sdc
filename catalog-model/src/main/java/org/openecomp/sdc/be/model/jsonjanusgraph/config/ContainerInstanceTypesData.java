@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.config;
 
 import java.util.Collections;
@@ -36,7 +35,6 @@ public class ContainerInstanceTypesData {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContainerInstanceTypesData.class);
     private static final String WILDCARD = "*";
-
     private final ConfigurationManager configurationManager;
 
     public ContainerInstanceTypesData() {
@@ -50,8 +48,7 @@ public class ContainerInstanceTypesData {
      * @return {@code true} if the resource instance is allowed, {@code false} otherwise
      */
     public boolean isAllowedForServiceComponent(final ResourceTypeEnum resourceTypeToCheck) {
-        final List<String> allowedResourceInstanceTypeList =
-            getComponentAllowedList(ComponentTypeEnum.SERVICE, null);
+        final List<String> allowedResourceInstanceTypeList = getComponentAllowedList(ComponentTypeEnum.SERVICE, null);
         if (CollectionUtils.isEmpty(allowedResourceInstanceTypeList)) {
             return false;
         }
@@ -62,13 +59,11 @@ public class ContainerInstanceTypesData {
      * Checks if a resource instance type is allowed for a resource component.
      *
      * @param containerComponentResourceType the container component type that the instance will be added
-     * @param resourceToCheck the resource instance type that will be added to the container component
+     * @param resourceToCheck                the resource instance type that will be added to the container component
      * @return {@code true} if the resource instance is allowed in the container component, {@code false} otherwise
      */
-    public boolean isAllowedForResourceComponent(final ResourceTypeEnum containerComponentResourceType,
-                                                 final ResourceTypeEnum resourceToCheck) {
-        final List<String> allowedResourceInstanceTypeList =
-            getComponentAllowedList(ComponentTypeEnum.RESOURCE, containerComponentResourceType);
+    public boolean isAllowedForResourceComponent(final ResourceTypeEnum containerComponentResourceType, final ResourceTypeEnum resourceToCheck) {
+        final List<String> allowedResourceInstanceTypeList = getComponentAllowedList(ComponentTypeEnum.RESOURCE, containerComponentResourceType);
         if (CollectionUtils.isEmpty(allowedResourceInstanceTypeList)) {
             return false;
         }
@@ -78,18 +73,15 @@ public class ContainerInstanceTypesData {
     /**
      * Gets the list of allowed component instances for a component type.
      *
-     * @param componentType the component type
+     * @param componentType        the component type
      * @param resourceInstanceType the instance type to check, or null for any instance
      * @return the list of allowed component instances for the given component
      */
-    public List<String> getComponentAllowedList(final ComponentTypeEnum componentType,
-                                                final ResourceTypeEnum resourceInstanceType) {
-        final Map<String, List<String>> componentAllowedResourceTypeMap =
-            getComponentAllowedInstanceTypes().get(componentType.getValue());
+    public List<String> getComponentAllowedList(final ComponentTypeEnum componentType, final ResourceTypeEnum resourceInstanceType) {
+        final Map<String, List<String>> componentAllowedResourceTypeMap = getComponentAllowedInstanceTypes().get(componentType.getValue());
         if (MapUtils.isEmpty(componentAllowedResourceTypeMap)) {
             final String resourceTypeString = resourceInstanceType == null ? WILDCARD : resourceInstanceType.getValue();
-            LOGGER.warn("No '{}' instance resource type configuration found for '{}'",
-                componentType.getValue(), resourceTypeString);
+            LOGGER.warn("No '{}' instance resource type configuration found for '{}'", componentType.getValue(), resourceTypeString);
             return Collections.emptyList();
         }
         return getAllowedInstanceType(resourceInstanceType, componentAllowedResourceTypeMap);
@@ -112,11 +104,9 @@ public class ContainerInstanceTypesData {
         } else {
             allowedInstanceResourceType = instanceAllowedResourceTypeMap.get(resourceInstanceType.getValue());
         }
-
         if (CollectionUtils.isEmpty(allowedInstanceResourceType)) {
             return Collections.emptyList();
         }
-
         return allowedInstanceResourceType;
     }
 }

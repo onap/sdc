@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.Map;
@@ -35,5 +34,4 @@ public class UiServiceDataTransfer extends UiComponentDataTransfer {
     private Map<String, ArtifactDefinition> serviceApiArtifacts;
     private Map<String, ForwardingPathDataDefinition> forwardingPaths;
     private UiServiceMetadata metadata;
-
 }

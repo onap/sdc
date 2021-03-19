@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,98 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
+
+import static org.openecomp.sdc.be.dao.utils.CollectionUtils.safeGetList;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.dao.utils.CollectionUtils.safeGetList;
-
-
-
-public class PropertyDefinition extends PropertyDataDefinition
-        implements IOperationParameter, IComplexDefaultValue {
-
-
-    /**The enumeration presents the list of property names with specific behavior
-     * @author rbetzer
-     *
-     */
-    public enum PropertyNames {
-
-        MIN_INSTANCES("min_vf_module_instances", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
-        MAX_INSTANCES("max_vf_module_instances", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
-        INITIAL_COUNT("initial_count", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
-        VF_MODULE_LABEL("vf_module_label", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_RESOURCE_LEVEL),
-        VF_MODULE_DESCRIPTION("vf_module_description", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_RESOURCE_LEVEL),
-        NETWORK_ROLE("network_role", GroupInstancePropertyValueUpdateBehavior.NOT_RELEVANT),
-        AVAILABILTY_ZONE_COUNT("availability_zone_count", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
-        VFC_LIST("vfc_list", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL);
-
-        private String propertyName;
-        private GroupInstancePropertyValueUpdateBehavior updateBehavior;
-
-        PropertyNames(String propertyName,GroupInstancePropertyValueUpdateBehavior updateBehavior){
-            this.propertyName = propertyName;
-            this.updateBehavior = updateBehavior;
-        }
-
-        public String getPropertyName() {
-            return propertyName;
-        }
-
-        public GroupInstancePropertyValueUpdateBehavior getUpdateBehavior() {
-            return updateBehavior;
-        }
-        /**
-         * finds PropertyNames according received string name
-         * @param name of the property
-         * @return PropertyNames found by received property name
-         */
-        public static PropertyNames findName(String name){
-            for (PropertyNames e : PropertyNames.values()) {
-                if (e.getPropertyName().equals(name)) {
-                    return e;
-                }
-            }
-            return null;
-        }
-    }
-    /**
-     * The enumeration presents the list of highest levels for which update property value is allowed
-     * @author nsheshukov
-     *
-     */
-    public enum GroupInstancePropertyValueUpdateBehavior{
-        NOT_RELEVANT("NOT_RELEVANT", -1),
-        UPDATABLE_ON_RESOURCE_LEVEL("UPDATABLE_ON_VF_LEVEL", 0),
-        UPDATABLE_ON_SERVICE_LEVEL("UPDATABLE_ON_SERVICE_LEVEL", 1);
-
-        String levelName;
-        int levelNumber;
-
-        GroupInstancePropertyValueUpdateBehavior(String name, int levelNumber){
-            this.levelName = name;
-            this.levelNumber = levelNumber;
-        }
-
-        public String getLevelName() {
-            return levelName;
-        }
-
-        public int getLevelNumber() {
-            return levelNumber;
-        }
-    }
+public class PropertyDefinition extends PropertyDataDefinition implements IOperationParameter, IComplexDefaultValue {
 
     private List<PropertyConstraint> constraints;
 
@@ -127,14 +50,10 @@ public class PropertyDefinition extends PropertyDataDefinition
     }
 
     public List<PropertyConstraint> getConstraints() {
-        if(CollectionUtils.isEmpty(constraints)){
+        if (CollectionUtils.isEmpty(constraints)) {
             constraints = deserializePropertyConstraints(findConstraints());
         }
         return constraints;
-    }
-
-    public List<PropertyConstraint> safeGetConstraints() {
-        return safeGetList(constraints);
     }
 
     public void setConstraints(List<PropertyConstraint> constraints) {
@@ -142,18 +61,22 @@ public class PropertyDefinition extends PropertyDataDefinition
         this.constraints = constraints;
     }
 
+    public List<PropertyConstraint> safeGetConstraints() {
+        return safeGetList(constraints);
+    }
+
     private List<PropertyConstraint> deserializePropertyConstraints(List<String> constraints) {
-        if(CollectionUtils.isNotEmpty(constraints)){
+        if (CollectionUtils.isNotEmpty(constraints)) {
             Type constraintType = new TypeToken<PropertyConstraint>() {
             }.getType();
             Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
-            return constraints.stream().map(c -> (PropertyConstraint)gson.fromJson(c, constraintType)).collect(Collectors.toList());
+            return constraints.stream().map(c -> (PropertyConstraint) gson.fromJson(c, constraintType)).collect(Collectors.toList());
         }
         return null;
     }
 
     private List<String> serializePropertyConstraints(List<PropertyConstraint> constraints) {
-        if(CollectionUtils.isNotEmpty(constraints)){
+        if (CollectionUtils.isNotEmpty(constraints)) {
             Type constraintType = new TypeToken<PropertyConstraint>() {
             }.getType();
             Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintSerialiser()).create();
@@ -163,10 +86,10 @@ public class PropertyDefinition extends PropertyDataDefinition
     }
 
     private List<String> findConstraints() {
-        if(CollectionUtils.isNotEmpty(getPropertyConstraints())){
+        if (CollectionUtils.isNotEmpty(getPropertyConstraints())) {
             return getPropertyConstraints();
         }
-        if(getSchemaProperty()!= null){
+        if (getSchemaProperty() != null) {
             return getSchemaProperty().getPropertyConstraints();
         }
         return null;
@@ -174,8 +97,7 @@ public class PropertyDefinition extends PropertyDataDefinition
 
     @Override
     public String toString() {
-        return  "PropertyDefinition [ " + super.toString() + ", name=" + getName() + ", constraints="
-                + constraints + "]]";
+        return "PropertyDefinition [ " + super.toString() + ", name=" + getName() + ", constraints=" + constraints + "]]";
     }
 
     @Override
@@ -194,24 +116,104 @@ public class PropertyDefinition extends PropertyDataDefinition
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PropertyDefinition other = (PropertyDefinition) obj;
         if (constraints == null) {
-            if (other.constraints != null)
+            if (other.constraints != null) {
                 return false;
-        } else if (!constraints.equals(other.constraints))
+            }
+        } else if (!constraints.equals(other.constraints)) {
             return false;
+        }
         if (getName() == null) {
-            if (other.getName() != null)
+            if (other.getName() != null) {
                 return false;
-        } else if (!getName().equals(other.getName()))
+            }
+        } else if (!getName().equals(other.getName())) {
             return false;
+        }
         return true;
     }
 
+    /**
+     * The enumeration presents the list of property names with specific behavior
+     *
+     * @author rbetzer
+     */
+    public enum PropertyNames {
+        // @formatter:off
+        MIN_INSTANCES("min_vf_module_instances", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+        MAX_INSTANCES("max_vf_module_instances", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+        INITIAL_COUNT("initial_count", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+        VF_MODULE_LABEL("vf_module_label", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_RESOURCE_LEVEL),
+        VF_MODULE_DESCRIPTION("vf_module_description", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_RESOURCE_LEVEL),
+        NETWORK_ROLE("network_role", GroupInstancePropertyValueUpdateBehavior.NOT_RELEVANT),
+        AVAILABILTY_ZONE_COUNT("availability_zone_count", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+        VFC_LIST("vfc_list", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL);
+        // @formatter:on
+
+        private String propertyName;
+        private GroupInstancePropertyValueUpdateBehavior updateBehavior;
+
+        PropertyNames(String propertyName, GroupInstancePropertyValueUpdateBehavior updateBehavior) {
+            this.propertyName = propertyName;
+            this.updateBehavior = updateBehavior;
+        }
+
+        /**
+         * finds PropertyNames according received string name
+         *
+         * @param name of the property
+         * @return PropertyNames found by received property name
+         */
+        public static PropertyNames findName(String name) {
+            for (PropertyNames e : PropertyNames.values()) {
+                if (e.getPropertyName().equals(name)) {
+                    return e;
+                }
+            }
+            return null;
+        }
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public GroupInstancePropertyValueUpdateBehavior getUpdateBehavior() {
+            return updateBehavior;
+        }
+    }
+
+    /**
+     * The enumeration presents the list of highest levels for which update property value is allowed
+     *
+     * @author nsheshukov
+     */
+    public enum GroupInstancePropertyValueUpdateBehavior {
+        NOT_RELEVANT("NOT_RELEVANT", -1), UPDATABLE_ON_RESOURCE_LEVEL("UPDATABLE_ON_VF_LEVEL", 0), UPDATABLE_ON_SERVICE_LEVEL(
+            "UPDATABLE_ON_SERVICE_LEVEL", 1);
+        String levelName;
+        int levelNumber;
+
+        GroupInstancePropertyValueUpdateBehavior(String name, int levelNumber) {
+            this.levelName = name;
+            this.levelNumber = levelNumber;
+        }
+
+        public String getLevelName() {
+            return levelName;
+        }
+
+        public int getLevelNumber() {
+            return levelNumber;
+        }
+    }
 }

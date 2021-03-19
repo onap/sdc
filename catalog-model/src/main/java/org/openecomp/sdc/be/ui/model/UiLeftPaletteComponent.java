@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,6 +34,7 @@ public class UiLeftPaletteComponent implements ICategorizedElement {
 
     private final String uniqueId;
     private final String name; // archiveName
+
     private final String version; // archiveVersion
     private final String description;
     private final List<String> tags;

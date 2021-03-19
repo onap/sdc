@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
@@ -29,7 +28,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
 @Setter
-public class ComponentInstOutputsMap  {
+public class ComponentInstOutputsMap {
 
     private Map<String, List<ComponentInstanceAttribOutput>> componentInstanceOutputsMap;
     private Map<String, List<ComponentInstanceAttribOutput>> componentInstanceAttributes;
@@ -56,5 +55,4 @@ public class ComponentInstOutputsMap  {
     public Map<String, List<ComponentInstanceAttribOutput>> getComponentInstanceAttributes() {
         return componentInstanceAttributes == null ? new HashMap<>() : componentInstanceAttributes;
     }
-
 }

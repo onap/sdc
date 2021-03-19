@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,24 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.validators;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
+import java.io.StringReader;
+import java.util.Map;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.io.StringReader;
-import java.util.Map;
-
 public class JsonValidator implements PropertyTypeValidator {
 
-    private static JsonValidator jsonValidator = new JsonValidator();
-
     private static final Logger log = Logger.getLogger(JsonValidator.class.getName());
-
+    private static JsonValidator jsonValidator = new JsonValidator();
     private static JsonParser jsonParser = new JsonParser();
 
     public static JsonValidator getInstance() {
@@ -43,7 +39,6 @@ public class JsonValidator implements PropertyTypeValidator {
 
     @Override
     public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
-
         if (value == null || value.isEmpty()) {
             return true;
         }
@@ -57,7 +52,6 @@ public class JsonValidator implements PropertyTypeValidator {
             return false;
         }
         return true;
-
     }
 
     @Override

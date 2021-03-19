@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.Collections;
@@ -99,5 +98,4 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     public boolean isCreatedFromCsar() {
         return CreatedFrom.CSAR.equals(this.getCreatedFrom());
     }
-
 }

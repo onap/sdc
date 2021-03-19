@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.ArrayList;
@@ -39,5 +38,4 @@ public class OperationUi {
         }
         inputs.add(input);
     }
-
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,23 +24,17 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.resources.data.UserData;
+
 @JsonInclude
 public class User {
 
     public static final String FORCE_DELETE_HEADER_FLAG = "FORCE_DELETE";
-
     private String firstName;
-
     private String lastName;
-
     private String userId;
-
     private String email;
-
     private String role;
-
     private Long lastLoginTime;
-
     private UserStatusEnum status = UserStatusEnum.ACTIVE;
 
     public User() {
@@ -52,12 +45,11 @@ public class User {
     }
 
     public User(UserData userDate) {
-        this(userDate.getFirstName(), userDate.getLastName(), userDate.getUserId(), userDate.getEmail(),
-                userDate.getRole(), userDate.getLastLoginTime());
+        this(userDate.getFirstName(), userDate.getLastName(), userDate.getUserId(), userDate.getEmail(), userDate.getRole(),
+            userDate.getLastLoginTime());
     }
 
-    public User(String firstName, String lastName, String userId, String emailAddress, String role,
-            Long lastLoginTime) {
+    public User(String firstName, String lastName, String userId, String emailAddress, String role, Long lastLoginTime) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userId = userId;
@@ -66,22 +58,20 @@ public class User {
         this.lastLoginTime = lastLoginTime;
     }
 
+    public User(User aUser) {
+        this(aUser.getFirstName(), aUser.getLastName(), aUser.getUserId(), aUser.getEmail(), aUser.getRole(), aUser.getLastLoginTime());
+    }
+
     public void copyData(User other) {
-		if(other == null) {
-			return;
-		}
+        if (other == null) {
+            return;
+        }
         this.firstName = other.getFirstName();
         this.lastName = other.getLastName();
         this.userId = other.getUserId();
         this.email = other.getEmail();
         this.role = other.getRole();
         this.lastLoginTime = other.getLastLoginTime();
-
-    }
-
-    public User(User aUser) {
-        this(aUser.getFirstName(), aUser.getLastName(), aUser.getUserId(), aUser.getEmail(), aUser.getRole(),
-                aUser.getLastLoginTime());
     }
 
     public String getFirstName() {
@@ -133,12 +123,12 @@ public class User {
         this.lastLoginTime = now.getMillis();
     }
 
-    public void setLastLoginTime(Long time) {
-        this.lastLoginTime = time;
-    }
-
     public Long getLastLoginTime() {
         return this.lastLoginTime;
+    }
+
+    public void setLastLoginTime(Long time) {
+        this.lastLoginTime = time;
     }
 
     @Override
@@ -156,43 +146,58 @@ public class User {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         User other = (User) obj;
         if (userId == null) {
-            if (other.userId != null)
+            if (other.userId != null) {
                 return false;
-        } else if (!userId.equals(other.userId))
+            }
+        } else if (!userId.equals(other.userId)) {
             return false;
+        }
         if (email == null) {
-            if (other.email != null)
+            if (other.email != null) {
                 return false;
-        } else if (!email.equals(other.email))
+            }
+        } else if (!email.equals(other.email)) {
             return false;
+        }
         if (firstName == null) {
-            if (other.firstName != null)
+            if (other.firstName != null) {
                 return false;
-        } else if (!firstName.equals(other.firstName))
+            }
+        } else if (!firstName.equals(other.firstName)) {
             return false;
+        }
         if (lastName == null) {
-            if (other.lastName != null)
+            if (other.lastName != null) {
                 return false;
-        } else if (!lastName.equals(other.lastName))
+            }
+        } else if (!lastName.equals(other.lastName)) {
             return false;
+        }
         if (role == null) {
-            if (other.role != null)
+            if (other.role != null) {
                 return false;
-        } else if (!role.equals(other.role))
+            }
+        } else if (!role.equals(other.role)) {
             return false;
+        }
         if (lastLoginTime == null) {
-            if (other.lastLoginTime != null)
+            if (other.lastLoginTime != null) {
                 return false;
-        } else if (!lastLoginTime.equals(other.lastLoginTime))
+            }
+        } else if (!lastLoginTime.equals(other.lastLoginTime)) {
             return false;
+        }
         return true;
     }
 
@@ -206,8 +211,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [firstName=" + firstName + ", lastName=" + lastName + ", userId=" + userId + ", email=" + email
-                + ", role=" + role + ", last login time=" + lastLoginTime + "]";
+        return "User [firstName=" + firstName + ", lastName=" + lastName + ", userId=" + userId + ", email=" + email + ", role=" + role
+            + ", last login time=" + lastLoginTime + "]";
     }
-
 }

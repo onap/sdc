@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,15 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
+import javax.validation.constraints.NotNull;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import javax.validation.constraints.NotNull;
-
 public interface TypeOperations<T extends ToscaDataDefinition> {
+
+    static <T> Either<T, StorageOperationStatus> mapOkStatus(StorageOperationStatus status, T obj) {
+        return status != StorageOperationStatus.OK ? Either.right(status) : Either.left(obj);
+    }
 
     T addType(T newTypeDefinition);
 
@@ -33,12 +35,7 @@ public interface TypeOperations<T extends ToscaDataDefinition> {
 
     T getLatestType(String uniqueId);
 
-    boolean isSameType(@NotNull T type1,@NotNull T type2);
+    boolean isSameType(@NotNull T type1, @NotNull T type2);
 
     T updateType(T currentTypeDefinition, T newTypeDefinition);
-    
-    static <T> Either<T, StorageOperationStatus> mapOkStatus(StorageOperationStatus status, T obj) {
-        return status != StorageOperationStatus.OK? Either.right(status) : Either.left(obj);
-    }
-
 }

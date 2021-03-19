@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.category;
 
 import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
@@ -30,5 +29,4 @@ public class GroupingDefinition extends GroupingDataDefinition {
     public GroupingDefinition(GroupingDataDefinition g) {
         super(g);
     }
-
 }

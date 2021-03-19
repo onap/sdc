@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
+import java.util.Map;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-
-import java.util.Map;
 
 public interface ICapabilityTypeOperation {
 
@@ -34,10 +32,11 @@ public interface ICapabilityTypeOperation {
      */
     public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition);
 
-    public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition, boolean inTransaction);
-    
-    
-    public Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(CapabilityTypeDefinition capabilityTypeDefNew, CapabilityTypeDefinition capabilityTypeDefOld);
+    public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition,
+                                                                                      boolean inTransaction);
+
+    public Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(CapabilityTypeDefinition capabilityTypeDefNew,
+                                                                                         CapabilityTypeDefinition capabilityTypeDefOld);
 
     /**
      * @param uniqueId
@@ -46,5 +45,6 @@ public interface ICapabilityTypeOperation {
     public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId);
 
     public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId, boolean inTransaction);
+
     Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> getAllCapabilityTypes();
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
@@ -30,24 +29,18 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 @Setter
 public class ComponentInstanceAttribute extends AttributeDefinition implements IComponentInstanceConnectedElement, IAttributeOutputCommon {
 
+    /**
+     * The unique id of the property value on graph
+     */
+    private String valueUniqueUid;
+    private List<String> path;
+    private List<PropertyRule> rules;
+    private String componentInstanceName;
+    private String componentInstanceId;
     public ComponentInstanceAttribute(final AttributeDataDefinition value) {
         super(value);
     }
     public ComponentInstanceAttribute() {
         super();
     }
-
-    /**
-     * The unique id of the property value on graph
-     */
-    private String valueUniqueUid;
-
-    private List<String> path;
-
-    private List<PropertyRule> rules ;
-
-    private String componentInstanceName;
-
-    private String componentInstanceId;
-
 }

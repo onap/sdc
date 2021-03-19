@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.category;
 
 import java.util.ArrayList;
@@ -49,5 +48,4 @@ public class SubCategoryDefinition extends SubCategoryDataDefinition {
         }
         groupings.add(groupingDefinition);
     }
-
 }

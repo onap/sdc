@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,5 +41,4 @@ public class CatalogUpdateTimestamp {
     public static CatalogUpdateTimestamp buildDummyCatalogUpdateTimestamp() {
         return new CatalogUpdateTimestamp(0L, System.currentTimeMillis());
     }
-
 }

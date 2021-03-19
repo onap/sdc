@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception;
 
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;

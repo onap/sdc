@@ -17,16 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
-
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 
 public class ArtifactDefinition extends ArtifactDataDefinition {
 
@@ -34,16 +32,7 @@ public class ArtifactDefinition extends ArtifactDataDefinition {
      * Base64 encoded Artifact file data
      */
     private byte[] payloadData;
-
     private Boolean isHeatParamUpdated = false;
-
-    public Boolean getHeatParamUpdated() {
-        return isHeatParamUpdated;
-    }
-
-    public void setHeatParamUpdated(Boolean heatParamUpdated) {
-        isHeatParamUpdated = heatParamUpdated;
-    }
 
     public ArtifactDefinition() {
     }
@@ -66,18 +55,26 @@ public class ArtifactDefinition extends ArtifactDataDefinition {
         setPayloadData(payloadData);
     }
 
-    public byte[] getPayloadData() {
-        return payloadData;
+    public Boolean getHeatParamUpdated() {
+        return isHeatParamUpdated;
     }
 
-    public void setPayload(byte[] payloadData) {
-        this.payloadData = payloadData;
+    public void setHeatParamUpdated(Boolean heatParamUpdated) {
+        isHeatParamUpdated = heatParamUpdated;
+    }
+
+    public byte[] getPayloadData() {
+        return payloadData;
     }
 
     public void setPayloadData(String payloadData) {
         if (payloadData != null) {
             this.payloadData = payloadData.getBytes();
         }
+    }
+
+    public void setPayload(byte[] payloadData) {
+        this.payloadData = payloadData;
     }
 
     public List<HeatParameterDefinition> getListHeatParameters() {
@@ -91,24 +88,20 @@ public class ArtifactDefinition extends ArtifactDataDefinition {
 
     public void setListHeatParameters(List<HeatParameterDefinition> properties) {
         List<HeatParameterDataDefinition> res = null;
-
         if (properties != null) {
             res = properties.stream().map(HeatParameterDataDefinition::new).collect(Collectors.toList());
         }
         super.setHeatParameters(res);
     }
 
-
-
-	public boolean checkEsIdExist() {
-		return (getEsId() != null) && (!getEsId().trim().isEmpty());
-	}
+    public boolean checkEsIdExist() {
+        return (getEsId() != null) && (!getEsId().trim().isEmpty());
+    }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-
         result = prime * result + Arrays.hashCode(payloadData);
         return result;
     }
@@ -125,13 +118,11 @@ public class ArtifactDefinition extends ArtifactDataDefinition {
             return false;
         }
         ArtifactDefinition other = (ArtifactDefinition) obj;
-
         if (payloadData == null) {
             if (other.payloadData != null) {
                 return false;
             }
-        }
-        else if (!Arrays.equals(payloadData, other.payloadData)) {
+        } else if (!Arrays.equals(payloadData, other.payloadData)) {
             return false;
         }
         return true;

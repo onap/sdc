@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
@@ -40,12 +46,9 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 @Component
 public class UpgradeOperation extends BaseOperation {
+
     private static final Logger log = Logger.getLogger(UpgradeOperation.class.getName());
 
     public Either<List<ComponentDependency>, StorageOperationStatus> getComponentDependencies(String componentId) {
@@ -55,14 +58,11 @@ public class UpgradeOperation extends BaseOperation {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexById.right().value()));
         }
         List<ComponentDependency> dependencies = new ArrayList<>();
-
         GraphVertex vertex = vertexById.left().value();
-
         StorageOperationStatus status = fillDependenciesByVertex(componentId, dependencies, vertex);
         if (status != StorageOperationStatus.OK) {
             return Either.right(status);
         }
-
         GraphVertex vertexToStart = vertex;
         Function<GraphVertex, Either<GraphVertex, JanusGraphOperationStatus>> getNextElement = vertexP -> janusGraphDao
             .getParentVertex(vertexP, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
@@ -71,15 +71,13 @@ public class UpgradeOperation extends BaseOperation {
             return Either.right(status);
         }
         vertex = vertexToStart;
-        getNextElement = vertexP -> janusGraphDao
-            .getChildVertex(vertexP, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
+        getNextElement = vertexP -> janusGraphDao.getChildVertex(vertexP, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
         status = handleVersionChain(componentId, dependencies, vertex, getNextElement);
-
         return status == StorageOperationStatus.OK ? Either.left(dependencies) : Either.right(status);
     }
 
-    private StorageOperationStatus handleVersionChain(String componentId, List<ComponentDependency> dependencies, GraphVertex vertexToStart, Function<GraphVertex, Either<GraphVertex, JanusGraphOperationStatus>> getNextElement) {
-
+    private StorageOperationStatus handleVersionChain(String componentId, List<ComponentDependency> dependencies, GraphVertex vertexToStart,
+                                                      Function<GraphVertex, Either<GraphVertex, JanusGraphOperationStatus>> getNextElement) {
         StorageOperationStatus status;
         boolean nextInChain = true;
         GraphVertex vertex = vertexToStart;
@@ -101,9 +99,8 @@ public class UpgradeOperation extends BaseOperation {
 
     private StorageOperationStatus fillDependenciesByVertex(String componentId, List<ComponentDependency> dependencies, GraphVertex vertex) {
         StorageOperationStatus status = StorageOperationStatus.OK;
-        if ( needToAddToDependency(vertex) ) {
+        if (needToAddToDependency(vertex)) {
             ComponentDependency dependency = fillDataFromVertex(vertex, null, null);
-
             List<EdgeLabelEnum> dependList = Arrays.asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
             for (EdgeLabelEnum label : dependList) {
                 status = fillDependenciesByLabel(componentId, vertex, dependency, label);
@@ -119,21 +116,24 @@ public class UpgradeOperation extends BaseOperation {
         return status;
     }
 
-    private boolean needToAddToDependency(GraphVertex vertex){
-        Boolean isDeleted = (Boolean) vertex.getMetadataProperty(GraphPropertyEnum.IS_DELETED);     
+    private boolean needToAddToDependency(GraphVertex vertex) {
+        Boolean isDeleted = (Boolean) vertex.getMetadataProperty(GraphPropertyEnum.IS_DELETED);
         Boolean isArchived = (Boolean) vertex.getMetadataProperty(GraphPropertyEnum.IS_ARCHIVED);
         return !Boolean.TRUE.equals(isDeleted) && !Boolean.TRUE.equals(isArchived);
     }
 
-    private StorageOperationStatus fillDependenciesByLabel(String componentId, GraphVertex vertex, ComponentDependency dependency, EdgeLabelEnum label) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> parentVertices = janusGraphDao.getParentVertices(vertex, label, JsonParseFlagEnum.ParseAll);
+    private StorageOperationStatus fillDependenciesByLabel(String componentId, GraphVertex vertex, ComponentDependency dependency,
+                                                           EdgeLabelEnum label) {
+        Either<List<GraphVertex>, JanusGraphOperationStatus> parentVertices = janusGraphDao
+            .getParentVertices(vertex, label, JsonParseFlagEnum.ParseAll);
         if (parentVertices.isRight() && parentVertices.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
-            log.debug("Failed to fetch parent verticies by label INSTANCE_OF for vertex with id {} error {}", componentId, parentVertices.right().value());
+            log.debug("Failed to fetch parent verticies by label INSTANCE_OF for vertex with id {} error {}", componentId,
+                parentVertices.right().value());
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(parentVertices.right().value());
         }
         if (parentVertices.isLeft()) {
-            List<ComponentDependency> existIn = new ArrayList<>( );
-            parentVertices.left().value().forEach(v -> handleHighestVersion(vertex, label, existIn, v) );
+            List<ComponentDependency> existIn = new ArrayList<>();
+            parentVertices.left().value().forEach(v -> handleHighestVersion(vertex, label, existIn, v));
             dependency.addDependencies(existIn);
         }
         return StorageOperationStatus.OK;
@@ -141,41 +141,42 @@ public class UpgradeOperation extends BaseOperation {
 
     private void handleHighestVersion(GraphVertex vertexOrigin, EdgeLabelEnum label, List<ComponentDependency> exisIn, GraphVertex containerVertex) {
         Boolean isHighest = (Boolean) containerVertex.getMetadataProperty(GraphPropertyEnum.IS_HIGHEST_VERSION);
-        if ( isHighest && needToAddToDependency(containerVertex) ) {
+        if (isHighest && needToAddToDependency(containerVertex)) {
             JanusGraphVertex janusGraphVertex = containerVertex.getVertex();
             Iterator<Edge> edges = janusGraphVertex.edges(Direction.OUT, EdgeLabelEnum.VERSION.name());
             //verify that it is a last version - highest by version number
-            if ( edges == null || !edges.hasNext() ){
+            if (edges == null || !edges.hasNext()) {
                 ComponentDependency container = fillDataFromVertex(containerVertex, vertexOrigin.getUniqueId(), label);
                 boolean addToDependency = true;
                 if (label == EdgeLabelEnum.ALLOTTED_OF) {
                     //in case of not full allotted chain not add to dependency list
                     addToDependency = findAllottedChain(containerVertex, container);
                 }
-                if ( addToDependency ){
+                if (addToDependency) {
                     exisIn.add(container);
-                 }
+                }
             }
         }
     }
 
     private boolean findAllottedChain(GraphVertex vertex, ComponentDependency container) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> parentVertecies = janusGraphDao.getParentVertices(vertex, EdgeLabelEnum.INSTANCE_OF, JsonParseFlagEnum.ParseAll);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> parentVertecies = janusGraphDao
+            .getParentVertices(vertex, EdgeLabelEnum.INSTANCE_OF, JsonParseFlagEnum.ParseAll);
         if (parentVertecies.isLeft()) {
             List<ComponentDependency> existIn = new ArrayList<>();
             parentVertecies.left().value().forEach(v -> {
                 Boolean isHighest = (Boolean) v.getMetadataProperty(GraphPropertyEnum.IS_HIGHEST_VERSION);
-                if ( isHighest && needToAddToDependency(v) ) {
-                   JanusGraphVertex janusGraphVertex = v.getVertex();
-                   Iterator<Edge> edges = janusGraphVertex.edges(Direction.OUT, EdgeLabelEnum.VERSION.name());
-                   //verify that it is a last version - highest by version number
-                   if ( edges == null || !edges.hasNext() ){
-                       ComponentDependency parentContainer = fillDataFromVertex(v, vertex.getUniqueId(), EdgeLabelEnum.INSTANCE_OF);
-                       existIn.add(parentContainer);
-                   }
+                if (isHighest && needToAddToDependency(v)) {
+                    JanusGraphVertex janusGraphVertex = v.getVertex();
+                    Iterator<Edge> edges = janusGraphVertex.edges(Direction.OUT, EdgeLabelEnum.VERSION.name());
+                    //verify that it is a last version - highest by version number
+                    if (edges == null || !edges.hasNext()) {
+                        ComponentDependency parentContainer = fillDataFromVertex(v, vertex.getUniqueId(), EdgeLabelEnum.INSTANCE_OF);
+                        existIn.add(parentContainer);
+                    }
                 }
             });
-            if ( !existIn.isEmpty() ){
+            if (!existIn.isEmpty()) {
                 container.setDependencies(existIn);
                 return true;
             }
@@ -191,7 +192,6 @@ public class UpgradeOperation extends BaseOperation {
         container.setType((String) v.getMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE));
         container.setIcon((String) v.getJsonMetadataField(JsonPresentationFields.ICON));
         container.setState((String) v.getMetadataProperty(GraphPropertyEnum.STATE));
-
         if (edgeLabel == EdgeLabelEnum.PROXY_OF || edgeLabel == EdgeLabelEnum.ALLOTTED_OF) {
             findInstanceNames(v, originId, edgeLabel, container);
         }
@@ -208,17 +208,11 @@ public class UpgradeOperation extends BaseOperation {
             JanusGraphVertex inVertex = (JanusGraphVertex) edge.inVertex();
             String id = (String) janusGraphDao.getProperty(inVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
             if (id.equals(originId)) {
-                List<String> instanceOnEdge = (List<String>) janusGraphDao
-                    .getProperty(edge, EdgePropertyEnum.INSTANCES);
+                List<String> instanceOnEdge = (List<String>) janusGraphDao.getProperty(edge, EdgePropertyEnum.INSTANCES);
                 Map<String, ComponentInstanceDataDefinition> componentInstances = compositionDataDefinition.getComponentInstances();
-
                 if (componentInstances != null) {
-                    List<String> ciNames = componentInstances
-                            .values()
-                            .stream()
-                            .filter(ci -> instanceOnEdge.contains(ci.getUniqueId()))
-                            .map(ComponentInstanceDataDefinition::getName)
-                            .collect(Collectors.toList());
+                    List<String> ciNames = componentInstances.values().stream().filter(ci -> instanceOnEdge.contains(ci.getUniqueId()))
+                        .map(ComponentInstanceDataDefinition::getName).collect(Collectors.toList());
                     if (ciNames != null && !ciNames.isEmpty()) {
                         container.setInstanceNames(ciNames);
                         break;
@@ -229,22 +223,20 @@ public class UpgradeOperation extends BaseOperation {
     }
 
     public List<String> getInstanceIdFromAllottedEdge(String resourceId, String serviceInvariantUUID) {
-      Either<GraphVertex, JanusGraphOperationStatus> vertexById = janusGraphDao.getVertexById(resourceId);
-      if ( vertexById.isLeft() ){
-          GraphVertex vertexG = vertexById.left().value();
-          JanusGraphVertex vertex = vertexG.getVertex();
-          Iterator<Edge> edges = vertex.edges(Direction.OUT, EdgeLabelEnum.ALLOTTED_OF.name());
-          while ( edges != null && edges.hasNext() ){
-              Edge edge = edges.next();
-              JanusGraphVertex inVertex = (JanusGraphVertex)edge.inVertex();
-              String vertexInInvUUID = (String) janusGraphDao
-                  .getProperty(inVertex, GraphPropertyEnum.INVARIANT_UUID.getProperty());
-              if ( vertexInInvUUID.equals(serviceInvariantUUID) ){
-                  return (List<String>) janusGraphDao.getProperty(edge, EdgePropertyEnum.INSTANCES) ;
-              }
-          }
-      }
-      return new ArrayList<>();
+        Either<GraphVertex, JanusGraphOperationStatus> vertexById = janusGraphDao.getVertexById(resourceId);
+        if (vertexById.isLeft()) {
+            GraphVertex vertexG = vertexById.left().value();
+            JanusGraphVertex vertex = vertexG.getVertex();
+            Iterator<Edge> edges = vertex.edges(Direction.OUT, EdgeLabelEnum.ALLOTTED_OF.name());
+            while (edges != null && edges.hasNext()) {
+                Edge edge = edges.next();
+                JanusGraphVertex inVertex = (JanusGraphVertex) edge.inVertex();
+                String vertexInInvUUID = (String) janusGraphDao.getProperty(inVertex, GraphPropertyEnum.INVARIANT_UUID.getProperty());
+                if (vertexInInvUUID.equals(serviceInvariantUUID)) {
+                    return (List<String>) janusGraphDao.getProperty(edge, EdgePropertyEnum.INSTANCES);
+                }
+            }
+        }
+        return new ArrayList<>();
     }
-
 }

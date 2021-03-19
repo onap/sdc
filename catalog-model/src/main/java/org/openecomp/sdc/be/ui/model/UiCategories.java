@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
@@ -32,5 +31,4 @@ public class UiCategories {
     private List<CategoryDefinition> resourceCategories;
     private List<CategoryDefinition> serviceCategories;
     private List<CategoryDefinition> productCategories;
-
 }

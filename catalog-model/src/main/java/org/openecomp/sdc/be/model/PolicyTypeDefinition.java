@@ -17,12 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
-import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
-
 import java.util.List;
+import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 
 /**
  * Specifies the policy type that the Node Type exposes.
@@ -31,20 +29,20 @@ public class PolicyTypeDefinition extends PolicyTypeDataDefinition {
 
     private List<PropertyDefinition> properties;
 
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
     public PolicyTypeDefinition() {
         super();
     }
 
     public PolicyTypeDefinition(PolicyTypeDataDefinition p) {
         super(p);
+    }
+
+    public List<PropertyDefinition> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<PropertyDefinition> properties) {
+        this.properties = properties;
     }
 
     @Override

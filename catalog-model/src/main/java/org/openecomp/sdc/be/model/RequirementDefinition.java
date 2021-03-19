@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;

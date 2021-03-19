@@ -17,9 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.utils;
 
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
@@ -28,9 +29,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ExternalReferencesOp
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by yavivi on 12/02/2018.
@@ -53,30 +51,25 @@ public class IdMapper {
         try {
             Map<String, CompositionDataDefinition> jsonComposition = (Map<String, CompositionDataDefinition>) serviceVertex.getJson();
             CompositionDataDefinition compositionDataDefinition = jsonComposition.get(JsonConstantKeysEnum.COMPOSITION.getValue());
-
             Optional<ComponentInstanceDataDefinition> componentInstanceDataDefinitionOptional;
             if (fromCompName) {
-                componentInstanceDataDefinitionOptional = compositionDataDefinition.getComponentInstances().values()
-                    .stream().filter(c -> c.getNormalizedName().equals(componentUniqueIdOrName)).findAny();
-
+                componentInstanceDataDefinitionOptional = compositionDataDefinition.getComponentInstances().values().stream()
+                    .filter(c -> c.getNormalizedName().equals(componentUniqueIdOrName)).findAny();
                 if (componentInstanceDataDefinitionOptional.isPresent()) {
                     result = componentInstanceDataDefinitionOptional.get().getUniqueId();
                     log.debug("Component Instance Unique Id = {}", result);
                 }
             } else {
-                componentInstanceDataDefinitionOptional = compositionDataDefinition.getComponentInstances().values()
-                    .stream().filter(c -> c.getUniqueId().equals(componentUniqueIdOrName)).findAny();
-
+                componentInstanceDataDefinitionOptional = compositionDataDefinition.getComponentInstances().values().stream()
+                    .filter(c -> c.getUniqueId().equals(componentUniqueIdOrName)).findAny();
                 if (componentInstanceDataDefinitionOptional.isPresent()) {
                     result = componentInstanceDataDefinitionOptional.get().getNormalizedName();
                     log.debug("Component Instance Normalized Name = {}", result);
                 }
             }
         } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.DATA_ERROR, "Failed to map UUID or Normalized name of {}",
-                componentUniqueIdOrName, e);
+            log.error(EcompLoggerErrorCode.DATA_ERROR, "Failed to map UUID or Normalized name of {}", componentUniqueIdOrName, e);
         }
         return result;
     }
-
 }

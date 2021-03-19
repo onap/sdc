@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import static java.util.Collections.emptyList;
@@ -92,9 +91,9 @@ public abstract class Component implements PropertiesOwner {
     private Map<String, InterfaceDefinition> interfaces;
     private List<DataTypeDefinition> dataTypes;
     private SubstitutionFilterDataDefinition substitutionFilter;
-    
-    public void setCategorySpecificMetadata(final Map<String, String> categorySpecificMetadata) {
-        componentMetadataDefinition.getMetadataDataDefinition().setCategorySpecificMetadata(categorySpecificMetadata);
+
+    protected Component(ComponentMetadataDefinition componentMetadataDefinition) {
+        this.componentMetadataDefinition = componentMetadataDefinition;
     }
 
     public Map<String, String> getCategorySpecificMetadata() {
@@ -102,8 +101,8 @@ public abstract class Component implements PropertiesOwner {
         return categorySpecificMetadata == null ? Collections.emptyMap() : categorySpecificMetadata;
     }
 
-    protected Component(ComponentMetadataDefinition componentMetadataDefinition) {
-        this.componentMetadataDefinition = componentMetadataDefinition;
+    public void setCategorySpecificMetadata(final Map<String, String> categorySpecificMetadata) {
+        componentMetadataDefinition.getMetadataDataDefinition().setCategorySpecificMetadata(categorySpecificMetadata);
     }
 
     @JsonIgnore
@@ -302,12 +301,12 @@ public abstract class Component implements PropertiesOwner {
         return this.componentMetadataDefinition.getMetadataDataDefinition().getComponentType();
     }
 
-    public boolean isService() {
-        return getComponentType() == ComponentTypeEnum.SERVICE;
-    }
-
     public void setComponentType(ComponentTypeEnum componentType) {
         this.componentMetadataDefinition.getMetadataDataDefinition().setComponentType(componentType);
+    }
+
+    public boolean isService() {
+        return getComponentType() == ComponentTypeEnum.SERVICE;
     }
 
     public Map<String, List<CapabilityDefinition>> getCapabilities() {
@@ -330,19 +329,16 @@ public abstract class Component implements PropertiesOwner {
     }
 
     public Map<String, ArtifactDefinition> safeGetComponentInstanceDeploymentArtifacts(String componentInstanceId) {
-        return getComponentInstanceById(componentInstanceId).map(ComponentInstance::safeGetDeploymentArtifacts)
-            .orElse(emptyMap());
+        return getComponentInstanceById(componentInstanceId).map(ComponentInstance::safeGetDeploymentArtifacts).orElse(emptyMap());
     }
 
     public Map<String, ArtifactDefinition> safeGetComponentInstanceInformationalArtifacts(String componentInstanceId) {
-        return getComponentInstanceById(componentInstanceId).map(ComponentInstance::safeGetInformationalArtifacts)
-            .orElse(emptyMap());
+        return getComponentInstanceById(componentInstanceId).map(ComponentInstance::safeGetInformationalArtifacts).orElse(emptyMap());
     }
 
     public List<ArtifactDefinition> safeGetComponentInstanceHeatArtifacts(String componentInstanceId) {
         return safeGetComponentInstanceDeploymentArtifacts(componentInstanceId).values().stream()
-            .filter(artifact -> ArtifactTypeEnum.HEAT_ENV.getType().equals(artifact.getArtifactType()))
-            .collect(Collectors.toList());
+            .filter(artifact -> ArtifactTypeEnum.HEAT_ENV.getType().equals(artifact.getArtifactType())).collect(Collectors.toList());
     }
 
     public Map<String, List<ComponentInstanceProperty>> safeGetComponentInstancesProperties() {
@@ -358,8 +354,8 @@ public abstract class Component implements PropertiesOwner {
     }
 
     private Map<String, List<ComponentInstanceProperty>> findUiComponentInstancesProperties() {
-        List<String> instancesFromUi = componentInstances.stream().filter(i -> !i.isCreatedFromCsar())
-            .map(ComponentInstance::getUniqueId).collect(Collectors.toList());
+        List<String> instancesFromUi = componentInstances.stream().filter(i -> !i.isCreatedFromCsar()).map(ComponentInstance::getUniqueId)
+            .collect(Collectors.toList());
         return componentInstancesProperties.entrySet().stream().filter(e -> instancesFromUi.contains(e.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -373,8 +369,8 @@ public abstract class Component implements PropertiesOwner {
     }
 
     private Map<String, List<ComponentInstanceInput>> findUiComponentInstancesInputs() {
-        List<String> instancesFromUi = componentInstances.stream().filter(i -> !i.isCreatedFromCsar())
-            .map(ComponentInstance::getUniqueId).collect(Collectors.toList());
+        List<String> instancesFromUi = componentInstances.stream().filter(i -> !i.isCreatedFromCsar()).map(ComponentInstance::getUniqueId)
+            .collect(Collectors.toList());
         return componentInstancesInputs.entrySet().stream().filter(e -> instancesFromUi.contains(e.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -488,7 +484,6 @@ public abstract class Component implements PropertiesOwner {
         if (MapUtils.isEmpty(this.policies)) {
             this.policies = new HashMap<>();
         }
-
         this.policies.put(policyDefinition.getUniqueId(), policyDefinition);
     }
 
@@ -496,7 +491,6 @@ public abstract class Component implements PropertiesOwner {
         if (org.apache.commons.collections.CollectionUtils.isEmpty(this.properties)) {
             this.properties = new ArrayList<>();
         }
-
         this.properties.add(propertyDefinition);
     }
 
@@ -595,10 +589,8 @@ public abstract class Component implements PropertiesOwner {
         if (this.componentInstancesInputs == null) {
             return emptyPropsList;
         }
-        return this.componentInstances.stream().filter(ci -> ci.getName().equals(cmptInstanceName))
-            .map(ComponentInstance::getUniqueId)
-            .map(instanceId -> safeGetComponentInstanceEntity(instanceId, this.componentInstancesInputs)).findAny()
-            .orElse(emptyPropsList);
+        return this.componentInstances.stream().filter(ci -> ci.getName().equals(cmptInstanceName)).map(ComponentInstance::getUniqueId)
+            .map(instanceId -> safeGetComponentInstanceEntity(instanceId, this.componentInstancesInputs)).findAny().orElse(emptyPropsList);
     }
 
     private <T> List<T> safeGetComponentInstanceEntity(String cmptInstanceId, Map<String, List<T>> instanceEntities) {
@@ -615,8 +607,7 @@ public abstract class Component implements PropertiesOwner {
     }
 
     public String fetchGenericTypeToscaNameFromConfig() {
-        return ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes()
-            .get(this.assetType());
+        return ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get(this.assetType());
     }
 
     protected <A> Optional<A> getHeadOption(List<A> list) {
@@ -715,5 +706,4 @@ public abstract class Component implements PropertiesOwner {
         componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION, this.getCsarVersion());
         return componentMetadata;
     }
-
 }

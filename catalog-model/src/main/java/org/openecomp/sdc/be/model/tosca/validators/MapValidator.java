@@ -17,23 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.validators;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.JsonUtils;
-
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /*
  * Property Type Map correct usage:
@@ -53,12 +51,9 @@ Keys always need " " around them.
 */
 public class MapValidator implements PropertyTypeValidator {
 
-    private static MapValidator mapValidator = new MapValidator();
-
     private static final Logger log = Logger.getLogger(MapValidator.class.getName());
-
+    private static MapValidator mapValidator = new MapValidator();
     private static DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
-
     private static JsonParser jsonParser = new JsonParser();
 
     public static MapValidator getInstance() {
@@ -67,49 +62,42 @@ public class MapValidator implements PropertyTypeValidator {
 
     @Override
     public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
-
         if (StringUtils.isEmpty(value)) {
             return true;
         }
         if (innerType == null) {
             return false;
         }
-
         PropertyTypeValidator innerValidator;
         PropertyTypeValidator keyValidator = ToscaPropertyType.KEY.getValidator();
         ToscaPropertyType innerToscaType = ToscaPropertyType.isValidType(innerType);
-
         if (innerToscaType != null) {
             switch (innerToscaType) {
-            case STRING:
-                innerValidator = ToscaPropertyType.STRING.getValidator();
-                break;
-            case INTEGER:
-                innerValidator = ToscaPropertyType.INTEGER.getValidator();
-                break;
-            case FLOAT:
-                innerValidator = ToscaPropertyType.FLOAT.getValidator();
-                break;
-            case BOOLEAN:
-                innerValidator = ToscaPropertyType.BOOLEAN.getValidator();
-                break;
-            case JSON:
-                innerValidator = ToscaPropertyType.JSON.getValidator();
-                break;
-            default:
-                log.debug("inner Tosca Type is unknown. {}", innerToscaType);
-                return false;
+                case STRING:
+                    innerValidator = ToscaPropertyType.STRING.getValidator();
+                    break;
+                case INTEGER:
+                    innerValidator = ToscaPropertyType.INTEGER.getValidator();
+                    break;
+                case FLOAT:
+                    innerValidator = ToscaPropertyType.FLOAT.getValidator();
+                    break;
+                case BOOLEAN:
+                    innerValidator = ToscaPropertyType.BOOLEAN.getValidator();
+                    break;
+                case JSON:
+                    innerValidator = ToscaPropertyType.JSON.getValidator();
+                    break;
+                default:
+                    log.debug("inner Tosca Type is unknown. {}", innerToscaType);
+                    return false;
             }
-
         } else {
             log.debug("inner Tosca Type is: {}", innerType);
-
             boolean isValid = validateComplexInnerType(value, innerType, allDataTypes);
-            log.debug("Finish to validate value {} of map with inner type {}. result is {}",value,innerType,isValid);
+            log.debug("Finish to validate value {} of map with inner type {}. result is {}", value, innerType, isValid);
             return isValid;
-
         }
-
         try {
             JsonElement jsonObject = jsonParser.parse(value);
             if (!jsonObject.isJsonObject()) {
@@ -121,38 +109,30 @@ public class MapValidator implements PropertyTypeValidator {
             log.debug("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("Map Validator");
         }
-
         return false;
-
     }
 
-    private boolean validateJsonObject(Map<String, DataTypeDefinition> allDataTypes, PropertyTypeValidator innerValidator, PropertyTypeValidator keyValidator, JsonObject asJsonObject) {
+    private boolean validateJsonObject(Map<String, DataTypeDefinition> allDataTypes, PropertyTypeValidator innerValidator,
+                                       PropertyTypeValidator keyValidator, JsonObject asJsonObject) {
         Set<Entry<String, JsonElement>> entrySet = asJsonObject.entrySet();
         for (Entry<String, JsonElement> entry : entrySet) {
             String currentKey = entry.getKey();
             JsonElement jsonValue = entry.getValue();
-
             String element = JsonUtils.toString(jsonValue);
-
-            if (!innerValidator.isValid(element, null, allDataTypes)
-                    || !keyValidator.isValid(entry.getKey(), null, allDataTypes)) {
+            if (!innerValidator.isValid(element, null, allDataTypes) || !keyValidator.isValid(entry.getKey(), null, allDataTypes)) {
                 log.debug("validation of key : {}, element : {} failed", currentKey, entry.getValue());
                 return false;
             }
         }
-
         return true;
     }
 
-    private boolean validateComplexInnerType(String value, String innerType,
-            Map<String, DataTypeDefinition> allDataTypes) {
-
+    private boolean validateComplexInnerType(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
         DataTypeDefinition innerDataTypeDefinition = allDataTypes.get(innerType);
         if (innerDataTypeDefinition == null) {
             log.debug("Data type {} cannot be found in our data types.", innerType);
             return false;
         }
-
         try {
             JsonElement jsonObject = jsonParser.parse(value);
             JsonObject asJsonObject = jsonObject.getAsJsonObject();
@@ -160,23 +140,19 @@ public class MapValidator implements PropertyTypeValidator {
             for (Entry<String, JsonElement> entry : entrySet) {
                 String currentKey = entry.getKey();
                 JsonElement currentValue = entry.getValue();
-
                 if (currentValue != null) {
                     String element = JsonUtils.toString(currentValue);
-                    boolean isValid = dataTypeValidatorConverter.isValid(element, innerDataTypeDefinition,
-                            allDataTypes);
+                    boolean isValid = dataTypeValidatorConverter.isValid(element, innerDataTypeDefinition, allDataTypes);
                     if (!isValid) {
-                        log.debug("Cannot parse value {} from type {} of key {}",currentValue,innerType,currentKey);
+                        log.debug("Cannot parse value {} from type {} of key {}", currentValue, innerType, currentKey);
                         return false;
                     }
                 }
             }
-
         } catch (Exception e) {
             log.debug("Cannot parse value {} of map from inner type {}", value, innerType, e);
             return false;
         }
-
         return true;
     }
 

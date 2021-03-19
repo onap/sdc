@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import java.io.Serializable;
@@ -45,13 +44,11 @@ public class UIConstraint implements Serializable {
         this.value = value;
     }
 
-    public UIConstraint(String servicePropertyName, String constraintOperator, String sourceType, String sourceName,
-                        Object value) {
+    public UIConstraint(String servicePropertyName, String constraintOperator, String sourceType, String sourceName, Object value) {
         this.servicePropertyName = servicePropertyName;
         this.constraintOperator = constraintOperator;
         this.sourceType = sourceType;
         this.sourceName = sourceName;
         this.value = value;
     }
-
 }

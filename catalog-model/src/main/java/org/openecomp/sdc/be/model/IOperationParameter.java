@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,21 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 /**
- * An operation parameter can be either a PropertyValue (value or expression) or
- * a PropertyDefinition.
+ * An operation parameter can be either a PropertyValue (value or expression) or a PropertyDefinition.
  */
 public interface IOperationParameter {
+
     /**
-     * Allow to know if the operation parameter is a property definition or a
-     * property value. Only parameter exposed as property definitions can be
+     * Allow to know if the operation parameter is a property definition or a property value. Only parameter exposed as property definitions can be
      * used for "custom" operations.
      *
-     * @return true if the operation parameter is a property definition and
-     *         false if the parameter is a property value.
+     * @return true if the operation parameter is a property definition and false if the parameter is a property value.
      */
     boolean isDefinition();
 }

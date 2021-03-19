@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
+import java.util.Collections;
+import java.util.List;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -32,18 +33,13 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-
 @Component("consumer-operation")
 public class ConsumerOperation implements IConsumerOperation {
 
+    private static final Logger log = Logger.getLogger(ConsumerOperation.class.getName());
     private JanusGraphGenericDao janusGraphGenericDao;
 
-    private static final Logger log = Logger.getLogger(ConsumerOperation.class.getName());
-
-    public ConsumerOperation(@Qualifier("janusgraph-generic-dao")
-                                 JanusGraphGenericDao janusGraphGenericDao) {
+    public ConsumerOperation(@Qualifier("janusgraph-generic-dao") JanusGraphGenericDao janusGraphGenericDao) {
         this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
@@ -66,9 +62,8 @@ public class ConsumerOperation implements IConsumerOperation {
     @Override
     public Either<List<ConsumerData>, StorageOperationStatus> getAll() {
         log.debug("retrieving all consumers");
-        return janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.ConsumerCredentials, Collections.emptyMap(), ConsumerData.class)
-                .right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        return janusGraphGenericDao.getByCriteria(NodeTypeEnum.ConsumerCredentials, Collections.emptyMap(), ConsumerData.class).right()
+            .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     @Override
@@ -81,8 +76,7 @@ public class ConsumerOperation implements IConsumerOperation {
         Either<ConsumerData, StorageOperationStatus> result = null;
         try {
             log.debug("creating Credentials for: {}", consumerData.getUniqueId());
-            Either<ConsumerData, JanusGraphOperationStatus> createNode = janusGraphGenericDao
-                .createNode(consumerData, ConsumerData.class);
+            Either<ConsumerData, JanusGraphOperationStatus> createNode = janusGraphGenericDao.createNode(consumerData, ConsumerData.class);
             if (createNode.isRight()) {
                 JanusGraphOperationStatus status = createNode.right().value();
                 log.error("Error returned after creating Consumer Data node {}. status returned is {}", consumerData.getUniqueId(), status);
@@ -115,14 +109,12 @@ public class ConsumerOperation implements IConsumerOperation {
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 return result;
             }
-
             ConsumerData deletedConsumerData = deleteNode.left().value();
             result = Either.left(deletedConsumerData);
             return result;
         } finally {
             handleTransaction(inTransaction, result);
         }
-
     }
 
     @Override
@@ -132,12 +124,10 @@ public class ConsumerOperation implements IConsumerOperation {
 
     @Override
     public Either<ConsumerData, StorageOperationStatus> updateCredentials(ConsumerData consumerData, boolean inTransaction) {
-
         Either<ConsumerData, StorageOperationStatus> result = null;
         try {
             log.debug("update Credentials for: {}", consumerData.getUniqueId());
-            Either<ConsumerData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao
-                .updateNode(consumerData, ConsumerData.class);
+            Either<ConsumerData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao.updateNode(consumerData, ConsumerData.class);
             if (updateNode.isRight()) {
                 JanusGraphOperationStatus status = updateNode.right().value();
                 log.error("Error returned after delete Consumer Data node {}. status returned is {}", consumerData.getUniqueId(), status);
@@ -163,5 +153,4 @@ public class ConsumerOperation implements IConsumerOperation {
             }
         }
     }
-
 }

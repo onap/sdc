@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
@@ -32,8 +31,6 @@ public class UploadArtifactInfo extends UploadInfo {
      * specify the node type(Optional by tosca)
      */
     private List<String> validSourceTypes;
-
     private String file;
     private String type;
-
 }

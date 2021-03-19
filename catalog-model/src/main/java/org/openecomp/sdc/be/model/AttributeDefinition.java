@@ -46,13 +46,7 @@ public class AttributeDefinition extends AttributeDataDefinition implements IOpe
 
     @Override
     public String toString() {
-        return "AttributeDefinition{" +
-            "name=" + getName() +
-            "uniqueId=" + getUniqueId() +
-            "ownerId=" + getOwnerId() +
-            "type=" + getType() +
-            "description=" + getDescription() +
-            "default=" + getDefaultValue() +
-            '}';
+        return "AttributeDefinition{" + "name=" + getName() + "uniqueId=" + getUniqueId() + "ownerId=" + getOwnerId() + "type=" + getType()
+            + "description=" + getDescription() + "default=" + getDefaultValue() + '}';
     }
 }

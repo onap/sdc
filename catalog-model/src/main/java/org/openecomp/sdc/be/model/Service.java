@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,7 +33,6 @@ import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 
 @Getter
@@ -56,8 +53,7 @@ public class Service extends Component {
 
     public Service(ComponentMetadataDefinition serviceMetadataDefinition) {
         super(serviceMetadataDefinition);
-        ComponentMetadataDataDefinition metadataDataDefinition =
-                this.getComponentMetadataDefinition().getMetadataDataDefinition();
+        ComponentMetadataDataDefinition metadataDataDefinition = this.getComponentMetadataDefinition().getMetadataDataDefinition();
         if (metadataDataDefinition != null) {
             metadataDataDefinition.setComponentType(ComponentTypeEnum.SERVICE);
         }
@@ -164,15 +160,13 @@ public class Service extends Component {
 
     @Override
     public String fetchGenericTypeToscaNameFromConfig() {
-        return getHeadOption(this.getCategories())
-                .map(category -> fetchToscaNameFromConfigBasedOnService(category.getName()))
-                .orElse(super.fetchGenericTypeToscaNameFromConfig());
+        return getHeadOption(this.getCategories()).map(category -> fetchToscaNameFromConfigBasedOnService(category.getName()))
+            .orElse(super.fetchGenericTypeToscaNameFromConfig());
     }
 
     private String fetchToscaNameFromConfigBasedOnService(final String serviceCategory) {
-        return Optional
-                .ofNullable(ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes())
-                .map(serviceNames -> serviceNames.get(serviceCategory)).orElse(null);
+        return Optional.ofNullable(ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes())
+            .map(serviceNames -> serviceNames.get(serviceCategory)).orElse(null);
     }
 
     @Override
@@ -180,23 +174,19 @@ public class Service extends Component {
         setServiceApiArtifacts(specificComponentTypeArtifacts);
     }
 
-
     public void setServiceVendorModelNumber(String serviceVendorModelNumber) {
         getServiceMetadataDefinition().setServiceVendorModelNumber(serviceVendorModelNumber);
     }
 
     public void setAbstract(Boolean isAbstract) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setIsAbstract(isAbstract);
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setIsAbstract(isAbstract);
     }
 
     public void setVendorName(String vendorName) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setVendorName(vendorName);
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorName(vendorName);
     }
 
     public void setVendorRelease(String vendorRelease) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setVendorRelease(vendorRelease);
+        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorRelease(vendorRelease);
     }
 }

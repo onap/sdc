@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
@@ -27,7 +26,10 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public interface IAttributeOutputCommon {
 
     String getType();
+
     ToscaDataDefinition getSchema();
+
     List<PropertyRule> getRules();
+
     String getName();
 }

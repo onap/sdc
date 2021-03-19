@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,8 +21,7 @@ import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 
-public class MapInterfaceInstanceDataDefinition extends
-    MapDataDefinition<InterfaceInstanceDataDefinition> {
+public class MapInterfaceInstanceDataDefinition extends MapDataDefinition<InterfaceInstanceDataDefinition> {
 
     @JsonCreator
     public MapInterfaceInstanceDataDefinition(Map<String, InterfaceInstanceDataDefinition> mapToscaDataDefinition) {

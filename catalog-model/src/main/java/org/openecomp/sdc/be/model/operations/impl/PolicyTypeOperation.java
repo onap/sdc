@@ -17,11 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.graphdb.query.JanusGraphPredicate;
+import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -39,18 +46,12 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
-
 @Component("policy-type-operation")
 public class PolicyTypeOperation extends AbstractOperation implements IPolicyTypeOperation {
 
     private static final Logger log = Logger.getLogger(PolicyTypeOperation.class.getName());
     private static final String CREATE_FLOW_CONTEXT = "CreatePolicyType";
     private static final String GET_FLOW_CONTEXT = "GetPolicyType";
-
     @Autowired
     private PropertyOperation propertyOperation;
     @Autowired
@@ -71,15 +72,16 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         Either<PolicyTypeDefinition, StorageOperationStatus> result;
         Either<PolicyTypeData, StorageOperationStatus> eitherStatus = addPolicyTypeToGraph(policyTypeDef);
         if (eitherStatus.isRight()) {
-            BeEcompErrorManager.getInstance().logBeFailedCreateNodeError(CREATE_FLOW_CONTEXT, policyTypeDef.getType(), eitherStatus.right().value().name());
+            BeEcompErrorManager.getInstance()
+                .logBeFailedCreateNodeError(CREATE_FLOW_CONTEXT, policyTypeDef.getType(), eitherStatus.right().value().name());
             result = Either.right(eitherStatus.right().value());
         } else {
             PolicyTypeData policyTypeData = eitherStatus.left().value();
             String uniqueId = policyTypeData.getUniqueId();
             Either<PolicyTypeDefinition, StorageOperationStatus> policyTypeRes = this.getPolicyTypeByUid(uniqueId);
-
             if (policyTypeRes.isRight()) {
-                BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError(GET_FLOW_CONTEXT, policyTypeDef.getType(), eitherStatus.right().value().name());
+                BeEcompErrorManager.getInstance()
+                    .logBeFailedRetrieveNodeError(GET_FLOW_CONTEXT, policyTypeDef.getType(), eitherStatus.right().value().name());
             }
             result = policyTypeRes;
         }
@@ -87,30 +89,26 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     }
 
     @Override
-    public Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition updatedPolicyType, PolicyTypeDefinition currPolicyType) {
+    public Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition updatedPolicyType,
+                                                                                 PolicyTypeDefinition currPolicyType) {
         log.debug("updating policy type {}", updatedPolicyType.getType());
         return updatePolicyTypeOnGraph(updatedPolicyType, currPolicyType);
     }
 
     @Override
     public List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes) {
-        Map<String, Map.Entry<JanusGraphPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(), excludedPolicyTypes);
-        return janusGraphGenericDao
-            .getByCriteriaWithPredicate(NodeTypeEnum.PolicyType, predicateCriteria, PolicyTypeData.class)
-                .left()
-                .map(this::convertPolicyTypesToDefinition)
-                .left()
-                .on(operationUtils::onJanusGraphOperationFailure);
+        Map<String, Map.Entry<JanusGraphPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(),
+            excludedPolicyTypes);
+        return janusGraphGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.PolicyType, predicateCriteria, PolicyTypeData.class).left()
+            .map(this::convertPolicyTypesToDefinition).left().on(operationUtils::onJanusGraphOperationFailure);
     }
 
     private List<PolicyTypeDefinition> convertPolicyTypesToDefinition(List<PolicyTypeData> policiesTypes) {
         return policiesTypes.stream().map(type -> new PolicyTypeDefinition(type.getPolicyTypeDataDefinition())).collect(Collectors.toList());
     }
 
-
     private Either<PolicyTypeData, StorageOperationStatus> addPolicyTypeToGraph(PolicyTypeDefinition policyTypeDef) {
         log.debug("Got policy type {}", policyTypeDef);
-
         String ptUniqueId = UniqueIdBuilder.buildPolicyTypeUid(policyTypeDef.getType(), policyTypeDef.getVersion(), "policytype");
         PolicyTypeData policyTypeData = buildPolicyTypeData(policyTypeDef, ptUniqueId);
         log.debug("Before adding policy type to graph. policyTypeData = {}", policyTypeData);
@@ -123,14 +121,13 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus));
         }
         List<PropertyDefinition> properties = policyTypeDef.getProperties();
-        Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToPolicyType = propertyOperation.addPropertiesToElementType(ptUniqueId, NodeTypeEnum.PolicyType, properties);
+        Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToPolicyType = propertyOperation
+            .addPropertiesToElementType(ptUniqueId, NodeTypeEnum.PolicyType, properties);
         if (addPropertiesToPolicyType.isRight()) {
             log.error("Failed add properties {} to policy {}", properties, policyTypeDef.getType());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(addPropertiesToPolicyType.right().value()));
         }
-        return addDerivedFromRelation(policyTypeDef, ptUniqueId)
-            .left()
-            .map(updatedDerivedFrom -> eitherPolicyTypeData.left().value());
+        return addDerivedFromRelation(policyTypeDef, ptUniqueId).left().map(updatedDerivedFrom -> eitherPolicyTypeData.left().value());
     }
 
     private Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeByCriteria(String type, Map<String, Object> properties) {
@@ -140,68 +137,60 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
             result = Either.right(StorageOperationStatus.INVALID_ID);
             return result;
         }
-
         Either<List<PolicyTypeData>, JanusGraphOperationStatus> eitherPolicyData = janusGraphGenericDao
             .getByCriteria(NodeTypeEnum.PolicyType, properties, PolicyTypeData.class);
         if (eitherPolicyData.isRight()) {
             result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherPolicyData.right().value()));
         } else {
-            PolicyTypeDataDefinition dataDefinition = eitherPolicyData.left().value().stream().map(PolicyTypeData::getPolicyTypeDataDefinition).findFirst().get();
+            PolicyTypeDataDefinition dataDefinition = eitherPolicyData.left().value().stream().map(PolicyTypeData::getPolicyTypeDataDefinition)
+                .findFirst().get();
             result = getPolicyTypeByUid(dataDefinition.getUniqueId());
         }
         return result;
-
     }
 
     private Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeByUid(String uniqueId) {
         log.debug("#getPolicyTypeByUid - fetching policy type with id {}", uniqueId);
-        return janusGraphGenericDao
-            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), uniqueId, PolicyTypeData.class)
-                .right()
-                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus)
-                .left()
-                .bind(policyType -> createPolicyTypeDefinition(uniqueId, policyType));
+        return janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), uniqueId, PolicyTypeData.class).right()
+            .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left()
+            .bind(policyType -> createPolicyTypeDefinition(uniqueId, policyType));
     }
 
     private Either<PolicyTypeDefinition, StorageOperationStatus> createPolicyTypeDefinition(String uniqueId, PolicyTypeData policyTypeNode) {
         PolicyTypeDefinition policyType = new PolicyTypeDefinition(policyTypeNode.getPolicyTypeDataDefinition());
-        return fillDerivedFrom(uniqueId, policyType)
-                .left()
-                .map(derivedFrom -> fillProperties(uniqueId, policyType, derivedFrom))
-                .left()
-                .map(props -> policyType);
+        return fillDerivedFrom(uniqueId, policyType).left().map(derivedFrom -> fillProperties(uniqueId, policyType, derivedFrom)).left()
+            .map(props -> policyType);
     }
 
-    private Either<List<PropertyDefinition>, StorageOperationStatus> fillProperties(String uniqueId, PolicyTypeDefinition policyType, PolicyTypeData derivedFromNode) {
+    private Either<List<PropertyDefinition>, StorageOperationStatus> fillProperties(String uniqueId, PolicyTypeDefinition policyType,
+                                                                                    PolicyTypeData derivedFromNode) {
         log.debug("#fillProperties - fetching all properties for policy type {}", policyType.getType());
-        return propertyOperation.findPropertiesOfNode(NodeTypeEnum.PolicyType, uniqueId)
-                .right()
-                .bind(this::handlePolicyTypeHasNoProperties)
-                .left()
-                .bind(propsMap -> fillDerivedFromProperties(policyType, derivedFromNode, new ArrayList<>(propsMap.values())));
+        return propertyOperation.findPropertiesOfNode(NodeTypeEnum.PolicyType, uniqueId).right().bind(this::handlePolicyTypeHasNoProperties).left()
+            .bind(propsMap -> fillDerivedFromProperties(policyType, derivedFromNode, new ArrayList<>(propsMap.values())));
     }
 
-    private Either<List<PropertyDefinition>, StorageOperationStatus> fillDerivedFromProperties(PolicyTypeDefinition policyType, PolicyTypeData derivedFromNode, List<PropertyDefinition> policyTypeDirectProperties) {
+    private Either<List<PropertyDefinition>, StorageOperationStatus> fillDerivedFromProperties(PolicyTypeDefinition policyType,
+                                                                                               PolicyTypeData derivedFromNode,
+                                                                                               List<PropertyDefinition> policyTypeDirectProperties) {
         if (derivedFromNode == null) {
             policyType.setProperties(policyTypeDirectProperties);
             return Either.left(policyTypeDirectProperties);
         }
         log.debug("#fillDerivedFromProperties - fetching all properties of derived from chain for policy type {}", policyType.getType());
-        return propertyOperation.getAllPropertiesRec(derivedFromNode.getUniqueId(), NodeTypeEnum.PolicyType, PolicyTypeData.class)
-                .left()
-                .map(derivedFromProps -> {policyTypeDirectProperties.addAll(derivedFromProps); return policyTypeDirectProperties;})
-                .left()
-                .map(allProps -> {policyType.setProperties(allProps);return allProps;});
+        return propertyOperation.getAllPropertiesRec(derivedFromNode.getUniqueId(), NodeTypeEnum.PolicyType, PolicyTypeData.class).left()
+            .map(derivedFromProps -> {
+                policyTypeDirectProperties.addAll(derivedFromProps);
+                return policyTypeDirectProperties;
+            }).left().map(allProps -> {
+                policyType.setProperties(allProps);
+                return allProps;
+            });
     }
 
     private Either<PolicyTypeData, StorageOperationStatus> fillDerivedFrom(String uniqueId, PolicyTypeDefinition policyType) {
         log.debug("#fillDerivedFrom - fetching policy type {} derived node", policyType.getType());
-        return derivedFromOperation.getDerivedFromChild(uniqueId, NodeTypeEnum.PolicyType, PolicyTypeData.class)
-                .right()
-                .bind(this::handleDerivedFromNotExist)
-                .left()
-                .map(derivedFrom -> setDerivedFrom(policyType, derivedFrom));
-
+        return derivedFromOperation.getDerivedFromChild(uniqueId, NodeTypeEnum.PolicyType, PolicyTypeData.class).right()
+            .bind(this::handleDerivedFromNotExist).left().map(derivedFrom -> setDerivedFrom(policyType, derivedFrom));
     }
 
     private Either<PolicyTypeData, StorageOperationStatus> handleDerivedFromNotExist(StorageOperationStatus err) {
@@ -226,43 +215,39 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     }
 
     private PolicyTypeData buildPolicyTypeData(PolicyTypeDefinition policyTypeDefinition, String ptUniqueId) {
-
         PolicyTypeData policyTypeData = new PolicyTypeData(policyTypeDefinition);
-
         policyTypeData.getPolicyTypeDataDefinition().setUniqueId(ptUniqueId);
         Long creationDate = policyTypeData.getPolicyTypeDataDefinition().getCreationTime();
         if (creationDate == null) {
             creationDate = System.currentTimeMillis();
         }
-
         policyTypeData.getPolicyTypeDataDefinition().setCreationTime(creationDate);
         policyTypeData.getPolicyTypeDataDefinition().setModificationTime(creationDate);
         return policyTypeData;
     }
 
-    private Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyTypeOnGraph(PolicyTypeDefinition updatedPolicyType, PolicyTypeDefinition currPolicyType) {
+    private Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyTypeOnGraph(PolicyTypeDefinition updatedPolicyType,
+                                                                                         PolicyTypeDefinition currPolicyType) {
         updatePolicyTypeData(updatedPolicyType, currPolicyType);
-        return janusGraphGenericDao.updateNode(new PolicyTypeData(updatedPolicyType), PolicyTypeData.class)
-                .right()
-                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus)
-                .left()
-                .bind(updatedNode -> updatePolicyProperties(updatedPolicyType.getUniqueId(), updatedPolicyType.getProperties()))
-                .left()
-                .bind(updatedProperties -> updatePolicyDerivedFrom(updatedPolicyType, currPolicyType.getDerivedFrom()))
-                .left()
-                .map(updatedDerivedFrom -> updatedPolicyType);
+        return janusGraphGenericDao.updateNode(new PolicyTypeData(updatedPolicyType), PolicyTypeData.class).right()
+            .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left()
+            .bind(updatedNode -> updatePolicyProperties(updatedPolicyType.getUniqueId(), updatedPolicyType.getProperties())).left()
+            .bind(updatedProperties -> updatePolicyDerivedFrom(updatedPolicyType, currPolicyType.getDerivedFrom())).left()
+            .map(updatedDerivedFrom -> updatedPolicyType);
     }
 
     private Either<Map<String, PropertyData>, StorageOperationStatus> updatePolicyProperties(String policyId, List<PropertyDefinition> properties) {
         log.debug("#updatePolicyProperties - updating policy type properties for policy type with id {}", policyId);
-        return propertyOperation.deletePropertiesAssociatedToNode(NodeTypeEnum.PolicyType, policyId)
-                .left()
-                .bind(deleteProps -> addPropertiesToPolicy(policyId, properties));
+        return propertyOperation.deletePropertiesAssociatedToNode(NodeTypeEnum.PolicyType, policyId).left()
+            .bind(deleteProps -> addPropertiesToPolicy(policyId, properties));
     }
 
-    private Either<GraphRelation, StorageOperationStatus> updatePolicyDerivedFrom(PolicyTypeDefinition updatedPolicyType, String currDerivedFromPolicyType) {
+    private Either<GraphRelation, StorageOperationStatus> updatePolicyDerivedFrom(PolicyTypeDefinition updatedPolicyType,
+                                                                                  String currDerivedFromPolicyType) {
         String policyTypeId = updatedPolicyType.getUniqueId();
-        log.debug("#updatePolicyDerivedFrom - updating policy derived from relation for policy type with id {}. old derived type {}. new derived type {}", policyTypeId, currDerivedFromPolicyType, updatedPolicyType.getDerivedFrom());
+        log.debug(
+            "#updatePolicyDerivedFrom - updating policy derived from relation for policy type with id {}. old derived type {}. new derived type {}",
+            policyTypeId, currDerivedFromPolicyType, updatedPolicyType.getDerivedFrom());
         StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromPolicyType(policyTypeId, currDerivedFromPolicyType);
         if (deleteDerivedRelationStatus != StorageOperationStatus.OK) {
             return Either.right(deleteDerivedRelationStatus);
@@ -275,27 +260,28 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         if (derivedFrom == null) {
             return Either.left(null);
         }
-        log.debug("#addDerivedFromRelationBefore - adding derived from relation between policy type {} to its parent {}", policyTypeDef.getType(), derivedFrom);
-        return this.getLatestPolicyTypeByType(derivedFrom)
-                .left()
-                .bind(derivedFromPolicy -> derivedFromOperation.addDerivedFromRelation(ptUniqueId, derivedFromPolicy.getUniqueId(), NodeTypeEnum.PolicyType));
+        log.debug("#addDerivedFromRelationBefore - adding derived from relation between policy type {} to its parent {}", policyTypeDef.getType(),
+            derivedFrom);
+        return this.getLatestPolicyTypeByType(derivedFrom).left().bind(
+            derivedFromPolicy -> derivedFromOperation.addDerivedFromRelation(ptUniqueId, derivedFromPolicy.getUniqueId(), NodeTypeEnum.PolicyType));
     }
 
     private StorageOperationStatus deleteDerivedFromPolicyType(String policyTypeId, String derivedFromType) {
         if (derivedFromType == null) {
             return StorageOperationStatus.OK;
         }
-        log.debug("#deleteDerivedFromPolicyType - deleting derivedFrom relation for policy type with id {} and its derived type {}", policyTypeId, derivedFromType);
-        return getLatestPolicyTypeByType(derivedFromType)
-                .either(derivedFromNode -> derivedFromOperation.removeDerivedFromRelation(policyTypeId, derivedFromNode.getUniqueId(), NodeTypeEnum.PolicyType),
-                        err -> err);
+        log.debug("#deleteDerivedFromPolicyType - deleting derivedFrom relation for policy type with id {} and its derived type {}", policyTypeId,
+            derivedFromType);
+        return getLatestPolicyTypeByType(derivedFromType).either(
+            derivedFromNode -> derivedFromOperation.removeDerivedFromRelation(policyTypeId, derivedFromNode.getUniqueId(), NodeTypeEnum.PolicyType),
+            err -> err);
     }
 
-    private  Either<Map<String, PropertyData>, StorageOperationStatus> addPropertiesToPolicy(String policyTypeId, List<PropertyDefinition> properties) {
+    private Either<Map<String, PropertyData>, StorageOperationStatus> addPropertiesToPolicy(String policyTypeId,
+                                                                                            List<PropertyDefinition> properties) {
         log.debug("#addPropertiesToPolicy - adding policy type properties for policy type with id {}", policyTypeId);
-        return propertyOperation.addPropertiesToElementType(policyTypeId, NodeTypeEnum.PolicyType, properties)
-                .right()
-                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        return propertyOperation.addPropertiesToElementType(policyTypeId, NodeTypeEnum.PolicyType, properties).right()
+            .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     private void updatePolicyTypeData(PolicyTypeDefinition updatedTypeDefinition, PolicyTypeDefinition currTypeDefinition) {
@@ -303,5 +289,4 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         updatedTypeDefinition.setCreationTime(currTypeDefinition.getCreationTime());
         updatedTypeDefinition.setModificationTime(System.currentTimeMillis());
     }
-
 }

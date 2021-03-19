@@ -17,11 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 public enum LifeCycleTransitionEnum {
-
+    // @formatter:off
     CHECKOUT("checkout"),
     CHECKIN("checkin"),
     CERTIFICATION_REQUEST("certificationRequest"),
@@ -31,15 +30,12 @@ public enum LifeCycleTransitionEnum {
     FAIL_CERTIFICATION("failCertification"),
     CERTIFY("certify"),
     DISTRIBUTE("distribute");
+    // @formatter:on
 
     String displayName;
 
     LifeCycleTransitionEnum(final String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
     }
 
     public static LifeCycleTransitionEnum getFromDisplayName(final String name) {
@@ -80,5 +76,9 @@ public enum LifeCycleTransitionEnum {
             sb.append(op.getDisplayName()).append(" ");
         }
         return sb.toString();
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
@@ -45,9 +44,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
     private List<String> derivedFrom;
     private Map<String, String> categorySpecificMetadata;
 
-
-    public UiResourceMetadata(List<CategoryDefinition> categories, List<String> derivedFrom,
-                              ResourceMetadataDataDefinition metadata) {
+    public UiResourceMetadata(List<CategoryDefinition> categories, List<String> derivedFrom, ResourceMetadataDataDefinition metadata) {
         super(categories, metadata);
         this.vendorName = metadata.getVendorName();
         this.vendorRelease = metadata.getVendorRelease();
@@ -59,8 +56,4 @@ public class UiResourceMetadata extends UiComponentMetadata {
         this.derivedFrom = derivedFrom;
         this.categorySpecificMetadata = metadata.getCategorySpecificMetadata();
     }
-
 }
-
-
-
