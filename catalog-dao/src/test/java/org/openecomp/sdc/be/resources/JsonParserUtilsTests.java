@@ -37,12 +37,16 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.openecomp.sdc.be.utils.FixtureHelpers.fixture;
 import static org.openecomp.sdc.be.utils.JsonTester.testJsonMap;
 
 public class JsonParserUtilsTests {
 
 	private static final String FIXTURE_PATH = "fixtures/ListCapabilityDataDefinition.json";
+	private static final String FIXTURE_PATH2 = "fixtures/ListCapabilityDataDefinition2.json";
 
 	@Test
 	public void testToMap() {
@@ -51,6 +55,19 @@ public class JsonParserUtilsTests {
 				ListCapabilityDataDefinition.class);
 		Map<String, ListCapabilityDataDefinition> expected = buildMap();
 		assertThat(actual).isEqualToComparingFieldByFieldRecursively(expected);
+	}
+
+	@Test
+	public void testToList() {
+		assertNull(JsonParserUtils.toList(null, ListCapabilityDataDefinition.class));
+		String json = fixture(FIXTURE_PATH2);
+		List<ListCapabilityDataDefinition> actual = JsonParserUtils.toList(json,
+				ListCapabilityDataDefinition.class);
+		assertEquals(1, actual.size());
+		CapabilityDataDefinition expectedDef = buildListCapabilityDataDefinition().getListToscaDataDefinition().get(0);
+		CapabilityDataDefinition actualDef = actual.get(0).getListToscaDataDefinition().get(0);
+		assertEquals(1, actual.get(0).getListToscaDataDefinition().size());
+		assertEquals(expectedDef, actualDef);
 	}
 
 	@Test

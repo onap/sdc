@@ -22,12 +22,12 @@ package org.openecomp.sdc.be.components.property;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
@@ -55,7 +55,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     @InjectMocks
@@ -71,9 +71,23 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
     private static final String SERVICE_UID = "serviceUid";
     private Service service;
 
-    @Before
+    @BeforeEach
     public void init() {
         service = new ServiceBuilder().setUniqueId(SERVICE_UID).build();
+    }
+
+    @Test
+    public void unDeclarePropertiesAsInputsTest_whenPropertyUsedByOperation() {
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId(INPUT_ID);
+        input.setName(INPUT_ID);
+        input.setValue("value");
+
+        PropertyDefinition propertyDefinition = new PropertyDefinition(input);
+
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), eq(propertyDefinition))).thenReturn(true);
+        StorageOperationStatus status = testInstance.unDeclarePropertiesAsInputs(resource, input);
+        Assert.assertEquals(StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION, status);
     }
 
     @Test
@@ -87,7 +101,22 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
 
         when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), eq(propertyDefinition))).thenReturn(true);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION);
+        Assert.assertEquals(StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION, status);
+    }
+
+    @Test
+    public void unDeclarePropertiesAsInputsTest_whenNotPresentPropertyToUpdateCandidate() {
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId(INPUT_ID);
+        input.setName(INPUT_ID);
+        input.setValue("value");
+
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        resource.setProperties(Collections.singletonList(propertyDefinition));
+
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class))).thenReturn(false);
+        StorageOperationStatus status = testInstance.unDeclarePropertiesAsInputs(resource, input);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
     }
 
     @Test
@@ -102,7 +131,21 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
 
         when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class))).thenReturn(false);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.OK);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
+    }
+
+    @Test
+    public void unDeclarePropertiesAsInputsTest_whenPropertiesEmpty() {
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId(INPUT_ID);
+        input.setName(INPUT_ID);
+        input.setValue("value");
+
+        resource.setProperties(new ArrayList<>());
+
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class))).thenReturn(false);
+        StorageOperationStatus status = testInstance.unDeclarePropertiesAsInputs(resource, input);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
     }
 
     @Test
@@ -116,7 +159,22 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
 
         when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any(PropertyDefinition.class))).thenReturn(false);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.OK);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
+    }
+
+    @Test
+    public void unDeclarePropertiesAsInputsTest_whenPropertiesToUpdateIsEmpty() {
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId(INPUT_ID);
+        input.setName(INPUT_ID);
+        input.setValue("value");
+
+        PropertyDefinition propertyDefinition = new PropertyDefinition(input);
+        resource.setProperties(Collections.singletonList(propertyDefinition));
+
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), eq(propertyDefinition))).thenReturn(false);
+        StorageOperationStatus status = testInstance.unDeclarePropertiesAsInputs(resource, input);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
     }
 
     @Test
@@ -131,7 +189,32 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
 
         when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), eq(propertyDefinition))).thenReturn(false);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.OK);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
+    }
+
+    @Test
+    public void unDeclarePropertiesAsInputsTest_singleProperty() {
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId(INPUT_ID);
+        input.setName(INPUT_ID);
+        input.setValue("value");
+        input.setDefaultValue("default value");
+
+        PropertyDefinition propertyDefinition = new PropertyDefinition(input);
+        List<GetInputValueDataDefinition> getInputValueList = new ArrayList<>();
+        getInputValueList.add(buildGetInputValue(INPUT_ID));
+        getInputValueList.add(buildGetInputValue("otherInputId"));
+        propertyDefinition.setGetInputValues(getInputValueList);
+        propertyDefinition.setUniqueId("propertyId");
+        propertyDefinition.setDefaultValue("default value");
+        propertyDefinition.setValue(generateGetInputValueAsListInput(INPUT_ID, "innerPropName"));
+        resource.setProperties(Collections.singletonList(propertyDefinition));
+
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any())).thenReturn(false);
+        when(propertyOperation.findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()), eq(propertyDefinition.getDefaultValue()))).thenReturn(Either.left(propertyDefinition.getDefaultValue()));
+        when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any())).thenReturn(Either.left(propertyDefinition));
+        StorageOperationStatus status = testInstance.unDeclarePropertiesAsInputs(resource, input);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
     }
 
     @Test
@@ -156,7 +239,32 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
         when(propertyOperation.findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()), eq(propertyDefinition.getDefaultValue()))).thenReturn(Either.left(propertyDefinition.getDefaultValue()));
         when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any())).thenReturn(Either.left(propertyDefinition));
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.OK);
+        Assert.assertEquals(StorageOperationStatus.OK, status);
+    }
+
+    @Test
+    public void unDeclarePropertiesAsInputsTest_UnDeclareInputFail() {
+        InputDefinition input = new InputDefinition();
+        input.setUniqueId(INPUT_ID);
+        input.setName(INPUT_ID);
+        input.setValue("value");
+        input.setDefaultValue("default value");
+
+        PropertyDefinition propertyDefinition = new PropertyDefinition(input);
+        List<GetInputValueDataDefinition> getInputValueList = new ArrayList<>();
+        getInputValueList.add(buildGetInputValue(INPUT_ID));
+        getInputValueList.add(buildGetInputValue("otherInputId"));
+        propertyDefinition.setGetInputValues(getInputValueList);
+        propertyDefinition.setUniqueId("propertyId");
+        propertyDefinition.setDefaultValue("default value");
+        propertyDefinition.setValue(generateGetInputValueAsListInput(INPUT_ID, "innerPropName"));
+        resource.setProperties(Collections.singletonList(propertyDefinition));
+
+        when(propertyBusinessLogic.isPropertyUsedByOperation(eq(resource), any())).thenReturn(false);
+        when(propertyOperation.findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()), eq(propertyDefinition.getDefaultValue()))).thenReturn(Either.left(propertyDefinition.getDefaultValue()));
+        when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        StorageOperationStatus status = testInstance.unDeclarePropertiesAsInputs(resource, input);
+        Assert.assertEquals(StorageOperationStatus.NOT_FOUND, status);
     }
 
     @Test
@@ -181,7 +289,7 @@ public class ComponentPropertyDeclaratorTest extends PropertyDeclaratorTestBase 
         when(propertyOperation.findDefaultValueFromSecondPosition(eq(Collections.emptyList()), eq(propertyDefinition.getUniqueId()), eq(propertyDefinition.getDefaultValue()))).thenReturn(Either.left(propertyDefinition.getDefaultValue()));
         when(toscaOperationFacade.updatePropertyOfComponent(eq(resource), any())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.NOT_FOUND);
+        Assert.assertEquals(StorageOperationStatus.NOT_FOUND, status);
     }
 
 
