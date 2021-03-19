@@ -21,13 +21,17 @@
 package org.openecomp.sdc.be.dao.utils;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.*;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.openecomp.sdc.be.dao.utils.MapUtil.mergeMaps;
 
 public class MapUtilTest {
@@ -64,14 +68,54 @@ public class MapUtilTest {
      }
      	@Test
 	public void testGet() throws Exception {
-		Map<String, ? extends Object> map = null;
+		Map<String, ? extends Object> mapWildcard = null;
 		String path = "";
 		Object result;
 
-		// default test
-		result = MapUtil.get(map, path);
-		path = "\\mock\\mock";
-		result = MapUtil.get(map, path);
+		result = MapUtil.get(mapWildcard, path);
+		assertNull(result);
+
+		path = "mock1.mock2";
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("mock1", "test");
+		mapWildcard = map;
+		result = MapUtil.get(mapWildcard, path);
+		assertNull(result);
+
+		Map<String, Integer> subMap = new HashMap<>();
+		subMap.put("mock2", 1);
+		Map<String, ? extends Object> subMapWildcard = subMap;
+		map.put("mock1", subMapWildcard);
+		mapWildcard = map;
+		result = MapUtil.get(mapWildcard, path);
+		assertEquals(1, result);
+	}
+
+	@Test
+	public void testFlattenMapValues() throws Exception {
+		assertNotNull(MapUtil.flattenMapValues(null));
+
+		Map<String, List<String>> map = new HashMap<>();
+		List<String> list1 = new LinkedList<>();
+		list1.add("test1");
+		List<String> list2 = new LinkedList<>();
+		list2.add("test2");
+		map.put("key1", list1);
+		map.put("key2", list2);
+		List<String> result = MapUtil.flattenMapValues(map);
+		assertEquals(2, result.size());
+		assertEquals("test1", result.get(0));
+		assertEquals("test2", result.get(1));
+	}
+
+	@Test
+	public void testStreamOfNullable() throws Exception {
+		assertEquals(0, MapUtil.streamOfNullable(null).count());
+
+		Collection collectionTest = new LinkedList<String>();
+		collectionTest.add("test");
+		assertEquals(1, MapUtil.streamOfNullable(collectionTest).count());
 	}
 
 	@Test
