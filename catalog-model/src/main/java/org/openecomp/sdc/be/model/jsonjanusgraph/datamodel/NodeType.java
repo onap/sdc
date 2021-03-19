@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.datamodel;
 
 import java.util.List;
@@ -30,12 +29,12 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 @Setter
 public class NodeType extends ToscaElement {
 
-    public NodeType() {
-        super(ToscaElementTypeEnum.NODE_TYPE);
-    }
-
     private List<String> derivedFrom;
     private List<String> derivedList;
     private Map<String, String> derivedFromMapOfIdToName;
     private Map<String, InterfaceDataDefinition> interfaceArtifacts;
+
+    public NodeType() {
+        super(ToscaElementTypeEnum.NODE_TYPE);
+    }
 }

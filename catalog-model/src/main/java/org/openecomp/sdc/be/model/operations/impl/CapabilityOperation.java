@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -55,150 +54,113 @@ import org.springframework.stereotype.Component;
 @Component("capability-operation")
 public class CapabilityOperation extends AbstractOperation {
 
-
     private static final Logger log = Logger.getLogger(CapabilityOperation.class.getName());
-
     private final CapabilityTypeOperation capabilityTypeOperation;
     private final PropertyOperation propertyOperation;
-    
 
     public CapabilityOperation(CapabilityTypeOperation capabilityTypeOperation, PropertyOperation propertyOperation) {
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.propertyOperation = propertyOperation;
     }
 
-
-    public Either<CapabilityData, JanusGraphOperationStatus> addCapabilityToGraph(String resourceId, CapabilityTypeData capTypeData, CapabilityDefinition capabilityDefinition) {
-
+    public Either<CapabilityData, JanusGraphOperationStatus> addCapabilityToGraph(String resourceId, CapabilityTypeData capTypeData,
+                                                                                  CapabilityDefinition capabilityDefinition) {
         log.debug("#addCapabilityToGraph - capabilityDefinition={}", capabilityDefinition);
-
         String capUniqueId = UniqueIdBuilder.buildCapabilityUid(resourceId, capabilityDefinition.getName());
         CapabilityData capabilityData = buildCapabilityData(capabilityDefinition, capUniqueId);
-
         log.debug("addCapabilityToGraph - Before adding capability to graph. capabilityTypeData = {}", capabilityData);
-        Either<CapabilityData, JanusGraphOperationStatus> createCapResult = janusGraphGenericDao
-            .createNode(capabilityData, CapabilityData.class);
+        Either<CapabilityData, JanusGraphOperationStatus> createCapResult = janusGraphGenericDao.createNode(capabilityData, CapabilityData.class);
         log.debug("addCapabilityToGraph - After adding capability to graph. status is = {}", createCapResult);
-
         if (createCapResult.isRight()) {
             JanusGraphOperationStatus operationStatus = createCapResult.right().value();
-            log.error("addCapabilityToGraph - Failed to add capability of type {} to graph. status is {}", capabilityDefinition.getType(), operationStatus);
+            log.error("addCapabilityToGraph - Failed to add capability of type {} to graph. status is {}", capabilityDefinition.getType(),
+                operationStatus);
             return createCapResult;
         }
-        
-        createCapResult = connectToCapabilityType(capabilityData, capTypeData)
-                                .left()
-                                .bind(res -> createCapabilityProperties(capabilityData, capTypeData))
-                                .left()
-                                .map(res -> capabilityData);
-        
+        createCapResult = connectToCapabilityType(capabilityData, capTypeData).left()
+            .bind(res -> createCapabilityProperties(capabilityData, capTypeData)).left().map(res -> capabilityData);
         return createCapResult;
     }
-    
-    private Either<GraphRelation, JanusGraphOperationStatus> connectToCapabilityType(CapabilityData capabilityData, CapabilityTypeData capabilityTypeData) {
-        
-        Map<String, Object> properties = new HashMap<>();
 
+    private Either<GraphRelation, JanusGraphOperationStatus> connectToCapabilityType(CapabilityData capabilityData,
+                                                                                     CapabilityTypeData capabilityTypeData) {
+        Map<String, Object> properties = new HashMap<>();
         String capabilityName = capabilityData.getCapabilityDataDefinition().getName();
         properties.put(GraphEdgePropertiesDictionary.NAME.getProperty(), capabilityName);
-        
-        return janusGraphGenericDao
-            .createRelation(capabilityData, capabilityTypeData, GraphEdgeLabels.CAPABILITY_IMPL, properties);
-
+        return janusGraphGenericDao.createRelation(capabilityData, capabilityTypeData, GraphEdgeLabels.CAPABILITY_IMPL, properties);
     }
-    
 
     /**
      * @param capabilites
      * @return
      */
-    public Either<List<CapabilityDefinition>, JanusGraphOperationStatus> getCapabilitiesWithProps(List<ImmutablePair<CapabilityData, GraphEdge>> capabilites) {
-        List<Either<CapabilityDefinition, JanusGraphOperationStatus>> listFilledCapabilitiesResults = capabilites.stream()
-                                                        .map(ImmutablePair::getLeft)
-                                                        .map(this::toCapabilityDefinitionWithProps)
-                                                        .collect(Collectors.toList());
-        
-        Optional<JanusGraphOperationStatus> status = listFilledCapabilitiesResults.stream().filter(Either::isRight)
-                                                               .map(res -> res.right().value())
-                                                               .findFirst();
-        
+    public Either<List<CapabilityDefinition>, JanusGraphOperationStatus> getCapabilitiesWithProps(
+        List<ImmutablePair<CapabilityData, GraphEdge>> capabilites) {
+        List<Either<CapabilityDefinition, JanusGraphOperationStatus>> listFilledCapabilitiesResults = capabilites.stream().map(ImmutablePair::getLeft)
+            .map(this::toCapabilityDefinitionWithProps).collect(Collectors.toList());
+        Optional<JanusGraphOperationStatus> status = listFilledCapabilitiesResults.stream().filter(Either::isRight).map(res -> res.right().value())
+            .findFirst();
         if (status.isPresent()) {
             return Either.right(status.get());
         }
-        
-        List<CapabilityDefinition> listCapabilities = listFilledCapabilitiesResults.stream()
-                                                                                    .map(res -> res.left().value())
-                                                                                    .collect(Collectors.toList());
-        
+        List<CapabilityDefinition> listCapabilities = listFilledCapabilitiesResults.stream().map(res -> res.left().value())
+            .collect(Collectors.toList());
         return Either.left(listCapabilities);
     }
-    
+
     private Either<CapabilityDefinition, JanusGraphOperationStatus> toCapabilityDefinitionWithProps(CapabilityData capabilityData) {
         CapabilityDefinition capabilityDefinition = new CapabilityDefinition(capabilityData.getCapabilityDataDefinition());
-        return getCapabilityProperties(capabilityDefinition.getUniqueId(), capabilityDefinition.getType())
-                    .left()
-                    .map(props -> {
-                        capabilityDefinition.setProperties(props); 
-                        return capabilityDefinition;
-                    });
+        return getCapabilityProperties(capabilityDefinition.getUniqueId(), capabilityDefinition.getType()).left().map(props -> {
+            capabilityDefinition.setProperties(props);
+            return capabilityDefinition;
+        });
     }
-    
-        
+
     /**
      * get all properties of the capability.
-     *
+     * <p>
      * the property definition is taken from the capability type.
      *
      * @param capabilityUid
      * @return
      */
     private Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> getCapabilityProperties(String capabilityUid, String capabilityType) {
-        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeRes = capabilityTypeOperation.getCapabilityTypeByType(capabilityType);
-
+        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeRes = capabilityTypeOperation
+            .getCapabilityTypeByType(capabilityType);
         if (capabilityTypeRes.isRight()) {
             JanusGraphOperationStatus status = capabilityTypeRes.right().value();
             return Either.right(status);
         }
-
         CapabilityTypeDefinition capabilityTypeDefinition = capabilityTypeRes.left().value();
-
-        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> typesPropsRes = getPropertiesOfCapabilityTypeAndAcestors(capabilityTypeDefinition);
+        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> typesPropsRes = getPropertiesOfCapabilityTypeAndAcestors(
+            capabilityTypeDefinition);
         if (typesPropsRes.isRight()) {
             JanusGraphOperationStatus status = typesPropsRes.right().value();
             return Either.right(status);
         }
-        
         Map<String, PropertyDefinition> capabilityTypeProperties = typesPropsRes.left().value();
-
         if (isEmpty(capabilityTypeProperties)) {
             return Either.right(JanusGraphOperationStatus.OK);
         }
-
         Map<String, PropertyDefinition> uidToPropDefMap = capabilityTypeProperties.values().stream()
-                                                            .collect(Collectors.toMap(PropertyDefinition::getUniqueId, Function.identity()));
-
+            .collect(Collectors.toMap(PropertyDefinition::getUniqueId, Function.identity()));
         // Find all properties values on the capability
         Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, JanusGraphOperationStatus> propertyValNodes = janusGraphGenericDao
             .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Capability), capabilityUid, GraphEdgeLabels.PROPERTY_VALUE,
                 NodeTypeEnum.PropertyValue, PropertyValueData.class);
-
         if (propertyValNodes.isRight()) {
             return onLoadPropValuesFailure(propertyValNodes.right().value(), capabilityTypeProperties);
         }
-
         List<ImmutablePair<PropertyValueData, GraphEdge>> propValsRelationPairs = propertyValNodes.left().value();
         if (isEmpty(propValsRelationPairs)) {
             return Either.right(JanusGraphOperationStatus.OK);
         }
-
         List<ComponentInstanceProperty> capabilityProperties = new ArrayList<>();
-
         for (ImmutablePair<PropertyValueData, GraphEdge> propValRelPair : propValsRelationPairs) {
-
             PropertyValueData propertyValueData = propValRelPair.getLeft();
             Either<ImmutablePair<PropertyData, GraphEdge>, JanusGraphOperationStatus> propertyDefRes = janusGraphGenericDao
-                .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PropertyValue), propertyValueData.getUniqueId(), GraphEdgeLabels.PROPERTY_IMPL,
-                    NodeTypeEnum.Property, PropertyData.class);
+                .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PropertyValue), propertyValueData.getUniqueId(),
+                    GraphEdgeLabels.PROPERTY_IMPL, NodeTypeEnum.Property, PropertyData.class);
             if (propertyDefRes.isRight()) {
                 JanusGraphOperationStatus status = propertyDefRes.right().value();
                 if (status == JanusGraphOperationStatus.NOT_FOUND) {
@@ -206,40 +168,33 @@ public class CapabilityOperation extends AbstractOperation {
                 }
                 return Either.right(status);
             }
-
             ImmutablePair<PropertyData, GraphEdge> propertyDefPair = propertyDefRes.left().value();
             PropertyData propertyData = propertyDefPair.left;
             String propertyUniqueId = propertyData.getPropertyDataDefinition().getUniqueId();
-
             PropertyDefinition propertyDefinition = uidToPropDefMap.get(propertyUniqueId);
-            ComponentInstanceProperty capabilityProperty = new ComponentInstanceProperty(propertyDefinition, propertyValueData.getValue(), propertyValueData.getUniqueId());
-
+            ComponentInstanceProperty capabilityProperty = new ComponentInstanceProperty(propertyDefinition, propertyValueData.getValue(),
+                propertyValueData.getUniqueId());
             capabilityProperties.add(capabilityProperty);
         }
-        
         Set<String> processedProps = buildProcessedPropsSet(capabilityProperties);
-
         // Find all properties which does not have property value on the group.
         List<ComponentInstanceProperty> leftProps = filterCapabilityTypesProps(capabilityTypeProperties, processedProps);
         if (leftProps != null) {
             capabilityProperties.addAll(leftProps);
         }
-
         return Either.left(capabilityProperties);
     }
-
 
     /**
      * @param capabilityProperties
      * @return
      */
     private Set<String> buildProcessedPropsSet(List<ComponentInstanceProperty> capabilityProperties) {
-        return capabilityProperties.stream()
-                                    .map(ComponentInstanceProperty::getName)
-                                    .collect(Collectors.toSet());
+        return capabilityProperties.stream().map(ComponentInstanceProperty::getName).collect(Collectors.toSet());
     }
-    
-    private Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> onLoadPropValuesFailure(JanusGraphOperationStatus status, Map<String, PropertyDefinition> capabilityTypeProperties) {
+
+    private Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> onLoadPropValuesFailure(JanusGraphOperationStatus status,
+                                                                                                       Map<String, PropertyDefinition> capabilityTypeProperties) {
         if (status == JanusGraphOperationStatus.NOT_FOUND) {
             return Either.left(buildPropsFromCapabilityTypeProps(capabilityTypeProperties));
         } else {
@@ -247,31 +202,29 @@ public class CapabilityOperation extends AbstractOperation {
         }
     }
 
-
     /**
      * @param capabilityTypeProperties
      * @return
      */
     private List<ComponentInstanceProperty> buildPropsFromCapabilityTypeProps(Map<String, PropertyDefinition> capabilityTypeProperties) {
-        return capabilityTypeProperties.values().stream()
-                                                    .map(p -> new ComponentInstanceProperty(p, p.getDefaultValue(), null))
-                                                    .collect(Collectors.toList());
+        return capabilityTypeProperties.values().stream().map(p -> new ComponentInstanceProperty(p, p.getDefaultValue(), null))
+            .collect(Collectors.toList());
     }
-
 
     /**
      * @param capabilityTypeRes
      * @param capabilityTypeDefinition
      * @return
      */
-    private Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> getPropertiesOfCapabilityTypeAndAcestors(CapabilityTypeDefinition capabilityTypeDefinition) {
+    private Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> getPropertiesOfCapabilityTypeAndAcestors(
+        CapabilityTypeDefinition capabilityTypeDefinition) {
         // Get the properties on the group type of this capability
         Map<String, PropertyDefinition> capabilityTypeProperties = capabilityTypeDefinition.getProperties();
-        
         String derivedFrom = capabilityTypeDefinition.getDerivedFrom();
         if (!Strings.isNullOrEmpty(derivedFrom)) {
-            Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> parentPropsRes = capabilityTypeOperation.getAllCapabilityTypePropertiesFromAllDerivedFrom(derivedFrom);
-            if(parentPropsRes.isRight()) {
+            Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> parentPropsRes = capabilityTypeOperation
+                .getAllCapabilityTypePropertiesFromAllDerivedFrom(derivedFrom);
+            if (parentPropsRes.isRight()) {
                 JanusGraphOperationStatus status = parentPropsRes.right().value();
                 return Either.right(status);
             }
@@ -281,14 +234,11 @@ public class CapabilityOperation extends AbstractOperation {
                 capabilityTypeProperties = parentPropsRes.left().value();
             }
         }
-        
         return Either.left(capabilityTypeProperties);
     }
-    
-    
+
     /**
-     * Create all property values of the capability and their 
-     * relations to relevant properties of the capability type.
+     * Create all property values of the capability and their relations to relevant properties of the capability type.
      *
      * @param capabilityDefintion
      * @param capabilityTypeData
@@ -296,104 +246,80 @@ public class CapabilityOperation extends AbstractOperation {
      */
     private Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> createCapabilityProperties(CapabilityData capabilityData,
                                                                                                           CapabilityTypeData capabilityTypeData) {
-
-        CapabilityDefinition capabilityDefintion = (CapabilityDefinition)capabilityData.getCapabilityDataDefinition();
-        CapabilityTypeDefinition capabilityTypeDefinition = (CapabilityTypeDefinition)capabilityTypeData.getCapabilityTypeDataDefinition();
-
-        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> typesPropsRes = getPropertiesOfCapabilityTypeAndAcestors(capabilityTypeDefinition);
+        CapabilityDefinition capabilityDefintion = (CapabilityDefinition) capabilityData.getCapabilityDataDefinition();
+        CapabilityTypeDefinition capabilityTypeDefinition = (CapabilityTypeDefinition) capabilityTypeData.getCapabilityTypeDataDefinition();
+        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> typesPropsRes = getPropertiesOfCapabilityTypeAndAcestors(
+            capabilityTypeDefinition);
         if (typesPropsRes.isRight()) {
             JanusGraphOperationStatus status = typesPropsRes.right().value();
             return Either.right(status);
         }
-        
         Map<String, PropertyDefinition> capabilityTypeProperties = typesPropsRes.left().value();
-        
         if (isEmpty(capabilityTypeProperties) && !isEmpty(capabilityDefintion.getProperties())) {
             log.debug("#createCapabilityProperties - It's not valid if group capability has properties while corresponding capability type doesn't.");
             return Either.right(JanusGraphOperationStatus.MATCH_NOT_FOUND);
         }
-
         Optional<JanusGraphOperationStatus> error = capabilityDefintion.getProperties().stream()
-                             .map(property -> createPropertyValue(property, capabilityData, capabilityTypeProperties.get(property.getName())))
-                             .filter(Either::isRight)
-                             .map(result -> result.right().value())
-                             .findFirst();
+            .map(property -> createPropertyValue(property, capabilityData, capabilityTypeProperties.get(property.getName()))).filter(Either::isRight)
+            .map(result -> result.right().value()).findFirst();
         if (error.isPresent()) {
             return Either.right(error.get());
         }
-
         return Either.left(capabilityDefintion.getProperties());
     }
-
 
     /**
      * @param capabilityTypeProperties
      * @param excludePropsWithUniqueIds
      * @return
      */
-    private List<ComponentInstanceProperty> filterCapabilityTypesProps(Map<String, PropertyDefinition> capabilityTypeProperties, 
-                                                                   Set<String> excludePropsWithNames) {
-        return capabilityTypeProperties.values().stream()
-                .filter(p -> !excludePropsWithNames.contains(p.getName()))
-                .map(p -> new ComponentInstanceProperty(p, p.getDefaultValue(), null))
-                .collect(Collectors.toList());
+    private List<ComponentInstanceProperty> filterCapabilityTypesProps(Map<String, PropertyDefinition> capabilityTypeProperties,
+                                                                       Set<String> excludePropsWithNames) {
+        return capabilityTypeProperties.values().stream().filter(p -> !excludePropsWithNames.contains(p.getName()))
+            .map(p -> new ComponentInstanceProperty(p, p.getDefaultValue(), null)).collect(Collectors.toList());
     }
 
-    private  Either<PropertyValueData, JanusGraphOperationStatus> createPropertyValue(ComponentInstanceProperty capabilityProperty,
-                                                                                      CapabilityData capabilityData,
-                                                                                      PropertyDefinition capTypePropertyDefinition) {
+    private Either<PropertyValueData, JanusGraphOperationStatus> createPropertyValue(ComponentInstanceProperty capabilityProperty,
+                                                                                     CapabilityData capabilityData,
+                                                                                     PropertyDefinition capTypePropertyDefinition) {
         if (capTypePropertyDefinition == null) {
             return Either.right(JanusGraphOperationStatus.MATCH_NOT_FOUND);
         }
-        
-        CapabilityDefinition capabilityDefintion = (CapabilityDefinition)capabilityData.getCapabilityDataDefinition();
-        
-        Either<Integer, StorageOperationStatus> indexRes = 
-                propertyOperation.increaseAndGetObjInstancePropertyCounter(capabilityDefintion.getUniqueId(), NodeTypeEnum.Capability);
-        String uniqueId = UniqueIdBuilder.buildResourceInstancePropertyValueUid(capabilityDefintion.getUniqueId(), indexRes.left().value() );
+        CapabilityDefinition capabilityDefintion = (CapabilityDefinition) capabilityData.getCapabilityDataDefinition();
+        Either<Integer, StorageOperationStatus> indexRes = propertyOperation
+            .increaseAndGetObjInstancePropertyCounter(capabilityDefintion.getUniqueId(), NodeTypeEnum.Capability);
+        String uniqueId = UniqueIdBuilder.buildResourceInstancePropertyValueUid(capabilityDefintion.getUniqueId(), indexRes.left().value());
         PropertyValueData propertyValueData = new PropertyValueData();
         propertyValueData.setUniqueId(uniqueId);
         propertyValueData.setValue(capabilityProperty.getValue());
-        Either<PropertyValueData, JanusGraphOperationStatus> propResult = janusGraphGenericDao
-            .createNode(propertyValueData, PropertyValueData.class);
+        Either<PropertyValueData, JanusGraphOperationStatus> propResult = janusGraphGenericDao.createNode(propertyValueData, PropertyValueData.class);
         // It's not accepted if Capability Type doesn't have suitable property
-        propResult = propResult.left()
-                .bind(propValueData -> connectToProperty(propValueData, capTypePropertyDefinition))
-                .left()
-                .bind(graphRelation -> connectCapability(propertyValueData, capTypePropertyDefinition.getName(), capabilityData))
-                .left()
-                .map(graphRelation -> propertyValueData);
-        
-        propResult.left()
-                    .foreachDoEffect(propValueData -> capabilityProperty.setUniqueId(uniqueId));
-        
+        propResult = propResult.left().bind(propValueData -> connectToProperty(propValueData, capTypePropertyDefinition)).left()
+            .bind(graphRelation -> connectCapability(propertyValueData, capTypePropertyDefinition.getName(), capabilityData)).left()
+            .map(graphRelation -> propertyValueData);
+        propResult.left().foreachDoEffect(propValueData -> capabilityProperty.setUniqueId(uniqueId));
         return propResult;
     }
-    
-    private Either<GraphRelation, JanusGraphOperationStatus> connectCapability(PropertyValueData propValueData, String name, CapabilityData capabilityData) {
+
+    private Either<GraphRelation, JanusGraphOperationStatus> connectCapability(PropertyValueData propValueData, String name,
+                                                                               CapabilityData capabilityData) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(GraphEdgePropertiesDictionary.NAME.getProperty(), name);
-
         return janusGraphGenericDao.createRelation(capabilityData, propValueData, GraphEdgeLabels.PROPERTY_VALUE, properties);
     }
-    
-    private Either<GraphRelation, JanusGraphOperationStatus> connectToProperty(PropertyValueData propValueData, PropertyDefinition propertyDefinition) {
-        Either<PropertyData, JanusGraphOperationStatus> dataTypesRes = janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Property),
-                                                                            propertyDefinition.getUniqueId(), PropertyData.class);
 
+    private Either<GraphRelation, JanusGraphOperationStatus> connectToProperty(PropertyValueData propValueData,
+                                                                               PropertyDefinition propertyDefinition) {
+        Either<PropertyData, JanusGraphOperationStatus> dataTypesRes = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Property), propertyDefinition.getUniqueId(), PropertyData.class);
         Map<String, Object> properties = new HashMap<>();
         properties.put(GraphEdgePropertiesDictionary.NAME.getProperty(), propertyDefinition.getName());
-        
         return dataTypesRes.left()
-                           .bind(propertyData -> janusGraphGenericDao
-                               .createRelation(propValueData, propertyData, GraphEdgeLabels.PROPERTY_IMPL, properties));
+            .bind(propertyData -> janusGraphGenericDao.createRelation(propValueData, propertyData, GraphEdgeLabels.PROPERTY_IMPL, properties));
     }
-    
 
     private CapabilityData buildCapabilityData(CapabilityDefinition capabilityDefinition, String ctUniqueId) {
-
         CapabilityData capabilityData = new CapabilityData(capabilityDefinition);
-
         capabilityData.setUniqueId(ctUniqueId);
         Long creationDate = capabilityData.getCreationTime();
         if (creationDate == null) {
@@ -404,19 +330,11 @@ public class CapabilityOperation extends AbstractOperation {
         return capabilityData;
     }
 
-
     public StorageOperationStatus deleteCapability(CapabilityDefinition capabilityDef) {
-        
         return janusGraphGenericDao
             .deleteChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), capabilityDef.getUniqueId(), GraphEdgeLabels.PROPERTY_VALUE,
-                                                    NodeTypeEnum.PropertyValue, PropertyValueData.class)
-                 .left()
-                 .bind(props -> janusGraphGenericDao
-                     .deleteNode(new CapabilityData(capabilityDef), CapabilityData.class))
-                 .right()
-                 .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus)
-                 .right()
-                 .on(capData -> StorageOperationStatus.OK);
+                NodeTypeEnum.PropertyValue, PropertyValueData.class).left()
+            .bind(props -> janusGraphGenericDao.deleteNode(new CapabilityData(capabilityDef), CapabilityData.class)).right()
+            .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).right().on(capData -> StorageOperationStatus.OK);
     }
-    
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.impl;
 
 import com.google.gson.Gson;
@@ -25,24 +24,21 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import fj.data.Either;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
 
 @org.springframework.stereotype.Component("csar-operation")
 public class CsarOperation {
 
     private static final Logger log = Logger.getLogger(CsarOperation.class.getName());
-
     @javax.annotation.Resource
     private OnboardingClient onboardingClient;
 
     @PostConstruct
     public void init() {
-
     }
 
     /**
@@ -52,9 +48,7 @@ public class CsarOperation {
      * @return
      */
     public Either<Map<String, byte[]>, StorageOperationStatus> getCsar(String csarUuid, User user) {
-
         Either<Map<String, byte[]>, StorageOperationStatus> result = onboardingClient.getCsar(csarUuid, user.getUserId());
-
         if (result.isRight()) {
             log.debug("Cannot find csar {}. Staus returned is {}", csarUuid, result.right().value());
         } else {
@@ -63,15 +57,12 @@ public class CsarOperation {
                 log.debug("The returned files are {}", values.keySet());
             }
         }
-
         return result;
     }
 
     @SuppressWarnings("unchecked")
     public Either<String, StorageOperationStatus> getCsarLatestVersion(String csarUuid, User user) {
-
         Either<String, StorageOperationStatus> result = onboardingClient.getPackages(user.getUserId());
-
         if (result.isRight()) {
             log.debug("Cannot find version for package with Id {}. Status returned is {}", csarUuid, result.right().value());
         } else {
@@ -80,9 +71,9 @@ public class CsarOperation {
             JsonArray csarsInfo = root.getAsJsonObject().get("results").getAsJsonArray();
             for (JsonElement csarInfo : csarsInfo) {
                 Map<String, String> csarInfoMap = new Gson().fromJson(csarInfo, Map.class);
-                if(csarInfoMap.get("packageId").equals(csarUuid)){
+                if (csarInfoMap.get("packageId").equals(csarUuid)) {
                     String curVersion = csarInfoMap.get("version");
-                    if(latestVersion == null || isGreater(latestVersion, curVersion)){
+                    if (latestVersion == null || isGreater(latestVersion, curVersion)) {
                         latestVersion = curVersion;
                     }
                 }
@@ -94,7 +85,6 @@ public class CsarOperation {
                 result = Either.right(StorageOperationStatus.NOT_FOUND);
             }
         }
-
         return result;
     }
 
@@ -105,5 +95,4 @@ public class CsarOperation {
     public OnboardingClient getOnboardingClient() {
         return onboardingClient;
     }
-
 }

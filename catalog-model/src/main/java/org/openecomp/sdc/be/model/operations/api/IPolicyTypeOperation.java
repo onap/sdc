@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-
 import java.util.List;
 import java.util.Set;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 
 public interface IPolicyTypeOperation {
 
@@ -32,8 +30,8 @@ public interface IPolicyTypeOperation {
 
     Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType(PolicyTypeDefinition policyType);
 
-    Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition updatedPolicyType, PolicyTypeDefinition currPolicyType);
+    Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition updatedPolicyType,
+                                                                          PolicyTypeDefinition currPolicyType);
 
     List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes);
-
 }

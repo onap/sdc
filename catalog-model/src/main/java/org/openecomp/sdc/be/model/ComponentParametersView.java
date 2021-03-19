@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
@@ -71,7 +70,6 @@ public class ComponentParametersView {
 
     public ComponentParametersView(List<String> filters) {
         this(true);
-
         for (String fieldName : filters) {
             switch (ComponentFieldsEnum.findByValue(fieldName)) {
                 case PROPERTIES:
@@ -183,15 +181,14 @@ public class ComponentParametersView {
                 default:
                     break;
             }
-
         }
     }
-
     ///////////////////////////////////////////////////////////////
+
     // When adding new member, please update the filter method.
+
     ///////////////////////////////////////////////////////////////
     public Component filter(Component component, ComponentTypeEnum componentType) {
-
         if (ignoreUsers) {
             component.setCreatorUserId(null);
             component.setCreatorFullName(null);
@@ -238,8 +235,7 @@ public class ComponentParametersView {
         if (ignoreNodeFilterRequirements) {
             component.setNodeFilterComponents(null);
         }
-        if (ignoreInterfaces && ignoreInterfaceInstances &&
-            componentType == ComponentTypeEnum.RESOURCE) {
+        if (ignoreInterfaces && ignoreInterfaceInstances && componentType == ComponentTypeEnum.RESOURCE) {
             component.setInterfaces(null);
         }
         if (ignoreDerivedFrom && componentType == ComponentTypeEnum.RESOURCE) {
@@ -322,5 +318,4 @@ public class ComponentParametersView {
         }
         return parseFlag;
     }
-
 }

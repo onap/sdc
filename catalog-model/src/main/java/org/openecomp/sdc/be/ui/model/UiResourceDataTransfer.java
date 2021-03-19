@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
@@ -35,17 +34,10 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 public class UiResourceDataTransfer extends UiComponentDataTransfer {
 
     private UiResourceMetadata metadata;
-
     private List<String> derivedFrom;
-
     private List<String> derivedList;
-
     private List<PropertyDefinition> properties;
-
     private List<AttributeDefinition> attributes;
-
     private Map<String, InterfaceDefinition> interfaces;
-
     private List<String> defaultCapabilities;
-
 }

@@ -17,45 +17,42 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import org.openecomp.sdc.be.model.PropertyConstraint;
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
-import javax.validation.constraints.NotNull;
-
 @SuppressWarnings("serial")
 public class EqualConstraint extends AbstractPropertyConstraint implements Serializable {
 
-	@NotNull
-	private String constraintValue;
+    @NotNull
+    private String constraintValue;
     private Object typed;
 
-	public EqualConstraint(String constraintValue) {
-		super();
-		this.constraintValue = constraintValue;
-	}
+    public EqualConstraint(String constraintValue) {
+        super();
+        this.constraintValue = constraintValue;
+    }
 
-	public String getConstraintValue() {
-		return constraintValue;
-	}
+    public String getConstraintValue() {
+        return constraintValue;
+    }
 
-	@Override
-	public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-		if (propertyType.isValidValue(constraintValue)) {
-			typed = propertyType.convert(constraintValue);
-		} else {
+    @Override
+    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        if (propertyType.isValidValue(constraintValue)) {
+            typed = propertyType.convert(constraintValue);
+        } else {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "constraintValue constraint has invalid value <" + constraintValue
-                            + "> property type is <" + propertyType.toString() + ">");
-		}
-	}
+                "constraintValue constraint has invalid value <" + constraintValue + "> property type is <" + propertyType.toString() + ">");
+        }
+    }
 
     @Override
     public void validate(Object propertyValue) throws ConstraintViolationException {
@@ -79,16 +76,15 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
 
     @Override
     public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
-
     }
 
-	private void fail(Object propertyValue) throws ConstraintViolationException {
-		throw new ConstraintViolationException("Equal constraint violation, the reference is <" + constraintValue
-													   + "> but the value to compare is <" + propertyValue + ">");
-	}
+    private void fail(Object propertyValue) throws ConstraintViolationException {
+        throw new ConstraintViolationException(
+            "Equal constraint violation, the reference is <" + constraintValue + "> but the value to compare is <" + propertyValue + ">");
+    }
 
-	@Override
-	public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-	    return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", constraintValue);
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", constraintValue);
     }
 }

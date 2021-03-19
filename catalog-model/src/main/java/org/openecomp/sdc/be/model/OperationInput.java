@@ -16,10 +16,10 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 
 public class OperationInput extends OperationInputDefinition {
+
     private List<PropertyConstraint> constraints;
 
     public OperationInput(OperationInputDefinition operationInputDefinition) {

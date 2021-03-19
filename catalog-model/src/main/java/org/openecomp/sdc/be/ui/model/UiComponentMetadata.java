@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
@@ -33,58 +32,33 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 public abstract class UiComponentMetadata {
 
     private String uniqueId;
-
     private String name; // archiveName
 
     private String version; // archiveVersion
-
     private Boolean isHighestVersion;
-
     private Long creationDate;
     private Long lastUpdateDate;
-
     private String description;
-
     private String lifecycleState;
-
     private List<String> tags;
-
     private String icon;
-
     private String UUID;
-
     private String normalizedName;
-
     private String systemName;
-
     private String contactId;
-
     private Map<String, String> allVersions;
-
     private Boolean isDeleted;
-
     private String projectCode;
-
     private String csarUUID;
-
     private String csarVersion;
-
     private String importedToscaChecksum;
-
     private String invariantUUID;
-
     private ComponentTypeEnum componentType;
-
     private List<CategoryDefinition> categories;
-
     private String creatorUserId;
-
     private String creatorFullName;
-
     private String lastUpdaterUserId;
-
     private String lastUpdaterFullName;
-
     //Archive/Restore
     private Boolean isArchived;
     private Long archiveTime;
@@ -94,7 +68,6 @@ public abstract class UiComponentMetadata {
     }
 
     public UiComponentMetadata(List<CategoryDefinition> categories, ComponentMetadataDataDefinition metadata) {
-
         this.uniqueId = metadata.getUniqueId();
         this.name = metadata.getName(); // archiveName
         this.version = metadata.getVersion();
@@ -121,11 +94,9 @@ public abstract class UiComponentMetadata {
         this.creatorFullName = metadata.getCreatorFullName();
         this.lastUpdaterFullName = metadata.getLastUpdaterFullName();
         this.lastUpdaterUserId = metadata.getLastUpdaterUserId();
-
         //archive
         this.isArchived = metadata.isArchived();
         this.archiveTime = metadata.getArchiveTime();
         this.isVspArchived = metadata.isVspArchived();
     }
-
 }

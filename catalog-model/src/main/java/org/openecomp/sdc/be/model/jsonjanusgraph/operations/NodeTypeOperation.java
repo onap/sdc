@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,16 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,32 +63,27 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
-import com.vdurmont.semver4j.Semver;
-import com.vdurmont.semver4j.Semver.SemverType;
 
 @org.springframework.stereotype.Component("node-type-operation")
 public class NodeTypeOperation extends ToscaElementOperation {
+
     public static final Pattern uuidNewVersion = Pattern.compile("^\\d+.1");
     public static final Pattern uuidNormativeNewVersion = Pattern.compile("^\\d+.0");
     private static final Logger log = Logger.getLogger(NodeTypeOperation.class);
     private DerivedNodeTypeResolver derivedResourceResolver;
 
-    
     public NodeTypeOperation(@Qualifier("derived-resource-resolver") DerivedNodeTypeResolver derivedNodeTypeResolver) {
         this.derivedResourceResolver = derivedNodeTypeResolver;
     }
 
     public Either<NodeType, StorageOperationStatus> createNodeType(NodeType nodeType) {
-
         nodeType.generateUUID();
-
         nodeType = getResourceMetaDataFromResource(nodeType);
         String resourceUniqueId = nodeType.getUniqueId();
         if (resourceUniqueId == null) {
             resourceUniqueId = UniqueIdBuilder.buildResourceUniqueId();
             nodeType.setUniqueId(resourceUniqueId);
         }
-
         // get derived from resources
         List<GraphVertex> derivedResources = null;
         Either<List<GraphVertex>, StorageOperationStatus> derivedResourcesResult = findDerivedResources(nodeType);
@@ -97,10 +92,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
         } else {
             derivedResources = derivedResourcesResult.left().value();
         }
-
         GraphVertex nodeTypeVertex = new GraphVertex(VertexTypeEnum.NODE_TYPE);
         fillToscaElementVertexData(nodeTypeVertex, nodeType, JsonParseFlagEnum.ParseAll);
-
         Either<GraphVertex, JanusGraphOperationStatus> createdVertex = janusGraphDao.createVertex(nodeTypeVertex);
         if (createdVertex.isRight()) {
             JanusGraphOperationStatus status = createdVertex.right().value();
@@ -108,12 +101,10 @@ public class NodeTypeOperation extends ToscaElementOperation {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         nodeTypeVertex = createdVertex.left().value();
-
         StorageOperationStatus assosiateCommon = assosiateCommonForToscaElement(nodeTypeVertex, nodeType, derivedResources);
         if (assosiateCommon != StorageOperationStatus.OK) {
             return Either.right(assosiateCommon);
         }
-
         StorageOperationStatus associateDerived = assosiateToDerived(nodeTypeVertex, derivedResources);
         if (associateDerived != StorageOperationStatus.OK) {
             return Either.right(associateDerived);
@@ -122,17 +113,14 @@ public class NodeTypeOperation extends ToscaElementOperation {
         if (associateCategory != StorageOperationStatus.OK) {
             return Either.right(associateCategory);
         }
-
         StorageOperationStatus associateAttributes = associateAttributesToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateAttributes != StorageOperationStatus.OK) {
             return Either.right(associateAttributes);
         }
-
         StorageOperationStatus associateRequirements = associateRequirementsToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateRequirements != StorageOperationStatus.OK) {
             return Either.right(associateRequirements);
         }
-
         StorageOperationStatus associateCapabilities = associateCapabilitiesToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateCapabilities != StorageOperationStatus.OK) {
             return Either.right(associateCapabilities);
@@ -141,12 +129,10 @@ public class NodeTypeOperation extends ToscaElementOperation {
         if (associateCapabilitiesProps != StorageOperationStatus.OK) {
             return Either.right(associateCapabilitiesProps);
         }
-
         StorageOperationStatus associateInterfaces = associateInterfacesToResource(nodeTypeVertex, nodeType, derivedResources);
         if (associateInterfaces != StorageOperationStatus.OK) {
             return Either.right(associateInterfaces);
         }
-
         StorageOperationStatus addAdditionalInformation = addAdditionalInformationToResource(nodeTypeVertex, nodeType, derivedResources);
         if (addAdditionalInformation != StorageOperationStatus.OK) {
             return Either.right(addAdditionalInformation);
@@ -156,18 +142,19 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     private StorageOperationStatus associateInterfacesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
         // Note : currently only one derived supported!!!!
-        Either<Map<String, InterfaceDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.INTERFACE_ARTIFACTS);
+        Either<Map<String, InterfaceDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources,
+            EdgeLabelEnum.INTERFACE_ARTIFACTS);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
         Map<String, InterfaceDataDefinition> interfacArtsAll = dataFromDerived.left().value();
-
         Map<String, InterfaceDataDefinition> interfacArts = nodeType.getInterfaceArtifacts();
         if (interfacArts != null) {
             interfacArtsAll.putAll(interfacArts);
         }
         if (!interfacArtsAll.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INTERFACE_ARTIFACTS, EdgeLabelEnum.INTERFACE_ARTIFACTS, interfacArtsAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.INTERFACE_ARTIFACTS, EdgeLabelEnum.INTERFACE_ARTIFACTS, interfacArtsAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -177,15 +164,13 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     @Override
     public Either<ToscaElement, StorageOperationStatus> getToscaElement(String uniqueId, ComponentParametersView componentParametersView) {
-
-        Either<GraphVertex, StorageOperationStatus> componentByLabelAndId = getComponentByLabelAndId(uniqueId, ToscaElementTypeEnum.NODE_TYPE, JsonParseFlagEnum.ParseMetadata);
+        Either<GraphVertex, StorageOperationStatus> componentByLabelAndId = getComponentByLabelAndId(uniqueId, ToscaElementTypeEnum.NODE_TYPE,
+            JsonParseFlagEnum.ParseMetadata);
         if (componentByLabelAndId.isRight()) {
             return Either.right(componentByLabelAndId.right().value());
         }
         GraphVertex componentV = componentByLabelAndId.left().value();
-
         return getToscaElement(componentV, componentParametersView);
-
     }
 
     // -------------------------------------------------------------
@@ -199,34 +184,29 @@ public class NodeTypeOperation extends ToscaElementOperation {
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
-
             status = setLastModifierFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
-
         if (!componentParametersView.isIgnoreProperties()) {
             status = setResourcePropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK && status != JanusGraphOperationStatus.NOT_FOUND) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
-
         if (!componentParametersView.isIgnoreAttributes()) {
             status = setResourceAttributesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
-
         if (!componentParametersView.isIgnoreDerivedFrom()) {
             status = setResourceDerivedFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
-
         if (!componentParametersView.isIgnoreCategories()) {
             status = setResourceCategoryFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
@@ -246,7 +226,6 @@ public class NodeTypeOperation extends ToscaElementOperation {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
-
         if (!componentParametersView.isIgnoreArtifacts()) {
             status = setArtifactsFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
@@ -271,19 +250,18 @@ public class NodeTypeOperation extends ToscaElementOperation {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
-
         if (!componentParametersView.isIgnoreCapabiltyProperties()) {
             status = setComponentCapPropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-
             }
         }
         return Either.left(toscaElement);
     }
 
     private JanusGraphOperationStatus setComponentCapPropertiesFromGraph(GraphVertex componentV, NodeType toscaElement) {
-        Either<Map<String, MapPropertiesDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
+        Either<Map<String, MapPropertiesDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.CAPABILITIES_PROPERTIES);
         if (result.isLeft()) {
             toscaElement.setCapabilitiesProperties(result.left().value());
         } else {
@@ -295,7 +273,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
     }
 
     private JanusGraphOperationStatus setInterfacesFromGraph(GraphVertex componentV, NodeType toscaElement) {
-        Either<Map<String, InterfaceDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INTERFACE_ARTIFACTS);
+        Either<Map<String, InterfaceDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.INTERFACE_ARTIFACTS);
         if (result.isLeft()) {
             toscaElement.setInterfaceArtifacts(result.left().value());
         } else {
@@ -311,7 +290,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
     }
 
     private JanusGraphOperationStatus setResourceCapabilitiesFromGraph(GraphVertex componentV, NodeType toscaElement) {
-        Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES);
+        Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.CAPABILITIES);
         if (result.isLeft()) {
             toscaElement.setCapabilities(result.left().value());
         } else {
@@ -322,17 +302,13 @@ public class NodeTypeOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus setResourceDerivedFromGraph(final GraphVertex componentV,
-                                                                  final NodeType toscaElement) {
+    private JanusGraphOperationStatus setResourceDerivedFromGraph(final GraphVertex componentV, final NodeType toscaElement) {
         final List<String> derivedFromList = new ArrayList<>();
         final Map<String, String> derivedFromMapOfIdToName = new LinkedHashMap<>();
-
-        final JanusGraphOperationStatus listFromGraphStatus = findResourcesPathRecursively(componentV, derivedFromList,
-            derivedFromMapOfIdToName);
+        final JanusGraphOperationStatus listFromGraphStatus = findResourcesPathRecursively(componentV, derivedFromList, derivedFromMapOfIdToName);
         if (JanusGraphOperationStatus.OK != listFromGraphStatus) {
             return listFromGraphStatus;
         }
-
         if (!derivedFromList.isEmpty()) {
             if (derivedFromList.size() > 1) {
                 final List<String> lastDerivedFrom = new ArrayList<>();
@@ -347,30 +323,24 @@ public class NodeTypeOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus findResourcesPathRecursively(final GraphVertex nodeTypeV,
-                                                                     final List<String> resourcesPathList,
-                                                                     final Map<String, String> derivedFromMapOfIdToName) {
+    private JanusGraphOperationStatus findResourcesPathRecursively(final GraphVertex nodeTypeV, final List<String> resourcesPathList,
+                                                                   final Map<String, String> derivedFromMapOfIdToName) {
         Either<GraphVertex, JanusGraphOperationStatus> parentResourceRes = janusGraphDao
             .getChildVertex(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
         resourcesPathList.add((String) nodeTypeV.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
-        derivedFromMapOfIdToName.put(nodeTypeV.getUniqueId(),
-            (String) nodeTypeV.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
+        derivedFromMapOfIdToName.put(nodeTypeV.getUniqueId(), (String) nodeTypeV.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
         while (parentResourceRes.isLeft()) {
             final GraphVertex parent = parentResourceRes.left().value();
             resourcesPathList.add((String) parent.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
-            derivedFromMapOfIdToName
-                .put(parent.getUniqueId(), (String) parent.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
-            parentResourceRes = janusGraphDao
-                .getChildVertex(parent, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
+            derivedFromMapOfIdToName.put(parent.getUniqueId(), (String) parent.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
+            parentResourceRes = janusGraphDao.getChildVertex(parent, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
         }
         final JanusGraphOperationStatus operationStatus = parentResourceRes.right().value();
-
         if (operationStatus != JanusGraphOperationStatus.NOT_FOUND) {
             return operationStatus;
         } else {
             return JanusGraphOperationStatus.OK;
         }
-
     }
 
     protected <T extends ToscaElement> JanusGraphOperationStatus setRequirementsFromGraph(GraphVertex componentV, T toscaElement) {
@@ -378,7 +348,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
     }
 
     private JanusGraphOperationStatus setResourceRequirementsFromGraph(GraphVertex componentV, NodeType toscaElement) {
-        Either<Map<String, ListRequirementDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.REQUIREMENTS);
+        Either<Map<String, ListRequirementDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.REQUIREMENTS);
         if (result.isLeft()) {
             toscaElement.setRequirements(result.left().value());
         } else {
@@ -415,9 +386,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     private StorageOperationStatus assosiateToDerived(GraphVertex nodeTypeVertex, List<GraphVertex> derivedResources) {
         for (GraphVertex derivedV : derivedResources) {
-            JanusGraphOperationStatus
-                createEdge = janusGraphDao
-                .createEdge(nodeTypeVertex, derivedV, EdgeLabelEnum.DERIVED_FROM, null);
+            JanusGraphOperationStatus createEdge = janusGraphDao.createEdge(nodeTypeVertex, derivedV, EdgeLabelEnum.DERIVED_FROM, null);
             if (createEdge != JanusGraphOperationStatus.OK) {
                 log.trace("Failed to associate resource {} to derived with id {}", nodeTypeVertex.getUniqueId(), derivedV.getUniqueId());
                 return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createEdge);
@@ -426,20 +395,22 @@ public class NodeTypeOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
-    private StorageOperationStatus addAdditionalInformationToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
+    private StorageOperationStatus addAdditionalInformationToResource(GraphVertex nodeTypeVertex, NodeType nodeType,
+                                                                      List<GraphVertex> derivedResources) {
         // Note : currently only one derived supported!!!!
-        Either<Map<String, AdditionalInfoParameterDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.ADDITIONAL_INFORMATION);
+        Either<Map<String, AdditionalInfoParameterDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources,
+            EdgeLabelEnum.ADDITIONAL_INFORMATION);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
         Map<String, AdditionalInfoParameterDataDefinition> addInformationAll = dataFromDerived.left().value();
-
         Map<String, AdditionalInfoParameterDataDefinition> addInformation = nodeType.getAdditionalInformation();
         if (addInformation != null) {
             ToscaDataDefinition.mergeDataMaps(addInformationAll, addInformation);
         }
         if (!addInformationAll.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.ADDITIONAL_INFORMATION, EdgeLabelEnum.ADDITIONAL_INFORMATION, addInformationAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.ADDITIONAL_INFORMATION, EdgeLabelEnum.ADDITIONAL_INFORMATION, addInformationAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -447,14 +418,15 @@ public class NodeTypeOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
-    private StorageOperationStatus associateCapabilitiesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
+    private StorageOperationStatus associateCapabilitiesToResource(GraphVertex nodeTypeVertex, NodeType nodeType,
+                                                                   List<GraphVertex> derivedResources) {
         // Note : currently only one derived supported!!!!
-        Either<Map<String, ListCapabilityDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.CAPABILITIES);
+        Either<Map<String, ListCapabilityDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources,
+            EdgeLabelEnum.CAPABILITIES);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
         Map<String, ListCapabilityDataDefinition> capabiltiesAll = dataFromDerived.left().value();
-
         Map<String, ListCapabilityDataDefinition> capabilties = nodeType.getCapabilities();
         if (capabilties != null) {
             if (capabiltiesAll == null) {
@@ -466,7 +438,6 @@ public class NodeTypeOperation extends ToscaElementOperation {
                     p.setUniqueId(uid);
                 });
             });
-
             ToscaDataDefinition.mergeDataMaps(capabiltiesAll, capabilties);
             capabiltiesAll.values().forEach(l -> {
                 l.getListToscaDataDefinition().forEach(c -> {
@@ -490,7 +461,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
             });
         });
         if (!capabiltiesAll.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES, EdgeLabelEnum.CAPABILITIES, capabiltiesAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES,
+                EdgeLabelEnum.CAPABILITIES, capabiltiesAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -498,14 +470,15 @@ public class NodeTypeOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
-    private StorageOperationStatus associateRequirementsToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
+    private StorageOperationStatus associateRequirementsToResource(GraphVertex nodeTypeVertex, NodeType nodeType,
+                                                                   List<GraphVertex> derivedResources) {
         // Note : currently only one derived supported!!!!
-        Either<Map<String, ListRequirementDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.REQUIREMENTS);
+        Either<Map<String, ListRequirementDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources,
+            EdgeLabelEnum.REQUIREMENTS);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
         Map<String, ListRequirementDataDefinition> requirementsAll = dataFromDerived.left().value();
-
         Map<String, ListRequirementDataDefinition> requirements = nodeType.getRequirements();
         if (requirements != null) {
             if (requirementsAll == null) {
@@ -517,12 +490,11 @@ public class NodeTypeOperation extends ToscaElementOperation {
                     p.setUniqueId(uid);
                 });
             });
-
             ToscaDataDefinition.mergeDataMaps(requirementsAll, requirements);
-
         }
         if (!requirementsAll.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS, EdgeLabelEnum.REQUIREMENTS, requirementsAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS,
+                EdgeLabelEnum.REQUIREMENTS, requirementsAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -532,12 +504,12 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     private StorageOperationStatus associateAttributesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
         // Note : currently only one derived supported!!!!
-        Either<Map<String, AttributeDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.ATTRIBUTES);
+        Either<Map<String, AttributeDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources,
+            EdgeLabelEnum.ATTRIBUTES);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
         Map<String, AttributeDataDefinition> attributesAll = dataFromDerived.left().value();
-
         Map<String, AttributeDataDefinition> attributes = nodeType.getAttributes();
         if (attributes != null) {
             attributes.values().stream().filter(p -> p.getUniqueId() == null).forEach(p -> {
@@ -551,8 +523,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
             attributesAll.forEach((s, attributeDataDefinition) -> {
                 log.debug("Attribute {}:{}", s, attributeDataDefinition.getUniqueId());
             });
-
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.ATTRIBUTES, EdgeLabelEnum.ATTRIBUTES, attributesAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.ATTRIBUTES,
+                EdgeLabelEnum.ATTRIBUTES, attributesAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -561,9 +533,11 @@ public class NodeTypeOperation extends ToscaElementOperation {
     }
 
     // TODO get from derived
-    private StorageOperationStatus associateCapabilitiesPropertiesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
+    private StorageOperationStatus associateCapabilitiesPropertiesToResource(GraphVertex nodeTypeVertex, NodeType nodeType,
+                                                                             List<GraphVertex> derivedResources) {
         // // Note : currently only one derived supported!!!!
-        Either<Map<String, MapPropertiesDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
+        Either<Map<String, MapPropertiesDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources,
+            EdgeLabelEnum.CAPABILITIES_PROPERTIES);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
@@ -582,7 +556,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
             ToscaDataDefinition.mergeDataMaps(propertiesAll, capabiltiesProps);
         }
         if (!propertiesAll.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, propertiesAll);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, propertiesAll);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -591,18 +566,16 @@ public class NodeTypeOperation extends ToscaElementOperation {
     }
 
     public Either<List<GraphVertex>, StorageOperationStatus> findDerivedResources(NodeType nodeType) {
-
         List<GraphVertex> derivedResources = new ArrayList<>();
         List<String> derivedFromResources = nodeType.getDerivedFrom();
         if (derivedFromResources != null && !derivedFromResources.isEmpty()) {
-
             for (String parentResource : derivedFromResources) {
-                Either<List<GraphVertex>, JanusGraphOperationStatus> getParentResources = derivedResourceResolver.findDerivedResources(parentResource);
+                Either<List<GraphVertex>, JanusGraphOperationStatus> getParentResources = derivedResourceResolver
+                    .findDerivedResources(parentResource);
                 List<GraphVertex> resources = null;
                 if (getParentResources.isRight()) {
                     log.error("Cannot find parent resource by tosca resource name {} in the graph.", parentResource);
                     return Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
-
                 } else {
                     resources = getParentResources.left().value();
                     if (resources == null || resources.size() == 0) {
@@ -610,50 +583,50 @@ public class NodeTypeOperation extends ToscaElementOperation {
                         return Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
                     } else {
                         if (resources.size() > 1) {
-                            return handleMultipleParent(parentResource, derivedResources, resources, (String)nodeType.getMetadataValue(JsonPresentationFields.VENDOR_RELEASE));
+                            return handleMultipleParent(parentResource, derivedResources, resources,
+                                (String) nodeType.getMetadataValue(JsonPresentationFields.VENDOR_RELEASE));
                         } else {
                             GraphVertex parentResourceData = resources.get(0);
                             derivedResources.add(parentResourceData);
                         }
                     }
-
                 }
-
             }
         }
         return Either.left(derivedResources);
     }
 
-    Either<List<GraphVertex>, StorageOperationStatus> handleMultipleParent(String parentResource, List<GraphVertex> derivedResource, List<GraphVertex> fetchedDerivedResources, String vendorRelease) {
-
+    Either<List<GraphVertex>, StorageOperationStatus> handleMultipleParent(String parentResource, List<GraphVertex> derivedResource,
+                                                                           List<GraphVertex> fetchedDerivedResources, String vendorRelease) {
         Either<List<GraphVertex>, StorageOperationStatus> result = Either.left(derivedResource);
         try {
             fetchedDerivedResources.removeIf(graphVertex -> !isValidForVendorRelease(graphVertex, vendorRelease));
             fetchedDerivedResources.sort((d1, d2) -> {
-                return new Double(Double.parseDouble((String) d1.getMetadataProperty(GraphPropertyEnum.VERSION))).compareTo(Double.parseDouble((String) d2.getMetadataProperty(GraphPropertyEnum.VERSION)));
+                return new Double(Double.parseDouble((String) d1.getMetadataProperty(GraphPropertyEnum.VERSION)))
+                    .compareTo(Double.parseDouble((String) d2.getMetadataProperty(GraphPropertyEnum.VERSION)));
             });
-
             int actualHighestIndex = fetchedDerivedResources.size() - 1;
             derivedResource.add(fetchedDerivedResources.get(actualHighestIndex));
             fetchedDerivedResources.remove(actualHighestIndex);
-
             StorageOperationStatus status = fixMultipleParent(fetchedDerivedResources);
             if (status != StorageOperationStatus.OK) {
                 result = Either.right(status);
             }
         } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during handle multiple parent {}. Exception is  {}", parentResource, e.getMessage());
+            CommonUtility
+                .addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during handle multiple parent {}. Exception is  {}", parentResource,
+                    e.getMessage());
             result = Either.right(StorageOperationStatus.GENERAL_ERROR);
         }
         return result;
     }
-    
+
     private boolean isValidForVendorRelease(final GraphVertex resource, final String vendorRelease) {
         if (vendorRelease != null && !vendorRelease.equals("1.0")) {
             try {
-                Semver resourceSemVer = new Semver((String)resource.getJsonMetadataField(JsonPresentationFields.VENDOR_RELEASE), SemverType.NPM);
+                Semver resourceSemVer = new Semver((String) resource.getJsonMetadataField(JsonPresentationFields.VENDOR_RELEASE), SemverType.NPM);
                 Semver packageSemVer = new Semver(vendorRelease, SemverType.NPM);
-                return !resourceSemVer.isGreaterThan(packageSemVer); 
+                return !resourceSemVer.isGreaterThan(packageSemVer);
             } catch (Exception exception) {
                 log.debug("Error in comparing vendor release", exception);
                 return false;
@@ -669,7 +642,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
             Either<GraphVertex, JanusGraphOperationStatus> updateVertexRes = janusGraphDao.updateVertex(fetchedDerivedResource);
             if (updateVertexRes.isRight()) {
                 JanusGraphOperationStatus titatStatus = updateVertexRes.right().value();
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to set highest version of node type {} to false. Status is  {}", fetchedDerivedResource.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME), titatStatus);
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to set highest version of node type {} to false. Status is  {}",
+                    fetchedDerivedResource.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME), titatStatus);
                 result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(titatStatus);
                 break;
             }
@@ -679,10 +653,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     private GraphVertex fillMetadata(GraphVertex nodeTypeVertex, NodeType nodeType) {
         nodeTypeVertex.setLabel(VertexTypeEnum.NODE_TYPE);
-
         fillCommonMetadata(nodeTypeVertex, nodeType);
         nodeTypeVertex.setJsonMetadataField(JsonPresentationFields.ATTRIBUTES, nodeType.getAttributes());
-
         return nodeTypeVertex;
     }
 
@@ -697,39 +669,33 @@ public class NodeTypeOperation extends ToscaElementOperation {
         if (status != JanusGraphOperationStatus.OK) {
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-        status = janusGraphDao
-            .disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES);
         if (status != JanusGraphOperationStatus.OK) {
             log.debug("Failed to disassociate capabilties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-        status = janusGraphDao
-            .disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
         if (status != JanusGraphOperationStatus.OK) {
             log.debug("Failed to disassociate capabilties properties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-        status = janusGraphDao
-            .disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.REQUIREMENTS);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.REQUIREMENTS);
         if (status != JanusGraphOperationStatus.OK) {
             log.debug("Failed to disassociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-        status = janusGraphDao
-            .disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.ATTRIBUTES);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.ATTRIBUTES);
         if (status != JanusGraphOperationStatus.OK) {
             log.debug("Failed to disassociate attributes for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-        status = janusGraphDao
-            .disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INTERFACE_ARTIFACTS);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INTERFACE_ARTIFACTS);
         if (status != JanusGraphOperationStatus.OK) {
             log.debug("Failed to disassociate interface artifacts for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         toscaElementVertex.getVertex().remove();
         log.trace("Tosca element vertex for {} was removed", toscaElementVertex.getUniqueId());
-
         return nodeType;
     }
 
@@ -751,11 +717,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     @Override
     protected <T extends ToscaElement> StorageOperationStatus updateDerived(T toscaElementToUpdate, GraphVertex nodeTypeV) {
-
         NodeType nodeType = (NodeType) toscaElementToUpdate;
-
         List<String> derivedFromResources = nodeType.getDerivedFrom();
-
         // now supported only single derived from
         if (derivedFromResources != null && !derivedFromResources.isEmpty() && derivedFromResources.get(0) != null) {
             String firstDerived = derivedFromResources.get(0);
@@ -768,22 +731,18 @@ public class NodeTypeOperation extends ToscaElementOperation {
                 return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getchieldError);
             }
             GraphVertex firstDerivedInChain = childVertex.left().value();
-
             String firstCurrentDerived = (String) firstDerivedInChain.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME);
             if (!firstDerived.equals(firstCurrentDerived) || derivedFromGenericType) {
-
                 Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
                 propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-
                 propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, firstDerived);
                 propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-
                 Either<List<GraphVertex>, JanusGraphOperationStatus> getParentResources = janusGraphDao
                     .getByCriteria(VertexTypeEnum.NODE_TYPE, propertiesToMatch, JsonParseFlagEnum.NoParse);
-
                 if (getParentResources.isRight()) {
                     JanusGraphOperationStatus error = getParentResources.right().value();
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch derived by criteria {}. error {} ", propertiesToMatch, error);
+                    CommonUtility
+                        .addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch derived by criteria {}. error {} ", propertiesToMatch, error);
                     return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error);
                 }
                 // must be only one
@@ -795,7 +754,6 @@ public class NodeTypeOperation extends ToscaElementOperation {
     }
 
     /**
-     *
      * @param toscaElementToUpdate
      * @param nodeTypeV
      * @param preDerivedV
@@ -803,7 +761,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
      * @param mergeValues
      * @return
      */
-    protected <T extends ToscaElement> StorageOperationStatus updateDerived(T toscaElementToUpdate, GraphVertex nodeTypeV, GraphVertex preDerivedV, GraphVertex newDerivedV, boolean mergeValues) {
+    protected <T extends ToscaElement> StorageOperationStatus updateDerived(T toscaElementToUpdate, GraphVertex nodeTypeV, GraphVertex preDerivedV,
+                                                                            GraphVertex newDerivedV, boolean mergeValues) {
         Set<String> preDerivedChainIdList = new HashSet();
         preDerivedChainIdList.add(preDerivedV.getUniqueId());
         Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao
@@ -811,54 +770,53 @@ public class NodeTypeOperation extends ToscaElementOperation {
         while (childVertex.isLeft()) {
             GraphVertex currentChield = childVertex.left().value();
             preDerivedChainIdList.add(currentChield.getUniqueId());
-            childVertex = janusGraphDao
-                .getChildVertex(currentChield, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
+            childVertex = janusGraphDao.getChildVertex(currentChield, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
         }
-
         List<GraphVertex> derivedResources = new ArrayList<>();
         derivedResources.add(newDerivedV);
-        StorageOperationStatus updateStatus = updateDataFromNewDerived(derivedResources, nodeTypeV, (NodeType) toscaElementToUpdate, mergeValues, preDerivedChainIdList);
+        StorageOperationStatus updateStatus = updateDataFromNewDerived(derivedResources, nodeTypeV, (NodeType) toscaElementToUpdate, mergeValues,
+            preDerivedChainIdList);
         if (updateStatus != StorageOperationStatus.OK) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update data for {} from new derived {} ", nodeTypeV.getUniqueId(), newDerivedV.getUniqueId(), updateStatus);
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update data for {} from new derived {} ", nodeTypeV.getUniqueId(),
+                newDerivedV.getUniqueId(), updateStatus);
             return updateStatus;
         }
-
-        Either<Edge, JanusGraphOperationStatus> deleteEdge = janusGraphDao
-            .deleteEdge(nodeTypeV, preDerivedV, EdgeLabelEnum.DERIVED_FROM);
+        Either<Edge, JanusGraphOperationStatus> deleteEdge = janusGraphDao.deleteEdge(nodeTypeV, preDerivedV, EdgeLabelEnum.DERIVED_FROM);
         if (deleteEdge.isRight()) {
             JanusGraphOperationStatus deleteError = deleteEdge.right().value();
-            log.debug("Failed to disassociate element {} from derived {} , error {}", nodeTypeV.getUniqueId(), preDerivedV.getUniqueId(), deleteError);
+            log.debug("Failed to disassociate element {} from derived {} , error {}", nodeTypeV.getUniqueId(), preDerivedV.getUniqueId(),
+                deleteError);
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(deleteError);
         }
-
         janusGraphDao.createEdge(nodeTypeV, newDerivedV, EdgeLabelEnum.DERIVED_FROM, new HashMap<>());
-
         return StorageOperationStatus.OK;
     }
 
-    private StorageOperationStatus associateDerivedDataByType(EdgeLabelEnum edgeLabel, GraphVertex nodeTypeV, NodeType nodeToUpdate, List<GraphVertex> newDerived) {
-
+    private StorageOperationStatus associateDerivedDataByType(EdgeLabelEnum edgeLabel, GraphVertex nodeTypeV, NodeType nodeToUpdate,
+                                                              List<GraphVertex> newDerived) {
         switch (edgeLabel) {
-        case CAPABILITIES:
-            return associateCapabilitiesToResource(nodeTypeV, nodeToUpdate, newDerived);
-        case REQUIREMENTS:
-            return associateRequirementsToResource(nodeTypeV, nodeToUpdate, newDerived);
-        case PROPERTIES:
-            return associatePropertiesToResource(nodeTypeV, nodeToUpdate, newDerived);
-        case ATTRIBUTES:
-            return associateAttributesToResource(nodeTypeV, nodeToUpdate, newDerived);
-        case ADDITIONAL_INFORMATION:
-            return addAdditionalInformationToResource(nodeTypeV, nodeToUpdate, newDerived);
-        case CAPABILITIES_PROPERTIES:
-            return associateCapabilitiesPropertiesToResource(nodeTypeV, nodeToUpdate, newDerived);
-        default:
-            return StorageOperationStatus.OK;
+            case CAPABILITIES:
+                return associateCapabilitiesToResource(nodeTypeV, nodeToUpdate, newDerived);
+            case REQUIREMENTS:
+                return associateRequirementsToResource(nodeTypeV, nodeToUpdate, newDerived);
+            case PROPERTIES:
+                return associatePropertiesToResource(nodeTypeV, nodeToUpdate, newDerived);
+            case ATTRIBUTES:
+                return associateAttributesToResource(nodeTypeV, nodeToUpdate, newDerived);
+            case ADDITIONAL_INFORMATION:
+                return addAdditionalInformationToResource(nodeTypeV, nodeToUpdate, newDerived);
+            case CAPABILITIES_PROPERTIES:
+                return associateCapabilitiesPropertiesToResource(nodeTypeV, nodeToUpdate, newDerived);
+            default:
+                return StorageOperationStatus.OK;
         }
-
     }
 
-    private StorageOperationStatus updateDataFromNewDerived(List<GraphVertex> newDerived, GraphVertex nodeTypeV, NodeType nodeToUpdate, boolean mergeValues, Set<String> preDerivedChainIdList) {
-        EnumSet<EdgeLabelEnum> edgeLabels = EnumSet.of(EdgeLabelEnum.CAPABILITIES, EdgeLabelEnum.REQUIREMENTS, EdgeLabelEnum.PROPERTIES, EdgeLabelEnum.ATTRIBUTES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.ADDITIONAL_INFORMATION);
+    private StorageOperationStatus updateDataFromNewDerived(List<GraphVertex> newDerived, GraphVertex nodeTypeV, NodeType nodeToUpdate,
+                                                            boolean mergeValues, Set<String> preDerivedChainIdList) {
+        EnumSet<EdgeLabelEnum> edgeLabels = EnumSet
+            .of(EdgeLabelEnum.CAPABILITIES, EdgeLabelEnum.REQUIREMENTS, EdgeLabelEnum.PROPERTIES, EdgeLabelEnum.ATTRIBUTES,
+                EdgeLabelEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.ADDITIONAL_INFORMATION);
         StorageOperationStatus status = null;
         for (EdgeLabelEnum edge : edgeLabels) {
             status = updateDataByType(newDerived, nodeTypeV, edge, nodeToUpdate, mergeValues, preDerivedChainIdList);
@@ -867,24 +825,26 @@ public class NodeTypeOperation extends ToscaElementOperation {
             }
         }
         return status;
-
     }
 
-    private <T extends ToscaDataDefinition> StorageOperationStatus updateDataByType(List<GraphVertex> newDerivedList, GraphVertex nodeTypeV, EdgeLabelEnum label, NodeType nodeElement, boolean mergeValues, Set<String> preDerivedChainIdList) {
+    private <T extends ToscaDataDefinition> StorageOperationStatus updateDataByType(List<GraphVertex> newDerivedList, GraphVertex nodeTypeV,
+                                                                                    EdgeLabelEnum label, NodeType nodeElement, boolean mergeValues,
+                                                                                    Set<String> preDerivedChainIdList) {
         log.debug("Update data from derived for element {} type {}", nodeTypeV.getUniqueId(), label);
         Either<GraphVertex, JanusGraphOperationStatus> dataFromGraph = getDataVertex(nodeTypeV, label);
         if (dataFromGraph.isRight()) {
-            if (JanusGraphOperationStatus.NOT_FOUND == dataFromGraph.right().value())
+            if (JanusGraphOperationStatus.NOT_FOUND == dataFromGraph.right().value()) {
                 return associateDerivedDataByType(label, nodeTypeV, nodeElement, newDerivedList);
+            }
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(dataFromGraph.right().value());
         }
         GraphVertex dataV = dataFromGraph.left().value();
-
         Map<String, T> mapFromGraph = (Map<String, T>) dataV.getJson();
         Map<String, T> valuesFrmPrev = null;
         if (isSimpleHierarchy(label)) {
             if (mergeValues) {
-                valuesFrmPrev = mapFromGraph.entrySet().stream().filter(e -> e.getValue().getOwnerId() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                valuesFrmPrev = mapFromGraph.entrySet().stream().filter(e -> e.getValue().getOwnerId() != null)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             }
             mapFromGraph.entrySet().removeIf(e -> preDerivedChainIdList.contains(e.getValue().getOwnerId()));
         } else {
@@ -895,15 +855,13 @@ public class NodeTypeOperation extends ToscaElementOperation {
                 valuesFrmPrevFinal.put(e.getKey(), value);
             });
             valuesFrmPrev = valuesFrmPrevFinal;
-            mapFromGraph.entrySet().removeIf(e->e.getValue().isEmpty());
+            mapFromGraph.entrySet().removeIf(e -> e.getValue().isEmpty());
         }
-
         Either<Map<String, T>, StorageOperationStatus> dataFromDerived = getDataFromDerived(newDerivedList, label);
         if (dataFromDerived.isRight()) {
             return dataFromDerived.right().value();
         }
         Map<String, T> dataFromDerivedAll = dataFromDerived.left().value();
-
         Either<Map<String, T>, String> merged = ToscaDataDefinition.mergeDataMaps(dataFromDerivedAll, mapFromGraph);
         if (merged.isRight()) {
             log.debug("property {} cannot be overriden", merged.right().value());
@@ -915,7 +873,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
                 if (newData != null) {
                     if (isSimpleHierarchy(label)) {
                         e.getValue().mergeFunction(newData, true);
-                    }else{
+                    } else {
                         e.getValue().updateIfExist(newData, true);
                     }
                 }
@@ -931,16 +889,16 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     private boolean isSimpleHierarchy(EdgeLabelEnum label) {
         switch (label) {
-        case PROPERTIES:
-        case ATTRIBUTES:
-        case ADDITIONAL_INFORMATION:
-        case ARTIFACTS:
-        case GROUPS:
-        case INPUTS:
-        case OUTPUTS:
-            return true;
-        default:
-            return false;
+            case PROPERTIES:
+            case ATTRIBUTES:
+            case ADDITIONAL_INFORMATION:
+            case ARTIFACTS:
+            case GROUPS:
+            case INPUTS:
+            case OUTPUTS:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -951,7 +909,6 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
     public Either<ToscaElement, StorageOperationStatus> shouldUpdateDerivedVersion(ToscaElement toscaElementToUpdate, GraphVertex nodeTypeV) {
         NodeType nodeType = (NodeType) toscaElementToUpdate;
-
         Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao
             .getChildVertex(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
@@ -960,19 +917,15 @@ public class NodeTypeOperation extends ToscaElementOperation {
                 log.debug("derived resource for element {} not found", nodeTypeV.getUniqueId());
                 return Either.right(StorageOperationStatus.OK);
             }
-
             log.debug("Failed to fetch derived resource for element {} error {}", nodeTypeV.getUniqueId(), getchildError);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getchildError));
         }
         GraphVertex firstDerivedInChain = childVertex.left().value();
-
         String currentVersion = (String) firstDerivedInChain.getMetadataProperty(GraphPropertyEnum.VERSION);
-
         Map<GraphPropertyEnum, Object> props = new HashMap<>();
         props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, nodeType.getDerivedFrom().get(0));
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-
         Map<GraphPropertyEnum, Object> propsHasNot = new HashMap<>();
         propsHasNot.put(GraphPropertyEnum.IS_DELETED, true);
         Either<List<GraphVertex>, JanusGraphOperationStatus> byCriteria = janusGraphDao
@@ -986,12 +939,11 @@ public class NodeTypeOperation extends ToscaElementOperation {
         GraphVertex derivedFromHighest = lastDerived.get(0);
         String highestVersion = (String) derivedFromHighest.getMetadataProperty(GraphPropertyEnum.VERSION);
         if (!highestVersion.equals(currentVersion)) {
-
             // need to update to latest version of derived from
             StorageOperationStatus updateDerived = updateDerived(toscaElementToUpdate, nodeTypeV, firstDerivedInChain, derivedFromHighest, true);
-
             if (updateDerived != StorageOperationStatus.OK) {
-                log.debug("Failed to update {} to highest derived {} from error {}", nodeTypeV.getUniqueId(), derivedFromHighest.getUniqueId(), updateDerived);
+                log.debug("Failed to update {} to highest derived {} from error {}", nodeTypeV.getUniqueId(), derivedFromHighest.getUniqueId(),
+                    updateDerived);
                 return Either.right(updateDerived);
             }
             return getToscaElement(nodeTypeV.getUniqueId(), new ComponentParametersView());
@@ -999,5 +951,4 @@ public class NodeTypeOperation extends ToscaElementOperation {
         // no version changes
         return Either.right(StorageOperationStatus.OK);
     }
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
@@ -77,5 +76,4 @@ public class Product extends Component {
     private ProductMetadataDataDefinition getProductMetadataDefinition() {
         return (ProductMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
     }
-
 }

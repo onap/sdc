@@ -25,5 +25,4 @@ public class UploadNodeFilterCapabilitiesInfo {
 
     private String name;
     private List<UploadNodeFilterPropertyInfo> properties;
-
 }

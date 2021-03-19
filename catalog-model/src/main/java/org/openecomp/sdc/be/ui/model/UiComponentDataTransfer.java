@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
-
 
 import java.util.List;
 import java.util.Map;
@@ -74,14 +72,11 @@ public class UiComponentDataTransfer {
     private List<OutputDefinition> outputs;
     private List<GroupDefinition> groups;
     private Map<String, InterfaceDefinition> interfaces;
-
     private Map<String, CINodeFilterDataDefinition> nodeFilter;
     private Map<String, SubstitutionFilterDataDefinition> substitutionFilter;
-
     private Map<String, UINodeFilter> nodeFilterforNode;
     private Map<String, UINodeFilter> substitutionFilterForTopologyTemplate;
     private List<PropertyDefinition> properties;
     private List<AttributeDefinition> attributes;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
-
 }

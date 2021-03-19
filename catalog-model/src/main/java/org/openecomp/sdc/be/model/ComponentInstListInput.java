@@ -17,14 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 /**
- * Represents a pair of a list of properties to be declared and a "list input" to be created.
- * This class is used for passing parameters on creating a list input.
+ * Represents a pair of a list of properties to be declared and a "list input" to be created. This class is used for passing parameters on creating a
+ * list input.
  */
 public class ComponentInstListInput {
+
     private ComponentInstInputsMap componentInstInputsMap;
     private InputDefinition listInput;
 

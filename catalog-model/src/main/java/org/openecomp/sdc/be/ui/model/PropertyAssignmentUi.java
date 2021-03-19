@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ui.model;
 
 import lombok.Getter;
@@ -25,6 +24,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PropertyAssignmentUi {
+
     private String name;
     private String value;
     private String type;

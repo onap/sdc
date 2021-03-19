@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.converters;
 
 import com.google.gson.Gson;
@@ -47,9 +46,8 @@ public class DataTypePropertyConverter {
     }
 
     /**
-     *
      * @param propertyDataType the data type
-     * @param dataTypes all data types in the system mapped by their name
+     * @param dataTypes        all data types in the system mapped by their name
      * @return a json representation of all the given data type properties default values and recursively their data type properties
      */
     public String getDataTypePropertiesDefaultValuesRec(String propertyDataType, Map<String, DataTypeDefinition> dataTypes) {
@@ -59,11 +57,11 @@ public class DataTypePropertyConverter {
 
     /**
      * Takes a json representation of a tosca property value and merges all the default values of the property data type
-     * @param value the json representation of a tosca property value
+     *
+     * @param value            the json representation of a tosca property value
      * @param propertyDataType data type from which to merge default values
-     * @param dataTypes all data types in the system mapped by their name
-     * for example: for value {a: {b: c}} we could have a default value {a: {d: e}} (property a has two sub properties but only b was overridden)
-     * so the complete value is {a: {b: c, d: e}}
+     * @param dataTypes        all data types in the system mapped by their name for example: for value {a: {b: c}} we could have a default value {a:
+     *                         {d: e}} (property a has two sub properties but only b was overridden) so the complete value is {a: {b: c, d: e}}
      */
     public void mergeDataTypeDefaultValuesWithPropertyValue(JsonObject value, String propertyDataType, Map<String, DataTypeDefinition> dataTypes) {
         JsonObject dataTypeDefaultValues = getDataTypePropsDefaultValuesRec(propertyDataType, dataTypes);
@@ -106,7 +104,8 @@ public class DataTypePropertyConverter {
         return dataTypeDefaultsJson;
     }
 
-    private void addDefaultValueToJson(Map<String, DataTypeDefinition> dataTypes, JsonObject dataTypePropsDefaults, PropertyDefinition propertyDefinition) {
+    private void addDefaultValueToJson(Map<String, DataTypeDefinition> dataTypes, JsonObject dataTypePropsDefaults,
+                                       PropertyDefinition propertyDefinition) {
         String propName = propertyDefinition.getName();
         JsonElement defVal = getDefaultValue(dataTypes, dataTypePropsDefaults, propertyDefinition);
         if (!JsonUtils.isEmptyJson(defVal)) {
@@ -114,11 +113,12 @@ public class DataTypePropertyConverter {
         }
     }
 
-    private JsonElement getDefaultValue(Map<String, DataTypeDefinition> dataTypes, JsonObject dataTypePropsDefaults, PropertyDefinition propertyDefinition) {
+    private JsonElement getDefaultValue(Map<String, DataTypeDefinition> dataTypes, JsonObject dataTypePropsDefaults,
+                                        PropertyDefinition propertyDefinition) {
         JsonElement defVal = new JsonObject();
         String propName = propertyDefinition.getName();
         String propDefaultVal = propertyDefinition.getDefaultValue();
-        if(!JsonUtils.containsEntry(dataTypePropsDefaults, propName) && propDefaultVal != null){
+        if (!JsonUtils.containsEntry(dataTypePropsDefaults, propName) && propDefaultVal != null) {
             defVal = convertToJson(propDefaultVal);
         } else if (!JsonUtils.containsEntry(dataTypePropsDefaults, propName)) {
             defVal = getDataTypePropsDefaultValuesRec(propertyDefinition.getType(), dataTypes);
@@ -135,15 +135,12 @@ public class DataTypePropertyConverter {
     private Map<String, PropertyDefinition> getAllDataTypeProperties(DataTypeDefinition dataTypeDefinition) {
         Map<String, PropertyDefinition> allParentsProps = new HashMap<>();
         while (dataTypeDefinition != null) {
-
             List<PropertyDefinition> currentParentsProps = dataTypeDefinition.getProperties();
             if (currentParentsProps != null) {
                 currentParentsProps.stream().forEach(p -> allParentsProps.put(p.getName(), p));
             }
-
             dataTypeDefinition = dataTypeDefinition.getDerivedFrom();
         }
         return allParentsProps;
     }
-
 }

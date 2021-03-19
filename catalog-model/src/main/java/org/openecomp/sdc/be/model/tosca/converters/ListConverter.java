@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,11 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import fj.data.Either;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -32,20 +39,13 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GsonFactory;
 import org.openecomp.sdc.common.util.JsonUtils;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 public class ListConverter implements PropertyValueConverter {
 
+    private static final Logger log = Logger.getLogger(ListValidator.class.getName());
     private static ListConverter listConverter = new ListConverter();
     private static Gson gson = GsonFactory.getGson();
-    private static final Logger log = Logger.getLogger(ListValidator.class.getName());
-
-    DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
-
     private static JsonParser jsonParser = new JsonParser();
+    DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
     public static ListConverter getInstance() {
         return listConverter;
@@ -57,142 +57,123 @@ public class ListConverter implements PropertyValueConverter {
         if (convertWithErrorResult.isRight()) {
             return null;
         }
-
         return convertWithErrorResult.left().value();
     }
 
-    public Either<String, Boolean> convertWithErrorResult(String value, String innerType,
-            Map<String, DataTypeDefinition> dataTypes) {
+    public Either<String, Boolean> convertWithErrorResult(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
         if (value == null || innerType == null) {
             return Either.left(value);
         }
-
         PropertyValueConverter innerConverter;
         ToscaPropertyType innerToscaType = ToscaPropertyType.isValidType(innerType);
-
         if (innerToscaType != null) {
             PropertyValueConverter innerConverter1;
             switch (innerToscaType) {
-            case STRING:
-                innerConverter1 = ToscaPropertyType.STRING.getConverter();
-                break;
-            case INTEGER:
-                innerConverter1 = ToscaPropertyType.INTEGER.getConverter();
-                break;
-            case FLOAT:
-                innerConverter1 = ToscaPropertyType.FLOAT.getConverter();
-                break;
-            case BOOLEAN:
-                innerConverter1 = ToscaPropertyType.BOOLEAN.getConverter();
-                break;
-            case JSON:
-                innerConverter1 = ToscaPropertyType.JSON.getConverter();
-                break;
-            default:
-                log.debug("inner Tosca Type is unknown");
-                return Either.left(value);
+                case STRING:
+                    innerConverter1 = ToscaPropertyType.STRING.getConverter();
+                    break;
+                case INTEGER:
+                    innerConverter1 = ToscaPropertyType.INTEGER.getConverter();
+                    break;
+                case FLOAT:
+                    innerConverter1 = ToscaPropertyType.FLOAT.getConverter();
+                    break;
+                case BOOLEAN:
+                    innerConverter1 = ToscaPropertyType.BOOLEAN.getConverter();
+                    break;
+                case JSON:
+                    innerConverter1 = ToscaPropertyType.JSON.getConverter();
+                    break;
+                default:
+                    log.debug("inner Tosca Type is unknown");
+                    return Either.left(value);
             }
             innerConverter = innerConverter1;
         } else {
             log.debug("inner Tosca Type {} ia a complex data type.", innerType);
-
             return convertComplexInnerType(value, innerType, dataTypes);
         }
-
         try {
             ArrayList<String> newList = new ArrayList<>();
-
             JsonArray jo = (JsonArray) jsonParser.parse(value);
-            if(ToscaPropertyType.JSON == innerToscaType)
+            if (ToscaPropertyType.JSON == innerToscaType) {
                 return Either.left(value);
+            }
             int size = jo.size();
             for (int i = 0; i < size; i++) {
                 JsonElement currentValue = jo.get(i);
                 String element = JsonUtils.toString(currentValue);
-
                 if (element == null || element.isEmpty()) {
                     continue;
                 }
                 element = innerConverter.convert(element, null, dataTypes);
                 newList.add(element);
             }
-
             switch (innerToscaType) {
-            case STRING:
-                value = gson.toJson(newList);
-                break;
-            case INTEGER:
-                List<BigInteger> intList = new ArrayList<>();
-
-                for (String str : newList) {
-                    int base = 10;
-                    if (str.contains("0x")) {
-                        str = str.replaceFirst("0x", "");
-                        base = 16;
+                case STRING:
+                    value = gson.toJson(newList);
+                    break;
+                case INTEGER:
+                    List<BigInteger> intList = new ArrayList<>();
+                    for (String str : newList) {
+                        int base = 10;
+                        if (str.contains("0x")) {
+                            str = str.replaceFirst("0x", "");
+                            base = 16;
+                        }
+                        if (str.contains("0o")) {
+                            str = str.replaceFirst("0o", "");
+                            base = 8;
+                        }
+                        intList.add(new BigInteger(str, base));
                     }
-                    if (str.contains("0o")) {
-                        str = str.replaceFirst("0o", "");
-                        base = 8;
+                    value = gson.toJson(intList);
+                    break;
+                case FLOAT:
+                    value = "[";
+                    for (String str : newList) {
+                        value += str + ",";
                     }
-                    intList.add(new BigInteger(str, base));
-                }
-                value = gson.toJson(intList);
-                break;
-            case FLOAT:
-                value = "[";
-                for (String str : newList) {
-                    value += str + ",";
-                }
-                value = value.substring(0, value.length() - 1);
-                value += "]";
-                break;
-            case BOOLEAN:
-                List<Boolean> boolList = new ArrayList<>();
-                for (String str : newList) {
-                    boolList.add(Boolean.valueOf(str));
-                }
-                value = gson.toJson(boolList);
-                break;
-            default:
-                value = gson.toJson(newList);
-                log.debug("inner Tosca Type unknown : {}", innerToscaType);
+                    value = value.substring(0, value.length() - 1);
+                    value += "]";
+                    break;
+                case BOOLEAN:
+                    List<Boolean> boolList = new ArrayList<>();
+                    for (String str : newList) {
+                        boolList.add(Boolean.valueOf(str));
+                    }
+                    value = gson.toJson(boolList);
+                    break;
+                default:
+                    value = gson.toJson(newList);
+                    log.debug("inner Tosca Type unknown : {}", innerToscaType);
             }
-
         } catch (JsonParseException e) {
             log.debug("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
             return Either.right(false);
         }
-
         return Either.left(value);
     }
 
-    private Either<String, Boolean> convertComplexInnerType(String value, String innerType,
-            Map<String, DataTypeDefinition> allDataTypes) {
-
+    private Either<String, Boolean> convertComplexInnerType(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
         DataTypeDefinition dataTypeDefinition = allDataTypes.get(innerType);
         if (dataTypeDefinition == null) {
             log.debug("Cannot find data type {}", innerType);
             return Either.right(false);
         }
-
         List<JsonElement> newList = new ArrayList<>();
-
         try {
-
             JsonArray jo = (JsonArray) jsonParser.parse(value);
             int size = jo.size();
             for (int i = 0; i < size; i++) {
                 JsonElement currentValue = jo.get(i);
-
                 if (currentValue != null) {
-
                     String element = JsonUtils.toString(currentValue);
-
                     ImmutablePair<JsonElement, Boolean> validateAndUpdate = dataTypeValidatorConverter
-                            .validateAndUpdate(element, dataTypeDefinition, allDataTypes);
+                        .validateAndUpdate(element, dataTypeDefinition, allDataTypes);
                     if (!validateAndUpdate.right.booleanValue()) {
-                        log.debug("Cannot parse value {} from type {} in list position {}",currentValue,innerType,i);
+                        log.debug("Cannot parse value {} from type {} in list position {}", currentValue, innerType, i);
                         return Either.right(false);
                     }
                     JsonElement newValue = validateAndUpdate.left;
@@ -206,5 +187,4 @@ public class ListConverter implements PropertyValueConverter {
         value = gson.toJson(newList);
         return Either.left(value);
     }
-
 }

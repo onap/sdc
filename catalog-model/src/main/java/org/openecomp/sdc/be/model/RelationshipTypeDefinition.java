@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.openecomp.sdc.be.model;
 
+import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.resources.data.RelationshipTypeData;
-
-import java.util.Map;
 
 /**
  * Specifies the capabilities that the Node Type exposes.
@@ -28,7 +25,6 @@ import java.util.Map;
 public class RelationshipTypeDefinition extends RelationshipInstDataDefinition {
 
     private String derivedFrom;
-
     private Map<String, PropertyDefinition> properties;
 
     public RelationshipTypeDefinition() {

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import lombok.Getter;
@@ -45,5 +44,4 @@ public class ComponentInstanceAttribOutput extends ComponentInstanceAttribute {
         }
         return tokens;
     }
-
 }

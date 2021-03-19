@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.impl;
 
 import com.google.gson.Gson;
@@ -56,55 +55,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractOperation {
 
+    public static final String EMPTY_VALUE = null;
     private static final Logger log = Logger.getLogger(AbstractOperation.class.getName());
-
     @Autowired
     protected HealingJanusGraphGenericDao janusGraphGenericDao;
-
-    public static final String EMPTY_VALUE = null;
-
     protected Gson gson = new Gson();
-
     @Autowired
     protected ApplicationDataTypeCache applicationDataTypeCache;
-
     protected DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
-    interface NodeElementFetcher<ElementDefinition> {
-        JanusGraphOperationStatus findAllNodeElements(String nodeId, List<ElementDefinition> listTofill);
-    }
-
-    public <ElementDefinition> JanusGraphOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
-
-        if (log.isTraceEnabled())
+    public <ElementDefinition> JanusGraphOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId,
+                                                                                                      List<ElementDefinition> elements,
+                                                                                                      NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
+        if (log.isTraceEnabled()) {
             log.trace("Going to fetch elements under resource {}", resourceId);
-        JanusGraphOperationStatus
-            resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
-
+        }
+        JanusGraphOperationStatus resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
         if (resourceAttributesStatus != JanusGraphOperationStatus.OK) {
             return resourceAttributesStatus;
         }
-
         Either<ImmutablePair<ResourceMetadataData, GraphEdge>, JanusGraphOperationStatus> parentNodes = janusGraphGenericDao
             .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
                 ResourceMetadataData.class);
-
         if (parentNodes.isRight()) {
             JanusGraphOperationStatus parentNodesStatus = parentNodes.right().value();
             if (parentNodesStatus != JanusGraphOperationStatus.NOT_FOUND) {
-                BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find parent elements of resource " + resourceId + ". status is " + parentNodesStatus, ErrorSeverity.ERROR);
+                BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively",
+                    "Failed to find parent elements of resource " + resourceId + ". status is " + parentNodesStatus, ErrorSeverity.ERROR);
                 return parentNodesStatus;
             }
         }
-
         if (parentNodes.isLeft()) {
             ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
             String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
             JanusGraphOperationStatus addParentIntStatus = findAllResourceElementsDefinitionRecursively(parentUniqueId, elements, singleNodeFetcher);
-
             if (addParentIntStatus != JanusGraphOperationStatus.OK) {
-                BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively", "Failed to find all resource elements of resource " + parentUniqueId, ErrorSeverity.ERROR);
-
+                BeEcompErrorManager.getInstance().logInternalFlowError("findAllResourceElementsDefinitionRecursively",
+                    "Failed to find all resource elements of resource " + parentUniqueId, ErrorSeverity.ERROR);
                 return addParentIntStatus;
             }
         }
@@ -123,50 +110,36 @@ public abstract class AbstractOperation {
         }
     }
 
-
     /**
      * @param propertyDefinition
      * @return
      */
-
     protected StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
-
         log.trace("Going to validate property type and value. {}", propertyDefinition);
-
         String propertyType = propertyDefinition.getType();
         String value = propertyDefinition.getDefaultValue();
-
         ToscaPropertyType type = getType(propertyType);
-
         if (type == null) {
-
             DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
             if (dataTypeDefinition == null) {
                 log.debug("The type {}  of property cannot be found.", propertyType);
                 return StorageOperationStatus.INVALID_TYPE;
             }
-
             return validateAndUpdateComplexValue(propertyDefinition, propertyType, value, dataTypeDefinition, dataTypes);
-
         }
         String innerType = null;
-
         Either<String, JanusGraphOperationStatus> checkInnerType = getInnerType(type, propertyDefinition::getSchema);
         if (checkInnerType.isRight()) {
             return StorageOperationStatus.INVALID_TYPE;
         }
         innerType = checkInnerType.left().value();
-
         log.trace("After validating property type {}", propertyType);
-
         boolean isValidProperty = isValidValue(type, value, innerType, dataTypes);
         if (!isValidProperty) {
             log.info("The value {} of property from type {} is invalid", value, type);
             return StorageOperationStatus.INVALID_VALUE;
         }
-
         PropertyValueConverter converter = type.getConverter();
-
         if (isEmptyValue(value)) {
             log.debug("Default value was not sent for property {}. Set default value to {}", propertyDefinition.getName(), EMPTY_VALUE);
             propertyDefinition.setDefaultValue(EMPTY_VALUE);
@@ -178,18 +151,14 @@ public abstract class AbstractOperation {
     }
 
     protected ToscaPropertyType getType(String propertyType) {
-
         return ToscaPropertyType.isValidType(propertyType);
-
     }
 
     protected boolean isValidValue(ToscaPropertyType type, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
         if (isEmptyValue(value)) {
             return true;
         }
-
         PropertyTypeValidator validator = type.getValidator();
-
         return validator.isValid(value, innerType, dataTypes);
     }
 
@@ -197,30 +166,22 @@ public abstract class AbstractOperation {
         return value == null;
     }
 
-    protected StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType,
-
-            String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> dataTypes) {
-
+    protected StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType, String value,
+                                                                   DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> dataTypes) {
         ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
-
         if (!validateResult.right.booleanValue()) {
             log.debug("The value {} of property from type {} is invalid", propertyType, propertyType);
             return StorageOperationStatus.INVALID_VALUE;
         }
-
         JsonElement jsonElement = validateResult.left;
-
-        log.trace("Going to update value in property definition {} {}" , propertyDefinition.getName() , (jsonElement != null ? jsonElement.toString() : null));
-
+        log.trace("Going to update value in property definition {} {}", propertyDefinition.getName(),
+            (jsonElement != null ? jsonElement.toString() : null));
         updateValue(propertyDefinition, jsonElement);
-
         return StorageOperationStatus.OK;
     }
 
     protected void updateValue(IComplexDefaultValue propertyDefinition, JsonElement jsonElement) {
-
         propertyDefinition.setDefaultValue(getValueFromJsonElement(jsonElement));
-
     }
 
     protected String getValueFromJsonElement(JsonElement jsonElement) {
@@ -234,7 +195,6 @@ public abstract class AbstractOperation {
     protected Either<String, JanusGraphOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
         String innerType = null;
         if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
-
             SchemaDefinition def = schemeGen.get();
             if (def == null) {
                 log.debug("Schema doesn't exists for property of type {}", type);
@@ -257,26 +217,24 @@ public abstract class AbstractOperation {
      * @return
      */
     public List<String> convertConstraintsToString(List<PropertyConstraint> constraints) {
-
         if (constraints == null || constraints.isEmpty()) {
             return null;
         }
-
         return constraints.stream().map(gson::toJson).collect(Collectors.toList());
     }
 
     public List<PropertyConstraint> convertConstraints(List<String> constraints) {
-
         if (constraints == null || constraints.isEmpty()) {
             return null;
         }
-
         Type constraintType = new TypeToken<PropertyConstraint>() {
         }.getType();
-
         Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
-
         return constraints.stream().map(c -> gson.fromJson(c, PropertyConstraint.class)).collect(Collectors.toList());
     }
 
+    interface NodeElementFetcher<ElementDefinition> {
+
+        JanusGraphOperationStatus findAllNodeElements(String nodeId, List<ElementDefinition> listTofill);
+    }
 }

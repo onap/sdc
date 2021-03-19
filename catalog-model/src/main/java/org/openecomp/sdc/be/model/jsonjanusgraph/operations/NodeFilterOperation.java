@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import com.google.common.collect.ImmutableList;
@@ -48,75 +47,59 @@ public class NodeFilterOperation extends BaseOperation {
 
     private static Logger logger = Logger.getLogger(NodeFilterOperation.class);
 
-    public Either<Set<String>, StorageOperationStatus> deleteNodeFilters(final Component component,
-                                                                         final Set<String> componentInstanceIds) {
+    public Either<Set<String>, StorageOperationStatus> deleteNodeFilters(final Component component, final Set<String> componentInstanceIds) {
         final Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex;
         final Either<GraphVertex, JanusGraphOperationStatus> getNodeFilterVertex;
         StorageOperationStatus status;
-
         getComponentVertex = janusGraphDao.getVertexById(component.getUniqueId(), JsonParseFlagEnum.NoParse);
         if (getComponentVertex.isRight()) {
-            return Either.right(
-                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
         }
-        getNodeFilterVertex = janusGraphDao.getChildVertex(getComponentVertex.left().value(),
-            EdgeLabelEnum.NODE_FILTER_TEMPLATE, JsonParseFlagEnum.NoParse);
+        getNodeFilterVertex = janusGraphDao
+            .getChildVertex(getComponentVertex.left().value(), EdgeLabelEnum.NODE_FILTER_TEMPLATE, JsonParseFlagEnum.NoParse);
         if (getNodeFilterVertex.isLeft()) {
-            status = deleteToscaDataElements(component.getUniqueId(), EdgeLabelEnum.NODE_FILTER_TEMPLATE,
-                    new ArrayList<>(componentInstanceIds));
+            status = deleteToscaDataElements(component.getUniqueId(), EdgeLabelEnum.NODE_FILTER_TEMPLATE, new ArrayList<>(componentInstanceIds));
             if (status != StorageOperationStatus.OK) {
                 return Either.right(status);
             }
         }
-
         return Either.left(componentInstanceIds);
     }
 
-
-    public Either<String, StorageOperationStatus> deleteNodeFilter(final Component component,
-                                                                   final String componentInstanceId) {
-        final Either<Set<String>, StorageOperationStatus> listStorageOperationStatusEither =
-                deleteNodeFilters(component, ImmutableSet.of(componentInstanceId));
+    public Either<String, StorageOperationStatus> deleteNodeFilter(final Component component, final String componentInstanceId) {
+        final Either<Set<String>, StorageOperationStatus> listStorageOperationStatusEither = deleteNodeFilters(component,
+            ImmutableSet.of(componentInstanceId));
         if (listStorageOperationStatusEither.isRight()) {
             return Either.right(listStorageOperationStatusEither.right().value());
         }
         return Either.left(componentInstanceId);
     }
 
-
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> createNodeFilter(final String componentId,
-                                                                                       final String componentInstanceId) {
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> createNodeFilter(final String componentId, final String componentInstanceId) {
         CINodeFilterDataDefinition nodeFilterDataDefinition = new CINodeFilterDataDefinition();
         return addOrUpdateNodeFilter(false, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> deleteConstraint(final String serviceId,
-                                                                                       final String componentInstanceId,
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> deleteConstraint(final String serviceId, final String componentInstanceId,
                                                                                        final CINodeFilterDataDefinition nodeFilterDataDefinition,
                                                                                        final int propertyIndex,
                                                                                        final NodeFilterConstraintType nodeFilterConstraintType) {
-
         if (NodeFilterConstraintType.PROPERTIES.equals(nodeFilterConstraintType)) {
-            final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
-                nodeFilterDataDefinition.getProperties();
+            final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties = nodeFilterDataDefinition.getProperties();
             properties.getListToscaDataDefinition().remove(propertyIndex);
             nodeFilterDataDefinition.setProperties(properties);
         } else if (NodeFilterConstraintType.CAPABILITIES.equals(nodeFilterConstraintType)) {
-            final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities =
-                nodeFilterDataDefinition.getCapabilities();
+            final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities = nodeFilterDataDefinition.getCapabilities();
             capabilities.getListToscaDataDefinition().remove(propertyIndex);
             nodeFilterDataDefinition.setCapabilities(capabilities);
         }
         return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, nodeFilterDataDefinition);
     }
 
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewProperty(
-        final String componentId, final String componentInstanceId,
-        final CINodeFilterDataDefinition nodeFilterDataDefinition,
-        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition) {
-
-        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
-            nodeFilterDataDefinition.getProperties();
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewProperty(final String componentId, final String componentInstanceId,
+                                                                                     final CINodeFilterDataDefinition nodeFilterDataDefinition,
+                                                                                     final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition) {
+        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties = nodeFilterDataDefinition.getProperties();
         if (properties == null) {
             properties = new ListDataDefinition<>();
             nodeFilterDataDefinition.setProperties(properties);
@@ -126,14 +109,11 @@ public class NodeFilterOperation extends BaseOperation {
         return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewCapabilities(
-        final String componentId, final String componentInstanceId,
-        final CINodeFilterDataDefinition nodeFilterDataDefinition,
-        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition) {
-
-        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities =
-            nodeFilterDataDefinition.getCapabilities();
-        if(capabilities == null) {
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewCapabilities(final String componentId, final String componentInstanceId,
+                                                                                         final CINodeFilterDataDefinition nodeFilterDataDefinition,
+                                                                                         final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition) {
+        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities = nodeFilterDataDefinition.getCapabilities();
+        if (capabilities == null) {
             capabilities = new ListDataDefinition<>();
             nodeFilterDataDefinition.setCapabilities(capabilities);
         }
@@ -142,50 +122,42 @@ public class NodeFilterOperation extends BaseOperation {
         return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateProperties(
-        final String componentId, final String componentInstanceId,
-        final CINodeFilterDataDefinition nodeFilterDataDefinition,
-        final List<RequirementNodeFilterPropertyDataDefinition> requirementNodeFilterPropertyDataDefinition) {
-
-        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
-                nodeFilterDataDefinition.getProperties();
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateProperties(final String componentId, final String componentInstanceId,
+                                                                                       final CINodeFilterDataDefinition nodeFilterDataDefinition,
+                                                                                       final List<RequirementNodeFilterPropertyDataDefinition> requirementNodeFilterPropertyDataDefinition) {
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties = nodeFilterDataDefinition.getProperties();
         properties.getListToscaDataDefinition().clear();
         properties.getListToscaDataDefinition().addAll(requirementNodeFilterPropertyDataDefinition);
         nodeFilterDataDefinition.setProperties(properties);
         return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateCapabilities(
-        final String componentId, final String componentInstanceId,
-        final CINodeFilterDataDefinition nodeFilterDataDefinition,
-        final List<RequirementNodeFilterCapabilityDataDefinition> requirementNodeFilterCapabilityDataDefinitions) {
-
-        final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities =
-            nodeFilterDataDefinition.getCapabilities();
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateCapabilities(final String componentId, final String componentInstanceId,
+                                                                                         final CINodeFilterDataDefinition nodeFilterDataDefinition,
+                                                                                         final List<RequirementNodeFilterCapabilityDataDefinition> requirementNodeFilterCapabilityDataDefinitions) {
+        final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities = nodeFilterDataDefinition.getCapabilities();
         capabilities.getListToscaDataDefinition().clear();
         capabilities.getListToscaDataDefinition().addAll(requirementNodeFilterCapabilityDataDefinitions);
         nodeFilterDataDefinition.setCapabilities(capabilities);
         return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateNodeFilter(final String serviceId,
-                                                                                       final String componentInstanceId,
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateNodeFilter(final String serviceId, final String componentInstanceId,
                                                                                        final CINodeFilterDataDefinition ciNodeFilterDataDefinition) {
         return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, ciNodeFilterDataDefinition);
     }
 
-    private Either<CINodeFilterDataDefinition, StorageOperationStatus> addOrUpdateNodeFilter(
-        final boolean isUpdateAction, final String componentId, final String componentInstanceId,
-        final CINodeFilterDataDefinition ciNodeFilterDataDefinition) {
-
+    private Either<CINodeFilterDataDefinition, StorageOperationStatus> addOrUpdateNodeFilter(final boolean isUpdateAction, final String componentId,
+                                                                                             final String componentInstanceId,
+                                                                                             final CINodeFilterDataDefinition ciNodeFilterDataDefinition) {
         StorageOperationStatus statusRes;
         Either<GraphVertex, JanusGraphOperationStatus> getToscaElementRes;
-
         getToscaElementRes = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
         if (getToscaElementRes.isRight()) {
             JanusGraphOperationStatus status = getToscaElementRes.right().value();
-            CommonUtility.addRecordToLog(logger, CommonUtility.LogLevelEnum.DEBUG,
-                    "Failed to get tosca element {} upon adding the properties. Status is {}. ", componentId, status);
+            CommonUtility
+                .addRecordToLog(logger, CommonUtility.LogLevelEnum.DEBUG, "Failed to get tosca element {} upon adding the properties. Status is {}. ",
+                    componentId, status);
             statusRes = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
             return Either.right(statusRes);
         }
@@ -194,27 +166,22 @@ public class NodeFilterOperation extends BaseOperation {
         statusRes = performUpdateToscaAction(isUpdateAction, serviceVertex, ImmutableList.of(ciNodeFilterDataDefinition));
         if (!statusRes.equals(StorageOperationStatus.OK)) {
             janusGraphDao.rollback();
-            logger.error(
-                    " Failed to perform tosca update for node filter in service {} , component instance {}. status is {}",
-                    componentId, componentInstanceId, statusRes);
+            logger.error(" Failed to perform tosca update for node filter in service {} , component instance {}. status is {}", componentId,
+                componentInstanceId, statusRes);
             return Either.right(statusRes);
         }
         janusGraphDao.commit();
         return Either.left(ciNodeFilterDataDefinition);
     }
 
-    private StorageOperationStatus performUpdateToscaAction(final boolean isUpdate,
-                                                            final GraphVertex graphVertex,
+    private StorageOperationStatus performUpdateToscaAction(final boolean isUpdate, final GraphVertex graphVertex,
                                                             final List<CINodeFilterDataDefinition> toscaDataList) {
         if (isUpdate) {
-            return updateToscaDataOfToscaElement(graphVertex, EdgeLabelEnum.NODE_FILTER_TEMPLATE,
-                VertexTypeEnum.NODE_FILTER_TEMPLATE, toscaDataList, JsonPresentationFields.UNIQUE_ID);
+            return updateToscaDataOfToscaElement(graphVertex, EdgeLabelEnum.NODE_FILTER_TEMPLATE, VertexTypeEnum.NODE_FILTER_TEMPLATE, toscaDataList,
+                JsonPresentationFields.UNIQUE_ID);
         } else {
-            return addToscaDataToToscaElement(graphVertex, EdgeLabelEnum.NODE_FILTER_TEMPLATE,
-                VertexTypeEnum.NODE_FILTER_TEMPLATE, toscaDataList, JsonPresentationFields.UNIQUE_ID);
+            return addToscaDataToToscaElement(graphVertex, EdgeLabelEnum.NODE_FILTER_TEMPLATE, VertexTypeEnum.NODE_FILTER_TEMPLATE, toscaDataList,
+                JsonPresentationFields.UNIQUE_ID);
         }
     }
 }
-
-
-

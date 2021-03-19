@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -25,8 +24,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 public class GroupProperty extends PropertyDefinition {
 
     /**
-     * The unique is of Group property on graph. If it is null, then the
-     * property's value was not updated. The value is taken from the group type
+     * The unique is of Group property on graph. If it is null, then the property's value was not updated. The value is taken from the group type
      * property.
      */
     private String valueUniqueUid;
@@ -48,6 +46,7 @@ public class GroupProperty extends PropertyDefinition {
             this.valueUniqueUid = other.getValueUniqueUid();
         }
     }
+
     public GroupProperty(PropertyDataDefinition other) {
         super(other);
     }
@@ -62,7 +61,6 @@ public class GroupProperty extends PropertyDefinition {
 
     @Override
     public String toString() {
-        return "GroupProperty [ " + super.toString() + ", valueUniqueUid = " + valueUniqueUid
-                + " ]";
+        return "GroupProperty [ " + super.toString() + ", valueUniqueUid = " + valueUniqueUid + " ]";
     }
 }

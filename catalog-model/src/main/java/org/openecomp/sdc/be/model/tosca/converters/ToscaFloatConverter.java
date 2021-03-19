@@ -17,20 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.converters;
-
-import org.apache.commons.lang.StringUtils;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 public class ToscaFloatConverter implements PropertyValueConverter {
 
     private static ToscaFloatConverter numberConverter = new ToscaFloatConverter();
 
-    private ToscaFloatConverter() {}
+    private ToscaFloatConverter() {
+    }
 
     public static ToscaFloatConverter getInstance() {
         return numberConverter;
@@ -47,5 +46,4 @@ public class ToscaFloatConverter implements PropertyValueConverter {
         }
         return new BigDecimal(convertedValue).toPlainString();
     }
-
 }

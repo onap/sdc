@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
@@ -38,16 +37,12 @@ public class ComponentInstanceOutput extends OutputDefinition implements ICompon
      * The unique id of the attribute value on graph
      */
     private String valueUniqueUid;
-
     private List<String> path;
-
     private List<PropertyRule> rules;
     private String componentInstanceName;
     private String componentInstanceId;
 
-    public ComponentInstanceOutput(final AttributeDataDefinition curPropertyDef,
-                                   final String outputId,
-                                   final String value,
+    public ComponentInstanceOutput(final AttributeDataDefinition curPropertyDef, final String outputId, final String value,
                                    final String valueUniqueUid) {
         super(curPropertyDef);
         setOutputId(outputId);
@@ -55,21 +50,16 @@ public class ComponentInstanceOutput extends OutputDefinition implements ICompon
         this.valueUniqueUid = valueUniqueUid;
     }
 
-    public ComponentInstanceOutput(final OutputDefinition pd,
-                                   final String value,
-                                   final String valueUniqueUid) {
+    public ComponentInstanceOutput(final OutputDefinition pd, final String value, final String valueUniqueUid) {
         super(pd);
-
         setValue(value);
         this.valueUniqueUid = valueUniqueUid;
     }
 
     public ComponentInstanceOutput(AttributeDataDefinition attributeDataDefinition) {
         super(attributeDataDefinition);
-        if (attributeDataDefinition.getGetOutputValues() != null && !attributeDataDefinition.getGetOutputValues()
-            .isEmpty()) {
+        if (attributeDataDefinition.getGetOutputValues() != null && !attributeDataDefinition.getGetOutputValues().isEmpty()) {
             setOutputId(attributeDataDefinition.getGetOutputValues().get(0).getOutputId());
         }
     }
-
 }

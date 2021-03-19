@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
@@ -29,6 +28,7 @@ import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 @Setter
 @NoArgsConstructor
 public class OutputDefinition extends AttributeDefinition {
+
     private List<ComponentInstanceAttribute> attributes;
 
     public OutputDefinition(final AttributeDataDefinition attributeDataDefinition) {
@@ -42,5 +42,4 @@ public class OutputDefinition extends AttributeDefinition {
     public OutputDefinition(final OutputDefinition outputDefinition) {
         super(outputDefinition);
     }
-
 }

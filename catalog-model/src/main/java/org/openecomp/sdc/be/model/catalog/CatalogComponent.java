@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.catalog;
 
 import static java.util.Objects.requireNonNull;
@@ -67,5 +66,4 @@ public class CatalogComponent {
     public List<CategoryDefinition> getCategories() {
         return categories == null ? Collections.emptyList() : ImmutableList.copyOf(categories);
     }
-
 }

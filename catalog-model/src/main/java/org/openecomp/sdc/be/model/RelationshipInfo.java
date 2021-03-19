@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
@@ -28,11 +27,8 @@ public class RelationshipInfo {
     private String capabilityOwnerId;
     private String requirementOwnerId;
     private String id;
-
     private RelationshipImpl relationship;
-
     private String capability;
-
     private String capabilityUid;
     private String requirementUid;
 
@@ -119,37 +115,35 @@ public class RelationshipInfo {
 
     @Override
     public String toString() {
-        return "RequirementAndRelationshipPair [requirement=" + requirement + ", relationship=" + relationship
-                + ", capability=" + capability + "]";
+        return "RequirementAndRelationshipPair [requirement=" + requirement + ", relationship=" + relationship + ", capability=" + capability + "]";
     }
 
-    public boolean equalsTo( RelationshipInstDataDefinition savedRelation){
-        if ( savedRelation == null ){
+    public boolean equalsTo(RelationshipInstDataDefinition savedRelation) {
+        if (savedRelation == null) {
             return false;
         }
-        if(getRelationship().getType() == null ){
-            if(savedRelation.getType() != null){
+        if (getRelationship().getType() == null) {
+            if (savedRelation.getType() != null) {
+                return false;
+            }
+        } else {
+            if (!savedRelation.getType().equals(this.getRelationship().getType())) {
                 return false;
             }
         }
-        else {
-            if ( !savedRelation.getType().equals(this.getRelationship().getType()) ){
-                return false;
-            }
-        }
-        if ( !savedRelation.getCapabilityOwnerId().equals(this.getCapabilityOwnerId()) ){
+        if (!savedRelation.getCapabilityOwnerId().equals(this.getCapabilityOwnerId())) {
             return false;
         }
-        if ( !savedRelation.getRequirementOwnerId().equals(this.getRequirementOwnerId()) ){
+        if (!savedRelation.getRequirementOwnerId().equals(this.getRequirementOwnerId())) {
             return false;
         }
-        if ( !savedRelation.getRequirementId().equals(this.getRequirementUid()) ){
+        if (!savedRelation.getRequirementId().equals(this.getRequirementUid())) {
             return false;
         }
-        if ( !savedRelation.getCapabilityId().equals(this.getCapabilityUid()) ){
+        if (!savedRelation.getCapabilityId().equals(this.getCapabilityUid())) {
             return false;
         }
-        if ( !savedRelation.getRequirement().equals(this.getRequirement()) ){
+        if (!savedRelation.getRequirement().equals(this.getRequirement())) {
             return false;
         }
         return true;

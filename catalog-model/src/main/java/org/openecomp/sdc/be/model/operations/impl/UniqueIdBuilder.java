@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -30,14 +32,22 @@ import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 public class UniqueIdBuilder {
 
-    private static String DOT = ".";
     private static final String HEAT_PARAM_PREFIX = "heat_";
+    private static String DOT = ".";
+    private static UserData userData = new UserData();
+    private static TagData tagData = new TagData();
+    private static ResourceCategoryData resCategoryData = new ResourceCategoryData();
+    private static ServiceCategoryData serCategoryData = new ServiceCategoryData();
+    private static Map<NodeTypeEnum, String> nodeTypeToUniqueKeyMapper = new HashMap<>();
+
+    static {
+        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.User, userData.getUniqueIdKey());
+        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.Tag, tagData.getUniqueIdKey());
+        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ResourceCategory, resCategoryData.getUniqueIdKey());
+        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ServiceCategory, serCategoryData.getUniqueIdKey());
+    }
 
     public static String buildPropertyUniqueId(String resourceId, String propertyName) {
         return resourceId + DOT + propertyName;
@@ -51,21 +61,6 @@ public class UniqueIdBuilder {
         return buildTypeUid(resourceId, artifactLabel, propertyName);
     }
 
-    private static UserData userData = new UserData();
-    private static TagData tagData = new TagData();
-    private static ResourceCategoryData resCategoryData = new ResourceCategoryData();
-    private static ServiceCategoryData serCategoryData = new ServiceCategoryData();
-
-    private static Map<NodeTypeEnum, String> nodeTypeToUniqueKeyMapper = new HashMap<>();
-
-    static {
-
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.User, userData.getUniqueIdKey());
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.Tag, tagData.getUniqueIdKey());
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ResourceCategory, resCategoryData.getUniqueIdKey());
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ServiceCategory, serCategoryData.getUniqueIdKey());
-    }
-
     /**
      * find the unique id key of a node on the graph
      *
@@ -73,12 +68,10 @@ public class UniqueIdBuilder {
      * @return
      */
     public static String getKeyByNodeType(NodeTypeEnum nodeTypeEnum) {
-
         String uniqueID = nodeTypeToUniqueKeyMapper.get(nodeTypeEnum);
         if (uniqueID == null) {
             uniqueID = GraphPropertiesDictionary.UNIQUE_ID.getProperty();
         }
-
         return uniqueID;
     }
 
@@ -106,6 +99,7 @@ public class UniqueIdBuilder {
     public static String buildAttributeUid(String resourceId, String attName) {
         return buildTypeUid(NodeTypeEnum.Attribute.getName(), resourceId, attName);
     }
+
     public static String buildRequirementUid(String resourceId, String reqName) {
         return resourceId + DOT + reqName;
     }
@@ -115,22 +109,18 @@ public class UniqueIdBuilder {
     }
 
     public static String buildArtifactByInterfaceUniqueId(String resourceId, String interfaceName, String operation, String artifactLabel) {
-
         return resourceId + DOT + interfaceName + DOT + operation + DOT + artifactLabel;
     }
 
     public static String buildInstanceArtifactUniqueId(String parentId, String instanceId, String artifactLabel) {
-
         return buildTypeUid(parentId, instanceId, artifactLabel);
     }
 
     public static String buildResourceInstanceUniuqeId(String serviceId, String resourceId, String logicalName) {
-
         return buildTypeUid(serviceId, resourceId, logicalName);
     }
 
     public static String buildRelationsipInstInstanceUid(String resourceInstUid, String requirement) {
-
         return generateUUID();
     }
 
@@ -152,6 +142,7 @@ public class UniqueIdBuilder {
     public static String buildCategoryUid(String categoryName, NodeTypeEnum type) {
         return type.getName() + DOT + categoryName;
     }
+
     public static String buildComponentCategoryUid(String categoryName, VertexTypeEnum type) {
         return type.getName() + DOT + ValidationUtils.normalizeCategoryName4Uniqueness(categoryName);
     }
@@ -210,6 +201,5 @@ public class UniqueIdBuilder {
 
     public static String buildGroupPropertyValueUid(String groupUniqueId, Integer index) {
         return groupUniqueId + DOT + "property" + DOT + index;
-
     }
 }

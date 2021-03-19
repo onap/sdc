@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import lombok.Getter;
@@ -37,9 +36,7 @@ public class RequirementCapabilityRelDef extends TargetCapabilityRelDef {
 
     public RequirementCapabilityRelDef(RequirementCapabilityRelDef another) {
         super(another.getToNode(), another.getRelationships());
-
         fromNode = another.getFromNode();
         originUI = another.isOriginUI();
     }
-
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import java.util.Map;
@@ -25,14 +24,11 @@ import java.util.Map;
 public class RequirementImplDef {
 
     private String uniqueId;
-
     /**
      * node type(mandatory). Unique id of the node we choose.
      */
     private String nodeId;
-
     private Map<String, CapabiltyInstance> requirementProperties;
-
     private Point point;
 
     public String getNodeId() {
@@ -69,8 +65,7 @@ public class RequirementImplDef {
 
     @Override
     public String toString() {
-        return "RequirementImplDef [uniqueId=" + uniqueId + ", nodeId=" + nodeId + ", requirementProperties="
-                + requirementProperties + ", point=" + point + "]";
+        return "RequirementImplDef [uniqueId=" + uniqueId + ", nodeId=" + nodeId + ", requirementProperties=" + requirementProperties + ", point="
+            + point + "]";
     }
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.datamodel;
 
 import java.util.HashMap;
@@ -54,10 +53,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
 @Setter
 public class TopologyTemplate extends ToscaElement {
 
-    public TopologyTemplate() {
-        super(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE);
-    }
-
     private Map<String, PropertyDataDefinition> inputs;
     private Map<String, AttributeDataDefinition> outputs;
     private Map<String, MapPropertiesDataDefinition> instInputs;
@@ -83,33 +78,32 @@ public class TopologyTemplate extends ToscaElement {
     private Map<String, MapInterfaceDataDefinition> componentInstInterfaces;
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
     private Map<String, SubstitutionFilterDataDefinition> substitutionFilterDataDefinitionMap;
-
-    //Component Instances External References (instanceId -> ExternalRefsMap)
     //-----------------------------------------------------------------------
     private Map<String, MapComponentInstanceExternalRefs> mapComponentInstancesExternalRefs;
-    //-----------------------------------------------------------------------
+    //Component Instances External References (instanceId -> ExternalRefsMap)
 
-    public void addInstInterface(String compId, MapInterfaceInstanceDataDefinition
-        mapInterfaceInstanceDataDefinition) {
+    public TopologyTemplate() {
+        super(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE);
+    }
+
+    //-----------------------------------------------------------------------
+    public void addInstInterface(String compId, MapInterfaceInstanceDataDefinition mapInterfaceInstanceDataDefinition) {
         if (MapUtils.isEmpty(this.instInterfaces)) {
             this.instInterfaces = new HashMap<>();
         }
-
         this.instInterfaces.put(compId, mapInterfaceInstanceDataDefinition);
     }
 
-    public void addComponentInstanceInterfaceMap(String componentInstanceId, MapInterfaceDataDefinition
-        mapInterfaceDataDefinition) {
+    public void addComponentInstanceInterfaceMap(String componentInstanceId, MapInterfaceDataDefinition mapInterfaceDataDefinition) {
         if (MapUtils.isEmpty(this.componentInstInterfaces)) {
             this.componentInstInterfaces = new HashMap<>();
         }
-
         this.componentInstInterfaces.put(componentInstanceId, mapInterfaceDataDefinition);
     }
 
     /**
-     * Adds component instance to composition of topology template Note that component instance will be overrided in
-     * case if the topology template already contains a component instance with the same name
+     * Adds component instance to composition of topology template Note that component instance will be overrided in case if the topology template
+     * already contains a component instance with the same name
      *
      * @param componentInstance
      */
@@ -120,8 +114,7 @@ public class TopologyTemplate extends ToscaElement {
         if (MapUtils.isEmpty(getCompositions())) {
             compositions.put(JsonConstantKeysEnum.COMPOSITION.getValue(), new CompositionDataDefinition());
         }
-        if (MapUtils
-            .isEmpty(getCompositions().get(JsonConstantKeysEnum.COMPOSITION.getValue()).getComponentInstances())) {
+        if (MapUtils.isEmpty(getCompositions().get(JsonConstantKeysEnum.COMPOSITION.getValue()).getComponentInstances())) {
             getCompositions().get(JsonConstantKeysEnum.COMPOSITION.getValue()).setComponentInstances(new HashMap<>());
         }
         getCompositions().get(JsonConstantKeysEnum.COMPOSITION.getValue()).getComponentInstances()
@@ -141,10 +134,9 @@ public class TopologyTemplate extends ToscaElement {
         return instances;
     }
 
-
     /**
-     * Sets map of component instances to composition of topology template Note that component instances will be
-     * overrided in case if the topology template already contains a component instances
+     * Sets map of component instances to composition of topology template Note that component instances will be overrided in case if the topology
+     * template already contains a component instances
      *
      * @param instances
      */

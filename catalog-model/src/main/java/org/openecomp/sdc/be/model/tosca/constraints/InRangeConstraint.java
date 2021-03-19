@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,24 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import com.google.common.collect.Lists;
-import org.openecomp.sdc.be.model.PropertyConstraint;
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
-import javax.validation.constraints.NotNull;
-
 public class InRangeConstraint extends AbstractPropertyConstraint {
 
     private List<String> inRange;
-
     private Comparable min;
     private Comparable max;
 
@@ -42,11 +39,13 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         this.inRange = inRange;
     }
 
-    public InRangeConstraint() { }
+    public InRangeConstraint() {
+    }
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         // Perform verification that the property type is supported for
+
         // comparison
         ConstraintUtil.checkComparableType(propertyType);
         if (inRange == null || inRange.size() != 2) {
@@ -55,12 +54,12 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         String minRawText = inRange.get(0);
         String maxRawText = inRange.get(1);
         if (!propertyType.isValidValue(minRawText)) {
-            throw new ConstraintValueDoNotMatchPropertyTypeException("Invalid min value for in range constraint ["
-                    + minRawText + "] as it does not follow the property type [" + propertyType + "]");
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "Invalid min value for in range constraint [" + minRawText + "] as it does not follow the property type [" + propertyType + "]");
         }
         if (!propertyType.isValidValue(maxRawText)) {
-            throw new ConstraintValueDoNotMatchPropertyTypeException("Invalid max value for in range constraint ["
-                    + maxRawText + "] as it does not follow the property type [" + propertyType + "]");
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "Invalid max value for in range constraint [" + maxRawText + "] as it does not follow the property type [" + propertyType + "]");
         }
         min = ConstraintUtil.convertToComparable(propertyType, minRawText);
         max = ConstraintUtil.convertToComparable(propertyType, maxRawText);
@@ -72,8 +71,8 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
             throw new ConstraintViolationException("Value to check is null");
         }
         if (!(min.getClass().isAssignableFrom(propertyValue.getClass()))) {
-            throw new ConstraintViolationException("Value to check is not comparable to range type, value type ["
-                    + propertyValue.getClass() + "], range type [" + min.getClass() + "]");
+            throw new ConstraintViolationException(
+                "Value to check is not comparable to range type, value type [" + propertyValue.getClass() + "], range type [" + min.getClass() + "]");
         }
         if (min.compareTo(propertyValue) > 0 || max.compareTo(propertyValue) < 0) {
             throw new ConstraintViolationException("The value [" + propertyValue + "] is out of range " + inRange);
@@ -87,7 +86,6 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @Override
     public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
-
     }
 
     @NotNull
@@ -126,8 +124,7 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%f property value must be between >= [%s] and <= [%s]",
-                String.valueOf(min), String.valueOf(max));
+        return getErrorMessage(toscaType, e, propertyName, "%f property value must be between >= [%s] and <= [%s]", String.valueOf(min),
+            String.valueOf(max));
     }
-
 }

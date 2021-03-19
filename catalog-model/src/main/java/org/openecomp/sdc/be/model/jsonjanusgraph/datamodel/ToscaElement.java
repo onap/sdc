@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.datamodel;
 
 import java.util.HashMap;
@@ -65,15 +64,14 @@ public abstract class ToscaElement {
     private String creatorFullName;
     private String lastUpdaterUserId;
     private String lastUpdaterFullName;
-
     private Map<String, String> allVersions;
     private String toscaVersion;
 
-    protected ToscaElement(ToscaElementTypeEnum toscaType){
+    protected ToscaElement(ToscaElementTypeEnum toscaType) {
         this.toscaType = toscaType;
     }
-
     // metadata properties
+
     // ----------------------------
     public Object getMetadataValue(JsonPresentationFields name) {
         return getMetadataValueOrDefault(name, null);
@@ -89,13 +87,14 @@ public abstract class ToscaElement {
     public void setMetadataValue(JsonPresentationFields name, Object value) {
         setMetadataValue(name.getPresentation(), value);
     }
-    
+
     public void setMetadataValue(String name, Object value) {
         if (metadata == null) {
             metadata = new HashMap<>();
         }
         metadata.put(name, value);
     }
+
     // --------------------
     public String getUUID() {
         return (String) getMetadataValue(JsonPresentationFields.UUID);
@@ -124,17 +123,19 @@ public abstract class ToscaElement {
     public String getSystemName() {
         return (String) getMetadataValue(JsonPresentationFields.SYSTEM_NAME);
     }
+
     public void setSystemName(String systemName) {
         setMetadataValue(JsonPresentationFields.SYSTEM_NAME, systemName);
     }
 
-    public void setLifecycleState(LifecycleStateEnum state) {
-        if(state != null)
-            setMetadataValue(JsonPresentationFields.LIFECYCLE_STATE, state.name());
+    public LifecycleStateEnum getLifecycleState() {
+        return LifecycleStateEnum.findState((String) getMetadataValue(JsonPresentationFields.LIFECYCLE_STATE));
     }
 
-    public LifecycleStateEnum getLifecycleState() {
-        return LifecycleStateEnum.findState( (String) getMetadataValue(JsonPresentationFields.LIFECYCLE_STATE));
+    public void setLifecycleState(LifecycleStateEnum state) {
+        if (state != null) {
+            setMetadataValue(JsonPresentationFields.LIFECYCLE_STATE, state.name());
+        }
     }
 
     public Long getCreationDate() {
@@ -145,36 +146,39 @@ public abstract class ToscaElement {
         setMetadataValue(JsonPresentationFields.CREATION_DATE, currentDate);
     }
 
-    public void setLastUpdateDate(Long currentDate) {
-        setMetadataValue(JsonPresentationFields.LAST_UPDATE_DATE, currentDate);
-    }
     public Long getLastUpdateDate() {
         return (Long) getMetadataValue(JsonPresentationFields.LAST_UPDATE_DATE);
+    }
+
+    public void setLastUpdateDate(Long currentDate) {
+        setMetadataValue(JsonPresentationFields.LAST_UPDATE_DATE, currentDate);
     }
 
     public String getUniqueId() {
         return (String) getMetadataValue(JsonPresentationFields.UNIQUE_ID);
     }
+
     public void setUniqueId(String uniqueId) {
-         setMetadataValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
+        setMetadataValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
     }
 
     public void setHighestVersion(Boolean isHighest) {
-         setMetadataValue(JsonPresentationFields.HIGHEST_VERSION, isHighest);
-
+        setMetadataValue(JsonPresentationFields.HIGHEST_VERSION, isHighest);
     }
+
     public Boolean isHighestVersion() {
         return (Boolean) getMetadataValue(JsonPresentationFields.HIGHEST_VERSION);
-
     }
+
     public ResourceTypeEnum getResourceType() {
         String resourceType = (String) getMetadataValue(JsonPresentationFields.RESOURCE_TYPE);
         return resourceType != null ? ResourceTypeEnum.valueOf(resourceType) : null;
     }
 
     public void setResourceType(ResourceTypeEnum resourceType) {
-        if(resourceType != null)
+        if (resourceType != null) {
             setMetadataValue(JsonPresentationFields.RESOURCE_TYPE, resourceType.name());
+        }
     }
 
     public ComponentTypeEnum getComponentType() {
@@ -182,36 +186,41 @@ public abstract class ToscaElement {
     }
 
     public void setComponentType(ComponentTypeEnum componentType) {
-        if(componentType != null)
+        if (componentType != null) {
             setMetadataValue(JsonPresentationFields.COMPONENT_TYPE, componentType.name());
+        }
     }
 
-    public String getDerivedFromGenericType(){
+    public String getDerivedFromGenericType() {
         return (String) getMetadataValue(JsonPresentationFields.DERIVED_FROM_GENERIC_TYPE);
     }
 
-    public void setDerivedFromGenericType(String derivedFromGenericType){
+    public void setDerivedFromGenericType(String derivedFromGenericType) {
         setMetadataValue(JsonPresentationFields.DERIVED_FROM_GENERIC_TYPE, derivedFromGenericType);
     }
 
-    public String getDerivedFromGenericVersion(){
+    public String getDerivedFromGenericVersion() {
         return (String) getMetadataValue(JsonPresentationFields.DERIVED_FROM_GENERIC_VERSION);
     }
 
-    public void setDerivedFromGenericVersion(String derivedFromGenericVersion){
+    public void setDerivedFromGenericVersion(String derivedFromGenericVersion) {
         setMetadataValue(JsonPresentationFields.DERIVED_FROM_GENERIC_VERSION, derivedFromGenericVersion);
     }
 
-    public Boolean isArchived() { return (Boolean) getMetadataValue(JsonPresentationFields.IS_ARCHIVED); }
+    public Boolean isArchived() {
+        return (Boolean) getMetadataValue(JsonPresentationFields.IS_ARCHIVED);
+    }
 
-    public void setArchived(Boolean archived) { setMetadataValue(JsonPresentationFields.IS_ARCHIVED, archived); }
+    public void setArchived(Boolean archived) {
+        setMetadataValue(JsonPresentationFields.IS_ARCHIVED, archived);
+    }
 
     public Long getArchiveTime() {
         Object archiveTime = getMetadataValue(JsonPresentationFields.ARCHIVE_TIME);
-        if (archiveTime instanceof Integer){
-            return Long.valueOf((Integer)getMetadataValue(JsonPresentationFields.ARCHIVE_TIME));
+        if (archiveTime instanceof Integer) {
+            return Long.valueOf((Integer) getMetadataValue(JsonPresentationFields.ARCHIVE_TIME));
         }
-        return (Long)archiveTime;
+        return (Long) archiveTime;
     }
 
     public void setArchiveTime(Long archiveTime) {
@@ -229,11 +238,11 @@ public abstract class ToscaElement {
     public void generateUUID() {
         String prevUUID = getUUID();
         String version = getVersion();
-        if ((prevUUID == null && NodeTypeOperation.uuidNormativeNewVersion.matcher(version).matches()) || NodeTypeOperation.uuidNewVersion.matcher(version).matches()) {
+        if ((prevUUID == null && NodeTypeOperation.uuidNormativeNewVersion.matcher(version).matches()) || NodeTypeOperation.uuidNewVersion
+            .matcher(version).matches()) {
             UUID uuid = UUID.randomUUID();
             setUUID(uuid.toString());
             MDC.put(ILogConfiguration.MDC_SERVICE_INSTANCE_ID, uuid.toString());
         }
     }
-
 }

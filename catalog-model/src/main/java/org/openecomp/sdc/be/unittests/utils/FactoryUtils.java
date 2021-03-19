@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,27 +17,36 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.unittests.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.resources.data.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.resources.data.CapabilityData;
+import org.openecomp.sdc.be.resources.data.CapabilityInstData;
+import org.openecomp.sdc.be.resources.data.PropertyData;
+import org.openecomp.sdc.be.resources.data.PropertyValueData;
+import org.openecomp.sdc.be.resources.data.RequirementData;
+import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 
 public final class FactoryUtils {
+
     private static final String STRING = "string";
     private static final String DEFAULT_CAPABILITY_TYPE = "tosca.capabilities.Node";
 
-	private FactoryUtils() {
+    private FactoryUtils() {
     }
 
     public static Resource createVFWithRI(String riVersion) {
@@ -59,13 +68,12 @@ public final class FactoryUtils {
         String uniqueId = UUID.randomUUID().toString();
         resource.getMetadataDataDefinition().setHighestVersion(true);
         resource.getMetadataDataDefinition().setUniqueId(uniqueId);
-        ((ResourceMetadataDataDefinition)resource.getMetadataDataDefinition()).setResourceType(ResourceTypeEnum.getTypeIgnoreCase(resourceType));
+        ((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).setResourceType(ResourceTypeEnum.getTypeIgnoreCase(resourceType));
         return resource;
     }
 
     public static void addComponentInstanceToVF(Resource vf, ComponentInstance resourceInstance) {
-        List<ComponentInstance> componentsInstances = vf.getComponentInstances() != null ? vf.getComponentInstances()
-                : new ArrayList<>();
+        List<ComponentInstance> componentsInstances = vf.getComponentInstances() != null ? vf.getComponentInstances() : new ArrayList<>();
         componentsInstances.add(resourceInstance);
         vf.setComponentInstances(componentsInstances);
     }
@@ -79,7 +87,6 @@ public final class FactoryUtils {
         ri.setName("genericRI" + uniqueId);
         ri.setOriginType(OriginTypeEnum.VF);
         return ri;
-
     }
 
     public static ComponentInstance createResourceInstanceWithVersion(String riVersion) {
@@ -92,7 +99,6 @@ public final class FactoryUtils {
         CapabilityData capData = new CapabilityData();
         String uniqueId = UUID.randomUUID().toString();
         capData.setUniqueId(uniqueId);
-
         capData.setType(DEFAULT_CAPABILITY_TYPE);
         return capData;
     }
@@ -104,8 +110,7 @@ public final class FactoryUtils {
         return reqData;
     }
 
-    public static CapabilityDefinition convertCapabilityDataToCapabilityDefinitionAddProperties(
-            CapabilityData capData) {
+    public static CapabilityDefinition convertCapabilityDataToCapabilityDefinitionAddProperties(CapabilityData capData) {
         CapabilityDefinition capDef = new CapabilityDefinition();
         capDef.setName("Cap2");
         capDef.setDescription(capData.getDescription());
@@ -118,22 +123,18 @@ public final class FactoryUtils {
         host.setName("host");
         host.setDefaultValue("defhost");
         host.setType(STRING);
-
         host.setSchema(new SchemaDefinition());
         host.getSchema().setProperty(new PropertyDataDefinition());
         host.getSchema().getProperty().setType(STRING);
-
         capDef.getProperties().add(host);
         ComponentInstanceProperty port = new ComponentInstanceProperty();
         port.setName("port");
         port.setDefaultValue("defport");
         port.setUniqueId(UUID.randomUUID().toString());
         port.setType(STRING);
-
         port.setSchema(new SchemaDefinition());
         port.getSchema().setProperty(new PropertyDataDefinition());
         port.getSchema().getProperty().setType(STRING);
-
         capDef.getProperties().add(port);
         return capDef;
     }
@@ -145,22 +146,18 @@ public final class FactoryUtils {
         host.setName("host");
         host.setValue("newhost");
         host.setType(STRING);
-
         host.setSchema(new SchemaDefinition());
         host.getSchema().setProperty(new PropertyDataDefinition());
         host.getSchema().getProperty().setType(STRING);
-
         properties.add(host);
         ComponentInstanceProperty port = new ComponentInstanceProperty();
         port.setName("port");
         port.setValue("newport");
         port.setUniqueId(UUID.randomUUID().toString());
         port.setType(STRING);
-
         port.setSchema(new SchemaDefinition());
         port.getSchema().setProperty(new PropertyDataDefinition());
         port.getSchema().getProperty().setType(STRING);
-
         properties.add(port);
         return properties;
     }
@@ -211,22 +208,18 @@ public final class FactoryUtils {
         host.setName("host");
         host.setDefaultValue("roothost");
         host.setType(STRING);
-
         host.setSchema(new SchemaDefinition());
         host.getSchema().setProperty(new PropertyDataDefinition());
         host.getSchema().getProperty().setType(STRING);
-
         capDef.getProperties().add(host);
         ComponentInstanceProperty port = new ComponentInstanceProperty();
         port.setName("port");
         port.setDefaultValue("rootport");
         port.setUniqueId(UUID.randomUUID().toString());
         port.setType(STRING);
-
         port.setSchema(new SchemaDefinition());
         port.getSchema().setProperty(new PropertyDataDefinition());
         port.getSchema().getProperty().setType(STRING);
-
         capDef.getProperties().add(port);
         return capDef;
     }

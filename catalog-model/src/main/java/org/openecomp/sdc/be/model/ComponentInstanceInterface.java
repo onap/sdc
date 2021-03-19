@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.model;
 
 import lombok.Getter;
@@ -26,18 +25,17 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 @Setter
 @NoArgsConstructor
 public class ComponentInstanceInterface extends InterfaceDefinition {
-  private String interfaceId;
-  private InterfaceInstanceDataDefinition interfaceInstanceDataDefinition;
 
-  public ComponentInstanceInterface(String interfaceId,
-                                    InterfaceInstanceDataDefinition interfaceInstanceDataDefinition) {
-    this.interfaceId = interfaceId;
-    this.interfaceInstanceDataDefinition = interfaceInstanceDataDefinition;
-  }
+    private String interfaceId;
+    private InterfaceInstanceDataDefinition interfaceInstanceDataDefinition;
 
-  public ComponentInstanceInterface(String interfaceId, InterfaceDataDefinition interfaceDataDefinition) {
-    super(interfaceDataDefinition);
-    this.interfaceId = interfaceId;
-  }
+    public ComponentInstanceInterface(String interfaceId, InterfaceInstanceDataDefinition interfaceInstanceDataDefinition) {
+        this.interfaceId = interfaceId;
+        this.interfaceInstanceDataDefinition = interfaceInstanceDataDefinition;
+    }
 
+    public ComponentInstanceInterface(String interfaceId, InterfaceDataDefinition interfaceDataDefinition) {
+        super(interfaceDataDefinition);
+        this.interfaceId = interfaceId;
+    }
 }

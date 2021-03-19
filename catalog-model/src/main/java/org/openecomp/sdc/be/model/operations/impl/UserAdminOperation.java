@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,21 +17,28 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.core.JanusGraphVertex;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -46,18 +53,10 @@ import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
 @org.springframework.stereotype.Component
 public class UserAdminOperation {
 
+    private static final Logger log = Logger.getLogger(UserAdminOperation.class.getName());
     private final JanusGraphGenericDao janusGraphGenericDao;
     private final ToscaOperationFacade toscaOperationFacade;
 
@@ -65,8 +64,6 @@ public class UserAdminOperation {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.toscaOperationFacade = toscaOperationFacade;
     }
-
-    private static final Logger log = Logger.getLogger(UserAdminOperation.class.getName());
 
     public Either<User, ActionStatus> getUserData(String id, boolean inTransaction) {
         return getUserData(id, true, inTransaction);
@@ -78,10 +75,8 @@ public class UserAdminOperation {
         Wrapper<UserData> userWrapper = new Wrapper<>();
         try {
             validateUserExists(resultWrapper, userWrapper, id);
-
             if (resultWrapper.isEmpty()) {
                 validateUserData(resultWrapper, userWrapper.getInnerElement(), id);
-
             }
             if (resultWrapper.isEmpty()) {
                 if (isActive) {
@@ -90,11 +85,9 @@ public class UserAdminOperation {
                     validateInActiveUser(resultWrapper, userWrapper.getInnerElement());
                 }
             }
-
             if (resultWrapper.isEmpty()) {
                 resultWrapper.setInnerElement(Either.left(convertToUser(userWrapper.getInnerElement())));
             }
-
             return resultWrapper.getInnerElement();
         } finally {
             if (!inTransaction) {
@@ -134,7 +127,6 @@ public class UserAdminOperation {
         id = id.toLowerCase();
         Either<UserData, JanusGraphOperationStatus> either = janusGraphGenericDao
             .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
-
         if (either.isRight()) {
             resultWrapper.setInnerElement(getUserNotFoundError(id, either.right().value()));
         } else {
@@ -153,7 +145,6 @@ public class UserAdminOperation {
             }
             log.debug("User {} saved successfully", userData.getUserId());
             return convertToUser(result.left().value());
-
         } finally {
             if (result == null || result.isRight()) {
                 log.error("saveUserData - Failed");
@@ -175,9 +166,8 @@ public class UserAdminOperation {
                 log.error("Problem while updating User {}. Reason - {}", userData.toString(), result.right().value());
                 throw new StorageException(StorageOperationStatus.GENERAL_ERROR);
             }
-            log.debug("User {} updated successfully",userData.getUserId());
+            log.debug("User {} updated successfully", userData.getUserId());
             return convertToUser(result.left().value());
-
         } finally {
             if (result == null || result.isRight()) {
                 log.error("updateUserData - Failed");
@@ -186,7 +176,6 @@ public class UserAdminOperation {
                 log.debug("updateUserData - end");
                 janusGraphGenericDao.commit();
             }
-
         }
     }
 
@@ -200,7 +189,7 @@ public class UserAdminOperation {
         Either<UserData, JanusGraphOperationStatus> eitherGet = janusGraphGenericDao
             .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
         if (eitherGet.isRight()) {
-            log.debug("Problem while retriving user with userId {}",id);
+            log.debug("Problem while retriving user with userId {}", id);
             if (eitherGet.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
                 result = Either.right(ActionStatus.USER_NOT_FOUND);
             } else {
@@ -226,24 +215,21 @@ public class UserAdminOperation {
     }
 
     private void deleteUser(Wrapper<Either<User, ActionStatus>> resultWrapper, UserData userData) {
-        Either<UserData, JanusGraphOperationStatus> eitherDelete = janusGraphGenericDao
-            .deleteNode(userData, UserData.class);
+        Either<UserData, JanusGraphOperationStatus> eitherDelete = janusGraphGenericDao.deleteNode(userData, UserData.class);
         if (eitherDelete.isRight()) {
             if (log.isDebugEnabled()) {
                 log.debug("Problem while deleting User {}. Reason - {}", userData.toString(), eitherDelete.right().value());
             }
             resultWrapper.setInnerElement(Either.right(ActionStatus.GENERAL_ERROR));
         } else {
-            log.debug("User {} deleted successfully",userData.getUserId());
+            log.debug("User {} deleted successfully", userData.getUserId());
             resultWrapper.setInnerElement(Either.left(convertToUser(eitherDelete.left().value())));
         }
     }
 
     private void validateUserHasNoConnections(Wrapper<Either<User, ActionStatus>> resultWrapper, UserData userData) {
         if (resultWrapper.isEmpty()) {
-
-            Either<List<Edge>, JanusGraphOperationStatus> edgesForNode = janusGraphGenericDao
-                .getEdgesForNode(userData, Direction.BOTH);
+            Either<List<Edge>, JanusGraphOperationStatus> edgesForNode = janusGraphGenericDao.getEdgesForNode(userData, Direction.BOTH);
             if (edgesForNode.isRight()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Problem while deleting User {}. Reason - {}", userData.getUserId(), edgesForNode.right().value());
@@ -258,19 +244,16 @@ public class UserAdminOperation {
         }
     }
 
-    public @NotNull List<Edge> getUserPendingTasksList(User user, List<Object> states) {
-
+    public @NotNull
+    List<Edge> getUserPendingTasksList(User user, List<Object> states) {
         JanusGraphVertex userVertex = janusGraphGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), user.getUserId())
-            .left()
-            .on(this::handleJanusGraphError);
-
+            .left().on(this::handleJanusGraphError);
         List<Edge> pendingTasks = new ArrayList<>();
         for (Object state : states) {
             Map<String, Object> property = new HashMap<>();
             property.put(GraphPropertiesDictionary.STATE.getProperty(), state);
-            List<Edge> edges = janusGraphGenericDao.getOutgoingEdgesByCriteria(userVertex, GraphEdgeLabels.STATE, property)
-                    .left()
-                    .on(this::handleJanusGraphError);
+            List<Edge> edges = janusGraphGenericDao.getOutgoingEdgesByCriteria(userVertex, GraphEdgeLabels.STATE, property).left()
+                .on(this::handleJanusGraphError);
             for (Edge edge : edges) {
                 Vertex vertex = edge.inVertex();
                 if (!isComponentDeleted(vertex)) {
@@ -282,7 +265,8 @@ public class UserAdminOperation {
         return pendingTasks;
     }
 
-    public @NotNull List<Component> getUserActiveComponents(User user, List<Object> states) {
+    public @NotNull
+    List<Component> getUserActiveComponents(User user, List<Object> states) {
         List<Component> components = new ArrayList<>();
         List<Edge> edges = getUserPendingTasksList(user, states);
         for (Edge edge : edges) {
@@ -316,7 +300,8 @@ public class UserAdminOperation {
                 Object resourceUuid = edge.inVertex().property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value();
                 Object componentName = edge.inVertex().property(GraphPropertyEnum.NAME.getProperty()).value();
                 Object componentState = edge.inVertex().property(GraphPropertyEnum.STATE.getProperty()).value();
-                log.debug("The user userId = {} is working on the component name = {} uid = {} in state {}", user.getUserId(), componentName, resourceUuid, componentState);
+                log.debug("The user userId = {} is working on the component name = {} uid = {} in state {}", user.getUserId(), componentName,
+                    resourceUuid, componentState);
             }
         }
     }
@@ -330,10 +315,8 @@ public class UserAdminOperation {
             if (status != null && !status.isEmpty()) {
                 propertiesToMatch.put(GraphPropertiesDictionary.USER_STATUS.getProperty(), status);
             }
-
             Either<List<UserData>, JanusGraphOperationStatus> userNodes = janusGraphGenericDao
                 .getByCriteria(NodeTypeEnum.User, propertiesToMatch, UserData.class);
-
             janusGraphGenericDao.commit();
             return convertToUsers(role, userNodes);
         } finally {
@@ -342,7 +325,6 @@ public class UserAdminOperation {
     }
 
     private Either<List<User>, ActionStatus> convertToUsers(String role, Either<List<UserData>, JanusGraphOperationStatus> userNodes) {
-
         if (userNodes.isRight()) {
             // in case of NOT_FOUND from JanusGraph return empty list
             JanusGraphOperationStatus tos = userNodes.right().value();
@@ -377,7 +359,7 @@ public class UserAdminOperation {
             return Either.right(ActionStatus.USER_NOT_FOUND);
         } else {
             log.debug("Problem get User with userId {}. Reason - {}", uid, status);
-            return  Either.right(ActionStatus.GENERAL_ERROR);
+            return Either.right(ActionStatus.GENERAL_ERROR);
         }
     }
 
@@ -390,6 +372,7 @@ public class UserAdminOperation {
         user.setRole(userData.getRole());
         user.setLastLoginTime(userData.getLastLoginTime());
         // Support backward compatibility - user status may not exist in old
+
         // users
         Either<UserStatusEnum, MethodActivationStatusEnum> either = UserStatusEnum.findByName(userData.getStatus());
         user.setStatus(either.isLeft() ? either.left().value() : UserStatusEnum.ACTIVE);
@@ -407,5 +390,4 @@ public class UserAdminOperation {
         userData.setLastLoginTime(user.getLastLoginTime());
         return userData;
     }
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,8 +27,7 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 
 /**
- * Definition of the operations that can be performed on (instances of) a Node
- * Type.
+ * Definition of the operations that can be performed on (instances of) a Node Type.
  *
  * @author esofer
  */
@@ -55,10 +53,7 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
 
     @JsonIgnore
     public Map<String, Operation> getOperationsMap() {
-        return getOperations().entrySet()
-                              .stream()
-                              .collect(Collectors.toMap(Map.Entry::getKey, e -> new Operation(e
-                                                                           .getValue())));
+        return getOperations().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new Operation(e.getValue())));
     }
 
     @JsonIgnore
@@ -66,14 +61,14 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
         if (MapUtils.isEmpty(operations)) {
             return;
         }
-        final Map<String, OperationDataDefinition> convertedOperation = operations.entrySet()
-            .stream()
+        final Map<String, OperationDataDefinition> convertedOperation = operations.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, e -> new OperationDataDefinition(e.getValue())));
         setOperations(convertedOperation);
     }
 
     /**
      * Checks if the interface has the given operation
+     *
      * @param operation the operation to check
      * @return {@code true} if the operation exists, {@code false} otherwise
      */
@@ -82,8 +77,6 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
         if (MapUtils.isEmpty(operationMap)) {
             return false;
         }
-        return operationMap.keySet().stream()
-            .anyMatch(operation1 -> operation1.equalsIgnoreCase(operation));
+        return operationMap.keySet().stream().anyMatch(operation1 -> operation1.equalsIgnoreCase(operation));
     }
-
 }

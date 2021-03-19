@@ -17,14 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -35,12 +39,9 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.category.MetadataKeyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
@@ -51,9 +52,12 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
@@ -88,45 +92,43 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 @org.springframework.stereotype.Component("topology-template-operation")
 public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private static final Logger log = Logger.getLogger(TopologyTemplateOperation.class);
-
     @Autowired
     private ArchiveOperation archiveOperation;
 
+    public static String buildSubComponentName(String componentName, String subComponentTypeName, int counter) {
+        String normalizedComponentName = ValidationUtils.normalizeComponentInstanceName(componentName);
+        String typeSuffix = subComponentTypeName.substring(subComponentTypeName.lastIndexOf('.') + 1, subComponentTypeName.length());
+        return normalizedComponentName + Constants.GROUP_POLICY_NAME_DELIMETER + typeSuffix + Constants.GROUP_POLICY_NAME_DELIMETER + counter;
+    }
+
     public Either<TopologyTemplate, StorageOperationStatus> createTopologyTemplate(TopologyTemplate topologyTemplate) {
         topologyTemplate.generateUUID();
-
         topologyTemplate = getResourceMetaDataFromResource(topologyTemplate);
         String resourceUniqueId = topologyTemplate.getUniqueId();
         if (resourceUniqueId == null) {
             resourceUniqueId = UniqueIdBuilder.buildResourceUniqueId();
             topologyTemplate.setUniqueId(resourceUniqueId);
         }
-
         GraphVertex topologyTemplateVertex = new GraphVertex();
         topologyTemplateVertex = fillMetadata(topologyTemplateVertex, topologyTemplate, JsonParseFlagEnum.ParseAll);
-
         Either<GraphVertex, JanusGraphOperationStatus> createdVertex = janusGraphDao.createVertex(topologyTemplateVertex);
         if (createdVertex.isRight()) {
             JanusGraphOperationStatus status = createdVertex.right().value();
-            log.debug( "Error returned after creating topology template data node {}. status returned is ", topologyTemplateVertex, status);
+            log.debug("Error returned after creating topology template data node {}. status returned is ", topologyTemplateVertex, status);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-
         StorageOperationStatus assosiateCommon = assosiateCommonForToscaElement(topologyTemplateVertex, topologyTemplate);
         if (assosiateCommon != StorageOperationStatus.OK) {
             return Either.right(assosiateCommon);
         }
-
         StorageOperationStatus associateCategory = assosiateMetadataToCategory(topologyTemplateVertex, topologyTemplate);
         if (associateCategory != StorageOperationStatus.OK) {
             return Either.right(associateCategory);
         }
-
         StorageOperationStatus associateInputs = associateInputsToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInputs != StorageOperationStatus.OK) {
             return Either.right(associateInputs);
@@ -155,22 +157,18 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (associateInstGroups != StorageOperationStatus.OK) {
             return Either.right(associateInstInputs);
         }
-
         StorageOperationStatus associateRequirements = associateRequirementsToResource(topologyTemplateVertex, topologyTemplate);
         if (associateRequirements != StorageOperationStatus.OK) {
             return Either.right(associateRequirements);
         }
-
         StorageOperationStatus associateCapabilities = associateCapabilitiesToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapabilities != StorageOperationStatus.OK) {
             return Either.right(associateCapabilities);
         }
-
         StorageOperationStatus associateArtifacts = associateTopologyTemplateArtifactsToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateArtifacts != StorageOperationStatus.OK) {
             return Either.right(associateArtifacts);
         }
-
         StorageOperationStatus addAdditionalInformation = addAdditionalInformationToResource(topologyTemplateVertex, topologyTemplate);
         if (addAdditionalInformation != StorageOperationStatus.OK) {
             return Either.right(addAdditionalInformation);
@@ -179,12 +177,10 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (associateCapProperties != StorageOperationStatus.OK) {
             return Either.right(associateCapProperties);
         }
-
         StorageOperationStatus associateInterfaces = associateInterfacesToComponent(topologyTemplateVertex, topologyTemplate);
         if (associateInterfaces != StorageOperationStatus.OK) {
             return Either.right(associateInterfaces);
         }
-
         StorageOperationStatus associatePathProperties = associateForwardingPathToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapProperties != StorageOperationStatus.OK) {
             return Either.right(associatePathProperties);
@@ -196,13 +192,14 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return associatePoliciesToComponent(nodeTypeVertex, topologyTemplate.getPolicies());
     }
 
-    private StorageOperationStatus associatePoliciesToComponent(GraphVertex nodeTypeVertex,    Map<String, PolicyDataDefinition> policies) {
+    private StorageOperationStatus associatePoliciesToComponent(GraphVertex nodeTypeVertex, Map<String, PolicyDataDefinition> policies) {
         if (policies != null && !policies.isEmpty()) {
             policies.values().stream().filter(p -> p.getUniqueId() == null).forEach(p -> {
                 String uid = UniqueIdBuilder.buildGroupingUid(nodeTypeVertex.getUniqueId(), p.getName());
                 p.setUniqueId(uid);
             });
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.POLICIES, EdgeLabelEnum.POLICIES, policies);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.POLICIES,
+                EdgeLabelEnum.POLICIES, policies);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -212,26 +209,22 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private StorageOperationStatus associateForwardingPathToResource(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
         Map<String, ForwardingPathDataDefinition> forwardingPaths = topologyTemplate.getForwardingPaths();
-        return associateForwardingPathToComponent(topologyTemplateVertex,forwardingPaths);
+        return associateForwardingPathToComponent(topologyTemplateVertex, forwardingPaths);
     }
 
     private StorageOperationStatus associateCapPropertiesToResource(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
-        Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate
-                .getCalculatedCapabilitiesProperties();
+        Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate.getCalculatedCapabilitiesProperties();
         if (MapUtils.isNotEmpty(calculatedCapProperties)) {
-            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData
-                    (topologyTemplateVertex, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,
-                            EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, calculatedCapProperties);
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData(topologyTemplateVertex,
+                VertexTypeEnum.CALCULATED_CAP_PROPERTIES, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, calculatedCapProperties);
             if (associateElementToData.isRight()) {
                 return associateElementToData.right().value();
             }
         }
-
         Map<String, MapPropertiesDataDefinition> capabilitiesProperties = topologyTemplate.getCapabilitiesProperties();
         if (MapUtils.isNotEmpty(capabilitiesProperties)) {
-            Either<GraphVertex, StorageOperationStatus> associateElementToData =
-                    associateElementToData(topologyTemplateVertex, VertexTypeEnum.CAPABILITIES_PROPERTIES,
-                            EdgeLabelEnum.CAPABILITIES_PROPERTIES, capabilitiesProperties);
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData(topologyTemplateVertex,
+                VertexTypeEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, capabilitiesProperties);
             if (associateElementToData.isRight()) {
                 return associateElementToData.right().value();
             }
@@ -242,51 +235,52 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     private StorageOperationStatus associateCapabilitiesToResource(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
         Map<String, MapListCapabilityDataDefinition> calculatedCapabilities = topologyTemplate.getCalculatedCapabilities();
         if (calculatedCapabilities != null && !calculatedCapabilities.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CALCULATED_CAPABILITIES, EdgeLabelEnum.CALCULATED_CAPABILITIES, calculatedCapabilities);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.CALCULATED_CAPABILITIES, EdgeLabelEnum.CALCULATED_CAPABILITIES, calculatedCapabilities);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         Map<String, MapListCapabilityDataDefinition> fullfilledCapabilities = topologyTemplate.getFullfilledCapabilities();
         if (fullfilledCapabilities != null && !fullfilledCapabilities.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.FULLFILLED_CAPABILITIES, EdgeLabelEnum.FULLFILLED_CAPABILITIES, fullfilledCapabilities);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.FULLFILLED_CAPABILITIES, EdgeLabelEnum.FULLFILLED_CAPABILITIES, fullfilledCapabilities);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         Map<String, ListCapabilityDataDefinition> capabilities = topologyTemplate.getCapabilities();
-        if(MapUtils.isNotEmpty(capabilities)) {
-            Either<GraphVertex, StorageOperationStatus> associateElementToData =
-                    associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES,
-                            EdgeLabelEnum.CAPABILITIES, capabilities);
+        if (MapUtils.isNotEmpty(capabilities)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES,
+                EdgeLabelEnum.CAPABILITIES, capabilities);
             if (associateElementToData.isRight()) {
                 return associateElementToData.right().value();
             }
         }
         return StorageOperationStatus.OK;
-
     }
 
     private StorageOperationStatus associateRequirementsToResource(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
         Map<String, MapListRequirementDataDefinition> calculatedRequirements = topologyTemplate.getCalculatedRequirements();
         if (calculatedRequirements != null && !calculatedRequirements.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.CALCULATED_REQUIREMENTS, EdgeLabelEnum.CALCULATED_REQUIREMENTS, calculatedRequirements);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.CALCULATED_REQUIREMENTS, EdgeLabelEnum.CALCULATED_REQUIREMENTS, calculatedRequirements);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         Map<String, MapListRequirementDataDefinition> fullfilledRequirements = topologyTemplate.getFullfilledRequirements();
         if (fullfilledRequirements != null && !fullfilledRequirements.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.FULLFILLED_REQUIREMENTS, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, fullfilledRequirements);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.FULLFILLED_REQUIREMENTS, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, fullfilledRequirements);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         Map<String, ListRequirementDataDefinition> requirements = topologyTemplate.getRequirements();
-        if(MapUtils.isNotEmpty(requirements)) {
-            Either<GraphVertex, StorageOperationStatus> associateElementToData =
-                    associateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS,
-                            EdgeLabelEnum.REQUIREMENTS, requirements);
+        if (MapUtils.isNotEmpty(requirements)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS,
+                EdgeLabelEnum.REQUIREMENTS, requirements);
             if (associateElementToData.isRight()) {
                 return associateElementToData.right().value();
             }
@@ -296,38 +290,38 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private StorageOperationStatus associateTopologyTemplateArtifactsToComponent(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
         Map<String, ArtifactDataDefinition> addInformation = topologyTemplate.getServiceApiArtifacts();
-
         if (addInformation != null && !addInformation.isEmpty()) {
             addInformation.values().stream().filter(a -> a.getUniqueId() == null).forEach(a -> {
-                String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(nodeTypeVertex.getUniqueId().toLowerCase(), a.getArtifactLabel().toLowerCase());
+                String uniqueId = UniqueIdBuilder
+                    .buildPropertyUniqueId(nodeTypeVertex.getUniqueId().toLowerCase(), a.getArtifactLabel().toLowerCase());
                 a.setUniqueId(uniqueId);
             });
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.SERVICE_API_ARTIFACTS, EdgeLabelEnum.SERVICE_API_ARTIFACTS, addInformation);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.SERVICE_API_ARTIFACTS, EdgeLabelEnum.SERVICE_API_ARTIFACTS, addInformation);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         Map<String, MapArtifactDataDefinition> instArtifacts = topologyTemplate.getInstDeploymentArtifacts();
-
         if (instArtifacts != null && !instArtifacts.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, instArtifacts);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, instArtifacts);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         Map<String, MapArtifactDataDefinition> instInfoArtifacts = topologyTemplate.getInstanceArtifacts();
-
         if (instInfoArtifacts != null && !instInfoArtifacts.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INSTANCE_ARTIFACTS, EdgeLabelEnum.INSTANCE_ARTIFACTS, instInfoArtifacts);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.INSTANCE_ARTIFACTS, EdgeLabelEnum.INSTANCE_ARTIFACTS, instInfoArtifacts);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         Map<String, ListRequirementDataDefinition> requirements = topologyTemplate.getRequirements();
-        if(MapUtils.isNotEmpty(requirements)) {
-            Either<GraphVertex, StorageOperationStatus> associateElementToData =
-                    associateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS,
-                            EdgeLabelEnum.REQUIREMENTS, requirements);
+        if (MapUtils.isNotEmpty(requirements)) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS,
+                EdgeLabelEnum.REQUIREMENTS, requirements);
             if (associateElementToData.isRight()) {
                 return associateElementToData.right().value();
             }
@@ -336,11 +330,10 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     private StorageOperationStatus addAdditionalInformationToResource(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
-
         Map<String, AdditionalInfoParameterDataDefinition> addInformation = topologyTemplate.getAdditionalInformation();
-
         if (addInformation != null && !addInformation.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.ADDITIONAL_INFORMATION, EdgeLabelEnum.ADDITIONAL_INFORMATION, addInformation);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.ADDITIONAL_INFORMATION, EdgeLabelEnum.ADDITIONAL_INFORMATION, addInformation);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -363,10 +356,10 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return associateInstGroupsToComponent(nodeTypeVertex, instGroups);
     }
 
-
     public StorageOperationStatus associateInstPropertiesToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instProps) {
         if (instProps != null && !instProps.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_PROPERTIES, EdgeLabelEnum.INST_PROPERTIES, instProps);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.INST_PROPERTIES, EdgeLabelEnum.INST_PROPERTIES, instProps);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -376,7 +369,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     public StorageOperationStatus associateInstInputsToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instInputs) {
         if (instInputs != null && !instInputs.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_INPUTS, EdgeLabelEnum.INST_INPUTS, instInputs);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_INPUTS,
+                EdgeLabelEnum.INST_INPUTS, instInputs);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -386,7 +380,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     public StorageOperationStatus associateInstGroupsToComponent(GraphVertex nodeTypeVertex, Map<String, MapGroupsDataDefinition> instGroups) {
         if (instGroups != null && !instGroups.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_GROUPS, EdgeLabelEnum.INST_GROUPS, instGroups);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_GROUPS,
+                EdgeLabelEnum.INST_GROUPS, instGroups);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -394,50 +389,52 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
-
     public StorageOperationStatus deleteInstInputsToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instInputs) {
-
         if (instInputs != null && !instInputs.isEmpty()) {
             instInputs.entrySet().forEach(i -> {
                 List<String> uniqueKeys = new ArrayList<>(i.getValue().getMapToscaDataDefinition().keySet());
                 List<String> pathKeys = new ArrayList<>();
                 pathKeys.add(i.getKey());
-
-                StorageOperationStatus status = deleteToscaDataDeepElements(nodeTypeVertex, EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, uniqueKeys, pathKeys, JsonPresentationFields.NAME);
+                StorageOperationStatus status = deleteToscaDataDeepElements(nodeTypeVertex, EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS,
+                    uniqueKeys, pathKeys, JsonPresentationFields.NAME);
                 if (status != StorageOperationStatus.OK) {
                     return;
                 }
             });
         }
-
         return StorageOperationStatus.OK;
     }
 
     public StorageOperationStatus addInstPropertiesToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instInputs) {
-
         if (instInputs != null && !instInputs.isEmpty()) {
             instInputs.entrySet().forEach(i -> {
-                StorageOperationStatus status = addToscaDataDeepElementsBlockToToscaElement(nodeTypeVertex, EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, i.getValue(), i.getKey());
+                StorageOperationStatus status = addToscaDataDeepElementsBlockToToscaElement(nodeTypeVertex, EdgeLabelEnum.INST_PROPERTIES,
+                    VertexTypeEnum.INST_PROPERTIES, i.getValue(), i.getKey());
                 if (status != StorageOperationStatus.OK) {
                     return;
                 }
             });
         }
-
         return StorageOperationStatus.OK;
     }
 
-    public StorageOperationStatus associateInstDeploymentArtifactsToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instArtifacts) {
-        return associateInstanceArtifactsToComponent(nodeTypeVertex, instArtifacts, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
+    public StorageOperationStatus associateInstDeploymentArtifactsToComponent(GraphVertex nodeTypeVertex,
+                                                                              Map<String, MapArtifactDataDefinition> instArtifacts) {
+        return associateInstanceArtifactsToComponent(nodeTypeVertex, instArtifacts, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS,
+            EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
     }
 
-    public StorageOperationStatus associateInstArtifactsToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instArtifacts) {
-        return associateInstanceArtifactsToComponent(nodeTypeVertex, instArtifacts, VertexTypeEnum.INSTANCE_ARTIFACTS, EdgeLabelEnum.INSTANCE_ARTIFACTS);
+    public StorageOperationStatus associateInstArtifactsToComponent(GraphVertex nodeTypeVertex,
+                                                                    Map<String, MapArtifactDataDefinition> instArtifacts) {
+        return associateInstanceArtifactsToComponent(nodeTypeVertex, instArtifacts, VertexTypeEnum.INSTANCE_ARTIFACTS,
+            EdgeLabelEnum.INSTANCE_ARTIFACTS);
     }
 
-    private StorageOperationStatus associateInstanceArtifactsToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instProps, VertexTypeEnum vertexType, EdgeLabelEnum edgeLabel) {
+    private StorageOperationStatus associateInstanceArtifactsToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instProps,
+                                                                         VertexTypeEnum vertexType, EdgeLabelEnum edgeLabel) {
         if (instProps != null && !instProps.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, vertexType, edgeLabel, instProps);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, vertexType, edgeLabel,
+                instProps);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -445,58 +442,70 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
-    public StorageOperationStatus associateOrAddCalcCapReqToComponent(GraphVertex nodeTypeVertex, Map<String, MapListRequirementDataDefinition> calcRequirements, Map<String, MapListCapabilityDataDefinition> calcCapabilty, Map<String, MapCapabilityProperty> calculatedCapabilitiesProperties) {
+    public StorageOperationStatus associateOrAddCalcCapReqToComponent(GraphVertex nodeTypeVertex,
+                                                                      Map<String, MapListRequirementDataDefinition> calcRequirements,
+                                                                      Map<String, MapListCapabilityDataDefinition> calcCapabilty,
+                                                                      Map<String, MapCapabilityProperty> calculatedCapabilitiesProperties) {
         if (!MapUtils.isEmpty(calcRequirements)) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.CALCULATED_REQUIREMENTS, EdgeLabelEnum.CALCULATED_REQUIREMENTS, calcRequirements);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateOrAddElementToData(nodeTypeVertex,
+                VertexTypeEnum.CALCULATED_REQUIREMENTS, EdgeLabelEnum.CALCULATED_REQUIREMENTS, calcRequirements);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
             Map<String, MapListRequirementDataDefinition> fullFilled = new HashMap<>();
-            assosiateElementToData = associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.FULLFILLED_REQUIREMENTS, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, fullFilled);
+            assosiateElementToData = associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.FULLFILLED_REQUIREMENTS,
+                EdgeLabelEnum.FULLFILLED_REQUIREMENTS, fullFilled);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
         if (!MapUtils.isEmpty(calcCapabilty)) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.CALCULATED_CAPABILITIES ,EdgeLabelEnum.CALCULATED_CAPABILITIES, calcCapabilty);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateOrAddElementToData(nodeTypeVertex,
+                VertexTypeEnum.CALCULATED_CAPABILITIES, EdgeLabelEnum.CALCULATED_CAPABILITIES, calcCapabilty);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
             Map<String, MapListCapabilityDataDefinition> fullFilled = new HashMap<>();
-            assosiateElementToData = associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.FULLFILLED_CAPABILITIES, EdgeLabelEnum.FULLFILLED_CAPABILITIES, fullFilled);
+            assosiateElementToData = associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.FULLFILLED_CAPABILITIES,
+                EdgeLabelEnum.FULLFILLED_CAPABILITIES, fullFilled);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
         }
-        if (!MapUtils.isEmpty(calculatedCapabilitiesProperties)){
-            return associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,
-                    EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, calculatedCapabilitiesProperties)
-                    .right()
-                    .on(v -> StorageOperationStatus.OK);
+        if (!MapUtils.isEmpty(calculatedCapabilitiesProperties)) {
+            return associateOrAddElementToData(nodeTypeVertex, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES,
+                calculatedCapabilitiesProperties).right().on(v -> StorageOperationStatus.OK);
         }
         return StorageOperationStatus.OK;
     }
 
-    private <T extends MapDataDefinition> Either<GraphVertex, StorageOperationStatus> associateOrAddElementToData(GraphVertex nodeTypeVertex, VertexTypeEnum vertexTypeEnum, EdgeLabelEnum edgeLabelEnum, Map<String, T> dataMap){
+    private <T extends MapDataDefinition> Either<GraphVertex, StorageOperationStatus> associateOrAddElementToData(GraphVertex nodeTypeVertex,
+                                                                                                                  VertexTypeEnum vertexTypeEnum,
+                                                                                                                  EdgeLabelEnum edgeLabelEnum,
+                                                                                                                  Map<String, T> dataMap) {
         return janusGraphDao.getChildVertex(nodeTypeVertex, edgeLabelEnum, JsonParseFlagEnum.ParseJson)
-                .either(dataVertex -> addElementsToComponent(nodeTypeVertex, dataVertex, vertexTypeEnum, edgeLabelEnum, dataMap),
-                        status -> associateElementToDataIfNotFound(status, nodeTypeVertex, vertexTypeEnum, edgeLabelEnum, dataMap));
+            .either(dataVertex -> addElementsToComponent(nodeTypeVertex, dataVertex, vertexTypeEnum, edgeLabelEnum, dataMap),
+                status -> associateElementToDataIfNotFound(status, nodeTypeVertex, vertexTypeEnum, edgeLabelEnum, dataMap));
     }
 
-    private Either<GraphVertex, StorageOperationStatus> associateElementToDataIfNotFound(JanusGraphOperationStatus status, GraphVertex nodeTypeVertex, VertexTypeEnum vertexTypeEnum, EdgeLabelEnum edgeLabelEnum, Map<String, ? extends ToscaDataDefinition> dataMap) {
+    private Either<GraphVertex, StorageOperationStatus> associateElementToDataIfNotFound(JanusGraphOperationStatus status, GraphVertex nodeTypeVertex,
+                                                                                         VertexTypeEnum vertexTypeEnum, EdgeLabelEnum edgeLabelEnum,
+                                                                                         Map<String, ? extends ToscaDataDefinition> dataMap) {
         if (status == JanusGraphOperationStatus.NOT_FOUND) {
             return associateElementToData(nodeTypeVertex, vertexTypeEnum, edgeLabelEnum, dataMap);
         }
         return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
     }
 
-    private <T extends MapDataDefinition> Either<GraphVertex, StorageOperationStatus> addElementsToComponent(GraphVertex nodeTypeVertex, GraphVertex dataVertex, VertexTypeEnum vertexTypeEnum, EdgeLabelEnum edgeLabelEnum, Map<String, T> dataMap) {
-        Optional<StorageOperationStatus> error = dataMap.entrySet()
-                .stream()
-                .map(e -> addElementToComponent(nodeTypeVertex.getUniqueId(), vertexTypeEnum, edgeLabelEnum, e))
-                .filter(s -> s != StorageOperationStatus.OK)
-                .findFirst();
-        if(error.isPresent()){
+    private <T extends MapDataDefinition> Either<GraphVertex, StorageOperationStatus> addElementsToComponent(GraphVertex nodeTypeVertex,
+                                                                                                             GraphVertex dataVertex,
+                                                                                                             VertexTypeEnum vertexTypeEnum,
+                                                                                                             EdgeLabelEnum edgeLabelEnum,
+                                                                                                             Map<String, T> dataMap) {
+        Optional<StorageOperationStatus> error = dataMap.entrySet().stream()
+            .map(e -> addElementToComponent(nodeTypeVertex.getUniqueId(), vertexTypeEnum, edgeLabelEnum, e))
+            .filter(s -> s != StorageOperationStatus.OK).findFirst();
+        if (error.isPresent()) {
             return Either.right(error.get());
         }
         return Either.left(dataVertex);
@@ -507,9 +516,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return associateInstAttributeToComponent(nodeTypeVertex, instAttr);
     }
 
-    public StorageOperationStatus associateForwardingPathToComponent(GraphVertex nodeTypeVertex, Map<String, ForwardingPathDataDefinition> forwardingPathMap) {
+    public StorageOperationStatus associateForwardingPathToComponent(GraphVertex nodeTypeVertex,
+                                                                     Map<String, ForwardingPathDataDefinition> forwardingPathMap) {
         if (forwardingPathMap != null && !forwardingPathMap.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.FORWARDING_PATH, EdgeLabelEnum.FORWARDING_PATH, forwardingPathMap);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.FORWARDING_PATH, EdgeLabelEnum.FORWARDING_PATH, forwardingPathMap);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -519,7 +530,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     public StorageOperationStatus associateInstAttributeToComponent(GraphVertex nodeTypeVertex, Map<String, MapAttributesDataDefinition> instAttr) {
         if (instAttr != null && !instAttr.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_ATTRIBUTES, EdgeLabelEnum.INST_ATTRIBUTES, instAttr);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
+                VertexTypeEnum.INST_ATTRIBUTES, EdgeLabelEnum.INST_ATTRIBUTES, instAttr);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -528,13 +540,13 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     public StorageOperationStatus associateGroupsToComponent(GraphVertex nodeTypeVertex, Map<String, GroupDataDefinition> groups) {
-
         if (groups != null && !groups.isEmpty()) {
             groups.values().stream().filter(p -> p.getUniqueId() == null).forEach(p -> {
                 String uid = UniqueIdBuilder.buildGroupingUid(nodeTypeVertex.getUniqueId(), p.getName());
                 p.setUniqueId(uid);
             });
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.GROUPS, EdgeLabelEnum.GROUPS, groups);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.GROUPS,
+                EdgeLabelEnum.GROUPS, groups);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -553,9 +565,10 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     public StorageOperationStatus associateInputsToComponent(GraphVertex nodeTypeVertex, Map<String, PropertyDataDefinition> inputs, String id) {
         if (inputs != null && !inputs.isEmpty()) {
-            inputs.values().stream().filter(e -> e.getUniqueId() == null).forEach(e -> e.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(id, e.getName())));
-
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INPUTS, EdgeLabelEnum.INPUTS, inputs);
+            inputs.values().stream().filter(e -> e.getUniqueId() == null)
+                .forEach(e -> e.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(id, e.getName())));
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INPUTS,
+                EdgeLabelEnum.INPUTS, inputs);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -570,10 +583,9 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             nodeTypeVertex.setJson(topologyTemplate.getCompositions());
         }
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.CSAR_UUID, topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_UUID));
-        nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS, topologyTemplate.getMetadataValue(JsonPresentationFields.DISTRIBUTION_STATUS));
-
+        nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS,
+            topologyTemplate.getMetadataValue(JsonPresentationFields.DISTRIBUTION_STATUS));
         return nodeTypeVertex;
-
     }
 
     private StorageOperationStatus assosiateMetadataToCategory(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
@@ -596,7 +608,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         GraphVertex categoryV = category.left().value();
         JanusGraphOperationStatus createEdge = janusGraphDao.createEdge(nodeTypeVertex, categoryV, EdgeLabelEnum.CATEGORY, new HashMap<>());
         if (createEdge != JanusGraphOperationStatus.OK) {
-            log.trace("Failed to associate resource {} to category {} with id {}", topologyTemplate.getUniqueId(), categoryName, categoryV.getUniqueId());
+            log.trace("Failed to associate resource {} to category {} with id {}", topologyTemplate.getUniqueId(), categoryName,
+                categoryV.getUniqueId());
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createEdge);
         }
         return StorageOperationStatus.OK;
@@ -605,21 +618,18 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     @Override
     public Either<ToscaElement, StorageOperationStatus> getToscaElement(String uniqueId, ComponentParametersView componentParametersView) {
         JsonParseFlagEnum parseFlag = componentParametersView.detectParseFlag();
-
-        Either<GraphVertex, StorageOperationStatus> componentByLabelAndId = getComponentByLabelAndId(uniqueId, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, parseFlag);
+        Either<GraphVertex, StorageOperationStatus> componentByLabelAndId = getComponentByLabelAndId(uniqueId, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE,
+            parseFlag);
         if (componentByLabelAndId.isRight()) {
             return Either.right(componentByLabelAndId.right().value());
         }
         GraphVertex componentV = componentByLabelAndId.left().value();
-
         return getToscaElement(componentV, componentParametersView);
-
     }
-    // -------------------------------------------------------------
 
+    // -------------------------------------------------------------
     public Either<ToscaElement, StorageOperationStatus> getToscaElement(GraphVertex componentV, ComponentParametersView componentParametersView) {
         TopologyTemplate toscaElement;
-
         toscaElement = convertToTopologyTemplate(componentV);
         JanusGraphOperationStatus status;
         if (!componentParametersView.isIgnoreUsers()) {
@@ -627,7 +637,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
-
             status = setLastModifierFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
@@ -637,7 +646,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             status = setTopologyTempalteCategoriesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-
             }
         }
         if (!componentParametersView.isIgnoreArtifacts()) {
@@ -682,126 +690,98 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
-
         if (!componentParametersView.isIgnoreGroups()) {
             status = setGroupsFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
-
         }
         if (!componentParametersView.isIgnorePolicies()) {
             status = setPoliciesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
-
         }
         if (!componentParametersView.isIgnoreComponentInstances()) {
             status = setInstGroupsFromGraph(componentV, toscaElement);
-
             //Mark all CIs that has archived origins
             archiveOperation.setArchivedOriginsFlagInComponentInstances(componentV);
-
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
-
         }
         if (!componentParametersView.isIgnoreInputs()) {
             status = setInputsFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
-
         }
-
         if (!componentParametersView.isIgnoreOutputs()) {
             final JanusGraphOperationStatus storageStatus = setOutputsFromGraph(componentV, toscaElement);
             if (storageStatus != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
             }
         }
-
         if (!componentParametersView.isIgnoreProperties()) {
             status = setPropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
-
         }
-
         if (!componentParametersView.isIgnoreComponentInstancesInputs()) {
             status = setComponentInstancesInputsFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-
             }
         }
-
         if (!componentParametersView.isIgnoreCapabiltyProperties()) {
             status = setComponentInstancesCapPropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-
             }
         }
-
         if (!componentParametersView.isIgnoreServicePath()) {
             status = setForwardingGraphPropertiesFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-
             }
         }
-
         if (!componentParametersView.isIgnoreNodeFilter()) {
             status = setNodeFilterComponentFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-
             }
         }
-
         if (!componentParametersView.isIgnoreSubstitutionFilter()) {
             status = setSubstitutionFilterComponentFromGraph(componentV, toscaElement);
             if (status != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-
             }
         }
-
         if (!componentParametersView.isIgnoreInterfaces()) {
             JanusGraphOperationStatus storageStatus = setInterfacesFromGraph(componentV, toscaElement);
             if (storageStatus != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
-
             }
         }
-
         if (!componentParametersView.isIgnoreInterfaces()) {
             JanusGraphOperationStatus storageStatus = setInterfcesFromGraph(componentV, toscaElement);
             if (storageStatus != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
-
             }
         }
-
         if (!componentParametersView.isIgnoreComponentInstancesInterfaces()) {
-            JanusGraphOperationStatus storageStatus =
-                    setComponentInstancesInterfacesFromGraph(componentV, toscaElement);
+            JanusGraphOperationStatus storageStatus = setComponentInstancesInterfacesFromGraph(componentV, toscaElement);
             if (storageStatus != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
             }
         }
-
         if (!componentParametersView.isIgnoreDataType()) {
             JanusGraphOperationStatus storageStatus = setDataTypesFromGraph(componentV, toscaElement);
             if (storageStatus != JanusGraphOperationStatus.OK) {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
             }
         }
-
         return Either.left(toscaElement);
     }
 
@@ -853,14 +833,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-
-    private JanusGraphOperationStatus setComponentInstancesInterfacesFromGraph(GraphVertex componentV,
-                                                                          TopologyTemplate topologyTemplate) {
-        Either<Map<String, MapInterfaceDataDefinition>, JanusGraphOperationStatus> result =
-                getDataFromGraph(componentV, EdgeLabelEnum.INST_INTERFACES);
+    private JanusGraphOperationStatus setComponentInstancesInterfacesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
+        Either<Map<String, MapInterfaceDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.INST_INTERFACES);
         if (result.isLeft()) {
-            result.left().value().entrySet().forEach(entry -> topologyTemplate
-                    .addComponentInstanceInterfaceMap(entry.getKey(), entry.getValue()));
+            result.left().value().entrySet().forEach(entry -> topologyTemplate.addComponentInstanceInterfaceMap(entry.getKey(), entry.getValue()));
         } else {
             if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 return result.right().value();
@@ -872,7 +849,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     private StorageOperationStatus associateInterfacesToComponent(GraphVertex topologyTemplateVertex, TopologyTemplate topologyTemplate) {
         Map<String, InterfaceDataDefinition> interfaceMap = topologyTemplate.getInterfaces();
         if (interfaceMap != null && !interfaceMap.isEmpty()) {
-            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(topologyTemplateVertex, VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceMap);
+            Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(topologyTemplateVertex,
+                VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceMap);
             if (assosiateElementToData.isRight()) {
                 return assosiateElementToData.right().value();
             }
@@ -881,7 +859,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     private JanusGraphOperationStatus setForwardingGraphPropertiesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
-        Either<Map<String, ForwardingPathDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.FORWARDING_PATH);
+        Either<Map<String, ForwardingPathDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.FORWARDING_PATH);
         if (result.isLeft()) {
             topologyTemplate.setForwardingPaths(result.left().value());
         } else {
@@ -892,9 +871,9 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-
     private JanusGraphOperationStatus setComponentInstancesCapPropertiesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
-        Either<Map<String, MapCapabilityProperty>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES);
+        Either<Map<String, MapCapabilityProperty>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.CALCULATED_CAP_PROPERTIES);
         if (result.isLeft()) {
             topologyTemplate.setCalculatedCapabilitiesProperties(result.left().value());
         } else {
@@ -902,8 +881,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return result.right().value();
             }
         }
-        Either<Map<String, MapPropertiesDataDefinition>, JanusGraphOperationStatus> capPropResult =
-                getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
+        Either<Map<String, MapPropertiesDataDefinition>, JanusGraphOperationStatus> capPropResult = getDataFromGraph(componentV,
+            EdgeLabelEnum.CAPABILITIES_PROPERTIES);
         if (capPropResult.isLeft()) {
             topologyTemplate.setCapabilitiesProperties(capPropResult.left().value());
         } else {
@@ -911,7 +890,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return capPropResult.right().value();
             }
         }
-
         return JanusGraphOperationStatus.OK;
     }
 
@@ -940,7 +918,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     private JanusGraphOperationStatus setComponentInstancesPropertiesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
-        Either<Map<String, MapPropertiesDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INST_PROPERTIES);
+        Either<Map<String, MapPropertiesDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.INST_PROPERTIES);
         if (result.isLeft()) {
             topologyTemplate.setInstProperties(result.left().value());
         } else {
@@ -953,8 +932,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private JanusGraphOperationStatus setComponentInstancesAttributesFromGraph(final GraphVertex componentV,
                                                                                final TopologyTemplate topologyTemplate) {
-        final Either<Map<String, MapAttributesDataDefinition>, JanusGraphOperationStatus> result =
-            getDataFromGraph(componentV, EdgeLabelEnum.INST_ATTRIBUTES);
+        final Either<Map<String, MapAttributesDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.INST_ATTRIBUTES);
         if (result.isLeft()) {
             topologyTemplate.setInstAttributes(result.left().value());
         } else if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
@@ -975,11 +954,9 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus setNodeFilterComponentFromGraph(final GraphVertex componentV,
-                                                                      final TopologyTemplate topologyTemplate) {
-
-        final Either<Map<String, CINodeFilterDataDefinition>, JanusGraphOperationStatus> result =
-            getDataFromGraph(componentV, EdgeLabelEnum.NODE_FILTER_TEMPLATE);
+    private JanusGraphOperationStatus setNodeFilterComponentFromGraph(final GraphVertex componentV, final TopologyTemplate topologyTemplate) {
+        final Either<Map<String, CINodeFilterDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.NODE_FILTER_TEMPLATE);
         if (result.isLeft()) {
             topologyTemplate.setNodeFilterComponents(result.left().value());
         } else {
@@ -990,11 +967,9 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus setSubstitutionFilterComponentFromGraph(final GraphVertex componentV,
-                                                                              final TopologyTemplate topologyTemplate) {
-
-        final Either<Map<String, SubstitutionFilterDataDefinition>, JanusGraphOperationStatus> result =
-            getDataFromGraph(componentV, EdgeLabelEnum.SUBSTITUTION_FILTER_TEMPLATE);
+    private JanusGraphOperationStatus setSubstitutionFilterComponentFromGraph(final GraphVertex componentV, final TopologyTemplate topologyTemplate) {
+        final Either<Map<String, SubstitutionFilterDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.SUBSTITUTION_FILTER_TEMPLATE);
         if (result.isLeft()) {
             topologyTemplate.setSubstitutionFilterDataDefinitionMap(result.left().value());
         } else {
@@ -1005,10 +980,10 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-
     @Override
     protected <T extends ToscaElement> JanusGraphOperationStatus setRequirementsFromGraph(GraphVertex componentV, T toscaElement) {
-        Either<Map<String, MapListRequirementDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
+        Either<Map<String, MapListRequirementDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.CALCULATED_REQUIREMENTS);
         if (result.isLeft()) {
             ((TopologyTemplate) toscaElement).setCalculatedRequirements(result.left().value());
         } else {
@@ -1024,8 +999,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return result.right().value();
             }
         }
-        Either<Map<String, ListRequirementDataDefinition>, JanusGraphOperationStatus> requirementResult =
-                getDataFromGraph(componentV, EdgeLabelEnum.REQUIREMENTS);
+        Either<Map<String, ListRequirementDataDefinition>, JanusGraphOperationStatus> requirementResult = getDataFromGraph(componentV,
+            EdgeLabelEnum.REQUIREMENTS);
         if (requirementResult.isLeft()) {
             toscaElement.setRequirements(requirementResult.left().value());
         } else {
@@ -1034,11 +1009,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
         }
         return JanusGraphOperationStatus.OK;
-
     }
 
     protected <T extends ToscaElement> JanusGraphOperationStatus setCapabilitiesFromGraph(GraphVertex componentV, T toscaElement) {
-        Either<Map<String, MapListCapabilityDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
+        Either<Map<String, MapListCapabilityDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.CALCULATED_CAPABILITIES);
         if (result.isLeft()) {
             ((TopologyTemplate) toscaElement).setCalculatedCapabilities(result.left().value());
         } else {
@@ -1054,8 +1029,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return result.right().value();
             }
         }
-        Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> capabilitiesResult =
-                getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES);
+        Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> capabilitiesResult = getDataFromGraph(componentV,
+            EdgeLabelEnum.CAPABILITIES);
         if (capabilitiesResult.isLeft()) {
             toscaElement.setCapabilities(capabilitiesResult.left().value());
         } else {
@@ -1071,7 +1046,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (storageStatus != JanusGraphOperationStatus.OK) {
             return storageStatus;
         }
-        Either<Map<String, ArtifactDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.SERVICE_API_ARTIFACTS);
+        Either<Map<String, ArtifactDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
+            EdgeLabelEnum.SERVICE_API_ARTIFACTS);
         if (result.isLeft()) {
             toscaElement.setServiceApiArtifacts(result.left().value());
         } else {
@@ -1079,7 +1055,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return result.right().value();
             }
         }
-        Either<Map<String, MapArtifactDataDefinition>, JanusGraphOperationStatus> resultInstArt = getDataFromGraph(componentV, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
+        Either<Map<String, MapArtifactDataDefinition>, JanusGraphOperationStatus> resultInstArt = getDataFromGraph(componentV,
+            EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
         if (resultInstArt.isLeft()) {
             toscaElement.setInstDeploymentArtifacts(resultInstArt.left().value());
         } else {
@@ -1087,7 +1064,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return resultInstArt.right().value();
             }
         }
-        Either<Map<String, MapArtifactDataDefinition>, JanusGraphOperationStatus> instanceArt = getDataFromGraph(componentV, EdgeLabelEnum.INSTANCE_ARTIFACTS);
+        Either<Map<String, MapArtifactDataDefinition>, JanusGraphOperationStatus> instanceArt = getDataFromGraph(componentV,
+            EdgeLabelEnum.INSTANCE_ARTIFACTS);
         if (instanceArt.isLeft()) {
             toscaElement.setInstanceArtifacts(instanceArt.left().value());
         } else {
@@ -1107,8 +1085,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return result.right().value();
             }
         }
-        Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> capabilitiesResult =
-                getDataFromGraph(componentV, EdgeLabelEnum.CAPABILITIES);
+        Either<Map<String, ListCapabilityDataDefinition>, JanusGraphOperationStatus> capabilitiesResult = getDataFromGraph(componentV,
+            EdgeLabelEnum.CAPABILITIES);
         if (capabilitiesResult.isLeft()) {
             toscaElement.setCapabilities(capabilitiesResult.left().value());
         } else {
@@ -1119,10 +1097,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus setOutputsFromGraph(final GraphVertex componentV,
-                                                          final TopologyTemplate toscaElement) {
-        final Either<Map<String, AttributeDataDefinition>, JanusGraphOperationStatus> result =
-            getDataFromGraph(componentV, EdgeLabelEnum.OUTPUTS);
+    private JanusGraphOperationStatus setOutputsFromGraph(final GraphVertex componentV, final TopologyTemplate toscaElement) {
+        final Either<Map<String, AttributeDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.OUTPUTS);
         if (result.isLeft()) {
             toscaElement.setOutputs(result.left().value());
         } else {
@@ -1147,24 +1123,25 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private JanusGraphOperationStatus setTopologyTempalteCategoriesFromGraph(GraphVertex componentV, ToscaElement toscaElement) {
         List<CategoryDefinition> categories = new ArrayList<>();
-
         switch (componentV.getType()) {
-        case RESOURCE:
-            return setResourceCategoryFromGraph(componentV, toscaElement);
-        case SERVICE:
-            return setServiceCategoryFromGraph(componentV, toscaElement, categories);
-
-        default:
-            log.debug("Not supported component type {} ", componentV.getType());
-            break;
+            case RESOURCE:
+                return setResourceCategoryFromGraph(componentV, toscaElement);
+            case SERVICE:
+                return setServiceCategoryFromGraph(componentV, toscaElement, categories);
+            default:
+                log.debug("Not supported component type {} ", componentV.getType());
+                break;
         }
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus setServiceCategoryFromGraph(GraphVertex componentV, ToscaElement toscaElement, List<CategoryDefinition> categories) {
-        Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao.getChildVertex(componentV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
+    private JanusGraphOperationStatus setServiceCategoryFromGraph(GraphVertex componentV, ToscaElement toscaElement,
+                                                                  List<CategoryDefinition> categories) {
+        Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao
+            .getChildVertex(componentV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, componentV.getUniqueId(), childVertex.right().value());
+            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, componentV.getUniqueId(),
+                childVertex.right().value());
             return childVertex.right().value();
         }
         GraphVertex categoryV = childVertex.left().value();
@@ -1173,31 +1150,29 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         category.setUniqueId(categoryV.getUniqueId());
         category.setNormalizedName((String) metadataProperties.get(GraphPropertyEnum.NORMALIZED_NAME));
         category.setName((String) metadataProperties.get(GraphPropertyEnum.NAME));
-        final Boolean useServiceSubstitutionForNestedServices = (Boolean)metadataProperties.get(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES);
-        category.setUseServiceSubstitutionForNestedServices(useServiceSubstitutionForNestedServices == null ? false : useServiceSubstitutionForNestedServices);
-
-        Type listTypeCat = new TypeToken<List<String>>() {}.getType();
+        final Boolean useServiceSubstitutionForNestedServices = (Boolean) metadataProperties
+            .get(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES);
+        category.setUseServiceSubstitutionForNestedServices(
+            useServiceSubstitutionForNestedServices == null ? false : useServiceSubstitutionForNestedServices);
+        Type listTypeCat = new TypeToken<List<String>>() {
+        }.getType();
         List<String> iconsfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.ICONS.getProperty()), listTypeCat);
         category.setIcons(iconsfromJsonCat);
-        
-        final Type metadataKeysTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {}.getType();
-        final List<MetadataKeyDataDefinition> metadataKeysfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.METADATA_KEYS), metadataKeysTypeCat);
+        final Type metadataKeysTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {
+        }.getType();
+        final List<MetadataKeyDataDefinition> metadataKeysfromJsonCat = getGson()
+            .fromJson((String) metadataProperties.get(GraphPropertyEnum.METADATA_KEYS), metadataKeysTypeCat);
         category.setMetadataKeys(metadataKeysfromJsonCat);
-        
         categories.add(category);
         toscaElement.setCategories(categories);
-
         return JanusGraphOperationStatus.OK;
     }
 
     @SuppressWarnings("unchecked")
     private TopologyTemplate convertToTopologyTemplate(GraphVertex componentV) {
-
         TopologyTemplate topologyTemplate = super.convertToComponent(componentV);
-
         Map<String, CompositionDataDefinition> json = (Map<String, CompositionDataDefinition>) componentV.getJson();
         topologyTemplate.setCompositions(json);
-
         return topologyTemplate;
     }
 
@@ -1222,13 +1197,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             log.debug("Failed to disassociate instances properties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-
         status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_INPUTS);
         if (status != JanusGraphOperationStatus.OK) {
             log.debug("Failed to disassociate instances inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-
         status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.GROUPS);
         if (status != JanusGraphOperationStatus.OK) {
             log.debug("Failed to disassociate groups for {} error {}", toscaElementVertex.getUniqueId(), status);
@@ -1309,19 +1282,14 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             log.debug("Failed to disassociate instance artifact for {} error {}", toscaElementVertex.getUniqueId(), status);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-
-        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT,
-                EdgeLabelEnum.REQUIREMENTS);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.REQUIREMENTS);
         if (status != JanusGraphOperationStatus.OK) {
-            log.debug("Failed to disassociate requirements for {} error {}",
-                    toscaElementVertex.getUniqueId(), status);
+            log.debug("Failed to disassociate requirements for {} error {}", toscaElementVertex.getUniqueId(), status);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT,
-                EdgeLabelEnum.CAPABILITIES);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.CAPABILITIES);
         if (status != JanusGraphOperationStatus.OK) {
-            log.debug("Failed to disassociate capabilities for {} error {}",
-                    toscaElementVertex.getUniqueId(), status);
+            log.debug("Failed to disassociate capabilities for {} error {}", toscaElementVertex.getUniqueId(), status);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_INTERFACES);
@@ -1331,7 +1299,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }
         toscaElementVertex.getVertex().remove();
         log.trace("Tosca element vertex for {} was removed", toscaElementVertex.getUniqueId());
-
         return nodeType;
     }
 
@@ -1349,6 +1316,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     @Override
     protected <T extends ToscaElement> StorageOperationStatus validateCategories(T toscaElementToUpdate, GraphVertex elementV) {
         // Product isn't supported now!!
+
         // TODO add for Product
         if (toscaElementToUpdate.getComponentType() == ComponentTypeEnum.SERVICE) {
             return validateServiceCategory(toscaElementToUpdate, elementV);
@@ -1373,22 +1341,21 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         StorageOperationStatus status = StorageOperationStatus.OK;
         List<CategoryDefinition> newCategoryList = toscaElementToUpdate.getCategories();
         CategoryDefinition newCategory = newCategoryList.get(0);
-
-        Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao.getChildVertex(elementV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
+        Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao
+            .getChildVertex(elementV, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
-            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, elementV.getUniqueId(), childVertex.right().value());
+            log.debug("failed to fetch {} for tosca element with id {}, error {}", EdgeLabelEnum.CATEGORY, elementV.getUniqueId(),
+                childVertex.right().value());
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childVertex.right().value());
         }
-
         GraphVertex categoryV = childVertex.left().value();
         Map<GraphPropertyEnum, Object> metadataProperties = categoryV.getMetadataProperties();
         String categoryNameCurrent = (String) metadataProperties.get(GraphPropertyEnum.NAME);
-
         String newCategoryName = newCategory.getName();
         if (newCategoryName != null && !newCategoryName.equals(categoryNameCurrent)) {
             // the category was changed
-            Either<GraphVertex, StorageOperationStatus> getCategoryVertex = categoryOperation.getCategory(newCategoryName, VertexTypeEnum.SERVICE_CATEGORY);
-
+            Either<GraphVertex, StorageOperationStatus> getCategoryVertex = categoryOperation
+                .getCategory(newCategoryName, VertexTypeEnum.SERVICE_CATEGORY);
             if (getCategoryVertex.isRight()) {
                 return getCategoryVertex.right().value();
             }
@@ -1399,8 +1366,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return status;
     }
 
-    public Either<GraphVertex, StorageOperationStatus> updateDistributionStatus(String uniqueId, User user, DistributionStatusEnum distributionStatus) {
-
+    public Either<GraphVertex, StorageOperationStatus> updateDistributionStatus(String uniqueId, User user,
+                                                                                DistributionStatusEnum distributionStatus) {
         Either<GraphVertex, StorageOperationStatus> result = null;
         String userId = user.getUserId();
         Either<GraphVertex, JanusGraphOperationStatus> getRes = findUserVertex(userId);
@@ -1416,7 +1383,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             getRes = janusGraphDao.getVertexById(uniqueId, JsonParseFlagEnum.ParseMetadata);
             if (getRes.isRight()) {
                 JanusGraphOperationStatus status = getRes.right().value();
-                log.debug( "Cannot find service {} in the graph. status is {}", uniqueId, status);
+                log.debug("Cannot find service {} in the graph. status is {}", uniqueId, status);
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
@@ -1424,14 +1391,17 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             serviceVertex = getRes.left().value();
             Iterator<Edge> edgeIterator = serviceVertex.getVertex().edges(Direction.IN, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER.name());
             if (edgeIterator.hasNext()) {
-                log.debug("Remove existing edge from user to component {}. Edge type is {}", userId, uniqueId, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER);
+                log.debug("Remove existing edge from user to component {}. Edge type is {}", userId, uniqueId,
+                    EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER);
                 edgeIterator.next().remove();
             }
         }
         if (result == null) {
-            JanusGraphOperationStatus status = janusGraphDao.createEdge(userVertex, serviceVertex, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER, null);
+            JanusGraphOperationStatus status = janusGraphDao
+                .createEdge(userVertex, serviceVertex, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER, null);
             if (status != JanusGraphOperationStatus.OK) {
-                log.debug( "Failed to associate user {} to component {}. Edge type is {}", userId, uniqueId, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER);
+                log.debug("Failed to associate user {} to component {}. Edge type is {}", userId, uniqueId,
+                    EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER);
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
         }
@@ -1449,8 +1419,10 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }
         return result;
     }
+
     /**
      * Returns list of ComponentInstanceProperty belonging to component instance capability specified by name, type and ownerId
+     *
      * @param componentId
      * @param instanceId
      * @param capabilityName
@@ -1458,53 +1430,59 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
      * @param ownerId
      * @return
      */
-    public Either<List<ComponentInstanceProperty>, StorageOperationStatus> getComponentInstanceCapabilityProperties(String componentId, String instanceId, String capabilityName, String capabilityType, String ownerId) {
-
+    public Either<List<ComponentInstanceProperty>, StorageOperationStatus> getComponentInstanceCapabilityProperties(String componentId,
+                                                                                                                    String instanceId,
+                                                                                                                    String capabilityName,
+                                                                                                                    String capabilityType,
+                                                                                                                    String ownerId) {
         Either<List<ComponentInstanceProperty>, StorageOperationStatus> result = null;
         Map<String, MapCapabilityProperty> mapPropertiesDataDefinition = null;
-        Either<GraphVertex, StorageOperationStatus> componentByLabelAndId = getComponentByLabelAndId(componentId, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.NoParse);
+        Either<GraphVertex, StorageOperationStatus> componentByLabelAndId = getComponentByLabelAndId(componentId,
+            ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.NoParse);
         if (componentByLabelAndId.isRight()) {
             result = Either.right(componentByLabelAndId.right().value());
         }
-        if(componentByLabelAndId.isLeft()){
-            Either<Map<String, MapCapabilityProperty>, JanusGraphOperationStatus> getDataRes = getDataFromGraph(componentByLabelAndId.left().value(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES);
+        if (componentByLabelAndId.isLeft()) {
+            Either<Map<String, MapCapabilityProperty>, JanusGraphOperationStatus> getDataRes = getDataFromGraph(componentByLabelAndId.left().value(),
+                EdgeLabelEnum.CALCULATED_CAP_PROPERTIES);
             if (getDataRes.isRight()) {
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getDataRes.right().value()));
             } else {
                 mapPropertiesDataDefinition = getDataRes.left().value();
             }
         }
-        if(isNotEmptyMapOfProperties(instanceId, mapPropertiesDataDefinition)){
-            result = Either.left(findComponentInstanceCapabilityProperties(instanceId, capabilityName, capabilityType, ownerId, mapPropertiesDataDefinition.get(instanceId).getMapToscaDataDefinition()));
+        if (isNotEmptyMapOfProperties(instanceId, mapPropertiesDataDefinition)) {
+            result = Either.left(findComponentInstanceCapabilityProperties(instanceId, capabilityName, capabilityType, ownerId,
+                mapPropertiesDataDefinition.get(instanceId).getMapToscaDataDefinition()));
         }
         return result;
     }
 
-    public StorageOperationStatus updateComponentInstanceCapabilityProperties(Component containerComponent, String componentInstanceId, MapCapabilityProperty instanceProperties) {
-        return updateToscaDataDeepElementsBlockToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, instanceProperties, componentInstanceId);
+    public StorageOperationStatus updateComponentInstanceCapabilityProperties(Component containerComponent, String componentInstanceId,
+                                                                              MapCapabilityProperty instanceProperties) {
+        return updateToscaDataDeepElementsBlockToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES,
+            instanceProperties, componentInstanceId);
     }
 
-    public StorageOperationStatus updateComponentInstanceInterfaces(Component containerComponent,
-                                                                    String componentInstanceId,
+    public StorageOperationStatus updateComponentInstanceInterfaces(Component containerComponent, String componentInstanceId,
                                                                     MapInterfaceDataDefinition instanceInterfaces) {
         if (MapUtils.isNotEmpty(instanceInterfaces.getMapToscaDataDefinition())) {
-            return updateToscaDataDeepElementsBlockToToscaElement(containerComponent.getUniqueId(),
-                    EdgeLabelEnum.INST_INTERFACES, instanceInterfaces, componentInstanceId);
+            return updateToscaDataDeepElementsBlockToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INTERFACES, instanceInterfaces,
+                componentInstanceId);
         }
         return StorageOperationStatus.OK;
     }
 
-
     private boolean isNotEmptyMapOfProperties(String instanceId, Map<String, MapCapabilityProperty> mapPropertiesDataDefinition) {
-        return  MapUtils.isNotEmpty(mapPropertiesDataDefinition) &&
-                instanceId != null &&
-                mapPropertiesDataDefinition.get(instanceId) != null &&
-                MapUtils.isNotEmpty(mapPropertiesDataDefinition.get(instanceId).getMapToscaDataDefinition());
+        return MapUtils.isNotEmpty(mapPropertiesDataDefinition) && instanceId != null && mapPropertiesDataDefinition.get(instanceId) != null
+            && MapUtils.isNotEmpty(mapPropertiesDataDefinition.get(instanceId).getMapToscaDataDefinition());
     }
 
-    private List<ComponentInstanceProperty> findComponentInstanceCapabilityProperties(String instanceId, String capabilityName, String capabilityType, String ownerId, Map<String, MapPropertiesDataDefinition> propertiesMap) {
+    private List<ComponentInstanceProperty> findComponentInstanceCapabilityProperties(String instanceId, String capabilityName, String capabilityType,
+                                                                                      String ownerId,
+                                                                                      Map<String, MapPropertiesDataDefinition> propertiesMap) {
         List<ComponentInstanceProperty> capPropsList = null;
-        for(Entry<String, MapPropertiesDataDefinition> capProp : propertiesMap.entrySet()){
+        for (Entry<String, MapPropertiesDataDefinition> capProp : propertiesMap.entrySet()) {
             if (isBelongingPropertyMap(instanceId, capabilityName, capabilityType, ownerId, capProp)) {
                 Map<String, PropertyDataDefinition> capMap = capProp.getValue().getMapToscaDataDefinition();
                 if (capMap != null && !capMap.isEmpty()) {
@@ -1513,27 +1491,30 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 }
             }
         }
-        if(capPropsList == null){
+        if (capPropsList == null) {
             capPropsList = new ArrayList<>();
         }
         return capPropsList;
     }
 
-    private boolean isBelongingPropertyMap(String instanceId, String capabilityName, String capabilityType, String ownerId, Entry<String, MapPropertiesDataDefinition> capProp) {
+    private boolean isBelongingPropertyMap(String instanceId, String capabilityName, String capabilityType, String ownerId,
+                                           Entry<String, MapPropertiesDataDefinition> capProp) {
         if (capProp != null) {
-            String[] path = capProp.getKey().split(ModelConverter.CAP_PROP_DELIM );
+            String[] path = capProp.getKey().split(ModelConverter.CAP_PROP_DELIM);
             if (path.length < 4) {
                 log.debug("wrong key format for capabilty, key {}", capProp);
                 return false;
             }
-            return path[path.length - 2].equals(capabilityType) && path[path.length - 1].equals(capabilityName) && path[1].equals(ownerId) && path[0].equals(instanceId);
+            return path[path.length - 2].equals(capabilityType) && path[path.length - 1].equals(capabilityName) && path[1].equals(ownerId) && path[0]
+                .equals(instanceId);
         }
         return false;
     }
 
     public StorageOperationStatus addPolicyToToscaElement(GraphVertex componentV, PolicyDefinition policyDefinition, int counter) {
         fillPolicyDefinition(componentV, policyDefinition, counter);
-        return addToscaDataToToscaElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policyDefinition, JsonPresentationFields.UNIQUE_ID);
+        return addToscaDataToToscaElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policyDefinition,
+            JsonPresentationFields.UNIQUE_ID);
     }
 
     public StorageOperationStatus addPoliciesToToscaElement(GraphVertex componentV, List<PolicyDefinition> policies) {
@@ -1541,23 +1522,27 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     public StorageOperationStatus updatePolicyOfToscaElement(GraphVertex componentV, PolicyDefinition policyDefinition) {
-        return updateToscaDataOfToscaElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policyDefinition, JsonPresentationFields.UNIQUE_ID);
+        return updateToscaDataOfToscaElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policyDefinition,
+            JsonPresentationFields.UNIQUE_ID);
     }
 
     public StorageOperationStatus updatePoliciesOfToscaElement(GraphVertex componentV, List<PolicyDefinition> policiesDefinitions) {
-        return updateToscaDataOfToscaElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policiesDefinitions, JsonPresentationFields.UNIQUE_ID);
+        return updateToscaDataOfToscaElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policiesDefinitions,
+            JsonPresentationFields.UNIQUE_ID);
     }
 
     public StorageOperationStatus removePolicyFromToscaElement(GraphVertex componentV, String policyId) {
-        return  deleteToscaDataElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policyId, JsonPresentationFields.UNIQUE_ID);
+        return deleteToscaDataElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policyId, JsonPresentationFields.UNIQUE_ID);
     }
 
     public StorageOperationStatus updateGroupOfToscaElement(GraphVertex componentV, GroupDefinition groupDefinition) {
-        return updateToscaDataOfToscaElement(componentV, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groupDefinition, JsonPresentationFields.CI_INVARIANT_NAME);
+        return updateToscaDataOfToscaElement(componentV, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groupDefinition,
+            JsonPresentationFields.CI_INVARIANT_NAME);
     }
 
     private void fillPolicyDefinition(GraphVertex componentV, PolicyDefinition policyDefinition, int counter) {
-        String policyName = buildSubComponentName((String) componentV.getJsonMetadataField(JsonPresentationFields.NAME), policyDefinition.getPolicyTypeName(), counter);
+        String policyName = buildSubComponentName((String) componentV.getJsonMetadataField(JsonPresentationFields.NAME),
+            policyDefinition.getPolicyTypeName(), counter);
         policyDefinition.setName(policyName);
         policyDefinition.setInvariantName(policyName);
         policyDefinition.setComponentName((String) componentV.getJsonMetadataField(JsonPresentationFields.NAME));
@@ -1566,43 +1551,50 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         policyDefinition.setPolicyUUID(UniqueIdBuilder.generateUUID());
     }
 
-    public static String buildSubComponentName(String componentName, String subComponentTypeName, int counter) {
-        String normalizedComponentName = ValidationUtils.normalizeComponentInstanceName(componentName);
-        String typeSuffix = subComponentTypeName.substring(subComponentTypeName.lastIndexOf('.') + 1, subComponentTypeName.length());
-        return normalizedComponentName + Constants.GROUP_POLICY_NAME_DELIMETER + typeSuffix + Constants.GROUP_POLICY_NAME_DELIMETER + counter;
-    }
-
     void revertNamesOfCalculatedCapabilitiesRequirements(String componentId, TopologyTemplate toscaElement) {
-        if(MapUtils.isNotEmpty(toscaElement.getComponentInstances()) || MapUtils.isNotEmpty(toscaElement.getGroups())){
-            GraphVertex toscaElementV = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse)
-                    .left()
-                    .on(this::throwStorageException);
-            if(MapUtils.isNotEmpty(toscaElement.getComponentInstances())){
-                toscaElement.getComponentInstances().values().forEach(i -> CapabilityRequirementNameResolver.revertNamesOfCalculatedCapabilitiesRequirements(toscaElement, i.getUniqueId(), this::getOriginToscaElement));
+        if (MapUtils.isNotEmpty(toscaElement.getComponentInstances()) || MapUtils.isNotEmpty(toscaElement.getGroups())) {
+            GraphVertex toscaElementV = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse).left().on(this::throwStorageException);
+            if (MapUtils.isNotEmpty(toscaElement.getComponentInstances())) {
+                toscaElement.getComponentInstances().values().forEach(i -> CapabilityRequirementNameResolver
+                    .revertNamesOfCalculatedCapabilitiesRequirements(toscaElement, i.getUniqueId(), this::getOriginToscaElement));
             }
-            if(MapUtils.isNotEmpty(toscaElement.getGroups())){
-                toscaElement.getGroups().values().forEach(g -> CapabilityRequirementNameResolver.revertNamesOfCalculatedCapabilitiesRequirements(toscaElement, g.getUniqueId(), this::getOriginToscaElement));
+            if (MapUtils.isNotEmpty(toscaElement.getGroups())) {
+                toscaElement.getGroups().values().forEach(g -> CapabilityRequirementNameResolver
+                    .revertNamesOfCalculatedCapabilitiesRequirements(toscaElement, g.getUniqueId(), this::getOriginToscaElement));
             }
-            topologyTemplateOperation.updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES,  toscaElement.getCalculatedCapabilities());
-            topologyTemplateOperation.updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS,  toscaElement.getCalculatedRequirements());
-            topologyTemplateOperation.updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,  toscaElement.getCalculatedCapabilitiesProperties());
+            topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES,
+                    toscaElement.getCalculatedCapabilities());
+            topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS,
+                    toscaElement.getCalculatedRequirements());
+            topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,
+                    toscaElement.getCalculatedCapabilitiesProperties());
         }
     }
 
     public void updateNamesOfCalculatedCapabilitiesRequirements(String componentId, TopologyTemplate toscaElement) {
-        if(MapUtils.isNotEmpty(toscaElement.getComponentInstances()) || MapUtils.isNotEmpty(toscaElement.getGroups())){
-            GraphVertex toscaElementV = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse)
-                    .left()
-                    .on(this::throwStorageException);
-            if(MapUtils.isNotEmpty(toscaElement.getComponentInstances())){
-                toscaElement.getComponentInstances().values().forEach(i -> CapabilityRequirementNameResolver.updateNamesOfCalculatedCapabilitiesRequirements(toscaElement, i.getUniqueId(), i.getNormalizedName(), this::getOriginToscaElement));
+        if (MapUtils.isNotEmpty(toscaElement.getComponentInstances()) || MapUtils.isNotEmpty(toscaElement.getGroups())) {
+            GraphVertex toscaElementV = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse).left().on(this::throwStorageException);
+            if (MapUtils.isNotEmpty(toscaElement.getComponentInstances())) {
+                toscaElement.getComponentInstances().values().forEach(i -> CapabilityRequirementNameResolver
+                    .updateNamesOfCalculatedCapabilitiesRequirements(toscaElement, i.getUniqueId(), i.getNormalizedName(),
+                        this::getOriginToscaElement));
             }
-            if(MapUtils.isNotEmpty(toscaElement.getGroups())){
-                toscaElement.getGroups().values().forEach(g -> CapabilityRequirementNameResolver.updateNamesOfCalculatedCapabilitiesRequirements(toscaElement, g.getUniqueId(), g.getName(), this::getOriginToscaElement));
+            if (MapUtils.isNotEmpty(toscaElement.getGroups())) {
+                toscaElement.getGroups().values().forEach(g -> CapabilityRequirementNameResolver
+                    .updateNamesOfCalculatedCapabilitiesRequirements(toscaElement, g.getUniqueId(), g.getName(), this::getOriginToscaElement));
             }
-            topologyTemplateOperation.updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES,  toscaElement.getCalculatedCapabilities());
-            topologyTemplateOperation.updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS,  toscaElement.getCalculatedRequirements());
-            topologyTemplateOperation.updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,  toscaElement.getCalculatedCapabilitiesProperties());
+            topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES,
+                    toscaElement.getCalculatedCapabilities());
+            topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS,
+                    toscaElement.getCalculatedRequirements());
+            topologyTemplateOperation
+                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,
+                    toscaElement.getCalculatedCapabilitiesProperties());
         }
     }
 
@@ -1610,13 +1602,12 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         log.debug("#getOriginToscaElement - origin name: {}", instance.getComponentName());
         ToscaElementTypeEnum elementType = detectToscaType(instance.getOriginType());
         Either<ToscaElement, StorageOperationStatus> getOriginRes;
-        if(elementType == ToscaElementTypeEnum.TOPOLOGY_TEMPLATE){
+        if (elementType == ToscaElementTypeEnum.TOPOLOGY_TEMPLATE) {
             getOriginRes = this.getToscaElement(CapabilityRequirementNameResolver.getActualComponentUid(instance), getFilter());
-
         } else {
             getOriginRes = nodeTypeOperation.getToscaElement(CapabilityRequirementNameResolver.getActualComponentUid(instance), getFilter());
         }
-        if(getOriginRes.isRight()){
+        if (getOriginRes.isRight()) {
             log.debug("Failed to get an origin component with uniqueId {}", CapabilityRequirementNameResolver.getActualComponentUid(instance));
             throw new StorageException(getOriginRes.right().value());
         }
@@ -1625,11 +1616,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private ToscaElementTypeEnum detectToscaType(OriginTypeEnum originType) {
         log.debug("#detectToscaType - type: {}", originType);
-        if(originType == OriginTypeEnum.VFC
-                || originType == OriginTypeEnum.CP
-                || originType == OriginTypeEnum.VL
-                || originType == OriginTypeEnum.Configuration
-                || originType == OriginTypeEnum.VFCMT){
+        if (originType == OriginTypeEnum.VFC || originType == OriginTypeEnum.CP || originType == OriginTypeEnum.VL
+            || originType == OriginTypeEnum.Configuration || originType == OriginTypeEnum.VFCMT) {
             return ToscaElementTypeEnum.NODE_TYPE;
         } else {
             return ToscaElementTypeEnum.TOPOLOGY_TEMPLATE;
@@ -1643,43 +1631,38 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         filter.setIgnoreRequirements(false);
         return filter;
     }
+
     public void updateCapReqPropertiesOwnerId(String componentId, TopologyTemplate toscaElement) {
-        GraphVertex toscaElementV = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse)
-                .left().on(this::throwStorageException);
+        GraphVertex toscaElementV = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse).left().on(this::throwStorageException);
         updateCapOwnerId(toscaElement, componentId);
         updateReqOwnerId(toscaElement, componentId);
         updatePropertiesOwnerId(toscaElement, componentId);
         topologyTemplateOperation
-
-                .updateFullToscaData(toscaElementV, EdgeLabelEnum.CAPABILITIES,
-                        VertexTypeEnum.CAPABILITIES, toscaElement.getCapabilities());
+            .updateFullToscaData(toscaElementV, EdgeLabelEnum.CAPABILITIES, VertexTypeEnum.CAPABILITIES, toscaElement.getCapabilities());
         topologyTemplateOperation
-                .updateFullToscaData(toscaElementV, EdgeLabelEnum.REQUIREMENTS,
-                        VertexTypeEnum.REQUIREMENTS, toscaElement.getRequirements());
+            .updateFullToscaData(toscaElementV, EdgeLabelEnum.REQUIREMENTS, VertexTypeEnum.REQUIREMENTS, toscaElement.getRequirements());
         topologyTemplateOperation
-                .updateFullToscaData(toscaElementV, EdgeLabelEnum.PROPERTIES,
-                        VertexTypeEnum.PROPERTIES, toscaElement.getProperties());
+            .updateFullToscaData(toscaElementV, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, toscaElement.getProperties());
     }
 
     private void updateCapOwnerId(ToscaElement toscaElement, String ownerId) {
-        if(MapUtils.isNotEmpty(toscaElement.getCapabilities())) {
+        if (MapUtils.isNotEmpty(toscaElement.getCapabilities())) {
             toscaElement.getCapabilities().values().stream().flatMap(listCapDef -> listCapDef.getListToscaDataDefinition().stream())
-                    .forEach(capabilityDefinition -> capabilityDefinition.setOwnerId(ownerId));
+                .forEach(capabilityDefinition -> capabilityDefinition.setOwnerId(ownerId));
         }
     }
 
     private void updateReqOwnerId(ToscaElement toscaElement, String ownerId) {
-        if(MapUtils.isNotEmpty(toscaElement.getRequirements())) {
+        if (MapUtils.isNotEmpty(toscaElement.getRequirements())) {
             toscaElement.getRequirements().values().stream().flatMap(listReqDef -> listReqDef.getListToscaDataDefinition().stream())
-                    .forEach(requirementDefinition -> requirementDefinition.setOwnerId(ownerId));
+                .forEach(requirementDefinition -> requirementDefinition.setOwnerId(ownerId));
         }
     }
 
     private void updatePropertiesOwnerId(ToscaElement toscaElement, String ownerId) {
         Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
-        if(MapUtils.isNotEmpty(properties)) {
+        if (MapUtils.isNotEmpty(properties)) {
             properties.values().forEach(propertyDataDefinition -> propertyDataDefinition.setParentUniqueId(ownerId));
         }
     }
-
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
@@ -53,14 +52,16 @@ public interface IElementOperation {
 
     <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
 
-    <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
+    <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name,
+                                                                                                                                       NodeTypeEnum type,
+                                                                                                                                       Class<T> clazz);
 
     Either<Map<String, String>, ActionStatus> getResourceTypesMap();
 
     Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType);
 
     Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction);
-    
+
     Either<CategoryDefinition, ActionStatus> updateCategory(CategoryDefinition category, NodeTypeEnum nodeType);
 
     Either<CategoryDefinition, ActionStatus> updateCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction);
@@ -73,11 +74,13 @@ public interface IElementOperation {
 
     Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType);
 
-    Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction);
-    
+    Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType,
+                                                                  boolean inTransaction);
+
     Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType);
-        
-    Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction);
+
+    Either<SubCategoryDefinition, ActionStatus> updateSubCategory(String subCategoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType,
+                                                                  boolean inTransaction);
 
     Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction);
 

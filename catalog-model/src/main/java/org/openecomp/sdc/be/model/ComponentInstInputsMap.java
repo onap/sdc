@@ -17,16 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.model;
 
-import org.apache.commons.lang3.tuple.Pair;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ComponentInstInputsMap {
 
@@ -48,13 +46,13 @@ public class ComponentInstInputsMap {
         if (isNotEmpty(policyProperties)) {
             return singleMapEntry(policyProperties);
         }
-        if(isNotEmpty(serviceProperties)) {
+        if (isNotEmpty(serviceProperties)) {
             return singleMapEntry(serviceProperties);
         }
         if (isNotEmpty(groupProperties)) {
             return singleMapEntry(groupProperties);
         }
-        if(isNotEmpty(componentPropertiesToPolicies)) {
+        if (isNotEmpty(componentPropertiesToPolicies)) {
             return singleMapEntry(componentPropertiesToPolicies);
         }
         if (isNotEmpty(componentInstancePropertiesToPolicies)) {
@@ -96,8 +94,7 @@ public class ComponentInstInputsMap {
         return serviceProperties;
     }
 
-    public void setServiceProperties(
-        Map<String, List<ComponentInstancePropInput>> serviceProperties) {
+    public void setServiceProperties(Map<String, List<ComponentInstancePropInput>> serviceProperties) {
         this.serviceProperties = serviceProperties;
     }
 
@@ -124,6 +121,4 @@ public class ComponentInstInputsMap {
     public void setComponentInstancePropertiesToPolicies(Map<String, List<ComponentInstancePropInput>> componentInstancePropertiesToPolicies) {
         this.componentInstancePropertiesToPolicies = componentInstancePropertiesToPolicies;
     }
-
-
 }
