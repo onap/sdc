@@ -26,32 +26,23 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
 
-public class AuditGetCategoryHierarchyEventFactoryTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-	private AuditGetCategoryHierarchyEventFactory createTestSubject() {
-		Builder newBuilder = CommonAuditData.newBuilder();
-		CommonAuditData build = newBuilder.build();
-		return new AuditGetCategoryHierarchyEventFactory( build,
-				new User(), "");
-	}
+public class AuditGetCategoryHierarchyEventFactoryTest {
+	private Builder newBuilder = CommonAuditData.newBuilder();
+	private CommonAuditData build = newBuilder.build();
 
 	@Test
 	public void testGetLogMessage() throws Exception {
-		AuditGetCategoryHierarchyEventFactory testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLogMessage();
+		AuditGetCategoryHierarchyEventFactory testSubject = new AuditGetCategoryHierarchyEventFactory( build,
+				"user", "", "");
+		assertEquals("ACTION = \"GetCategoryHierarchy\" MODIFIER = \"user\" DETAILS = \"\" STATUS = \"\" DESC = \"\"", testSubject.getLogMessage());
 	}
 
 	@Test
 	public void testGetDbEvent() throws Exception {
-		AuditGetCategoryHierarchyEventFactory testSubject;
-		AuditingGenericEvent result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDbEvent();
+		AuditGetCategoryHierarchyEventFactory testSubject = new AuditGetCategoryHierarchyEventFactory( build, new User(), "");
+		assertNotNull(testSubject.getDbEvent());
 	}
 }

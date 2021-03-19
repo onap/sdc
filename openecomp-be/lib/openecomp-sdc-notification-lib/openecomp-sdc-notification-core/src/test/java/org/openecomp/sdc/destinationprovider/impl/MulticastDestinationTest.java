@@ -21,7 +21,7 @@
 package org.openecomp.sdc.destinationprovider.impl;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.notification.services.SubscriptionService;
@@ -31,7 +31,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
@@ -72,13 +75,12 @@ public class MulticastDestinationTest {
         assertFalse(actualSubscribers.contains(excludedSubscriber));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void shouldThrowUnsupportedOperationExceptionWhenTryingToChangeSubscribersList() throws
-        Exception {
+    @Test
+    public void entityIdTest() {
         doReturn(subscribers).when(subscriptionServiceMock).getSubscribers(any());
         multicastDestination =
-            new MulticastDestination("aa", subscriptionServiceMock, excludedSubscriber);
-        List<String> actualSubscribers = multicastDestination.getSubscribers();
-        actualSubscribers.add("sss");
+                new MulticastDestination("aa", subscriptionServiceMock, excludedSubscriber);
+        multicastDestination.setEntityId("entityId");
+        assertEquals("entityId", multicastDestination.getEntityId());
     }
 }
