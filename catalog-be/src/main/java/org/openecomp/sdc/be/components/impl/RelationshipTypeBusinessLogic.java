@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.Map;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -27,40 +27,33 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 @Component("relationshipTypeBusinessLogic")
 public class RelationshipTypeBusinessLogic {
 
-    private final RelationshipTypeOperation relationshipTypeOperation;
     protected final ComponentsUtils componentsUtils;
+    private final RelationshipTypeOperation relationshipTypeOperation;
 
     @Autowired
-    public RelationshipTypeBusinessLogic(RelationshipTypeOperation relationshipTypeOperation,
-        ComponentsUtils componentsUtils) {
+    public RelationshipTypeBusinessLogic(RelationshipTypeOperation relationshipTypeOperation, ComponentsUtils componentsUtils) {
         this.relationshipTypeOperation = relationshipTypeOperation;
         this.componentsUtils = componentsUtils;
     }
 
     public Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> getAllRelationshipTypes() {
-        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> allRelationshipTypes =
-                relationshipTypeOperation.getAllRelationshipTypes();
+        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> allRelationshipTypes = relationshipTypeOperation
+            .getAllRelationshipTypes();
         if (allRelationshipTypes.isRight()) {
             JanusGraphOperationStatus operationStatus = allRelationshipTypes.right().value();
             if (JanusGraphOperationStatus.NOT_FOUND == operationStatus) {
-                BeEcompErrorManager.getInstance().logInternalDataError("FetchRelationshipTypes", "Relationship types "
-                                + "are "
-                                + "not loaded",
-                        BeEcompErrorManager.ErrorSeverity.ERROR);
+                BeEcompErrorManager.getInstance().logInternalDataError("FetchRelationshipTypes", "Relationship types " + "are " + "not loaded",
+                    BeEcompErrorManager.ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY));
             } else {
-                BeEcompErrorManager.getInstance().logInternalFlowError("FetchRelationshipTypes", "Failed to fetch "
-                                + "relationship types",
-                        BeEcompErrorManager.ErrorSeverity.ERROR);
+                BeEcompErrorManager.getInstance().logInternalFlowError("FetchRelationshipTypes", "Failed to fetch " + "relationship types",
+                    BeEcompErrorManager.ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
         }
         return Either.left(allRelationshipTypes.left().value());
     }
-
 }

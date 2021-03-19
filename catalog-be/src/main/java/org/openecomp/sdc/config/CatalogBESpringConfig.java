@@ -40,8 +40,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+// @formatter:off
 @Configuration
-@ComponentScan({"org.openecomp.sdc.be.user",
+@ComponentScan({
+    "org.openecomp.sdc.be.user",
     "org.openecomp.sdc.be.facade.operations",
     "org.openecomp.sdc.be.impl",
     "org.openecomp.sdc.be.auditing.impl",
@@ -63,8 +65,8 @@ import org.springframework.core.annotation.Order;
     "org.openecomp.sdc.be.servlets",
     "org.openecomp.sdc.be.filters",
     "org.openecomp.sdc.be.plugins",
-    "org.openecomp.sdc.be.togglz"
-})
+    "org.openecomp.sdc.be.togglz"})
+// @formatter:on
 public class CatalogBESpringConfig {
 
     private static final int BEFORE_TRANSACTION_MANAGER = 0;
@@ -97,7 +99,9 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public RoleAuthorizationHandler roleAuthorizationHandler() {return new RoleAuthorizationHandler();}
+    public RoleAuthorizationHandler roleAuthorizationHandler() {
+        return new RoleAuthorizationHandler();
+    }
 
     @Bean
     public CloseableHttpClient httpClientConnectionManager() {
@@ -106,13 +110,19 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public PortalConfiguration portalConfiguration() throws CipherUtilException {return new PortalConfiguration();}
+    public PortalConfiguration portalConfiguration() throws CipherUtilException {
+        return new PortalConfiguration();
+    }
 
     @Bean
-    public FilterConfiguration filterConfiguration() {return new FilterConfiguration(configuration());}
+    public FilterConfiguration filterConfiguration() {
+        return new FilterConfiguration(configuration());
+    }
 
     @Bean
-    public ThreadLocalUtils threadLocalUtils() {return new ThreadLocalUtils();}
+    public ThreadLocalUtils threadLocalUtils() {
+        return new ThreadLocalUtils();
+    }
 
     @Bean
     public PortalClient portalClient() throws CipherUtilException {
@@ -120,8 +130,7 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public org.openecomp.sdc.be.config.Configuration configuration(){
+    public org.openecomp.sdc.be.config.Configuration configuration() {
         return ConfigurationManager.getConfigurationManager().getConfiguration();
     }
-
 }

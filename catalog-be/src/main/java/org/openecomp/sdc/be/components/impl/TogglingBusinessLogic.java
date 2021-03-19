@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import java.util.Arrays;
@@ -42,17 +41,15 @@ import org.togglz.core.util.NamedFeature;
 public class TogglingBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
-    public TogglingBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
-            IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation,
-            InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-            ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
-                interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public TogglingBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
+                                 IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
     }
 
     public Map<String, Boolean> getAllFeatureStates() {
-        return Arrays.stream(ToggleableFeature.values()).collect(Collectors.toMap(Enum::name,
-                ToggleableFeature::isActive));
+        return Arrays.stream(ToggleableFeature.values()).collect(Collectors.toMap(Enum::name, ToggleableFeature::isActive));
     }
 
     public boolean getFeatureState(String featureName) {
@@ -60,8 +57,7 @@ public class TogglingBusinessLogic extends BaseBusinessLogic {
     }
 
     public void setAllFeatures(boolean state) {
-        Arrays.asList(ToggleableFeature.values())
-                .forEach(toggleableFeature -> updateFeatureState(toggleableFeature.name(), state));
+        Arrays.asList(ToggleableFeature.values()).forEach(toggleableFeature -> updateFeatureState(toggleableFeature.name(), state));
     }
 
     public void updateFeatureState(String featureName, boolean state) {

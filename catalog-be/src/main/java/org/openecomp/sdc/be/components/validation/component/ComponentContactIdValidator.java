@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.component;
 
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -46,7 +45,6 @@ public class ComponentContactIdValidator implements ComponentFieldValidator {
         log.debug("validate component contactId");
         ComponentTypeEnum type = component.getComponentType();
         String contactId = component.getContactId();
-
         if (!ValidationUtils.validateStringNotEmpty(contactId)) {
             log.info("contact is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT, type.getValue());
@@ -56,7 +54,8 @@ public class ComponentContactIdValidator implements ComponentFieldValidator {
         validateContactId(contactId, user, component, actionEnum, type);
     }
 
-    private void validateContactId(String contactId, User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type) {
+    private void validateContactId(String contactId, User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum,
+                                   ComponentTypeEnum type) {
         if (contactId != null && !ValidationUtils.validateContactId(contactId)) {
             log.info("contact is invalid.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CONTACT, type.getValue());

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
@@ -38,10 +40,6 @@ import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 @Component("policyTypeImportManager")
 public class PolicyTypeImportManager {
 
@@ -52,9 +50,9 @@ public class PolicyTypeImportManager {
     private final CommonImportManager commonImportManager;
     private final GroupTypeOperation groupTypeOperation;
 
-    public PolicyTypeImportManager(IPolicyTypeOperation policyTypeOperation, ComponentsUtils componentsUtils,
-                                   GroupOperation groupOperation, ToscaOperationFacade toscaOperationFacade,
-                                   CommonImportManager commonImportManager, GroupTypeOperation groupTypeOperation) {
+    public PolicyTypeImportManager(IPolicyTypeOperation policyTypeOperation, ComponentsUtils componentsUtils, GroupOperation groupOperation,
+                                   ToscaOperationFacade toscaOperationFacade, CommonImportManager commonImportManager,
+                                   GroupTypeOperation groupTypeOperation) {
         this.policyTypeOperation = policyTypeOperation;
         this.componentsUtils = componentsUtils;
         this.groupOperation = groupOperation;
@@ -71,12 +69,15 @@ public class PolicyTypeImportManager {
         return commonImportManager.createElementTypesFromYml(policyTypesYml, this::createPolicyType);
     }
 
-    private Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> upsertPolicyTypesByDao(List<PolicyTypeDefinition> policyTypesToCreate) {
-        return commonImportManager.createElementTypesByDao(policyTypesToCreate, this::validatePolicyType, policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, policyType.getType()),
-                policyTypeOperation::getLatestPolicyTypeByType, policyTypeOperation::addPolicyType, this::updatePolicyType);
+    private Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> upsertPolicyTypesByDao(
+        List<PolicyTypeDefinition> policyTypesToCreate) {
+        return commonImportManager.createElementTypesByDao(policyTypesToCreate, this::validatePolicyType,
+            policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, policyType.getType()), policyTypeOperation::getLatestPolicyTypeByType,
+            policyTypeOperation::addPolicyType, this::updatePolicyType);
     }
 
-    private Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition newPolicyType, PolicyTypeDefinition oldPolicyType) {
+    private Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition newPolicyType,
+                                                                                  PolicyTypeDefinition oldPolicyType) {
         if (PolicyTypeImportUtils.isPolicyTypesEquals(newPolicyType, oldPolicyType)) {
             return policyTypeAlreadyExists();
         }
@@ -96,35 +97,29 @@ public class PolicyTypeImportManager {
             }
             if (result.isLeft()) {
                 for (String targetId : policyType.getTargets()) {
-                        boolean isValid = toscaOperationFacade.getLatestByToscaResourceName(targetId).isLeft();
-
-                        if (!isValid) { // check if it is a groupType
-                            final Either<GroupTypeDefinition, StorageOperationStatus> groupTypeFound = groupTypeOperation
-                                .getLatestGroupTypeByType(targetId, false);
-                            isValid = groupTypeFound.isLeft() && !groupTypeFound.left().value().isEmpty();
-                        }
-
-                        if (!isValid) {
-                            isValid = groupOperation.isGroupExist(targetId, false);
-                        }
-
-                        if (!isValid) {
-                            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.TARGETS_NON_VALID, policyType.getType(), targetId);
-                            result = Either.right(responseFormat);
-                            break;
-                        }
+                    boolean isValid = toscaOperationFacade.getLatestByToscaResourceName(targetId).isLeft();
+                    if (!isValid) { // check if it is a groupType
+                        final Either<GroupTypeDefinition, StorageOperationStatus> groupTypeFound = groupTypeOperation
+                            .getLatestGroupTypeByType(targetId, false);
+                        isValid = groupTypeFound.isLeft() && !groupTypeFound.left().value().isEmpty();
+                    }
+                    if (!isValid) {
+                        isValid = groupOperation.isGroupExist(targetId, false);
+                    }
+                    if (!isValid) {
+                        ResponseFormat responseFormat = componentsUtils
+                            .getResponseFormat(ActionStatus.TARGETS_NON_VALID, policyType.getType(), targetId);
+                        result = Either.right(responseFormat);
+                        break;
                     }
                 }
             }
-
-
+        }
         return result;
     }
 
     private PolicyTypeDefinition createPolicyType(String groupTypeName, Map<String, Object> toscaJson) {
-
         PolicyTypeDefinition policyType = new PolicyTypeDefinition();
-
         if (toscaJson != null) {
             // Description
             final Consumer<String> descriptionSetter = policyType::setDescription;
@@ -138,16 +133,12 @@ public class PolicyTypeImportManager {
             final Consumer<Map<String, String>> metadataSetter = policyType::setMetadata;
             commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.METADATA.getElementName(), metadataSetter);
             // Targets
-            final Consumer <List<String>> targetsSetter = policyType::setTargets;
+            final Consumer<List<String>> targetsSetter = policyType::setTargets;
             commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.TARGETS.getElementName(), targetsSetter);
-
             policyType.setType(groupTypeName);
-
             policyType.setHighestVersion(true);
-
             policyType.setVersion(TypeUtils.getFirstCertifiedVersionVersion());
         }
         return policyType;
     }
-
 }

@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.togglz;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.FeatureToggleDao;
 import org.openecomp.sdc.be.resources.data.togglz.FeatureToggleEvent;
@@ -29,10 +31,6 @@ import org.springframework.stereotype.Component;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.repository.StateRepository;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class CassandraCustomStateRepository implements StateRepository {
@@ -52,15 +50,13 @@ public class CassandraCustomStateRepository implements StateRepository {
     @VisibleForTesting
     void removeUnusedItems() {
         List<FeatureToggleEvent> allEvents = featureToggleDao.getAllFeatures();
-
-        List<FeatureToggleEvent> eventsToDelete = allEvents.stream()
-                .filter(e-> ToggleableFeature.getFeatureByName(e.getFeatureName()) == null)
-                .collect(Collectors.toList());
+        List<FeatureToggleEvent> eventsToDelete = allEvents.stream().filter(e -> ToggleableFeature.getFeatureByName(e.getFeatureName()) == null)
+            .collect(Collectors.toList());
         if (!eventsToDelete.isEmpty()) {
             logger.debug("Found Feature toggles not in use [{}], they will be deleted",
-                    eventsToDelete.stream().map(FeatureToggleEvent::getFeatureName).collect(Collectors.toList()));
+                eventsToDelete.stream().map(FeatureToggleEvent::getFeatureName).collect(Collectors.toList()));
         }
-        eventsToDelete.forEach(e->featureToggleDao.delete(e.getFeatureName()));
+        eventsToDelete.forEach(e -> featureToggleDao.delete(e.getFeatureName()));
     }
 
     @Override
@@ -71,7 +67,6 @@ public class CassandraCustomStateRepository implements StateRepository {
         }
         FeatureState state = null;
         FeatureToggleEvent event = featureToggleDao.get(feature.name());
-
         if (event != null) {
             state = event.getFeatureState();
             logger.debug("State of feature {} is {}", feature, state.getFeature());
@@ -87,5 +82,4 @@ public class CassandraCustomStateRepository implements StateRepository {
         CassandraOperationStatus status = featureToggleDao.save(new FeatureToggleEvent(featureState));
         logger.debug("setFeatureState=> FeatureState {} is set with status {}", featureState.getFeature(), status);
     }
-
 }

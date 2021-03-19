@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.utils;
 
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+
 import com.google.common.base.CharMatcher;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -31,20 +43,6 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
-
 public class PropertiesUtils {
 
     private PropertiesUtils() {
@@ -57,41 +55,29 @@ public class PropertiesUtils {
             properties = new ArrayList<>();
         }
         Set<PropertyDefinition> serviceProperties = new HashSet<>(properties);
-        SetUtils.emptyIfNull(serviceProperties)
-                .forEach(propertyDefinition -> resolvePropertyValueFromInput(propertyDefinition,
-                        service.getInputs()));
-        Set<PropertyDefinition> inputs = ListUtils.emptyIfNull(service.getInputs()).stream()
-                        .map(PropertyDefinition::new)
-                        .collect(Collectors.toSet());
+        SetUtils.emptyIfNull(serviceProperties).forEach(propertyDefinition -> resolvePropertyValueFromInput(propertyDefinition, service.getInputs()));
+        Set<PropertyDefinition> inputs = ListUtils.emptyIfNull(service.getInputs()).stream().map(PropertyDefinition::new).collect(Collectors.toSet());
         serviceProperties.addAll(inputs);
-        serviceProperties = serviceProperties.stream()
-                .filter(distinctByKey(PropertyDefinition::getName))
-                .collect(Collectors.toSet());
+        serviceProperties = serviceProperties.stream().filter(distinctByKey(PropertyDefinition::getName)).collect(Collectors.toSet());
         return new ArrayList<>(serviceProperties);
     }
 
-    public static PropertyDefinition resolvePropertyValueFromInput(PropertyDefinition propertyDefinition,
-                                                                   List<InputDefinition> componentInputs) {
+    public static PropertyDefinition resolvePropertyValueFromInput(PropertyDefinition propertyDefinition, List<InputDefinition> componentInputs) {
         if (Objects.isNull(propertyDefinition) || CollectionUtils.isEmpty(componentInputs)) {
             return propertyDefinition;
         }
-        Optional<InputDefinition> mappedInput = componentInputs.stream()
-                .filter(componentInput -> Objects.nonNull(componentInput.getPropertyId())
-                        && componentInput.getPropertyId().equals(propertyDefinition.getUniqueId()))
-                .findFirst();
+        Optional<InputDefinition> mappedInput = componentInputs.stream().filter(
+            componentInput -> Objects.nonNull(componentInput.getPropertyId()) && componentInput.getPropertyId()
+                .equals(propertyDefinition.getUniqueId())).findFirst();
         mappedInput.ifPresent(inputDefinition -> propertyDefinition.setValue(inputDefinition.getValue()));
         return propertyDefinition;
     }
 
-
-    public static Optional<ComponentInstanceProperty> isCapabilityProperty(String propertyUniqueId,
-                                               Component containerComponent) {
-
+    public static Optional<ComponentInstanceProperty> isCapabilityProperty(String propertyUniqueId, Component containerComponent) {
         Optional<List<ComponentInstanceProperty>> capPropertiesOptional = getCapProperties(containerComponent);
-
-        if(capPropertiesOptional.isPresent()) {
-            return capPropertiesOptional.get().stream().filter(propertyDefinition ->
-                    propertyDefinition.getUniqueId().equals(propertyUniqueId)).findAny();
+        if (capPropertiesOptional.isPresent()) {
+            return capPropertiesOptional.get().stream().filter(propertyDefinition -> propertyDefinition.getUniqueId().equals(propertyUniqueId))
+                .findAny();
         } else {
             return Optional.empty();
         }
@@ -99,50 +85,44 @@ public class PropertiesUtils {
 
     private static Optional<List<ComponentInstanceProperty>> getCapProperties(Component containerComponent) {
         Map<String, List<CapabilityDefinition>> componentCapabilities = containerComponent.getCapabilities();
-        if(MapUtils.isEmpty(componentCapabilities)){
+        if (MapUtils.isEmpty(componentCapabilities)) {
             return Optional.empty();
         }
-        List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values()
-                .stream().flatMap(Collection::stream).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(capabilityDefinitionList)){
+        List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values().stream().flatMap(Collection::stream)
+            .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(capabilityDefinitionList)) {
             return Optional.empty();
         }
-        List<ComponentInstanceProperty> allComponentInstanceCapProperties= new ArrayList<>();
-        capabilityDefinitionList.stream().filter(capabilityDefinition -> CollectionUtils.isNotEmpty(capabilityDefinition
-                .getProperties())).collect(Collectors.toList()).forEach(capabilityDefinition ->
-                allComponentInstanceCapProperties.addAll(capabilityDefinition.getProperties()));
+        List<ComponentInstanceProperty> allComponentInstanceCapProperties = new ArrayList<>();
+        capabilityDefinitionList.stream().filter(capabilityDefinition -> CollectionUtils.isNotEmpty(capabilityDefinition.getProperties()))
+            .collect(Collectors.toList())
+            .forEach(capabilityDefinition -> allComponentInstanceCapProperties.addAll(capabilityDefinition.getProperties()));
         return Optional.of(allComponentInstanceCapProperties);
     }
 
     public static Optional<CapabilityDefinition> getPropertyCapabilityOfChildInstance(String propertyParentUniqueId,
-                                                                                      Map<String, List<CapabilityDefinition>>
-                                                                               componentCapabilities) {
-        if(MapUtils.isEmpty(componentCapabilities)){
+                                                                                      Map<String, List<CapabilityDefinition>> componentCapabilities) {
+        if (MapUtils.isEmpty(componentCapabilities)) {
             return Optional.empty();
         }
-        List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values()
-                .stream().flatMap(Collection::stream).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(capabilityDefinitionList)){
+        List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values().stream().flatMap(Collection::stream)
+            .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(capabilityDefinitionList)) {
             return Optional.empty();
         }
-        return capabilityDefinitionList.stream()
-                .filter(capabilityDefinition -> capabilityDefinition.getUniqueId().equals(propertyParentUniqueId) &&
-                        capabilityDefinition.getPath().size() == 1)
-                .findAny();
+        return capabilityDefinitionList.stream().filter(
+            capabilityDefinition -> capabilityDefinition.getUniqueId().equals(propertyParentUniqueId) && capabilityDefinition.getPath().size() == 1)
+            .findAny();
     }
 
     public static Optional<CapabilityDefinition> getPropertyCapabilityFromAllCapProps(String propertyParentUniqueId,
-                                                                                      List<CapabilityDefinition>
-                                                                                   capabilityDefinitionList) {
-        return capabilityDefinitionList.stream()
-                .filter(capabilityDefinition -> capabilityDefinition.getUniqueId().equals(propertyParentUniqueId))
-                .findAny();
+                                                                                      List<CapabilityDefinition> capabilityDefinitionList) {
+        return capabilityDefinitionList.stream().filter(capabilityDefinition -> capabilityDefinition.getUniqueId().equals(propertyParentUniqueId))
+            .findAny();
     }
 
     public static boolean isNodeProperty(String propertyName, List<PropertyDefinition> properties) {
-
-        return !CollectionUtils.isEmpty(properties) && properties.stream().anyMatch(property -> property.getName()
-                .equals(propertyName));
+        return !CollectionUtils.isEmpty(properties) && properties.stream().anyMatch(property -> property.getName().equals(propertyName));
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -152,31 +132,28 @@ public class PropertiesUtils {
 
     public static Optional<ComponentInstanceProperty> getPropertyByInputId(Component component, String inputId) {
         List<InputDefinition> componentInputs = component.getInputs();
-        if(CollectionUtils.isEmpty(componentInputs)) {
+        if (CollectionUtils.isEmpty(componentInputs)) {
             return Optional.empty();
         }
-        Optional<InputDefinition> inputDefinition = componentInputs.stream().filter(cip -> cip.getUniqueId()
-                .equals(inputId)).findFirst();
-        if(!inputDefinition.isPresent()) {
+        Optional<InputDefinition> inputDefinition = componentInputs.stream().filter(cip -> cip.getUniqueId().equals(inputId)).findFirst();
+        if (!inputDefinition.isPresent()) {
             return Optional.empty();
         }
         Optional<List<ComponentInstanceProperty>> capProperties = getCapProperties(component);
-        if(!capProperties.isPresent()) {
+        if (!capProperties.isPresent()) {
             return Optional.empty();
         }
-
-        return capProperties.get().stream().filter(capProp -> CollectionUtils.isNotEmpty(capProp.getGetInputValues()) &&
-                capProp.getGetInputValues().stream().anyMatch(capPropInp -> capPropInp.getInputId().equals(inputId)) &&
-                capProp.getUniqueId().equals(inputDefinition.get().getPropertyId())).findAny();
+        return capProperties.get().stream().filter(
+            capProp -> CollectionUtils.isNotEmpty(capProp.getGetInputValues()) && capProp.getGetInputValues().stream()
+                .anyMatch(capPropInp -> capPropInp.getInputId().equals(inputId)) && capProp.getUniqueId()
+                .equals(inputDefinition.get().getPropertyId())).findAny();
     }
 
-    public static List<ComponentInstanceProperty> getCapabilityProperty(ComponentInstanceProperty capabilityProperty,
-                                                                  String inputId) {
+    public static List<ComponentInstanceProperty> getCapabilityProperty(ComponentInstanceProperty capabilityProperty, String inputId) {
         List<ComponentInstanceProperty> resList = new ArrayList<>();
         List<GetInputValueDataDefinition> inputsValues = capabilityProperty.getGetInputValues();
-        if (CollectionUtils.isNotEmpty(inputsValues) &&  inputsValues.stream().anyMatch(inputData ->
-                isGetInputValueForInput(inputData, inputId))) {
-                resList.add(capabilityProperty);
+        if (CollectionUtils.isNotEmpty(inputsValues) && inputsValues.stream().anyMatch(inputData -> isGetInputValueForInput(inputData, inputId))) {
+            resList.add(capabilityProperty);
         }
         return resList;
     }
@@ -192,6 +169,7 @@ public class PropertiesUtils {
 
     /**
      * Trim " and ' quotes
+     *
      * @return String
      */
     public static String trimQuotes(String incomingString) {

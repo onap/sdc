@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.utils;
 
 import com.google.gson.Gson;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -28,37 +33,27 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 
 public class ConsumptionUtils {
 
     private ConsumptionUtils() {
-
     }
 
-    public static Either<Operation, ResponseFormat> handleConsumptionInputMappedToCapabilityProperty(
-            Operation operation,
-            OperationInputDefinition operationInputDefinition, ServiceConsumptionData serviceConsumptionData,
-            Map<String, List<CapabilityDefinition>> capabilities, String componentName) {
-
-        List<CapabilityDefinition> componentCapabilityDefinitions = capabilities.values().stream()
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+    public static Either<Operation, ResponseFormat> handleConsumptionInputMappedToCapabilityProperty(Operation operation,
+                                                                                                     OperationInputDefinition operationInputDefinition,
+                                                                                                     ServiceConsumptionData serviceConsumptionData,
+                                                                                                     Map<String, List<CapabilityDefinition>> capabilities,
+                                                                                                     String componentName) {
+        List<CapabilityDefinition> componentCapabilityDefinitions = capabilities.values().stream().flatMap(Collection::stream)
+            .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(componentCapabilityDefinitions)) {
             return Either.left(operation);
         }
-
         for (CapabilityDefinition capabilityDefinition : componentCapabilityDefinitions) {
             String capabilityName = capabilityDefinition.getName();
             List<ComponentInstanceProperty> capabilityProperties = capabilityDefinition.getProperties();
@@ -69,14 +64,12 @@ public class ConsumptionUtils {
                 String capabilityPropertyName = capabilityProperty.getName();
                 String capabilityPropertyIdentifier = capabilityName + "_" + capabilityPropertyName;
                 if (capabilityPropertyIdentifier.equals(serviceConsumptionData.getValue())) {
-                    boolean isInputTypeSimilarToOperation =
-                            isAssignedValueFromValidType(operationInputDefinition.getType(), capabilityProperty);
+                    boolean isInputTypeSimilarToOperation = isAssignedValueFromValidType(operationInputDefinition.getType(), capabilityProperty);
                     if (!isInputTypeSimilarToOperation) {
-                        return Either.right(getResponseFormatManager().getResponseFormat(
-                                ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
+                        return Either.right(
+                            getResponseFormatManager().getResponseFormat(ActionStatus.INVALID_CONSUMPTION_TYPE, operationInputDefinition.getType()));
                     }
-                    addCapabilityPropertyToInputValue(componentName, capabilityName, operation,
-                            operationInputDefinition, capabilityProperty);
+                    addCapabilityPropertyToInputValue(componentName, capabilityName, operation, operationInputDefinition, capabilityProperty);
                 }
             }
         }
@@ -84,21 +77,16 @@ public class ConsumptionUtils {
     }
 
     private static void addCapabilityPropertyToInputValue(String componentName, String capabilityName, Operation operation,
-                                                   OperationInputDefinition operationInputDefinition,
-                                                   PropertyDefinition capabilityProperty) {
-
+                                                          OperationInputDefinition operationInputDefinition, PropertyDefinition capabilityProperty) {
         List<String> getPropertyValues = new ArrayList<>();
         getPropertyValues.add(componentName);
         getPropertyValues.add(capabilityName);
         getPropertyValues.add(capabilityProperty.getName());
-
         Map<String, List<String>> getProperty = new HashMap<>();
         getProperty.put(ToscaFunctions.GET_PROPERTY.getFunctionName(), getPropertyValues);
-
         operationInputDefinition.setSourceProperty(capabilityProperty.getUniqueId());
         operation.getInputs().delete(operationInputDefinition);
-        operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.GET_PROPERTY,
-                getPropertyValues);
+        operationInputDefinition.setToscaPresentationValue(JsonPresentationFields.GET_PROPERTY, getPropertyValues);
         operationInputDefinition.setValue((new Gson()).toJson(getProperty));
         operation.getInputs().add(operationInputDefinition);
     }
@@ -108,7 +96,7 @@ public class ConsumptionUtils {
             // validate static value
             ToscaPropertyType actualType = ToscaPropertyType.isValidType(operationInputType);
             PropertyTypeValidator validator = actualType.getValidator();
-            return validator.isValid((String)actualValue, operationInputType);
+            return validator.isValid((String) actualValue, operationInputType);
         } else if (actualValue instanceof PropertyDefinition) {
             // validate input / property value
             String actualType = ((PropertyDefinition) actualValue).getType();

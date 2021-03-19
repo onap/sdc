@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.attribute;
 
 import static org.openecomp.sdc.common.api.Constants.GET_ATTRIBUTE;
@@ -53,8 +52,8 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.Yaml;
 
-public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends PropertiesOwner, ATTRIBUTETYPE extends AttributeDataDefinition>
-    implements AttributeDeclarator {
+public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends PropertiesOwner, ATTRIBUTETYPE extends AttributeDataDefinition> implements
+    AttributeDeclarator {
 
     private static final Logger log = Logger.getLogger(DefaultAttributeDeclarator.class);
     private static final short LOOP_PROTECTION_LEVEL = 10;
@@ -68,9 +67,8 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
     public Either<List<OutputDefinition>, StorageOperationStatus> declareAttributesAsOutputs(final Component component,
                                                                                              final String propertiesOwnerId,
                                                                                              final List<ComponentInstanceAttribOutput> attribsToDeclare) {
-        log.debug(
-            "#declarePropertiesAsInputs - declaring properties as inputs for component {} from properties owner {}",
-            component.getUniqueId(), propertiesOwnerId);
+        log.debug("#declarePropertiesAsInputs - declaring properties as inputs for component {} from properties owner {}", component.getUniqueId(),
+            propertiesOwnerId);
         return resolvePropertiesOwner(component, propertiesOwnerId)
             .map(propertyOwner -> declareAttributesAsOutputs(component, propertyOwner, attribsToDeclare))
             .orElse(Either.right(onPropertiesOwnerNotFound(component.getUniqueId(), propertiesOwnerId)));
@@ -78,31 +76,26 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
 
     protected abstract ATTRIBUTETYPE createDeclaredAttribute(final AttributeDataDefinition attributeDataDefinition);
 
-    protected abstract Either<?, StorageOperationStatus> updateAttributesValues(final Component component,
-                                                                                final String propertiesOwnerId,
+    protected abstract Either<?, StorageOperationStatus> updateAttributesValues(final Component component, final String propertiesOwnerId,
                                                                                 final List<ATTRIBUTETYPE> attributetypeList);
 
     protected abstract Optional<PROPERTYOWNER> resolvePropertiesOwner(final Component component, final String propertiesOwnerId);
 
     private StorageOperationStatus onPropertiesOwnerNotFound(final String componentId, final String propertiesOwnerId) {
-        log.debug("#declarePropertiesAsInputs - properties owner {} was not found on component {}", propertiesOwnerId,
-            componentId);
+        log.debug("#declarePropertiesAsInputs - properties owner {} was not found on component {}", propertiesOwnerId, componentId);
         return StorageOperationStatus.NOT_FOUND;
     }
 
     private Either<List<OutputDefinition>, StorageOperationStatus> declareAttributesAsOutputs(final Component component,
                                                                                               final PROPERTYOWNER propertiesOwner,
                                                                                               final List<ComponentInstanceAttribOutput> attributesToDeclare) {
-        final AttributesDeclarationData attributesDeclarationData
-            = createOutputsAndOverrideAttributesValues(component, propertiesOwner, attributesToDeclare);
-        return updateAttributesValues(component, propertiesOwner.getUniqueId(),
-            attributesDeclarationData.getAttributesToUpdate())
-            .left()
+        final AttributesDeclarationData attributesDeclarationData = createOutputsAndOverrideAttributesValues(component, propertiesOwner,
+            attributesToDeclare);
+        return updateAttributesValues(component, propertiesOwner.getUniqueId(), attributesDeclarationData.getAttributesToUpdate()).left()
             .map(updatePropsRes -> attributesDeclarationData.getOutputsToCreate());
     }
 
-    private AttributesDeclarationData createOutputsAndOverrideAttributesValues(final Component component,
-                                                                               final PROPERTYOWNER propertiesOwner,
+    private AttributesDeclarationData createOutputsAndOverrideAttributesValues(final Component component, final PROPERTYOWNER propertiesOwner,
                                                                                final List<ComponentInstanceAttribOutput> attributesToDeclare) {
         final List<ATTRIBUTETYPE> declaredAttributes = new ArrayList<>();
         final List<OutputDefinition> createdInputs = attributesToDeclare.stream()
@@ -111,10 +104,8 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return new AttributesDeclarationData(createdInputs, declaredAttributes);
     }
 
-    private OutputDefinition declareAttributeOutput(final Component component,
-                                                    final PROPERTYOWNER propertiesOwner,
-                                                    final List<ATTRIBUTETYPE> declaredAttributes,
-                                                    final ComponentInstanceAttribOutput attribOutput) {
+    private OutputDefinition declareAttributeOutput(final Component component, final PROPERTYOWNER propertiesOwner,
+                                                    final List<ATTRIBUTETYPE> declaredAttributes, final ComponentInstanceAttribOutput attribOutput) {
         final AttributeDataDefinition attribute = resolveAttribute(declaredAttributes, attribOutput);
         final OutputDefinition outputDefinition = createOutput(component, propertiesOwner, attribOutput, attribute);
         final ATTRIBUTETYPE declaredAttribute = createDeclaredAttribute(attribute);
@@ -124,40 +115,34 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return outputDefinition;
     }
 
-    private OutputDefinition createOutput(final Component component,
-                                          final PROPERTYOWNER propertiesOwner,
-                                          final ComponentInstanceAttribOutput attribOutput,
-                                          final AttributeDataDefinition attributeDataDefinition) {
+    private OutputDefinition createOutput(final Component component, final PROPERTYOWNER propertiesOwner,
+                                          final ComponentInstanceAttribOutput attribOutput, final AttributeDataDefinition attributeDataDefinition) {
         String generatedInputPrefix = propertiesOwner.getNormalizedName();
         if (propertiesOwner.getUniqueId().equals(attribOutput.getParentUniqueId())) {
             //Creating input from property create on self using add property..Do not add the prefix
             generatedInputPrefix = null;
         }
-
         final String generatedOutputName = generateOutputName(generatedInputPrefix, attribOutput);
-        log.debug("createInput: propOwner.uniqueId={}, attribOutput.parentUniqueId={}",
-            propertiesOwner.getUniqueId(), attribOutput.getParentUniqueId());
+        log.debug("createInput: propOwner.uniqueId={}, attribOutput.parentUniqueId={}", propertiesOwner.getUniqueId(),
+            attribOutput.getParentUniqueId());
         return createOutputFromAttribute(component.getUniqueId(), propertiesOwner, generatedOutputName, attribOutput, attributeDataDefinition);
     }
 
     private String generateOutputName(final String outputName, final ComponentInstanceAttribOutput attribOutput) {
         final String declaredInputName;
         final String[] parsedPropNames = attribOutput.getParsedAttribNames();
-
         if (parsedPropNames != null) {
             declaredInputName = handleInputName(outputName, parsedPropNames);
         } else {
             final String[] propName = {attribOutput.getName()};
             declaredInputName = handleInputName(outputName, propName);
         }
-
         return declaredInputName;
     }
 
     private String handleInputName(final String outputName, final String[] parsedPropNames) {
         final StringBuilder prefix = new StringBuilder();
         int startingIndex;
-
         if (Objects.isNull(outputName)) {
             prefix.append(parsedPropNames[0]);
             startingIndex = 1;
@@ -165,29 +150,22 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
             prefix.append(outputName);
             startingIndex = 0;
         }
-
         while (startingIndex < parsedPropNames.length) {
             prefix.append(UNDERSCORE);
             prefix.append(parsedPropNames[startingIndex]);
             startingIndex++;
         }
-
         return prefix.toString();
     }
 
-    private AttributeDataDefinition resolveAttribute(final List<ATTRIBUTETYPE> attributesToCreate,
-                                                     final ComponentInstanceAttribOutput attribOutput) {
-        final Optional<ATTRIBUTETYPE> resolvedAttribute = attributesToCreate.stream()
-            .filter(p -> p.getName().equals(attribOutput.getName()))
+    private AttributeDataDefinition resolveAttribute(final List<ATTRIBUTETYPE> attributesToCreate, final ComponentInstanceAttribOutput attribOutput) {
+        final Optional<ATTRIBUTETYPE> resolvedAttribute = attributesToCreate.stream().filter(p -> p.getName().equals(attribOutput.getName()))
             .findFirst();
         return resolvedAttribute.isPresent() ? resolvedAttribute.get() : attribOutput;
     }
 
-    OutputDefinition createOutputFromAttribute(final String componentId,
-                                               final PROPERTYOWNER propertiesOwner,
-                                               final String outputName,
-                                               final ComponentInstanceAttribOutput attributeOutput,
-                                               final AttributeDataDefinition attribute) {
+    OutputDefinition createOutputFromAttribute(final String componentId, final PROPERTYOWNER propertiesOwner, final String outputName,
+                                               final ComponentInstanceAttribOutput attributeOutput, final AttributeDataDefinition attribute) {
         final String attributesName = attributeOutput.getAttributesName();
         final AttributeDefinition selectedAttrib = attributeOutput.getOutput();
         final String[] parsedAttribNames = attributeOutput.getParsedAttribNames();
@@ -207,7 +185,6 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         outputDefinition.setInstanceUniqueId(propertiesOwner.getUniqueId());
         outputDefinition.setAttributeId(attributeOutput.getUniqueId());
         outputDefinition.setAttributes(Arrays.asList(attributeOutput));
-
         if (attribute instanceof IComponentInstanceConnectedElement) {
             ((IComponentInstanceConnectedElement) attribute).setComponentInstanceId(propertiesOwner.getUniqueId());
             ((IComponentInstanceConnectedElement) attribute).setComponentInstanceName(propertiesOwner.getName());
@@ -216,11 +193,8 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return outputDefinition;
     }
 
-    private void changeOutputValueToGetAttributeValue(final String outputName,
-                                                      final String[] parsedPropNames,
-                                                      final OutputDefinition output,
-                                                      final AttributeDataDefinition attributeDataDefinition,
-                                                      final boolean complexProperty) {
+    private void changeOutputValueToGetAttributeValue(final String outputName, final String[] parsedPropNames, final OutputDefinition output,
+                                                      final AttributeDataDefinition attributeDataDefinition, final boolean complexProperty) {
         JSONObject jsonObject = new JSONObject();
         final String value = attributeDataDefinition.getValue();
         if (StringUtils.isEmpty(value)) {
@@ -228,36 +202,32 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
                 jsonObject = createJSONValueForProperty(parsedPropNames.length - 1, parsedPropNames, jsonObject, outputName);
                 attributeDataDefinition.setValue(jsonObject.toJSONString());
             } else {
-                jsonObject.put(
-                    GET_ATTRIBUTE, Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
+                jsonObject
+                    .put(GET_ATTRIBUTE, Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
                 output.setValue(jsonObject.toJSONString());
             }
         } else {
             final Object objValue = new Yaml().load(value);
             if (objValue instanceof Map || objValue instanceof List) {
                 if (!complexProperty) {
-                    jsonObject.put(
-                        GET_ATTRIBUTE, Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
+                    jsonObject.put(GET_ATTRIBUTE,
+                        Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
                     output.setValue(jsonObject.toJSONString());
                 } else {
                     final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) objValue;
                     createOutputValue(mappedToscaTemplate, 1, parsedPropNames, outputName);
-
                     output.setValue(gson.toJson(mappedToscaTemplate));
                 }
-
             } else {
-                jsonObject.put(
-                    GET_ATTRIBUTE, Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
+                jsonObject
+                    .put(GET_ATTRIBUTE, Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
                 output.setValue(jsonObject.toJSONString());
             }
         }
-
         if (CollectionUtils.isEmpty(attributeDataDefinition.getGetOutputValues())) {
             attributeDataDefinition.setGetOutputValues(new ArrayList<>());
         }
         final List<GetOutputValueDataDefinition> getOutputValues = attributeDataDefinition.getGetOutputValues();
-
         final GetOutputValueDataDefinition getOutputValueDataDefinition = new GetOutputValueDataDefinition();
         getOutputValueDataDefinition.setOutputId(output.getUniqueId());
         getOutputValueDataDefinition.setOutputName(output.getName());
@@ -265,7 +235,6 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
     }
 
     private JSONObject createJSONValueForProperty(int i, final String[] parsedPropNames, final JSONObject ooj, final String outputName) {
-
         while (i >= 1) {
             if (i == parsedPropNames.length - 1) {
                 final JSONObject jobProp = new JSONObject();
@@ -280,7 +249,6 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
                 return createJSONValueForProperty(i, parsedPropNames, res, outputName);
             }
         }
-
         return ooj;
     }
 
@@ -319,43 +287,33 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return lhm1;
     }
 
-    private class AttributesDeclarationData {
-
-        private final List<OutputDefinition> outputsToCreate;
-        private final List<ATTRIBUTETYPE> attributesToUpdate;
-
-        AttributesDeclarationData(final List<OutputDefinition> outputsToCreate,
-                                  final List<ATTRIBUTETYPE> attributesToUpdate) {
-            this.outputsToCreate = outputsToCreate;
-            this.attributesToUpdate = attributesToUpdate;
-        }
-
-        List<OutputDefinition> getOutputsToCreate() {
-            return outputsToCreate;
-        }
-
-        List<ATTRIBUTETYPE> getAttributesToUpdate() {
-            return attributesToUpdate;
-        }
-    }
-
-    Either<OutputDefinition, ResponseFormat> prepareValueBeforeDelete(final OutputDefinition inputForDelete,
-                                                                      final AttributeDataDefinition inputValue,
+    Either<OutputDefinition, ResponseFormat> prepareValueBeforeDelete(final OutputDefinition inputForDelete, final AttributeDataDefinition inputValue,
                                                                       final List<String> pathOfComponentInstances) {
         final Either<OutputDefinition, ResponseFormat> deleteEither = prepareValueBeforeDelete(inputForDelete, inputValue);
-
 //        Either<String, JanusGraphOperationStatus> findDefaultValue = propertyOperation
+
 //            .findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(),
+
 //                (String) inputValue.get_default());
+
 //        if (findDefaultValue.isRight()) {
+
 //            deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils
+
 //                .convertFromStorageResponse(
+
 //                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findDefaultValue.right().value()))));
+
 //            return deleteEither;
+
 //
+
 //        }
+
 //        String defaultValue = findDefaultValue.left().value();
+
 //        inputValue.set_default(defaultValue);
+
 //        log.debug("The returned default value in ResourceInstanceProperty is {}", defaultValue);
         return deleteEither;
     }
@@ -365,9 +323,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         final Either<OutputDefinition, ResponseFormat> deleteEither = Either.left(outputForDelete);
         String value = outputValue.getValue();
         final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(value);
-
         resetOutputName(mappedToscaTemplate, outputForDelete.getName());
-
         value = "";
         if (MapUtils.isNotEmpty(mappedToscaTemplate)) {
             final Either result = cleanNestedMap(mappedToscaTemplate, true);
@@ -380,11 +336,10 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
             value = gson.toJson(modifiedMappedToscaTemplate);
         }
         outputValue.setValue(value);
-
         final List<GetOutputValueDataDefinition> getInputsValues = outputValue.getGetOutputValues();
         if (getInputsValues != null && !getInputsValues.isEmpty()) {
-            final Optional<GetOutputValueDataDefinition> op =
-                getInputsValues.stream().filter(gi -> gi.getOutputId().equals(outputForDelete.getUniqueId())).findAny();
+            final Optional<GetOutputValueDataDefinition> op = getInputsValues.stream()
+                .filter(gi -> gi.getOutputId().equals(outputForDelete.getUniqueId())).findAny();
             op.ifPresent(getInputsValues::remove);
         }
         outputValue.setGetOutputValues(getInputsValues);
@@ -410,9 +365,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         if (MapUtils.isNotEmpty(mappedToscaTemplate)) {
             if (deepClone) {
                 if (!(mappedToscaTemplate instanceof HashMap)) {
-                    return Either.right(
-                        "expecting mappedToscaTemplate as HashMap ,recieved " + mappedToscaTemplate.getClass()
-                            .getSimpleName());
+                    return Either.right("expecting mappedToscaTemplate as HashMap ,recieved " + mappedToscaTemplate.getClass().getSimpleName());
                 } else {
                     mappedToscaTemplate = (HashMap) ((HashMap) mappedToscaTemplate).clone();
                 }
@@ -449,7 +402,6 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
             if (CollectionUtils.isNotEmpty(set)) {
                 set.removeAll(keysToRemove);
             }
-
             if (isEmptyNestedMap(toscaElement)) {
                 return null;
             }
@@ -480,4 +432,22 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return isEmpty;
     }
 
+    private class AttributesDeclarationData {
+
+        private final List<OutputDefinition> outputsToCreate;
+        private final List<ATTRIBUTETYPE> attributesToUpdate;
+
+        AttributesDeclarationData(final List<OutputDefinition> outputsToCreate, final List<ATTRIBUTETYPE> attributesToUpdate) {
+            this.outputsToCreate = outputsToCreate;
+            this.attributesToUpdate = attributesToUpdate;
+        }
+
+        List<OutputDefinition> getOutputsToCreate() {
+            return outputsToCreate;
+        }
+
+        List<ATTRIBUTETYPE> getAttributesToUpdate() {
+            return attributesToUpdate;
+        }
+    }
 }

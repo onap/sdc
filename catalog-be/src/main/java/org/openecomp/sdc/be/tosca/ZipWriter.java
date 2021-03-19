@@ -17,10 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca;
 
-import fj.data.Either;
 import io.vavr.control.Try;
 import java.util.function.Function;
 import java.util.zip.ZipEntry;
@@ -32,10 +30,24 @@ import java.util.zip.ZipOutputStream;
 public interface ZipWriter {
 
     /**
+     * Builds a ZipWriter that outputs the data on a {@link java.util.zip.ZipOutputStream}
+     *
+     * @param zos the target {@link java.util.zip.ZipOutputStream}
+     */
+    static ZipWriter live(ZipOutputStream zos) {
+        return (entryName, payload) -> Try.of(() -> {
+            zos.putNextEntry(new ZipEntry(entryName));
+            zos.write(payload);
+            // We can return null as a Void is expected;
+            return null;
+        });
+    }
+
+    /**
      * Writes an entry provided with its name and its payload
      *
      * @param entryName The entry's name to use in the zip file
-     * @param payload The payload to write for this entry
+     * @param payload   The payload to write for this entry
      */
     Try<Void> write(String entryName, byte[] payload);
 
@@ -43,7 +55,7 @@ public interface ZipWriter {
      * Writes an entry provided with its name and its payload
      *
      * @param entryName The entry's name to use in the zip file
-     * @param payload The payload to write for this entry
+     * @param payload   The payload to write for this entry
      */
     default Try<Void> write(String entryName, String payload) {
         return write(entryName, payload.getBytes());
@@ -61,18 +73,4 @@ public interface ZipWriter {
     default Function<byte[], Try<Void>> write(String entryName) {
         return payload -> write(entryName, payload);
     }
-
-    /**
-     * Builds a ZipWriter that outputs the data on a {@link java.util.zip.ZipOutputStream}
-     * @param zos the target {@link java.util.zip.ZipOutputStream}
-     */
-    static ZipWriter live(ZipOutputStream zos) {
-        return (entryName, payload) -> Try.of(() -> {
-            zos.putNextEntry(new ZipEntry(entryName));
-            zos.write(payload);
-            // We can return null as a Void is expected;
-            return null;
-        });
-    }
 }
-

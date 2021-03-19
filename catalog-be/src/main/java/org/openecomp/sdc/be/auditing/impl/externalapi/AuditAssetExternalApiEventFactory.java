@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.auditing.impl.externalapi;
 
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -28,17 +27,13 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
 public class AuditAssetExternalApiEventFactory extends AuditExternalApiEventFactory {
 
-    private static final String LOG_STR = "ACTION = \"%s\" CONSUMER_ID = \"%s\" RESOURCE_URL = \"%s\" RESOURCE_NAME = \"%s\" " +
-            "RESOURCE_TYPE = \"%s\" SERVICE_INSTANCE_ID = \"%s\" STATUS = \"%s\" DESC = \"%s\"";
+    private static final String LOG_STR = "ACTION = \"%s\" CONSUMER_ID = \"%s\" RESOURCE_URL = \"%s\" RESOURCE_NAME = \"%s\" "
+        + "RESOURCE_TYPE = \"%s\" SERVICE_INSTANCE_ID = \"%s\" STATUS = \"%s\" DESC = \"%s\"";
 
     public AuditAssetExternalApiEventFactory(AuditingActionEnum action, CommonAuditData commonFields, ResourceCommonInfo resourceCommonInfo,
                                              DistributionData distributionData) {
-        super(action, commonFields, resourceCommonInfo, distributionData,
-                ResourceVersionInfo.newBuilder()
-                        .build(),
-                ResourceVersionInfo.newBuilder()
-                        .build(),
-                null, null, null);
+        super(action, commonFields, resourceCommonInfo, distributionData, ResourceVersionInfo.newBuilder().build(),
+            ResourceVersionInfo.newBuilder().build(), null, null, null);
     }
 
     @Override
@@ -48,7 +43,7 @@ public class AuditAssetExternalApiEventFactory extends AuditExternalApiEventFact
 
     @Override
     public String[] getLogMessageParams() {
-        return new String[] {event.getAction(), event.getConsumerId(), event.getResourceURL(), event.getResourceName(),
-                event.getResourceType(), event.getServiceInstanceId(), event.getStatus(), event.getDesc()};
+        return new String[]{event.getAction(), event.getConsumerId(), event.getResourceURL(), event.getResourceName(), event.getResourceType(),
+            event.getServiceInstanceId(), event.getStatus(), event.getDesc()};
     }
 }

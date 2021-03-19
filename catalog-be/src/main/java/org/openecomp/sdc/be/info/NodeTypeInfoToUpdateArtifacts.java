@@ -21,20 +21,20 @@
  */
 package org.openecomp.sdc.be.info;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-
 @Getter
 @Setter
 @AllArgsConstructor
 public class NodeTypeInfoToUpdateArtifacts {
+
     private String nodeName;
     private Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle;
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.auditing.impl.distribution;
 
 import org.openecomp.sdc.be.auditing.impl.AuditBaseEventFactory;
@@ -29,19 +28,18 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 
 public class AuditDistributionStatusEventFactory extends AuditBaseEventFactory {
 
-    private static final String LOG_STR = "ACTION = \"%s\" DID = \"%s\" CONSUMER_ID = \"%s\" " +
-            "TOPIC_NAME = \"%s\" RESOURCE_URL = \"%s\" STATUS_TIME = \"%s\" STATUS = \"%s\" DESC = \"%s\"";
+    private static final String LOG_STR = "ACTION = \"%s\" DID = \"%s\" CONSUMER_ID = \"%s\" "
+        + "TOPIC_NAME = \"%s\" RESOURCE_URL = \"%s\" STATUS_TIME = \"%s\" STATUS = \"%s\" DESC = \"%s\"";
     private final DistributionStatusEvent event;
 
-    public AuditDistributionStatusEventFactory(CommonAuditData commonFields, DistributionData distributionData,
-                                               String did, String topicName, String statusTime) {
+    public AuditDistributionStatusEventFactory(CommonAuditData commonFields, DistributionData distributionData, String did, String topicName,
+                                               String statusTime) {
         super(AuditingActionEnum.DISTRIBUTION_STATUS);
-        this.event = new DistributionStatusEvent(getAction().getName(), commonFields, distributionData, did,
-                topicName, statusTime);
+        this.event = new DistributionStatusEvent(getAction().getName(), commonFields, distributionData, did, topicName, statusTime);
     }
 
-    public AuditDistributionStatusEventFactory(CommonAuditData commonFields, DistributionData distributionData,
-                                               String did, String topicName, String statusTime, String timestamp) {
+    public AuditDistributionStatusEventFactory(CommonAuditData commonFields, DistributionData distributionData, String did, String topicName,
+                                               String statusTime, String timestamp) {
         this(commonFields, distributionData, did, topicName, statusTime);
         this.event.setTimestamp1(timestamp);
     }
@@ -53,8 +51,8 @@ public class AuditDistributionStatusEventFactory extends AuditBaseEventFactory {
 
     @Override
     public String[] getLogMessageParams() {
-        return new String[] {event.getAction(), event.getDid(), event.getConsumerId(), event.getTopicName(),
-                event.getResoureURL(), event.getStatusTime(), event.getStatus(), event.getDesc()};
+        return new String[]{event.getAction(), event.getDid(), event.getConsumerId(), event.getTopicName(), event.getResoureURL(),
+            event.getStatusTime(), event.getStatus(), event.getDesc()};
     }
 
     @Override

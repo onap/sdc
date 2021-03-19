@@ -16,9 +16,13 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
+import static java.util.stream.Collectors.toList;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
+
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
@@ -33,18 +37,12 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
-
 @Component("softwareInformationBusinessLogic")
 public class SoftwareInformationBusinessLogic {
 
-    private final PropertyBusinessLogic propertyBusinessLogic;
     private static final String SOFTWARE_VERSION_PROPERTY_NAME = "software_versions";
     private static final String DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME = "default_software_version";
+    private final PropertyBusinessLogic propertyBusinessLogic;
 
     @Autowired
     public SoftwareInformationBusinessLogic(final PropertyBusinessLogic propertyBusinessLogic) {
@@ -53,17 +51,16 @@ public class SoftwareInformationBusinessLogic {
 
     /**
      * Adds the software information from a csar package to the resource {@link SoftwareInformationBusinessLogic#SOFTWARE_VERSION_PROPERTY_NAME}
-     * property.<br/> The csar package must contain the expected non-mano yaml file with the software information. Also
-     * the resource must have the {@link SoftwareInformationBusinessLogic#SOFTWARE_VERSION_PROPERTY_NAME} property.
+     * property.<br/> The csar package must contain the expected non-mano yaml file with the software information. Also the resource must have the
+     * {@link SoftwareInformationBusinessLogic#SOFTWARE_VERSION_PROPERTY_NAME} property.
      *
      * @param resource the resource to add the software information
      * @param csarInfo the csar package representation
-     * @return if the expected property exists in the resource and the csar package contains the software information
-     * file, an Optional<PropertyDefinition> with the updated property; otherwise Optional.empty().
+     * @return if the expected property exists in the resource and the csar package contains the software information file, an
+     * Optional<PropertyDefinition> with the updated property; otherwise Optional.empty().
      * @throws BusinessLogicException when there was a problem while updating the property
      */
-    public Optional<PropertyDefinition> setSoftwareInformation(final Resource resource,
-                                                               final CsarInfo csarInfo) throws BusinessLogicException {
+    public Optional<PropertyDefinition> setSoftwareInformation(final Resource resource, final CsarInfo csarInfo) throws BusinessLogicException {
         final Optional<String> softwareInformation = csarInfo.getSoftwareInformationPath();
         if (!softwareInformation.isPresent()) {
             return Optional.empty();
@@ -73,26 +70,22 @@ public class SoftwareInformationBusinessLogic {
             return Optional.empty();
         }
         final byte[] softwareInformationYaml = csarInfo.getCsar().get(softwareInformation.get());
-        final PnfSoftwareInformation pnfSoftwareInformation =
-            parseSoftwareInformation(softwareInformationYaml).orElse(null);
+        final PnfSoftwareInformation pnfSoftwareInformation = parseSoftwareInformation(softwareInformationYaml).orElse(null);
         if (pnfSoftwareInformation == null) {
             return Optional.empty();
         }
-
-        final List<String> versionList = pnfSoftwareInformation.getSoftwareVersionSet().stream()
-            .map(PnfSoftwareVersion::getVersion).collect(toList());
-        final String softwareVersionInformation =
-            getPropertyJsonStringValue(versionList, ToscaPropertyType.LIST.getType());
+        final List<String> versionList = pnfSoftwareInformation.getSoftwareVersionSet().stream().map(PnfSoftwareVersion::getVersion)
+            .collect(toList());
+        final String softwareVersionInformation = getPropertyJsonStringValue(versionList, ToscaPropertyType.LIST.getType());
         propertyDefinition.setValue(softwareVersionInformation);
-
-        final PropertyDefinition updatedPropertyDefinition =
-            propertyBusinessLogic.updateComponentProperty(resource.getUniqueId(), propertyDefinition);
-
+        final PropertyDefinition updatedPropertyDefinition = propertyBusinessLogic
+            .updateComponentProperty(resource.getUniqueId(), propertyDefinition);
         // set default-software-version as first entry of software version list for resource type pnf
-        if(resource.getResourceType() == ResourceTypeEnum.PNF && !versionList.isEmpty()){
+        if (resource.getResourceType() == ResourceTypeEnum.PNF && !versionList.isEmpty()) {
             final String sw_version = versionList.get(0);
-            Optional<InputDefinition> default_Sw_Ver_PropertyDefinition = resource.safeGetInputs().stream().filter(s->DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME.equals(s.getName())).findFirst();
-            if(default_Sw_Ver_PropertyDefinition.isPresent()) {
+            Optional<InputDefinition> default_Sw_Ver_PropertyDefinition = resource.safeGetInputs().stream()
+                .filter(s -> DEFAULT_SOFTWARE_VERSION_PROPERTY_NAME.equals(s.getName())).findFirst();
+            if (default_Sw_Ver_PropertyDefinition.isPresent()) {
                 default_Sw_Ver_PropertyDefinition.get().setDefaultValue(sw_version);
             }
         }
@@ -103,8 +96,7 @@ public class SoftwareInformationBusinessLogic {
      * Parses the non-mano software information yaml file.
      *
      * @param softwareInformationYaml the file byte array
-     * @return an {@code Optional<PnfSoftwareInformation>} if the file was successful parsed, otherwise {@code
-     * Optional.empty()}
+     * @return an {@code Optional<PnfSoftwareInformation>} if the file was successful parsed, otherwise {@code Optional.empty()}
      */
     private Optional<PnfSoftwareInformation> parseSoftwareInformation(byte[] softwareInformationYaml) {
         return SoftwareInformationArtifactYamlParser.parse(softwareInformationYaml);
@@ -112,6 +104,7 @@ public class SoftwareInformationBusinessLogic {
 
     /**
      * Finds the {@link SoftwareInformationBusinessLogic#SOFTWARE_VERSION_PROPERTY_NAME} property in a Resource
+     *
      * @param resource the resource to search for the property
      * @return an {@code Optional<PnfSoftwareInformation>} if the property was found, otherwise {@code Optional.empty()}
      */
@@ -119,8 +112,7 @@ public class SoftwareInformationBusinessLogic {
         if (CollectionUtils.isEmpty(resource.getProperties())) {
             return Optional.empty();
         }
-        return resource.getProperties().stream()
-            .filter(propertyDefinition -> propertyDefinition.getName().equals(SOFTWARE_VERSION_PROPERTY_NAME))
+        return resource.getProperties().stream().filter(propertyDefinition -> propertyDefinition.getName().equals(SOFTWARE_VERSION_PROPERTY_NAME))
             .findFirst();
     }
 
@@ -135,7 +127,6 @@ public class SoftwareInformationBusinessLogic {
         if (!softwareInformation.isPresent()) {
             return false;
         }
-
         csarInfo.getCsar().remove(softwareInformation.get());
         return true;
     }

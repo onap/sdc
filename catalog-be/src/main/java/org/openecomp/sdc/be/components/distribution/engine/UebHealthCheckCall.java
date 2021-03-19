@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,23 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.common.log.wrappers.Logger;
-
 import java.util.concurrent.Callable;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class UebHealthCheckCall implements Callable<Boolean> {
 
+    private static final Logger healthLogger = Logger.getLogger(DistributionEngineClusterHealth.UEB_HEALTH_LOG_CONTEXT);
+    private static final Logger logger = Logger.getLogger(UebHealthCheckCall.class.getName());
     CambriaHandler cambriaHandler = new CambriaHandler();
-
     String server;
     String publicApiKey;
-
-    private static final Logger healthLogger = Logger.getLogger(DistributionEngineClusterHealth.UEB_HEALTH_LOG_CONTEXT);
-
-    private static final Logger logger = Logger.getLogger(UebHealthCheckCall.class.getName());
 
     public UebHealthCheckCall(String server, String publicApiKey) {
         super();
@@ -43,24 +38,20 @@ public class UebHealthCheckCall implements Callable<Boolean> {
 
     @Override
     public Boolean call() {
-
         healthLogger.trace("Going to run health check towards ueb server {}", server);
-
         boolean result = false;
         CambriaErrorResponse cambriaErrorResponse = cambriaHandler.getApiKey(server, publicApiKey);
-
         logger.debug("After running Health check towards ueb server {}. Result is {}", server, cambriaErrorResponse);
-
         if (cambriaErrorResponse.httpCode < CambriaErrorResponse.HTTP_INTERNAL_SERVER_ERROR) {
-            logger.debug("After running Health check towards ueb server {}. Error code is {}. Set result to true", server, cambriaErrorResponse.httpCode);
+            logger.debug("After running Health check towards ueb server {}. Error code is {}. Set result to true", server,
+                cambriaErrorResponse.httpCode);
             result = true;
+        } else {
+            logger.debug("After running Health check towards ueb server {}. Error code is {}. Set result to false", server,
+                cambriaErrorResponse.httpCode);
         }
-        else {
-            logger.debug("After running Health check towards ueb server {}. Error code is {}. Set result to false", server, cambriaErrorResponse.httpCode);
-        }
-
-        healthLogger.trace("Result after running health check towards ueb server {} is {}. Returned result is {} ", server, cambriaErrorResponse, result);
-
+        healthLogger
+            .trace("Result after running health check towards ueb server {} is {}. Returned result is {} ", server, cambriaErrorResponse, result);
         return result;
     }
 
@@ -75,5 +66,4 @@ public class UebHealthCheckCall implements Callable<Boolean> {
     public void setCambriaHandler(CambriaHandler cambriaHandler) {
         this.cambriaHandler = cambriaHandler;
     }
-
 }

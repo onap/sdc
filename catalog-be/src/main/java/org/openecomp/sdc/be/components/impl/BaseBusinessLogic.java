@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
@@ -101,7 +100,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class BaseBusinessLogic {
 
     private static final String FAILED_TO_LOCK_COMPONENT_ERROR = "Failed to lock component {} error - {}";
-
     private static final Logger log = Logger.getLogger(BaseBusinessLogic.class);
     private static final String EMPTY_VALUE = null;
     private static final String SCHEMA_DOESN_T_EXISTS_FOR_PROPERTY_OF_TYPE = "Schema doesn't exists for property of type {}";
@@ -127,12 +125,11 @@ public abstract class BaseBusinessLogic {
     protected PolicyTypeOperation policyTypeOperation;
     protected ArtifactsOperations artifactToscaOperation;
     protected UserValidations userValidations;
-
     DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
-    protected BaseBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+    protected BaseBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
+                                IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+                                InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
         this.elementDao = elementDao;
         this.groupOperation = groupOperation;
         this.groupInstanceOperation = groupInstanceOperation;
@@ -140,6 +137,12 @@ public abstract class BaseBusinessLogic {
         this.interfaceOperation = interfaceOperation;
         this.interfaceLifecycleTypeOperation = interfaceLifecycleTypeOperation;
         this.artifactToscaOperation = artifactToscaOperation;
+    }
+
+    @SafeVarargs
+    static <T extends Enum<T>> boolean enumHasValueFilter(String name, Function<String, T> enumGetter, T... enumValues) {
+        T enumFound = enumGetter.apply(name);
+        return Arrays.asList(enumValues).contains(enumFound);
     }
 
     @Autowired
@@ -226,11 +229,10 @@ public abstract class BaseBusinessLogic {
         lockComponent(component.getUniqueId(), component, ecompErrorContext);
     }
 
-    protected boolean isVolumeGroup(List<String> artifactsInGroup,List <ArtifactDefinition> deploymentArtifacts) {
+    protected boolean isVolumeGroup(List<String> artifactsInGroup, List<ArtifactDefinition> deploymentArtifacts) {
         for (String artifactId : artifactsInGroup) {
             ArtifactDefinition artifactDef = ArtifactUtils.findArtifactInList(deploymentArtifacts, artifactId);
-            if (artifactDef != null
-                    && artifactDef.getArtifactType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType())) {
+            if (artifactDef != null && artifactDef.getArtifactType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType())) {
                 return true;
             }
         }
@@ -238,14 +240,14 @@ public abstract class BaseBusinessLogic {
     }
 
     protected void lockComponent(Component component, boolean shouldLock, String ecompErrorContext) {
-        if(shouldLock){
+        if (shouldLock) {
             lockComponent(component.getUniqueId(), component, ecompErrorContext);
         }
     }
 
     protected void lockComponent(String componentId, Component component, String ecompErrorContext) {
         ActionStatus lock = lockElement(componentId, component, ecompErrorContext);
-        if (lock!= ActionStatus.OK) {
+        if (lock != ActionStatus.OK) {
             logAndThrowComponentException(lock, component.getUniqueId(), component.getName());
         }
     }
@@ -256,7 +258,7 @@ public abstract class BaseBusinessLogic {
         }
     }
 
-    private ResponseFormat logAndThrowComponentException(ActionStatus status, String componentId, String name){
+    private ResponseFormat logAndThrowComponentException(ActionStatus status, String componentId, String name) {
         log.debug(FAILED_TO_LOCK_COMPONENT_ERROR, componentId, status);
         throw new ByActionStatusComponentException(status, name);
     }
@@ -265,7 +267,6 @@ public abstract class BaseBusinessLogic {
         ComponentTypeEnum componentType = component.getComponentType();
         NodeTypeEnum nodeType = componentType.getNodeType();
         StorageOperationStatus lockResourceStatus = graphLockOperation.lockComponent(componentId, nodeType);
-
         if (lockResourceStatus == StorageOperationStatus.OK) {
             return ActionStatus.OK;
         } else {
@@ -287,16 +288,18 @@ public abstract class BaseBusinessLogic {
             }
             // unlock resource
             graphLockOperation.unlockComponent(component.getUniqueId(), nodeType);
+        } else {
+            log.debug("component is NULL");
         }
-        else log.debug("component is NULL");
     }
 
     protected void unlockComponent(boolean failed, Component component) {
         unlockComponent(failed, component, false);
     }
+
     void unlockComponentById(boolean failed, String componentId) {
         Either<Component, StorageOperationStatus> component = toscaOperationFacade.getToscaElement(componentId);
-        if(component.isLeft()) {
+        if (component.isLeft()) {
             unlockComponent(failed, component.left().value(), false);
         }
     }
@@ -310,7 +313,6 @@ public abstract class BaseBusinessLogic {
         }
     }
 
-
     ComponentTypeEnum validateComponentType(String componentType) {
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         if (componentTypeEnum == null) {
@@ -322,9 +324,9 @@ public abstract class BaseBusinessLogic {
     }
 
     Component validateComponentExists(String componentId, ComponentTypeEnum componentType, ComponentParametersView filter) {
-
-        Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(componentId, filter == null ? new ComponentParametersView() : filter);
-        if(toscaElement.isRight()){
+        Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade
+            .getToscaElement(componentId, filter == null ? new ComponentParametersView() : filter);
+        if (toscaElement.isRight()) {
             handleGetComponentError(componentId, componentType, toscaElement.right().value());
         }
         return validateComponentType(toscaElement.left().value(), componentType);
@@ -342,21 +344,24 @@ public abstract class BaseBusinessLogic {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
         if (allDataTypesEither.isRight()) {
             JanusGraphOperationStatus status = allDataTypesEither.right().value();
-            BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)));
+            BeEcompErrorManager.getInstance()
+                .logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status,
+                    ErrorSeverity.ERROR);
+            throw new ByActionStatusComponentException(
+                componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)));
         }
         Map<String, DataTypeDefinition> allDataTypes = allDataTypesEither.left().value();
         String propertyType = property.getType();
         String innerType = getInnerType(property);
         // Specific Update Logic
-        Either<Object, Boolean> isValid =
-                propertyOperation.validateAndUpdatePropertyValue(propertyType, property.getValue(), true,
-                        innerType, allDataTypes);
+        Either<Object, Boolean> isValid = propertyOperation
+            .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType, allDataTypes);
         String newValue = property.getValue();
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
-                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
+                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
             }
         } else {
             Object object = isValid.left().value();
@@ -367,7 +372,7 @@ public abstract class BaseBusinessLogic {
         return newValue;
     }
 
-    <T extends PropertyDataDefinition> String getInnerType(T property){
+    <T extends PropertyDataDefinition> String getInnerType(T property) {
         ToscaPropertyType type = ToscaPropertyType.isValidType(property.getType());
         log.debug("#getInnerType - The type of the property {} is {}", property.getUniqueId(), property.getType());
         String innerType = null;
@@ -389,35 +394,30 @@ public abstract class BaseBusinessLogic {
     public void validateCanWorkOnComponent(Component component, String userId) {
         ActionStatus actionStatus = ActionStatus.RESTRICTED_OPERATION;
         // verify resource is not archived
-        if (Boolean.TRUE.equals(component.isArchived())){
+        if (Boolean.TRUE.equals(component.isArchived())) {
             actionStatus = ActionStatus.COMPONENT_IS_ARCHIVED;
             throw new ByActionStatusComponentException(actionStatus, component.getName());
         }
-
         if (component.getLifecycleState() != LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) {
             log.debug("Component {} is not checked-out", component.getName());
             throw new ByActionStatusComponentException(actionStatus);
         }
-
         // verify userId is not null
         if (userId == null) {
             log.debug("Current user userId is null");
             throw new ByActionStatusComponentException(actionStatus);
         }
-
         // verify component last update user is the current user
         String lastUpdaterUserId = component.getLastUpdaterUserId();
         if (!userId.equals(lastUpdaterUserId)) {
             log.debug("Current user is not last updater, last updater userId: {}, current user userId: {}", lastUpdaterUserId, userId);
             throw new ByActionStatusComponentException(actionStatus);
         }
-
         // verify resource is not deleted
         if (Boolean.TRUE.equals(component.getIsDeleted())) {
             log.debug("Component {} is marked as deleted", component.getUniqueId());
             throw new ByActionStatusComponentException(actionStatus);
         }
-
     }
 
     ComponentTypeEnum getComponentTypeByParentComponentType(ComponentTypeEnum parentComponentType) {
@@ -453,7 +453,8 @@ public abstract class BaseBusinessLogic {
         String innerType = null;
         if (!propertyOperation.isPropertyTypeValid(property)) {
             log.info("Invalid type for property '{}' type '{}'", property.getName(), property.getType());
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
             return Either.right(responseFormat);
         }
         type = property.getType();
@@ -461,8 +462,10 @@ public abstract class BaseBusinessLogic {
             ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, dataTypes);
             innerType = propertyInnerTypeValid.getLeft();
             if (Boolean.FALSE.equals(propertyInnerTypeValid.getRight())) {
-                log.info("Invalid inner type for property '{}' type '{}', dataTypeCount '{}'", property.getName(), property.getType(), dataTypes.size());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
+                log.info("Invalid inner type for property '{}' type '{}', dataTypeCount '{}'", property.getName(), property.getType(),
+                    dataTypes.size());
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
                 return Either.right(responseFormat);
             }
         }
@@ -470,14 +473,13 @@ public abstract class BaseBusinessLogic {
             log.info("Invalid default value for property '{}' type '{}'", property.getName(), property.getType());
             ResponseFormat responseFormat;
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType,
-                        property.getDefaultValue());
+                responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType, property.getDefaultValue());
             } else {
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE, property.getName(), type,
-                        property.getDefaultValue());
+                responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE, property.getName(), type, property.getDefaultValue());
             }
             return Either.right(responseFormat);
-
         }
         return Either.left(true);
     }
@@ -487,15 +489,14 @@ public abstract class BaseBusinessLogic {
             BeEcompErrorManager.getInstance().logInvalidInputError(errorContext, "invalid component type", ErrorSeverity.INFO);
             errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
         }
-
     }
 
-    protected void validateCanWorkOnComponent(String componentId, ComponentTypeEnum componentTypeEnum, String userId, Wrapper<ResponseFormat> errorWrapper) {
+    protected void validateCanWorkOnComponent(String componentId, ComponentTypeEnum componentTypeEnum, String userId,
+                                              Wrapper<ResponseFormat> errorWrapper) {
         if (!ComponentValidationUtils.canWorkOnComponent(componentId, toscaOperationFacade, userId)) {
             log.info("Restricted operation for user {} on {} {}", userId, componentTypeEnum.getValue(), componentId);
             errorWrapper.setInnerElement(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
-
     }
 
     void validateComponentLock(String componentId, ComponentTypeEnum componentTypeEnum, Wrapper<ResponseFormat> errorWrapper) {
@@ -504,7 +505,6 @@ public abstract class BaseBusinessLogic {
             log.debug("Failed to lock {} {}", componentTypeEnum.getValue(), componentId);
             errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
-
     }
 
     protected ToscaPropertyType getType(String propertyType) {
@@ -525,7 +525,6 @@ public abstract class BaseBusinessLogic {
         ComponentTypeEnum componentType = component.getComponentType();
         NodeTypeEnum nodeType = componentType.getNodeType();
         StorageOperationStatus lockResourceStatus = graphLockOperation.lockComponentByName(name, nodeType);
-
         if (lockResourceStatus == StorageOperationStatus.OK) {
             return Either.left(true);
         } else {
@@ -537,11 +536,10 @@ public abstract class BaseBusinessLogic {
         }
     }
 
-    protected Component validateComponentExistsByFilter(String componentId, ComponentTypeEnum componentType, ComponentParametersView componentParametersView) {
-        return toscaOperationFacade.getToscaElement(componentId, componentParametersView)
-                .left()
-                .on(err -> handleGetComponentError(componentId, componentType, err));
-
+    protected Component validateComponentExistsByFilter(String componentId, ComponentTypeEnum componentType,
+                                                        ComponentParametersView componentParametersView) {
+        return toscaOperationFacade.getToscaElement(componentId, componentParametersView).left()
+            .on(err -> handleGetComponentError(componentId, componentType, err));
     }
 
     private Component handleGetComponentError(String componentId, ComponentTypeEnum componentType, StorageOperationStatus getComponentError) {
@@ -550,14 +548,8 @@ public abstract class BaseBusinessLogic {
         throw new ByActionStatusComponentException(actionStatus, componentId);
     }
 
-    @SafeVarargs
-    static <T extends Enum<T>> boolean enumHasValueFilter(String name, Function<String, T> enumGetter, T... enumValues) {
-        T enumFound = enumGetter.apply(name);
-        return Arrays.asList(enumValues).contains(enumFound);
-    }
-
     String validatePropValueBeforeCreate(IPropertyInputCommon property, String value, boolean isValidate,
-        Map<String, DataTypeDefinition> allDataTypes) {
+                                         Map<String, DataTypeDefinition> allDataTypes) {
         String propertyType = property.getType();
         String updatedInnerType = updateInnerType(property);
         Either<Object, Boolean> isValid = validateAndUpdatePropertyValue(propertyType, value, isValidate, updatedInnerType, allDataTypes);
@@ -565,8 +557,7 @@ public abstract class BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
-                throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
-                        JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
+                throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
             }
         } else {
             Object object = isValid.left().value();
@@ -578,8 +569,7 @@ public abstract class BaseBusinessLogic {
         log.trace("After validateAndUpdateRules. pair = {}", pair);
         if (Boolean.FALSE.equals(pair.getRight())) {
             BeEcompErrorManager.getInstance().logBeInvalidValueError(ADD_PROPERTY_VALUE, pair.getLeft(), property.getName(), propertyType);
-            throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
-                    JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
+            throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
         }
         return newValue;
     }
@@ -603,20 +593,19 @@ public abstract class BaseBusinessLogic {
     }
 
     private void failOnIllegalArgument() {
-        throw new ByActionStatusComponentException(
-                componentsUtils.convertFromStorageResponse(
-                        DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
+        throw new ByActionStatusComponentException(componentsUtils
+            .convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
     }
 
-    public Either<Object, Boolean> validateAndUpdatePropertyValue(String propertyType, String value, boolean isValidate, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+    public Either<Object, Boolean> validateAndUpdatePropertyValue(String propertyType, String value, boolean isValidate, String innerType,
+                                                                  Map<String, DataTypeDefinition> dataTypes) {
         log.trace("Going to validate property value and its type. type = {}, value = {}", propertyType, value);
         ToscaPropertyType type = getType(propertyType);
-
         if (isValidate) {
-
             if (type == null) {
                 DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
-                ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
+                ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter
+                    .validateAndUpdate(value, dataTypeDefinition, dataTypes);
                 if (Boolean.FALSE.equals(validateResult.right)) {
                     log.debug(THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID, value, propertyType);
                     return Either.right(false);
@@ -640,12 +629,11 @@ public abstract class BaseBusinessLogic {
         return Either.left(convertedValue);
     }
 
-    private ImmutablePair<String, Boolean> validateAndUpdateRules(String propertyType, List<PropertyRule> rules, String innerType, Map<String, DataTypeDefinition> dataTypes, boolean isValidate) {
-
+    private ImmutablePair<String, Boolean> validateAndUpdateRules(String propertyType, List<PropertyRule> rules, String innerType,
+                                                                  Map<String, DataTypeDefinition> dataTypes, boolean isValidate) {
         if (rules == null || rules.isEmpty()) {
             return ImmutablePair.of(null, true);
         }
-
         for (PropertyRule rule : rules) {
             String value = rule.getValue();
             Either<Object, Boolean> updateResult = validateAndUpdatePropertyValue(propertyType, value, isValidate, innerType, dataTypes);
@@ -663,7 +651,6 @@ public abstract class BaseBusinessLogic {
                 rule.setValue(newValue);
             }
         }
-
         return ImmutablePair.of(null, true);
     }
 
@@ -671,9 +658,7 @@ public abstract class BaseBusinessLogic {
         if (isEmptyValue(value)) {
             return true;
         }
-
         PropertyTypeValidator validator = type.getValidator();
-
         return validator.isValid(value, innerType, dataTypes);
     }
 
@@ -696,26 +681,22 @@ public abstract class BaseBusinessLogic {
         throw new ByActionStatusComponentException(actionStatus, params);
     }
 
-    public  <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareProperties(final String userId,
-                                                                                              final String componentId,
-                                                                                              final ComponentTypeEnum componentTypeEnum,
-                                                                                              final ComponentInstInputsMap componentInstInputsMap) {
+    public <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareProperties(final String userId, final String componentId,
+                                                                                             final ComponentTypeEnum componentTypeEnum,
+                                                                                             final ComponentInstInputsMap componentInstInputsMap) {
         return Either.left(new ArrayList<>());
     }
 
-    public  <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareAttributes(final String userId,
-                                                                                              final String componentId,
-                                                                                              final ComponentTypeEnum componentTypeEnum,
-                                                                                              final ComponentInstOutputsMap componentInstOutputsMap) {
+    public <T extends ToscaDataDefinition> Either<List<T>, ResponseFormat> declareAttributes(final String userId, final String componentId,
+                                                                                             final ComponentTypeEnum componentTypeEnum,
+                                                                                             final ComponentInstOutputsMap componentInstOutputsMap) {
         return Either.left(new ArrayList<>());
     }
 
     public <T extends PropertyDataDefinition> List<PropertyConstraint> setInputConstraint(T inputDefinition) {
-        if (StringUtils.isNotBlank(inputDefinition.getParentPropertyType())
-                && StringUtils.isNotBlank(inputDefinition.getSubPropertyInputPath())) {
+        if (StringUtils.isNotBlank(inputDefinition.getParentPropertyType()) && StringUtils.isNotBlank(inputDefinition.getSubPropertyInputPath())) {
             return setConstraint(inputDefinition);
         }
-
         return Collections.emptyList();
     }
 
@@ -725,32 +706,22 @@ public abstract class BaseBusinessLogic {
         if (inputPathArr.length > 1) {
             inputPathArr = ArrayUtils.remove(inputPathArr, 0);
         }
-
-        Map<String, DataTypeDefinition> dataTypeDefinitionMap =
-                applicationDataTypeCache.getAll().left().value();
-
+        Map<String, DataTypeDefinition> dataTypeDefinitionMap = applicationDataTypeCache.getAll().left().value();
         String propertyType = inputDefinition.getParentPropertyType();
-
         for (String anInputPathArr : inputPathArr) {
             if (ToscaType.isPrimitiveType(propertyType)) {
-                constraints.addAll(
-                        dataTypeDefinitionMap.get(propertyType).getConstraints());
+                constraints.addAll(dataTypeDefinitionMap.get(propertyType).getConstraints());
             } else if (!ToscaType.isCollectionType(propertyType)) {
-                propertyType = setConstraintForComplexType(dataTypeDefinitionMap, propertyType, anInputPathArr,
-                        constraints);
+                propertyType = setConstraintForComplexType(dataTypeDefinitionMap, propertyType, anInputPathArr, constraints);
             }
         }
-
         return constraints;
     }
 
-    private String setConstraintForComplexType(Map<String, DataTypeDefinition> dataTypeDefinitionMap,
-                                               String propertyType,
-                                               String anInputPathArr,
+    private String setConstraintForComplexType(Map<String, DataTypeDefinition> dataTypeDefinitionMap, String propertyType, String anInputPathArr,
                                                List<PropertyConstraint> constraints) {
         String type = null;
-        List<PropertyDefinition> propertyDefinitions =
-                dataTypeDefinitionMap.get(propertyType).getProperties();
+        List<PropertyDefinition> propertyDefinitions = dataTypeDefinitionMap.get(propertyType).getProperties();
         for (PropertyDefinition propertyDefinition : propertyDefinitions) {
             if (propertyDefinition.getName().equals(anInputPathArr)) {
                 if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
@@ -761,10 +732,8 @@ public abstract class BaseBusinessLogic {
                 break;
             }
         }
-
         return type;
     }
-
 
     protected void unlockRollbackWithException(Component component, RuntimeException e) {
         janusGraphDao.rollback();
@@ -772,7 +741,7 @@ public abstract class BaseBusinessLogic {
         throw e;
     }
 
-    protected void unlockWithCommit(Component component){
+    protected void unlockWithCommit(Component component) {
         ComponentTypeEnum componentType = component.getComponentType();
         NodeTypeEnum nodeType = componentType.getNodeType();
         janusGraphDao.commit();
@@ -796,17 +765,13 @@ public abstract class BaseBusinessLogic {
     }
 
     protected Component getComponent(final String componentId) throws BusinessLogicException {
-
         final Either<Component, StorageOperationStatus> result = toscaOperationFacade.getToscaElement(componentId);
-
         if (result.isRight()) {
             final StorageOperationStatus errorStatus = result.right().value();
-            log.error(BUSINESS_PROCESS_ERROR, this.getClass().getName(),
-                "Failed to fetch component information by component id, error {}", errorStatus);
-            throw new BusinessLogicException(componentsUtils.getResponseFormat(
-                componentsUtils.convertFromStorageResponse(errorStatus)));
+            log.error(BUSINESS_PROCESS_ERROR, this.getClass().getName(), "Failed to fetch component information by component id, error {}",
+                errorStatus);
+            throw new BusinessLogicException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
         return result.left().value();
     }
-
 }

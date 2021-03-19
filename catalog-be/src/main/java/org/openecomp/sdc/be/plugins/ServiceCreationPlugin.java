@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.plugins;
 
 import org.openecomp.sdc.be.model.Service;
@@ -39,5 +38,4 @@ public interface ServiceCreationPlugin {
      * @return a order
      */
     int getOrder();
-
 }

@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.impl;
-
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
-import org.openecomp.sdc.be.utils.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
+import org.openecomp.sdc.be.utils.TypeUtils;
 
 public class NodeFilterUploadCreator {
 
@@ -35,7 +33,6 @@ public class NodeFilterUploadCreator {
             return null;
         }
         Map<String, Object> nodeFilterMap = (Map<String, Object>) obj;
-
         UploadNodeFilterInfo uploadNodeFilterInfo = new UploadNodeFilterInfo();
         final String propertiesElementName = TypeUtils.ToscaTagNamesEnum.PROPERTIES.getElementName();
         if (nodeFilterMap.containsKey(propertiesElementName)) {
@@ -43,8 +40,7 @@ public class NodeFilterUploadCreator {
         }
         final String capabilitiesElementName = TypeUtils.ToscaTagNamesEnum.CAPABILITIES.getElementName();
         if (nodeFilterMap.containsKey(capabilitiesElementName)) {
-            uploadNodeFilterInfo
-                    .setCapabilities(createNodeFilterCapabilities(nodeFilterMap.get(capabilitiesElementName)));
+            uploadNodeFilterInfo.setCapabilities(createNodeFilterCapabilities(nodeFilterMap.get(capabilitiesElementName)));
         }
         final String toscaId = TypeUtils.ToscaTagNamesEnum.TOSCA_ID.getElementName();
         if (nodeFilterMap.containsKey(toscaId)) {
@@ -67,8 +63,7 @@ public class NodeFilterUploadCreator {
                 valueList.add(valueToProperty(entry.getValue()));
                 retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), valueList));
             } else if (value instanceof List) {
-                List<String> propertiesVals =
-                        (List<String>) ((List) value).stream().map(this::valueToProperty).collect(Collectors.toList());
+                List<String> propertiesVals = (List<String>) ((List) value).stream().map(this::valueToProperty).collect(Collectors.toList());
                 retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), propertiesVals));
             }
         }
@@ -76,7 +71,6 @@ public class NodeFilterUploadCreator {
     }
 
     private String valueToProperty(Object o) {
-
         if (o instanceof Map) {
             return new YamlUtil().objectToYaml(o);
         }
@@ -97,7 +91,6 @@ public class NodeFilterUploadCreator {
             retVal.put(entry.getKey(), uploadNodeFilterCapabilitiesInfo);
         }
         return retVal;
-
     }
 
     private List<UploadNodeFilterPropertyInfo> createCapabilitiesProperties(Object o) {
@@ -112,6 +105,4 @@ public class NodeFilterUploadCreator {
         }
         return null;
     }
-
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.service;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,26 +46,23 @@ public class ServiceRoleValidator implements ServiceFieldValidator {
     public void validateAndCorrectField(User user, Service service, AuditingActionEnum actionEnum) {
         log.debug("validate service role");
         String serviceRole = service.getServiceRole();
-        if (serviceRole != null){
-        validateServiceRole(serviceRole);
-            }
-
+        if (serviceRole != null) {
+            validateServiceRole(serviceRole);
+        }
     }
 
     private void validateServiceRole(String serviceRole) {
-        if (StringUtils.isEmpty(serviceRole)){
+        if (StringUtils.isEmpty(serviceRole)) {
             return;
         } else {
-
             if (!ValidationUtils.validateServiceRoleLength(serviceRole)) {
                 log.info("service role exceeds limit.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_EXCEEDS_LIMIT, "" + SERVICE_ROLE);
                 throw new ByResponseFormatComponentException(errorResponse);
             }
-
             if (!ValidationUtils.validateServiceMetadata(serviceRole)) {
                 log.info("service role is not valid.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERY, ""+ SERVICE_ROLE);
+                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERY, "" + SERVICE_ROLE);
                 throw new ByResponseFormatComponentException(errorResponse);
             }
         }

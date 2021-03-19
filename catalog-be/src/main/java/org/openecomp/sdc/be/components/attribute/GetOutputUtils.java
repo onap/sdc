@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.attribute;
 
 import org.openecomp.sdc.be.datatypes.elements.GetOutputValueDataDefinition;
@@ -28,7 +27,7 @@ public class GetOutputUtils {
     }
 
     public static boolean isGetOutputValueForOutput(GetOutputValueDataDefinition outputData, String outputId) {
-        return outputData.getOutputId().equals(outputId)
-            || (outputData.getGetOutputIndex() != null && outputData.getGetOutputIndex().getOutputId().equals(outputId));
+        return outputData.getOutputId().equals(outputId) || (outputData.getGetOutputIndex() != null && outputData.getGetOutputIndex().getOutputId()
+            .equals(outputId));
     }
 }

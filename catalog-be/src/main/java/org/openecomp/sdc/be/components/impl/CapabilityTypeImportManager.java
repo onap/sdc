@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -32,9 +33,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 @Component("capabilityTypeImportManager")
 public class CapabilityTypeImportManager {
@@ -50,51 +48,44 @@ public class CapabilityTypeImportManager {
     }
 
     public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(String capabilityTypesYml) {
-        return  commonImportManager.createElementTypes(capabilityTypesYml, this::createCapabilityTypesFromYml, this::upsertCapabilityTypesByDao, CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE);
-
+        return commonImportManager.createElementTypes(capabilityTypesYml, this::createCapabilityTypesFromYml, this::upsertCapabilityTypesByDao,
+            CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE);
     }
 
     private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(String capabilityTypesYml) {
         return commonImportManager.createElementTypesFromYml(capabilityTypesYml, this::createCapabilityType);
-
     }
 
-    private Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> upsertCapabilityTypesByDao(List<CapabilityTypeDefinition> capabilityTypesToCreate) {
-        return commonImportManager.createElementTypesByDao(capabilityTypesToCreate,
-                capabilityType -> Either.left(ActionStatus.OK),
-                capabilityType -> new ImmutablePair<>(CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE, capabilityType.getType()),
-                capabilityTypeOperation::getCapabilityType,
-                capabilityTypeOperation::addCapabilityType,
-                this::updateCapabilityType);
+    private Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> upsertCapabilityTypesByDao(
+        List<CapabilityTypeDefinition> capabilityTypesToCreate) {
+        return commonImportManager.createElementTypesByDao(capabilityTypesToCreate, capabilityType -> Either.left(ActionStatus.OK),
+            capabilityType -> new ImmutablePair<>(CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE, capabilityType.getType()),
+            capabilityTypeOperation::getCapabilityType, capabilityTypeOperation::addCapabilityType, this::updateCapabilityType);
     }
-    
-    private Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(CapabilityTypeDefinition newCapabilityType, CapabilityTypeDefinition oldCapabilityType) {
+
+    private Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(CapabilityTypeDefinition newCapabilityType,
+                                                                                          CapabilityTypeDefinition oldCapabilityType) {
         Either<CapabilityTypeDefinition, StorageOperationStatus> validationRes = capabilityTypeOperation.validateUpdateProperties(newCapabilityType);
         if (validationRes.isRight()) {
-            log.error("#updateCapabilityType - One or all properties of capability type {} not valid. status is {}", newCapabilityType, validationRes.right().value());
+            log.error("#updateCapabilityType - One or all properties of capability type {} not valid. status is {}", newCapabilityType,
+                validationRes.right().value());
             return validationRes;
         }
-        
         if (TypeCompareUtils.isCapabilityTypesEquals(newCapabilityType, oldCapabilityType)) {
             return TypeCompareUtils.typeAlreadyExists();
         }
-        
         return capabilityTypeOperation.updateCapabilityType(newCapabilityType, oldCapabilityType);
     }
 
     private CapabilityTypeDefinition createCapabilityType(String capabilityTypeName, Map<String, Object> toscaJson) {
         CapabilityTypeDefinition capabilityType = new CapabilityTypeDefinition();
-
         capabilityType.setType(capabilityTypeName);
-
         // Description
         commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), capabilityType::setDescription);
         // Derived From
         commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(), capabilityType::setDerivedFrom);
         // Properties
         commonImportManager.setPropertiesMap(toscaJson, capabilityType::setProperties);
-
         return capabilityType;
     }
-
 }

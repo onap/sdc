@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.utils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -29,16 +31,13 @@ import org.openecomp.sdc.be.tosca.model.ToscaAnnotation;
 import org.openecomp.sdc.be.tosca.model.ToscaInput;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component
 public class InputConverter {
-    private PropertyConvertor propertyConvertor;
+
     private static final Logger log = Logger.getLogger(ToscaExportHandler.class);
+    private PropertyConvertor propertyConvertor;
 
     @Autowired
     public InputConverter(PropertyConvertor propertyConvertor) {
@@ -56,15 +55,13 @@ public class InputConverter {
      *              type
      *              description
      *              list of properties */
-    public Map<String, ToscaProperty>  convertInputs( List<InputDefinition> inputDef,Map<String, DataTypeDefinition> dataTypes) {
+    public Map<String, ToscaProperty> convertInputs(List<InputDefinition> inputDef, Map<String, DataTypeDefinition> dataTypes) {
         log.debug("convert inputs to to tosca  ");
-
         Map<String, ToscaProperty> inputs = new HashMap<>();
         if (inputDef != null) {
             inputDef.forEach(i -> {
                 //Extract input the same as property
-                ToscaProperty toscaProperty = propertyConvertor.convertProperty(dataTypes, i,
-                    PropertyConvertor.PropertyType.INPUT);
+                ToscaProperty toscaProperty = propertyConvertor.convertProperty(dataTypes, i, PropertyConvertor.PropertyType.INPUT);
                 //now that we have Tosca property we create new object called tosca input which drives from it
                 ToscaInput toscaInput = new ToscaInput(toscaProperty);
                 List<Annotation> annotations = i.getAnnotations();
@@ -88,7 +85,7 @@ public class InputConverter {
                 if (inputAnnotation.getProperties() != null) {
                     Map<String, Object> properties = new HashMap<>();
                     inputAnnotation.getProperties().forEach(k -> {
-                        propertyConvertor.convertAndAddValue(dataTypes,properties,k, k::getValue);
+                        propertyConvertor.convertAndAddValue(dataTypes, properties, k, k::getValue);
                     });
                     annotation.setProperties(properties);
                 }
@@ -97,6 +94,3 @@ public class InputConverter {
         }
     }
 }
-
-
-

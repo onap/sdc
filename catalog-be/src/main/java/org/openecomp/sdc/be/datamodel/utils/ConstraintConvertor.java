@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datamodel.utils;
 
 import com.google.common.collect.ImmutableMap;
@@ -37,8 +36,6 @@ import org.yaml.snakeyaml.Yaml;
 
 public class ConstraintConvertor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConstraintConvertor.class);
-
     public static final String EQUAL_OPERATOR = ConstraintType.EQUAL.getTypes().get(1);
     public static final String GREATER_THAN_OPERATOR = ConstraintType.GREATER_THAN.getTypes().get(1);
     public static final String LESS_THAN_OPERATOR = ConstraintType.LESS_THAN.getTypes().get(1);
@@ -46,11 +43,10 @@ public class ConstraintConvertor {
     public static final String PROPERTY_CONSTRAINT = "property";
     public static final String SERVICE_INPUT_CONSTRAINT = "service_input";
     public static final String SELF = "SELF";
-    private static Set<String> SUPPORTED_CONSTRAINT_LIST =
-            ImmutableSet.of(EQUAL_OPERATOR, GREATER_THAN_OPERATOR, LESS_THAN_OPERATOR);
-
-    private static Set<String> SUPPORTED_FUNCTIONS =
-            ImmutableSet.of(ToscaFunctions.GET_INPUT.getFunctionName(), ToscaFunctions.GET_PROPERTY.getFunctionName());
+    private static final Logger logger = LoggerFactory.getLogger(ConstraintConvertor.class);
+    private static Set<String> SUPPORTED_CONSTRAINT_LIST = ImmutableSet.of(EQUAL_OPERATOR, GREATER_THAN_OPERATOR, LESS_THAN_OPERATOR);
+    private static Set<String> SUPPORTED_FUNCTIONS = ImmutableSet
+        .of(ToscaFunctions.GET_INPUT.getFunctionName(), ToscaFunctions.GET_PROPERTY.getFunctionName());
 
     public UIConstraint convert(String inConstraint) {
         Yaml yamlSource = new Yaml();
@@ -109,7 +105,7 @@ public class ConstraintConvertor {
             uiConstraint.setValue(value.get(1));
             return uiConstraint;
         }
-      	return null;
+        return null;
     }
 
     public List<String> convertToList(List<UIConstraint> uiConstraints) {
@@ -127,7 +123,6 @@ public class ConstraintConvertor {
         try {
             Map map1 = new HashMap();
             Map map2 = new HashMap();
-
             map1.put(uiConstraint.getServicePropertyName(), map2);
             if (uiConstraint.getSourceType().equals(STATIC_CONSTRAINT)) {
                 Object value = uiConstraint.getValue();
@@ -143,7 +138,6 @@ public class ConstraintConvertor {
                 Map map3 = ImmutableMap.of(ToscaFunctions.GET_INPUT.getFunctionName(), uiConstraint.getValue());
                 map2.put(uiConstraint.getConstraintOperator(), map3);
             }
-
             Yaml yamlSource = new Yaml();
             return yamlSource.dump(map1);
         } catch (NullPointerException ex) {
@@ -186,6 +180,5 @@ public class ConstraintConvertor {
             return handleMap(uiConstraint, constraintValue);
         }
         return null;
-
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.lock.LockingTransactional;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
@@ -34,10 +36,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by yavivi on 04/02/2018.
  */
@@ -45,20 +43,21 @@ import java.util.Map;
 public class ExternalRefsBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ExternalRefsBusinessLogic.class);
-
     private final ExternalReferencesOperation externalReferencesOperation;
     private final ToscaOperationFacade toscaOperationFacade;
     private final AccessValidations accessValidations;
     private final ComponentLocker componentLocker;
 
-    public ExternalRefsBusinessLogic(ExternalReferencesOperation externalReferencesOperation, ToscaOperationFacade toscaOperationFacade, AccessValidations accessValidations, ComponentLocker componentLocker) {
+    public ExternalRefsBusinessLogic(ExternalReferencesOperation externalReferencesOperation, ToscaOperationFacade toscaOperationFacade,
+                                     AccessValidations accessValidations, ComponentLocker componentLocker) {
         this.externalReferencesOperation = externalReferencesOperation;
         this.toscaOperationFacade = toscaOperationFacade;
         this.accessValidations = accessValidations;
         this.componentLocker = componentLocker;
     }
 
-    public Either<List<String>, ActionStatus> getExternalReferences(String assetUuid, String version, String componentInstanceName, String objectType){
+    public Either<List<String>, ActionStatus> getExternalReferences(String assetUuid, String version, String componentInstanceName,
+                                                                    String objectType) {
         Either<Component, StorageOperationStatus> componentsResult = toscaOperationFacade.getComponentByUuidAndVersion(assetUuid, version);
         if (componentsResult == null || componentsResult.isRight()) {
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
@@ -67,16 +66,15 @@ public class ExternalRefsBusinessLogic {
         return this.externalReferencesOperation.getExternalReferences(component.getUniqueId(), componentInstanceName, objectType);
     }
 
-    public Either<Map<String, List<String>>, ActionStatus> getExternalReferences(String assetUuid, String version, String objectType){
+    public Either<Map<String, List<String>>, ActionStatus> getExternalReferences(String assetUuid, String version, String objectType) {
         Either<Component, StorageOperationStatus> componentsResult = toscaOperationFacade.getComponentByUuidAndVersion(assetUuid, version);
         if (componentsResult == null || componentsResult.isRight()) {
             return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
         }
-
         Component component = componentsResult.left().value();
-
-        Either<Map<String, List<String>>, ActionStatus> externalReferencesResult = this.externalReferencesOperation.getExternalReferences(component.getUniqueId(), objectType);
-        if (externalReferencesResult.isRight()){
+        Either<Map<String, List<String>>, ActionStatus> externalReferencesResult = this.externalReferencesOperation
+            .getExternalReferences(component.getUniqueId(), objectType);
+        if (externalReferencesResult.isRight()) {
             return Either.right(externalReferencesResult.right().value());
         } else {
             return Either.left(externalReferencesResult.left().value());
@@ -84,36 +82,38 @@ public class ExternalRefsBusinessLogic {
     }
 
     @LockingTransactional
-    public Either<String, ActionStatus> addExternalReference(String componentId, ComponentTypeEnum componentType, String userId, String componentInstanceName, String objectType, ExternalRefDTO ref) {
+    public Either<String, ActionStatus> addExternalReference(String componentId, ComponentTypeEnum componentType, String userId,
+                                                             String componentInstanceName, String objectType, ExternalRefDTO ref) {
         return this.doAction(componentId, componentType, userId, "POST", componentId, componentInstanceName, objectType, ref.getReferenceUUID(), "");
     }
 
     @LockingTransactional
-    public Either<String, ActionStatus> deleteExternalReference(String componentId, ComponentTypeEnum componentType, String userId, String componentInstanceName, String objectType, String reference) {
+    public Either<String, ActionStatus> deleteExternalReference(String componentId, ComponentTypeEnum componentType, String userId,
+                                                                String componentInstanceName, String objectType, String reference) {
         return this.doAction(componentId, componentType, userId, "DELETE", componentId, componentInstanceName, objectType, reference, "");
     }
 
     @LockingTransactional
-    public Either<String, ActionStatus> updateExternalReference(String componentId, ComponentTypeEnum componentType, String userId, String componentInstanceName, String objectType, String oldRefValue, String newRefValue) {
+    public Either<String, ActionStatus> updateExternalReference(String componentId, ComponentTypeEnum componentType, String userId,
+                                                                String componentInstanceName, String objectType, String oldRefValue,
+                                                                String newRefValue) {
         return this.doAction(componentId, componentType, userId, "PUT", componentId, componentInstanceName, objectType, oldRefValue, newRefValue);
     }
 
-    public String fetchComponentUniqueIdByUuid(String uuid, ComponentTypeEnum componentType){
-        Either<Component, StorageOperationStatus> latestServiceByUuid = toscaOperationFacade.getLatestComponentByUuid(uuid, createPropsToMatch(componentType));
-        if (latestServiceByUuid == null || latestServiceByUuid.isRight()){
+    public String fetchComponentUniqueIdByUuid(String uuid, ComponentTypeEnum componentType) {
+        Either<Component, StorageOperationStatus> latestServiceByUuid = toscaOperationFacade
+            .getLatestComponentByUuid(uuid, createPropsToMatch(componentType));
+        if (latestServiceByUuid == null || latestServiceByUuid.isRight()) {
             throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NOT_FOUND, uuid);
         }
-
         //Get Component Unique ID
         Component component = latestServiceByUuid.left().value();
         return component.getUniqueId();
     }
 
-
-    public Either<String, ActionStatus> doAction(String componentId, ComponentTypeEnum componentType, String userId, String action, String uuid, String componentInstanceName, String objectType, String ref1, String ref2){
-
+    public Either<String, ActionStatus> doAction(String componentId, ComponentTypeEnum componentType, String userId, String action, String uuid,
+                                                 String componentInstanceName, String objectType, String ref1, String ref2) {
         accessValidations.validateUserCanWorkOnComponent(componentId, componentType, userId, action + " EXTERNAL REF");
-
         switch (action) {
             case "POST":
                 return this.externalReferencesOperation.addExternalReferenceWithCommit(componentId, componentInstanceName, objectType, ref1);
@@ -124,7 +124,6 @@ public class ExternalRefsBusinessLogic {
             default:
                 return Either.right(ActionStatus.GENERAL_ERROR);
         }
-
     }
 
     private Map<GraphPropertyEnum, Object> createPropsToMatch(ComponentTypeEnum componentType) {
@@ -132,5 +131,4 @@ public class ExternalRefsBusinessLogic {
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
         return propertiesToMatch;
     }
-
 }

@@ -19,13 +19,17 @@
  *  * ============LICENSE_END=========================================================
  *  * Modifications copyright (c) 2020 Nokia
  */
-
 package org.openecomp.sdc.be.components.impl.artifact;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -36,12 +40,6 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 public enum PayloadTypeEnum {
     HEAT_YAML {
         @Override
@@ -50,9 +48,7 @@ public enum PayloadTypeEnum {
             if (isNotValidYaml(payload, yamlToObjectConverter)) {
                 return Either.right(ActionStatus.INVALID_YAML);
             }
-
-            DeploymentArtifactHeatConfiguration heatConfiguration =
-                    yamlToObjectConverter.convert(payload, DeploymentArtifactHeatConfiguration.class);
+            DeploymentArtifactHeatConfiguration heatConfiguration = yamlToObjectConverter.convert(payload, DeploymentArtifactHeatConfiguration.class);
             if (heatConfiguration == null || heatConfiguration.getHeat_template_version() == null) {
                 log.debug("HEAT doesn't contain required \"heat_template_version\" section.");
                 return Either.right(ActionStatus.INVALID_DEPLOYMENT_ARTIFACT_HEAT);
@@ -68,8 +64,7 @@ public enum PayloadTypeEnum {
         private boolean isNotValidYaml(byte[] payload, YamlToObjectConverter yamlToObjectConverter) {
             return !yamlToObjectConverter.isValidYaml(payload);
         }
-    },
-    HEAT_ENV {
+    }, HEAT_ENV {
         @Override
         public Either<Boolean, ActionStatus> isValid(byte[] payload) {
             return isValidYaml(payload);
@@ -79,8 +74,7 @@ public enum PayloadTypeEnum {
         public boolean isHeatRelated() {
             return true;
         }
-    },
-    XML {
+    }, XML {
         @Override
         public Either<Boolean, ActionStatus> isValid(byte[] payload) {
             try {
@@ -103,11 +97,10 @@ public enum PayloadTypeEnum {
                 reader.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             } catch (SAXNotRecognizedException exception) {
                 log.debug("Xml parser couldn't set feature: \"http://apache.org/xml/features/validation/schema\", false",
-                        exception.getMessage(), exception);
+                    exception.getMessage(), exception);
             }
         }
-    },
-    JSON {
+    }, JSON {
         @Override
         public Either<Boolean, ActionStatus> isValid(byte[] payload) {
             try {
@@ -118,28 +111,19 @@ public enum PayloadTypeEnum {
             }
             return Either.left(true);
         }
-    },
-    YAML {
+    }, YAML {
         @Override
         public Either<Boolean, ActionStatus> isValid(byte[] payload) {
             return isValidYaml(payload);
         }
-    },
-    NOT_DEFINED {
+    }, NOT_DEFINED {
         @Override
         public Either<Boolean, ActionStatus> isValid(byte[] payload) {
             return Either.left(true);
         }
     };
-
     private static final Logger log = Logger.getLogger(PayloadTypeEnum.class);
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-    public abstract Either<Boolean, ActionStatus> isValid(byte[] payload);
-
-    public boolean isHeatRelated() {
-        return false;
-    }
 
     private static Either<Boolean, ActionStatus> isValidYaml(byte[] payload) {
         YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
@@ -150,4 +134,9 @@ public enum PayloadTypeEnum {
         return Either.right(ActionStatus.INVALID_YAML);
     }
 
+    public abstract Either<Boolean, ActionStatus> isValid(byte[] payload);
+
+    public boolean isHeatRelated() {
+        return false;
+    }
 }

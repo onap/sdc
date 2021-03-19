@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.auditing.impl.distribution;
 
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -26,11 +25,11 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
 
 public class AuditRegUnregDistributionEngineEventFactory extends AuditDistributionEngineEventFactory {
 
-    private static final String LOG_STR = "ACTION = \"%s\" CONSUMER_ID = \"%s\" API_KEY = \"%s\" D_ENV = \"%s\" STATUS = \"%s\"" +
-            " DESC = \"%s\" DNOTIF_TOPIC = \"%s\" DSTATUS_TOPIC = \"%s\"";
+    private static final String LOG_STR = "ACTION = \"%s\" CONSUMER_ID = \"%s\" API_KEY = \"%s\" D_ENV = \"%s\" STATUS = \"%s\""
+        + " DESC = \"%s\" DNOTIF_TOPIC = \"%s\" DSTATUS_TOPIC = \"%s\"";
 
-    public AuditRegUnregDistributionEngineEventFactory(AuditingActionEnum action, CommonAuditData commonFields,
-                                                       DistributionTopicData distrTopicData, String consumerId, String apiKey, String envName) {
+    public AuditRegUnregDistributionEngineEventFactory(AuditingActionEnum action, CommonAuditData commonFields, DistributionTopicData distrTopicData,
+                                                       String consumerId, String apiKey, String envName) {
         super(action, commonFields, distrTopicData, consumerId, apiKey, envName, null);
     }
 
@@ -41,8 +40,7 @@ public class AuditRegUnregDistributionEngineEventFactory extends AuditDistributi
 
     @Override
     public String[] getLogMessageParams() {
-        return new String[] {event.getAction(), event.getConsumerId(), event.getApiKey(),
-                event.getEnvironmentName(), event.getStatus(), event.getDesc(),
-                event.getDnotifTopic(), event.getDstatusTopic()};
+        return new String[]{event.getAction(), event.getConsumerId(), event.getApiKey(), event.getEnvironmentName(), event.getStatus(),
+            event.getDesc(), event.getDnotifTopic(), event.getDstatusTopic()};
     }
 }

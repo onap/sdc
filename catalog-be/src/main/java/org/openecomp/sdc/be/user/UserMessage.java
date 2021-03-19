@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.user;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +30,7 @@ import org.openecomp.sdc.be.catalog.api.ITypeMessage;
 @AllArgsConstructor
 @ToString
 public class UserMessage implements ITypeMessage {
+
     private UserOperationEnum operation;
     private String userId;
     private String role;

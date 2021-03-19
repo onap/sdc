@@ -40,27 +40,23 @@ public class ExceptionUtils {
         this.janusGraphDao = janusGraphDao;
     }
 
-    public <T> T rollBackAndThrow(ActionStatus actionStatus, String ... params) {
-         janusGraphDao.rollback();
-         throw new ByActionStatusComponentException(actionStatus, params);
-     }
+    public <T> T rollBackAndThrow(ActionStatus actionStatus, String... params) {
+        janusGraphDao.rollback();
+        throw new ByActionStatusComponentException(actionStatus, params);
+    }
 
     public <T> T rollBackAndThrow(ResponseFormat responseFormat) {
         janusGraphDao.rollback();
         throw new ByResponseFormatComponentException(responseFormat);
     }
 
-    public <T> T rollBackAndThrow(StorageOperationStatus status, String ... params) {
+    public <T> T rollBackAndThrow(StorageOperationStatus status, String... params) {
         janusGraphDao.rollback();
         throw new StorageException(status, params);
     }
 
-    public <T> T rollBackAndThrow(JanusGraphOperationStatus status, String ... params) {
+    public <T> T rollBackAndThrow(JanusGraphOperationStatus status, String... params) {
         janusGraphDao.rollback();
         throw new StorageException(status, params);
     }
-
-
-
-
 }

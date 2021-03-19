@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -104,11 +103,9 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     private final ResourceBusinessLogic resourceBusinessLogic;
 
     @Inject
-    public ResourcesServlet(UserBusinessLogic userBusinessLogic,
-        ComponentInstanceBusinessLogic componentInstanceBL,
-        ResourceBusinessLogic resourceBusinessLogic,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
-        ResourceImportManager resourceImportManager) {
+    public ResourcesServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+                            ResourceBusinessLogic resourceBusinessLogic, ComponentsUtils componentsUtils, ServletUtils servletUtils,
+                            ResourceImportManager resourceImportManager) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.resourceBusinessLogic = resourceBusinessLogic;
     }
@@ -118,28 +115,26 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Resource", method = "POST", summary = "Returns created resource", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-            @ApiResponse(responseCode = "201", description = "Resource created"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "201", description = "Resource created"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "Resource already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createResource(@Parameter(description = "Resource object to be created", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException, ZipException {
-
+                                   @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
+        throws IOException, ZipException {
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-        loggerSupportability.log(LoggerSupportabilityActions.CREATE_RESOURCE, StatusCode.STARTED,"Starting to create Resource by user {}",userId);
+        loggerSupportability.log(LoggerSupportabilityActions.CREATE_RESOURCE, StatusCode.STARTED, "Starting to create Resource by user {}", userId);
         Response response;
         try {
-
             Wrapper<Response> responseWrapper = new Wrapper<>();
             // UI Import
             if (isUIImport(data)) {
@@ -147,20 +142,20 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             }
             // UI Create
             else {
-
                 Either<Resource, ResponseFormat> convertResponse = parseToResource(data, modifier);
                 if (convertResponse.isRight()) {
                     log.debug("failed to parse resource");
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
-
                 Resource resource = convertResponse.left().value();
                 Resource createdResource = resourceBusinessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
                 Object representation = RepresentationUtils.toRepresentation(createdResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
                 responseWrapper.setInnerElement(response);
-                loggerSupportability.log(LoggerSupportabilityActions.CREATE_RESOURCE,resource.getComponentMetadataForSupportLog() ,StatusCode.COMPLETE,"Resource successfully created user {}",userId);
+                loggerSupportability
+                    .log(LoggerSupportabilityActions.CREATE_RESOURCE, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                        "Resource successfully created user {}", userId);
             }
             return responseWrapper.getInnerElement();
         } catch (final IOException | ZipException e) {
@@ -183,36 +178,36 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         return isUIImport;
     }
 
-    private void performUIImport(final Wrapper<Response> responseWrapper, final String data,
-                                 final HttpServletRequest request, final String userId,
+    private void performUIImport(final Wrapper<Response> responseWrapper, final String data, final HttpServletRequest request, final String userId,
                                  final String resourceUniqueId) throws ZipException {
         Wrapper<User> userWrapper = new Wrapper<>();
         Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();
         Wrapper<String> yamlStringWrapper = new Wrapper<>();
-
         ResourceAuthorityTypeEnum resourceAuthorityEnum = ResourceAuthorityTypeEnum.USER_TYPE_UI;
-
         commonGeneralValidations(responseWrapper, userWrapper, uploadResourceInfoWrapper, resourceAuthorityEnum, userId, data);
-
         if (!CsarValidationUtils.isCsarPayloadName(uploadResourceInfoWrapper.getInnerElement().getPayloadName())) {
-            fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), data, resourceAuthorityEnum, null);
-
+            fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), data, resourceAuthorityEnum,
+                null);
             // PayLoad Validations
             commonPayloadValidations(responseWrapper, yamlStringWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement());
         }
-        specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, data, resourceAuthorityEnum);
-
+        specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request,
+            data, resourceAuthorityEnum);
         if (responseWrapper.isEmpty()) {
-            handleImport(responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(), yamlStringWrapper.getInnerElement(), resourceAuthorityEnum, true, resourceUniqueId);
+            handleImport(responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(),
+                yamlStringWrapper.getInnerElement(), resourceAuthorityEnum, true, resourceUniqueId);
         }
     }
 
     private Either<Resource, ResponseFormat> parseToResource(String resourceJson, User user) {
-        return getComponentsUtils().convertJsonToObjectUsingObjectMapper(resourceJson, user, Resource.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.RESOURCE);
+        return getComponentsUtils()
+            .convertJsonToObjectUsingObjectMapper(resourceJson, user, Resource.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.RESOURCE);
     }
 
     private Either<Resource, ResponseFormat> parseToLightResource(String resourceJson, User user) {
-        Either<Resource, ResponseFormat> ret = getComponentsUtils().convertJsonToObjectUsingObjectMapper(resourceJson, user, Resource.class, AuditingActionEnum.UPDATE_RESOURCE_METADATA, ComponentTypeEnum.RESOURCE);
+        Either<Resource, ResponseFormat> ret = getComponentsUtils()
+            .convertJsonToObjectUsingObjectMapper(resourceJson, user, Resource.class, AuditingActionEnum.UPDATE_RESOURCE_METADATA,
+                ComponentTypeEnum.RESOURCE);
         if (ret.isLeft()) {// drop unwanted data (sent from UI in update flow)
             ret.left().value().setRequirements(null);
             ret.left().value().setCapabilities(null);
@@ -224,7 +219,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/{resourceId}")
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResource(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request) {
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
@@ -232,22 +226,19 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-        loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE ,StatusCode.STARTED,"Starting to delete Resource by user {}",userId);
+        loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE, StatusCode.STARTED, "Starting to delete Resource by user {}", userId);
         Response response;
-
         try {
             String resourceIdLower = resourceId.toLowerCase();
             ResponseFormat actionResponse = resourceBusinessLogic.deleteResource(resourceIdLower, modifier);
-
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete resource");
                 response = buildErrorResponse(actionResponse);
                 return response;
             }
             response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
-            loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE ,StatusCode.COMPLETE,"Ended delete Resource by user {}",userId);
+            loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE, StatusCode.COMPLETE, "Ended delete Resource by user {}", userId);
             return response;
-
         } catch (JSONException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Resource");
             log.debug("delete resource failed with exception", e);
@@ -257,31 +248,26 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/resources/{resourceName}/{version}")
-    @Operation(description = "Delete Resource By Name And Version", method = "DELETE", summary = "Returns no content",
-            responses = {@ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-                    @ApiResponse(responseCode = "204", description = "Resource deleted"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-                    @ApiResponse(responseCode = "404", description = "Resource not found")})
+    @Operation(description = "Delete Resource By Name And Version", method = "DELETE", summary = "Returns no content", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "204", description = "Resource deleted"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Resource not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteResourceByNameAndVersion(@PathParam("resourceName") final String resourceName, @PathParam("version") final String version, @Context final HttpServletRequest request) {
-
+    public Response deleteResourceByNameAndVersion(@PathParam("resourceName") final String resourceName, @PathParam("version") final String version,
+                                                   @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-
         Response response;
         ResourceBusinessLogic businessLogic = getResourceBL(context);
         ResponseFormat actionResponse = businessLogic.deleteResourceByNameAndVersion(resourceName, version, modifier);
-
         if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
             log.debug("failed to delete resource");
             response = buildErrorResponse(actionResponse);
@@ -295,33 +281,25 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/{resourceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Retrieve Resource", method = "GET", summary = "Returns resource according to resourceId",
-            responses = {@ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-                    @ApiResponse(responseCode = "200", description = "Resource found"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "404", description = "Resource not found")})
+    @Operation(description = "Retrieve Resource", method = "GET", summary = "Returns resource according to resourceId", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "200", description = "Resource found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Resource not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getResourceById(@PathParam("resourceId") final String resourceId,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
-
+    public Response getResourceById(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request,
+                                    @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-
         Response response;
-
         try {
             String resourceIdLower = resourceId.toLowerCase();
             log.trace("get resource with id {}", resourceId);
             Either<Resource, ResponseFormat> actionResponse = resourceBusinessLogic.getResource(resourceIdLower, modifier);
-
             if (actionResponse.isRight()) {
                 log.debug("failed to get resource");
                 response = buildErrorResponse(actionResponse.right().value());
@@ -329,7 +307,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             }
             Object resource = RepresentationUtils.toRepresentation(actionResponse.left().value());
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), resource);
-
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Resource");
             log.debug("get resource failed with exception", e);
@@ -341,31 +318,28 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/resourceName/{resourceName}/resourceVersion/{resourceVersion}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Retrieve Resource by name and version", method = "GET",
-            summary = "Returns resource according to resourceId", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-            @ApiResponse(responseCode = "200", description = "Resource found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Resource not found")})
+    @Operation(description = "Retrieve Resource by name and version", method = "GET", summary = "Returns resource according to resourceId", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "200", description = "Resource found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Resource not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceByNameAndVersion(@PathParam("resourceName") final String resourceName,
                                                 @PathParam("resourceVersion") final String resourceVersion, @Context final HttpServletRequest request,
                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
-
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
         Response response;
         try {
-            Either<Resource, ResponseFormat> actionResponse = resourceBusinessLogic.getResourceByNameAndVersion(resourceName, resourceVersion, userId);
+            Either<Resource, ResponseFormat> actionResponse = resourceBusinessLogic
+                .getResourceByNameAndVersion(resourceName, resourceVersion, userId);
             if (actionResponse.isRight()) {
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
             Object resource = RepresentationUtils.toRepresentation(actionResponse.left().value());
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), resource);
-
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Resource by name and version");
             log.debug("get resource failed with exception", e);
@@ -377,36 +351,30 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/validate-name/{resourceName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "validate resource name", method = "GET",
-            summary = "checks if the chosen resource name is available ", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-            @ApiResponse(responseCode = "200", description = "Resource found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    @Operation(description = "validate resource name", method = "GET", summary = "checks if the chosen resource name is available ", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "200", description = "Resource found"), @ApiResponse(responseCode = "403", description = "Restricted operation")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response validateResourceName(@PathParam("resourceName") final String resourceName,
-            @QueryParam("subtype") String resourceType, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    public Response validateResourceName(@PathParam("resourceName") final String resourceName, @QueryParam("subtype") String resourceType,
+                                         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
         Response response;
-
         if (resourceType != null && !ResourceTypeEnum.containsName(resourceType)) {
             log.debug("invalid resource type received");
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
             return response;
-
         }
         ResourceTypeEnum typeEnum = null;
         if (resourceType != null) {
             typeEnum = ResourceTypeEnum.valueOf(resourceType);
         }
-        Either<Map<String, Boolean>, ResponseFormat> actionResponse = resourceBusinessLogic.validateResourceNameExists(resourceName, typeEnum, userId);
-
+        Either<Map<String, Boolean>, ResponseFormat> actionResponse = resourceBusinessLogic
+            .validateResourceNameExists(resourceName, typeEnum, userId);
         if (actionResponse.isRight()) {
             log.debug("failed to validate resource name");
             response = buildErrorResponse(actionResponse.right().value());
@@ -420,14 +388,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getCertifiedAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
+    public Response getCertifiedAbstractResources(@Context final HttpServletRequest request,
+                                                  @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}" , url);
+        log.debug("(get) Start handle request of {}", url);
         try {
-            List<Resource> resources = resourceBusinessLogic
-                    .getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, userId);
+            List<Resource> resources = resourceBusinessLogic.getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, userId);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(resources));
-
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Certified Abstract Resources");
             log.debug("getCertifiedAbstractResources failed with exception", e);
@@ -440,39 +407,36 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getCertifiedNotAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
+    public Response getCertifiedNotAbstractResources(@Context final HttpServletRequest request,
+                                                     @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}" , url);
+        log.debug("(get) Start handle request of {}", url);
         try {
             List<Resource> resouces = resourceBusinessLogic.getAllCertifiedResources(false, HighestFilterEnum.ALL, userId);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(resouces));
-
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Certified Non Abstract Resources");
             log.debug("getCertifiedNotAbstractResources failed with exception", e);
             throw e;
         }
-
     }
 
     @PUT
     @Path("/resources/{resourceId}/metadata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Resource Metadata", method = "PUT", summary = "Returns updated resource metadata",
-            responses = {@ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-                    @ApiResponse(responseCode = "200", description = "Resource metadata updated"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content")})
+    @Operation(description = "Update Resource Metadata", method = "PUT", summary = "Returns updated resource metadata", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "200", description = "Resource metadata updated"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceMetadata(@PathParam("resourceId") final String resourceId,
-            @Parameter(description = "Resource metadata to be updated", required = true) String data,
-            @Context final HttpServletRequest request,       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
-
+                                           @Parameter(description = "Resource metadata to be updated", required = true) String data,
+                                           @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
+        throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
@@ -480,13 +444,16 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         Response response;
         try {
             String resourceIdLower = resourceId.toLowerCase();
-            Either<Resource, ResponseFormat> updateInfoResource = getComponentsUtils().convertJsonToObjectUsingObjectMapper(data, modifier, Resource.class, AuditingActionEnum.UPDATE_RESOURCE_METADATA, ComponentTypeEnum.RESOURCE);
+            Either<Resource, ResponseFormat> updateInfoResource = getComponentsUtils()
+                .convertJsonToObjectUsingObjectMapper(data, modifier, Resource.class, AuditingActionEnum.UPDATE_RESOURCE_METADATA,
+                    ComponentTypeEnum.RESOURCE);
             if (updateInfoResource.isRight()) {
                 log.debug("failed to parse resource metadata");
                 response = buildErrorResponse(updateInfoResource.right().value());
                 return response;
             }
-            Resource updatedResource = resourceBusinessLogic.updateResourceMetadata(resourceIdLower, updateInfoResource.left().value(), null, modifier, false);
+            Resource updatedResource = resourceBusinessLogic
+                .updateResourceMetadata(resourceIdLower, updateInfoResource.left().value(), null, modifier, false);
             Object resource = RepresentationUtils.toRepresentation(updatedResource);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), resource);
         } catch (IOException e) {
@@ -501,17 +468,15 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Resource", method = "PUT", summary = "Returns updated resource", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-            @ApiResponse(responseCode = "200", description = "Resource updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "200", description = "Resource updated"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "Resource already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response updateResource(
-            @Parameter(description = "Resource object to be updated", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @PathParam(value = "resourceId") String resourceId) throws IOException, ZipException {
-
+    public Response updateResource(@Parameter(description = "Resource object to be updated", required = true) String data,
+                                   @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                   @PathParam(value = "resourceId") String resourceId) throws IOException, ZipException {
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -520,7 +485,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
-        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_RESOURCE,StatusCode.STARTED,"Starting to update a resource by user {}",userId);
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_RESOURCE, StatusCode.STARTED, "Starting to update a resource by user {}", userId);
         Response response;
         try {
             Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -534,12 +499,14 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
-                Resource updatedResource = resourceBusinessLogic.validateAndUpdateResourceFromCsar(convertResponse.left().value(), modifier, null, null, resourceId);
+                Resource updatedResource = resourceBusinessLogic
+                    .validateAndUpdateResourceFromCsar(convertResponse.left().value(), modifier, null, null, resourceId);
                 Object representation = RepresentationUtils.toRepresentation(updatedResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);
                 responseWrapper.setInnerElement(response);
-                loggerSupportability.log(LoggerSupportabilityActions.UPDATE_RESOURCE,updatedResource.getComponentMetadataForSupportLog(),StatusCode.COMPLETE,"Ended update a resource by user {}",userId);
-
+                loggerSupportability
+                    .log(LoggerSupportabilityActions.UPDATE_RESOURCE, updatedResource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                        "Ended update a resource by user {}", userId);
             }
             return responseWrapper.getInnerElement();
         } catch (final IOException | ZipException e) {
@@ -553,36 +520,26 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/csar/{csaruuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Create Resource", method = "POST", summary = "Returns resource created from csar uuid",
-            responses = {@ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-                    @ApiResponse(responseCode = "201", description = "Resource retrieced"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Create Resource", method = "POST", summary = "Returns resource created from csar uuid", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "201", description = "Resource retrieced"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getResourceFromCsar(@Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @PathParam(value = "csaruuid") String csarUUID) throws IOException {
-
+    public Response getResourceFromCsar(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                        @PathParam(value = "csaruuid") String csarUUID) throws IOException {
         init();
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         // retrieve user details
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         User user = new User();
         user.setUserId(userId);
-
         log.debug("user id is {}", userId);
-
         Response response;
-
         try {
-
-            Either<Resource, ResponseFormat> eitherResource =
-                    resourceBusinessLogic.getLatestResourceFromCsarUuid(ValidationUtils.sanitizeInputString(csarUUID), user);
-
+            Either<Resource, ResponseFormat> eitherResource = resourceBusinessLogic
+                .getLatestResourceFromCsarUuid(ValidationUtils.sanitizeInputString(csarUUID), user);
             // validate response
             if (eitherResource.isRight()) {
                 log.debug("failed to get resource from csarUuid : {}", csarUUID);
@@ -591,9 +548,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 Object representation = RepresentationUtils.toRepresentation(eitherResource.left().value());
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);
             }
-
             return response;
-
         } catch (IOException e) {
             log.debug("get resource by csar failed with exception", e);
             throw e;
@@ -604,48 +559,33 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/importReplaceResource")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Import Resource", method = "POST", summary = "Returns imported resource", responses = {
-            @ApiResponse(responseCode = "201", description = "Resource created"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+        @ApiResponse(responseCode = "201", description = "Resource created"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "Resource already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response importReplaceResource(
-            @Parameter(description = "The user id",
-                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Parameter(description = "X-ECOMP-RequestID header",
-                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
-                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @Parameter(description = "Determines the format of the body of the response",
-                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @Parameter(description = "The username and password",
-                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Context final HttpServletRequest request,
-            @Parameter(description = "FileInputStream")
-            @FormDataParam("resourceZip") File file,
-            @Parameter(description = "ContentDisposition")
-            @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
-            @Parameter(description = "resourceMetadata")
-            @FormDataParam("resourceZipMetadata") String resourceInfoJsonString) {
-
+        @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+        @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+        @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+        @Parameter(description = "Determines the format of the body of the response", required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+        @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+        @Context final HttpServletRequest request, @Parameter(description = "FileInputStream") @FormDataParam("resourceZip") File file,
+        @Parameter(description = "ContentDisposition") @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
+        @Parameter(description = "resourceMetadata") @FormDataParam("resourceZipMetadata") String resourceInfoJsonString) {
         init();
-
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
         log.debug("importReplaceResource,Start handle request of {}", url);
-
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug("importReplaceResource,modifier id is {}", userId);
-
         log.debug("importReplaceResource,get file:{},fileName:{}", file, file.getName());
-
         Response response;
         ResponseFormat responseFormat = null;
         AuditingActionEnum auditingActionEnum = AuditingActionEnum.Import_Replace_Resource;
         String assetType = "resources";
-
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentType.getValue());
         DistributionData distributionData = new DistributionData(instanceIdHeader, requestURI);
@@ -653,37 +593,28 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
             log.debug("importReplaceResource: Missing X-ECOMP-InstanceID header");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
-                    resourceCommonInfo, requestId, null);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData, resourceCommonInfo, requestId, null);
             return buildErrorResponse(responseFormat);
         }
-
         try {
             Wrapper<Response> responseWrapper = new Wrapper<>();
             // file import
             Wrapper<User> userWrapper = new Wrapper<>();
             Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();
             Wrapper<String> yamlStringWrapper = new Wrapper<>();
-
             ResourceAuthorityTypeEnum serviceAuthorityEnum = ResourceAuthorityTypeEnum.CSAR_TYPE_BE;
-
             // PayLoad Validations
             commonGeneralValidations(responseWrapper, userWrapper, uploadResourceInfoWrapper, serviceAuthorityEnum, userId, resourceInfoJsonString);
-
             fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, modifier, resourceInfoJsonString, serviceAuthorityEnum, file);
-
-            specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, resourceInfoJsonString, serviceAuthorityEnum);
-
+            specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(),
+                request, resourceInfoJsonString, serviceAuthorityEnum);
             log.debug("importReplaceResource:get payload:{}", uploadResourceInfoWrapper.getInnerElement().getPayloadData());
-
-            log.debug("importReplaceResource:get ResourceType:{}",
-                    uploadResourceInfoWrapper.getInnerElement().getResourceType());
-
+            log.debug("importReplaceResource:get ResourceType:{}", uploadResourceInfoWrapper.getInnerElement().getResourceType());
             if (responseWrapper.isEmpty()) {
                 log.debug("importReplaceService:start handleImport");
-                handleImport(responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(), yamlStringWrapper.getInnerElement(), serviceAuthorityEnum, true, null);
+                handleImport(responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(),
+                    yamlStringWrapper.getInnerElement(), serviceAuthorityEnum, true, null);
             }
-
             return responseWrapper.getInnerElement();
         } catch (ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Import Resource");

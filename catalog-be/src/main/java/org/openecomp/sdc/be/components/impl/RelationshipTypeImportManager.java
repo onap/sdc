@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -29,9 +30,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-
 @Component("relationshipTypeImportManager")
 public class RelationshipTypeImportManager {
 
@@ -40,73 +38,62 @@ public class RelationshipTypeImportManager {
     private final ComponentsUtils componentsUtils;
 
     @Autowired
-    public RelationshipTypeImportManager(RelationshipTypeOperation relationshipTypeOperation,
-        CommonImportManager commonImportManager, ComponentsUtils componentsUtils) {
+    public RelationshipTypeImportManager(RelationshipTypeOperation relationshipTypeOperation, CommonImportManager commonImportManager,
+                                         ComponentsUtils componentsUtils) {
         this.relationshipTypeOperation = relationshipTypeOperation;
         this.commonImportManager = commonImportManager;
         this.componentsUtils = componentsUtils;
     }
 
-    public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(
-            String relationshipYml) {
+    public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(String relationshipYml) {
         return createRelationshipTypes(relationshipYml, false);
     }
 
-    private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(
-            String relationshipTypeYml, boolean inTransaction) {
-        return commonImportManager.createElementTypes(relationshipTypeYml,
-                relationshipTypesFromYml -> createRelationshipTypesFromYml(relationshipTypeYml),
-                relationshipTypesToCreate -> createRelationshipTypesByDao(relationshipTypesToCreate,
-                        inTransaction), ElementTypeEnum.RELATIONSHIP_TYPE);
+    private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(String relationshipTypeYml,
+                                                                                                                     boolean inTransaction) {
+        return commonImportManager
+            .createElementTypes(relationshipTypeYml, relationshipTypesFromYml -> createRelationshipTypesFromYml(relationshipTypeYml),
+                relationshipTypesToCreate -> createRelationshipTypesByDao(relationshipTypesToCreate, inTransaction),
+                ElementTypeEnum.RELATIONSHIP_TYPE);
     }
 
-    private Either<List<RelationshipTypeDefinition>, ActionStatus> createRelationshipTypesFromYml(
-            String relationshipTypeYml) {
-        return commonImportManager.createElementTypesFromYml(relationshipTypeYml,
-                this::createRelationshipType);
+    private Either<List<RelationshipTypeDefinition>, ActionStatus> createRelationshipTypesFromYml(String relationshipTypeYml) {
+        return commonImportManager.createElementTypesFromYml(relationshipTypeYml, this::createRelationshipType);
     }
 
     private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypesByDao(
-            List<RelationshipTypeDefinition> relationshipTypesToCreate, boolean inTransaction) {
+        List<RelationshipTypeDefinition> relationshipTypesToCreate, boolean inTransaction) {
         return commonImportManager.createElementTypesByDao(relationshipTypesToCreate, this::validateRelationshipType,
-                relationshipType -> new ImmutablePair<>(ElementTypeEnum.RELATIONSHIP_TYPE, relationshipType.getType()),
-                relationshipTypeName -> relationshipTypeOperation.getRelationshipTypeByName(relationshipTypeName)
-                        .right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus),
-                relationshipType -> relationshipTypeOperation.addRelationshipType(relationshipType, inTransaction),
-                (newRelationshipType, oldRelationshipType) -> relationshipTypeOperation
-                        .updateRelationshipType(newRelationshipType, oldRelationshipType, inTransaction));
+            relationshipType -> new ImmutablePair<>(ElementTypeEnum.RELATIONSHIP_TYPE, relationshipType.getType()),
+            relationshipTypeName -> relationshipTypeOperation.getRelationshipTypeByName(relationshipTypeName).right()
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus),
+            relationshipType -> relationshipTypeOperation.addRelationshipType(relationshipType, inTransaction),
+            (newRelationshipType, oldRelationshipType) -> relationshipTypeOperation
+                .updateRelationshipType(newRelationshipType, oldRelationshipType, inTransaction));
     }
-
 
     private Either<ActionStatus, ResponseFormat> validateRelationshipType(RelationshipTypeDefinition relationshipType) {
         Either<ActionStatus, ResponseFormat> result = Either.left(ActionStatus.OK);
         if (relationshipType.getType() == null) {
-            ResponseFormat responseFormat =
-                    componentsUtils.getResponseFormat(ActionStatus.MISSING_RELATIONSHIP_TYPE, relationshipType.getType());
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_RELATIONSHIP_TYPE, relationshipType.getType());
             result = Either.right(responseFormat);
         }
         return result;
     }
 
-    private RelationshipTypeDefinition createRelationshipType(String relationshipTypeName,
-                                                              Map<String, Object> toscaJson) {
+    private RelationshipTypeDefinition createRelationshipType(String relationshipTypeName, Map<String, Object> toscaJson) {
         RelationshipTypeDefinition relationshipType = new RelationshipTypeDefinition();
-
         relationshipType.setType(relationshipTypeName);
-
         // Description
-        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(),
-                relationshipType::setDescription);
+        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), relationshipType::setDescription);
         // Derived From
-        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(),
-                relationshipType::setDerivedFrom);
+        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(), relationshipType::setDerivedFrom);
         // Properties
         commonImportManager.setPropertiesMap(toscaJson, relationshipType::setProperties);
         //valid-target-types
-        if(toscaJson.get("valid_target_types") instanceof List)
+        if (toscaJson.get("valid_target_types") instanceof List) {
             relationshipType.setValidTargetTypes((List<String>) toscaJson.get("valid_target_types"));
-
+        }
         return relationshipType;
     }
-
 }

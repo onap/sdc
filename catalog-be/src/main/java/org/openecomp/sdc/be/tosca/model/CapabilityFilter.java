@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.tosca.model;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.collections.CollectionUtils;
 
 @Getter
 @Setter
@@ -33,7 +31,7 @@ public class CapabilityFilter {
     private List<Map<String, List<Object>>> properties;
 
     public void addProperty(Map<String, List<Object>> property) {
-        if(CollectionUtils.isEmpty(properties)) {
+        if (CollectionUtils.isEmpty(properties)) {
             this.properties = new ArrayList<>();
         }
         this.properties.add(property);

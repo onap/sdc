@@ -17,10 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.property;
 
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -32,16 +40,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 
 @org.springframework.stereotype.Component
 public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefinition, PropertyDataDefinition> {
@@ -75,26 +73,23 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
     @Override
     public void addPropertiesListToInput(PropertyDataDefinition declaredProp, InputDefinition input) {
         List<ComponentInstanceProperty> propertiesList = input.getProperties();
-        if(propertiesList == null) {
+        if (propertiesList == null) {
             propertiesList = new ArrayList<>(); // adding the property with the new value for UI
         }
         propertiesList.add(new ComponentInstanceProperty(declaredProp));
         input.setProperties(propertiesList);
-
     }
 
     @Override
     public StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition inputForDelete) {
         return getGroupPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
-                .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties))
-                .orElse(StorageOperationStatus.OK);
+            .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties)).orElse(StorageOperationStatus.OK);
     }
 
     @Override
     public StorageOperationStatus unDeclarePropertiesAsListInputs(Component component, InputDefinition inputForDelete) {
         return getGroupPropertiesDeclaredAsInput(component, inputForDelete.getUniqueId())
-                .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties))
-                .orElse(StorageOperationStatus.OK);
+            .map(groupProperties -> unDeclareGroupProperties(component, inputForDelete, groupProperties)).orElse(StorageOperationStatus.OK);
     }
 
     private StorageOperationStatus unDeclareGroupProperties(Component container, InputDefinition input, GroupProperties groupProperties) {
@@ -108,20 +103,13 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
         if (container.getGroups() == null) {
             return Optional.empty();
         }
-        return container.getGroups()
-                .stream()
-                .filter(group -> Objects.nonNull(group.getProperties()))
-                .map(grp -> getGroupPropertiesDeclaredAsInput(grp, inputId))
-                .filter(GroupProperties::isNotEmpty)
-                .findFirst();
+        return container.getGroups().stream().filter(group -> Objects.nonNull(group.getProperties()))
+            .map(grp -> getGroupPropertiesDeclaredAsInput(grp, inputId)).filter(GroupProperties::isNotEmpty).findFirst();
     }
 
-
     private GroupProperties getGroupPropertiesDeclaredAsInput(GroupDefinition group, String inputId) {
-        List<PropertyDataDefinition> propertyDataDefinitions = group.getProperties()
-                .stream()
-                .filter(prop -> isPropertyDeclaredAsInputByInputId(prop, inputId))
-                .collect(toList());
+        List<PropertyDataDefinition> propertyDataDefinitions = group.getProperties().stream()
+            .filter(prop -> isPropertyDeclaredAsInputByInputId(prop, inputId)).collect(toList());
         return new GroupProperties(group.getUniqueId(), propertyDataDefinitions);
     }
 
@@ -129,19 +117,17 @@ public class GroupPropertyDeclarator extends DefaultPropertyDeclarator<GroupDefi
         if (isEmpty(property.getGetInputValues())) {
             return false;
         }
-        return property.getGetInputValues().stream()
-                .filter(Objects::nonNull)
-                .anyMatch(getInputVal -> isGetInputValueForInput(getInputVal, inputId));
+        return property.getGetInputValues().stream().filter(Objects::nonNull).anyMatch(getInputVal -> isGetInputValueForInput(getInputVal, inputId));
     }
 
-
     private class GroupProperties {
+
         private String groupId;
         private List<PropertyDataDefinition> properties;
 
         GroupProperties(String groupId, List<PropertyDataDefinition> properties) {
             this.groupId = groupId;
-            this.properties = (properties == null)? null :new ArrayList<>(properties);
+            this.properties = (properties == null) ? null : new ArrayList<>(properties);
         }
 
         String getGroupId() {

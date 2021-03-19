@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.auditing.impl.category;
 
 import org.openecomp.sdc.be.auditing.impl.AuditBaseEventFactory;
@@ -30,7 +29,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 public class AuditGetCategoryHierarchyEventFactory extends AuditBaseEventFactory {
 
     private static final String LOG_STR = "ACTION = \"%s\" MODIFIER = \"%s\" DETAILS = \"%s\" STATUS = \"%s\" DESC = \"%s\"";
-    private final  GetCategoryHierarchyEvent event;
+    private final GetCategoryHierarchyEvent event;
 
     public AuditGetCategoryHierarchyEventFactory(CommonAuditData commonFields, User modifier, String details) {
         this(commonFields, buildUserName(modifier), details);
@@ -53,13 +52,11 @@ public class AuditGetCategoryHierarchyEventFactory extends AuditBaseEventFactory
 
     @Override
     public String[] getLogMessageParams() {
-        return new String[] {event.getAction(), event.getModifier(), event.getDetails(), event.getStatus(), event.getDesc()};
+        return new String[]{event.getAction(), event.getModifier(), event.getDetails(), event.getStatus(), event.getDesc()};
     }
 
     @Override
     public AuditingGenericEvent getDbEvent() {
         return event;
     }
-
-
 }

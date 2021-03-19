@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.ecomp.converters;
 
 import fj.data.Either;
@@ -38,23 +37,19 @@ public final class EcompUserConverter {
 
     public static Either<EcompUser, String> convertUserToEcompUser(User asdcUser) {
         EcompUser convertedUser = new EcompUser();
-
         if (asdcUser == null) {
             return Either.right("User is null");
         }
-
         convertedUser.setFirstName(asdcUser.getFirstName());
         convertedUser.setLastName(asdcUser.getLastName());
         convertedUser.setLoginId(asdcUser.getUserId());
         convertedUser.setOrgUserId(asdcUser.getUserId());
         convertedUser.setEmail(asdcUser.getEmail());
-
         if (asdcUser.getStatus().equals(UserStatusEnum.ACTIVE)) {
             convertedUser.setActive(true);
         } else if (asdcUser.getStatus().equals(UserStatusEnum.INACTIVE)) {
             convertedUser.setActive(false);
         }
-
         EcompRole convertedRole = new EcompRole();
         for (Role role : Role.values()) {
             if (role.name().equals(asdcUser.getRole()) || role.toString().equals(asdcUser.getRole())) {
@@ -63,47 +58,37 @@ public final class EcompUserConverter {
                 break;
             }
         }
-
         Set<EcompRole> convertedRoleSet = new HashSet<>();
         convertedRoleSet.add(convertedRole);
         convertedUser.setRoles(convertedRoleSet);
-
         return Either.left(convertedUser);
     }
 
     public static User convertEcompUserToUser(EcompUser ecompUser) throws PortalAPIException {
         User convertedUser = new User();
-
         if (ecompUser == null) {
             throw new PortalAPIException("ecomp user is null");
         }
-
         convertedUser.setFirstName(ecompUser.getFirstName());
         convertedUser.setLastName(ecompUser.getLastName());
-
         if (ecompUser.getLoginId() != null && !ecompUser.getLoginId().isEmpty()) {
             convertedUser.setUserId(ecompUser.getLoginId());
         } else {
             convertedUser.setUserId(ecompUser.getOrgUserId());
         }
-
         convertedUser.setEmail(ecompUser.getEmail());
-
         if (ecompUser.getRoles() != null) {
             Iterator<EcompRole> iter = ecompUser.getRoles().iterator();
-
             if (iter.hasNext()) {
                 String updatedRole = EcompRoleConverter.convertEcompRoleToRole(iter.next());
                 convertedUser.setRole(updatedRole);
             }
         }
-
         if (ecompUser.isActive()) {
             convertedUser.setStatus(UserStatusEnum.ACTIVE);
         } else {
             convertedUser.setStatus(UserStatusEnum.INACTIVE);
         }
-
         return convertedUser;
     }
 }

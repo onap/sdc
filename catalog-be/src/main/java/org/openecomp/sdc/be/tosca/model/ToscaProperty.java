@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
@@ -73,5 +72,4 @@ public class ToscaProperty {
     public void setDefaultp(Object defaultp) {
         this._defaultp_ = defaultp;
     }
-
 }

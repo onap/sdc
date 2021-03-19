@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.service;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +40,7 @@ public class ServiceNamingPolicyValidator implements ServiceFieldValidator {
     public ServiceNamingPolicyValidator(ComponentsUtils componentsUtils) {
         this.componentsUtils = componentsUtils;
     }
+
     @Override
     public void validateAndCorrectField(User user, Service service, AuditingActionEnum actionEnum) {
         Boolean isEcompGeneratedCurr = service.isEcompGeneratedNaming();
@@ -50,7 +50,8 @@ public class ServiceNamingPolicyValidator implements ServiceFieldValidator {
         }
         if (isEcompGeneratedCurr) {
             if (!ValidationUtils.validateServiceNamingPolicyLength(namingPolicyUpdate)) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NAMING_POLICY_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_NAMING_POLICY_MAX_SIZE);
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.NAMING_POLICY_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_NAMING_POLICY_MAX_SIZE);
                 throw new ByResponseFormatComponentException(responseFormat);
             }
             if (StringUtils.isEmpty(namingPolicyUpdate)) {

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -31,6 +30,21 @@ import fj.data.Either;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -55,9 +69,9 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
@@ -70,46 +84,28 @@ import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-
-@OpenAPIDefinition(info = @Info(title = "SDC API", description = "SDC External, Distribution and Internal APIs"),
-        servers = {@Server(url = "/sdc", description = "SDC External and Distribution APIs"),
-                @Server(url = "/sdc2/rest", description = "SDC Internal APIs")})
+@OpenAPIDefinition(info = @Info(title = "SDC API", description = "SDC External, Distribution and Internal APIs"), servers = {
+    @Server(url = "/sdc", description = "SDC External and Distribution APIs"), @Server(url = "/sdc2/rest", description = "SDC Internal APIs")})
 public class BeGenericServlet extends BasicServlet {
 
-    public BeGenericServlet(UserBusinessLogic userAdminManager,
-        ComponentsUtils componentsUtils) {
+    private static final Logger log = Logger.getLogger(BeGenericServlet.class);
+    private static final String PROPERTY_NAME_REGEX = "[\\w,\\d,_]+";
+    @Context
+    protected HttpServletRequest servletRequest;
+    protected ComponentsUtils componentsUtils;
+    private UserBusinessLogic userAdminManager;
+
+    public BeGenericServlet(UserBusinessLogic userAdminManager, ComponentsUtils componentsUtils) {
         this.userAdminManager = userAdminManager;
         this.componentsUtils = componentsUtils;
     }
 
-    @Context
-    protected HttpServletRequest servletRequest;
-
-    private static final Logger log = Logger.getLogger(BeGenericServlet.class);
-
-    private static final String PROPERTY_NAME_REGEX = "[\\w,\\d,_]+";
-
-    private UserBusinessLogic userAdminManager;
-    protected ComponentsUtils componentsUtils;
+    private static Response buildOkResponseStatic(Object entity) {
+        return Response.status(Response.Status.OK).entity(entity).build();
+    }
 
     /******************** New error response mechanism
      * @param requestErrorWrapper **************/
-
     protected Response buildErrorResponse(ResponseFormat requestErrorWrapper) {
         return Response.status(requestErrorWrapper.getStatus()).entity(gson.toJson(requestErrorWrapper.getRequestError())).build();
     }
@@ -122,18 +118,14 @@ public class BeGenericServlet extends BasicServlet {
         return buildOkResponseStatic(entity);
     }
 
-    private static Response buildOkResponseStatic(Object entity) {
-        return Response.status(Response.Status.OK)
-            .entity(entity)
-            .build();
-    }
-
     public HttpServletRequest getServletRequest() {
         return servletRequest;
     }
 
     @VisibleForTesting
-    public void setRequestServlet(HttpServletRequest request) {this.servletRequest = request;}
+    public void setRequestServlet(HttpServletRequest request) {
+        this.servletRequest = request;
+    }
 
     protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity) {
         return buildOkResponse(errorResponseWrapper, entity, null);
@@ -143,16 +135,18 @@ public class BeGenericServlet extends BasicServlet {
         int status = errorResponseWrapper.getStatus();
         ResponseBuilder responseBuilder = Response.status(status);
         if (entity != null) {
-            if (log.isTraceEnabled())
+            if (log.isTraceEnabled()) {
                 log.trace("returned entity is {}", entity.toString());
+            }
             responseBuilder = responseBuilder.entity(entity);
         }
         if (additionalHeaders != null) {
             for (Entry<String, String> additionalHeader : additionalHeaders.entrySet()) {
                 String headerName = additionalHeader.getKey();
                 String headerValue = additionalHeader.getValue();
-                if (log.isTraceEnabled())
+                if (log.isTraceEnabled()) {
                     log.trace("Adding header {} with value {} to the response", headerName, headerValue);
+                }
                 responseBuilder.header(headerName, headerValue);
             }
         }
@@ -212,8 +206,7 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     /**
-     * Used to support Unit Test.<br>
-     * Header Params are not supported in Unit Tests
+     * Used to support Unit Test.<br> Header Params are not supported in Unit Tests
      *
      * @return
      */
@@ -233,16 +226,13 @@ public class BeGenericServlet extends BasicServlet {
 
     <T> T convertJsonToObjectOfClass(String json, Class<T> clazz) {
         T object = null;
-        ObjectMapper mapper = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         try {
             log.trace("Starting to convert json to object. Json=\n{}", json);
-
             SimpleModule module = new SimpleModule("customDeserializationModule");
             module.addDeserializer(PropertyConstraint.class, new PropertyConstraintJacksonDeserializer());
             mapper.registerModule(module);
-
             object = mapper.readValue(json, clazz);
             if (object != null) {
                 return object;
@@ -264,28 +254,21 @@ public class BeGenericServlet extends BasicServlet {
         try {
             Map<String, PropertyDefinition> properties = new HashMap<>();
             root = (JSONObject) parser.parse(data);
-
             Set entrySet = root.entrySet();
             Iterator iterator = entrySet.iterator();
             while (iterator.hasNext()) {
                 Entry next = (Entry) iterator.next();
                 String propertyName = (String) next.getKey();
-
-                if(!isPropertyNameValid(propertyName)) {
+                if (!isPropertyNameValid(propertyName)) {
                     return Either.right(ActionStatus.INVALID_PROPERTY_NAME);
                 }
-
                 JSONObject value = (JSONObject) next.getValue();
-                Either<PropertyDefinition, ActionStatus> propertyDefinitionEither =
-                        getPropertyDefinitionFromJson(componentId, propertyName, value);
-
-                if(propertyDefinitionEither.isRight()) {
+                Either<PropertyDefinition, ActionStatus> propertyDefinitionEither = getPropertyDefinitionFromJson(componentId, propertyName, value);
+                if (propertyDefinitionEither.isRight()) {
                     return Either.right(propertyDefinitionEither.right().value());
                 }
-
                 properties.put(propertyName, propertyDefinitionEither.left().value());
             }
-
             return Either.left(properties);
         } catch (ParseException e) {
             log.info("Property conetnt is invalid - {}", data);
@@ -294,9 +277,7 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     protected boolean isPropertyNameValid(String propertyName) {
-        return Objects.nonNull(propertyName)
-                       && propertyName.matches(PROPERTY_NAME_REGEX);
-
+        return Objects.nonNull(propertyName) && propertyName.matches(PROPERTY_NAME_REGEX);
     }
 
     private Either<PropertyDefinition, ActionStatus> getPropertyDefinitionFromJson(String componentId, String propertyName, JSONObject value) {
@@ -308,7 +289,6 @@ public class BeGenericServlet extends BasicServlet {
         PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
         String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, propertyName);
         propertyDefinition.setUniqueId(uniqueId);
-
         return Either.left(propertyDefinition);
     }
 
@@ -321,36 +301,29 @@ public class BeGenericServlet extends BasicServlet {
         InputDefinition inputDefinition = convertJsonToObject.left().value();
         String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(componentId, inputName);
         inputDefinition.setUniqueId(uniqueId);
-
         return Either.left(inputDefinition);
     }
 
     protected Either<Map<String, PropertyDefinition>, ActionStatus> getPropertiesListForUpdate(String data) {
-
         Map<String, PropertyDefinition> properties = new HashMap<>();
         JSONParser parser = new JSONParser();
         JSONArray jsonArray;
-
         try {
             jsonArray = (JSONArray) parser.parse(data);
             for (Object jsonElement : jsonArray) {
                 String propertyAsString = jsonElement.toString();
                 Either<PropertyDefinition, ActionStatus> convertJsonToObject = convertJsonToObject(propertyAsString, PropertyDefinition.class);
-
                 if (convertJsonToObject.isRight()) {
                     return Either.right(convertJsonToObject.right().value());
                 }
-
                 PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
                 properties.put(propertyDefinition.getName(), propertyDefinition);
             }
-
             return Either.left(properties);
         } catch (Exception e) {
             log.info("Property content is invalid - {}", data);
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
-
     }
 
     protected String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
@@ -364,27 +337,24 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     private JSONObject getPropertyDefinitionJSONObject(PropertyDefinition propertyDefinition) {
-
         Either<String, ActionStatus> either = convertObjectToJson(propertyDefinition);
         if (either.isRight()) {
             return new JSONObject();
         }
         try {
-            return  (JSONObject) new JSONParser().parse(either.left().value());
+            return (JSONObject) new JSONParser().parse(either.left().value());
         } catch (ParseException e) {
             log.info("failed to convert input to json");
             log.error("failed to convert to json", e);
             return new JSONObject();
         }
-
     }
 
-    protected  <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
+    protected <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
         T t = null;
         Type constraintType = new TypeToken<PropertyConstraint>() {
         }.getType();
-        Gson
-            gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
         try {
             log.trace("convert json to object. json=\n {}", data);
             t = gson.fromJson(data, clazz);
@@ -419,7 +389,6 @@ public class BeGenericServlet extends BasicServlet {
             log.debug("failed to convert fto json", e);
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
-
     }
 
     private OutputsBusinessLogic getOutputBL(final ServletContext context) {
@@ -438,46 +407,38 @@ public class BeGenericServlet extends BasicServlet {
         return ((WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).getWebAppContext(context);
     }
 
-    protected <T> Either<T, ResponseFormat> parseToComponentInstanceMap(final String componentJson,
-                                                                        final User user,
-                                                                        final ComponentTypeEnum componentType,
-                                                                        final Class<T> clazz) {
+    protected <T> Either<T, ResponseFormat> parseToComponentInstanceMap(final String componentJson, final User user,
+                                                                        final ComponentTypeEnum componentType, final Class<T> clazz) {
         return getComponentsUtils()
             .convertJsonToObjectUsingObjectMapper(componentJson, user, clazz, AuditingActionEnum.CREATE_RESOURCE, componentType);
     }
 
-    protected Response declareProperties(String userId, String componentId, String componentType,
-                                         String componentInstInputsMapObj, DeclarationTypeEnum typeEnum, HttpServletRequest request) {
+    protected Response declareProperties(String userId, String componentId, String componentType, String componentInstInputsMapObj,
+                                         DeclarationTypeEnum typeEnum, HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
-
         try {
             BaseBusinessLogic businessLogic = getBlForDeclaration(typeEnum, context);
-
             // get modifier id
             User modifier = new User();
             modifier.setUserId(userId);
             log.debug("modifier id is {}", userId);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(
-                componentInstInputsMapObj, modifier, componentTypeEnum, ComponentInstInputsMap.class);
+            Either<ComponentInstInputsMap, ResponseFormat> componentInstInputsMapRes = parseToComponentInstanceMap(componentInstInputsMapObj,
+                modifier, componentTypeEnum, ComponentInstInputsMap.class);
             if (componentInstInputsMapRes.isRight()) {
                 log.debug("failed to parse componentInstInputsMap");
                 return buildErrorResponse(componentInstInputsMapRes.right().value());
             }
-
             Either<List<ToscaDataDefinition>, ResponseFormat> propertiesAfterDeclaration = businessLogic
-                .declareProperties(userId, componentId,
-                    componentTypeEnum,
-                    componentInstInputsMapRes.left().value());
+                .declareProperties(userId, componentId, componentTypeEnum, componentInstInputsMapRes.left().value());
             if (propertiesAfterDeclaration.isRight()) {
                 log.debug("failed to create inputs  for service: {}", componentId);
                 return buildErrorResponse(propertiesAfterDeclaration.right().value());
             }
             Object properties = RepresentationUtils.toRepresentation(propertiesAfterDeclaration.left().value());
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
-
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create inputs for service with id: " + componentId);
             log.debug("Properties declaration failed with exception", e);
@@ -485,8 +446,7 @@ public class BeGenericServlet extends BasicServlet {
         }
     }
 
-    public BaseBusinessLogic getBlForDeclaration(final DeclarationTypeEnum typeEnum,
-                                                 final ServletContext context) {
+    public BaseBusinessLogic getBlForDeclaration(final DeclarationTypeEnum typeEnum, final ServletContext context) {
         switch (typeEnum) {
             case OUTPUT:
                 return getOutputBL(context);
@@ -505,28 +465,21 @@ public class BeGenericServlet extends BasicServlet {
         try {
             Map<String, InputDefinition> inputs = new HashMap<>();
             root = (JSONObject) parser.parse(data);
-
             Set entrySet = root.entrySet();
             Iterator iterator = entrySet.iterator();
             while (iterator.hasNext()) {
                 Entry next = (Entry) iterator.next();
                 String inputName = (String) next.getKey();
-
-                if(!isInputNameValid(inputName)) {
+                if (!isInputNameValid(inputName)) {
                     return Either.right(ActionStatus.INVALID_INPUT_NAME);
                 }
-
                 JSONObject value = (JSONObject) next.getValue();
-                Either<InputDefinition, ActionStatus> inputDefinitionEither =
-                        getInputDefinitionFromJson(componentId, inputName, value);
-
-                if(inputDefinitionEither.isRight()) {
+                Either<InputDefinition, ActionStatus> inputDefinitionEither = getInputDefinitionFromJson(componentId, inputName, value);
+                if (inputDefinitionEither.isRight()) {
                     return Either.right(inputDefinitionEither.right().value());
                 }
-
                 inputs.put(inputName, inputDefinitionEither.left().value());
             }
-
             return Either.left(inputs);
         } catch (ParseException e) {
             log.warn("Input content is invalid - {}", data, e);
@@ -535,8 +488,6 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     protected boolean isInputNameValid(String inputName) {
-        return Objects.nonNull(inputName)
-                && inputName.matches(PROPERTY_NAME_REGEX);
-
+        return Objects.nonNull(inputName) && inputName.matches(PROPERTY_NAME_REGEX);
     }
 }

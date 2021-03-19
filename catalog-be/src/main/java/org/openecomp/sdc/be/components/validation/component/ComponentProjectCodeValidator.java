@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.component;
 
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -34,7 +33,7 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 @org.springframework.stereotype.Component
-public class ComponentProjectCodeValidator implements  ComponentFieldValidator{
+public class ComponentProjectCodeValidator implements ComponentFieldValidator {
 
     private static final Logger log = Logger.getLogger(ComponentProjectCodeValidator.class.getName());
     private ComponentsUtils componentsUtils;
@@ -50,22 +49,18 @@ public class ComponentProjectCodeValidator implements  ComponentFieldValidator{
         }
         log.debug("validate ProjectCode name ");
         String projectCode = component.getProjectCode();
-
         if (!ValidationUtils.validateStringNotEmpty(projectCode)) {
             log.info("projectCode is empty is allowed CR.");
             return;
         }
-
         try {
             validateProjectCode(projectCode);
         } catch (ComponentException exp) {
             ResponseFormat responseFormat = exp.getResponseFormat();
             componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, component.getComponentType(),
-                    ResourceVersionInfo.newBuilder()
-                            .build());
+                ResourceVersionInfo.newBuilder().build());
             throw exp;
         }
-
     }
 
     private void validateProjectCode(String projectCode) {

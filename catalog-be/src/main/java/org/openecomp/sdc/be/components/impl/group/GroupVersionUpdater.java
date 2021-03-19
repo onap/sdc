@@ -17,10 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.group;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.openecomp.sdc.be.components.impl.version.OnChangeVersionCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -35,31 +39,47 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.utils.GroupUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
-
 /**
  * A Helper class which handles altering the version of a group
  */
 @org.springframework.stereotype.Component
 public class GroupVersionUpdater implements OnChangeVersionCommand {
-    
+
     private static final Logger log = Logger.getLogger(GroupVersionUpdater.class);
     private final GroupsOperation groupsOperation;
     private final ComponentsUtils componentsUtils;
-    
 
     public GroupVersionUpdater(GroupsOperation groupsOperation, ComponentsUtils componentsUtils) {
         this.groupsOperation = groupsOperation;
         this.componentsUtils = componentsUtils;
-    
     }
-    
-    
+
+    static <T> List<T> emptyIfNull(final List<T> list) {
+        return (list == null ? Collections.emptyList() : list);
+    }
+
+    static <T, U> Map<T, U> emptyIfNull(final Map<T, U> list) {
+        return (list == null ? Collections.emptyMap() : list);
+    }
+
+    static boolean isGenerateGroupUUID(GroupDefinition group, Component container) {
+        if (!GroupTypeEnum.VF_MODULE.getGroupTypeName().equals(group.getType())) {
+            return true;
+        } else {
+            List<String> artifactsUuid = emptyIfNull(group.getArtifactsUuid());
+            Map<String, ArtifactDefinition> deploymentArtifacts = emptyIfNull(container.getDeploymentArtifacts());
+            List<String> heatArtifactUniqueIDs = emptyIfNull(group.getArtifacts()).stream().filter(a -> !a.endsWith("env"))
+                .collect(Collectors.toList());
+            for (String heatArtifactUniqueID : heatArtifactUniqueIDs) {
+                ArtifactDefinition artifactDefinition = deploymentArtifacts.get(heatArtifactUniqueID.split("\\.", -1)[1]);
+                if ((artifactDefinition == null || artifactDefinition.isEmpty()) || !artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     @Override
     public ActionStatus onChangeVersion(Component container) {
         log.debug("#onChangeVersion - replacing all group members for component instance");
@@ -71,49 +91,15 @@ public class GroupVersionUpdater implements OnChangeVersionCommand {
         groups.forEach(group -> increaseMajorVersion(group, container));
     }
 
-  
     private void increaseMajorVersion(GroupDefinition group, Component container) {
         String version = group.getVersion();
-        
         String newVersion = GroupUtils.updateVersion(PromoteVersionEnum.MAJOR, group.getVersion());
-      
-        if(!version.equals(newVersion) ){
-            if(isGenerateGroupUUID(group, container)) {
+        if (!version.equals(newVersion)) {
+            if (isGenerateGroupUUID(group, container)) {
                 String groupUUID = UniqueIdBuilder.generateUUID();
                 group.setGroupUUID(groupUUID);
             }
             group.setVersion(String.valueOf(newVersion));
-        }
-    }
-
-    static <T> List<T> emptyIfNull(final List<T> list) {
-        return (list == null? Collections.emptyList() : list);
-    }
-
-    static <T, U> Map<T, U> emptyIfNull(final Map<T, U> list) {
-        return (list == null? Collections.emptyMap() : list);
-    }
-
-    static boolean isGenerateGroupUUID(GroupDefinition group, Component container) {
-        if (!GroupTypeEnum.VF_MODULE.getGroupTypeName().equals(group.getType())) {
-            return true;
-        } else {
-            List<String> artifactsUuid = emptyIfNull(group.getArtifactsUuid());
-            Map<String, ArtifactDefinition> deploymentArtifacts = emptyIfNull(container.getDeploymentArtifacts());
-            List<String> heatArtifactUniqueIDs = emptyIfNull(group.getArtifacts()).stream().filter(a -> !a.endsWith("env")).collect(
-                Collectors.toList());
-
-            for (String heatArtifactUniqueID : heatArtifactUniqueIDs) {
-                ArtifactDefinition artifactDefinition = deploymentArtifacts
-                    .get(heatArtifactUniqueID.split("\\.", -1)[1]);
-
-                if ((artifactDefinition == null
-                    || artifactDefinition.isEmpty())
-                    || !artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
@@ -124,14 +110,10 @@ public class GroupVersionUpdater implements OnChangeVersionCommand {
         }
         updateGroupVersion.accept(groups);
         return updateGroups(groupsContainer.getUniqueId(), groups);
-    }  
+    }
 
-    
     private ActionStatus updateGroups(String componentId, List<GroupDefinition> groupsToUpdate) {
         log.debug("#updateGroups - updating {} groups for container {}", groupsToUpdate.size(), componentId);
         return componentsUtils.convertFromStorageResponse(groupsOperation.updateGroupsOnComponent(componentId, groupsToUpdate));
-               
     }
-
 }
-

@@ -30,6 +30,4 @@ public class ToscaInterfaceDefinition {
     private String type;
     private Map<String, Object> operations;
     private Map<String, Object> inputs;
-
 }
-

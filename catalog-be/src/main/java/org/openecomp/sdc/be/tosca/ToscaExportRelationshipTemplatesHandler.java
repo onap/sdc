@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -47,7 +46,6 @@ public class ToscaExportRelationshipTemplatesHandler {
         if (MapUtils.isEmpty(nodeTemplateMap)) {
             return Collections.emptyMap();
         }
-
         final Map<String, ToscaRelationshipTemplate> relationshipTemplates = new HashMap<>();
         for (final Entry<String, ToscaNodeTemplate> nodeEntry : nodeTemplateMap.entrySet()) {
             final ToscaNodeTemplate nodeTemplate = nodeEntry.getValue();
@@ -56,28 +54,22 @@ public class ToscaExportRelationshipTemplatesHandler {
             }
             final AtomicInteger relationshipTemplateCount = new AtomicInteger(1);
             for (final Map<String, ToscaTemplateRequirement> requirementMap : nodeTemplate.getRequirements()) {
-                requirementMap.entrySet().stream()
-                    .filter(entry -> entry.getValue().isRelationshipComplexNotation())
-                    .forEach(requirementEntry -> {
-                        final ToscaTemplateRequirement requirement = requirementEntry.getValue();
-                        final ToscaRelationship relationship = requirement.getRelationshipAsComplexType();
-                        final ToscaRelationshipTemplate relationshipTemplate = new ToscaRelationshipTemplate();
-                        relationshipTemplate.setType(relationship.getType());
-                        relationshipTemplate.setInterfaces(relationship.getInterfaces());
-                        final String relationshipName = String.format("%s.%s",
-                            ToscaRelationshipTemplate
-                                .createRelationshipName(nodeEntry.getKey(), requirementEntry.getKey()),
+                requirementMap.entrySet().stream().filter(entry -> entry.getValue().isRelationshipComplexNotation()).forEach(requirementEntry -> {
+                    final ToscaTemplateRequirement requirement = requirementEntry.getValue();
+                    final ToscaRelationship relationship = requirement.getRelationshipAsComplexType();
+                    final ToscaRelationshipTemplate relationshipTemplate = new ToscaRelationshipTemplate();
+                    relationshipTemplate.setType(relationship.getType());
+                    relationshipTemplate.setInterfaces(relationship.getInterfaces());
+                    final String relationshipName = String
+                        .format("%s.%s", ToscaRelationshipTemplate.createRelationshipName(nodeEntry.getKey(), requirementEntry.getKey()),
                             relationshipTemplateCount);
-
-                        requirement.setRelationship(relationshipName);
-                        relationshipTemplate.setName(relationshipName);
-                        relationshipTemplates.put(relationshipName, relationshipTemplate);
-                        relationshipTemplateCount.incrementAndGet();
-                    });
+                    requirement.setRelationship(relationshipName);
+                    relationshipTemplate.setName(relationshipName);
+                    relationshipTemplates.put(relationshipName, relationshipTemplate);
+                    relationshipTemplateCount.incrementAndGet();
+                });
             }
         }
-
         return relationshipTemplates;
     }
-
 }

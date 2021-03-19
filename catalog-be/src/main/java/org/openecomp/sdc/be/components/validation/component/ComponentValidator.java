@@ -17,16 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.component;
 
+import java.util.List;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class ComponentValidator {
@@ -41,8 +39,6 @@ public class ComponentValidator {
     }
 
     public void validate(User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum) {
-        componentFieldValidators.stream().forEach(validator ->
-                validator.validateAndCorrectField(user,component,actionEnum));
+        componentFieldValidators.stream().forEach(validator -> validator.validateAndCorrectField(user, component, actionEnum));
     }
-
 }

@@ -13,37 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.types;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum  ServiceConsumptionSource {
-  SERVICE_INPUT("ServiceInput"),
-  STATIC("Static");
+public enum ServiceConsumptionSource {
+    SERVICE_INPUT("ServiceInput"), STATIC("Static");
+    private static Map<String, ServiceConsumptionSource> sourceToValue;
 
-
-  private static Map<String, ServiceConsumptionSource> sourceToValue;
-
-  static {
-    sourceToValue = new HashMap<>();
-    for(ServiceConsumptionSource sourceName : ServiceConsumptionSource.values()) {
-      sourceToValue.put(sourceName.source, sourceName);
+    static {
+        sourceToValue = new HashMap<>();
+        for (ServiceConsumptionSource sourceName : ServiceConsumptionSource.values()) {
+            sourceToValue.put(sourceName.source, sourceName);
+        }
     }
-  }
 
-  private String source;
+    private String source;
 
-  ServiceConsumptionSource(String source) {
-    this.source = source;
-  }
+    ServiceConsumptionSource(String source) {
+        this.source = source;
+    }
 
-  public static ServiceConsumptionSource getSourceValue(String source) {
-    return sourceToValue.get(source);
-  }
+    public static ServiceConsumptionSource getSourceValue(String source) {
+        return sourceToValue.get(source);
+    }
 
-  public String getSource() {
-    return source;
-  }
+    public String getSource() {
+        return source;
+    }
 }

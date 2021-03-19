@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.attribute;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
@@ -46,8 +45,7 @@ public class ComponentInstanceOutputAttributeDeclarator extends DefaultAttribute
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
-    public ComponentInstanceOutputAttributeDeclarator(final ComponentsUtils componentsUtils,
-                                                      final AttributeOperation attributeOperation,
+    public ComponentInstanceOutputAttributeDeclarator(final ComponentsUtils componentsUtils, final AttributeOperation attributeOperation,
                                                       final ToscaOperationFacade toscaOperationFacade,
                                                       final ComponentInstanceBusinessLogic componentInstanceBusinessLogic) {
 //        super(componentsUtils, attributeOperation);
@@ -61,8 +59,7 @@ public class ComponentInstanceOutputAttributeDeclarator extends DefaultAttribute
     }
 
     @Override
-    public Either<?, StorageOperationStatus> updateAttributesValues(final Component component,
-                                                                    final String cmptInstanceId,
+    public Either<?, StorageOperationStatus> updateAttributesValues(final Component component, final String cmptInstanceId,
                                                                     final List<ComponentInstanceOutput> attributetypeList) {
         log.debug("#updateAttributesValues - updating component instance outputs for instance {} on component {}", cmptInstanceId,
             component.getUniqueId());
@@ -78,8 +75,7 @@ public class ComponentInstanceOutputAttributeDeclarator extends DefaultAttribute
 
     public StorageOperationStatus unDeclareAttributesAsOutputs(final Component component, final OutputDefinition output) {
         List<ComponentInstanceOutput> componentInstanceInputsByInputId = componentInstanceBusinessLogic
-            .getComponentInstanceOutputsByOutputId(component, output
-                .getUniqueId());
+            .getComponentInstanceOutputsByOutputId(component, output.getUniqueId());
         if (isEmpty(componentInstanceInputsByInputId)) {
             return StorageOperationStatus.OK;
         }
@@ -88,5 +84,4 @@ public class ComponentInstanceOutputAttributeDeclarator extends DefaultAttribute
         return toscaOperationFacade.updateComponentInstanceOutputs(component, componentInstanceInputsByInputId.get(0).getComponentInstanceId(),
             componentInstanceInputsByInputId);
     }
-
 }

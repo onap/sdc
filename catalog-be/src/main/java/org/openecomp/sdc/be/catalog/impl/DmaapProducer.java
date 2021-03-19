@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.catalog.impl;
 
 import com.att.nsa.mr.client.MRBatchingPublisher;
@@ -45,8 +44,7 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
     private final ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
     private MRBatchingPublisher publisher;
 
-    public DmaapProducer(final DmaapClientFactory dmaapClientFactory,
-                         final DmaapProducerHealth dmaapHealth) {
+    public DmaapProducer(final DmaapClientFactory dmaapClientFactory, final DmaapProducerHealth dmaapHealth) {
         this.dmaapClientFactory = dmaapClientFactory;
         this.dmaapHealth = dmaapHealth;
     }
@@ -54,18 +52,15 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
     @Override
     public IStatus pushMessage(ITypeMessage message) {
         try {
-            DmaapProducerConfiguration producerConfiguration = configurationManager.getConfiguration()
-                .getDmaapProducerConfiguration();
+            DmaapProducerConfiguration producerConfiguration = configurationManager.getConfiguration().getDmaapProducerConfiguration();
             if (!producerConfiguration.getActive()) {
-                LOG.info(
-                    "[Microservice DMAAP] producer is disabled [re-enable in configuration->isActive],message not sent.");
+                LOG.info("[Microservice DMAAP] producer is disabled [re-enable in configuration->isActive],message not sent.");
                 dmaapHealth.report(false);
                 return IStatus.getServiceDisabled();
             }
             if (publisher == null) {
                 IStatus initStatus = init();
                 if (initStatus.getResultStatus() != ResultStatusEnum.SUCCESS) {
-
                     return initStatus;
                 }
             }
@@ -73,23 +68,17 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
             String jsonInString = mapper.writeValueAsString(message);
             if (publisher != null) {
                 LOG.info("before send message . response {}", jsonInString);
-
-                LOG.invoke("Dmaap Producer", "DmaapProducer-pushMessage", DmaapProducer.class.getName(),
-                    message.toString());
-
+                LOG.invoke("Dmaap Producer", "DmaapProducer-pushMessage", DmaapProducer.class.getName(), message.toString());
                 int pendingMsg = publisher.send(jsonInString);
                 LOG.info("sent message . response {}", pendingMsg);
-                LOG.invokeReturn(producerConfiguration.getConsumerId(), "Dmaap Producer",
-                    StatusCode.COMPLETE.getStatusCode(), "DmaapProducer-pushMessage", message.toString(), pendingMsg);
-
+                LOG.invokeReturn(producerConfiguration.getConsumerId(), "Dmaap Producer", StatusCode.COMPLETE.getStatusCode(),
+                    "DmaapProducer-pushMessage", message.toString(), pendingMsg);
             }
-
             dmaapHealth.report(true);
         } catch (Exception e) {
             LOG.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, "Failed to send message . Exception {}", e.getMessage());
             return IStatus.getFailStatus();
         }
-
         return IStatus.getSuccessStatus();
     }
 
@@ -97,8 +86,7 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
     @Override
     public IStatus init() {
         LOG.debug("MessageQueueHandlerProducer:: Start initializing");
-        DmaapProducerConfiguration configuration = configurationManager.getConfiguration()
-            .getDmaapProducerConfiguration();
+        DmaapProducerConfiguration configuration = configurationManager.getConfiguration().getDmaapProducerConfiguration();
         if (configuration.getActive()) {
             try {
                 publisher = dmaapClientFactory.createProducer(configuration);
@@ -107,7 +95,6 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
                     dmaapHealth.report(false);
                     return IStatus.getFailStatus();
                 }
-
             } catch (Exception e) {
                 LOG.error("Failed to connect to topic . Exeption {}", e.getMessage());
                 dmaapHealth.report(false);
@@ -130,9 +117,6 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
             }
         } catch (Exception e) {
             LOG.error("Failed to close  messageQ . Exeption {}", e.getMessage());
-
         }
-
     }
-
 }

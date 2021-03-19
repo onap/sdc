@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -79,117 +78,96 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class GroupServlet extends AbstractValidationsServlet {
 
-    private static final Logger log = Logger.getLogger(GroupServlet.class);
     public static final String START_HANDLE_REQUEST = "Start handle request of {}";
+    private static final Logger log = Logger.getLogger(GroupServlet.class);
     private final GroupBusinessLogic groupBL;
 
     @Inject
-    public GroupServlet(UserBusinessLogic userBusinessLogic, GroupBusinessLogic groupBL,
-            ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
-            ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
+    public GroupServlet(UserBusinessLogic userBusinessLogic, GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+                        ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.groupBL = groupBL;
     }
 
     @POST
     @Path("/{containerComponentType}/{componentId}/groups/{groupType}")
-    @Operation(description = "Create group ", method = "POST",
-            summary = "Creates new group in component and returns it", responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))),
-            @ApiResponse(responseCode = "201", description = "Group created"), @ApiResponse(responseCode = "400",
-            description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Component not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Error")})
+    @Operation(description = "Create group ", method = "POST", summary = "Creates new group in component and returns it", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))),
+        @ApiResponse(responseCode = "201", description = "Group created"),
+        @ApiResponse(responseCode = "400", description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Component not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createGroup(@PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupType") final String type,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                @PathParam("componentId") final String componentId, @PathParam("groupType") final String type,
+                                @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(post) Start handle request of {}", url);
-
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        GroupDefinition groupDefinition = groupBL
-                .createGroup(componentId, componentTypeEnum, type, userId);
-
-        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
-                groupDefinition);
+        GroupDefinition groupDefinition = groupBL.createGroup(componentId, componentTypeEnum, type, userId);
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), groupDefinition);
     }
 
     @GET
     @Path("/{containerComponentType}/{componentId}/groups/{groupId}")
-    @Operation(description = "Get group artifacts ", method = "GET",
-            summary = "Returns artifacts metadata according to groupId", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-            @ApiResponse(responseCode = "200", description = "group found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Group not found")})
+    @Operation(description = "Get group artifacts ", method = "GET", summary = "Returns artifacts metadata according to groupId", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "200", description = "group found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Group not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getGroupById(@PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                 @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
+                                 @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
-
         try {
-
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            Either<GroupDefinitionInfo, ResponseFormat> actionResponse =
-                    groupBL.getGroupWithArtifactsById(componentTypeEnum, componentId, groupId, userId, false);
-
+            Either<GroupDefinitionInfo, ResponseFormat> actionResponse = groupBL
+                .getGroupWithArtifactsById(componentTypeEnum, componentId, groupId, userId, false);
             if (actionResponse.isRight()) {
                 log.debug("failed to get all non abstract {}", containerComponentType);
                 return buildErrorResponse(actionResponse.right().value());
             }
-
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                    actionResponse.left().value());
-
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getGroupArtifactById");
             log.debug("getGroupArtifactById unexpected exception", e);
             throw e;
         }
-
     }
 
     @DELETE
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}")
     @Operation(description = "Delete Group", method = "DELETE", summary = "Returns deleted group id", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "201", description = "ResourceInstance deleted"),
-            @ApiResponse(responseCode = "400",
-                    description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Component not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Error")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "ResourceInstance deleted"),
+        @ApiResponse(responseCode = "400", description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Component not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteGroup(@PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupId,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupId,
+                                @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST, url);
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        GroupDefinition groupDefinition = groupBL
-                .deleteGroup(componentId, componentTypeEnum, groupId, userId);
-
+        GroupDefinition groupDefinition = groupBL.deleteGroup(componentId, componentTypeEnum, groupId, userId);
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), groupDefinition.getUniqueId());
     }
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/groups/{groupId}")
     @Operation(description = "Update Group metadata", method = "PUT", summary = "Returns updated Group", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "Group updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "component / group Not found")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Group updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "component / group Not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroup(@PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Parameter(description = "GroupDefinition", required = true) GroupDefinition groupData,
-            @Context final HttpServletRequest request) {
+                                @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
+                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                @Parameter(description = "GroupDefinition", required = true) GroupDefinition groupData,
+                                @Context final HttpServletRequest request) {
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         GroupDefinition updatedGroup = groupBL.updateGroup(componentId, componentTypeEnum, groupId, userId, groupData);
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), updatedGroup);
@@ -199,25 +177,21 @@ public class GroupServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/metadata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Group Metadata", method = "PUT", summary = "Returns updated group definition",
-            responses = {@ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))),
-                    @ApiResponse(responseCode = "200", description = "Group Updated"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Update Group Metadata", method = "PUT", summary = "Returns updated group definition", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))),
+        @ApiResponse(responseCode = "200", description = "Group Updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroupMetadata(@PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
-            @Parameter(description = "Service object to be Updated", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
-
+                                        @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
+                                        @Parameter(description = "Service object to be Updated", required = true) String data,
+                                        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
+        throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST, url);
-
         User user = new User();
         user.setUserId(userId);
         log.debug("modifier id is {}", userId);
-
         try {
             Either<GroupDefinition, ResponseFormat> convertResponse = parseToObject(data, () -> GroupDefinition.class);
             if (convertResponse.isRight()) {
@@ -225,26 +199,21 @@ public class GroupServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(convertResponse.right().value());
             }
             GroupDefinition updatedGroup = convertResponse.left().value();
-
             // Update GroupDefinition
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             Either<GroupDefinition, ResponseFormat> actionResponse = groupBL
-                    .validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true ,true);
-
+                .validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true, true);
             if (actionResponse.isRight()) {
                 log.debug("failed to update GroupDefinition");
                 return buildErrorResponse(actionResponse.right().value());
             }
-
             GroupDefinition group = actionResponse.left().value();
             Object result = RepresentationUtils.toRepresentation(group);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
-
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Group Metadata");
             log.debug("update group metadata failed with exception", e);
             throw e;
         }
     }
-
 }

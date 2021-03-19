@@ -23,6 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NodeFilter {
+
     private Object tosca_id;
     private List<Map<String, List<Object>>> properties;
     private List<Map<String, CapabilityFilter>> capabilities;

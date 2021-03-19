@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,31 +17,28 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.capability;
 
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 
-import java.util.List;
-import java.util.Map;
-
 public interface CapabilityResolver {
 
     /**
-     *
-     * @param container the instance container
+     * @param container            the instance container
      * @param prevInstanceOrigNode the prev instance's original node type
-     * @param cmptInstanceId the current instance id
-     * @param prevCapabilities list of previous capabilities for which to find their corresponding new capabilities
+     * @param cmptInstanceId       the current instance id
+     * @param prevCapabilities     list of previous capabilities for which to find their corresponding new capabilities
      * @return a mapping between the prev capability to its corresponding new capability (if exists)
      */
-    Map<CapabilityDefinition, CapabilityDefinition> resolvePrevCapToNewCapability(Component container, Component prevInstanceOrigNode, String cmptInstanceId, List<CapabilityDefinition> prevCapabilities);
+    Map<CapabilityDefinition, CapabilityDefinition> resolvePrevCapToNewCapability(Component container, Component prevInstanceOrigNode,
+                                                                                  String cmptInstanceId, List<CapabilityDefinition> prevCapabilities);
 
     /**
-     *
-     * @param oldInstance the old instance of which its capabilities are to be mapped as the key
+     * @param oldInstance  the old instance of which its capabilities are to be mapped as the key
      * @param currInstance the curr instance of which its capabilities are to be mapped as the value
      * @return a mapping between the prev capability to its corresponding new capability (if exists)
      */

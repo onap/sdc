@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.group;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.FIRST_COMMAND;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.sdc.be.components.merge.ComponentsGlobalMergeCommand;
 import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -30,16 +38,6 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.core.annotation.Order;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isEmpty;
-import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.FIRST_COMMAND;
 
 @org.springframework.stereotype.Component
 @Order(FIRST_COMMAND)//must run before policies merge command
@@ -71,15 +69,11 @@ public class ComponentGroupMergeCommand implements VspComponentsMergeCommand, Co
         }
         updateGroupsMembers(prevUserDefinedGroups, prevComponent, currentComponent);
         return associateGroupsToComponent(currentComponent, prevUserDefinedGroups);
-
     }
 
     private List<GroupDefinition> getAllPreviouslyUserDefinedGroups(Component prevComponent, Component currCmpt) {
-        return prevComponent.getGroups()
-                .stream()
-                .filter(GroupDefinition::isUserDefined)
-                .filter(group -> !currCmpt.containsGroupWithInvariantName(group.getInvariantName()))
-                .collect(toList());
+        return prevComponent.getGroups().stream().filter(GroupDefinition::isUserDefined)
+            .filter(group -> !currCmpt.containsGroupWithInvariantName(group.getInvariantName())).collect(toList());
     }
 
     private void updateGroupsMembers(List<GroupDefinition> prevUserDefinedGroups, Component prevComponent, Component currentComponent) {
@@ -96,26 +90,16 @@ public class ComponentGroupMergeCommand implements VspComponentsMergeCommand, Co
         return findNewInstancesByPrevInstancesNames(prevComponent, currentComponent, prevGroupMembers);
     }
 
-    private Map<String, String> findNewInstancesByPrevInstancesNames(Component prevComponent, Component currentComponent, Map<String, String> prevGroupMembers) {
-        return prevGroupMembers.values()
-                .stream()
-                .map(prevComponent::getComponentInstanceById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(prevInstance -> currentComponent.getComponentInstanceByName(prevInstance.getName()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
+    private Map<String, String> findNewInstancesByPrevInstancesNames(Component prevComponent, Component currentComponent,
+                                                                     Map<String, String> prevGroupMembers) {
+        return prevGroupMembers.values().stream().map(prevComponent::getComponentInstanceById).filter(Optional::isPresent).map(Optional::get)
+            .map(prevInstance -> currentComponent.getComponentInstanceByName(prevInstance.getName())).filter(Optional::isPresent).map(Optional::get)
+            .collect(toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
     }
 
     private ActionStatus associateGroupsToComponent(Component currentComponent, List<GroupDefinition> prevUserDefinedGroups) {
         currentComponent.addGroups(prevUserDefinedGroups);
         return groupsOperation.addGroups(currentComponent, prevUserDefinedGroups)
-                .either(addedGroups -> ActionStatus.OK,
-                        componentsUtils::convertFromStorageResponse);
+            .either(addedGroups -> ActionStatus.OK, componentsUtils::convertFromStorageResponse);
     }
-
-
-
-
 }

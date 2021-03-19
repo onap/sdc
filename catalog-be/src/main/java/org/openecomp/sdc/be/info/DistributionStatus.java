@@ -19,30 +19,26 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.info;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 @Getter
 @AllArgsConstructor
 public enum DistributionStatus {
     DEPLOYED("Deployed", "DEPLOYED");
-
+    private static final Logger log = Logger.getLogger(DistributionStatus.class);
     private String name;
     private String auditingStatus;
 
-    private static final Logger log = Logger.getLogger(DistributionStatus.class);
-
     public static DistributionStatus getStatusByAuditingStatusName(String auditingStatus) {
-        Optional<DistributionStatus> distributionStatus = Arrays.stream(values())
-            .filter(value -> value.getAuditingStatus().equals(auditingStatus)).findAny();
-        if (!distributionStatus.isPresent()){
+        Optional<DistributionStatus> distributionStatus = Arrays.stream(values()).filter(value -> value.getAuditingStatus().equals(auditingStatus))
+            .findAny();
+        if (!distributionStatus.isPresent()) {
             log.debug("No DistributionStatus is mapped to name {}", auditingStatus);
         }
         // it should be replaced by some exception handling. Keeping it only for the purpose of backward compatibility

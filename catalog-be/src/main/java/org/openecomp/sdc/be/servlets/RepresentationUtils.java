@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -31,6 +30,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -44,23 +50,20 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class RepresentationUtils {
 
     private static final Logger log = Logger.getLogger(RepresentationUtils.class);
+    private static final String EMPTY = "empty";
+    private static final String REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER = "removeIsEmptyFromCollections";
+    private static final ImmutableMap<Class<?>, Class<?>> IS_EMPTY_FILTER_MIXIN = ImmutableMap.<Class<?>, Class<?>>builder()
+        .put(Collection.class, IsEmptyFilterMixIn.class).put(List.class, IsEmptyFilterMixIn.class).put(Set.class, IsEmptyFilterMixIn.class)
+        .put(HashMap.class, IsEmptyFilterMixIn.class).put(ArrayList.class, IsEmptyFilterMixIn.class).put(HashSet.class, IsEmptyFilterMixIn.class)
+        .put(InterfaceDefinition.class, IsEmptyFilterMixIn.class).put(Resource.class, IsEmptyFilterMixIn.class)
+        .put(ToscaDataDefinition.class, IsEmptyFilterMixIn.class).build();
 
     public static ArtifactDefinition convertJsonToArtifactDefinitionForUpdate(String content, Class<ArtifactDefinition> clazz) {
-
         JsonObject jsonElement = new JsonObject();
         ArtifactDefinition resourceInfo = null;
-
         try {
             Gson gson = new Gson();
             jsonElement = gson.fromJson(content, jsonElement.getClass());
@@ -78,21 +81,13 @@ public class RepresentationUtils {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
             resourceInfo = mapper.readValue(json, clazz);
             resourceInfo.setPayloadData(payload);
-
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
             log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
         }
-
         return resourceInfo;
-    }
-
-
-    public static class ResourceRep {
-
     }
 
     /**
@@ -103,7 +98,6 @@ public class RepresentationUtils {
      * @throws IOException
      */
     public static <T> Object toRepresentation(T elementToRepresent) throws IOException {
-
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -121,19 +115,15 @@ public class RepresentationUtils {
         } catch (Exception e) {
             log.error("Error when parsing JSON of object of type {}", clazz.getSimpleName(), e);
         } // return null in case of exception
-
         return object;
     }
 
     public static ArtifactDefinition convertJsonToArtifactDefinition(String content, Class<ArtifactDefinition> clazz, boolean validateTimeout) {
-
         JsonObject jsonElement = new JsonObject();
         ArtifactDefinition resourceInfo = null;
-
         if (StringUtils.isEmpty(content)) {
             throw new ByActionStatusComponentException(ActionStatus.MISSING_BODY);
         }
-
         try {
             Gson gson = new Gson();
             jsonElement = gson.fromJson(content, jsonElement.getClass());
@@ -146,7 +136,6 @@ public class RepresentationUtils {
                 elementsToValidate.put(Constants.ARTIFACT_TIMEOUT, jsonElement.get(Constants.ARTIFACT_TIMEOUT));
             }
             validateMandatoryProperties(elementsToValidate);
-
             if (artifactGroupValue != null && !artifactGroupValue.isJsonNull()) {
                 String groupValueUpper = artifactGroupValue.getAsString().toUpperCase();
                 if (!ArtifactGroupTypeEnum.getAllTypes().contains(groupValueUpper)) {
@@ -172,20 +161,16 @@ public class RepresentationUtils {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
             resourceInfo = mapper.readValue(json, clazz);
             resourceInfo.setPayloadData(payload);
-
         } catch (ComponentException ce) {
             BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
             log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), ce);
             throw ce;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
             log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
         }
-
         return resourceInfo;
     }
 
@@ -205,26 +190,17 @@ public class RepresentationUtils {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.setMixIns(IS_EMPTY_FILTER_MIXIN);
-        return mapper.writer(new SimpleFilterProvider().addFilter(REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER,
-                SerializeExceptFilter.serializeAllExcept(EMPTY))).writeValueAsString(elementToRepresent);
+        return mapper
+            .writer(new SimpleFilterProvider().addFilter(REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER, SerializeExceptFilter.serializeAllExcept(EMPTY)))
+            .writeValueAsString(elementToRepresent);
+    }
+
+    public static class ResourceRep {
+
     }
 
     @JsonFilter(REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER)
-    private static class IsEmptyFilterMixIn {}
+    private static class IsEmptyFilterMixIn {
 
-    private static final String EMPTY = "empty";
-    private static final String REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER = "removeIsEmptyFromCollections";
-    private static final ImmutableMap<Class<?>,Class<?>> IS_EMPTY_FILTER_MIXIN =
-            ImmutableMap.<Class<?>,Class<?>>builder()
-                    .put(Collection.class,IsEmptyFilterMixIn.class)
-                    .put(List.class,IsEmptyFilterMixIn.class)
-                    .put(Set.class,IsEmptyFilterMixIn.class)
-                    .put(HashMap.class,IsEmptyFilterMixIn.class)
-                    .put(ArrayList.class,IsEmptyFilterMixIn.class)
-                    .put(HashSet.class,IsEmptyFilterMixIn.class)
-                    .put(InterfaceDefinition.class,IsEmptyFilterMixIn.class)
-                    .put(Resource.class,IsEmptyFilterMixIn.class)
-                    .put(ToscaDataDefinition.class,IsEmptyFilterMixIn.class)
-                    .build();
-
+    }
 }

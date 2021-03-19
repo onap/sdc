@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.components.utils;
 
 import com.google.gson.Gson;

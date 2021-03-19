@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.instance;
 
 import lombok.AllArgsConstructor;
@@ -32,5 +31,4 @@ public class RelationMergeInfo {
     private final String capReqName;
     private final String capOwnerName;
     private final RequirementCapabilityRelDef relDef;
-
 }

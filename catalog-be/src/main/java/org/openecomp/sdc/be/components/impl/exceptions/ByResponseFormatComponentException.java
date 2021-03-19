@@ -39,7 +39,7 @@ public class ByResponseFormatComponentException extends ComponentException {
         return params.clone();
     }
 
-    public ActionStatus getActionStatus(){
+    public ActionStatus getActionStatus() {
         return actionStatus;
     }
 
@@ -50,9 +50,6 @@ public class ByResponseFormatComponentException extends ComponentException {
 
     @Override
     public String toString() {
-        return "ComponentException{" +
-            "responseFormat=" + responseFormat +
-            '}';
+        return "ComponentException{" + "responseFormat=" + responseFormat + '}';
     }
-
 }

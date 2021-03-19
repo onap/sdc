@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.policy;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.sdc.be.components.merge.ComponentsGlobalMergeCommand;
 import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -33,18 +43,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.core.annotation.Order;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isEmpty;
-import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
 
 @org.springframework.stereotype.Component
 @Order(ANY_ORDER_COMMAND)
@@ -70,9 +68,11 @@ public class PoliciesMergeCommand implements ComponentsGlobalMergeCommand, VspCo
     }
 
     private ActionStatus associatePoliciesToComponent(Component currentComponent, Map<String, PolicyDefinition> policiesToMerge) {
-        log.debug("#associatePoliciesToComponent - associating {} policies into component {}", policiesToMerge.size(), currentComponent.getUniqueId());
+        log.debug("#associatePoliciesToComponent - associating {} policies into component {}", policiesToMerge.size(),
+            currentComponent.getUniqueId());
         currentComponent.setPolicies(policiesToMerge);
-        StorageOperationStatus associateResult = toscaOperationFacade.associatePoliciesToComponent(currentComponent.getUniqueId(), new ArrayList<>(policiesToMerge.values()));
+        StorageOperationStatus associateResult = toscaOperationFacade
+            .associatePoliciesToComponent(currentComponent.getUniqueId(), new ArrayList<>(policiesToMerge.values()));
         return componentsUtils.convertFromStorageResponse(associateResult);
     }
 
@@ -92,7 +92,7 @@ public class PoliciesMergeCommand implements ComponentsGlobalMergeCommand, VspCo
         if (isEmpty(policy.getTargets())) {
             return;
         }
-        Map<PolicyTargetType, List<String>> targets =  buildPolicyTargetsMap(policy, prevComponent, currComponent);
+        Map<PolicyTargetType, List<String>> targets = buildPolicyTargetsMap(policy, prevComponent, currComponent);
         policy.setTargets(targets);
     }
 
@@ -121,34 +121,24 @@ public class PoliciesMergeCommand implements ComponentsGlobalMergeCommand, VspCo
         return resolveGroupTargetsByInvariantName(prevComponent, currComponent, prevGroupTargets);
     }
 
-    private List<String> resolveInstanceTargetsByInstanceName(Component prevComponent, Component currComponent, List<String> prevCompInstanceTargets) {
-        return prevCompInstanceTargets.stream()
-                .map(prevInstId -> resolveNewInstId(prevComponent, currComponent, prevInstId))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
+    private List<String> resolveInstanceTargetsByInstanceName(Component prevComponent, Component currComponent,
+                                                              List<String> prevCompInstanceTargets) {
+        return prevCompInstanceTargets.stream().map(prevInstId -> resolveNewInstId(prevComponent, currComponent, prevInstId))
+            .filter(Optional::isPresent).map(Optional::get).collect(toList());
     }
 
     private List<String> resolveGroupTargetsByInvariantName(Component prevComponent, Component currComponent, List<String> prevGroupTargets) {
-        return prevGroupTargets.stream()
-                .map(prevGroupId -> resolveNewGroupId(prevComponent, currComponent, prevGroupId))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
+        return prevGroupTargets.stream().map(prevGroupId -> resolveNewGroupId(prevComponent, currComponent, prevGroupId)).filter(Optional::isPresent)
+            .map(Optional::get).collect(toList());
     }
 
     private Optional<String> resolveNewInstId(Component prevCmpt, Component newCmpt, String prevInstanceId) {
-        return prevCmpt.getComponentInstanceById(prevInstanceId)
-                .map(ComponentInstance::getName)
-                .flatMap(newCmpt::getComponentInstanceByName)
-                .map(ComponentInstance::getUniqueId);
+        return prevCmpt.getComponentInstanceById(prevInstanceId).map(ComponentInstance::getName).flatMap(newCmpt::getComponentInstanceByName)
+            .map(ComponentInstance::getUniqueId);
     }
 
     private Optional<String> resolveNewGroupId(Component prevCmpt, Component newCmpt, String prevGroupId) {
-        return prevCmpt.getGroupById(prevGroupId)
-                .map(GroupDefinition::getInvariantName)
-                .flatMap(newCmpt::getGroupByInvariantName)
-                .map(GroupDefinition::getUniqueId);
+        return prevCmpt.getGroupById(prevGroupId).map(GroupDefinition::getInvariantName).flatMap(newCmpt::getGroupByInvariantName)
+            .map(GroupDefinition::getUniqueId);
     }
-
 }

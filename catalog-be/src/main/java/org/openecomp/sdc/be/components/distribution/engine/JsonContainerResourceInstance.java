@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import java.util.List;
 import org.openecomp.sdc.be.model.ComponentInstance;
 
-import java.util.List;
-
 public class JsonContainerResourceInstance {
+
     private String resourceInstanceName;
     private String resourceName;
     private String resourceVersion;
@@ -46,14 +45,15 @@ public class JsonContainerResourceInstance {
         this.artifacts = artifacts;
         this.resourceCustomizationUUID = resourceInstance.getCustomizationUUID();
     }
-    
+
     public JsonContainerResourceInstance(ComponentInstance resourceInstance, List<ArtifactInfoImpl> artifacts) {
         super();
         this.resourceInstanceName = resourceInstance.getName();
         this.resourceName = resourceInstance.getComponentName();
         this.resourceVersion = resourceInstance.getComponentVersion();
-        if(resourceInstance.getOriginType() != null)
+        if (resourceInstance.getOriginType() != null) {
             this.resoucreType = resourceInstance.getOriginType().getValue();
+        }
         this.resourceUUID = resourceInstance.getComponentUid();
         this.artifacts = artifacts;
         this.resourceCustomizationUUID = resourceInstance.getCustomizationUUID();
@@ -141,8 +141,9 @@ public class JsonContainerResourceInstance {
 
     @Override
     public String toString() {
-        return "JsonContainerResourceInstance [resourceInstanceName=" + resourceInstanceName + ", resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resoucreType=" + resoucreType + ", resourceUUID=" + resourceUUID
-                + ", resourceInvariantUUID=" + resourceInvariantUUID + ", resourceCustomizationUUID=" + resourceCustomizationUUID + ", category=" + category + ", subcategory=" + subcategory + ", artifacts=" + artifacts + "]";
+        return "JsonContainerResourceInstance [resourceInstanceName=" + resourceInstanceName + ", resourceName=" + resourceName + ", resourceVersion="
+            + resourceVersion + ", resoucreType=" + resoucreType + ", resourceUUID=" + resourceUUID + ", resourceInvariantUUID="
+            + resourceInvariantUUID + ", resourceCustomizationUUID=" + resourceCustomizationUUID + ", category=" + category + ", subcategory="
+            + subcategory + ", artifacts=" + artifacts + "]";
     }
-
 }

@@ -17,10 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.aaf;
 
-
+import javax.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -31,19 +30,15 @@ import org.openecomp.sdc.be.servlets.BeGenericServlet;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
-import javax.servlet.http.HttpServletRequest;
-
 // aop id defined via application-context.xml. the annotations are only for test purposes
 @Aspect
 public class RoleAuthorizationHandler {
 
     private static final Logger log = Logger.getLogger(RoleAuthorizationHandler.class);
-
     private final ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
 
     @Before("@annotation(permissions)")
     public void authorizeRole(JoinPoint joinPoint, PermissionAllowed permissions) {
-
         if (isPermissionAuthenticationNeeded()) {
             String methodName = joinPoint.getSignature().toShortString();
             HttpServletRequest request = ((BeGenericServlet) joinPoint.getThis()).getServletRequest();
@@ -58,13 +53,12 @@ public class RoleAuthorizationHandler {
             logAuth(methodName, perms, false, false);
             throw new ByActionStatusComponentException(ActionStatus.AUTH_FAILED);
         }
-
     }
 
     private void logAuth(String methodName, String[] perms, boolean beforeAuth, Boolean success) {
-        if (beforeAuth)
+        if (beforeAuth) {
             log.trace("#{} - authorizing before invoking endpoint {}", methodName);
-        else {
+        } else {
             String status = success ? "SUCCESS" : "FAILED";
             log.trace("#{} - authorizing before invoking endpoint {}, Status: {}", methodName, status);
         }
@@ -77,6 +71,8 @@ public class RoleAuthorizationHandler {
     private boolean isPermissionAuthenticationNeeded() {
         if (configurationManager.getConfiguration().getAafAuthNeeded() && ThreadLocalsHolder.isExternalRequest()) {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 }

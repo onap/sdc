@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
+
+import static java.util.stream.Collectors.toMap;
+import static org.openecomp.sdc.be.components.validation.PolicyUtils.getExcludedPolicyTypesByComponent;
+import static org.openecomp.sdc.be.components.validation.PolicyUtils.getNextPolicyCounter;
+import static org.openecomp.sdc.be.components.validation.PolicyUtils.validatePolicyFields;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -62,20 +74,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toMap;
-import static org.openecomp.sdc.be.components.validation.PolicyUtils.getExcludedPolicyTypesByComponent;
-import static org.openecomp.sdc.be.components.validation.PolicyUtils.getNextPolicyCounter;
-import static org.openecomp.sdc.be.components.validation.PolicyUtils.validatePolicyFields;
-
 /**
  * Provides specified business logic to create, retrieve, update, delete a policy
  */
@@ -85,20 +83,15 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     private static final String FAILED_TO_VALIDATE_COMPONENT = "#{} - failed to validate the component {} before policy processing. ";
     private static final String DECLARE_PROPERTIES_TO_POLICIES = "declare properties to policies";
     private static final Logger log = Logger.getLogger(PolicyBusinessLogic.class);
-    private static final LoggerSupportability loggerSupportability= LoggerSupportability.getLogger(PolicyBusinessLogic.class.getName());
-
+    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(PolicyBusinessLogic.class.getName());
     private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
 
     @Autowired
-    public PolicyBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public PolicyBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
+                               IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+                               InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
     }
 
     @Autowired
@@ -116,25 +109,24 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
      * @param shouldLock     the flag defining if the component should be locked
      * @return a policy or an error in a response format
      */
-
-    public PolicyDefinition createPolicy(ComponentTypeEnum componentType, String componentId, String policyTypeName, String userId, boolean shouldLock) {
-
+    public PolicyDefinition createPolicy(ComponentTypeEnum componentType, String componentId, String policyTypeName, String userId,
+                                         boolean shouldLock) {
         log.trace("#createPolicy - starting to create policy of the type {} on the component {}. ", policyTypeName, componentId);
         Component component = null;
         boolean failed = false;
         try {
             component = validateAndLockComponentAndUserBeforeWriteOperation(componentType, componentId, userId, shouldLock);
             return createPolicy(policyTypeName, component);
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             failed = true;
             throw e;
-        }finally {
+        } finally {
             unlockComponent(shouldLock, failed, component);
         }
     }
 
     public Map<String, PolicyDefinition> createPoliciesFromParsedCsar(Component component,
-            final Map<String, PolicyDefinition> incomingPolicyDefinitions) {
+                                                                      final Map<String, PolicyDefinition> incomingPolicyDefinitions) {
         if (MapUtils.isEmpty(incomingPolicyDefinitions)) {
             return Collections.emptyMap();
         }
@@ -143,8 +135,9 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             PolicyDefinition incomingPolicyDefinition = policyEntry.getValue();
             String policyName = incomingPolicyDefinition.getName();
             log.trace("Going to create policy {}", incomingPolicyDefinition);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_GROUP_POLICY,component.getComponentMetadataForSupportLog(),
-                    StatusCode.STARTED,"Start to create policy: {} for component {}", policyName, component.getName());
+            loggerSupportability
+                .log(LoggerSupportabilityActions.CREATE_GROUP_POLICY, component.getComponentMetadataForSupportLog(), StatusCode.STARTED,
+                    "Start to create policy: {} for component {}", policyName, component.getName());
             String policyType = incomingPolicyDefinition.getType();
             if (StringUtils.isEmpty(policyType)) {
                 log.debug("Policy type '{}' for policy '{}' not found.", policyType, policyName);
@@ -164,26 +157,25 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             List<PropertyDataDefinition> properties = incomingPolicyDefinition.getProperties();
             createdPolicyDefinition = setUpdatePolicyProperties(component, createdPolicyDefinition, properties);
             createdPolicies.put(policyName, createdPolicyDefinition);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_POLICIES,component.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,"policy {} has been created ", policyName);
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_POLICIES, component.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                "policy {} has been created ", policyName);
         }
         return createdPolicies;
     }
 
-    private PolicyDefinition setUpdatePolicyProperties(Component component, PolicyDefinition policyDefinition, List<PropertyDataDefinition> properties) {
+    private PolicyDefinition setUpdatePolicyProperties(Component component, PolicyDefinition policyDefinition,
+                                                       List<PropertyDataDefinition> properties) {
         if (CollectionUtils.isNotEmpty(properties)) {
             PropertyDataDefinition[] propertiesArray = properties.toArray(new PropertyDataDefinition[properties.size()]);
-            List<PropertyDataDefinition> updatedPropertiesList = setComponentValidateUpdatePolicyProperties(
-                    policyDefinition.getUniqueId(),
-                    propertiesArray,
-                    component
-            );
+            List<PropertyDataDefinition> updatedPropertiesList = setComponentValidateUpdatePolicyProperties(policyDefinition.getUniqueId(),
+                propertiesArray, component);
             policyDefinition.setProperties(updatedPropertiesList);
         }
         return policyDefinition;
     }
 
     private PolicyDefinition setUpdatePolicyTargets(Component component, PolicyDefinition policyDefinition,
-            Map<PolicyTargetType, List<String>> targets) {
+                                                    Map<PolicyTargetType, List<String>> targets) {
         if (MapUtils.isEmpty(targets)) {
             return policyDefinition;
         }
@@ -196,19 +188,13 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         for (String targetName : targetsToUpdate) {
             Optional<ComponentInstance> componentInstance = component.getComponentInstanceByName(targetName);
             String componentUniqueId = componentInstance
-                                               .orElseThrow(
-                                                       () -> new ByActionStatusComponentException(
-                                                               ActionStatus.COMPONENT_INSTANCE_NOT_FOUND
-                                                       )
-                                               )
-                                               .getUniqueId();
+                .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND)).getUniqueId();
             targetsUniqueIds.add(componentUniqueId);
         }
         EnumMap<PolicyTargetType, List<String>> updatedTargets = new EnumMap<>(PolicyTargetType.class);
         updatedTargets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsUniqueIds);
         policyDefinition.setTargets(updatedTargets);
-        policyDefinition = validateAndUpdatePolicyTargets(component, policyDefinition.getUniqueId(),
-                policyDefinition.getTargets());
+        policyDefinition = validateAndUpdatePolicyTargets(component, policyDefinition.getUniqueId(), policyDefinition.getTargets());
         return policyDefinition;
     }
 
@@ -236,7 +222,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }
         return result;
     }*/
-
     public Either<List<PolicyDefinition>, ResponseFormat> getPoliciesList(ComponentTypeEnum componentType, String componentId, String userId) {
         Either<List<PolicyDefinition>, ResponseFormat> result;
         log.trace("#getPolicies - starting to retrieve policies of component {}. ", componentId);
@@ -249,8 +234,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }
         return result;
     }
-
-
 
     /**
      * Retrieves the policy of the component by UniqueId
@@ -266,7 +249,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         Component component = validateContainerComponentAndUserBeforeReadOperation(componentType, componentId, userId);
         return getPolicyById(component, policyId);
     }
-
     /*public Either<PolicyDefinition, ResponseFormat> getPolicy(ComponentTypeEnum componentType, String componentId, String policyId, String userId) {
         Either<PolicyDefinition, ResponseFormat> result;
         log.trace("#getPolicy - starting to retrieve the policy {} of the component {}. ", policyId, componentId);
@@ -291,7 +273,8 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
      * @param shouldLock    the flag defining if the component should be locked
      * @return a policy or an error in a response format
      */
-    public PolicyDefinition updatePolicy(ComponentTypeEnum componentType, String componentId, PolicyDefinition policy, String userId, boolean shouldLock) {
+    public PolicyDefinition updatePolicy(ComponentTypeEnum componentType, String componentId, PolicyDefinition policy, String userId,
+                                         boolean shouldLock) {
         Component component = null;
         boolean failed = false;
         log.trace("#updatePolicy - starting to update the policy {} on the component {}. ", policy.getUniqueId(), componentId);
@@ -300,15 +283,14 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             return validateAndUpdatePolicy(component, policy);
         } catch (ComponentException e) {
             failed = true;
-            log.error("#updatePolicy - the exception occurred upon update of a policy of the type {} for the component {}: ", policy.getUniqueId(), componentId, e);
+            log.error("#updatePolicy - the exception occurred upon update of a policy of the type {} for the component {}: ", policy.getUniqueId(),
+                componentId, e);
             throw e;
         } finally {
             //TODO Andrey result = boolean
             unlockComponent(shouldLock, failed, component);
         }
     }
-
-
     /*public Either<PolicyDefinition, ResponseFormat> updatePolicy(ComponentTypeEnum componentType, String componentId, PolicyDefinition policy, String userId, boolean shouldLock) {
         Either<PolicyDefinition, ResponseFormat> result = null;
         log.trace("#updatePolicy - starting to update the policy {} on the component {}. ", policy.getUniqueId(), componentId);
@@ -344,19 +326,19 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         PolicyDefinition result = null;
         log.trace("#deletePolicy - starting to update the policy {} on the component {}. ", policyId, componentId);
         Component component = null;
-        boolean failed= false;
+        boolean failed = false;
         try {
             component = validateAndLockComponentAndUserBeforeWriteOperation(componentType, componentId, userId, shouldLock);
             return deletePolicy(component, policyId);
         } catch (ComponentException e) {
             failed = true;
-            log.error("#deletePolicy - the exception occurred upon update of a policy of the type {} for the component {}: ", policyId, componentId, e);
+            log.error("#deletePolicy - the exception occurred upon update of a policy of the type {} for the component {}: ", policyId, componentId,
+                e);
             throw e;
         } finally {
             unlockComponent(shouldLock, failed, component);
         }
     }
-
 
     /*public Either<PolicyDefinition, ResponseFormat> deletePolicy(ComponentTypeEnum componentType, String componentId, String policyId, String userId, boolean shouldLock) {
         Either<PolicyDefinition, ResponseFormat> result = null;
@@ -409,39 +391,35 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             unlockComponent(shouldLock, result, component);
         }
     }*/
-
-    public Either<PolicyDefinition, ResponseFormat> undeclarePolicy(ComponentTypeEnum componentType, String componentId, String policyId, String userId, boolean shouldLock) {
+    public Either<PolicyDefinition, ResponseFormat> undeclarePolicy(ComponentTypeEnum componentType, String componentId, String policyId,
+                                                                    String userId, boolean shouldLock) {
         Either<PolicyDefinition, ResponseFormat> result = null;
         log.trace("#undeclarePolicy - starting to undeclare policy {} on component {}. ", policyId, componentId);
         Wrapper<Component> component = new Wrapper<>();
         try {
             validateAndLockComponentAndUserBeforeWriteOperation(componentType, componentId, userId, shouldLock);
-
             ComponentParametersView componentParametersView = new ComponentParametersView();
             componentParametersView.disableAll();
             componentParametersView.setIgnoreComponentInstances(false);
             componentParametersView.setIgnoreComponentInstancesProperties(false);
             componentParametersView.setIgnorePolicies(false);
-
-            Either<Component, StorageOperationStatus> componentWithFilters =
-                    toscaOperationFacade.getToscaElement(componentId, componentParametersView);
+            Either<Component, StorageOperationStatus> componentWithFilters = toscaOperationFacade
+                .getToscaElement(componentId, componentParametersView);
             if (componentWithFilters.isRight()) {
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentWithFilters.right().value())));
+                return Either
+                    .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentWithFilters.right().value())));
             }
-
             Component containerComponent = componentWithFilters.left().value();
-
             Optional<PolicyDefinition> policyCandidate = getPolicyForUndeclaration(policyId, containerComponent);
-            if(policyCandidate.isPresent()) {
+            if (policyCandidate.isPresent()) {
                 result = undeclarePolicy(policyCandidate.get(), containerComponent);
             }
-
             return result;
-    }catch (Exception e) {
+        } catch (Exception e) {
             log.error("#undeclarePolicy - the exception occurred upon update of a policy of type {} for component {}: ", policyId, componentId, e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR, e.getMessage()));
         } finally {
-            if (result == null || result.isRight()){
+            if (result == null || result.isRight()) {
                 unlockComponent(shouldLock, true, component);
             } else {
                 unlockComponent(shouldLock, false, component);
@@ -449,56 +427,45 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-        private Either<PolicyDefinition, ResponseFormat> undeclarePolicy(PolicyDefinition policyDefinition, Component containerComponent) {
-            StorageOperationStatus undeclareStatus = propertyDeclarationOrchestrator
-                    .unDeclarePropertiesAsPolicies(containerComponent, policyDefinition);
-            if(undeclareStatus != StorageOperationStatus.OK){
-                return Either.right(componentsUtils.getResponseFormat(undeclareStatus));
-            } else {
-                return Either.left(policyDefinition);
+    private Either<PolicyDefinition, ResponseFormat> undeclarePolicy(PolicyDefinition policyDefinition, Component containerComponent) {
+        StorageOperationStatus undeclareStatus = propertyDeclarationOrchestrator.unDeclarePropertiesAsPolicies(containerComponent, policyDefinition);
+        if (undeclareStatus != StorageOperationStatus.OK) {
+            return Either.right(componentsUtils.getResponseFormat(undeclareStatus));
+        } else {
+            return Either.left(policyDefinition);
+        }
+    }
+
+    private Optional<PolicyDefinition> getPolicyForUndeclaration(String policyId, Component component) {
+        Map<String, PolicyDefinition> policies = component.getPolicies();
+        if (MapUtils.isNotEmpty(policies) && policies.containsKey(policyId)) {
+            return Optional.of(policies.get(policyId));
+        }
+        Map<String, List<ComponentInstanceProperty>> componentInstancesProperties =
+            MapUtils.isEmpty(component.getComponentInstancesProperties()) ? new HashMap<>() : component.getComponentInstancesProperties();
+        for (Map.Entry<String, List<ComponentInstanceProperty>> instancePropertyEntry : componentInstancesProperties.entrySet()) {
+            Optional<ComponentInstanceProperty> propertyCandidate = getPropertyForDeclaredPolicy(policyId, instancePropertyEntry.getValue());
+            if (propertyCandidate.isPresent()) {
+                return Optional.of(PolicyUtils.getDeclaredPolicyDefinition(instancePropertyEntry.getKey(), propertyCandidate.get()));
             }
         }
+        return Optional.empty();
+    }
 
-
-        private Optional<PolicyDefinition> getPolicyForUndeclaration(String policyId, Component component) {
-            Map<String, PolicyDefinition> policies = component.getPolicies();
-            if(MapUtils.isNotEmpty(policies) && policies.containsKey(policyId)) {
-                return Optional.of(policies.get(policyId));
+    private Optional<ComponentInstanceProperty> getPropertyForDeclaredPolicy(String policyId,
+                                                                             List<ComponentInstanceProperty> componentInstanceProperties) {
+        for (ComponentInstanceProperty property : componentInstanceProperties) {
+            Optional<GetPolicyValueDataDefinition> getPolicyCandidate = property.safeGetGetPolicyValues().stream()
+                .filter(getPolicyValue -> getPolicyValue.getPolicyId().equals(policyId)).findAny();
+            if (getPolicyCandidate.isPresent()) {
+                return Optional.of(property);
             }
-
-            Map<String, List<ComponentInstanceProperty>> componentInstancesProperties =
-                    MapUtils.isEmpty(component.getComponentInstancesProperties()) ? new HashMap<>() : component.getComponentInstancesProperties();
-
-            for(Map.Entry<String, List<ComponentInstanceProperty>> instancePropertyEntry : componentInstancesProperties.entrySet()) {
-                Optional<ComponentInstanceProperty> propertyCandidate = getPropertyForDeclaredPolicy(policyId, instancePropertyEntry.getValue());
-
-                if(propertyCandidate.isPresent()) {
-                    return Optional.of(
-                            PolicyUtils.getDeclaredPolicyDefinition(instancePropertyEntry.getKey(), propertyCandidate.get()));
-                }
-            }
-
-            return Optional.empty();
         }
+        return Optional.empty();
+    }
 
-        private Optional<ComponentInstanceProperty> getPropertyForDeclaredPolicy(String policyId, List<ComponentInstanceProperty> componentInstanceProperties) {
-            for(ComponentInstanceProperty property : componentInstanceProperties) {
-                Optional<GetPolicyValueDataDefinition> getPolicyCandidate = property.safeGetGetPolicyValues().stream()
-                        .filter(getPolicyValue -> getPolicyValue.getPolicyId()
-                                .equals(policyId))
-                        .findAny();
-
-                if(getPolicyCandidate.isPresent()) {
-                    return Optional.of(property);
-                }
-            }
-
-            return Optional.empty();
-        }
-
-
-        public PolicyDefinition updatePolicyTargets(ComponentTypeEnum componentTypeEnum, String componentId, String policyId, Map<PolicyTargetType, List<String>> targets, String userId) {
-
+    public PolicyDefinition updatePolicyTargets(ComponentTypeEnum componentTypeEnum, String componentId, String policyId,
+                                                Map<PolicyTargetType, List<String>> targets, String userId) {
         Either<PolicyDefinition, ResponseFormat> result = null;
         log.debug("updating the policy id {} targets with the components {}. ", policyId, componentId);
         boolean failed = false;
@@ -506,10 +473,10 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             //not right error response
             Component component = validateAndLockComponentAndUserBeforeWriteOperation(componentTypeEnum, componentId, userId, true);
             return validateAndUpdatePolicyTargets(component, policyId, targets);
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             failed = true;
             throw e;
-        }finally {
+        } finally {
             unlockComponentById(failed, componentId);
         }
     }
@@ -528,7 +495,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         return validateTargetExists(parentComponent, targets.entrySet());
     }
 
-
     private Component validateTargetExists(Component parentComponent, Set<Map.Entry<PolicyTargetType, List<String>>> entries) {
         for (Map.Entry<PolicyTargetType, List<String>> entry : entries) {
             checkTargetNotExistOnComponentByType(parentComponent, entry);
@@ -537,7 +503,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     }
 
     private Component checkTargetNotExistOnComponentByType(Component parentComponent, Map.Entry<PolicyTargetType, List<String>> targetEntry) {
-
         for (String id : targetEntry.getValue()) {
             if (checkNotPresenceInComponentByType(parentComponent, id, targetEntry.getKey().getName())) {
                 throw new ByActionStatusComponentException(ActionStatus.POLICY_TARGET_DOES_NOT_EXIST, id);
@@ -560,7 +525,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         return policyDefinition;
     }
 
-
     /**
      * @param componentType the type of the component
      * @param componentId   the id of the component which the policy resides under
@@ -577,7 +541,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             janusGraphDao.commit();
         }
     }
-
     /*public Either<List<PropertyDataDefinition>, ResponseFormat> getPolicyProperties(ComponentTypeEnum componentType, String componentId, String policyId, String userId) {
         log.debug("#getPolicyProperties - fetching policy properties for component {} and policy {}", componentId, policyId);
         try {
@@ -600,7 +563,8 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
      * @param shouldLock    the flag defining if the component should be locked
      * @return a list of policy properties or anerrorin a response format
      */
-    public List<PropertyDataDefinition> updatePolicyProperties(ComponentTypeEnum componentType, String componentId, String policyId, PropertyDataDefinition[] properties, String userId, boolean shouldLock) {
+    public List<PropertyDataDefinition> updatePolicyProperties(ComponentTypeEnum componentType, String componentId, String policyId,
+                                                               PropertyDataDefinition[] properties, String userId, boolean shouldLock) {
         List<PropertyDataDefinition> result;
         Component component = null;
         log.trace("#updatePolicyProperties - starting to update properties of the policy {} on the component {}. ", policyId, componentId);
@@ -618,47 +582,39 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     }
 
     @Override
-    public  Either<List<PolicyDefinition>, ResponseFormat> declareProperties(String userId, String componentId,
-            ComponentTypeEnum componentTypeEnum, ComponentInstInputsMap componentInstInputsMap) {
+    public Either<List<PolicyDefinition>, ResponseFormat> declareProperties(String userId, String componentId, ComponentTypeEnum componentTypeEnum,
+                                                                            ComponentInstInputsMap componentInstInputsMap) {
         return declarePropertiesToPolicies(userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
-
     }
 
     private Either<List<PolicyDefinition>, ResponseFormat> declarePropertiesToPolicies(String userId, String componentId,
-            ComponentTypeEnum componentTypeEnum, ComponentInstInputsMap componentInstInputsMap, boolean shouldLock,
-            boolean inTransaction) {
+                                                                                       ComponentTypeEnum componentTypeEnum,
+                                                                                       ComponentInstInputsMap componentInstInputsMap,
+                                                                                       boolean shouldLock, boolean inTransaction) {
         Either<List<PolicyDefinition>, ResponseFormat> result = null;
         org.openecomp.sdc.be.model.Component component = null;
-
         try {
             validateUserExists(userId);
-
             ComponentParametersView componentParametersView = new ComponentParametersView();
             componentParametersView.disableAll();
             componentParametersView.setIgnoreComponentInstances(false);
             componentParametersView.setIgnoreComponentInstancesProperties(false);
             componentParametersView.setIgnorePolicies(false);
             componentParametersView.setIgnoreUsers(false);
-
             component = validateComponentExists(componentId, componentTypeEnum, componentParametersView);
-
             if (shouldLock) {
                 lockComponent(component, DECLARE_PROPERTIES_TO_POLICIES);
             }
-
             validateCanWorkOnComponent(component, userId);
-
-            Either<List<PolicyDefinition>, StorageOperationStatus> declarePropertiesEither =
-                    propertyDeclarationOrchestrator.declarePropertiesToPolicies(component, componentInstInputsMap);
-
-            if(declarePropertiesEither.isRight()) {
+            Either<List<PolicyDefinition>, StorageOperationStatus> declarePropertiesEither = propertyDeclarationOrchestrator
+                .declarePropertiesToPolicies(component, componentInstInputsMap);
+            if (declarePropertiesEither.isRight()) {
                 return Either.right(componentsUtils.getResponseFormat(declarePropertiesEither.right().value()));
             }
-
             result = Either.left(declarePropertiesEither.left().value());
             return result;
         } finally {
-            if(!inTransaction) {
+            if (!inTransaction) {
                 commitOrRollback(result);
             }
             // unlock resource
@@ -668,9 +624,9 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private List<PropertyDataDefinition> setComponentValidateUpdatePolicyProperties(String policyId, PropertyDataDefinition[] properties, Component component) {
+    private List<PropertyDataDefinition> setComponentValidateUpdatePolicyProperties(String policyId, PropertyDataDefinition[] properties,
+                                                                                    Component component) {
         Set<String> updatedPropertyNames = Arrays.stream(properties).map(PropertyDataDefinition::getName).collect(Collectors.toSet());
-
         PolicyDefinition policyDefinition = validateAndUpdatePolicyProperties(component, policyId, properties);
         return getFilteredProperties(policyDefinition.getProperties(), updatedPropertyNames);
     }
@@ -684,7 +640,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             unlockComponent(result, component);
         }
     }
-
 
     private void unlockComponent(boolean shouldLock, boolean result, Wrapper<Component> component) {
         if (shouldLock && !component.isEmpty()) {
@@ -710,11 +665,10 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     /*private Either<PolicyDefinition, ResponseFormat> createPolicy(String policyTypeName, Component component) {
         return validatePolicyTypeOnCreatePolicy(policyTypeName, component).left().bind(type -> addPolicyToComponent(type, component));
     }*/
-
     private PolicyDefinition addPolicyToComponent(PolicyTypeDefinition policyType, Component component) {
-        Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponent =
-                toscaOperationFacade.associatePolicyToComponent(component.getUniqueId(), new PolicyDefinition(policyType), getNextPolicyCounter(component.getPolicies()));
-        if(associatePolicyToComponent.isRight()){
+        Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponent = toscaOperationFacade
+            .associatePolicyToComponent(component.getUniqueId(), new PolicyDefinition(policyType), getNextPolicyCounter(component.getPolicies()));
+        if (associatePolicyToComponent.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(associatePolicyToComponent.right().value()));
         }
         return associatePolicyToComponent.left().value();
@@ -724,10 +678,9 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         return toscaOperationFacade.associatePolicyToComponent(component.getUniqueId(), new PolicyDefinition(policyType), getNextPolicyCounter(component.getPolicies()))
                 .either(Either::left, r -> Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(r))));
     }*/
-
     private PolicyTypeDefinition validatePolicyTypeOnCreatePolicy(String policyTypeName, Component component) {
         Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyTypeByType = policyTypeOperation.getLatestPolicyTypeByType(policyTypeName);
-        if(latestPolicyTypeByType.isRight()){
+        if (latestPolicyTypeByType.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(latestPolicyTypeByType.right().value()));
         }
         return validatePolicyTypeNotExcluded(latestPolicyTypeByType.left().value(), component);
@@ -737,19 +690,21 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         return policyTypeOperation.getLatestPolicyTypeByType(policyTypeName)
                 .either(l -> validatePolicyTypeNotExcluded(l, component), r -> Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(r))));
     }*/
-
     private PolicyTypeDefinition validatePolicyTypeNotExcluded(PolicyTypeDefinition policyType, Component component) {
         if (getExcludedPolicyTypesByComponent(component).contains(policyType.getType())) {
-            throw new ByActionStatusComponentException(ActionStatus.EXCLUDED_POLICY_TYPE, policyType.getType(), getComponentOrResourceTypeName(component));
+            throw new ByActionStatusComponentException(ActionStatus.EXCLUDED_POLICY_TYPE, policyType.getType(),
+                getComponentOrResourceTypeName(component));
         }
         return policyType;
     }
 
     private String getComponentOrResourceTypeName(Component component) {
-        return component.getComponentType() == ComponentTypeEnum.SERVICE ? ComponentTypeEnum.SERVICE.name() : ((Resource) component).getResourceType().name();
+        return component.getComponentType() == ComponentTypeEnum.SERVICE ? ComponentTypeEnum.SERVICE.name()
+            : ((Resource) component).getResourceType().name();
     }
 
-    private Component validateAndLockComponentAndUserBeforeWriteOperation(ComponentTypeEnum componentType, String componentId, String userId, boolean shouldLock) {
+    private Component validateAndLockComponentAndUserBeforeWriteOperation(ComponentTypeEnum componentType, String componentId, String userId,
+                                                                          boolean shouldLock) {
         Component component = validateContainerComponentAndUserBeforeReadOperation(componentType, componentId, userId);
         validateComponentIsTopologyTemplate(component);
         validateCanWorkOnComponent(component, userId);
@@ -775,13 +730,12 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                     return Either.right(r);
                 });
     }*/
-
     private Component validateComponentIsTopologyTemplate(Component component) {
         if (!component.isTopologyTemplate()) {
             log.error("#validateComponentIsTopologyTemplate - policy association to a component of Tosca type {} is not allowed. ",
-                    component.getToscaType());
+                component.getToscaType());
             throw new ByActionStatusComponentException(ActionStatus.RESOURCE_CANNOT_CONTAIN_POLICIES,
-                    "#validateAndLockComponentAndUserBeforeWriteOperation", component.getUniqueId(), component.getToscaType());
+                "#validateAndLockComponentAndUserBeforeWriteOperation", component.getUniqueId(), component.getToscaType());
         }
         return component;
     }
@@ -800,7 +754,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     }
 
     private Component validateComponentExists(ComponentTypeEnum componentType, String componentId) {
-
         ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnorePolicies(false);
         filter.setIgnoreUsers(false);
@@ -808,7 +761,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         filter.setIgnoreGroups(false);
         return validateComponentExists(componentId, componentType, filter);
     }
-
 
     private PolicyDefinition validateAndUpdatePolicy(Component component, PolicyDefinition policy) {
         PolicyDefinition policyById = getPolicyById(component, policy.getUniqueId());
@@ -823,34 +775,33 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                 .left()
                 .bind(p -> updatePolicyOfComponent(component, p));
     }*/
-
     private PolicyDefinition validateAndUpdatePolicyProperties(Component component, String policyId, PropertyDataDefinition[] properties) {
-
         PolicyDefinition policyById = getPolicyById(component, policyId);
         policyById = validateUpdatePolicyPropertiesBeforeUpdate(policyById, properties);
         return updatePolicyOfComponent(component.getUniqueId(), policyById);
     }
 
     private PolicyDefinition updatePolicyOfComponent(String componentId, PolicyDefinition policy) {
-        return toscaOperationFacade.updatePolicyOfComponent(componentId, policy, PromoteVersionEnum.MINOR)
-                .left()
-                .on(ce->componentExceptionPolicyDefinition(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(ce))));
+        return toscaOperationFacade.updatePolicyOfComponent(componentId, policy, PromoteVersionEnum.MINOR).left()
+            .on(ce -> componentExceptionPolicyDefinition(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(ce))));
     }
 
     private PolicyDefinition validateUpdatePolicyPropertiesBeforeUpdate(PolicyDefinition policy, PropertyDataDefinition[] newProperties) {
         if (CollectionUtils.isEmpty(policy.getProperties())) {
-            log.error("#validateUpdatePolicyPropertiesBeforeUpdate - failed to update properites of the policy. Properties were not found on the policy. ");
+            log.error(
+                "#validateUpdatePolicyPropertiesBeforeUpdate - failed to update properites of the policy. Properties were not found on the policy. ");
             throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND);
         }
         return updatePropertyValues(policy, newProperties);
     }
 
     private PolicyDefinition updatePropertyValues(PolicyDefinition policy, PropertyDataDefinition[] newProperties) {
-
-        Map<String, PropertyDataDefinition> oldProperties = policy.getProperties().stream().collect(toMap(PropertyDataDefinition::getName, Function.identity()));
+        Map<String, PropertyDataDefinition> oldProperties = policy.getProperties().stream()
+            .collect(toMap(PropertyDataDefinition::getName, Function.identity()));
         for (PropertyDataDefinition newProperty : newProperties) {
             if (!oldProperties.containsKey(newProperty.getName())) {
-                log.error("#updatePropertyValues - failed to update properites of the policy {}. Properties were not found on the policy. ", policy.getName());
+                log.error("#updatePropertyValues - failed to update properites of the policy {}. Properties were not found on the policy. ",
+                    policy.getName());
                 throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, newProperty.getName());
             }
             String newPropertyValueEither = updateInputPropertyObjectValue(newProperty);
@@ -865,10 +816,11 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     }
 
     private PolicyDefinition updatePolicyOfComponent(Component component, PolicyDefinition policy) {
-
-        Either<PolicyDefinition, StorageOperationStatus> updatePolicyRes = toscaOperationFacade.updatePolicyOfComponent(component.getUniqueId(), policy, PromoteVersionEnum.MINOR);
+        Either<PolicyDefinition, StorageOperationStatus> updatePolicyRes = toscaOperationFacade
+            .updatePolicyOfComponent(component.getUniqueId(), policy, PromoteVersionEnum.MINOR);
         if (updatePolicyRes.isRight()) {
-            log.error("#updatePolicyOfComponent - failed to update policy {} of the component {}. The status is {}. ", policy.getUniqueId(), component.getName(), updatePolicyRes.right().value());
+            log.error("#updatePolicyOfComponent - failed to update policy {} of the component {}. The status is {}. ", policy.getUniqueId(),
+                component.getName(), updatePolicyRes.right().value());
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(updatePolicyRes.right().value()));
         } else {
             log.trace("#updatePolicyOfComponent - the policy with the name {} was updated. ", updatePolicyRes.left().value().getName());
@@ -879,7 +831,8 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     private PolicyDefinition removePolicyFromComponent(Component component, PolicyDefinition policy) {
         StorageOperationStatus updatePolicyStatus = toscaOperationFacade.removePolicyFromComponent(component.getUniqueId(), policy.getUniqueId());
         if (updatePolicyStatus != StorageOperationStatus.OK) {
-            log.error("#removePolicyFromComponent - failed to remove policy {} from the component {}. The status is {}. ", policy.getUniqueId(), component.getName(), updatePolicyStatus);
+            log.error("#removePolicyFromComponent - failed to remove policy {} from the component {}. The status is {}. ", policy.getUniqueId(),
+                component.getName(), updatePolicyStatus);
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(updatePolicyStatus));
         } else {
             log.trace("#removePolicyFromComponent - the policy with the name {} was deleted. ", updatePolicyStatus);
@@ -887,10 +840,11 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private PolicyDefinition validateUpdatePolicyBeforeUpdate(PolicyDefinition recievedPolicy, PolicyDefinition oldPolicy, Map<String, PolicyDefinition> policies) {
-
-        Either<PolicyDefinition, ActionStatus> policyDefinitionActionStatusEither = validatePolicyFields(recievedPolicy, new PolicyDefinition(oldPolicy), policies);
-        if(policyDefinitionActionStatusEither.isRight()){
+    private PolicyDefinition validateUpdatePolicyBeforeUpdate(PolicyDefinition recievedPolicy, PolicyDefinition oldPolicy,
+                                                              Map<String, PolicyDefinition> policies) {
+        Either<PolicyDefinition, ActionStatus> policyDefinitionActionStatusEither = validatePolicyFields(recievedPolicy,
+            new PolicyDefinition(oldPolicy), policies);
+        if (policyDefinitionActionStatusEither.isRight()) {
             throw new ByActionStatusComponentException(policyDefinitionActionStatusEither.right().value(), recievedPolicy.getName());
         }
         return policyDefinitionActionStatusEither.left().value();
@@ -901,13 +855,12 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                 .right()
                 .bind(r -> Either.right(componentsUtils.getResponseFormat(r, recievedPolicy.getName())));
     }*/
-
-    private PolicyDefinition updateTargets(String componentId, PolicyDefinition policy, Map<PolicyTargetType, List<String>> targets, String policyId) {
+    private PolicyDefinition updateTargets(String componentId, PolicyDefinition policy, Map<PolicyTargetType, List<String>> targets,
+                                           String policyId) {
         if (policy == null) {
             throw new ByActionStatusComponentException(ActionStatus.POLICY_NOT_FOUND_ON_CONTAINER, policyId, componentId);
         }
         PolicyDefinition updatedPolicy = setPolicyTargets(policy, targets);
         return updatePolicyOfComponent(componentId, updatedPolicy);
     }
-
 }

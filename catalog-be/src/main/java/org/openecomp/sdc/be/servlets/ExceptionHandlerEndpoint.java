@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.google.gson.Gson;
@@ -31,17 +30,16 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.stereotype.Controller;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -50,6 +48,7 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Controller
 public class ExceptionHandlerEndpoint {
+
     private static final Logger log = Logger.getLogger(ExceptionHandlerEndpoint.class);
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final ComponentsUtils componentsUtils;
@@ -61,14 +60,10 @@ public class ExceptionHandlerEndpoint {
     @GET
     @Path("/handleException")
     @Operation(description = "Handle exception", method = "GET", responses = {
-            @ApiResponse(responseCode = "500", description = "Internal Error",
-                    content = @Content(schema = @Schema(implementation = Response.class)))})
+        @ApiResponse(responseCode = "500", description = "Internal Error", content = @Content(schema = @Schema(implementation = Response.class)))})
     public Response sendError() {
         log.debug("Request is received");
-
         ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-        return Response.status(responseFormat.getStatus())
-                .entity(gson.toJson(responseFormat.getRequestError()))
-                .build();
+        return Response.status(responseFormat.getStatus()).entity(gson.toJson(responseFormat.getRequestError())).build();
     }
 }

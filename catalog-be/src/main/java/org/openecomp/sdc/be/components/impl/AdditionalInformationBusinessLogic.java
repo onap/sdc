@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.List;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -48,57 +48,47 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component("additionalInformationBusinessLogic")
 public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
     private static final String CREATE_ADDITIONAL_INFORMATION = "CreateAdditionalInformation";
-
     private static final String UPDATE_ADDITIONAL_INFORMATION = "UpdateAdditionalInformation";
-
     private static final String DELETE_ADDITIONAL_INFORMATION = "DeleteAdditionalInformation";
-
     private static final String GET_ADDITIONAL_INFORMATION = "GetAdditionalInformation";
-
     private static final Logger log = Logger.getLogger(AdditionalInformationBusinessLogic.class.getName());
     private static final String FAILED_TO_LOCK_COMPONENT_ERROR = "Failed to lock component {} error - {}";
-
     private final AdditionalInformationOperation additionalInformationOperation;
 
     @Autowired
-    public AdditionalInformationBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        AdditionalInformationOperation additionalInformationOperation,
-        ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public AdditionalInformationBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
+                                              IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation,
+                                              InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                              AdditionalInformationOperation additionalInformationOperation,
+                                              ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
         this.additionalInformationOperation = additionalInformationOperation;
     }
 
     /**
      * Create new additional information on resource/service on graph
+     *
      * @param nodeType
      * @param resourceId
      * @param additionalInfoParameterInfo
      * @param userId
      * @return Either<AdditionalInfoParameterInfo, ResponseFormat>
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> createAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
-
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> createAdditionalInformation(NodeTypeEnum nodeType, String resourceId,
+                                                                                           AdditionalInfoParameterInfo additionalInfoParameterInfo,
+                                                                                           String userId) {
         validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
-
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
         if (responseFormat != null) {
             result = Either.right(responseFormat);
             return result;
         }
-
         // lock component
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, nodeType);
         if (lockResult != StorageOperationStatus.OK) {
@@ -113,45 +103,40 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
                 result = Either.right(responseFormat);
                 return result;
             }
-
             // validate label
             responseFormat = validateAndConvertKey(additionalInfoParameterInfo, CREATE_ADDITIONAL_INFORMATION);
             if (responseFormat != null) {
                 result = Either.right(responseFormat);
                 return result;
             }
-
             // validate value
             responseFormat = validateAndConvertValue(additionalInfoParameterInfo, CREATE_ADDITIONAL_INFORMATION);
             if (responseFormat != null) {
                 result = Either.right(responseFormat);
                 return result;
             }
-
-            Either<AdditionalInformationDefinition, StorageOperationStatus> addResult = additionalInformationOperation.createAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getKey(),
+            Either<AdditionalInformationDefinition, StorageOperationStatus> addResult = additionalInformationOperation
+                .createAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getKey(),
                     additionalInfoParameterInfo.getValue(), true);
-
             if (addResult.isRight()) {
                 StorageOperationStatus status = addResult.right().value();
                 BeEcompErrorManager.getInstance().logBeSystemError(CREATE_ADDITIONAL_INFORMATION);
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
-                result = Either.right(componentsUtils.getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.Label));
+                result = Either.right(componentsUtils
+                    .getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.Label));
                 return result;
-
             } else {
                 AdditionalInformationDefinition informationDefinition = addResult.left().value();
-
-                AdditionalInfoParameterInfo createdAI = findAdditionInformationKey(informationDefinition.getParameters(), additionalInfoParameterInfo.getKey());
+                AdditionalInfoParameterInfo createdAI = findAdditionInformationKey(informationDefinition.getParameters(),
+                    additionalInfoParameterInfo.getKey());
                 result = Either.left(createdAI);
                 return result;
             }
-
         } finally {
             commitOrRollback(result);
             // unlock component
             graphLockOperation.unlockComponent(resourceId, nodeType);
         }
-
     }
 
     /**
@@ -162,13 +147,12 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      */
     private ResponseFormat validateAndConvertValue(AdditionalInfoParameterInfo additionalInfoParameterInfo, String context) {
         ResponseFormat result = null;
-
         String value = additionalInfoParameterInfo.getValue();
         log.debug("Going to validate additional information value {}", value);
-
         Either<String, ResponseFormat> valueValidRes = validateValue(value);
         if (valueValidRes.isRight()) {
-            BeEcompErrorManager.getInstance().logBeInvalidValueError(context, additionalInfoParameterInfo.getValue(), "additional information value", "string");
+            BeEcompErrorManager.getInstance()
+                .logBeInvalidValueError(context, additionalInfoParameterInfo.getValue(), "additional information value", "string");
             result = valueValidRes.right().value();
         } else {
             String newValue = valueValidRes.left().value();
@@ -187,21 +171,18 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @return
      */
     private ResponseFormat validateAndConvertKey(AdditionalInfoParameterInfo additionalInfoParameterInfo, String context) {
-
         String key = additionalInfoParameterInfo.getKey();
         log.debug("Going to validate additional information key {}", key);
-
         ResponseFormat result = null;
         ResponseFormat responseFormat;
         Either<String, ResponseFormat> validateKeyRes = validateAndNormalizeKey(key);
         if (validateKeyRes.isRight()) {
             responseFormat = validateKeyRes.right().value();
-            BeEcompErrorManager.getInstance().logBeInvalidValueError(context, additionalInfoParameterInfo.getKey(), "additional information label", "string");
+            BeEcompErrorManager.getInstance()
+                .logBeInvalidValueError(context, additionalInfoParameterInfo.getKey(), "additional information label", "string");
             result = responseFormat;
-
         } else {
             String convertedKey = validateKeyRes.left().value();
-
             if (log.isTraceEnabled() && key != null && !key.equals(convertedKey)) {
                 log.trace("The additional information key {} was normalized to {}", key, convertedKey);
             }
@@ -218,26 +199,29 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param additionalInfoParameterInfo
      * @return response format in case the maximal number has been reached.
      */
-    private ResponseFormat validateMaxSizeNotReached(NodeTypeEnum nodeType, String componentId, AdditionalInfoParameterInfo additionalInfoParameterInfo) {
-
+    private ResponseFormat validateMaxSizeNotReached(NodeTypeEnum nodeType, String componentId,
+                                                     AdditionalInfoParameterInfo additionalInfoParameterInfo) {
         ResponseFormat result;
-        Integer additionalInformationMaxNumberOfKeys = ConfigurationManager.getConfigurationManager().getConfiguration().getAdditionalInformationMaxNumberOfKeys();
-
-        Either<Integer, StorageOperationStatus> checkRes = additionalInformationOperation.getNumberOfAdditionalInformationParameters(nodeType, componentId, true);
+        Integer additionalInformationMaxNumberOfKeys = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getAdditionalInformationMaxNumberOfKeys();
+        Either<Integer, StorageOperationStatus> checkRes = additionalInformationOperation
+            .getNumberOfAdditionalInformationParameters(nodeType, componentId, true);
         if (checkRes.isRight()) {
             StorageOperationStatus status = checkRes.right().value();
-
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
-            result = componentsUtils.getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None);
+            result = componentsUtils
+                .getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None);
             return result;
         }
         Integer currentNumberOfProperties = checkRes.left().value();
         if (currentNumberOfProperties >= additionalInformationMaxNumberOfKeys) {
-            log.info("The current number of additional information properties is {}. The maximum allowed additional information properties is {}", currentNumberOfProperties, currentNumberOfProperties);
-            result = componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_MAX_NUMBER_REACHED, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None);
+            log.info("The current number of additional information properties is {}. The maximum allowed additional information properties is {}",
+                currentNumberOfProperties, currentNumberOfProperties);
+            result = componentsUtils
+                .getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_MAX_NUMBER_REACHED, additionalInfoParameterInfo, nodeType,
+                    AdditionalInformationEnum.None);
             return result;
         }
-
         return null;
     }
 
@@ -248,24 +232,20 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @return
      */
     private Either<String, ResponseFormat> validateValue(String value) {
-
         boolean isNonEmptyString = ValidationUtils.validateStringNotEmpty(value);
         if (!isNonEmptyString) {
             return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED));
         }
-
         boolean valid = StringValidator.getInstance().isValid(value, null);
         if (!valid) {
-            return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_VALUE_NOT_ALLOWED_CHARACTERS, new AdditionalInfoParameterInfo(null, value), null, AdditionalInformationEnum.Value));
+            return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_VALUE_NOT_ALLOWED_CHARACTERS,
+                new AdditionalInfoParameterInfo(null, value), null, AdditionalInformationEnum.Value));
         }
-
         String converted = StringConvertor.getInstance().convert(value, null, null);
-
         return Either.left(converted);
     }
 
     private AdditionalInfoParameterInfo findAdditionInformationKey(List<AdditionalInfoParameterInfo> parameters, String key) {
-
         for (AdditionalInfoParameterInfo infoParameterInfo : parameters) {
             if (infoParameterInfo.getKey().equals(key)) {
                 return infoParameterInfo;
@@ -276,27 +256,31 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
     /**
      * validate and normalize the key
+     *
      * @param key
      * @return Either<String, ResponseFormat>
      */
     private Either<String, ResponseFormat> validateAndNormalizeKey(String key) {
-
         AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
         additionalInfoParameterInfo.setKey(key);
-
         String normKey = ValidationUtils.normalizeAdditionalInformation(key);
         boolean isNonEmptyString = ValidationUtils.validateStringNotEmpty(normKey);
         if (!isNonEmptyString) {
-            return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED, null, null, AdditionalInformationEnum.Label));
+            return Either.right(componentsUtils
+                .getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED, null, null,
+                    AdditionalInformationEnum.Label));
         }
         boolean isValidString = ValidationUtils.validateAdditionalInformationKeyName(normKey);
         if (!isValidString) {
             if (!ValidationUtils.validateLength(normKey, ValidationUtils.ADDITIONAL_INFORMATION_KEY_MAX_LENGTH)) {
-                return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EXCEEDS_LIMIT, additionalInfoParameterInfo, null, AdditionalInformationEnum.Label));
+                return Either.right(componentsUtils
+                    .getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EXCEEDS_LIMIT, additionalInfoParameterInfo, null,
+                        AdditionalInformationEnum.Label));
             }
-            return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_KEY_NOT_ALLOWED_CHARACTERS, additionalInfoParameterInfo, null, AdditionalInformationEnum.Label));
+            return Either.right(componentsUtils
+                .getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_KEY_NOT_ALLOWED_CHARACTERS, additionalInfoParameterInfo,
+                    null, AdditionalInformationEnum.Label));
         }
-
         return Either.left(normKey);
     }
 
@@ -309,11 +293,11 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param userId
      * @return
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> updateAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
-
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> updateAdditionalInformation(NodeTypeEnum nodeType, String resourceId,
+                                                                                           AdditionalInfoParameterInfo additionalInfoParameterInfo,
+                                                                                           String userId) {
         validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
-
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
         if (responseFormat != null) {
             result = Either.right(responseFormat);
@@ -328,42 +312,39 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
             return result;
         }
         try {
-
             // validate input
             responseFormat = validateAndConvertKey(additionalInfoParameterInfo, UPDATE_ADDITIONAL_INFORMATION);
             if (responseFormat != null) {
                 result = Either.right(responseFormat);
                 return result;
             }
-
             responseFormat = validateAndConvertValue(additionalInfoParameterInfo, UPDATE_ADDITIONAL_INFORMATION);
             if (responseFormat != null) {
                 result = Either.right(responseFormat);
                 return result;
             }
-
-            Either<AdditionalInformationDefinition, StorageOperationStatus> addResult = additionalInformationOperation.updateAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(),
+            Either<AdditionalInformationDefinition, StorageOperationStatus> addResult = additionalInformationOperation
+                .updateAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(),
                     additionalInfoParameterInfo.getKey(), additionalInfoParameterInfo.getValue(), true);
-
             if (addResult.isRight()) {
                 StorageOperationStatus status = addResult.right().value();
                 BeEcompErrorManager.getInstance().logBeSystemError(UPDATE_ADDITIONAL_INFORMATION);
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
-                result = Either.right(componentsUtils.getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
+                result = Either.right(componentsUtils
+                    .getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
                 return result;
             } else {
                 AdditionalInformationDefinition informationDefinition = addResult.left().value();
-                AdditionalInfoParameterInfo parameterInfo = findAdditionInformationKey(informationDefinition.getParameters(), additionalInfoParameterInfo.getKey());
+                AdditionalInfoParameterInfo parameterInfo = findAdditionInformationKey(informationDefinition.getParameters(),
+                    additionalInfoParameterInfo.getKey());
                 result = Either.left(parameterInfo);
                 return result;
             }
-
         } finally {
             commitOrRollback(result);
             // unlock component
             graphLockOperation.unlockComponent(resourceId, nodeType);
         }
-
     }
 
     /**
@@ -375,11 +356,11 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param userId
      * @return
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> deleteAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
-
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> deleteAdditionalInformation(NodeTypeEnum nodeType, String resourceId,
+                                                                                           AdditionalInfoParameterInfo additionalInfoParameterInfo,
+                                                                                           String userId) {
         validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
-
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
         if (responseFormat != null) {
             return Either.right(responseFormat);
@@ -392,41 +373,38 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
             result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             return result;
         }
-
         try {
-
-            Either<AdditionalInfoParameterInfo, StorageOperationStatus> findIdRes = additionalInformationOperation.getAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true);
+            Either<AdditionalInfoParameterInfo, StorageOperationStatus> findIdRes = additionalInformationOperation
+                .getAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true);
             if (findIdRes.isRight()) {
                 StorageOperationStatus status = findIdRes.right().value();
                 if (status != StorageOperationStatus.NOT_FOUND) {
                     BeEcompErrorManager.getInstance().logBeSystemError(GET_ADDITIONAL_INFORMATION);
                 }
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
-                result = Either.right(componentsUtils.getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
+                result = Either.right(componentsUtils
+                    .getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
                 return result;
             }
-
             AdditionalInfoParameterInfo foundAdditionalInfo = findIdRes.left().value();
-
-            Either<AdditionalInformationDefinition, StorageOperationStatus> addResult = additionalInformationOperation.deleteAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true);
-
+            Either<AdditionalInformationDefinition, StorageOperationStatus> addResult = additionalInformationOperation
+                .deleteAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true);
             if (addResult.isRight()) {
                 StorageOperationStatus status = addResult.right().value();
                 BeEcompErrorManager.getInstance().logBeDaoSystemError(DELETE_ADDITIONAL_INFORMATION);
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
-                result = Either.right(componentsUtils.getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
+                result = Either.right(componentsUtils
+                    .getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
                 return result;
             } else {
                 result = Either.left(foundAdditionalInfo);
                 return result;
             }
-
         } finally {
             commitOrRollback(result);
             // unlock component
             graphLockOperation.unlockComponent(resourceId, nodeType);
         }
-
     }
 
     /**
@@ -436,31 +414,26 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param userId
      * @return
      */
-    public Either<AdditionalInfoParameterInfo, ResponseFormat> getAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
-
+    public Either<AdditionalInfoParameterInfo, ResponseFormat> getAdditionalInformation(NodeTypeEnum nodeType, String resourceId,
+                                                                                        AdditionalInfoParameterInfo additionalInfoParameterInfo,
+                                                                                        String userId) {
         validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
-
         try {
-
-            Either<AdditionalInfoParameterInfo, StorageOperationStatus> findIdRes = additionalInformationOperation.getAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true);
-
+            Either<AdditionalInfoParameterInfo, StorageOperationStatus> findIdRes = additionalInformationOperation
+                .getAdditionalInformationParameter(nodeType, resourceId, additionalInfoParameterInfo.getUniqueId(), true);
             if (findIdRes.isRight()) {
                 StorageOperationStatus status = findIdRes.right().value();
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
-                result = Either.right(componentsUtils.getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
+                result = Either.right(componentsUtils
+                    .getResponseFormatAdditionalProperty(actionStatus, additionalInfoParameterInfo, nodeType, AdditionalInformationEnum.None));
             }
-
             AdditionalInfoParameterInfo foundAdditionalInfo = findIdRes.left().value();
-
             result = Either.left(foundAdditionalInfo);
-
             return result;
-
         } finally {
             commitOrRollback(result);
         }
-
     }
 
     /**
@@ -471,15 +444,13 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @param userId
      * @return
      */
-    public Either<AdditionalInformationDefinition, ResponseFormat> getAllAdditionalInformation(NodeTypeEnum nodeType, String resourceId, String userId) {
-
+    public Either<AdditionalInformationDefinition, ResponseFormat> getAllAdditionalInformation(NodeTypeEnum nodeType, String resourceId,
+                                                                                               String userId) {
         validateUserExists(userId);
-
         Either<AdditionalInformationDefinition, ResponseFormat> result = null;
-
         try {
-
-            Either<AdditionalInformationDefinition, JanusGraphOperationStatus> findIdRes = additionalInformationOperation.getAllAdditionalInformationParameters(nodeType, resourceId, false);
+            Either<AdditionalInformationDefinition, JanusGraphOperationStatus> findIdRes = additionalInformationOperation
+                .getAllAdditionalInformationParameters(nodeType, resourceId, false);
             if (findIdRes.isRight()) {
                 StorageOperationStatus status = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findIdRes.right().value());
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForAdditionalInformation(status);
@@ -488,39 +459,33 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
                 AdditionalInformationDefinition informationDefinition = findIdRes.left().value();
                 result = Either.left(informationDefinition);
             }
-
             return result;
-
         } finally {
             commitOrRollback(result);
         }
-
     }
 
     private ResponseFormat verifyCanWorkOnComponent(NodeTypeEnum nodeType, String resourceId, String userId) {
-
         switch (nodeType) {
-        case Resource:
+            case Resource:
+                // verify that resource is checked-out and the user is the last
 
-            // verify that resource is checked-out and the user is the last
-            // updater
-            if (!ComponentValidationUtils.canWorkOnComponent(resourceId, toscaOperationFacade, userId)) {
-                return componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-            }
-            break;
-        case Service:
+                // updater
+                if (!ComponentValidationUtils.canWorkOnComponent(resourceId, toscaOperationFacade, userId)) {
+                    return componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
+                }
+                break;
+            case Service:
+                // verify that resource is checked-out and the user is the last
 
-            // verify that resource is checked-out and the user is the last
-            // updater
-            if (!ComponentValidationUtils.canWorkOnComponent(resourceId, toscaOperationFacade, userId)) {
-                return componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-            }
-            break;
-        default:
-            return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT, nodeType.getName());
+                // updater
+                if (!ComponentValidationUtils.canWorkOnComponent(resourceId, toscaOperationFacade, userId)) {
+                    return componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
+                }
+                break;
+            default:
+                return componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT, nodeType.getName());
         }
-
         return null;
     }
-
 }

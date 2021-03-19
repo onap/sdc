@@ -16,18 +16,16 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.utils;
 
 public class InterfaceTypesNameUtil {
 
     private InterfaceTypesNameUtil() {
-
     }
 
     /**
-     * Build the short name of an interface_type by grabbing the final name in its path. E.g.
-     * "tosca.interfaces.relationship.Configure" will be shortened to "Configure".
+     * Build the short name of an interface_type by grabbing the final name in its path. E.g. "tosca.interfaces.relationship.Configure" will be
+     * shortened to "Configure".
      *
      * @param interfaceName the full interface name
      * @return the shortened name of the interface
@@ -39,5 +37,4 @@ public class InterfaceTypesNameUtil {
         final int index = interfaceName.lastIndexOf('.');
         return index > 0 && interfaceName.length() > index + 1 ? interfaceName.substring(index + 1) : interfaceName;
     }
-
 }

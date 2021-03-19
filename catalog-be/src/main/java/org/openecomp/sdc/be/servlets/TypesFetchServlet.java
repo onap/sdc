@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -31,6 +30,21 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.ListUtils;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
@@ -62,23 +76,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Tags({@Tag(name = "SDC Internal APIs")})
@@ -95,15 +92,10 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     private final ResourceBusinessLogic resourceBusinessLogic;
 
     @Inject
-    public TypesFetchServlet(UserBusinessLogic userBusinessLogic,
-        ComponentInstanceBusinessLogic componentInstanceBL,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
-        ResourceImportManager resourceImportManager,
-        PropertyBusinessLogic propertyBusinessLogic,
-        RelationshipTypeBusinessLogic relationshipTypeBusinessLogic,
-        CapabilitiesBusinessLogic capabilitiesBusinessLogic,
-        InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
-        ResourceBusinessLogic resourceBusinessLogic) {
+    public TypesFetchServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+                             ServletUtils servletUtils, ResourceImportManager resourceImportManager, PropertyBusinessLogic propertyBusinessLogic,
+                             RelationshipTypeBusinessLogic relationshipTypeBusinessLogic, CapabilitiesBusinessLogic capabilitiesBusinessLogic,
+                             InterfaceOperationBusinessLogic interfaceOperationBusinessLogic, ResourceBusinessLogic resourceBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.propertyBusinessLogic = propertyBusinessLogic;
         this.relationshipTypeBusinessLogic = relationshipTypeBusinessLogic;
@@ -117,74 +109,59 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get data types", method = "GET", summary = "Returns data types", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "datatypes"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Data types not found")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "datatypes"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Data types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllDataTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-
         init();
         validateUserExist(responseWrapper, userWrapper, userId);
-
         if (responseWrapper.isEmpty()) {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {} - modifier id is {}", url, userId);
-
             Map<String, DataTypeDefinition> dataTypes = propertyBusinessLogic.getAllDataTypes();
             String dataTypeJson = gson.toJson(dataTypes);
             Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
             responseWrapper.setInnerElement(okResponse);
         }
-
-            return responseWrapper.getInnerElement();
-   }
+        return responseWrapper.getInnerElement();
+    }
 
     @GET
     @Path("interfaceLifecycleTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Get interface lifecycle types", method = "GET",
-            summary = "Returns interface lifecycle types", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "Interface lifecycle types"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Interface lifecycle types not found")})
+    @Operation(description = "Get interface lifecycle types", method = "GET", summary = "Returns interface lifecycle types", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Interface lifecycle types"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Interface lifecycle types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getInterfaceLifecycleTypes(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response getInterfaceLifecycleTypes(@Context final HttpServletRequest request,
+                                               @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-
         try {
             validateUserExist(responseWrapper, userWrapper, userId);
-
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.info("Start handle request of {} | modifier id is {}", url, userId);
-
-                Either<Map<String, InterfaceDefinition>, ResponseFormat> allInterfaceLifecycleTypes =
-                        interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
-
+                Either<Map<String, InterfaceDefinition>, ResponseFormat> allInterfaceLifecycleTypes = interfaceOperationBusinessLogic
+                    .getAllInterfaceLifecycleTypes();
                 if (allInterfaceLifecycleTypes.isRight()) {
-                    log.info("Failed to get all interface lifecycle types. Reason - {}",
-                        allInterfaceLifecycleTypes.right().value());
+                    log.info("Failed to get all interface lifecycle types. Reason - {}", allInterfaceLifecycleTypes.right().value());
                     Response errorResponse = buildErrorResponse(allInterfaceLifecycleTypes.right().value());
                     responseWrapper.setInnerElement(errorResponse);
-
                 } else {
                     String interfaceLifecycleTypeJson = gson.toJson(allInterfaceLifecycleTypes.left().value());
                     Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), interfaceLifecycleTypeJson);
                     responseWrapper.setInnerElement(okResponse);
-
                 }
             }
-
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
             log.debug("get all interface lifecycle types failed with exception", e);
@@ -192,50 +169,39 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             return buildErrorResponse(responseFormat);
         }
     }
+
     @GET
     @Path("capabilityTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get capability types", method = "GET", summary = "Returns capability types", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "capabilityTypes"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Capability types not found")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "capabilityTypes"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Capability types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getAllCapabilityTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
-            Constants.USER_ID_HEADER) String userId) {
-
+    public Response getAllCapabilityTypesServlet(@Context final HttpServletRequest request,
+                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-
         try {
             init();
             validateUserExist(responseWrapper, userWrapper, userId);
-
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
-
-                Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes =
-                    capabilitiesBusinessLogic.getAllCapabilityTypes();
-
+                Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes = capabilitiesBusinessLogic.getAllCapabilityTypes();
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all capability types. Reason - {}", allDataTypes.right().value());
                     Response errorResponse = buildErrorResponse(allDataTypes.right().value());
                     responseWrapper.setInnerElement(errorResponse);
-
                 } else {
-
                     Map<String, CapabilityTypeDefinition> dataTypes = allDataTypes.left().value();
                     String dataTypeJson = gson.toJson(dataTypes);
-                    Response okResponse =
-                            buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
+                    Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
                     responseWrapper.setInnerElement(okResponse);
-
                 }
             }
-
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Capability Types");
@@ -249,47 +215,36 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Path("relationshipTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Get relationship types", method = "GET", summary = "Returns relationship types",
-            responses = {@ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-                    @ApiResponse(responseCode = "200", description = "relationshipTypes"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-                    @ApiResponse(responseCode = "404", description = "Relationship types not found")})
+    @Operation(description = "Get relationship types", method = "GET", summary = "Returns relationship types", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "relationshipTypes"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Relationship types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getAllRelationshipTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
-            Constants.USER_ID_HEADER) String userId) {
-
+    public Response getAllRelationshipTypesServlet(@Context final HttpServletRequest request,
+                                                   @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-
         try {
             init();
             validateUserExist(responseWrapper, userWrapper, userId);
-
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
-
-                Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> allDataTypes =
-                    relationshipTypeBusinessLogic.getAllRelationshipTypes();
-
+                Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> allDataTypes = relationshipTypeBusinessLogic
+                    .getAllRelationshipTypes();
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all relationship types. Reason - {}", allDataTypes.right().value());
                     Response errorResponse = buildErrorResponse(allDataTypes.right().value());
                     responseWrapper.setInnerElement(errorResponse);
-
                 } else {
-
                     Map<String, RelationshipTypeDefinition> dataTypes = allDataTypes.left().value();
                     String dataTypeJson = gson.toJson(dataTypes);
-                    Response okResponse =
-                            buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
+                    Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
                     responseWrapper.setInnerElement(okResponse);
-
                 }
             }
-
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Relationship Types");
@@ -304,47 +259,37 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get node types", method = "GET", summary = "Returns node types", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "nodeTypes"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Node types not found")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "nodeTypes"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Node types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getAllNodeTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
-            Constants.USER_ID_HEADER) String userId) {
-
+    public Response getAllNodeTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         ServletContext context = request.getSession().getServletContext();
         Either<Map<String, Component>, Response> response;
         Map<String, Component> componentMap;
-
         try {
             init();
             validateUserExist(responseWrapper, userWrapper, userId);
-
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
-
                 response = getComponent(resourceBusinessLogic, true, userId);
                 if (response.isRight()) {
                     return response.right().value();
                 }
                 componentMap = new HashMap<>(response.left().value());
-
                 response = getComponent(resourceBusinessLogic, false, userId);
                 if (response.isRight()) {
                     return response.right().value();
                 }
                 componentMap.putAll(response.left().value());
-
                 String nodeTypesJson = gson.toJson(componentMap);
-                Response okResponse =
-                        buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), nodeTypesJson);
+                Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), nodeTypesJson);
                 responseWrapper.setInnerElement(okResponse);
             }
-
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Node Types");
@@ -354,27 +299,20 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         }
     }
 
-    private Either<Map<String, Component>, Response> getComponent(ComponentBusinessLogic resourceBL, boolean isAbstract,
-                                                                  String userId) {
+    private Either<Map<String, Component>, Response> getComponent(ComponentBusinessLogic resourceBL, boolean isAbstract, String userId) {
         Either<List<Component>, ResponseFormat> actionResponse;
         List<Component> componentList;
-
-        actionResponse =
-                resourceBL.getLatestVersionNotAbstractComponentsMetadata(isAbstract, HighestFilterEnum.HIGHEST_ONLY
-                        , ComponentTypeEnum.RESOURCE, null, userId);
+        actionResponse = resourceBL
+            .getLatestVersionNotAbstractComponentsMetadata(isAbstract, HighestFilterEnum.HIGHEST_ONLY, ComponentTypeEnum.RESOURCE, null, userId);
         if (actionResponse.isRight()) {
             log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, ComponentTypeEnum.RESOURCE.getValue());
             return Either.right(buildErrorResponse(actionResponse.right().value()));
         }
-
         componentList = actionResponse.left().value();
-
-        return Either.left(ListUtils.emptyIfNull(componentList).stream()
-                .filter(component -> ((ResourceMetadataDataDefinition) component
-                        .getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName() != null)
-                .collect(Collectors.toMap(
-                        component -> ((ResourceMetadataDataDefinition) component
-                                .getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName(),
-                        component -> component, (component1, component2) -> component1)));
+        return Either.left(ListUtils.emptyIfNull(componentList).stream().filter(component ->
+            ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName() != null)
+            .collect(Collectors.toMap(
+                component -> ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition())
+                    .getToscaResourceName(), component -> component, (component1, component2) -> component1)));
     }
 }

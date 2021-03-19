@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -63,37 +62,31 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ComponentAttributeServlet extends BeGenericServlet {
 
+    private static final Logger log = LoggerFactory.getLogger(ComponentAttributeServlet.class);
+    private static final String CREATE_ATTRIBUTE = "Create Attribute";
+    private static final String DEBUG_MESSAGE = "Start handle request of {} modifier id is {}";
     private final AttributeBusinessLogic attributeBusinessLogic;
 
     @Inject
-    public ComponentAttributeServlet(final UserBusinessLogic userBusinessLogic,
-                                     final ComponentsUtils componentsUtils,
+    public ComponentAttributeServlet(final UserBusinessLogic userBusinessLogic, final ComponentsUtils componentsUtils,
                                      final AttributeBusinessLogic attributeBusinessLogic) {
         super(userBusinessLogic, componentsUtils);
         this.attributeBusinessLogic = attributeBusinessLogic;
     }
 
-    private static final Logger log = LoggerFactory.getLogger(ComponentAttributeServlet.class);
-    private static final String CREATE_ATTRIBUTE = "Create Attribute";
-    private static final String DEBUG_MESSAGE = "Start handle request of {} modifier id is {}";
-
     @GET
     @Path("services/{serviceId}/attributes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Get Service Attribute", method = "GET", summary = "Returns attribute list of service",
-        responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "attribute"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Service attribute not found")})
+    @Operation(description = "Get Service Attribute", method = "GET", summary = "Returns attribute list of service", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "attribute"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Service attribute not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAttributeListInService(
-        @Parameter(description = "service id of attribute",
-            required = true) @PathParam("serviceId") final String serviceId,
+        @Parameter(description = "service id of attribute", required = true) @PathParam("serviceId") final String serviceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
-
         return getAttributeList(serviceId, request, userId);
     }
 
@@ -101,42 +94,31 @@ public class ComponentAttributeServlet extends BeGenericServlet {
     @Path("resources/{resourceId}/attributes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Get Resource Attribute", method = "GET", summary = "Returns attribute list of resource",
-        responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "attribute"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Resource attribute not found")})
+    @Operation(description = "Get Resource Attribute", method = "GET", summary = "Returns attribute list of resource", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "attribute"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Resource attribute not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAttributeListInResource(
-        @Parameter(description = "resource id of attribute",
-            required = true) @PathParam("resourceId") final String resourceId,
+        @Parameter(description = "resource id of attribute", required = true) @PathParam("resourceId") final String resourceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
-
         return getAttributeList(resourceId, request, userId);
     }
 
     private Response getAttributeList(final String componentId, final HttpServletRequest request, final String userId) {
-
         final String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(DEBUG_MESSAGE, url, userId);
-
         try {
-            final Either<List<AttributeDefinition>, ResponseFormat> attributesList =
-                attributeBusinessLogic.getAttributesList(componentId, userId);
-
+            final Either<List<AttributeDefinition>, ResponseFormat> attributesList = attributeBusinessLogic.getAttributesList(componentId, userId);
             if (attributesList.isRight()) {
                 return buildErrorResponse(attributesList.right().value());
             }
-
             return buildOkResponse(attributesList.left().value());
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE_ATTRIBUTE);
             log.debug("get attribute failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
-
 }

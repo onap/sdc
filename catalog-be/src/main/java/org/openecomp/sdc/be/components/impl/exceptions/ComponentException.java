@@ -17,30 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.exceptions;
 
+import javax.annotation.Nullable;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import javax.annotation.Nullable;
 
 public class ComponentException extends RuntimeException {
 
     /**
      * This class will be initialized either by action status and params or by ResponseFormat
      */
-
     private final transient ResponseFormat responseFormat;
     private final ActionStatus actionStatus;
     private final String[] params;
-
-    public Resource getResource() {
-        return resource;
-    }
-
     private final Resource resource;
 
     public ComponentException(ResponseFormat responseFormat) {
@@ -62,6 +54,10 @@ public class ComponentException extends RuntimeException {
         this.resource = resource;
     }
 
+    public Resource getResource() {
+        return resource;
+    }
+
     @Nullable
     public ResponseFormat getResponseFormat() {
         return responseFormat;
@@ -74,6 +70,4 @@ public class ComponentException extends RuntimeException {
     public String[] getParams() {
         return params.clone();
     }
-
-
 }

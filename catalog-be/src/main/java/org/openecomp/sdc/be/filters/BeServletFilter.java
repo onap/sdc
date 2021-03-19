@@ -17,10 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
 import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import javax.annotation.Priority;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 import org.onap.logging.filter.base.AuditLogContainerFilter;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -39,23 +47,13 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.MDC;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.Priority;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-
 @Provider
 @Priority(1)
 public class BeServletFilter extends AuditLogContainerFilter {
 
+    private static final Logger log = Logger.getLogger(BeServletFilter.class);
     @Context
     private HttpServletRequest sr;
-    private static final Logger log = Logger.getLogger(BeServletFilter.class);
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
@@ -63,7 +61,9 @@ public class BeServletFilter extends AuditLogContainerFilter {
             try {
                 super.filter(requestContext);
                 // In case of 405 response code, this function is not entered, then
+
                 // we'll process
+
                 // the MDC fields and UUID during the response
                 ThreadLocalsHolder.setMdcProcessed(true);
                 // Timing HTTP request
@@ -95,16 +95,14 @@ public class BeServletFilter extends AuditLogContainerFilter {
                     ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.NOT_ALLOWED);
                     responseContext.setEntity(new GsonBuilder().setPrettyPrinting().create().toJson(responseFormat.getRequestError()));
                 }
-
                 if (ThreadLocalsHolder.isMdcProcessed()) {
                     // filter() was executed during request - this is the regular
+
                     // flow
                     responseContext.getHeaders().add(Constants.X_ECOMP_REQUEST_ID_HEADER, ThreadLocalsHolder.getUuid());
                 }
                 writeToJanusGraph(responseContext);
-
                 outHttpResponse(responseContext);
-
             } catch (Exception e) {
                 BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Error during request filter");
                 log.debug("Error during response filter: {} ", e);
@@ -121,9 +119,8 @@ public class BeServletFilter extends AuditLogContainerFilter {
         HealingJanusGraphDao janusGraphDao = getJanusGraphDao();
         if (janusGraphDao != null) {
             int status = responseContext.getStatus();
-            if (status == Response.Status.OK.getStatusCode() ||
-                    status == Response.Status.CREATED.getStatusCode() ||
-                    status == Response.Status.NO_CONTENT.getStatusCode()) {
+            if (status == Response.Status.OK.getStatusCode() || status == Response.Status.CREATED.getStatusCode()
+                || status == Response.Status.NO_CONTENT.getStatusCode()) {
                 janusGraphDao.commit();
                 log.debug("Doing commit from filter");
             } else {
@@ -137,26 +134,24 @@ public class BeServletFilter extends AuditLogContainerFilter {
         // UserId for logging
         String userId = requestContext.getHeaderString(Constants.USER_ID_HEADER);
         MDC.put("userId", userId);
-
         String serviceInstanceID = requestContext.getHeaderString(Constants.X_ECOMP_SERVICE_ID_HEADER);
         MDC.put(ILogConfiguration.MDC_SERVICE_INSTANCE_ID, serviceInstanceID);
-
         MDC.put("remoteAddr", sr.getRemoteAddr());
         MDC.put("localAddr", sr.getLocalAddr());
     }
 
     private ComponentsUtils getComponentsUtils() {
         ServletContext context = this.sr.getSession().getServletContext();
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ComponentsUtils.class);
     }
 
     private HealingJanusGraphDao getJanusGraphDao() {
         ServletContext context = this.sr.getSession().getServletContext();
-
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(HealingJanusGraphDao.class);
     }

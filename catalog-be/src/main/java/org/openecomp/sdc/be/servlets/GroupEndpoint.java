@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -66,70 +65,65 @@ import org.springframework.stereotype.Controller;
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class GroupEndpoint extends BeGenericServlet{
+public class GroupEndpoint extends BeGenericServlet {
 
-    private final GroupBusinessLogicNew groupBusinessLogic;
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(GroupEndpoint.class.getName());
+    private final GroupBusinessLogicNew groupBusinessLogic;
 
     @Inject
-    public GroupEndpoint(UserBusinessLogic userBusinessLogic,
-                         ComponentsUtils componentsUtils, GroupBusinessLogicNew groupBusinessLogic) {
+    public GroupEndpoint(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, GroupBusinessLogicNew groupBusinessLogic) {
         super(userBusinessLogic, componentsUtils);
         this.groupBusinessLogic = groupBusinessLogic;
     }
 
     @POST
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/members")
-    @Operation(description = "Update group members ", method = "POST",
-            summary = "Updates list of members and returns it", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
-            @ApiResponse(responseCode = "200", description = "Group members updated"),
-            @ApiResponse(responseCode = "400",
-                    description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Component not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Error")})
+    @Operation(description = "Update group members ", method = "POST", summary = "Updates list of members and returns it", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+        @ApiResponse(responseCode = "200", description = "Group members updated"),
+        @ApiResponse(responseCode = "400", description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Component not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<String> updateGroupMembers(@PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
-            @Parameter(description = "List of members unique ids", required = true) List<String> members,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.STARTED," Starting to update Group Members for component {} " , componentId );
+                                           @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
+                                           @Parameter(description = "List of members unique ids", required = true) List<String> members,
+                                           @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        loggerSupportability
+            .log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.STARTED, " Starting to update Group Members for component {} ",
+                componentId);
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.COMPLETE," Ended update Group Members for component {} " , componentId );
+        loggerSupportability
+            .log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.COMPLETE, " Ended update Group Members for component {} ", componentId);
         return groupBusinessLogic.updateMembers(componentId, componentTypeEnum, userId, groupUniqueId, members);
     }
 
     @GET
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/properties")
-    @Operation(description = "Get List of properties on a group", method = "GET",
-            summary = "Returns list of properties", responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
-            @ApiResponse(responseCode = "200", description = "Group Updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Get List of properties on a group", method = "GET", summary = "Returns list of properties", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
+        @ApiResponse(responseCode = "200", description = "Group Updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<PropertyDataDefinition> getGroupProperties(
-            @PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    public List<PropertyDataDefinition> getGroupProperties(@PathParam("containerComponentType") final String containerComponentType,
+                                                           @PathParam("componentId") final String componentId,
+                                                           @PathParam("groupUniqueId") final String groupUniqueId,
+                                                           @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return groupBusinessLogic.getProperties(containerComponentType, userId, componentId, groupUniqueId);
     }
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/properties")
-    @Operation(description = "Updates List of properties on a group (only values)", method = "PUT",
-            summary = "Returns updated list of properties", responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
-            @ApiResponse(responseCode = "200", description = "Group Updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Updates List of properties on a group (only values)", method = "PUT", summary = "Returns updated list of properties", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
+        @ApiResponse(responseCode = "200", description = "Group Updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<GroupProperty> updateGroupProperties(
-            @PathParam("containerComponentType") final String containerComponentType,
-            @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
-            @Parameter(description = "Group Properties to be Updated", required = true) List<GroupProperty> properties,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    public List<GroupProperty> updateGroupProperties(@PathParam("containerComponentType") final String containerComponentType,
+                                                     @PathParam("componentId") final String componentId,
+                                                     @PathParam("groupUniqueId") final String groupUniqueId,
+                                                     @Parameter(description = "Group Properties to be Updated", required = true) List<GroupProperty> properties,
+                                                     @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         return groupBusinessLogic.updateProperties(componentId, componentTypeEnum, userId, groupUniqueId, properties);
     }

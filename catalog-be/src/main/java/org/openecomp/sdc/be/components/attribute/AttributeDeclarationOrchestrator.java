@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.attribute;
 
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
@@ -55,8 +54,7 @@ public class AttributeDeclarationOrchestrator {
         return attributeDeclarator.declareAttributesAsOutputs(component, attributesToDeclare.getLeft(), attributesToDeclare.getRight());
     }
 
-    public StorageOperationStatus unDeclareAttributesAsOutputs(final Component component,
-                                                               final OutputDefinition outputToDelete) {
+    public StorageOperationStatus unDeclareAttributesAsOutputs(final Component component, final OutputDefinition outputToDelete) {
         log.debug("#unDeclareAttributesAsOutputs - removing output declaration for output {} on component {}", outputToDelete.getName(),
             component.getUniqueId());
         for (final AttributeDeclarator attributeDeclarator : attributeDeclaratorsToOutput) {
@@ -68,7 +66,6 @@ public class AttributeDeclarationOrchestrator {
             }
         }
         return StorageOperationStatus.OK;
-
     }
 
     private AttributeDeclarator getAttributeDeclarator(final ComponentInstOutputsMap componentInstOutputsMap) {
@@ -79,7 +76,5 @@ public class AttributeDeclarationOrchestrator {
             return componentInstanceAttributeDeclarator;
         }
         throw new IllegalStateException("there are no properties selected for declaration");
-
     }
-
 }

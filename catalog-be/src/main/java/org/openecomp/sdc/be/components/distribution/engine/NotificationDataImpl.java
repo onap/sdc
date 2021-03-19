@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import java.util.List;
@@ -39,9 +38,17 @@ public class NotificationDataImpl implements INotificationData {
         return distributionID;
     }
 
+    public void setDistributionID(String distributionID) {
+        this.distributionID = distributionID;
+    }
+
     @Override
     public String getServiceName() {
         return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     @Override
@@ -49,21 +56,13 @@ public class NotificationDataImpl implements INotificationData {
         return serviceVersion;
     }
 
+    public void setServiceVersion(String serviceVersion) {
+        this.serviceVersion = serviceVersion;
+    }
+
     @Override
     public String getServiceUUID() {
         return serviceUUID;
-    }
-
-    public void setDistributionID(String distributionID) {
-        this.distributionID = distributionID;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public void setServiceVersion(String serviceVersion) {
-        this.serviceVersion = serviceVersion;
     }
 
     public void setServiceUUID(String serviceUUID) {
@@ -77,25 +76,23 @@ public class NotificationDataImpl implements INotificationData {
     public void setServiceDescription(String serviceDescription) {
         this.serviceDescription = serviceDescription;
     }
-    @Override
-    public String getWorkloadContext() { return workloadContext; }
 
     @Override
-    public void setWorkloadContext(String workloadContext) { this.workloadContext = workloadContext;    }
+    public String getWorkloadContext() {
+        return workloadContext;
+    }
+
+    @Override
+    public void setWorkloadContext(String workloadContext) {
+        this.workloadContext = workloadContext;
+    }
 
     @Override
     public String toString() {
-        return "NotificationDataImpl{" +
-                "distributionID='" + distributionID + '\'' +
-                ", serviceName='" + serviceName + '\'' +
-                ", serviceVersion='" + serviceVersion + '\'' +
-                ", serviceUUID='" + serviceUUID + '\'' +
-                ", serviceDescription='" + serviceDescription + '\'' +
-                ", serviceInvariantUUID='" + serviceInvariantUUID + '\'' +
-                ", resources=" + resources +
-                ", serviceArtifacts=" + serviceArtifacts +
-                ", workloadContext='" + workloadContext + '\'' +
-                '}';
+        return "NotificationDataImpl{" + "distributionID='" + distributionID + '\'' + ", serviceName='" + serviceName + '\'' + ", serviceVersion='"
+            + serviceVersion + '\'' + ", serviceUUID='" + serviceUUID + '\'' + ", serviceDescription='" + serviceDescription + '\''
+            + ", serviceInvariantUUID='" + serviceInvariantUUID + '\'' + ", resources=" + resources + ", serviceArtifacts=" + serviceArtifacts
+            + ", workloadContext='" + workloadContext + '\'' + '}';
     }
 
     @Override
@@ -106,7 +103,6 @@ public class NotificationDataImpl implements INotificationData {
     @Override
     public void setResources(List<JsonContainerResourceInstance> resources) {
         this.resources = resources;
-
     }
 
     @Override
@@ -118,7 +114,6 @@ public class NotificationDataImpl implements INotificationData {
     @Override
     public void setServiceArtifacts(List<ArtifactInfoImpl> serviceArtifacts) {
         this.serviceArtifacts = serviceArtifacts;
-
     }
 
     @Override
@@ -130,5 +125,4 @@ public class NotificationDataImpl implements INotificationData {
     public void setServiceInvariantUUID(String serviceInvariantUUID) {
         this.serviceInvariantUUID = serviceInvariantUUID;
     }
-
 }

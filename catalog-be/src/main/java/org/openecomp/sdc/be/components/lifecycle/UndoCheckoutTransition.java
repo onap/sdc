@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
+import java.util.Arrays;
 import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -43,23 +43,20 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.Arrays;
-
 public class UndoCheckoutTransition extends LifeCycleTransition {
-    private static final Logger log = Logger.getLogger(CheckoutTransition.class);
 
+    private static final Logger log = Logger.getLogger(CheckoutTransition.class);
     private CatalogOperation catalogOperations;
 
-    public UndoCheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
+    public UndoCheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation,
+                                  ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
         super(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
-
         // authorized roles
-        Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
-        Role[] productCheckoutRoles = { Role.ADMIN, Role.PRODUCT_MANAGER };
+        Role[] resourceServiceCheckoutRoles = {Role.ADMIN, Role.DESIGNER};
+        Role[] productCheckoutRoles = {Role.ADMIN, Role.PRODUCT_MANAGER};
         addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(resourceServiceCheckoutRoles));
         addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(resourceServiceCheckoutRoles));
         addAuthorizedRoles(ComponentTypeEnum.PRODUCT, Arrays.asList(productCheckoutRoles));
-
     }
 
     @Override
@@ -77,54 +74,52 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
     }
 
     @Override
-    public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
+    public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner,
+                                                                    LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
         String componentName = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
         log.debug("validate before undo checkout. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
-
         // validate user
-        Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
+        Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier, component, componentType, lifecycleChangeInfo);
         if (userValidationResponse.isRight()) {
             return userValidationResponse;
         }
-
         // check resource is not locked by another user
         if (!oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
-            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_ALREADY_CHECKED_IN, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+            ResponseFormat error = componentUtils
+                .getResponseFormat(ActionStatus.COMPONENT_ALREADY_CHECKED_IN, componentName, componentType.name().toLowerCase(), owner.getFirstName(),
+                    owner.getLastName(), owner.getUserId());
             return Either.right(error);
         }
-
         if (!modifier.equals(owner) && !modifier.getRole().equals(Role.ADMIN.name())) {
-            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+            ResponseFormat error = componentUtils
+                .getResponseFormat(ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, componentName, componentType.name().toLowerCase(),
+                    owner.getFirstName(), owner.getLastName(), owner.getUserId());
             return Either.right(error);
         }
-
         return Either.left(true);
     }
 
     @Override
-    public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
-
+    public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component,
+                                                                   ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock,
+                                                                   boolean inTransaction) {
         Either<? extends Component, ResponseFormat> result = null;
         log.debug("start performing undo-checkout for resource {}", component.getUniqueId());
-
         try {
             Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId());
-
             if (undoCheckoutResourceResult.isRight()) {
                 log.debug("checkout failed on graph");
                 StorageOperationStatus response = undoCheckoutResourceResult.right().value();
                 ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
                 ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-                result =  Either.right(responseFormat);
-            }
-            else {
+                result = Either.right(responseFormat);
+            } else {
                 ToscaElement element = undoCheckoutResourceResult.left().value();
-                if(element == null){ 
+                if (element == null) {
                     catalogOperations.updateCatalog(ChangeTypeEnum.DELETE, component);
                     result = Either.left(null);
-                }
-                else{
-                    result =  Either.left(ModelConverter.convertFromToscaElement(element));
+                } else {
+                    result = Either.left(ModelConverter.convertFromToscaElement(element));
                 }
             }
         } finally {
@@ -139,6 +134,4 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
         }
         return result;
     }
-    
-
 }

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import lombok.Getter;
@@ -27,5 +26,4 @@ import lombok.Setter;
 public class ToscaPropertyAssignment {
 
     private Object value;
-
 }

@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datamodel.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fj.data.Either;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -40,47 +46,34 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 public class PropertyValueConstraintValidationUtil {
 
     private static final String UNDERSCORE = "_";
-    private static final String VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY =
-            "%nValue provided in invalid format for %s property";
-    private Map<String, DataTypeDefinition> dataTypeDefinitionCache;
+    private static final String VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY = "%nValue provided in invalid format for %s property";
     private static final Logger logger = LoggerFactory.getLogger(PropertyValueConstraintValidationUtil.class);
+    private static final String IGNORE_PROPERTY_VALUE_START_WITH = "{\"get_input\":";
+    private Map<String, DataTypeDefinition> dataTypeDefinitionCache;
     private ObjectMapper objectMapper = new ObjectMapper();
     private List<String> errorMessages = new ArrayList<>();
     private StringBuilder completePropertyName;
     private String completeInputName;
-    private static final String IGNORE_PROPERTY_VALUE_START_WITH = "{\"get_input\":";
 
     public static PropertyValueConstraintValidationUtil getInstance() {
         return new PropertyValueConstraintValidationUtil();
     }
 
-    public Either<Boolean, ResponseFormat> validatePropertyConstraints(
-            Collection<? extends PropertyDefinition> propertyDefinitionList,
-            ApplicationDataTypeCache applicationDataTypeCache) {
+    public Either<Boolean, ResponseFormat> validatePropertyConstraints(Collection<? extends PropertyDefinition> propertyDefinitionList,
+                                                                       ApplicationDataTypeCache applicationDataTypeCache) {
         ResponseFormatManager responseFormatManager = getResponseFormatManager();
         dataTypeDefinitionCache = applicationDataTypeCache.getAll().left().value();
-        CollectionUtils.emptyIfNull(propertyDefinitionList).stream()
-                .filter(this::isValuePresent)
-                .forEach(this::evaluatePropertyTypeForConstraintValidation);
-
+        CollectionUtils.emptyIfNull(propertyDefinitionList).stream().filter(this::isValuePresent)
+            .forEach(this::evaluatePropertyTypeForConstraintValidation);
         if (CollectionUtils.isNotEmpty(errorMessages)) {
             logger.error("Properties with Invalid Data:", errorMessages);
-            ResponseFormat inputResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .INVALID_PROPERTY_VALUES, String.join(",", errorMessages));
+            ResponseFormat inputResponse = responseFormatManager
+                .getResponseFormat(ActionStatus.INVALID_PROPERTY_VALUES, String.join(",", errorMessages));
             return Either.right(inputResponse);
         }
-
         return Either.left(Boolean.TRUE);
     }
 
@@ -88,69 +81,60 @@ public class PropertyValueConstraintValidationUtil {
         if (propertyDefinition instanceof InputDefinition) {
             return StringUtils.isNotEmpty(propertyDefinition.getDefaultValue());
         }
-
         return StringUtils.isNotEmpty(propertyDefinition.getValue());
     }
 
     private void evaluatePropertyTypeForConstraintValidation(PropertyDefinition propertyDefinition) {
-        if (Objects.nonNull(propertyDefinition.getType())
-                && dataTypeDefinitionCache.containsKey(propertyDefinition.getType())) {
-
+        if (Objects.nonNull(propertyDefinition.getType()) && dataTypeDefinitionCache.containsKey(propertyDefinition.getType())) {
             completeInputName = "";
             completePropertyName = new StringBuilder();
             if (propertyDefinition instanceof InputDefinition) {
                 completeInputName = propertyDefinition.getName();
                 propertyDefinition = getPropertyDefinitionObjectFromInputs(propertyDefinition);
             }
-
             if (Objects.nonNull(propertyDefinition)) {
-				if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
-					propertyDefinition.setConstraints(
-							org.openecomp.sdc.be.dao.utils.CollectionUtils.merge(propertyDefinition.safeGetConstraints(),
-									dataTypeDefinitionCache.get(propertyDefinition.getType()).safeGetConstraints()));
-					evaluateConstraintsOnProperty(propertyDefinition);
-				} else if (ToscaType.isCollectionType(propertyDefinition.getType())) {
-					propertyDefinition.setConstraints(
-							org.openecomp.sdc.be.dao.utils.CollectionUtils.merge(propertyDefinition.safeGetConstraints(),
-									dataTypeDefinitionCache.get(propertyDefinition.getType()).safeGetConstraints()));
-					evaluateConstraintsOnProperty(propertyDefinition);
-					evaluateCollectionTypeProperties(propertyDefinition);
-				} else {
-					setCompletePropertyName(propertyDefinition);
-					evaluateComplexTypeProperties(propertyDefinition);
-				}
-			}
+                if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
+                    propertyDefinition.setConstraints(org.openecomp.sdc.be.dao.utils.CollectionUtils.merge(propertyDefinition.safeGetConstraints(),
+                        dataTypeDefinitionCache.get(propertyDefinition.getType()).safeGetConstraints()));
+                    evaluateConstraintsOnProperty(propertyDefinition);
+                } else if (ToscaType.isCollectionType(propertyDefinition.getType())) {
+                    propertyDefinition.setConstraints(org.openecomp.sdc.be.dao.utils.CollectionUtils.merge(propertyDefinition.safeGetConstraints(),
+                        dataTypeDefinitionCache.get(propertyDefinition.getType()).safeGetConstraints()));
+                    evaluateConstraintsOnProperty(propertyDefinition);
+                    evaluateCollectionTypeProperties(propertyDefinition);
+                } else {
+                    setCompletePropertyName(propertyDefinition);
+                    evaluateComplexTypeProperties(propertyDefinition);
+                }
+            }
         } else {
             errorMessages.add("\nUnsupported datatype found for property " + getCompletePropertyName(propertyDefinition));
         }
     }
 
     private void setCompletePropertyName(PropertyDefinition propertyDefinition) {
-        if(StringUtils.isNotBlank(propertyDefinition.getUniqueId())) {
-            completePropertyName.append(
-                    propertyDefinition.getUniqueId().substring(propertyDefinition.getUniqueId().lastIndexOf('.') + 1));
+        if (StringUtils.isNotBlank(propertyDefinition.getUniqueId())) {
+            completePropertyName.append(propertyDefinition.getUniqueId().substring(propertyDefinition.getUniqueId().lastIndexOf('.') + 1));
         }
     }
 
     private void evaluateConstraintsOnProperty(PropertyDefinition propertyDefinition) {
         ToscaType toscaType = ToscaType.isValidType(propertyDefinition.getType());
-        if (isPropertyNotMappedAsInput(propertyDefinition)
-                && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())
-                && isValidValueConstraintPresent(propertyDefinition.getConstraints())) {
+        if (isPropertyNotMappedAsInput(propertyDefinition) && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())
+            && isValidValueConstraintPresent(propertyDefinition.getConstraints())) {
             for (PropertyConstraint propertyConstraint : propertyDefinition.getConstraints()) {
                 try {
                     propertyConstraint.initialize(toscaType);
                     propertyConstraint.validate(toscaType, propertyDefinition.getValue());
                 } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {
-                    errorMessages.add("\n" + propertyConstraint.getErrorMessage(
-                            toscaType, exception, getCompletePropertyName(propertyDefinition)));
+                    errorMessages.add("\n" + propertyConstraint.getErrorMessage(toscaType, exception, getCompletePropertyName(propertyDefinition)));
                 }
             }
-        } else if (isPropertyNotMappedAsInput(propertyDefinition)
-                && ToscaType.isPrimitiveType(propertyDefinition.getType())
-                && !toscaType.isValidValue(propertyDefinition.getValue())) {
-            errorMessages.add(String.format("\nUnsupported value provided for %s property supported value "
-                    + "type is %s.", getCompletePropertyName(propertyDefinition), toscaType.getType()));
+        } else if (isPropertyNotMappedAsInput(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType()) && !toscaType
+            .isValidValue(propertyDefinition.getValue())) {
+            errorMessages.add(String
+                .format("\nUnsupported value provided for %s property supported value " + "type is %s.", getCompletePropertyName(propertyDefinition),
+                    toscaType.getType()));
         }
     }
 
@@ -158,66 +142,49 @@ public class PropertyValueConstraintValidationUtil {
         return !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH);
     }
 
-    private void checkAndEvaluatePrimitiveProperty(PropertyDefinition propertyDefinition,
-												   DataTypeDefinition dataTypeDefinition) {
-        if (ToscaType.isPrimitiveType(dataTypeDefinition.getName())
-                && CollectionUtils.isNotEmpty(dataTypeDefinition.getConstraints())) {
-
+    private void checkAndEvaluatePrimitiveProperty(PropertyDefinition propertyDefinition, DataTypeDefinition dataTypeDefinition) {
+        if (ToscaType.isPrimitiveType(dataTypeDefinition.getName()) && CollectionUtils.isNotEmpty(dataTypeDefinition.getConstraints())) {
             PropertyDefinition definition = new PropertyDefinition();
             definition.setValue(propertyDefinition.getValue());
             definition.setType(dataTypeDefinition.getName());
             definition.setConstraints(dataTypeDefinition.getConstraints());
-
             evaluateConstraintsOnProperty(propertyDefinition);
         }
     }
 
     private void evaluateComplexTypeProperties(PropertyDefinition propertyDefinition) {
-        List<PropertyDefinition> propertyDefinitions =
-                dataTypeDefinitionCache.get(propertyDefinition.getType()).getProperties();
-		try {
-			Map<String, Object> valueMap =
-					MapUtils.emptyIfNull(ConstraintUtil.parseToCollection(propertyDefinition.getValue(),
-							new TypeReference<Map<String, Object>>() {}));
-
-			if (CollectionUtils.isEmpty(propertyDefinitions)) {
-				checkAndEvaluatePrimitiveProperty(propertyDefinition,
-						dataTypeDefinitionCache.get(propertyDefinition.getType()));
-			} else {
-				ListUtils.emptyIfNull(propertyDefinitions)
-						.forEach(prop -> evaluateRegularComplexType(propertyDefinition, prop, valueMap));
-			}
-		} catch (ConstraintValueDoNotMatchPropertyTypeException e) {
-			logger.debug(e.getMessage(), e);
-			errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY,
-					getCompletePropertyName(propertyDefinition)));
-		}
+        List<PropertyDefinition> propertyDefinitions = dataTypeDefinitionCache.get(propertyDefinition.getType()).getProperties();
+        try {
+            Map<String, Object> valueMap = MapUtils
+                .emptyIfNull(ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<Map<String, Object>>() {
+                }));
+            if (CollectionUtils.isEmpty(propertyDefinitions)) {
+                checkAndEvaluatePrimitiveProperty(propertyDefinition, dataTypeDefinitionCache.get(propertyDefinition.getType()));
+            } else {
+                ListUtils.emptyIfNull(propertyDefinitions).forEach(prop -> evaluateRegularComplexType(propertyDefinition, prop, valueMap));
+            }
+        } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
+            logger.debug(e.getMessage(), e);
+            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));
+        }
     }
 
-    private void evaluateRegularComplexType(PropertyDefinition propertyDefinition,
-											PropertyDefinition prop,
-											Map<String, Object> valueMap) {
+    private void evaluateRegularComplexType(PropertyDefinition propertyDefinition, PropertyDefinition prop, Map<String, Object> valueMap) {
         try {
             if (valueMap.containsKey(prop.getName())) {
                 if (ToscaType.isPrimitiveType(prop.getType())) {
-                    evaluateConstraintsOnProperty(createPropertyDefinition(prop,
-                            String.valueOf(valueMap.get(prop.getName()))));
+                    evaluateConstraintsOnProperty(createPropertyDefinition(prop, String.valueOf(valueMap.get(prop.getName()))));
                 } else if (ToscaType.isCollectionType(prop.getType())) {
-
-                    evaluateCollectionTypeProperties(createPropertyDefinition(prop,
-                            objectMapper.writeValueAsString(valueMap.get(prop.getName()))));
+                    evaluateCollectionTypeProperties(createPropertyDefinition(prop, objectMapper.writeValueAsString(valueMap.get(prop.getName()))));
                 } else {
                     completePropertyName.append(UNDERSCORE);
                     completePropertyName.append(prop.getName());
-                    evaluateComplexTypeProperties(
-                            createPropertyDefinition(prop, objectMapper.writeValueAsString(
-                                    valueMap.get(prop.getName()))));
+                    evaluateComplexTypeProperties(createPropertyDefinition(prop, objectMapper.writeValueAsString(valueMap.get(prop.getName()))));
                 }
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY,
-                    getCompletePropertyName(propertyDefinition)));
+            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));
         }
     }
 
@@ -233,45 +200,37 @@ public class PropertyValueConstraintValidationUtil {
     private void evaluateListType(PropertyDefinition propertyDefinition) {
         try {
             String schemaType = propertyDefinition.getSchemaType();
-            List list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(),
-                    new TypeReference<List<Object>>() {});
+            List list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<List<Object>>() {
+            });
             evaluateCollectionType(propertyDefinition, list, schemaType);
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
             logger.debug(e.getMessage(), e);
-            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY,
-                    getCompletePropertyName(propertyDefinition)));
+            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));
         }
     }
 
     private void evaluateMapType(PropertyDefinition propertyDefinition) {
         try {
             String schemaType = propertyDefinition.getSchemaType();
-            Map map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(),
-                    new TypeReference<Map<String, Object>>() {
+            Map map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<Map<String, Object>>() {
             });
             evaluateCollectionType(propertyDefinition, map.values(), schemaType);
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
             logger.debug(e.getMessage(), e);
-            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY,
-                    getCompletePropertyName(propertyDefinition)));
+            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));
         }
     }
 
-    private void evaluateCollectionPrimitiveSchemaType(PropertyDefinition propertyDefinition,
-													   Object value,
-													   String schemaType) {
-        if (Objects.nonNull(propertyDefinition.getSchema())
-                && propertyDefinition.getSchema().getProperty() instanceof PropertyDefinition) {
-            propertyDefinition.setConstraints(((PropertyDefinition) propertyDefinition.getSchema()
-                    .getProperty()).getConstraints());
+    private void evaluateCollectionPrimitiveSchemaType(PropertyDefinition propertyDefinition, Object value, String schemaType) {
+        if (Objects.nonNull(propertyDefinition.getSchema()) && propertyDefinition.getSchema().getProperty() instanceof PropertyDefinition) {
+            propertyDefinition.setConstraints(((PropertyDefinition) propertyDefinition.getSchema().getProperty()).getConstraints());
             propertyDefinition.setValue(String.valueOf(value));
             propertyDefinition.setType(schemaType);
             evaluateConstraintsOnProperty(propertyDefinition);
         }
     }
-    private void evaluateCollectionType(PropertyDefinition propertyDefinition,
-										Collection valueList,
-										String schemaType) {
+
+    private void evaluateCollectionType(PropertyDefinition propertyDefinition, Collection valueList, String schemaType) {
         for (Object value : valueList) {
             try {
                 if (ToscaType.isPrimitiveType(schemaType)) {
@@ -289,16 +248,15 @@ public class PropertyValueConstraintValidationUtil {
                 }
             } catch (IOException e) {
                 logger.debug(e.getMessage(), e);
-                errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY,
-                        getCompletePropertyName(propertyDefinition)));
+                errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));
             }
         }
     }
 
     private String getCompletePropertyName(PropertyDefinition propertyDefinition) {
-        return StringUtils.isNotBlank(completeInputName) ? completeInputName :
-                StringUtils.isBlank(completePropertyName) ?
-                        propertyDefinition.getName() : completePropertyName + UNDERSCORE + propertyDefinition.getName();
+        return StringUtils.isNotBlank(completeInputName) ? completeInputName
+            : StringUtils.isBlank(completePropertyName) ? propertyDefinition.getName()
+                : completePropertyName + UNDERSCORE + propertyDefinition.getName();
     }
 
     private PropertyDefinition createPropertyDefinition(PropertyDefinition prop, String value) {
@@ -308,30 +266,24 @@ public class PropertyValueConstraintValidationUtil {
         propertyDefinition.setType(prop.getType());
         propertyDefinition.setConstraints(prop.getConstraints());
         propertyDefinition.setSchema(prop.getSchema());
-
         return propertyDefinition;
     }
 
     private boolean isValidValueConstraintPresent(List<PropertyConstraint> propertyConstraints) {
-        return propertyConstraints.stream()
-                .anyMatch(propertyConstraint -> propertyConstraint instanceof ValidValuesConstraint);
+        return propertyConstraints.stream().anyMatch(propertyConstraint -> propertyConstraint instanceof ValidValuesConstraint);
     }
 
-    private PropertyDefinition getPropertyDefinitionObjectFromInputs(
-            PropertyDefinition property) {
+    private PropertyDefinition getPropertyDefinitionObjectFromInputs(PropertyDefinition property) {
         InputDefinition inputDefinition = (InputDefinition) property;
         PropertyDefinition propertyDefinition = null;
-
-        if (CollectionUtils.isEmpty(inputDefinition.getProperties())
-                || ToscaType.isPrimitiveType(inputDefinition.getProperties().get(0).getType())) {
-        	propertyDefinition  = new PropertyDefinition();
+        if (CollectionUtils.isEmpty(inputDefinition.getProperties()) || ToscaType.isPrimitiveType(inputDefinition.getProperties().get(0).getType())) {
+            propertyDefinition = new PropertyDefinition();
             propertyDefinition.setType(inputDefinition.getType());
             propertyDefinition.setValue(inputDefinition.getDefaultValue());
             propertyDefinition.setName(inputDefinition.getName());
         } else if (Objects.nonNull(inputDefinition.getInputPath())) {
             propertyDefinition = evaluateComplexTypeInputs(inputDefinition);
         }
-
         return propertyDefinition;
     }
 
@@ -342,10 +294,9 @@ public class PropertyValueConstraintValidationUtil {
         if (inputPathArr.length > 1) {
             inputPathArr = ArrayUtils.remove(inputPathArr, 0);
         }
-
         try {
             Map<String, Object> presentMap = inputMap;
-            for (int i = 0; i < inputPathArr.length ; i++) {
+            for (int i = 0; i < inputPathArr.length; i++) {
                 if (i == inputPathArr.length - 1) {
                     presentMap.computeIfAbsent(inputPathArr[i], k -> inputDefinition.getDefaultValue());
                 } else {
@@ -353,7 +304,6 @@ public class PropertyValueConstraintValidationUtil {
                     presentMap = (Map<String, Object>) presentMap.get(inputPathArr[i]);
                 }
             }
-
             if (CollectionUtils.isNotEmpty(inputDefinition.getProperties())) {
                 propertyDefinition.setType(inputDefinition.getProperties().get(0).getType());
             }
@@ -361,10 +311,8 @@ public class PropertyValueConstraintValidationUtil {
             propertyDefinition.setValue(objectMapper.writeValueAsString(inputMap));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY,
-                    inputDefinition.getName()));
+            errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, inputDefinition.getName()));
         }
-
         return propertyDefinition;
     }
 

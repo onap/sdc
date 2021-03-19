@@ -13,44 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.types;
 
 public class ServiceConsumptionData {
-  private String inputId;
-  private String source;
-  private String value;
-  private String type;
 
-  public String getInputId() {
-    return inputId;
-  }
+    private String inputId;
+    private String source;
+    private String value;
+    private String type;
 
-  public void setInputId(String inputId) {
-    this.inputId = inputId;
-  }
+    public String getInputId() {
+        return inputId;
+    }
 
-  public String getSource() {
-    return source;
-  }
+    public void setInputId(String inputId) {
+        this.inputId = inputId;
+    }
 
-  public void setSource(String source) {
-    this.source = source;
-  }
+    public String getSource() {
+        return source;
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public String getValue() {
+        return value;
+    }
 
-  public String getType() {
-    return type;
-  }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

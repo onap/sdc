@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca;
 
 import com.google.gson.JsonElement;
@@ -72,8 +71,8 @@ public class AttributeConverter {
      */
     public ToscaAttribute convert(final AttributeDefinition attributeDefinition) throws ToscaConversionException {
         final ToscaAttribute toscaAttribute = new ToscaAttribute();
-        LOGGER.trace("Converting attribute '{}' from type '{}' with default value '{}'",
-            attributeDefinition.getName(), attributeDefinition.getType(), attributeDefinition.getDefaultValue());
+        LOGGER.trace("Converting attribute '{}' from type '{}' with default value '{}'", attributeDefinition.getName(), attributeDefinition.getType(),
+            attributeDefinition.getDefaultValue());
         toscaAttribute.setEntrySchema(convert(attributeDefinition.getEntry_schema()));
         toscaAttribute.setType(attributeDefinition.getType());
         toscaAttribute.setDescription(attributeDefinition.getDescription());
@@ -83,12 +82,11 @@ public class AttributeConverter {
         if (defaultValue != null) {
             toscaAttribute.setDefault(defaultValue);
         }
-        final Object value = convertToToscaObject(attributeDefinition.getName(), attributeDefinition.getType(),
-            attributeDefinition.getValue(), attributeDefinition.getEntry_schema(), false);
+        final Object value = convertToToscaObject(attributeDefinition.getName(), attributeDefinition.getType(), attributeDefinition.getValue(),
+            attributeDefinition.getEntry_schema(), false);
         if (value != null) {
             toscaAttribute.setValue(value);
         }
-
         return toscaAttribute;
     }
 
@@ -96,28 +94,24 @@ public class AttributeConverter {
         if (entrySchema == null) {
             return null;
         }
-
         final ToscaSchemaDefinition toscaSchemaDefinition = new ToscaSchemaDefinition();
         toscaSchemaDefinition.setType(entrySchema.getType());
         toscaSchemaDefinition.setDescription(entrySchema.getDescription());
         return toscaSchemaDefinition;
     }
 
-    private Object convertToToscaObject(final String name, final String attributeType, String value,
-                                        final EntrySchema schemaDefinition, final boolean preserveEmptyValue) throws ToscaConversionException {
+    private Object convertToToscaObject(final String name, final String attributeType, String value, final EntrySchema schemaDefinition,
+                                        final boolean preserveEmptyValue) throws ToscaConversionException {
         final String innerType = schemaDefinition == null ? attributeType : schemaDefinition.getType();
-        LOGGER.trace("Converting attribute '{}' of type '{}', value '{}', innerType '{}'",
-            name, attributeType, value, innerType);
+        LOGGER.trace("Converting attribute '{}' of type '{}', value '{}', innerType '{}'", name, attributeType, value, innerType);
         if (StringUtils.isEmpty(value)) {
             value = getTypeDefaultValue(attributeType);
             if (StringUtils.isEmpty(value)) {
                 return null;
             }
         }
-
         try {
             boolean isScalar = true;
-
             ToscaPropertyType predefinedType = ToscaPropertyType.isValidType(attributeType);
             if (predefinedType == null) {
                 //not predefined, search in existing data types
@@ -133,7 +127,6 @@ public class AttributeConverter {
             if (isValueGetAttribute(valueAsJson)) {
                 return ToscaMapValueConverter.getInstance().handleComplexJsonValue(valueAsJson.getAsJsonObject());
             }
-
             //if it has a converter
             if (predefinedType != null && predefinedType.getValueConverter() != null) {
                 LOGGER.trace("It's well defined type. convert it");
@@ -143,23 +136,17 @@ public class AttributeConverter {
             if (isScalar) {
                 return toscaMapValueConverter.handleComplexJsonValue(valueAsJson);
             }
-
             //if it is a data type
-            return toscaMapValueConverter.convertDataTypeToToscaObject(
-                innerType, dataTypes, null, false, valueAsJson, preserveEmptyValue);
-
+            return toscaMapValueConverter.convertDataTypeToToscaObject(innerType, dataTypes, null, false, valueAsJson, preserveEmptyValue);
         } catch (final JsonParseException e) {
             final String errorMsg = "Failed to parse json value";
-            LOGGER.error(EcompLoggerErrorCode.SCHEMA_ERROR, "Attribute Converter",
-                errorMsg, e);
+            LOGGER.error(EcompLoggerErrorCode.SCHEMA_ERROR, "Attribute Converter", errorMsg, e);
             throw new ToscaConversionException(errorMsg, e);
         } catch (final Exception e) {
             final String errorMsg = "Unexpected error occurred while converting attribute value to TOSCA";
-            LOGGER.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "Attribute Converter",
-                errorMsg, e);
+            LOGGER.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "Attribute Converter", errorMsg, e);
             throw new ToscaConversionException(errorMsg, e);
         }
-
     }
 
     private JsonElement parseToJson(final String value) {
@@ -180,5 +167,4 @@ public class AttributeConverter {
     private String getTypeDefaultValue(final String attributeType) {
         return DataTypePropertyConverter.getInstance().getDataTypePropertiesDefaultValuesRec(attributeType, dataTypes);
     }
-
 }

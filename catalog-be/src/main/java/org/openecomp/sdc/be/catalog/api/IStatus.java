@@ -17,16 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.catalog.api;
 
 import org.openecomp.sdc.be.catalog.enums.ResultStatusEnum;
 
 @FunctionalInterface
 public interface IStatus {
-    
+
     static IStatus getSuccessStatus() {
-        
         return () -> ResultStatusEnum.SUCCESS;
     }
 
@@ -39,5 +37,4 @@ public interface IStatus {
     }
 
     ResultStatusEnum getResultStatus();
-
 }

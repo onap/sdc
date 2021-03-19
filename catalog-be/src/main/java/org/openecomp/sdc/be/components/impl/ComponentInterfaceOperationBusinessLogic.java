@@ -18,7 +18,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
@@ -59,163 +58,125 @@ import org.springframework.beans.factory.annotation.Autowired;
 @org.springframework.stereotype.Component("componentInterfaceOperationBusinessLogic")
 public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentInterfaceOperationBusinessLogic.class);
     private final ComponentValidations componentValidations;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentInterfaceOperationBusinessLogic .class);
-
     @Autowired
-    public ComponentInterfaceOperationBusinessLogic(final IElementOperation elementDao,
-                                                    final IGroupOperation groupOperation,
+    public ComponentInterfaceOperationBusinessLogic(final IElementOperation elementDao, final IGroupOperation groupOperation,
                                                     final IGroupInstanceOperation groupInstanceOperation,
-                                                    final IGroupTypeOperation groupTypeOperation,
-                                                    final InterfaceOperation interfaceOperation,
+                                                    final IGroupTypeOperation groupTypeOperation, final InterfaceOperation interfaceOperation,
                                                     final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                                     final ArtifactsOperations artifactToscaOperation,
                                                     final ComponentValidations componentValidations) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
-            interfaceLifecycleTypeOperation, artifactToscaOperation);
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
         this.componentValidations = componentValidations;
     }
 
-    public Optional<ComponentInstance> updateComponentInstanceInterfaceOperation(final String componentId,
-                                                                                 final String componentInstanceId,
+    public Optional<ComponentInstance> updateComponentInstanceInterfaceOperation(final String componentId, final String componentInstanceId,
                                                                                  final InterfaceDefinition interfaceDefinition,
                                                                                  final ComponentTypeEnum componentTypeEnum,
-                                                                                 final Wrapper<ResponseFormat> errorWrapper,
-                                                                                 final boolean shouldLock)
+                                                                                 final Wrapper<ResponseFormat> errorWrapper, final boolean shouldLock)
         throws BusinessLogicException {
-
         final Component component = getComponent(componentId);
-        final Optional<ComponentInstance> componentInstanceOptional = componentValidations
-            .getComponentInstance(component, componentInstanceId);
+        final Optional<ComponentInstance> componentInstanceOptional = componentValidations.getComponentInstance(component, componentInstanceId);
         ResponseFormat responseFormat;
         if (componentInstanceOptional.isEmpty()) {
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
-            LOGGER.debug("Failed to found component instance with id {}, error: {}",
-                componentInstanceId, responseFormat);
+            LOGGER.debug("Failed to found component instance with id {}, error: {}", componentInstanceId, responseFormat);
             errorWrapper.setInnerElement(responseFormat);
             return Optional.empty();
         }
-
-        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaceMap = component
-            .getComponentInstancesInterfaces();
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaceMap = component.getComponentInstancesInterfaces();
         if (MapUtils.isEmpty(componentInstancesInterfaceMap)) {
             componentInstancesInterfaceMap = new HashMap<>();
             component.setComponentInstancesInterfaces(componentInstancesInterfaceMap);
         }
-        final List<ComponentInstanceInterface> componentInstanceInterfaceList = componentInstancesInterfaceMap
-            .get(componentInstanceId);
-
+        final List<ComponentInstanceInterface> componentInstanceInterfaceList = componentInstancesInterfaceMap.get(componentInstanceId);
         if (CollectionUtils.isEmpty(componentInstanceInterfaceList)) {
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
-            LOGGER.debug("Failed to found component instance with id {}, error: {}",
-                componentInstanceId, responseFormat);
+            LOGGER.debug("Failed to found component instance with id {}, error: {}", componentInstanceId, responseFormat);
             errorWrapper.setInnerElement(responseFormat);
             return Optional.empty();
         }
-
-        final Optional<OperationDataDefinition> optionalOperationDataDefinition = interfaceDefinition
-            .getOperations().values().stream().findFirst();
+        final Optional<OperationDataDefinition> optionalOperationDataDefinition = interfaceDefinition.getOperations().values().stream().findFirst();
         if (optionalOperationDataDefinition.isEmpty()) {
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
-            LOGGER.debug("Failed to found interface operation on component instance with id {}, error: {}",
-                componentInstanceId, responseFormat);
+            LOGGER.debug("Failed to found interface operation on component instance with id {}, error: {}", componentInstanceId, responseFormat);
             errorWrapper.setInnerElement(responseFormat);
             return Optional.empty();
         }
         final OperationDataDefinition updatedOperationDataDefinition = optionalOperationDataDefinition.get();
-        final Optional<ComponentInstanceInterface> optionalComponentInstanceInterface = componentInstanceInterfaceList
-            .stream().filter(ci -> ci.getOperations().values().stream().anyMatch(operationDataDefinition ->
-                operationDataDefinition.getUniqueId()
-                    .equalsIgnoreCase(updatedOperationDataDefinition.getUniqueId()))).findFirst();
-
+        final Optional<ComponentInstanceInterface> optionalComponentInstanceInterface = componentInstanceInterfaceList.stream().filter(
+            ci -> ci.getOperations().values().stream().anyMatch(
+                operationDataDefinition -> operationDataDefinition.getUniqueId().equalsIgnoreCase(updatedOperationDataDefinition.getUniqueId())))
+            .findFirst();
         if (optionalComponentInstanceInterface.isEmpty()) {
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT);
-            LOGGER.debug("Failed to found ComponentInstanceInterface on component instance with id {}, error: {}",
-                componentInstanceId, responseFormat);
+            LOGGER
+                .debug("Failed to found ComponentInstanceInterface on component instance with id {}, error: {}", componentInstanceId, responseFormat);
             errorWrapper.setInnerElement(responseFormat);
             return Optional.empty();
         }
-
         updateOperationDefinitionImplementation(updatedOperationDataDefinition);
-
-        optionalComponentInstanceInterface.get().getOperations()
-            .replace(updatedOperationDataDefinition.getName(), updatedOperationDataDefinition);
-
+        optionalComponentInstanceInterface.get().getOperations().replace(updatedOperationDataDefinition.getName(), updatedOperationDataDefinition);
         boolean wasLocked = false;
         try {
             if (shouldLock) {
                 lockComponent(componentId, component, "Update Interface Operation on Component instance");
                 wasLocked = true;
             }
-
-            final StorageOperationStatus status = toscaOperationFacade
-                .updateComponentInstanceInterfaces(component, componentInstanceId);
-
+            final StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId);
             if (status != StorageOperationStatus.OK) {
                 janusGraphDao.rollback();
-                responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.GENERAL_ERROR);
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                 LOGGER.error("Exception occurred when updating Component Instance Interfaces {}", responseFormat);
                 errorWrapper.setInnerElement(responseFormat);
                 return Optional.empty();
             }
-
             final ComponentParametersView componentFilter = new ComponentParametersView();
             componentFilter.disableAll();
             componentFilter.setIgnoreUsers(false);
             componentFilter.setIgnoreComponentInstances(false);
             componentFilter.setIgnoreInterfaces(false);
             componentFilter.setIgnoreComponentInstancesInterfaces(false);
-
             final Either<Component, StorageOperationStatus> operationStatusEither = toscaOperationFacade
                 .updateComponentInstanceMetadataOfTopologyTemplate(component, componentFilter);
-
             if (operationStatusEither.isRight()) {
                 janusGraphDao.rollback();
-                responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.GENERAL_ERROR);
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                 LOGGER.error("Exception occurred when updating Component Instance Topology template {}", responseFormat);
                 errorWrapper.setInnerElement(responseFormat);
                 return Optional.empty();
             }
             janusGraphDao.commit();
-
         } catch (final Exception e) {
             janusGraphDao.rollback();
-            LOGGER.error("Exception occurred when updating Interface Operation on Component Instance: {}",
-                e.getMessage(), e);
+            LOGGER.error("Exception occurred when updating Interface Operation on Component Instance: {}", e.getMessage(), e);
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             errorWrapper.setInnerElement(responseFormat);
             throw new BusinessLogicException(responseFormat);
-
         } finally {
             if (wasLocked) {
                 unlockComponent(component.getUniqueId(), componentTypeEnum);
             }
         }
-
         return componentInstanceOptional;
-
     }
 
     public User validateUser(final String userId) {
         final User user = userValidations.validateUserExists(userId);
-        userValidations
-            .validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
+        userValidations.validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
         return user;
     }
 
-    private void unlockComponent(final String componentUniqueId,
-                                 final ComponentTypeEnum componentType) {
+    private void unlockComponent(final String componentUniqueId, final ComponentTypeEnum componentType) {
         graphLockOperation.unlockComponent(componentUniqueId, componentType.getNodeType());
     }
 
     private void updateOperationDefinitionImplementation(final OperationDataDefinition updatedOperationDataDefinition) {
         final ArtifactDataDefinition artifactInfo = new ArtifactDataDefinition();
-        artifactInfo.setArtifactName(
-            String.format("'%s'", updatedOperationDataDefinition.getImplementation().getArtifactName())
-        );
+        artifactInfo.setArtifactName(String.format("'%s'", updatedOperationDataDefinition.getImplementation().getArtifactName()));
         updatedOperationDataDefinition.setImplementation(artifactInfo);
     }
 }

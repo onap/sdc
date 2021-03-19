@@ -19,14 +19,7 @@
  *  * ============LICENSE_END=========================================================
  *
  */
-
 package org.openecomp.sdc.be.components.impl.artifact;
-
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 import static org.openecomp.sdc.be.components.impl.artifact.PayloadTypeEnum.HEAT_YAML;
 import static org.openecomp.sdc.be.components.impl.artifact.PayloadTypeEnum.NOT_DEFINED;
@@ -47,6 +40,11 @@ import static org.openecomp.sdc.common.api.ArtifactTypeEnum.VF_LICENSE;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.VNF_CATALOG;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.YANG_XML;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+
 public class ArtifactTypeToPayloadTypeSelector {
 
     private static final Map<ArtifactTypeWithExtension, PayloadTypeEnum> artifactTypeWithExtension2PayloadType = new HashMap<>();
@@ -66,17 +64,14 @@ public class ArtifactTypeToPayloadTypeSelector {
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(DCAE_INVENTORY_JSON, JSON), PayloadTypeEnum.JSON);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(DCAE_INVENTORY_JSON, YML), PayloadTypeEnum.YAML);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(DCAE_INVENTORY_JSON, YAML), PayloadTypeEnum.YAML);
-
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(DCAE_INVENTORY_TOSCA, XML), PayloadTypeEnum.XML);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(DCAE_INVENTORY_TOSCA, JSON), PayloadTypeEnum.JSON);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(DCAE_INVENTORY_TOSCA, YML), PayloadTypeEnum.YAML);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(DCAE_INVENTORY_TOSCA, YAML), PayloadTypeEnum.YAML);
-
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(VES_EVENTS, XML), PayloadTypeEnum.XML);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(VES_EVENTS, JSON), PayloadTypeEnum.JSON);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(VES_EVENTS, YML), PayloadTypeEnum.YAML);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(VES_EVENTS, YAML), PayloadTypeEnum.YAML);
-
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(LIFECYCLE_OPERATIONS, XML), PayloadTypeEnum.XML);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(LIFECYCLE_OPERATIONS, JSON), PayloadTypeEnum.JSON);
         artifactTypeWithExtension2PayloadType.put(createArtifactTypeWithExtension(LIFECYCLE_OPERATIONS, YML), PayloadTypeEnum.YAML);
@@ -88,7 +83,6 @@ public class ArtifactTypeToPayloadTypeSelector {
         artifactType2PayloadType.put(HEAT_VOL.getType().toLowerCase(), HEAT_YAML);
         artifactType2PayloadType.put(HEAT_NET.getType().toLowerCase(), HEAT_YAML);
         artifactType2PayloadType.put(HEAT_ENV.getType().toLowerCase(), PayloadTypeEnum.HEAT_ENV);
-
         artifactType2PayloadType.put(YANG_XML.getType().toLowerCase(), PayloadTypeEnum.XML);
         artifactType2PayloadType.put(VNF_CATALOG.getType().toLowerCase(), PayloadTypeEnum.XML);
         artifactType2PayloadType.put(VF_LICENSE.getType().toLowerCase(), PayloadTypeEnum.XML);
@@ -114,6 +108,7 @@ public class ArtifactTypeToPayloadTypeSelector {
     }
 
     private class ArtifactTypeWithExtension {
+
         private String artifactType;
         private String fileExtension;
 
@@ -136,9 +131,8 @@ public class ArtifactTypeToPayloadTypeSelector {
                 return false;
             }
             ArtifactTypeWithExtension otherArtifactTypeWithExtension = (ArtifactTypeWithExtension) other;
-
-            return isArtifactTypeEqual(otherArtifactTypeWithExtension.getArtifactType()) &&
-                    isFileExtensionEqual(otherArtifactTypeWithExtension.getFileExtension());
+            return isArtifactTypeEqual(otherArtifactTypeWithExtension.getArtifactType()) && isFileExtensionEqual(
+                otherArtifactTypeWithExtension.getFileExtension());
         }
 
         @Override

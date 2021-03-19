@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.Map;
@@ -30,5 +29,4 @@ public class ToscaOperationAssignment {
     private String description;
     private String implementation;
     private Map<String, ToscaPropertyAssignment> inputs;
-
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.auditing.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
@@ -27,10 +30,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 public abstract class AuditBaseEventFactory implements AuditEventFactory {
 
     private AuditingActionEnum action;
@@ -39,32 +38,24 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
         this.action = Objects.requireNonNull(action);
     }
 
-    public AuditBaseEventFactory() {}
-
-    public AuditingActionEnum getAction() {
-        return action;
+    public AuditBaseEventFactory() {
     }
 
     public static String buildUserNameExtended(User user) {
         if (user == null) {
             return null;
         }
-
         StringBuilder builder = new StringBuilder();
         appendIfNotEmpty(user.getUserId(), builder);
-
         String firstName = replaceNullNameWithEmpty(user.getFirstName());
         String lastName = replaceNullNameWithEmpty(user.getLastName());
-
         if (appendIfNotEmpty(firstName, builder)) {
             appendIfNotEmpty(lastName, builder, " ");
-        }
-        else {
+        } else {
             appendIfNotEmpty(lastName, builder);
         }
         appendIfNotEmpty(user.getEmail(), builder);
         appendIfNotEmpty(user.getRole(), builder);
-
         return builder.toString();
     }
 
@@ -119,6 +110,10 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
         return StringUtils.EMPTY;
     }
 
+    public AuditingActionEnum getAction() {
+        return action;
+    }
+
     @Override
     //TODO implement in derived classes for ci testing
     public List<Pair<String, String>> getQueryParams() {
@@ -127,20 +122,14 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
 
     @Override
     public final String getLogMessage() {
-       return String.format(getLogPattern(), getLogArgs());
+        return String.format(getLogPattern(), getLogArgs());
     }
 
     private Object[] getLogArgs() {
-        return Arrays.stream(getLogMessageParams())
-                .map(AuditBaseEventFactory::buildValue)
-                .toArray(String[]::new);
+        return Arrays.stream(getLogMessageParams()).map(AuditBaseEventFactory::buildValue).toArray(String[]::new);
     }
 
     public abstract String getLogPattern();
 
     public abstract String[] getLogMessageParams();
-
-
-
-
 }

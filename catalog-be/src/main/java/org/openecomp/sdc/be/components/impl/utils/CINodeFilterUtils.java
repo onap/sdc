@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.impl.utils;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
@@ -25,22 +27,15 @@ import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class CINodeFilterUtils {
 
     Logger log = Logger.getLogger(CINodeFilterUtils.class);
 
-
-    public CINodeFilterDataDefinition getNodeFilterDataDefinition(
-            UploadNodeFilterInfo uploadNodeFilterInfo, String uniqueId) {
-        CINodeFilterDataDefinition nodeFilterDataDefinition =
-                new CINodeFilterDataDefinition();
+    public CINodeFilterDataDefinition getNodeFilterDataDefinition(UploadNodeFilterInfo uploadNodeFilterInfo, String uniqueId) {
+        CINodeFilterDataDefinition nodeFilterDataDefinition = new CINodeFilterDataDefinition();
         nodeFilterDataDefinition.setName(uploadNodeFilterInfo.getName());
-        List<RequirementNodeFilterPropertyDataDefinition> collect =
-                uploadNodeFilterInfo.getProperties().stream().map(this::buildProperty).collect(Collectors.toList());
+        List<RequirementNodeFilterPropertyDataDefinition> collect = uploadNodeFilterInfo.getProperties().stream().map(this::buildProperty)
+            .collect(Collectors.toList());
         ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> listDataDefinition = new ListDataDefinition<>();
         listDataDefinition.getListToscaDataDefinition().addAll(collect);
         nodeFilterDataDefinition.setProperties(listDataDefinition);
@@ -51,38 +46,31 @@ public class CINodeFilterUtils {
     }
 
     private ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> converCapabilties(
-            Map<String, UploadNodeFilterCapabilitiesInfo> capabilities) {
-        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> listDataDefinition =
-                new ListDataDefinition<>();
+        Map<String, UploadNodeFilterCapabilitiesInfo> capabilities) {
+        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> listDataDefinition = new ListDataDefinition<>();
         for (UploadNodeFilterCapabilitiesInfo capability : capabilities.values()) {
-            RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition =
-                    convertCapability(capability);
+            RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition = convertCapability(capability);
             listDataDefinition.add(requirementNodeFilterCapabilityDataDefinition);
         }
         return listDataDefinition;
     }
 
-    private RequirementNodeFilterCapabilityDataDefinition convertCapability(
-            UploadNodeFilterCapabilitiesInfo capability) {
+    private RequirementNodeFilterCapabilityDataDefinition convertCapability(UploadNodeFilterCapabilitiesInfo capability) {
         RequirementNodeFilterCapabilityDataDefinition retVal = new RequirementNodeFilterCapabilityDataDefinition();
         retVal.setName(capability.getName());
-        List<RequirementNodeFilterPropertyDataDefinition> props =
-                capability.getProperties().stream().map(this::buildProperty).collect(Collectors.toList());
+        List<RequirementNodeFilterPropertyDataDefinition> props = capability.getProperties().stream().map(this::buildProperty)
+            .collect(Collectors.toList());
         ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propsList = new ListDataDefinition<>();
         propsList.getListToscaDataDefinition().addAll(props);
         retVal.setProperties(propsList);
         return retVal;
     }
 
-
-    private RequirementNodeFilterPropertyDataDefinition buildProperty(
-            UploadNodeFilterPropertyInfo uploadNodeFilterPropertyInfo) {
+    private RequirementNodeFilterPropertyDataDefinition buildProperty(UploadNodeFilterPropertyInfo uploadNodeFilterPropertyInfo) {
         RequirementNodeFilterPropertyDataDefinition retVal = new RequirementNodeFilterPropertyDataDefinition();
         retVal.setName(uploadNodeFilterPropertyInfo.getName());
         List<String> propertyConstraints = uploadNodeFilterPropertyInfo.getValues();
         retVal.setConstraints(propertyConstraints);
         return retVal;
     }
-
-
 }

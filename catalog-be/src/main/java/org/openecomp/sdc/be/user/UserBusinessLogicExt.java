@@ -17,10 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.user;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -37,14 +38,10 @@ import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @org.springframework.stereotype.Component
 public class UserBusinessLogicExt {
 
     private static final Logger log = Logger.getLogger(UserBusinessLogicExt.class);
-
     private final UserBusinessLogic userBusinessLogic;
     private final UserAdminOperation userAdminOperation;
     private final LifecycleBusinessLogic lifecycleBusinessLogic;
@@ -58,30 +55,27 @@ public class UserBusinessLogicExt {
         this.componentsUtils = componentsUtils;
     }
 
-
     public User deActivateUser(String modifierUserId, String userIdToDeactivate) {
-
         User modifier = userBusinessLogic.getValidModifier(modifierUserId, userIdToDeactivate, AuditingActionEnum.DELETE_USER);
-
         User userToDeactivate = userBusinessLogic.getUser(userIdToDeactivate, false);
         if (userToDeactivate.getStatus() == UserStatusEnum.INACTIVE) {
             log.debug("deActivateUser method - User already inactive", userIdToDeactivate);
-            componentsUtils.auditAdminUserActionAndThrowException(AuditingActionEnum.DELETE_USER, modifier, userToDeactivate, null, ActionStatus.USER_NOT_FOUND, userIdToDeactivate);
+            componentsUtils
+                .auditAdminUserActionAndThrowException(AuditingActionEnum.DELETE_USER, modifier, userToDeactivate, null, ActionStatus.USER_NOT_FOUND,
+                    userIdToDeactivate);
         }
-
         handleTasksInProgress(userToDeactivate);
-
         userAdminOperation.deActivateUser(userToDeactivate);
         componentsUtils.auditUserAccess(userToDeactivate, ActionStatus.OK);
         handleAuditing(modifier, userToDeactivate, null, componentsUtils.getResponseFormat(ActionStatus.OK), AuditingActionEnum.DELETE_USER);
-        userBusinessLogic.getFacadeUserOperation().updateUserCache(UserOperationEnum.DEACTIVATE, userToDeactivate.getUserId(), userToDeactivate.getRole());
+        userBusinessLogic.getFacadeUserOperation()
+            .updateUserCache(UserOperationEnum.DEACTIVATE, userToDeactivate.getUserId(), userToDeactivate.getRole());
         return userToDeactivate;
     }
 
     private void handleTasksInProgress(User userToDeactivate) {
         String userIdToDeactivate = userToDeactivate.getUserId();
-        List<Component> userPendingTasks = userAdminOperation
-                .getUserActiveComponents(userToDeactivate, getDeactivateUserStateLimitations());
+        List<Component> userPendingTasks = userAdminOperation.getUserActiveComponents(userToDeactivate, getDeactivateUserStateLimitations());
         if (userPendingTasks.isEmpty()) {
             return;
         }
@@ -95,17 +89,19 @@ public class UserBusinessLogicExt {
                 log.debug("Erroneous component state when deactivating user for component {} state is {}", componentId, currentState);
                 continue;
             }
-            Either<? extends Component, ResponseFormat> result = lifecycleBusinessLogic.changeComponentState(component.getComponentType(), componentId, userToDeactivate,
-                    transition, changeInfo, false, true);
+            Either<? extends Component, ResponseFormat> result = lifecycleBusinessLogic
+                .changeComponentState(component.getComponentType(), componentId, userToDeactivate, transition, changeInfo, false, true);
             if (result.isRight()) {
                 failedComponents.add(component.getName());
             }
         }
         if (CollectionUtils.isNotEmpty(failedComponents)) {
             String componentList = failedComponents.toString();
-            log.error(EcompLoggerErrorCode.DATA_ERROR, "", "", "User cannot be deleted, {} has the following pending projects that cannot be committed: {}", userIdToDeactivate, componentList);
+            log.error(EcompLoggerErrorCode.DATA_ERROR, "", "",
+                "User cannot be deleted, {} has the following pending projects that cannot be committed: {}", userIdToDeactivate, componentList);
             String userInfo = userToDeactivate.getFirstName() + " " + userToDeactivate.getLastName() + '(' + userToDeactivate.getUserId() + ')';
-            componentsUtils.auditAdminUserActionAndThrowException(AuditingActionEnum.DELETE_USER, null, userToDeactivate, null, ActionStatus.CANNOT_DELETE_USER_WITH_ACTIVE_ELEMENTS, userInfo, componentList);
+            componentsUtils.auditAdminUserActionAndThrowException(AuditingActionEnum.DELETE_USER, null, userToDeactivate, null,
+                ActionStatus.CANNOT_DELETE_USER_WITH_ACTIVE_ELEMENTS, userInfo, componentList);
         }
     }
 
@@ -126,5 +122,4 @@ public class UserBusinessLogicExt {
     private void handleAuditing(User modifier, User userBefor, User userAfter, ResponseFormat responseFormat, AuditingActionEnum actionName) {
         componentsUtils.auditAdminUserAction(actionName, modifier, userBefor, userAfter, responseFormat);
     }
-
 }

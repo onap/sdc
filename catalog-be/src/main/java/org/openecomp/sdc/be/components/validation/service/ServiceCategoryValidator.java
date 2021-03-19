@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.service;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 import fj.data.Either;
+import java.util.List;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -35,16 +37,12 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.List;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
 @org.springframework.stereotype.Component
 public class ServiceCategoryValidator implements ServiceFieldValidator {
 
     private static final Logger log = Logger.getLogger(ServiceCategoryValidator.class.getName());
-    private ComponentsUtils componentsUtils;
     protected IElementOperation elementDao;
+    private ComponentsUtils componentsUtils;
 
     public ServiceCategoryValidator(ComponentsUtils componentsUtils, IElementOperation elementDao) {
         this.componentsUtils = componentsUtils;
@@ -55,7 +53,8 @@ public class ServiceCategoryValidator implements ServiceFieldValidator {
     public void validateAndCorrectField(User user, Service service, AuditingActionEnum actionEnum) {
         log.debug("validate Service category");
         if (isEmpty(service.getCategories())) {
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
+            ResponseFormat errorResponse = componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, service, actionEnum, ComponentTypeEnum.SERVICE);
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
         }
@@ -65,14 +64,14 @@ public class ServiceCategoryValidator implements ServiceFieldValidator {
             componentsUtils.auditComponentAdmin(responseFormat, user, service, actionEnum, ComponentTypeEnum.SERVICE);
             throw new ByResponseFormatComponentException(responseFormat);
         }
-
     }
 
     private Either<Boolean, ResponseFormat> validateServiceCategory(List<CategoryDefinition> list) {
         if (list != null) {
             if (list.size() > 1) {
                 log.debug("Must be only one category for service");
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_TOO_MUCH_CATEGORIES, ComponentTypeEnum.SERVICE.getValue());
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.COMPONENT_TOO_MUCH_CATEGORIES, ComponentTypeEnum.SERVICE.getValue());
                 return Either.right(responseFormat);
             }
             CategoryDefinition category = list.get(0);
@@ -83,10 +82,10 @@ public class ServiceCategoryValidator implements ServiceFieldValidator {
             }
             if (!ValidationUtils.validateStringNotEmpty(category.getName())) {
                 log.debug("Resource category is empty");
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
                 return Either.right(responseFormat);
             }
-
             log.debug("validating service category {} against valid categories list", list);
             Either<List<CategoryDefinition>, ActionStatus> categorys = elementDao.getAllServiceCategories();
             if (categorys.isRight()) {

@@ -17,9 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.component;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -31,9 +32,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @org.springframework.stereotype.Component
 public class ComponentTagsValidator implements ComponentFieldValidator {
@@ -51,16 +49,17 @@ public class ComponentTagsValidator implements ComponentFieldValidator {
         List<String> tagsList = component.getTags();
         try {
             validateComponentTags(tagsList, component.getName(), component.getComponentType(), user, component, actionEnum);
-        } catch(ComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+        } catch (ComponentException e) {
+            ResponseFormat responseFormat =
+                e.getResponseFormat() != null ? e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, component.getComponentType());
             throw e;
         }
         ValidationUtils.removeDuplicateFromList(component.getTags());
     }
 
-    protected void validateComponentTags(List<String> tags, String name, ComponentTypeEnum componentType, User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum action) {
+    protected void validateComponentTags(List<String> tags, String name, ComponentTypeEnum componentType, User user,
+                                         org.openecomp.sdc.be.model.Component component, AuditingActionEnum action) {
         log.debug("validate component tags");
         boolean includesComponentName = false;
         int tagListSize = 0;
@@ -81,7 +80,6 @@ public class ComponentTagsValidator implements ComponentFieldValidator {
             if (tagListSize > 0) {
                 tagListSize--;
             }
-
             if (!includesComponentName) {
                 log.debug("tags must include component name");
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
@@ -90,7 +88,8 @@ public class ComponentTagsValidator implements ComponentFieldValidator {
             }
             if (!ValidationUtils.validateTagListLength(tagListSize)) {
                 log.debug("overall tags length exceeds limit {}", ValidationUtils.TAG_LIST_MAX_LENGTH);
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
+                responseFormat = componentsUtils
+                    .getResponseFormat(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
                 componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
                 throw new ByActionStatusComponentException(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
             }
@@ -108,7 +107,8 @@ public class ComponentTagsValidator implements ComponentFieldValidator {
         return includesComponentName;
     }
 
-    private void validateTagLength(ComponentTypeEnum componentType, User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum action, String tag) {
+    private void validateTagLength(ComponentTypeEnum componentType, User user, org.openecomp.sdc.be.model.Component component,
+                                   AuditingActionEnum action, String tag) {
         ResponseFormat responseFormat;
         if (!ValidationUtils.validateTagLength(tag)) {
             log.debug("tag length exceeds limit {}", ValidationUtils.TAG_MAX_LENGTH);

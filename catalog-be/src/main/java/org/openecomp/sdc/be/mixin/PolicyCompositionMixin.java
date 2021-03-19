@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,34 +17,37 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.mixin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.view.Mixin;
 import org.openecomp.sdc.be.view.MixinTarget;
 
-import java.util.List;
-import java.util.Map;
-
 @MixinTarget(target = PolicyDataDefinition.class)
-public abstract  class PolicyCompositionMixin extends Mixin {
+public abstract class PolicyCompositionMixin extends Mixin {
+
     @JsonProperty
     abstract String getName();
+
     @JsonProperty
     abstract Map<PolicyTargetType, List<String>> getTargets();
+
     @JsonProperty
     abstract String getUniqueId();
+
     @JsonProperty("type")
     abstract String getPolicyTypeName();
+
     @JsonProperty
     abstract String getInputPath();
+
     @JsonProperty
     abstract String getValue();
+
     @JsonProperty
     abstract String getInstanceUniqueId();
-
-
 }

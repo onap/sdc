@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.builder;
 
 import java.util.HashMap;
@@ -56,7 +55,6 @@ public class ToscaRelationshipBuilder {
                         toscaProperty.setValue(propertyAssignmentUi.getValue());
                         inputMap.put(propertyAssignmentUi.getName(), toscaProperty);
                     });
-
                     toscaOperationAssignment.setInputs(inputMap);
                 }
                 operationDefinitionMap.put(operationUi.getOperationType(), toscaOperationAssignment);
@@ -67,5 +65,4 @@ public class ToscaRelationshipBuilder {
         toscaRelationship.setInterfaces(interfaceMap);
         return toscaRelationship;
     }
-
 }

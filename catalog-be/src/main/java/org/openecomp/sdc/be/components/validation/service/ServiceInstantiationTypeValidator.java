@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.service;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +33,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 @org.springframework.stereotype.Component
 public class ServiceInstantiationTypeValidator implements ServiceFieldValidator {
+
     private static final Logger log = Logger.getLogger(ServiceInstantiationTypeValidator.class.getName());
     private ComponentsUtils componentsUtils;
 
@@ -48,7 +48,7 @@ public class ServiceInstantiationTypeValidator implements ServiceFieldValidator 
         if (StringUtils.isEmpty(instantiationType)) {
             service.setInstantiationType(InstantiationTypes.A_LA_CARTE.getValue());
         }
-        if (!InstantiationTypes.containsName(service.getInstantiationType())){
+        if (!InstantiationTypes.containsName(service.getInstantiationType())) {
             log.error("Recieved Instantiation type {} is not valid.", instantiationType);
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_INSTANTIATION_TYPE, instantiationType);
             componentsUtils.auditComponentAdmin(errorResponse, user, service, actionEnum, ComponentTypeEnum.SERVICE);

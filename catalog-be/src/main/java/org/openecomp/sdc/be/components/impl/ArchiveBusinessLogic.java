@@ -21,8 +21,16 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.wrapWithTryCatch;
+
 import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
@@ -44,108 +52,88 @@ import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.wrapWithTryCatch;
-
-
 @org.springframework.stereotype.Component
 public class ArchiveBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ArchiveBusinessLogic.class.getName());
-
     private final JanusGraphDao janusGraphDao;
     private final AccessValidations accessValidations;
     private final ArchiveOperation archiveOperation;
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentsUtils componentUtils;
-	private final CatalogOperation catalogOperations;
+    private final CatalogOperation catalogOperations;
 
-    public ArchiveBusinessLogic(JanusGraphDao janusGraphDao, AccessValidations accessValidations, ArchiveOperation archiveOperation, ToscaOperationFacade tof, ComponentsUtils componentsUtils,
-	CatalogOperation catalogOperations) {
+    public ArchiveBusinessLogic(JanusGraphDao janusGraphDao, AccessValidations accessValidations, ArchiveOperation archiveOperation,
+                                ToscaOperationFacade tof, ComponentsUtils componentsUtils, CatalogOperation catalogOperations) {
         this.janusGraphDao = janusGraphDao;
         this.accessValidations = accessValidations;
         this.archiveOperation = archiveOperation;
         this.toscaOperationFacade = tof;
         this.componentUtils = componentsUtils;
-		this.catalogOperations = catalogOperations;
+        this.catalogOperations = catalogOperations;
     }
 
     public void archiveComponent(String containerComponentType, String userId, String componentId) {
         User user = accessValidations.userIsAdminOrDesigner(userId, containerComponentType + "_ARCHIVE");
         Either<List<String>, ActionStatus> result = this.archiveOperation.archiveComponent(componentId);
-
-        if (result.isRight()){
+        if (result.isRight()) {
             throw new ByActionStatusComponentException(result.right().value(), componentId);
         }
         this.auditAction(ArchiveOperation.Action.ARCHIVE, result.left().value(), user, containerComponentType);
-		// Send Archive Notification To Facade
-		wrapWithTryCatch(() -> sendNotificationToFacade(componentId, ChangeTypeEnum.ARCHIVE));
+        // Send Archive Notification To Facade
+        wrapWithTryCatch(() -> sendNotificationToFacade(componentId, ChangeTypeEnum.ARCHIVE));
     }
 
     public void restoreComponent(String containerComponentType, String userId, String componentId) {
         User user = accessValidations.userIsAdminOrDesigner(userId, containerComponentType + "_RESTORE");
         Either<List<String>, ActionStatus> result = this.archiveOperation.restoreComponent(componentId);
-        if (result.isRight()){
+        if (result.isRight()) {
             throw new ByActionStatusComponentException(result.right().value(), componentId);
         }
         this.auditAction(ArchiveOperation.Action.RESTORE, result.left().value(), user, containerComponentType);
-		// Send Archive Notification To Facade
-		wrapWithTryCatch(() -> sendNotificationToFacade(componentId, ChangeTypeEnum.RESTORE));
+        // Send Archive Notification To Facade
+        wrapWithTryCatch(() -> sendNotificationToFacade(componentId, ChangeTypeEnum.RESTORE));
     }
 
-    public List<String> onVspArchive(String userId, List<String> csarUuids){
+    public List<String> onVspArchive(String userId, List<String> csarUuids) {
         return this.onVspArchiveOrRestore(userId, csarUuids, ArchiveOperation.Action.ARCHIVE);
     }
 
-    public List<String> onVspRestore(String userId, List<String> csarUuids){
+    public List<String> onVspRestore(String userId, List<String> csarUuids) {
         return this.onVspArchiveOrRestore(userId, csarUuids, ArchiveOperation.Action.RESTORE);
     }
 
     private List<String> onVspArchiveOrRestore(String userId, List<String> csarUuids, ArchiveOperation.Action action) {
-
         accessValidations.userIsAdminOrDesigner(userId, action.name() + "_VSP");
-
         ActionStatus actionStatus;
         List<String> failedCsarIDs = new LinkedList<>();
-
         for (String csarUuid : csarUuids) {
             try {
-
                 if (action == ArchiveOperation.Action.ARCHIVE) {
                     actionStatus = this.archiveOperation.onVspArchived(csarUuid);
                 } else {
                     actionStatus = this.archiveOperation.onVspRestored(csarUuid);
                 }
-
                 //If not found VFs with this CSAR ID we still want a success (nothing is actually done)
                 if (actionStatus == ActionStatus.RESOURCE_NOT_FOUND) {
                     actionStatus = ActionStatus.OK;
                 }
-
                 if (actionStatus != ActionStatus.OK) {
                     failedCsarIDs.add(csarUuid);
                 }
-
             } catch (Exception e) {
                 log.error("Failed to handle notification: {} on VSP for csarUuid: {}", action.name(), csarUuid);
                 log.error("Exception Thrown:", e);
                 failedCsarIDs.add(csarUuid);
             }
         }
-
         return failedCsarIDs;
     }
 
     public Map<String, List<CatalogComponent>> getArchiveComponents(String userId, List<OriginTypeEnum> excludeTypes) {
         try {
-
-            Either<List<CatalogComponent>, StorageOperationStatus> components = toscaOperationFacade.getCatalogOrArchiveComponents(false, excludeTypes);
+            Either<List<CatalogComponent>, StorageOperationStatus> components = toscaOperationFacade
+                .getCatalogOrArchiveComponents(false, excludeTypes);
             if (components.isLeft()) {
                 List<CatalogComponent> comps = components.left().value();
                 return comps.stream().collect(Collectors.groupingBy(cmpt -> ComponentTypeEnum.findParamByType(cmpt.getComponentType())));
@@ -153,52 +141,54 @@ public class ArchiveBusinessLogic {
                 log.info("No components found");
                 return new HashMap();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error fetching archived elements", e);
             throw e;
-        }
-        finally {
+        } finally {
             janusGraphDao.commit();
         }
     }
-
 
     @VisibleForTesting
     void auditAction(ArchiveOperation.Action action, List<String> affectedCompIds, User user, String containerComponentType) {
         String comment = String.format("All versions of this component were %s", action == ArchiveOperation.Action.ARCHIVE ? "archived" : "restored");
         HashSet<String> auditDoneUUIDs = new HashSet<>();
-        for (String componentId : affectedCompIds){
+        for (String componentId : affectedCompIds) {
             Either<Component, StorageOperationStatus> result = toscaOperationFacade.getToscaElement(componentId, new ComponentParametersView());
             if (result.isRight()) {
-                log.error(EcompLoggerErrorCode.DATA_ERROR, null, "GetToscaElement",
-                        result.right().value().name() + "for component with id {}", componentId);
+                log.error(EcompLoggerErrorCode.DATA_ERROR, null, "GetToscaElement", result.right().value().name() + "for component with id {}",
+                    componentId);
                 continue;
             }
             if (auditDoneUUIDs.add(result.left().value().getUUID())) {
                 //a component with this UUID is not added to audit DB/log for current archive/restore operation yet - add to audit DB now
-                AuditingActionEnum auditAction = action == ArchiveOperation.Action.ARCHIVE ? AuditingActionEnum.ARCHIVE_COMPONENT : AuditingActionEnum.RESTORE_COMPONENT; //The audit Action
-                result.left().foreachDoEffect(
-                    c -> {
-                        // The archive/restore records have been retrieved from Cassandra using the separate queries.
-                        // Setting current version as null allows to avoid appearing same records in ActivityLog twice:
-                        // - first time as per current version query
-                        //- second type as per archive/restore query
-                        c.setVersion(null);
-                        componentUtils.auditComponentAdmin(componentUtils.getResponseFormat(ActionStatus.OK), user, c, auditAction, ComponentTypeEnum.findByParamName(containerComponentType), comment);
-                    });
+
+                AuditingActionEnum auditAction = action == ArchiveOperation.Action.ARCHIVE ? AuditingActionEnum.ARCHIVE_COMPONENT
+                    : AuditingActionEnum.RESTORE_COMPONENT; //The audit Action
+                result.left().foreachDoEffect(c -> {
+                    // The archive/restore records have been retrieved from Cassandra using the separate queries.
+
+                    // Setting current version as null allows to avoid appearing same records in ActivityLog twice:
+
+                    // - first time as per current version query
+
+                    //- second type as per archive/restore query
+                    c.setVersion(null);
+                    componentUtils.auditComponentAdmin(componentUtils.getResponseFormat(ActionStatus.OK), user, c, auditAction,
+                        ComponentTypeEnum.findByParamName(containerComponentType), comment);
+                });
             }
         }
     }
-	protected Either<Component, ResponseFormat> sendNotificationToFacade(String componentId,
-			ChangeTypeEnum changeStatus) {
-		log.debug("build {} notification for facade start", changeStatus.name());
-		Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(componentId);
-		Component component = toscaElement.left()
-				.value();
-		ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
-		if (status != ActionStatus.OK) {
-			return Either.right(componentUtils.getResponseFormat(status));
-		}
-		return Either.left(component);
-	}
+
+    protected Either<Component, ResponseFormat> sendNotificationToFacade(String componentId, ChangeTypeEnum changeStatus) {
+        log.debug("build {} notification for facade start", changeStatus.name());
+        Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(componentId);
+        Component component = toscaElement.left().value();
+        ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
+        if (status != ActionStatus.OK) {
+            return Either.right(componentUtils.getResponseFormat(status));
+        }
+        return Either.left(component);
+    }
 }

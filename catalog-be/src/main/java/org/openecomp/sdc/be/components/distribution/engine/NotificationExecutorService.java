@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,50 +17,44 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class NotificationExecutorService {
 
     private static final Logger logger = Logger.getLogger(NotificationExecutorService.class.getName());
 
     public ExecutorService createExcecutorService(DistributionNotificationTopicConfig distributionNotificationTopic) {
-
         Integer minThreadPoolSize = distributionNotificationTopic.getMinThreadPoolSize();
         if (minThreadPoolSize == null) {
             minThreadPoolSize = 0;
         }
-
         Integer maxThreadPoolSize = distributionNotificationTopic.getMaxThreadPoolSize();
         if (maxThreadPoolSize == null) {
             maxThreadPoolSize = 10;
         }
-
         ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder();
         threadFactoryBuilder.setNameFormat("distribution-notification-thread-%d");
         ThreadFactory threadFactory = threadFactoryBuilder.build();
-
         return new ThreadPoolExecutor(minThreadPoolSize, maxThreadPoolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory);
     }
 
     public void shutdownAndAwaitTermination(ExecutorService pool, long maxTimeToWait) {
-
         logger.debug("shutdown NotificationExecutorService");
         pool.shutdown(); // Disable new tasks from being submitted
         try {
             // Wait a while for existing tasks to terminate
             if (!pool.awaitTermination(maxTimeToWait, TimeUnit.SECONDS)) {
                 pool.shutdownNow(); // Cancel currently executing tasks
+
                 // Wait a while for tasks to respond to being cancelled
                 if (!pool.awaitTermination(maxTimeToWait, TimeUnit.SECONDS)) {
                     logger.debug("Failed to close executor service");
@@ -73,5 +67,4 @@ public class NotificationExecutorService {
             Thread.currentThread().interrupt();
         }
     }
-
 }

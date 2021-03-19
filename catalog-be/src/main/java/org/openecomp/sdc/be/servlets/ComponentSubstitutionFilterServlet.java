@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,26 +74,20 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
     private static final String MODIFIER_ID_IS = "Modifier id is {}";
     private static final String FAILED_TO_PARSE_COMPONENT = "Failed to parse component";
     private static final String INVALID_CONSTRAINTYPE_ENUM = "Invalid value for NodeFilterConstraintType enum %s";
-
     private static final String FAILED_TO_ADD_SUBSTITUTION_FILTER = "Failed to add substitution filter";
     private static final String ADD_SUBSTITUTION_FILTER = "Add Substitution Filter";
     private static final String ADD_SUBSTITUTION_FILTER_WITH_AN_ERROR = "Add substitution filter with an error";
-
     private static final String FAILED_TO_UPDATE_SUBSTITUTION_FILTER = "Failed to update substitution filter";
     private static final String SUBSTITUTION_FILTER_UPDATE = "Substitution Filter Update";
     private static final String UPDATE_SUBSTITUTION_FILTER_WITH_AN_ERROR = "Update substitution filter with an error {}";
-
     private static final String FAILED_TO_DELETE_SUBSTITUTION_FILTER = "Failed to delete substitution filter";
     private static final String SUBSTITUTION_FILTER_DELETE = "Substitution Filter Delete";
     private static final String DELETE_SUBSTITUTION_FILTER_WITH_AN_ERROR = "Delete substitution filter with an error";
-
     private final ComponentSubstitutionFilterBusinessLogic componentSubstitutionFilterBusinessLogic;
 
     @Inject
-    public ComponentSubstitutionFilterServlet(final UserBusinessLogic userBusinessLogic,
-                                              final ComponentInstanceBusinessLogic componentInstanceBL,
-                                              final ComponentsUtils componentsUtils,
-                                              final ServletUtils servletUtils,
+    public ComponentSubstitutionFilterServlet(final UserBusinessLogic userBusinessLogic, final ComponentInstanceBusinessLogic componentInstanceBL,
+                                              final ComponentsUtils componentsUtils, final ServletUtils servletUtils,
                                               final ResourceImportManager resourceImportManager,
                                               final ComponentSubstitutionFilterBusinessLogic componentSubstitutionFilterBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
@@ -104,62 +97,46 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Add Component Substitution Filter Constraint", method = "POST",
-        summary = "Add Component Substitution Filter Constraint", responses = {
+    @Operation(description = "Add Component Substitution Filter Constraint", method = "POST", summary = "Add Component Substitution Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Add Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response addSubstitutionFilter(
-        @Parameter(description = "UIConstraint data", required = true) String constraintData,
-        @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
-        @Parameter(description = "valid value: resources / services",
-            schema = @Schema(allowableValues = {
-                ComponentTypeEnum.SERVICE_PARAM_NAME,
-                ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
-        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
-            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
-                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
-        @PathParam("constraintType") final String constraintType,
-        @Context final HttpServletRequest request,
-        @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response addSubstitutionFilter(@Parameter(description = "UIConstraint data", required = true) String constraintData,
+                                          @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+                                          @Parameter(description = "valid value: resources / services", schema = @Schema(allowableValues = {
+                                              ComponentTypeEnum.SERVICE_PARAM_NAME,
+                                              ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+                                          @Parameter(description = "Constraint type. Valid values: properties / capabilities", schema = @Schema(allowableValues = {
+                                              NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                                              NodeFilterConstraintType.CAPABILITIES_PARAM_NAME})) @PathParam("constraintType") final String constraintType,
+                                          @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
         final User userModifier = componentSubstitutionFilterBusinessLogic.validateUser(userId);
-
         final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         try {
-            final Optional<UIConstraint> convertResponse = componentsUtils
-                .parseToConstraint(constraintData, userModifier, componentTypeEnum);
+            final Optional<UIConstraint> convertResponse = componentsUtils.parseToConstraint(constraintData, userModifier, componentTypeEnum);
             if (convertResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_PARSE_COMPONENT);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-
             final UIConstraint uiConstraint = convertResponse.get();
             final String constraint = new ConstraintConvertor().convert(uiConstraint);
-
-            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
-                NodeFilterConstraintType.parse(constraintType);
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintType = NodeFilterConstraintType.parse(constraintType);
             if (nodeFilterConstraintType.isEmpty()) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                        INVALID_CONSTRAINTYPE_ENUM, constraintType));
+                return buildErrorResponse(
+                    getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_CONSTRAINTYPE_ENUM, constraintType));
             }
-
             final Optional<SubstitutionFilterDataDefinition> actionResponse = componentSubstitutionFilterBusinessLogic
-                .addSubstitutionFilter(componentId.toLowerCase(),
-                    uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum);
-
+                .addSubstitutionFilter(componentId.toLowerCase(), uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum);
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_ADD_SUBSTITUTION_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             final UINodeFilter uiFilter = new SubstitutionFilterConverter().convertToUi(actionResponse.get());
-
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), uiFilter);
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(ADD_SUBSTITUTION_FILTER);
             LOGGER.error(ADD_SUBSTITUTION_FILTER_WITH_AN_ERROR, e);
@@ -170,60 +147,46 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Component Substitution Filter Constraint", method = "PUT",
-        summary = "Update Component Substitution Filter Constraint", responses = {
+    @Operation(description = "Update Component Substitution Filter Constraint", method = "PUT", summary = "Update Component Substitution Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Update Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response updateSubstitutionFilter(
-        @Parameter(description = "UIConstraint data", required = true) String constraintData,
-        @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
-        @Parameter(description = "valid value: resources / services",
-            schema = @Schema(allowableValues = {
-                ComponentTypeEnum.SERVICE_PARAM_NAME,
-                ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
-        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
-            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
-                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
-        @PathParam("constraintType") final String constraintType,
-        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response updateSubstitutionFilter(@Parameter(description = "UIConstraint data", required = true) String constraintData,
+                                             @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+                                             @Parameter(description = "valid value: resources / services", schema = @Schema(allowableValues = {
+                                                 ComponentTypeEnum.SERVICE_PARAM_NAME,
+                                                 ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+                                             @Parameter(description = "Constraint type. Valid values: properties / capabilities", schema = @Schema(allowableValues = {
+                                                 NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                                                 NodeFilterConstraintType.CAPABILITIES_PARAM_NAME})) @PathParam("constraintType") final String constraintType,
+                                             @Context final HttpServletRequest request,
+                                             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
         final User userModifier = componentSubstitutionFilterBusinessLogic.validateUser(userId);
-
         try {
             final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            final List<UIConstraint>  uiConstraints = componentsUtils
-                .validateAndParseConstraint(componentTypeEnum, constraintData, userModifier);
+            final List<UIConstraint> uiConstraints = componentsUtils.validateAndParseConstraint(componentTypeEnum, constraintData, userModifier);
             if (CollectionUtils.isEmpty(uiConstraints)) {
-                LOGGER.error("Failed to Parse Constraint data {} when executing {} ",
-                    constraintData, SUBSTITUTION_FILTER_UPDATE);
-                return buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR,
-                    "Failed to parse constraint data"));
+                LOGGER.error("Failed to Parse Constraint data {} when executing {} ", constraintData, SUBSTITUTION_FILTER_UPDATE);
+                return buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR, "Failed to parse constraint data"));
             }
-
             final List<String> constraints = new ConstraintConvertor().convertToList(uiConstraints);
-            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
-                NodeFilterConstraintType.parse(constraintType);
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintType = NodeFilterConstraintType.parse(constraintType);
             if (!nodeFilterConstraintType.isPresent()) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                        INVALID_CONSTRAINTYPE_ENUM, constraintType));
+                return buildErrorResponse(
+                    getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_CONSTRAINTYPE_ENUM, constraintType));
             }
             final Optional<SubstitutionFilterDataDefinition> actionResponse = componentSubstitutionFilterBusinessLogic
-                .updateSubstitutionFilter(componentId.toLowerCase(), constraints,
-                    true, componentTypeEnum);
-
+                .updateSubstitutionFilter(componentId.toLowerCase(), constraints, true, componentTypeEnum);
             if (!actionResponse.isPresent()) {
                 LOGGER.error(FAILED_TO_UPDATE_SUBSTITUTION_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                 new SubstitutionFilterConverter().convertToUi(actionResponse.get()));
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(SUBSTITUTION_FILTER_UPDATE);
             LOGGER.error(UPDATE_SUBSTITUTION_FILTER_WITH_AN_ERROR, e.getMessage(), e);
@@ -235,55 +198,43 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{constraintIndex}")
-    @Operation(description = "Delete Component Substitution Filter Constraint", method = "Delete",
-        summary = "Delete Component Substitution Filter Constraint", responses = {
+    @Operation(description = "Delete Component Substitution Filter Constraint", method = "Delete", summary = "Delete Component Substitution Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Delete Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteSubstitutionFilterConstraint(
-        @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
-        @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
-        @Parameter(description = "valid value: resources / services",
-            schema = @Schema(allowableValues = {
-                ComponentTypeEnum.SERVICE_PARAM_NAME,
-                ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
-        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
-            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
-                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
-        @PathParam("constraintType") final String constraintType,
-        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response deleteSubstitutionFilterConstraint(@Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+                                                       @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
+                                                       @Parameter(description = "valid value: resources / services", schema = @Schema(allowableValues = {
+                                                           ComponentTypeEnum.SERVICE_PARAM_NAME,
+                                                           ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+                                                       @Parameter(description = "Constraint type. Valid values: properties / capabilities", schema = @Schema(allowableValues = {
+                                                           NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                                                           NodeFilterConstraintType.CAPABILITIES_PARAM_NAME})) @PathParam("constraintType") final String constraintType,
+                                                       @Context final HttpServletRequest request,
+                                                       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
         componentSubstitutionFilterBusinessLogic.validateUser(userId);
-
-            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
-                NodeFilterConstraintType.parse(constraintType);
-            if (!nodeFilterConstraintType.isPresent()) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                        INVALID_CONSTRAINTYPE_ENUM, constraintType));
-            }
-
+        final Optional<NodeFilterConstraintType> nodeFilterConstraintType = NodeFilterConstraintType.parse(constraintType);
+        if (!nodeFilterConstraintType.isPresent()) {
+            return buildErrorResponse(
+                getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_CONSTRAINTYPE_ENUM, constraintType));
+        }
         try {
             final Optional<SubstitutionFilterDataDefinition> actionResponse = componentSubstitutionFilterBusinessLogic
                 .deleteSubstitutionFilter(componentId.toLowerCase(), index, true, ComponentTypeEnum.findByParamName(componentType));
-
             if (!actionResponse.isPresent()) {
                 LOGGER.debug(FAILED_TO_DELETE_SUBSTITUTION_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                 new SubstitutionFilterConverter().convertToUi(actionResponse.get()));
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(SUBSTITUTION_FILTER_DELETE);
             LOGGER.debug(DELETE_SUBSTITUTION_FILTER_WITH_AN_ERROR, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         }
     }
-
 }

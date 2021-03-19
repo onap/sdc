@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.tosca.utils;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import org.openecomp.sdc.be.ui.model.UINodeFilter;
 
 public class NodeFilterConverter {
 
-
     public Map<String, UINodeFilter> convertDataMapToUI(Map<String, CINodeFilterDataDefinition> inMap) {
         return inMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, o -> convertToUi(o.getValue())));
     }
@@ -38,39 +36,29 @@ public class NodeFilterConverter {
     public UINodeFilter convertToUi(final CINodeFilterDataDefinition inNodeFilter) {
         final UINodeFilter uiNodeFilter = new UINodeFilter();
         final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
-        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> nodeFilterProperties =
-            inNodeFilter.getProperties();
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> nodeFilterProperties = inNodeFilter.getProperties();
         if (nodeFilterProperties != null && !nodeFilterProperties.isEmpty()) {
-            final List<UIConstraint> propertiesConstraint = nodeFilterProperties.getListToscaDataDefinition()
-                .stream()
-                .map(property -> property.getConstraints().iterator().next())
-                .map(constraintConvertor::convert)
-                .collect(Collectors.toList());
+            final List<UIConstraint> propertiesConstraint = nodeFilterProperties.getListToscaDataDefinition().stream()
+                .map(property -> property.getConstraints().iterator().next()).map(constraintConvertor::convert).collect(Collectors.toList());
             uiNodeFilter.setProperties(propertiesConstraint);
         }
-        final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> nodeFilterCapabilities =
-            inNodeFilter.getCapabilities();
+        final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> nodeFilterCapabilities = inNodeFilter.getCapabilities();
         if (nodeFilterCapabilities != null && !nodeFilterCapabilities.isEmpty()) {
             final List<UIConstraint> capabilitiesConstraint = new ArrayList<>();
-            nodeFilterCapabilities.getListToscaDataDefinition()
-                .forEach(requirementNodeFilterCapabilityDataDefinition ->
-                    convertCapabilityConstraint(requirementNodeFilterCapabilityDataDefinition, capabilitiesConstraint ));
-
+            nodeFilterCapabilities.getListToscaDataDefinition().forEach(
+                requirementNodeFilterCapabilityDataDefinition -> convertCapabilityConstraint(requirementNodeFilterCapabilityDataDefinition,
+                    capabilitiesConstraint));
             uiNodeFilter.setCapabilities(capabilitiesConstraint);
         }
-
         return uiNodeFilter;
     }
 
-    private void convertCapabilityConstraint(
-        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition,
-        final List<UIConstraint> capabilitiesConstraint) {
-
+    private void convertCapabilityConstraint(final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition,
+                                             final List<UIConstraint> capabilitiesConstraint) {
         final UIConstraint uiConstraint = new UIConstraint();
         final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         uiConstraint.setCapabilityName(requirementNodeFilterCapabilityDataDefinition.getName());
-        requirementNodeFilterCapabilityDataDefinition.getProperties().getListToscaDataDefinition()
-            .forEach(property -> capabilitiesConstraint.add(constraintConvertor
-                .getUiConstraint(property.getConstraints().iterator().next(), uiConstraint)));
+        requirementNodeFilterCapabilityDataDefinition.getProperties().getListToscaDataDefinition().forEach(
+            property -> capabilitiesConstraint.add(constraintConvertor.getUiConstraint(property.getConstraints().iterator().next(), uiConstraint)));
     }
 }

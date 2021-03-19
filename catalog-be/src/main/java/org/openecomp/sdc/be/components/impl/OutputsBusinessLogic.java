@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
@@ -57,7 +56,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class OutputsBusinessLogic extends BaseBusinessLogic {
 
     private static final String CREATE_OUTPUT = "CreateOutput";
-
     private static final Logger log = Logger.getLogger(OutputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_ERROR = "Failed to found component {}, error: {}";
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
@@ -65,16 +63,12 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(OutputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID = "Failed to found component instance outputs componentInstanceId: {}";
     private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR = "Failed to found component instance outputs {}, error: {}";
-
     private final AttributeDeclarationOrchestrator attributeDeclarationOrchestrator;
 
     @Autowired
-    public OutputsBusinessLogic(final IElementOperation elementDao,
-                                final IGroupOperation groupOperation,
-                                final IGroupInstanceOperation groupInstanceOperation,
-                                final IGroupTypeOperation groupTypeOperation,
-                                final InterfaceOperation interfaceOperation,
-                                final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+    public OutputsBusinessLogic(final IElementOperation elementDao, final IGroupOperation groupOperation,
+                                final IGroupInstanceOperation groupInstanceOperation, final IGroupTypeOperation groupTypeOperation,
+                                final InterfaceOperation interfaceOperation, final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                 final AttributeDeclarationOrchestrator attributeDeclarationOrchestrator,
                                 final ArtifactsOperations artifactToscaOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
@@ -82,76 +76,58 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         this.attributeDeclarationOrchestrator = attributeDeclarationOrchestrator;
     }
 
-    public Either<List<ComponentInstanceOutput>, ResponseFormat> getComponentInstanceOutputs(final String userId,
-                                                                                             final String componentId,
+    public Either<List<ComponentInstanceOutput>, ResponseFormat> getComponentInstanceOutputs(final String userId, final String componentId,
                                                                                              final String componentInstanceId) {
-
         validateUserExists(userId);
         final ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreOutputs(false);
         filters.setIgnoreComponentInstances(false);
         filters.setIgnoreComponentInstancesOutputs(false);
-
         final Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
-        if(getComponentEither.isRight()){
+        if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
-
         }
         final Component component = getComponentEither.left().value();
-
         if (!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)) {
             final ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
             log.debug(FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR, componentInstanceId, actionStatus);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, component.getComponentMetadataForSupportLog(),
-                StatusCode.ERROR, FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID, componentInstanceId);
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, component.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+                FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID, componentInstanceId);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
         final Map<String, List<ComponentInstanceOutput>> ciOutputs = Optional.ofNullable(component.getComponentInstancesOutputs())
             .orElse(Collections.emptyMap());
-
         return Either.left(ciOutputs.getOrDefault(componentInstanceId, Collections.emptyList()));
     }
 
     @Override
-    public Either<List<OutputDefinition>, ResponseFormat> declareAttributes(final String userId,
-                                                                            final String componentId,
+    public Either<List<OutputDefinition>, ResponseFormat> declareAttributes(final String userId, final String componentId,
                                                                             final ComponentTypeEnum componentTypeEnum,
                                                                             final ComponentInstOutputsMap componentInstOutputsMap) {
-
         return createMultipleOutputs(userId, componentId, componentTypeEnum, componentInstOutputsMap, true, false);
     }
 
-    public Either<List<OutputDefinition>, ResponseFormat> createMultipleOutputs(final String userId,
-                                                                                final String componentId,
+    public Either<List<OutputDefinition>, ResponseFormat> createMultipleOutputs(final String userId, final String componentId,
                                                                                 final ComponentTypeEnum componentType,
                                                                                 final ComponentInstOutputsMap componentInstOutputsMapUi,
-                                                                                final boolean shouldLockComp,
-                                                                                final boolean inTransaction) {
-
+                                                                                final boolean shouldLockComp, final boolean inTransaction) {
         Either<List<OutputDefinition>, ResponseFormat> result = null;
         org.openecomp.sdc.be.model.Component component = null;
-
         try {
             validateUserExists(userId);
-
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
-
-            result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi)
-                .left()
-                .bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate))
-                .right()
+            result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi).left()
+                .bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate)).right()
                 .map(componentsUtils::getResponseFormat);
             return result;
-
         } catch (final ByResponseFormatComponentException e) {
             log.error("#createMultipleOutputs: Exception thrown: ", e);
             result = Either.right(e.getResponseFormat());
             return result;
         } finally {
-
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
                     log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
@@ -165,12 +141,10 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             if (shouldLockComp && component != null) {
                 graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
             }
-
         }
     }
 
-    private org.openecomp.sdc.be.model.Component getAndValidateComponentForCreate(final String userId,
-                                                                                  final String componentId,
+    private org.openecomp.sdc.be.model.Component getAndValidateComponentForCreate(final String userId, final String componentId,
                                                                                   final ComponentTypeEnum componentType,
                                                                                   final boolean shouldLockComp) {
         final ComponentParametersView componentParametersView = getBaseComponentParametersView();
@@ -183,15 +157,11 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         return component;
     }
 
-    private Either<List<OutputDefinition>, StorageOperationStatus> prepareOutputsForCreation(final String userId,
-                                                                                             final String cmptId,
+    private Either<List<OutputDefinition>, StorageOperationStatus> prepareOutputsForCreation(final String userId, final String cmptId,
                                                                                              final List<OutputDefinition> outputsToCreate) {
         final Map<String, OutputDefinition> outputsToPersist = MapUtil.toMap(outputsToCreate, OutputDefinition::getName);
         assignOwnerIdToOutputs(userId, outputsToPersist);
-
-        return toscaOperationFacade.addOutputsToComponent(outputsToPersist, cmptId)
-            .left()
-            .map(persistedOutputs -> outputsToCreate);
+        return toscaOperationFacade.addOutputsToComponent(outputsToPersist, cmptId).left().map(persistedOutputs -> outputsToCreate);
     }
 
     private void assignOwnerIdToOutputs(final String userId, final Map<String, OutputDefinition> outputsToCreate) {
@@ -219,24 +189,19 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
      * @return
      */
     public OutputDefinition deleteOutput(final String componentId, final String userId, final String outputId) {
-
         Either<OutputDefinition, ResponseFormat> deleteEither = null;
         if (log.isDebugEnabled()) {
             log.debug("Going to delete output id: {}", outputId);
         }
-
         validateUserExists(userId);
-
         final ComponentParametersView componentParametersView = getBaseComponentParametersView();
         componentParametersView.setIgnoreAttributes(false);
-
-        final Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither =
-            toscaOperationFacade.getToscaElement(componentId, componentParametersView);
+        final Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither = toscaOperationFacade
+            .getToscaElement(componentId, componentParametersView);
         if (componentEither.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(componentEither.right().value()));
         }
         final org.openecomp.sdc.be.model.Component component = componentEither.left().value();
-
         // Validate outputId is child of the component
         final Optional<OutputDefinition> optionalOutput = component.getOutputs().stream().
             // filter by ID
@@ -246,23 +211,19 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         if (!optionalOutput.isPresent()) {
             throw new ByActionStatusComponentException(ActionStatus.OUTPUT_IS_NOT_CHILD_OF_COMPONENT, outputId, componentId);
         }
-
         final OutputDefinition outputForDelete = optionalOutput.get();
-
         // Lock component
         lockComponent(componentId, component, "deleteOutput");
         // Delete output operations
         boolean failed = false;
         try {
-            final StorageOperationStatus status =
-                toscaOperationFacade.deleteOutputOfResource(component, outputForDelete.getName());
+            final StorageOperationStatus status = toscaOperationFacade.deleteOutputOfResource(component, outputForDelete.getName());
             if (status != StorageOperationStatus.OK) {
                 log.debug("Component id: {} delete output id: {} failed", componentId, outputId);
                 throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status), component.getName());
             }
-
-            final StorageOperationStatus storageOperationStatus =
-                attributeDeclarationOrchestrator.unDeclareAttributesAsOutputs(component, outputForDelete);
+            final StorageOperationStatus storageOperationStatus = attributeDeclarationOrchestrator
+                .unDeclareAttributesAsOutputs(component, outputForDelete);
             if (storageOperationStatus != StorageOperationStatus.OK) {
                 log.debug("Component id: {} update attributes declared as output for outputId: {} failed", componentId, outputId);
                 throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(storageOperationStatus), component.getName());
@@ -275,5 +236,4 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             unlockComponent(failed, component);
         }
     }
-
 }
