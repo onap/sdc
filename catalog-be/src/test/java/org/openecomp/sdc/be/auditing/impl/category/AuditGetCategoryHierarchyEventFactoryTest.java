@@ -32,7 +32,7 @@ public class AuditGetCategoryHierarchyEventFactoryTest {
 		Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData build = newBuilder.build();
 		return new AuditGetCategoryHierarchyEventFactory( build,
-				new User(), "");
+				"user", "", "");
 	}
 
 	@Test

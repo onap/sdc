@@ -116,6 +116,16 @@ public class CsarInfoTest {
     }
 
     @Test
+    public void setUpdateTest() {
+
+        csarInfo.setUpdate(true);
+        assertEquals(true, csarInfo.isUpdate());
+
+        csarInfo.setUpdate(false);
+        assertEquals(false, csarInfo.isUpdate());
+    }
+
+    @Test
     public void csarCheckNodeTypesInfoTest() {
 
         // when

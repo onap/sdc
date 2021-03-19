@@ -26,13 +26,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditingManagerTest {
@@ -47,6 +50,8 @@ public class AuditingManagerTest {
     private AuditCassandraDao cassandraDao;
     @Mock
     private AuditEventFactory eventFactory;
+    @Mock
+    private ConfigurationProvider config;
 
     @Before
     public void setUp() throws Exception {
@@ -63,5 +68,22 @@ public class AuditingManagerTest {
         Mockito.verify(cassandraDao).saveRecord(auditEvent);
     }
 
+    @Test
+    public void testShouldNotAuditEvent() {
+        Configuration testConfig = new Configuration();
+        testConfig.setDisableAudit(true);
+        Mockito.when(config.getConfiguration()).thenReturn(testConfig);
 
+        AuditingManager auditingManager2 = new AuditingManager(cassandraDao, config);
+        assertNull(auditingManager2.auditEvent(eventFactory));
+        Mockito.verify(config, Mockito.times(1)).getConfiguration();
+    }
+
+    @Test
+    public void testShouldAuditEventWithLog() {
+        LoggerSdcAudit logger = Mockito.mock(LoggerSdcAudit.class);
+        String result = auditingManager.auditEvent(eventFactory, logger);
+        assertThat(result, is(msg));
+        Mockito.verify(cassandraDao).saveRecord(auditEvent);
+    }
 }
