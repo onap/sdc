@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,16 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @org.springframework.stereotype.Component
 public class AccessValidations {
@@ -39,10 +37,10 @@ public class AccessValidations {
         this.componentValidations = componentValidations;
     }
 
-    public Component validateUserCanRetrieveComponentData(String componentId, String componentType, String userId, String actionContext)  {
+    public Component validateUserCanRetrieveComponentData(String componentId, String componentType, String userId, String actionContext) {
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         retrieveUser(userId, actionContext);
-	    return componentValidations.getComponent(componentId, componentTypeEnum);
+        return componentValidations.getComponent(componentId, componentTypeEnum);
     }
 
     public Component validateUserCanWorkOnComponent(String componentId, ComponentTypeEnum componentType, String userId, String actionContext) {
@@ -61,12 +59,11 @@ public class AccessValidations {
         retrieveUser(userId, context);
     }
 
-
     public void validateUserExist(String userId, String actionContext) {
         userValidations.validateUserExists(userId);
     }
 
-    public User userIsAdminOrDesigner(String userId, String actionContext){
+    public User userIsAdminOrDesigner(String userId, String actionContext) {
         User user = retrieveUser(userId, actionContext);
         validateUserIsAdminOrDesigner(user);
         return user;
@@ -82,5 +79,4 @@ public class AccessValidations {
         roles.add(Role.DESIGNER);
         userValidations.validateUserRole(user, roles);
     }
-
 }

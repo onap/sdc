@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -82,45 +81,37 @@ public class LifecycleServlet extends BeGenericServlet {
     private LifecycleBusinessLogic lifecycleBusinessLogic;
 
     @Inject
-    public LifecycleServlet(UserBusinessLogic userBusinessLogic,
-        ComponentsUtils componentsUtils,
-        LifecycleBusinessLogic lifecycleBusinessLogic) {
+    public LifecycleServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, LifecycleBusinessLogic lifecycleBusinessLogic) {
         super(userBusinessLogic, componentsUtils);
         this.lifecycleBusinessLogic = lifecycleBusinessLogic;
     }
-
 
     @POST
     @Path("/{componentCollection}/{componentId}/lifecycleState/{lifecycleOperation}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Change Resource lifecycle State", method = "POST", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "200", description = "Resource state changed"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "409", description = "Resource already exist")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Resource state changed"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "409", description = "Resource already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response changeResourceState(
-            @Parameter(description = "LifecycleChangeInfo - relevant for checkin, failCertification, cancelCertification")
-                String jsonChangeInfo,
-            @Parameter(description = "validValues: resources / services / products",
-                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
-                            ComponentTypeEnum.SERVICE_PARAM_NAME, ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam(
-                                    value = "componentCollection") final String componentCollection,
-            @Parameter(schema = @Schema(allowableValues = {
-                    "checkout, undoCheckout, checkin, certificationRequest, startCertification, failCertification,  cancelCertification, certify"}),
-                    required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
-            @Parameter(description = "id of component to be changed") @PathParam(
-                    value = "componentId") final String componentId,
-            @Context final HttpServletRequest request,
-            @Parameter(description = "id of user initiating the operation") @HeaderParam(
-                    value = Constants.USER_ID_HEADER) String userId) throws IOException {
+        @Parameter(description = "LifecycleChangeInfo - relevant for checkin, failCertification, cancelCertification") String jsonChangeInfo,
+        @Parameter(description = "validValues: resources / services / products", schema = @Schema(allowableValues = {
+            ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
+            ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam(value = "componentCollection") final String componentCollection,
+        @Parameter(schema = @Schema(allowableValues = {
+            "checkout, undoCheckout, checkin, certificationRequest, startCertification, failCertification,  cancelCertification, certify"}), required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
+        @Parameter(description = "id of component to be changed") @PathParam(value = "componentId") final String componentId,
+        @Context final HttpServletRequest request,
+        @Parameter(description = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
+        throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
-        loggerSupportability.log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE, StatusCode.STARTED,"Starting to change lifecycle state to " + lifecycleTransition + " by user " + userId);
-
+        loggerSupportability.log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE, StatusCode.STARTED,
+            "Starting to change lifecycle state to " + lifecycleTransition + " by user " + userId);
         Response response = null;
-
         // get modifier from graph
         log.debug("get modifier properties");
         Either<User, ResponseFormat> eitherGetUser = getUser(request, userId);
@@ -128,58 +119,54 @@ public class LifecycleServlet extends BeGenericServlet {
             return buildErrorResponse(eitherGetUser.right().value());
         }
         User user = eitherGetUser.left().value();
-
         String resourceIdLower = componentId.toLowerCase();
         log.debug("perform {} operation to resource with id {} ", lifecycleTransition, resourceIdLower);
         Either<LifeCycleTransitionEnum, Response> validateEnum = validateTransitionEnum(lifecycleTransition, user);
         if (validateEnum.isRight()) {
             return validateEnum.right().value();
         }
-
         LifecycleChangeInfoWithAction changeInfo = new LifecycleChangeInfoWithAction();
-
         try {
             if (jsonChangeInfo != null && !jsonChangeInfo.isEmpty()) {
                 ObjectMapper mapper = new ObjectMapper();
-                changeInfo = new LifecycleChangeInfoWithAction(mapper
-                    .readValue(ValidationUtils.sanitizeInputString(jsonChangeInfo), LifecycleChangeInfoBase.class)
-                    .getUserRemarks());
+                changeInfo = new LifecycleChangeInfoWithAction(
+                    mapper.readValue(ValidationUtils.sanitizeInputString(jsonChangeInfo), LifecycleChangeInfoBase.class).getUserRemarks());
             }
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
             log.debug("failed to convert from json {}", jsonChangeInfo, e);
             getComponentsUtils().getInvalidContentErrorAndAudit(user, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
             throw e;
         }
-
         LifeCycleTransitionEnum transitionEnum = validateEnum.left().value();
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(componentCollection);
         if (componentType != null) {
-            Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic.changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true);
-
+            Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic
+                .changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true);
             if (actionResponse.isRight()) {
                 log.info("failed to change resource state");
-                loggerSupportability.log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE, StatusCode.ERROR,"failed to change resource state " + lifecycleTransition + " with error " + actionResponse.isRight() +  " by user " + userId);
+                loggerSupportability.log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE, StatusCode.ERROR,
+                    "failed to change resource state " + lifecycleTransition + " with error " + actionResponse.isRight() + " by user " + userId);
                 response = buildErrorResponse(actionResponse.right().value());
                 return response;
             }
-
             log.debug("change state successful !!!");
             UiComponentMetadata componentMetatdata = UiComponentDataConverter.convertToUiComponentMetadata(actionResponse.left().value());
             Object value = null;
             try {
-            value = RepresentationUtils.toRepresentation(componentMetatdata);
+                value = RepresentationUtils.toRepresentation(componentMetatdata);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), value);
-            loggerSupportability.log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE,actionResponse.left().value().getComponentMetadataForSupportLog(),StatusCode.COMPLETE," change state to " + lifecycleTransition + " was successful by user" + userId);
+            loggerSupportability
+                .log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE, actionResponse.left().value().getComponentMetadataForSupportLog(),
+                    StatusCode.COMPLETE, " change state to " + lifecycleTransition + " was successful by user" + userId);
             return response;
         } else {
-            log.info("componentCollection \"{}\" is not valid. Supported componentCollection values are \"{}\", \"{}\" or \"{}\"", componentCollection, ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
-                    ComponentTypeEnum.PRODUCT_PARAM_NAME);
+            log.info("componentCollection \"{}\" is not valid. Supported componentCollection values are \"{}\", \"{}\" or \"{}\"",
+                componentCollection, ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
+                ComponentTypeEnum.PRODUCT_PARAM_NAME);
             ResponseFormat error = getComponentsUtils().getInvalidContentErrorAndAudit(user, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
             return buildErrorResponse(error);
         }
@@ -196,5 +183,4 @@ public class LifecycleServlet extends BeGenericServlet {
         }
         return Either.left(transitionEnum);
     }
-
 }

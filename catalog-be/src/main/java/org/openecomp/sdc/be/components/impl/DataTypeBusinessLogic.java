@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -35,23 +37,15 @@ import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @org.springframework.stereotype.Component("dataTypeBusinessLogic")
 public class DataTypeBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
-    public DataTypeBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public DataTypeBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
+                                 IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
     }
 
     /**
@@ -64,22 +58,19 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
         ComponentParametersView filter = new ComponentParametersView();
         filter.disableAll();
         filter.setIgnoreDataType(false);
-
         // Get Component object
-        Either<? extends Component, StorageOperationStatus> componentResult =
-                toscaOperationFacade.getToscaElement(componentId, filter);
+        Either<? extends Component, StorageOperationStatus> componentResult = toscaOperationFacade.getToscaElement(componentId, filter);
         if (componentResult.isRight()) {
             return Either.right(componentResult.right().value());
         }
         Component component = componentResult.left().value();
-
         List<DataTypeDefinition> dataTypesToReturn = component.getDataTypes();
         if (dataTypesToReturn == null) {
             // this means there is no DATA_TYPES graph vertex.
+
             // in this case, returns empty list.
             dataTypesToReturn = new ArrayList<>();
         }
-
         return Either.left(dataTypesToReturn);
     }
 
@@ -114,23 +105,19 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
         ComponentParametersView filter = new ComponentParametersView();
         filter.disableAll();
         filter.setIgnoreDataType(false);
-
         // Get Component object
-        Either<? extends Component, StorageOperationStatus> componentResult =
-                toscaOperationFacade.getToscaElement(componentId, filter);
+        Either<? extends Component, StorageOperationStatus> componentResult = toscaOperationFacade.getToscaElement(componentId, filter);
         if (componentResult.isRight()) {
             // not exists
             return Either.right(componentResult.right().value());
         }
-
         return deletePrivateDataType(componentResult.left().value(), dataTypeName);
     }
 
     /**
      * Delete a data type from the Component.
      *
-     * @param component    Component object which has data types.
-     *                     needs to be fetched with componentParametersView.setIgnoreDataType(false)
+     * @param component    Component object which has data types. needs to be fetched with componentParametersView.setIgnoreDataType(false)
      * @param dataTypeName Data type name to be deleted
      * @return deleted data type
      */
@@ -140,18 +127,15 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
         if (CollectionUtils.isEmpty(dataTypes)) {
             return Either.right(StorageOperationStatus.NOT_FOUND);
         }
-        Optional<DataTypeDefinition> dataTypeResult =
-                dataTypes.stream().filter(e -> e.getName().equals(dataTypeName)).findFirst();
+        Optional<DataTypeDefinition> dataTypeResult = dataTypes.stream().filter(e -> e.getName().equals(dataTypeName)).findFirst();
         if (!dataTypeResult.isPresent()) {
             return Either.right(StorageOperationStatus.NOT_FOUND);
         }
-
         // delete it
         StorageOperationStatus deleteResult = toscaOperationFacade.deleteDataTypeOfComponent(component, dataTypeName);
         if (deleteResult != StorageOperationStatus.OK) {
             return Either.right(deleteResult);
         }
-
         // return deleted data type if ok
         return Either.left(dataTypeResult.get());
     }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.utils;
 
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-
 import java.util.Objects;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 
 public class CapabilityTypeImportUtils {
 
@@ -33,16 +31,14 @@ public class CapabilityTypeImportUtils {
         if (capabilityType1 == capabilityType2) {
             return true;
         }
-        
         if (capabilityType1 == null || capabilityType2 == null) {
             return false;
         }
-        
-        return Objects.equals(capabilityType1.getType(), capabilityType2.getType()) &&
-                Objects.equals(capabilityType1.getVersion(), capabilityType2.getVersion()) &&
-                Objects.equals(capabilityType1.getDerivedFrom(), capabilityType2.getDerivedFrom()) &&
-                Objects.equals(capabilityType1.getValidSourceTypes(), capabilityType2.getValidSourceTypes()) &&
-                Objects.equals(capabilityType1.getDescription(), capabilityType2.getDescription()) &&
-                Objects.equals(capabilityType1.getProperties(), capabilityType2.getProperties());
+        return Objects.equals(capabilityType1.getType(), capabilityType2.getType()) && Objects
+            .equals(capabilityType1.getVersion(), capabilityType2.getVersion()) && Objects
+            .equals(capabilityType1.getDerivedFrom(), capabilityType2.getDerivedFrom()) && Objects
+            .equals(capabilityType1.getValidSourceTypes(), capabilityType2.getValidSourceTypes()) && Objects
+            .equals(capabilityType1.getDescription(), capabilityType2.getDescription()) && Objects
+            .equals(capabilityType1.getProperties(), capabilityType2.getProperties());
     }
 }

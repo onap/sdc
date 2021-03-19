@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
+import static java.util.Collections.emptySet;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -33,12 +37,6 @@ import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.emptySet;
-
 @Component
 public class PolicyTypeBusinessLogic {
 
@@ -47,7 +45,8 @@ public class PolicyTypeBusinessLogic {
     private ComponentsUtils componentsUtils;
     private UserValidations userValidations;
 
-    public PolicyTypeBusinessLogic(PolicyTypeOperation policyTypeOperation, JanusGraphDao janusGraphDao, ComponentsUtils componentsUtils, UserValidations userValidations) {
+    public PolicyTypeBusinessLogic(PolicyTypeOperation policyTypeOperation, JanusGraphDao janusGraphDao, ComponentsUtils componentsUtils,
+                                   UserValidations userValidations) {
         this.policyTypeOperation = policyTypeOperation;
         this.janusGraphDao = janusGraphDao;
         this.componentsUtils = componentsUtils;
@@ -62,16 +61,15 @@ public class PolicyTypeBusinessLogic {
     }
 
     public PolicyTypeDefinition getLatestPolicyTypeByType(String policyTypeName) {
-        return policyTypeOperation.getLatestPolicyTypeByType(policyTypeName)
-                       .left()
-                       .on(e -> failOnPolicyType(e, policyTypeName));
+        return policyTypeOperation.getLatestPolicyTypeByType(policyTypeName).left().on(e -> failOnPolicyType(e, policyTypeName));
     }
 
     public Set<String> getExcludedPolicyTypes(String internalComponentType) {
         if (StringUtils.isEmpty(internalComponentType)) {
             return emptySet();
         }
-        Map<String, Set<String>> excludedPolicyTypesMapping = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludedPolicyTypesMapping();
+        Map<String, Set<String>> excludedPolicyTypesMapping = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getExcludedPolicyTypesMapping();
         Set<String> excludedTypes = excludedPolicyTypesMapping.get(internalComponentType);
         return excludedTypes == null ? emptySet() : excludedTypes;
     }

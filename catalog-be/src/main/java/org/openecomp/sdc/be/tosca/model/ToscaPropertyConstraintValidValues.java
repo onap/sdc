@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
@@ -45,7 +44,6 @@ public class ToscaPropertyConstraintValidValues implements ToscaPropertyConstrai
         if ("validValues".equals(attributeName)) {
             return "valid_values";
         }
-
         return attributeName;
     }
 

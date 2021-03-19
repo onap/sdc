@@ -17,18 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -54,7 +52,6 @@ public class ToscaNodeTemplate {
         if (MapUtils.isEmpty(this.interfaces)) {
             this.interfaces = new HashMap<>();
         }
-
         this.interfaces.put(interfaceName, interfaceDataDefinition);
     }
 }

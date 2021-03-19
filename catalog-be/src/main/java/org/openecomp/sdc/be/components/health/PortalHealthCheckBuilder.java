@@ -17,10 +17,27 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.health;
 
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.onap.portalsdk.core.onboarding.util.CipherUtil.decryptPKC;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ECOMP_PORTAL;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
+import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UP;
+
 import com.google.common.annotations.VisibleForTesting;
+import java.security.InvalidParameterException;
+import java.util.Base64;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.util.PortalApiProperties;
@@ -39,25 +56,6 @@ import org.openecomp.sdc.common.http.config.Timeouts;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import java.security.InvalidParameterException;
-import java.util.Base64;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.onap.portalsdk.core.onboarding.util.CipherUtil.decryptPKC;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ECOMP_PORTAL;
-import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.DOWN;
-import static org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus.UP;
-
 @Component("portalHealthCheckBusinessLogic")
 public class PortalHealthCheckBuilder {
 
@@ -68,23 +66,20 @@ public class PortalHealthCheckBuilder {
     private static final String PORTAL_ERROR = HC_COMPONENT_ECOMP_PORTAL + " responded with %s status code";
     private String decryptedPortalUser;
     private String decryptedPortalPass;
-    private EcompPortalConfig configuration = null ;
+    private EcompPortalConfig configuration = null;
     private long healthCheckReadTimeout = 20;
     private long reconnectInterval = 5;
-    private HealthCheckScheduledTask healthCheckScheduledTask = null ;
+    private HealthCheckScheduledTask healthCheckScheduledTask = null;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> scheduledFuture = null;
-    private HealthCheckInfo healthCheckInfo = new HealthCheckInfo
-            (HC_COMPONENT_ECOMP_PORTAL, HealthCheckStatus.DOWN, null, CONFIG_IS_MISSING, null);
+    private HealthCheckInfo healthCheckInfo = new HealthCheckInfo(HC_COMPONENT_ECOMP_PORTAL, HealthCheckStatus.DOWN, null, CONFIG_IS_MISSING, null);
 
     @VisibleForTesting
     PortalHealthCheckBuilder init(EcompPortalConfig configuration) throws CipherUtilException {
         log.trace("Enter init method of Portal healthcheck");
-        decryptedPortalUser = decryptPKC
-                (getPortalProperty(PortalPropertiesEnum.USER.value()));
-        decryptedPortalPass = decryptPKC
-                (getPortalProperty(PortalPropertiesEnum.PASSWORD.value()));
-        synchronized (PortalHealthCheckBuilder.class){
+        decryptedPortalUser = decryptPKC(getPortalProperty(PortalPropertiesEnum.USER.value()));
+        decryptedPortalPass = decryptPKC(getPortalProperty(PortalPropertiesEnum.PASSWORD.value()));
+        synchronized (PortalHealthCheckBuilder.class) {
             if (configuration != null) {
                 Integer pollingInterval = configuration.getPollingInterval();
                 if (pollingInterval != null && pollingInterval != 0) {
@@ -96,8 +91,7 @@ public class PortalHealthCheckBuilder {
                 }
                 this.healthCheckScheduledTask = new HealthCheckScheduledTask(configuration);
                 startHealthCheckTask(true);
-            }
-            else {
+            } else {
                 log.error("ECOMP Portal health check configuration is missing.");
             }
         }
@@ -109,7 +103,6 @@ public class PortalHealthCheckBuilder {
     public PortalHealthCheckBuilder init() throws CipherUtilException {
         return init(ConfigurationManager.getConfigurationManager().getConfiguration().getEcompPortal());
     }
-
 
     @PreDestroy
     protected void destroy() {
@@ -128,9 +121,9 @@ public class PortalHealthCheckBuilder {
      * @param startTask
      */
     private void startHealthCheckTask(boolean startTask) {
-        synchronized (PortalHealthCheckBuilder.class){
+        synchronized (PortalHealthCheckBuilder.class) {
             if (startTask && this.scheduledFuture == null) {
-                this.scheduledFuture = this.scheduler.scheduleAtFixedRate(this.healthCheckScheduledTask , 0, reconnectInterval, TimeUnit.SECONDS);
+                this.scheduledFuture = this.scheduler.scheduleAtFixedRate(this.healthCheckScheduledTask, 0, reconnectInterval, TimeUnit.SECONDS);
             }
         }
     }
@@ -148,6 +141,7 @@ public class PortalHealthCheckBuilder {
      * Health Check Task Scheduler - infinite check.
      */
     public class HealthCheckScheduledTask implements Runnable {
+
         private final EcompPortalConfig config;
         String healthCheckUrl = buildPortalHealthCheckUrl();
         HealthCheckStatus healthCheckStatus = DOWN;
@@ -155,9 +149,10 @@ public class PortalHealthCheckBuilder {
         String description;
         final int timeout = 3000;
 
-        HealthCheckScheduledTask(final EcompPortalConfig config){
+        HealthCheckScheduledTask(final EcompPortalConfig config) {
             this.config = config;
         }
+
         @Override
         public void run() {
             if (healthCheckUrl != null) {
@@ -177,7 +172,6 @@ public class PortalHealthCheckBuilder {
             } else {
                 description = CONFIG_IS_MISSING;
             }
-
             healthCheckInfo.setHealthCheckStatus(healthCheckStatus);
             healthCheckInfo.setDescription(description);
         }
@@ -195,19 +189,16 @@ public class PortalHealthCheckBuilder {
         final String hcUrl = "%s://%s:%s%s";
         Configuration.EcompPortalConfig configuration = ConfigurationManager.getConfigurationManager().getConfiguration().getEcompPortal();
         if (configuration != null) {
-            return String.format(hcUrl, configuration.getProtocol(), configuration.getHost(),
-                    configuration.getPort(), configuration.getHealthCheckUri());
+            return String
+                .format(hcUrl, configuration.getProtocol(), configuration.getHost(), configuration.getPort(), configuration.getHealthCheckUri());
         }
         log.error("ECOMP Portal health check configuration is missing.");
         return null;
     }
 
-    private Properties createHeaders(){
+    private Properties createHeaders() {
         Properties headers = new Properties();
-        String encodedBasicAuthCred = Base64.getEncoder()
-                .encodeToString((decryptedPortalUser + ":" +
-                        decryptedPortalPass)
-                        .getBytes());
+        String encodedBasicAuthCred = Base64.getEncoder().encodeToString((decryptedPortalUser + ":" + decryptedPortalPass).getBytes());
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         headers.put(Constants.X_TRANSACTION_ID_HEADER, UUID.randomUUID().toString());
@@ -226,5 +217,4 @@ public class PortalHealthCheckBuilder {
     public EcompPortalConfig getConfiguration() {
         return ConfigurationManager.getConfigurationManager().getConfiguration().getEcompPortal();
     }
-
 }

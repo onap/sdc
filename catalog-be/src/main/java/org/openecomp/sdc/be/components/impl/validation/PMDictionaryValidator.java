@@ -40,8 +40,7 @@ public class PMDictionaryValidator {
 
     public Optional<String> validateIfPmDictionary(String artifactType, byte[] decodedPayload) {
         if (isPmDictionary(artifactType)) {
-            return validate(decodedPayload).stream()
-                .reduce((a, b) -> a + "; " + b);
+            return validate(decodedPayload).stream().reduce((a, b) -> a + "; " + b);
         }
         return Optional.empty();
     }
@@ -54,9 +53,7 @@ public class PMDictionaryValidator {
         List<String> errors = new ArrayList<>();
         try {
             List<YamlDocumentValidationError> validationErrors = yamlContentValidator.validate(fileContent);
-            validationErrors.stream()
-                .map(this::formatErrorMessage)
-                .forEach(errors::add);
+            validationErrors.stream().map(this::formatErrorMessage).forEach(errors::add);
         } catch (Exception e) {
             errors.add(e.getMessage());
         }
@@ -64,10 +61,6 @@ public class PMDictionaryValidator {
     }
 
     private String formatErrorMessage(YamlDocumentValidationError error) {
-        return String.format("Document number: %d, Path: %s, Message: %s",
-            error.getYamlDocumentNumber(),
-            error.getPath(),
-            error.getMessage());
+        return String.format("Document number: %d, Path: %s, Message: %s", error.getYamlDocumentNumber(), error.getPath(), error.getMessage());
     }
-
 }

@@ -40,51 +40,46 @@ import org.springframework.stereotype.Component;
 public class UserValidations {
 
     private static final Logger log = Logger.getLogger(UserValidations.class);
-	private final UserBusinessLogic userAdmin;
+    private final UserBusinessLogic userAdmin;
 
     public UserValidations(final UserBusinessLogic userAdmin) {
-		this.userAdmin = userAdmin;
+        this.userAdmin = userAdmin;
     }
 
     public void validateUserRole(final User user, final List<Role> roles) {
-		final Role userRole = Role.valueOf(user.getRole());
-		if (roles != null && !roles.contains(userRole)) {
-			log.error(EcompLoggerErrorCode.PERMISSION_ERROR, this.getClass().getName(),
-				"user is not in appropriate role to perform action");
-			throw new ByActionStatusComponentException(ActionStatus.RESTRICTED_OPERATION);
-		}
-	}
+        final Role userRole = Role.valueOf(user.getRole());
+        if (roles != null && !roles.contains(userRole)) {
+            log.error(EcompLoggerErrorCode.PERMISSION_ERROR, this.getClass().getName(), "user is not in appropriate role to perform action");
+            throw new ByActionStatusComponentException(ActionStatus.RESTRICTED_OPERATION);
+        }
+    }
 
-	public ActionStatus validateUserExistsActionStatus(final String userId) {
-	    if (!userAdmin.hasActiveUser(userId)) {
-			return ActionStatus.RESTRICTED_OPERATION;
-		}
-		return ActionStatus.OK;
-	}
+    public ActionStatus validateUserExistsActionStatus(final String userId) {
+        if (!userAdmin.hasActiveUser(userId)) {
+            return ActionStatus.RESTRICTED_OPERATION;
+        }
+        return ActionStatus.OK;
+    }
 
-    public User validateUserNotEmpty(final User user,
-									 final String ecompErrorContext) {
-		final String userId = user.getUserId();
-		if (StringUtils.isEmpty(userId)) {
-			log.error(EcompLoggerErrorCode.PERMISSION_ERROR, this.getClass().getName(),
-				"User header is missing ");
-			BeEcompErrorManager.getInstance().logBeUserMissingError(ecompErrorContext, user.getUserId());
+    public User validateUserNotEmpty(final User user, final String ecompErrorContext) {
+        final String userId = user.getUserId();
+        if (StringUtils.isEmpty(userId)) {
+            log.error(EcompLoggerErrorCode.PERMISSION_ERROR, this.getClass().getName(), "User header is missing ");
+            BeEcompErrorManager.getInstance().logBeUserMissingError(ecompErrorContext, user.getUserId());
             throw new ByActionStatusComponentException(ActionStatus.MISSING_USER_ID);
-		}
+        }
         return user;
-	}
+    }
 
-	public User validateUserExists(final String userId) {
-		final User user = userAdmin.getUser(userId);
-		if (UserStatusEnum.INACTIVE == user.getStatus()) {
-			throw new ByActionStatusComponentException(USER_INACTIVE, userId);
-		}
-		return user;
-	}
+    public User validateUserExists(final String userId) {
+        final User user = userAdmin.getUser(userId);
+        if (UserStatusEnum.INACTIVE == user.getStatus()) {
+            throw new ByActionStatusComponentException(USER_INACTIVE, userId);
+        }
+        return user;
+    }
 
-	public User validateUserExists(final User user) {
-		return validateUserExists(user.getUserId());
-	}
-
-
+    public User validateUserExists(final User user) {
+        return validateUserExists(user.getUserId());
+    }
 }

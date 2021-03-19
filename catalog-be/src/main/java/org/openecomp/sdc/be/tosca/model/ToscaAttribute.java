@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.LinkedHashMap;
@@ -86,8 +85,6 @@ public class ToscaAttribute {
         if (getStatus() != null) {
             toscaAttributeAsMap.put(ToscaTagNamesEnum.STATUS.getElementName(), getStatus());
         }
-
         return toscaAttributeAsMap;
     }
-
 }

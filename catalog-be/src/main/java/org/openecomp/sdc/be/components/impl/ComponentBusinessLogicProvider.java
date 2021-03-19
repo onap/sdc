@@ -34,7 +34,8 @@ public class ComponentBusinessLogicProvider {
     private final ServiceBusinessLogic serviceBusinessLogic;
     private final ProductBusinessLogic productBusinessLogic;
 
-    public ComponentBusinessLogicProvider(ResourceBusinessLogic resourceBusinessLogic, ServiceBusinessLogic serviceBusinessLogic, ProductBusinessLogic productBusinessLogic) {
+    public ComponentBusinessLogicProvider(ResourceBusinessLogic resourceBusinessLogic, ServiceBusinessLogic serviceBusinessLogic,
+                                          ProductBusinessLogic productBusinessLogic) {
         this.resourceBusinessLogic = resourceBusinessLogic;
         this.serviceBusinessLogic = serviceBusinessLogic;
         this.productBusinessLogic = productBusinessLogic;
@@ -43,16 +44,15 @@ public class ComponentBusinessLogicProvider {
     public ComponentBusinessLogic getInstance(ComponentTypeEnum componentTypeEnum) {
         switch (componentTypeEnum) {
             case SERVICE:
-               return serviceBusinessLogic;
+                return serviceBusinessLogic;
             case PRODUCT:
-               return productBusinessLogic;
+                return productBusinessLogic;
             case RESOURCE:
             case RESOURCE_INSTANCE:
-               return resourceBusinessLogic;
+                return resourceBusinessLogic;
             default:
                 BeEcompErrorManager.getInstance().logBeSystemError("getInstance");
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT, componentTypeEnum.getValue());
         }
     }
-
 }

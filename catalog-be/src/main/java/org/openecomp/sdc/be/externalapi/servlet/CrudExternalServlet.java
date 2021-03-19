@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.externalapi.servlet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -104,26 +103,21 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class CrudExternalServlet extends AbstractValidationsServlet {
 
-    @Context
-    private HttpServletRequest request;
-
     private static final Logger log = Logger.getLogger(CrudExternalServlet.class);
     private final ElementBusinessLogic elementBusinessLogic;
     private final AssetMetadataConverter assetMetadataUtils;
     private final LifecycleBusinessLogic lifecycleBusinessLogic;
     private final ResourceBusinessLogic resourceBusinessLogic;
     private final ServiceBusinessLogic serviceBusinessLogic;
+    @Context
+    private HttpServletRequest request;
 
     @Inject
-    public CrudExternalServlet(UserBusinessLogic userBusinessLogic,
-        ComponentInstanceBusinessLogic componentInstanceBL,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
-        ResourceImportManager resourceImportManager,
-        ElementBusinessLogic elementBusinessLogic,
-        AssetMetadataConverter assetMetadataUtils,
-        LifecycleBusinessLogic lifecycleBusinessLogic,
-        ResourceBusinessLogic resourceBusinessLogic,
-        ServiceBusinessLogic serviceBusinessLogic) {
+    public CrudExternalServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+                               ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
+                               ElementBusinessLogic elementBusinessLogic, AssetMetadataConverter assetMetadataUtils,
+                               LifecycleBusinessLogic lifecycleBusinessLogic, ResourceBusinessLogic resourceBusinessLogic,
+                               ServiceBusinessLogic serviceBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.elementBusinessLogic = elementBusinessLogic;
         this.assetMetadataUtils = assetMetadataUtils;
@@ -146,74 +140,41 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(parameters = {
-            @Parameter(required = true, schema = @Schema(implementation = org.openecomp.sdc.be.model.Resource.class),
-                    description = "json describe the created resource")},
-            description = "creates an asset (resource or service)", method = "POST",
-            summary = "Creates an asset (resource or service)", responses = {
-            @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and Asset created",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401",
-                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404",
-                    description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
-            @ApiResponse(responseCode = "405",
-                    description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500",
-                    description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
-            @ApiResponse(responseCode = "400",
-                    description = "The name provided for the newly created resource is already in use for another resource in SDC - SVC4050"),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid field format. One of the provided fields does not comply with the field rules - SVC4126"),
-            @ApiResponse(responseCode = "400",
-                    description = "Missing request body. The post request did not contain the expected body - SVC4500"),
-            @ApiResponse(responseCode = "400",
-                    description = "The resource name is missing in the request body - SVC4062"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT description has wrong format - SVC4064"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT description has wrong format (exceeds limit) - SVC4065"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT tags exceeds character limit - SVC4066"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT vendor name exceeds character limit - SVC4067"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT vendor release exceeds character limit - SVC4068"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT ATT Contact has wrong format - SVC4069"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT name has wrong format - SVC4070"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT vendor name has wrong format - SVC4071"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT vendor release has wrong format - SVC4072"),
-            @ApiResponse(responseCode = "400",
-                    description = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073"),
-            @ApiResponse(responseCode = "400", description = "Invalid Content. Missing PROJECT_CODE number - SVC4129"),
-            @ApiResponse(responseCode = "409",
-                    description = "Error: %1 (Service) with name '%2' already exists. - SVC4050")})
+        @Parameter(required = true, schema = @Schema(implementation = org.openecomp.sdc.be.model.Resource.class), description = "json describe the created resource")}, description = "creates an asset (resource or service)", method = "POST", summary = "Creates an asset (resource or service)", responses = {
+        @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and Asset created", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "400", description = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
+        @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+        @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+        @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+        @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+        @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+        @ApiResponse(responseCode = "400", description = "The name provided for the newly created resource is already in use for another resource in SDC - SVC4050"),
+        @ApiResponse(responseCode = "400", description = "Invalid field format. One of the provided fields does not comply with the field rules - SVC4126"),
+        @ApiResponse(responseCode = "400", description = "Missing request body. The post request did not contain the expected body - SVC4500"),
+        @ApiResponse(responseCode = "400", description = "The resource name is missing in the request body - SVC4062"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT description has wrong format - SVC4064"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT description has wrong format (exceeds limit) - SVC4065"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT tags exceeds character limit - SVC4066"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT vendor name exceeds character limit - SVC4067"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT vendor release exceeds character limit - SVC4068"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT ATT Contact has wrong format - SVC4069"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT name has wrong format - SVC4070"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT vendor name has wrong format - SVC4071"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT vendor release has wrong format - SVC4072"),
+        @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073"),
+        @ApiResponse(responseCode = "400", description = "Invalid Content. Missing PROJECT_CODE number - SVC4129"),
+        @ApiResponse(responseCode = "409", description = "Error: %1 (Service) with name '%2' already exists. - SVC4050")})
     @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response createComponentExternal(
-            @Parameter(description = "Determines the format of the body of the request",
-                    required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
-            @Parameter(description = "The user id",
-                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
-            @Parameter(description = "X-ECOMP-RequestID header",
-                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
-                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @Parameter(description = "Determines the format of the body of the response",
-                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @Parameter(description = "The username and password",
-                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(description = "The requested asset type", required = true,
-                    schema = @Schema(
-                            allowableValues = {"resources, services"})) @PathParam("assetType") final String assetType,
-            @Parameter(hidden = true) String data) {
-
+        @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
+        @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
+        @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+        @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+        @Parameter(description = "Determines the format of the body of the response", required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+        @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+        @Parameter(description = "The requested asset type", required = true, schema = @Schema(allowableValues = {
+            "resources, services"})) @PathParam("assetType") final String assetType, @Parameter(hidden = true) String data) {
         init();
-
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
@@ -222,7 +183,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         User modifier = null;
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(ComponentTypeEnum.RESOURCE.getValue());
         Service service = null;
-
         try {
             // Validate X-ECOMP-InstanceID Header
             if (responseWrapper.isEmpty()) {
@@ -233,75 +193,62 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 validateHttpCspUserIdHeader(userId, responseWrapper);
             }
             // Validate assetType
-
-            if( responseWrapper.isEmpty() && !(AssetTypeEnum.RESOURCES.getValue().equals(assetType) || AssetTypeEnum.SERVICES.getValue().equals(assetType))) {
+            if (responseWrapper.isEmpty() && !(AssetTypeEnum.RESOURCES.getValue().equals(assetType) || AssetTypeEnum.SERVICES.getValue()
+                .equals(assetType))) {
                 responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             }
-
-			if (responseWrapper.isEmpty() && AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
-
+            if (responseWrapper.isEmpty() && AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
                 modifier = new User();
                 modifier.setUserId(userId);
                 Either<Service, ResponseFormat> convertResponse = getComponentsUtils()
-                        .convertJsonToObjectUsingObjectMapper(data, modifier, Service.class,
-                                null, ComponentTypeEnum.SERVICE);
-                if( convertResponse.isRight() ){
+                    .convertJsonToObjectUsingObjectMapper(data, modifier, Service.class, null, ComponentTypeEnum.SERVICE);
+                if (convertResponse.isRight()) {
                     responseWrapper.setInnerElement(convertResponse.right().value());
-                }
-                else{
+                } else {
                     service = convertResponse.left().value();
                 }
-
-                if (service==null){
-                    responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                            ActionStatus.SERVICE_NOT_FOUND, ComponentTypeEnum.SERVICE.getValue()));
+                if (service == null) {
+                    responseWrapper.setInnerElement(
+                        getComponentsUtils().getResponseFormat(ActionStatus.SERVICE_NOT_FOUND, ComponentTypeEnum.SERVICE.getValue()));
                 }
-
                 //validate name exist
-                if(responseWrapper.isEmpty() && service != null && isNullOrEmpty(service.getName())){
-                    responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                    ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue()));
+                if (responseWrapper.isEmpty() && service != null && isNullOrEmpty(service.getName())) {
+                    responseWrapper.setInnerElement(
+                        getComponentsUtils().getResponseFormat(ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue()));
                 }
-
                 //validate category
-                if(responseWrapper.isEmpty() && service != null && service.getCategories() != null && !service.getCategories().isEmpty() && !ExternalCategoryTypeEnum.containsIgnoreCase(service.getCategories().get(0).getName())){
+                if (responseWrapper.isEmpty() && service != null && service.getCategories() != null && !service.getCategories().isEmpty()
+                    && !ExternalCategoryTypeEnum.containsIgnoreCase(service.getCategories().get(0).getName())) {
                     log.debug("Service category is not supported {}", service.getCategories().get(0).getName());
-                    responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                            ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.SERVICE.getValue()));
+                    responseWrapper.setInnerElement(
+                        getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.SERVICE.getValue()));
                 }
-
-                if(responseWrapper.isEmpty() && service != null){
+                if (responseWrapper.isEmpty() && service != null) {
                     service.setSystemName(ValidationUtils.convertToSystemName(service.getName()));
-                    log.debug("Service system name :"+service.getSystemName());
+                    log.debug("Service system name :" + service.getSystemName());
                 }
-
-				if(responseWrapper.isEmpty()){
-				    Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.createService(service, modifier);
+                if (responseWrapper.isEmpty()) {
+                    Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.createService(service, modifier);
                     if (actionResponse.isRight()) {
                         log.debug("Failed to create service");
-					    responseWrapper.setInnerElement(actionResponse.right().value());
-					    return buildErrorResponse(responseWrapper.getInnerElement());
+                        responseWrapper.setInnerElement(actionResponse.right().value());
+                        return buildErrorResponse(responseWrapper.getInnerElement());
                     }
-
                     // Create the service in the dataModel
                     service = actionResponse.left().value();
                     Object result = RepresentationUtils.toRepresentation(actionResponse.left().value());
                     responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.CREATED));
                     return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), result);
-				}
-				else{
-				    return buildErrorResponse(responseWrapper.getInnerElement());
+                } else {
+                    return buildErrorResponse(responseWrapper.getInnerElement());
                 }
-
-
-
-			} else {
+            } else {
                 //Validate resource type
-            	if(responseWrapper.isEmpty()){
+                if (responseWrapper.isEmpty()) {
                     JSONParser parser = new JSONParser();
                     JSONObject jsonObj = (JSONObject) parser.parse(data);
                     String resourceType = (String) jsonObj.get(FilterKeyEnum.RESOURCE_TYPE.getName());
-                    if( StringUtils.isEmpty(resourceType) || !ResourceTypeEnum.containsName(resourceType) ){
+                    if (StringUtils.isEmpty(resourceType) || !ResourceTypeEnum.containsName(resourceType)) {
                         resourceCommonInfo.setResourceName((String) jsonObj.get("name"));
                         responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
                     }
@@ -311,64 +258,57 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                     modifier = new User();
                     modifier.setUserId(userId);
                     Either<Resource, ResponseFormat> eitherResource = getComponentsUtils()
-                            .convertJsonToObjectUsingObjectMapper(data, modifier, Resource.class,
-                                    null, ComponentTypeEnum.RESOURCE);
-                    if( eitherResource.isRight() ){
+                        .convertJsonToObjectUsingObjectMapper(data, modifier, Resource.class, null, ComponentTypeEnum.RESOURCE);
+                    if (eitherResource.isRight()) {
                         responseWrapper.setInnerElement(eitherResource.right().value());
-                    }
-                    else{
+                    } else {
                         resource = eitherResource.left().value();
                     }
-
                 }
                 //validate name exist
-                if(responseWrapper.isEmpty() && isNullOrEmpty(resource.getName())){
-                        responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                                ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue()));
+                if (responseWrapper.isEmpty() && isNullOrEmpty(resource.getName())) {
+                    responseWrapper.setInnerElement(
+                        getComponentsUtils().getResponseFormat(ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue()));
                 }
-
-                if(responseWrapper.isEmpty()){
+                if (responseWrapper.isEmpty()) {
                     resource.setDerivedFrom(Arrays.asList("tosca.nodes.Root"));
                     resource.setSystemName(ValidationUtils.convertToSystemName(resource.getName()));
-                    resource.setToscaResourceName(CommonBeUtils.generateToscaResourceName(ResourceTypeEnum.VFCMT.name(),
-                            resource.getSystemName()));
+                    resource.setToscaResourceName(CommonBeUtils.generateToscaResourceName(ResourceTypeEnum.VFCMT.name(), resource.getSystemName()));
                     handleCategories(data, resource, responseWrapper);
                 }
                 // Create the resource in the dataModel
                 if (responseWrapper.isEmpty()) {
-                    resource = resourceBusinessLogic.createResource(resource, null,
-                            modifier, null, null);
+                    resource = resourceBusinessLogic.createResource(resource, null, modifier, null, null);
                     return buildCreatedResourceResponse(resource, responseWrapper);
                 } else {
                     return buildErrorResponse(responseWrapper.getInnerElement());
                 }
             }
-
-        } catch (IOException|ParseException e) {
+        } catch (IOException | ParseException e) {
             final String message = "failed to create vfc monitoring template resource";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
             log.debug(message, e);
             responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             return buildErrorResponse(responseWrapper.getInnerElement());
-        } catch (ComponentException e){
+        } catch (ComponentException e) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(e);
             responseWrapper.setInnerElement(responseFormat);
             return buildErrorResponse(responseFormat);
-        }
-        finally {
-        	if(AssetTypeEnum.RESOURCES.getValue().equals(assetType)) {
-        		getComponentsUtils().auditCreateResourceExternalApi(responseWrapper.getInnerElement(), resourceCommonInfo, request, resource);
-        	} else if(AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
-        		getComponentsUtils().auditCreateServiceExternalApi(responseWrapper.getInnerElement(), request, service);
-        	}
+        } finally {
+            if (AssetTypeEnum.RESOURCES.getValue().equals(assetType)) {
+                getComponentsUtils().auditCreateResourceExternalApi(responseWrapper.getInnerElement(), resourceCommonInfo, request, resource);
+            } else if (AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
+                getComponentsUtils().auditCreateServiceExternalApi(responseWrapper.getInnerElement(), request, service);
+            }
         }
     }
 
     /**
      * Changing the lifecycle of an asset
-     * @param jsonChangeInfo    The description - request body
-     * @param assetType The requested asset type.Valid values are: resources / services (for VFCMT – use "resources")
-     * @param uuid The uuid of the desired resource to be changed
+     *
+     * @param jsonChangeInfo      The description - request body
+     * @param assetType           The requested asset type.Valid values are: resources / services (for VFCMT – use "resources")
+     * @param uuid                The uuid of the desired resource to be changed
      * @param lifecycleTransition The lifecycle operation to be performed on the asset.Valid values are:Checkin / Checkout /  CERTIFICATION_REQUEST
      * @param userId
      * @return
@@ -378,67 +318,45 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(parameters = {
-            @Parameter(required = true, schema = @Schema(implementation = org.openecomp.sdc.be.model.Resource.class),
-                    description = "json describe the created resource")},
-            description = "Change Resource lifecycle State", method = "POST", responses = {
-            @ApiResponse(responseCode = "200", description = "Resource state changed",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing X-ECOMP-InstanceID HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401",
-                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404",
-                    description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
-            @ApiResponse(responseCode = "405",
-                    description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500",
-                    description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
-            @ApiResponse(responseCode = "403", description = "Asset is already checked-out by another user - SVC4085"),
-            @ApiResponse(responseCode = "403",
-                    description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
+        @Parameter(required = true, schema = @Schema(implementation = org.openecomp.sdc.be.model.Resource.class), description = "json describe the created resource")}, description = "Change Resource lifecycle State", method = "POST", responses = {
+        @ApiResponse(responseCode = "200", description = "Resource state changed", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
+        @ApiResponse(responseCode = "400", description = "Missing X-ECOMP-InstanceID HTTP header - POL5001"),
+        @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+        @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+        @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+        @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+        @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+        @ApiResponse(responseCode = "403", description = "Asset is already checked-out by another user - SVC4085"),
+        @ApiResponse(responseCode = "403", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
     @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response changeResourceStateExternal(
-            @Parameter(description = "Determines the format of the body of the request",
-                    required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
-            @Parameter(description = "The user id",
-                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
-            @Parameter(description = "X-ECOMP-RequestID header",
-                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
-                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @Parameter(description = "Determines the format of the body of the response",
-                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @Parameter(description = "The username and password",
-                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"checkout, checkin"}),
-                    required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
-            @Parameter(description = "id of component to be changed") @PathParam(value = "uuid") final String uuid,
-            @Parameter(description = "validValues: resources / services ",
-                    schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
-                             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam(
-                                    value = "assetType") final String assetType,
-            @Parameter(hidden = true) String jsonChangeInfo) {
-
+        @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
+        @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
+        @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+        @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+        @Parameter(description = "Determines the format of the body of the response", required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+        @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+        @Parameter(schema = @Schema(allowableValues = {
+            "checkout, checkin"}), required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
+        @Parameter(description = "id of component to be changed") @PathParam(value = "uuid") final String uuid,
+        @Parameter(description = "validValues: resources / services ", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam(value = "assetType") final String assetType,
+        @Parameter(hidden = true) String jsonChangeInfo) {
         Response response = null;
-
         init();
-
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
-
         Wrapper<ResponseFormat> responseWrapper = runValidations(assetType);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         Component component = null;
         Component responseObject = null;
         User modifier = null;
-
-        try{
+        try {
             // Validate X-ECOMP-InstanceID Header
             if (responseWrapper.isEmpty()) {
                 validateXECOMPInstanceIDHeader(instanceIdHeader, responseWrapper);
             }
-
             if (responseWrapper.isEmpty()) {
                 //get user
                 Either<User, ResponseFormat> eitherGetUser = getUser(request, userId);
@@ -448,7 +366,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                     return buildErrorResponse(responseFormat);
                 }
                 modifier = eitherGetUser.left().value();
-
                 //get the component id from the uuid
                 Either<Component, ResponseFormat> latestVersion = lifecycleBusinessLogic.getLatestComponentByUuid(componentType, uuid);
                 if (latestVersion.isRight()) {
@@ -458,7 +375,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 }
                 component = latestVersion.left().value();
                 String componentId = component.getUniqueId();
-
                 //validate the transition is valid
                 Either<LifeCycleTransitionEnum, ResponseFormat> validateEnum = validateTransitionEnum(lifecycleTransition, modifier);
                 if (validateEnum.isRight()) {
@@ -467,39 +383,37 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                     return buildErrorResponse(responseFormat);
                 }
                 LifeCycleTransitionEnum transitionEnum = validateEnum.left().value();
-
                 //create changeInfo
                 LifecycleChangeInfoWithAction changeInfo = new LifecycleChangeInfoWithAction();
                 try {
                     if (jsonChangeInfo != null && !jsonChangeInfo.isEmpty()) {
                         ObjectMapper mapper = new ObjectMapper();
-                        changeInfo = new LifecycleChangeInfoWithAction(mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
+                        changeInfo = new LifecycleChangeInfoWithAction(
+                            mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
                     }
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
                     log.debug("failed to convert from json {}", jsonChangeInfo, e);
-                    ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(modifier, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
+                    ResponseFormat responseFormat = getComponentsUtils()
+                        .getInvalidContentErrorAndAudit(modifier, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
                     responseWrapper.setInnerElement(responseFormat);
                     return buildErrorResponse(responseFormat);
                 }
-
                 //execute business logic
-                Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic.changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);
+                Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic
+                    .changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);
                 if (actionResponse.isRight()) {
                     log.info("failed to change resource state");
                     ResponseFormat responseFormat = actionResponse.right().value();
                     responseWrapper.setInnerElement(responseFormat);
                     return buildErrorResponse(responseFormat);
                 }
-
                 log.debug("change state successful !!!");
                 responseObject = actionResponse.left().value();
                 response = buildCreatedResourceResponse(responseObject, responseWrapper);
             } else {
                 response = buildErrorResponse(responseWrapper.getInnerElement());
             }
-
             return response;
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Change Lifecycle State");
@@ -507,33 +421,29 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(responseFormat);
             return buildErrorResponse(responseFormat);
-        } catch (ComponentException e){
+        } catch (ComponentException e) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(e);
             responseWrapper.setInnerElement(responseFormat);
             return buildErrorResponse(responseFormat);
-        }
-        finally{
-            getComponentsUtils().auditChangeLifecycleAction(responseWrapper.getInnerElement(), componentType, requestId,
-                    component, responseObject, new DistributionData(instanceIdHeader, requestURI), modifier);
+        } finally {
+            getComponentsUtils().auditChangeLifecycleAction(responseWrapper.getInnerElement(), componentType, requestId, component, responseObject,
+                new DistributionData(instanceIdHeader, requestURI), modifier);
         }
     }
 
-    private Response buildCreatedResourceResponse(Component resource,
-            Wrapper<ResponseFormat> responseWrapper) throws IOException {
+    private Response buildCreatedResourceResponse(Component resource, Wrapper<ResponseFormat> responseWrapper) throws IOException {
         ResponseFormat responseFormat;
         Response response;
         Either<? extends AssetMetadata, ResponseFormat> resMetadata = assetMetadataUtils
-                .convertToSingleAssetMetadata(resource, request.getRequestURL().toString(),
-                        true);
+            .convertToSingleAssetMetadata(resource, request.getRequestURL().toString(), true);
         if (resMetadata.isRight()) {
             log.debug("Asset conversion Failed");
             responseFormat = resMetadata.right().value();
             responseWrapper.setInnerElement(responseFormat);
             response = buildErrorResponse(responseFormat);
-        }else{
+        } else {
             final AssetMetadata assetData = resMetadata.left().value();
             assetData.setToscaModelURL(null);
-
             responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.CREATED));
             Object representation = RepresentationUtils.toRepresentation(assetData);
             response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
@@ -541,29 +451,24 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         return response;
     }
 
-    private void handleCategories(String data, Resource resource,
-            Wrapper<ResponseFormat> responseWrapper) {
+    private void handleCategories(String data, Resource resource, Wrapper<ResponseFormat> responseWrapper) {
         try {
             JSONParser parser = new JSONParser();
             JSONObject jsonObj = (JSONObject) parser.parse(data);
             String category = (String) jsonObj.get(CategoryTypeEnum.CATEGORY.getValue());
             String subcategory = (String) jsonObj.get(CategoryTypeEnum.SUBCATEGORY.getValue());
             if (isNullOrEmpty(category)) {
-                responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                        ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue()));
-            }
-            else if (isNullOrEmpty(subcategory)) {
-                responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                        ActionStatus.COMPONENT_MISSING_SUBCATEGORY));
+                responseWrapper.setInnerElement(
+                    getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue()));
+            } else if (isNullOrEmpty(subcategory)) {
+                responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_SUBCATEGORY));
             }
             if (responseWrapper.isEmpty()) {
                 // get All Categories
-                Either<List<CategoryDefinition>, ActionStatus> allResourceCategories = elementBusinessLogic
-                        .getAllResourceCategories();
+                Either<List<CategoryDefinition>, ActionStatus> allResourceCategories = elementBusinessLogic.getAllResourceCategories();
                 // Error fetching categories
                 if (allResourceCategories.isRight()) {
-                    responseWrapper.setInnerElement(
-                            getComponentsUtils().getResponseFormat(allResourceCategories.right().value()));
+                    responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(allResourceCategories.right().value()));
                 } else {
                     addCategories(resource, category, subcategory, allResourceCategories, responseWrapper);
                 }
@@ -572,65 +477,57 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             log.debug("Exception occured in addCategories: {}", e.getMessage(), e);
             responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
-
     }
 
     private void addCategories(Resource resource, String category, String subcategory,
-            Either<List<CategoryDefinition>, ActionStatus> allResourceCategories,
-            Wrapper<ResponseFormat> responseWrapper) {
+                               Either<List<CategoryDefinition>, ActionStatus> allResourceCategories, Wrapper<ResponseFormat> responseWrapper) {
         Optional<CategoryDefinition> optionalCategory =
-                // Stream of all the categories
-                allResourceCategories.left().value().stream()
-                        // filter in only relevant category
-                        .filter(e -> e.getName().equals(category))
-                        // get the result
-                        .findAny();
+            // Stream of all the categories
+            allResourceCategories.left().value().stream()
+                // filter in only relevant category
+                .filter(e -> e.getName().equals(category))
+                // get the result
+                .findAny();
         if (!optionalCategory.isPresent()) {
-            responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                    ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue()));
+            responseWrapper.setInnerElement(
+                getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue()));
         } else {
             CategoryDefinition categoryDefinition = optionalCategory.get();
-
             List<SubCategoryDefinition> subCaregories =
-                    // Stream of all sub-categories of the relevant
-                    // category
-                    categoryDefinition.getSubcategories().stream()
-                            // filter in only relevant sub-category
-                            .filter(e -> e.getName().equals(subcategory))
-                            // get the result
-                            .collect(Collectors.toList());
+                // Stream of all sub-categories of the relevant
 
-            if( subCaregories.isEmpty() ){
-                responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
-                        ActionStatus.COMPONENT_INVALID_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue()));
-            }
-            else{
+                // category
+                categoryDefinition.getSubcategories().stream()
+                    // filter in only relevant sub-category
+                    .filter(e -> e.getName().equals(subcategory))
+                    // get the result
+                    .collect(Collectors.toList());
+            if (subCaregories.isEmpty()) {
+                responseWrapper.setInnerElement(
+                    getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_INVALID_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue()));
+            } else {
                 categoryDefinition.setSubcategories(subCaregories);
                 resource.setCategories(Arrays.asList(categoryDefinition));
             }
-
         }
     }
 
     private Wrapper<ResponseFormat> runValidations(final String assetType) {
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
-
         // Validate X-ECOMP-InstanceID Header
         if (responseWrapper.isEmpty()) {
             String instanceId = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
-            validateXECOMPInstanceIDHeader(instanceId,responseWrapper);
+            validateXECOMPInstanceIDHeader(instanceId, responseWrapper);
         }
         // Validate USER_ID Header
         if (responseWrapper.isEmpty()) {
-            validateHttpCspUserIdHeader(request.getHeader(Constants.USER_ID_HEADER),responseWrapper);
+            validateHttpCspUserIdHeader(request.getHeader(Constants.USER_ID_HEADER), responseWrapper);
         }
         // Validate assetType
-        if (responseWrapper.isEmpty()
-                && !AssetTypeEnum.RESOURCES.getValue().equals(assetType)
-                && !AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
-                responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+        if (responseWrapper.isEmpty() && !AssetTypeEnum.RESOURCES.getValue().equals(assetType) && !AssetTypeEnum.SERVICES.getValue()
+            .equals(assetType)) {
+            responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
-
         return responseWrapper;
     }
 
@@ -643,5 +540,4 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             return Either.right(error);
         }
     }
-
 }

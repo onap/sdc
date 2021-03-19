@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.utils;
 
 import java.util.Collections;
@@ -45,8 +44,8 @@ public class OutputConverter {
         this.attributeConverterProvider = attributeConverterProvider;
     }
 
-    public Map<String, ToscaProperty> convert(final List<OutputDefinition> outputDefinitionList,
-                                              final Map<String, DataTypeDefinition> dataTypes) throws ToscaConversionException {
+    public Map<String, ToscaProperty> convert(final List<OutputDefinition> outputDefinitionList, final Map<String, DataTypeDefinition> dataTypes)
+        throws ToscaConversionException {
         final AttributeConverter attributeConverter = this.attributeConverterProvider.getObject(dataTypes);
         final Map<String, ToscaProperty> outputMap = new HashMap<>();
         if (CollectionUtils.isEmpty(outputDefinitionList)) {
@@ -60,6 +59,3 @@ public class OutputConverter {
         return outputMap;
     }
 }
-
-
-

@@ -21,6 +21,10 @@
  */
 package org.openecomp.sdc.be.info;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,46 +32,38 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupProperty;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 @Getter
 @Setter
 public class GroupDefinitionInfo {
+
     private String name;
-
     private String description;
-
     // the id is unique per group instance on graph.
     private String uniqueId;
-
     // the id is unique per group instance on graph.
     private String groupInstanceUniqueId;
-
     // the group UUID should be changed when one of the artifacts/component
+
     // instances has been changed.
     private String groupUUID;
-
     // version should be changed when there is a change to the group's metadata
+
     // or to the groups members
+
     // (not necessarily when the VF version is changed). This field cannot be
+
     // updated by user
     private String version;
-
     private String invariantUUID;
     private String customizationUUID;
-
     private Boolean isBase = null;
-
     // artifacts - list of artifact uid. All artifacts in the group must already
+
     // be uploaded to the VF
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private List<ArtifactDefinitionInfo> artifacts;
-
     private Map<String, String> members;
-
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private List<? extends GroupProperty> properties;
@@ -98,19 +94,19 @@ public class GroupDefinitionInfo {
     }
 
     public List<ArtifactDefinitionInfo> getArtifacts() {
-        return (artifacts==null) ? null : new ArrayList<>(artifacts);
-    }
-
-    public List<GroupProperty> getProperties() {
-        return (properties==null) ? null : new ArrayList<>(properties);
+        return (artifacts == null) ? null : new ArrayList<>(artifacts);
     }
 
     public void setArtifacts(List<ArtifactDefinitionInfo> artifacts) {
-        this.artifacts = (artifacts==null) ? null : new ArrayList<>(artifacts);
+        this.artifacts = (artifacts == null) ? null : new ArrayList<>(artifacts);
+    }
+
+    public List<GroupProperty> getProperties() {
+        return (properties == null) ? null : new ArrayList<>(properties);
     }
 
     public void setProperties(List<? extends GroupProperty> properties) {
-        this.properties = (properties==null) ? null : new ArrayList<>(properties);
+        this.properties = (properties == null) ? null : new ArrayList<>(properties);
     }
 
     @Override

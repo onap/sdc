@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -79,16 +78,12 @@ public class OutputsServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(OutputsServlet.class);
     private static final String START_HANDLE_REQUEST_OF = "(get) Start handle request of {}";
-
     private final OutputsBusinessLogic outputsBusinessLogic;
 
     @Inject
-    public OutputsServlet(final UserBusinessLogic userBusinessLogic,
-                          final OutputsBusinessLogic outputsBusinessLogic,
-                          final ComponentInstanceBusinessLogic componentInstanceBL,
-                          final ComponentsUtils componentsUtils,
-                          final ServletUtils servletUtils,
-                          final ResourceImportManager resourceImportManager) {
+    public OutputsServlet(final UserBusinessLogic userBusinessLogic, final OutputsBusinessLogic outputsBusinessLogic,
+                          final ComponentInstanceBusinessLogic componentInstanceBL, final ComponentsUtils componentsUtils,
+                          final ServletUtils servletUtils, final ResourceImportManager resourceImportManager) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.outputsBusinessLogic = outputsBusinessLogic;
     }
@@ -97,29 +92,24 @@ public class OutputsServlet extends AbstractValidationsServlet {
     @Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{originComponentUid}/outputs")
     @Operation(description = "Get Outputs only", method = "GET", summary = "Returns Outputs list", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-        @ApiResponse(responseCode = "200", description = "Component found"),
-        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getComponentInstanceOutputs(@PathParam("componentType") final String componentType,
-                                                @PathParam("componentId") final String componentId,
-                                                @PathParam("instanceId") final String instanceId,
+                                                @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
                                                 @PathParam("originComponentUid") final String originComponentUid,
                                                 @Context final HttpServletRequest request,
                                                 @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
-
         final String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         try {
-            final Either<List<ComponentInstanceOutput>, ResponseFormat> outputsResponse =
-                outputsBusinessLogic.getComponentInstanceOutputs(userId, componentId, instanceId);
+            final Either<List<ComponentInstanceOutput>, ResponseFormat> outputsResponse = outputsBusinessLogic
+                .getComponentInstanceOutputs(userId, componentId, instanceId);
             if (outputsResponse.isRight()) {
                 log.debug("failed to get component instance outputs {}", componentType);
                 return buildErrorResponse(outputsResponse.right().value());
             }
             final Object outputs = RepresentationUtils.toRepresentation(outputsResponse.left().value());
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), outputs);
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Outputs " + componentType);
             log.debug("getOutputs failed with exception", e);
@@ -131,61 +121,49 @@ public class OutputsServlet extends AbstractValidationsServlet {
     @Path("/{componentType}/{componentId}/create/outputs")
     @Operation(description = "Create outputs on service", method = "POST", summary = "Return outputs list", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-        @ApiResponse(responseCode = "200", description = "Component found"),
-        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    public Response createMultipleOutputs(@PathParam("componentType") final String componentType,
-                                          @PathParam("componentId") final String componentId,
+    public Response createMultipleOutputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
                                           @Context final HttpServletRequest request,
                                           @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
                                           @Parameter(description = "ComponentIns Outputs Object to be created", required = true) final String componentInstOutputsMapObj) {
         final String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         try {
             return declareAttributes(userId, componentId, componentType, componentInstOutputsMapObj, DeclarationTypeEnum.OUTPUT, request);
-
         } catch (final Exception e) {
-            BeEcompErrorManager.getInstance()
-                .logBeRestApiGeneralError("Create outputs for service with id: " + componentId);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create outputs for service with id: " + componentId);
             log.debug("Attributes declaration failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 
-    private Response declareAttributes(final String userId,
-                                         final String componentId,
-                                         final String componentType,
-                                         final String componentInstOutputsMapObj,
-                                         final DeclarationTypeEnum typeEnum,
-                                         final HttpServletRequest request) {
+    private Response declareAttributes(final String userId, final String componentId, final String componentType,
+                                       final String componentInstOutputsMapObj, final DeclarationTypeEnum typeEnum,
+                                       final HttpServletRequest request) {
         final ServletContext context = request.getSession().getServletContext();
         final String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         try {
             final BaseBusinessLogic businessLogic = getBlForDeclaration(typeEnum, context);
-
             // get modifier id
             final User modifier = new User(userId);
             log.debug("modifier id is {}", userId);
             final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            final Either<ComponentInstOutputsMap, ResponseFormat> componentInstOutputsMapRes = parseToComponentInstanceMap(
-                componentInstOutputsMapObj, modifier, componentTypeEnum, ComponentInstOutputsMap.class);
+            final Either<ComponentInstOutputsMap, ResponseFormat> componentInstOutputsMapRes = parseToComponentInstanceMap(componentInstOutputsMapObj,
+                modifier, componentTypeEnum, ComponentInstOutputsMap.class);
             if (componentInstOutputsMapRes.isRight()) {
                 log.debug("failed to parse componentInstOutMap");
                 return buildErrorResponse(componentInstOutputsMapRes.right().value());
             }
-
-            final Either<List<ToscaDataDefinition>, ResponseFormat> attributesAfterDeclaration =
-                businessLogic.declareAttributes(userId, componentId, componentTypeEnum, componentInstOutputsMapRes.left().value());
+            final Either<List<ToscaDataDefinition>, ResponseFormat> attributesAfterDeclaration = businessLogic
+                .declareAttributes(userId, componentId, componentTypeEnum, componentInstOutputsMapRes.left().value());
             if (attributesAfterDeclaration.isRight()) {
                 log.debug("failed to create outputs  for service: {}", componentId);
                 return buildErrorResponse(attributesAfterDeclaration.right().value());
             }
             final Object attributes = RepresentationUtils.toRepresentation(attributesAfterDeclaration.left().value());
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), attributes);
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create outputs for service with id: " + componentId);
             log.debug("Attributes declaration failed with exception", e);
@@ -195,22 +173,16 @@ public class OutputsServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/{componentType}/{componentId}/delete/{outputId}/output")
-    @Operation(description = "Delete output from service", method = "DELETE", summary = "Delete service output",
-        responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-            @ApiResponse(responseCode = "200", description = "Output deleted"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Output not found")})
-    public Response deleteOutput(@PathParam("componentType") final String componentType,
-                                 @PathParam("componentId") final String componentId,
-                                 @PathParam("outputId") final String outputId,
-                                 @Context final HttpServletRequest request,
+    @Operation(description = "Delete output from service", method = "DELETE", summary = "Delete service output", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+        @ApiResponse(responseCode = "200", description = "Output deleted"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Output not found")})
+    public Response deleteOutput(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
+                                 @PathParam("outputId") final String outputId, @Context final HttpServletRequest request,
                                  @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
                                  @Parameter(description = "Service Output to be deleted", required = true) final String componentInstOutputsMapObj) {
-
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         try {
             final OutputDefinition deleteOutput = outputsBusinessLogic.deleteOutput(componentId, userId, outputId);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteOutput);
@@ -220,5 +192,4 @@ public class OutputsServlet extends AbstractValidationsServlet {
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
-
 }

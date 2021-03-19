@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.group;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
+
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.components.merge.ComponentsGlobalMergeCommand;
 import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
@@ -33,16 +41,6 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.springframework.core.annotation.Order;
 
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
-
 @org.springframework.stereotype.Component
 @Order(ANY_ORDER_COMMAND)
 public class GroupPropertiesMergeCommand implements VspComponentsMergeCommand, ComponentsGlobalMergeCommand {
@@ -51,7 +49,8 @@ public class GroupPropertiesMergeCommand implements VspComponentsMergeCommand, C
     private final ComponentsUtils componentsUtils;
     private final DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic;
 
-    public GroupPropertiesMergeCommand(GroupsOperation groupsOperation, ComponentsUtils componentsUtils, DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic) {
+    public GroupPropertiesMergeCommand(GroupsOperation groupsOperation, ComponentsUtils componentsUtils,
+                                       DataDefinitionsValuesMergingBusinessLogic propertyValuesMergingBusinessLogic) {
         this.groupsOperation = groupsOperation;
         this.componentsUtils = componentsUtils;
         this.propertyValuesMergingBusinessLogic = propertyValuesMergingBusinessLogic;
@@ -64,9 +63,10 @@ public class GroupPropertiesMergeCommand implements VspComponentsMergeCommand, C
 
     /**
      * merge user defined group properties values from previous version into vsp defined groups in new version
-     * @param prevComponent the old component, whose group properties need to be merged from
-     * @param currentComponent the new component, whose group properties need to be merged into
-     * old and new component inputs are needed in order to determine if a "get_input" property value should be merged
+     *
+     * @param prevComponent    the old component, whose group properties need to be merged from
+     * @param currentComponent the new component, whose group properties need to be merged into old and new component inputs are needed in order to
+     *                         determine if a "get_input" property value should be merged
      * @return the status of the merge operation
      */
     @Override
@@ -84,7 +84,8 @@ public class GroupPropertiesMergeCommand implements VspComponentsMergeCommand, C
         return mergeGroupPropertiesValues(prevComponent, currentComponent, prevGroups, newGroups);
     }
 
-    private List<GroupDefinition> mergeGroupPropertiesValues(Component prevComponent, Component currentComponent, List<GroupDefinition> prevGroups, List<GroupDefinition> newGroups) {
+    private List<GroupDefinition> mergeGroupPropertiesValues(Component prevComponent, Component currentComponent, List<GroupDefinition> prevGroups,
+                                                             List<GroupDefinition> newGroups) {
         Map<String, GroupDefinition> prevGroupsByInvariantName = getVspGroupsMappedByInvariantName(prevGroups);
         List<GroupDefinition> newGroupsExistInPrevVersion = getNewGroupsExistInPrevComponent(prevGroupsByInvariantName, newGroups);
         newGroupsExistInPrevVersion.forEach(newGroup -> {
@@ -94,23 +95,20 @@ public class GroupPropertiesMergeCommand implements VspComponentsMergeCommand, C
         return newGroupsExistInPrevVersion;
     }
 
-    private void mergeGroupProperties(GroupDefinition prevGroup, List<InputDefinition> prevInputs, GroupDefinition newGroup, List<InputDefinition> currInputs) {
+    private void mergeGroupProperties(GroupDefinition prevGroup, List<InputDefinition> prevInputs, GroupDefinition newGroup,
+                                      List<InputDefinition> currInputs) {
         propertyValuesMergingBusinessLogic.mergeInstanceDataDefinitions(prevGroup.getProperties(), prevInputs, newGroup.getProperties(), currInputs);
     }
 
-    private List<GroupDefinition> getNewGroupsExistInPrevComponent(Map<String, GroupDefinition> prevGroupsByInvariantName, List<GroupDefinition> newGroups) {
-        return newGroups.stream()
-                .filter(newGroup -> prevGroupsByInvariantName.containsKey(newGroup.getInvariantName()))
-                .filter(newGroup -> isNotEmpty(newGroup.getProperties()))
-                .collect(toList());
+    private List<GroupDefinition> getNewGroupsExistInPrevComponent(Map<String, GroupDefinition> prevGroupsByInvariantName,
+                                                                   List<GroupDefinition> newGroups) {
+        return newGroups.stream().filter(newGroup -> prevGroupsByInvariantName.containsKey(newGroup.getInvariantName()))
+            .filter(newGroup -> isNotEmpty(newGroup.getProperties())).collect(toList());
     }
 
     private Map<String, GroupDefinition> getVspGroupsMappedByInvariantName(List<GroupDefinition> newGroups) {
-        return newGroups.stream()
-                .filter(GroupDataDefinition::isVspOriginated)
-                .filter(grp -> isNotEmpty(grp.getProperties()))
-                .collect(toMap(GroupDataDefinition::getInvariantName,
-                               group -> group));
+        return newGroups.stream().filter(GroupDataDefinition::isVspOriginated).filter(grp -> isNotEmpty(grp.getProperties()))
+            .collect(toMap(GroupDataDefinition::getInvariantName, group -> group));
     }
 
     private ActionStatus updateGroups(Component currentComponent, List<GroupDefinition> groupsToUpdate) {
@@ -118,8 +116,6 @@ public class GroupPropertiesMergeCommand implements VspComponentsMergeCommand, C
             return ActionStatus.OK;
         }
         return groupsOperation.updateGroups(currentComponent, groupsToUpdate, PromoteVersionEnum.MINOR)
-                .either(updatedGroups -> ActionStatus.OK,
-                        err -> componentsUtils.convertFromStorageResponse(err, currentComponent.getComponentType()));
+            .either(updatedGroups -> ActionStatus.OK, err -> componentsUtils.convertFromStorageResponse(err, currentComponent.getComponentType()));
     }
-
 }

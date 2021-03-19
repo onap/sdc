@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,17 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.instance;
-
-
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceInterface;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.InputDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.InputDefinition;
 
 /**
  * Created by chaya on 9/7/2017.
@@ -54,7 +51,7 @@ public class DataForMergeHolder {
     private Component currInstanceNode;
     private String origComponentInstId;
     private List<ComponentInstanceInterface> origComponentInstanceInterfaces;
-    private Map <String, Integer> componentInstanceDeploymentArtifactsTimeOut;
+    private Map<String, Integer> componentInstanceDeploymentArtifactsTimeOut;
 
     public DataForMergeHolder() {
         origComponentInstanceInputs = new ArrayList<>();
@@ -131,15 +128,19 @@ public class DataForMergeHolder {
         this.origComponentInputs = origComponentInputs;
     }
 
-    Map<String, ArtifactDefinition> getOrigComponentDeploymentArtifactsCreatedOnTheInstance(){ return this.origCompInstDeploymentArtifactsCreatedOnTheInstance;}
+    Map<String, ArtifactDefinition> getOrigComponentDeploymentArtifactsCreatedOnTheInstance() {
+        return this.origCompInstDeploymentArtifactsCreatedOnTheInstance;
+    }
 
-    Map<String, ArtifactDefinition> getOrigComponentInformationalArtifactsCreatedOnTheInstance(){ return origCompInstInformationalArtifactsCreatedOnTheInstance;}
-
-    void setOrigComponentDeploymentArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origDeploymentArtifacts){
+    void setOrigComponentDeploymentArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origDeploymentArtifacts) {
         origCompInstDeploymentArtifactsCreatedOnTheInstance = origDeploymentArtifacts;
     }
 
-    void setOrigComponentInformationalArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origInformationalArtifacts){
+    Map<String, ArtifactDefinition> getOrigComponentInformationalArtifactsCreatedOnTheInstance() {
+        return origCompInstInformationalArtifactsCreatedOnTheInstance;
+    }
+
+    void setOrigComponentInformationalArtifactsCreatedOnTheInstance(Map<String, ArtifactDefinition> origInformationalArtifacts) {
         origCompInstInformationalArtifactsCreatedOnTheInstance = origInformationalArtifacts;
     }
 
@@ -191,12 +192,12 @@ public class DataForMergeHolder {
         this.origComponentInstId = origComponentInstId;
     }
 
-    void setComponentInstanceDeploymentArtifactsTimeOut(Map<String,Integer> componentInstancesDeploymentArtifacts) {
-        this.componentInstanceDeploymentArtifactsTimeOut = componentInstancesDeploymentArtifacts;
-    }
-
     public Map<String, Integer> getComponentInstanceDeploymentArtifactsTimeOut() {
         return componentInstanceDeploymentArtifactsTimeOut;
+    }
+
+    void setComponentInstanceDeploymentArtifactsTimeOut(Map<String, Integer> componentInstancesDeploymentArtifacts) {
+        this.componentInstanceDeploymentArtifactsTimeOut = componentInstancesDeploymentArtifacts;
     }
 
     public List<ComponentInstanceInterface> getOrigComponentInstanceInterfaces() {
@@ -206,5 +207,4 @@ public class DataForMergeHolder {
     public void setOrigComponentInstanceInterfaces(List<ComponentInstanceInterface> origComponentInstanceInterfaces) {
         this.origComponentInstanceInterfaces = origComponentInstanceInterfaces;
     }
-
 }

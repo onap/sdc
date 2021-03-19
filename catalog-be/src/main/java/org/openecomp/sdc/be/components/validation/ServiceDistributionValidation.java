@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation;
 
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ActivationRequestInformation;
@@ -38,15 +40,12 @@ import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Created by chaya on 10/18/2017.
  */
 @org.springframework.stereotype.Component("serviceDistributionValidation")
 public class ServiceDistributionValidation {
+
     private static final Logger log = Logger.getLogger(ServiceDistributionValidation.class);
     @Resource
     private ComponentsUtils componentsUtils;
@@ -57,14 +56,16 @@ public class ServiceDistributionValidation {
     @Resource
     private IDistributionEngine distributionEngine;
 
-    public Either<ActivationRequestInformation, ResponseFormat> validateActivateServiceRequest(String serviceUUID, String opEnvId, User modifier, ServiceDistributionReqInfo data) {
+    public Either<ActivationRequestInformation, ResponseFormat> validateActivateServiceRequest(String serviceUUID, String opEnvId, User modifier,
+                                                                                               ServiceDistributionReqInfo data) {
         try {
             validateUserExists(modifier.getUserId());
             Service serviceToActivate = validateServiceExists(serviceUUID);
             validateDistributionServiceLifeCycleState(serviceToActivate);
             OperationalEnvironmentEntry operationalEnvironmentEntry = validateOperationalEnvExists(opEnvId);
             String workloadContext = validateWorkloadContext(data);
-            ActivationRequestInformation activationRequestInformation = new ActivationRequestInformation(serviceToActivate, workloadContext, operationalEnvironmentEntry.getTenant());
+            ActivationRequestInformation activationRequestInformation = new ActivationRequestInformation(serviceToActivate, workloadContext,
+                operationalEnvironmentEntry.getTenant());
             return Either.left(activationRequestInformation);
         } catch (ValidationException e) {
             log.error("failed while validating activate service UUID {} request. error {}", serviceUUID, e.getExceptionResponseFormat(), e);
@@ -77,7 +78,7 @@ public class ServiceDistributionValidation {
         Service abstractService = validateServiceExists(serviceUUID);
         validateDistributionServiceLifeCycleState(abstractService);
     }
-	
+
     private Service validateServiceExists(String serviceUUID) {
         if (StringUtils.isEmpty(serviceUUID.trim())) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.BAD_REQUEST_MISSING_RESOURCE);
@@ -86,10 +87,11 @@ public class ServiceDistributionValidation {
         Either<Component, StorageOperationStatus> latestComponentByUuid = toscaOperationFacade.getLatestServiceByUuid(serviceUUID);
         if (latestComponentByUuid.isRight()) {
             log.error("failed retrieving service {}", serviceUUID);
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND, ApiResourceEnum.SERVICE_ID.getValue());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND, ApiResourceEnum.SERVICE_ID.getValue());
             throw new ValidationException(responseFormat);
         }
-        return (Service)latestComponentByUuid.left().value();
+        return (Service) latestComponentByUuid.left().value();
     }
 
     private String validateWorkloadContext(ServiceDistributionReqInfo data) {
@@ -112,15 +114,19 @@ public class ServiceDistributionValidation {
             return failOnEnvNotExist(opEnvId);
         }
         if (!operationalEnvironment.getStatus().equals(EnvironmentStatusEnum.COMPLETED.getName())) {
-            log.error("the operational environment is not ready to receive distributions. environment status: {}", operationalEnvironment.getStatus());
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND , ApiResourceEnum.ENVIRONMENT_ID.getValue());
+            log.error("the operational environment is not ready to receive distributions. environment status: {}",
+                operationalEnvironment.getStatus());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND, ApiResourceEnum.ENVIRONMENT_ID.getValue());
             throw new ValidationException(responseFormat);
         }
         return operationalEnvironment;
     }
 
     private OperationalEnvironmentEntry failOnEnvNotExist(String opEnvId) {
-        return ValidationUtils.throwValidationException(componentsUtils.getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND, ApiResourceEnum.ENVIRONMENT_ID.getValue()), "failed to get operational environment {}", opEnvId);
+        return ValidationUtils.throwValidationException(
+            componentsUtils.getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND, ApiResourceEnum.ENVIRONMENT_ID.getValue()),
+            "failed to get operational environment {}", opEnvId);
     }
 
     private void validateServiceState(Service service, List<LifecycleStateEnum> allowedStates) {
@@ -131,12 +137,12 @@ public class ServiceDistributionValidation {
             throw new ValidationException(responseFormat);
         }
     }
+
     private void validateUserExists(String userId) {
         userValidations.validateUserExists(userId);
     }
 
     private void validateDistributionServiceLifeCycleState(Service serviceToActivate) {
-        validateServiceState(serviceToActivate,
-                Arrays.asList(LifecycleStateEnum.CERTIFIED));
+        validateServiceState(serviceToActivate, Arrays.asList(LifecycleStateEnum.CERTIFIED));
     }
 }

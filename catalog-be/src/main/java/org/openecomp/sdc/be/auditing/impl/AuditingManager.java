@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.auditing.impl;
 
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -39,7 +38,6 @@ import org.springframework.stereotype.Component;
 public class AuditingManager {
 
     private static final Logger log = Logger.getLogger(AuditingManager.class.getName());
-
     private final AuditCassandraDao cassandraDao;
     private final ConfigurationProvider configurationProvider;
 
@@ -54,7 +52,6 @@ public class AuditingManager {
         }
         String msg = factory.getLogMessage();
         logAuditEvent(msg);
-
         saveEventToCassandra(factory.getDbEvent());
         return msg;
     }
@@ -66,9 +63,8 @@ public class AuditingManager {
     }
 
     private void logAuditEvent(String msg, LoggerSdcAudit audit, String requestId) {
-        if(audit != null) {
-            audit.logEntry(LogLevel.INFO, Severity.OK, msg,
-                    MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName()), requestId);
+        if (audit != null) {
+            audit.logEntry(LogLevel.INFO, Severity.OK, msg, MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName()), requestId);
         }
     }
 
@@ -82,12 +78,10 @@ public class AuditingManager {
     private void logAuditEvent(final String formattedString) {
         log.trace("logAuditEvent - start");
         log.debug(formattedString);
-        LogFieldsMdcHandler.getInstance()
-                .setAuditMessage(formattedString);
-        if (!LoggerSdcAudit.isFlowBeingTakenCare()){
+        LogFieldsMdcHandler.getInstance().setAuditMessage(formattedString);
+        if (!LoggerSdcAudit.isFlowBeingTakenCare()) {
             log.debug("MOVED FROM AUDIT LOG: {}", formattedString);
         }
         log.trace("logAuditEvent - end");
     }
-
 }

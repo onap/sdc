@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca;
 
 import io.vavr.control.Try;
@@ -28,9 +27,11 @@ import java.util.function.Function;
  */
 public final class FJToVavrHelper {
 
-    private FJToVavrHelper() {}
+    private FJToVavrHelper() {
+    }
 
     public interface Try0 {
+
         /**
          * Converts a {@link fj.data.Either} to a {@link io.vavr.control.Try}
          *
@@ -39,10 +40,7 @@ public final class FJToVavrHelper {
          * @return
          */
         static <L, R> Try<L> fromEither(fj.data.Either<L, R> e, Function<R, Throwable> onError) {
-            return e.either(
-                Try::success,
-                r -> Try.failure(onError.apply(r))
-            );
+            return e.either(Try::success, r -> Try.failure(onError.apply(r)));
         }
     }
 }

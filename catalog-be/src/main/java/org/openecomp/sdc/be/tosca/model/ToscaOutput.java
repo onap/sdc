@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 public class ToscaOutput extends ToscaProperty {
@@ -28,5 +27,4 @@ public class ToscaOutput extends ToscaProperty {
         this.setDescription(toscaAttribute.getStatus());
         this.setValue(toscaAttribute.getValue());
     }
-
 }

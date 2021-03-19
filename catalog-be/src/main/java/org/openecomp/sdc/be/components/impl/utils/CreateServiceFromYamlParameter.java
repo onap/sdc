@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.impl.utils;
 
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
@@ -23,11 +24,10 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 
-import java.util.List;
-import java.util.Map;
 @Getter
 @Setter
 public class CreateServiceFromYamlParameter {
+
     private String yamlName;
     private ParsedToscaYamlInfo parsedToscaYamlInfo;
     private List<ArtifactDefinition> createdArtifacts;

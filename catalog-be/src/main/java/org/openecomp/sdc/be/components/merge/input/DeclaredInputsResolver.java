@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,40 +17,40 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.input;
 
+import static org.openecomp.sdc.be.utils.PropertyDefinitionUtils.resolveGetInputProperties;
 
 import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.utils.PropertyDefinitionUtils.resolveGetInputProperties;
-
 @org.springframework.stereotype.Component
 public class DeclaredInputsResolver {
+
     /**
      * @param oldComponent the old state of {@link Component} that is being updated
      * @param newComponent the new state of {@link Component} that is being updated
-     * @param properties a list of properties
-     * @return a list of all inputs that were previously declared and need to be merged to the updating component
-     * An input needs to merged if a property was declared as an input (by the user) in previous component version and the declared input not exist in new version
+     * @param properties   a list of properties
+     * @return a list of all inputs that were previously declared and need to be merged to the updating component An input needs to merged if a
+     * property was declared as an input (by the user) in previous component version and the declared input not exist in new version
      */
-    List<InputDefinition> getPreviouslyDeclaredInputsToMerge(Component oldComponent, Component newComponent, Map<String, List<PropertyDataDefinition>> properties) {
+    List<InputDefinition> getPreviouslyDeclaredInputsToMerge(Component oldComponent, Component newComponent,
+                                                             Map<String, List<PropertyDataDefinition>> properties) {
         List<InputDefinition> oldInputs = oldComponent.safeGetInputs();
         return getPreviouslyDeclaredInputsToMerge(oldInputs, newComponent, properties);
     }
 
-    public List<InputDefinition> getPreviouslyDeclaredInputsToMerge(List<InputDefinition> oldInputs, Component newComponent, Map<String, List<PropertyDataDefinition>> properties) {
+    public List<InputDefinition> getPreviouslyDeclaredInputsToMerge(List<InputDefinition> oldInputs, Component newComponent,
+                                                                    Map<String, List<PropertyDataDefinition>> properties) {
         Map<String, List<PropertyDataDefinition>> getInputProperties = resolveGetInputProperties(properties);
         List<RedeclareInputData> inputsToRedeclareData = buildRedeclareInputData(newComponent, getInputProperties);
         return findPrevDeclaredInputs(oldInputs, inputsToRedeclareData);
@@ -59,9 +59,9 @@ public class DeclaredInputsResolver {
     private List<RedeclareInputData> buildRedeclareInputData(Component newComponent, Map<String, List<PropertyDataDefinition>> getInputProperties) {
         Map<String, InputDefinition> inputsById = MapUtil.toMap(newComponent.getInputs(), InputDefinition::getUniqueId);
         List<RedeclareInputData> redeclareInputData = new ArrayList<>();
-        getInputProperties.forEach((instanceId, getInputProps) -> redeclareInputData.addAll(findInputsToRedeclare(inputsById, instanceId, getInputProps)));
+        getInputProperties
+            .forEach((instanceId, getInputProps) -> redeclareInputData.addAll(findInputsToRedeclare(inputsById, instanceId, getInputProps)));
         return redeclareInputData;
-
     }
 
     private List<InputDefinition> findPrevDeclaredInputs(List<InputDefinition> oldInputs, List<RedeclareInputData> inputsToRedeclareData) {
@@ -74,29 +74,25 @@ public class DeclaredInputsResolver {
         return inputsToRedeclare;
     }
 
-    private List<RedeclareInputData> findInputsToRedeclare(Map<String, InputDefinition> inputsById, String instanceId, List<PropertyDataDefinition> getInputProps) {
+    private List<RedeclareInputData> findInputsToRedeclare(Map<String, InputDefinition> inputsById, String instanceId,
+                                                           List<PropertyDataDefinition> getInputProps) {
         List<RedeclareInputData> redeclareInputDataList = new ArrayList<>();
         getInputProps.forEach(property -> {
             List<String> inputsToRedeclareIds = findInputsToRedeclareIds(inputsById, property);
-            RedeclareInputData redeclareInputData = new RedeclareInputData(property.getUniqueId(), inputsToRedeclareIds, instanceId, property.getDefaultValue());
+            RedeclareInputData redeclareInputData = new RedeclareInputData(property.getUniqueId(), inputsToRedeclareIds, instanceId,
+                property.getDefaultValue());
             redeclareInputDataList.add(redeclareInputData);
         });
         return redeclareInputDataList;
     }
 
     private List<InputDefinition> prepareInputsForRedeclaration(Map<String, InputDefinition> oldInputsById, RedeclareInputData redeclareInputData) {
-        List<InputDefinition> inputsForRedeclaration = redeclareInputData.declaredInputIds.stream()
-                                            .filter(oldInputsById::containsKey)
-                                            .map(oldInputsById::get)
-                                            .filter(Objects::nonNull)
-                                            .map(InputDefinition::new)
-                                            .collect(Collectors.toList());
-        
+        List<InputDefinition> inputsForRedeclaration = redeclareInputData.declaredInputIds.stream().filter(oldInputsById::containsKey)
+            .map(oldInputsById::get).filter(Objects::nonNull).map(InputDefinition::new).collect(Collectors.toList());
         inputsForRedeclaration.forEach(input -> {
             input.setPropertyId(redeclareInputData.propertyId);
             input.setInstanceUniqueId(redeclareInputData.propertyOwnerId);
-            
-            if(!Strings.isNullOrEmpty(redeclareInputData.value)) {
+            if (!Strings.isNullOrEmpty(redeclareInputData.value)) {
                 input.setValue(redeclareInputData.value);
                 input.setDefaultValue(redeclareInputData.value);
             }
@@ -106,10 +102,8 @@ public class DeclaredInputsResolver {
 
     private List<String> findInputsToRedeclareIds(Map<String, InputDefinition> inputsById, PropertyDataDefinition property) {
         List<GetInputValueDataDefinition> getInputValues = property.getGetInputValues();
-        return getInputValues.stream()
-                .filter(getInputVal -> isGetInputValueHasNoCorrespondingInput(getInputVal, inputsById))
-                .map(GetInputValueDataDefinition::getInputId)
-                .collect(Collectors.toList());
+        return getInputValues.stream().filter(getInputVal -> isGetInputValueHasNoCorrespondingInput(getInputVal, inputsById))
+            .map(GetInputValueDataDefinition::getInputId).collect(Collectors.toList());
     }
 
     private boolean isGetInputValueHasNoCorrespondingInput(GetInputValueDataDefinition getInputVal, Map<String, InputDefinition> inputsById) {
@@ -117,6 +111,7 @@ public class DeclaredInputsResolver {
     }
 
     private class RedeclareInputData {
+
         private String propertyId;
         private List<String> declaredInputIds;
         private String propertyOwnerId;
@@ -128,6 +123,5 @@ public class DeclaredInputsResolver {
             this.propertyOwnerId = propertyOwnerId;
             this.value = value;
         }
-
     }
 }

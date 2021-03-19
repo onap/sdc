@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.instance;
 
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.LAST_COMMAND;
+
 import fj.data.Either;
+import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
@@ -32,10 +34,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.core.annotation.Order;
 
-import java.util.List;
-
-import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.LAST_COMMAND;
-
 @org.springframework.stereotype.Component
 @Order(LAST_COMMAND)//must run after all merge commands
 public class ComponentInstanceRelationMergeCommand implements VspComponentsMergeCommand {
@@ -44,22 +42,25 @@ public class ComponentInstanceRelationMergeCommand implements VspComponentsMerge
     private final MergeInstanceUtils mergeInstanceUtils;
     private final ComponentsUtils componentsUtils;
 
-    public ComponentInstanceRelationMergeCommand(ToscaOperationFacade toscaOperationFacade, MergeInstanceUtils mergeInstanceUtils, ComponentsUtils componentsUtils) {
+    public ComponentInstanceRelationMergeCommand(ToscaOperationFacade toscaOperationFacade, MergeInstanceUtils mergeInstanceUtils,
+                                                 ComponentsUtils componentsUtils) {
         this.toscaOperationFacade = toscaOperationFacade;
         this.mergeInstanceUtils = mergeInstanceUtils;
         this.componentsUtils = componentsUtils;
     }
+
     @Override
     public ActionStatus mergeComponents(Component prevComponent, Component currentComponent) {
         List<RequirementCapabilityRelDef> updatedUiRelations = mergeInstanceUtils.getUpdatedUiRelations(prevComponent, currentComponent);
-        if(CollectionUtils.isNotEmpty(updatedUiRelations)){
+        if (CollectionUtils.isNotEmpty(updatedUiRelations)) {
             return associateResourceInstances(currentComponent, updatedUiRelations);
         }
         return ActionStatus.OK;
     }
 
     private ActionStatus associateResourceInstances(Component currentComponent, List<RequirementCapabilityRelDef> updatedUiRelations) {
-        Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> listStorageOperationStatusEither = toscaOperationFacade.associateResourceInstances(null, currentComponent.getUniqueId(), updatedUiRelations);
+        Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> listStorageOperationStatusEither = toscaOperationFacade
+            .associateResourceInstances(null, currentComponent.getUniqueId(), updatedUiRelations);
         if (listStorageOperationStatusEither.isLeft()) {
             currentComponent.getComponentInstancesRelations().addAll(updatedUiRelations);
         } else {

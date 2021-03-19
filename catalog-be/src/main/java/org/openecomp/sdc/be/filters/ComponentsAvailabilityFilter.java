@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,11 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Priority;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -38,45 +49,27 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.MarkerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.Priority;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Priority(11)
 public class ComponentsAvailabilityFilter implements ContainerRequestFilter {
 
-	private static LoggerSdcAudit audit = new LoggerSdcAudit(ComponentsAvailabilityFilter.class);
-
+    private static final Logger log = Logger.getLogger(ComponentsAvailabilityFilter.class);
+    private static LoggerSdcAudit audit = new LoggerSdcAudit(ComponentsAvailabilityFilter.class);
     @Context
     protected HttpServletRequest sr;
     protected Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Logger log = Logger.getLogger(ComponentsAvailabilityFilter.class);
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-
-		audit.startLog(requestContext);
-
+        audit.startLog(requestContext);
         String requestUrl = requestContext.getUriInfo().getPath();
         if (!"healthCheck".equals(requestUrl)) {
             List<HealthCheckInfo> beHealthCheckInfos = getBeHealthCheckInfos(this.sr.getSession().getServletContext());
             ActionStatus status = getAggregateBeStatus(beHealthCheckInfos);
-
             if (!status.equals(ActionStatus.OK)) {
                 log.error("Components Availability Filter Failed - ES/Cassandra is DOWN");
                 availabilityError(requestContext);
             }
         }
-
     }
 
     protected ActionStatus getAggregateBeStatus(List<HealthCheckInfo> beHealthCheckInfos) {
@@ -91,7 +84,6 @@ public class ComponentsAvailabilityFilter implements ContainerRequestFilter {
     }
 
     protected List<HealthCheckInfo> getBeHealthCheckInfos(ServletContext servletContext) {
-
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
         HealthCheckBusinessLogic healthCheckBusinessLogic = getHealthCheckBL(servletContext);
         healthCheckInfos.add(healthCheckBusinessLogic.getJanusGraphHealthCheck());
@@ -100,7 +92,8 @@ public class ComponentsAvailabilityFilter implements ContainerRequestFilter {
 
     protected ComponentsUtils getComponentsUtils() {
         ServletContext context = sr.getSession().getServletContext();
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ComponentsUtils.class);
     }
@@ -108,34 +101,27 @@ public class ComponentsAvailabilityFilter implements ContainerRequestFilter {
     protected void availabilityError(ContainerRequestContext requestContext) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-			String message = "Components Availability Filter Failed to get component utils.";
-			abortWith(requestContext, message, Response.status(Status.INTERNAL_SERVER_ERROR).build());
+            String message = "Components Availability Filter Failed to get component utils.";
+            abortWith(requestContext, message, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
         ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
         ResponseBuilder responseBuilder = Response.status(responseFormat.getStatus());
         Response response = responseBuilder.entity(gson.toJson(responseFormat.getRequestError())).build();
-		abortWith(requestContext, responseFormat.getRequestError().toString(), response);
+        abortWith(requestContext, responseFormat.getRequestError().toString(), response);
     }
 
     private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
 
-
-	private void abortWith(ContainerRequestContext requestContext, String message, Response response) {
-
-		audit.logExit(sr.getRemoteAddr(),
-				requestContext,
-				response.getStatusInfo(),
-				LogLevel.ERROR,
-				Severity.OK,
-				message,
-                MarkerFactory.getMarker(ONAPLogConstants.Markers.EXIT.getName()));
-
-		log.error(message);
-		audit.clearMyData();
-		requestContext.abortWith(response);
-	}
+    private void abortWith(ContainerRequestContext requestContext, String message, Response response) {
+        audit.logExit(sr.getRemoteAddr(), requestContext, response.getStatusInfo(), LogLevel.ERROR, Severity.OK, message,
+            MarkerFactory.getMarker(ONAPLogConstants.Markers.EXIT.getName()));
+        log.error(message);
+        audit.clearMyData();
+        requestContext.abortWith(response);
+    }
 }

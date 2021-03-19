@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation;
 
+import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.openecomp.sdc.common.api.Constants.GROUP_POLICY_NAME_DELIMETER;
+
 import fj.data.Either;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -33,17 +42,6 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.apache.commons.collections.MapUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.openecomp.sdc.common.api.Constants.GROUP_POLICY_NAME_DELIMETER;
 
 /**
  * Provides specific functionality for policy
@@ -65,16 +63,10 @@ public class PolicyUtils {
     public static int getNextPolicyCounter(Map<String, PolicyDefinition> policies) {
         int nextCounter = 0;
         if (isNotEmpty(policies)) {
-            int nextCounterFromIds = policies.values()
-                                             .stream()
-                                             .map(p -> extractNextPolicyCounterFromUniqueId(p.getUniqueId()))
-                                             .max(Integer::compareTo)
-                                             .orElse(0);
-            int nextCounterFromNames = policies.values()
-                                               .stream()
-                                               .map(p -> extractNextPolicyCounterFromName(p.getName()))
-                                               .max(Integer::compareTo)
-                                               .orElse(0);
+            int nextCounterFromIds = policies.values().stream().map(p -> extractNextPolicyCounterFromUniqueId(p.getUniqueId()))
+                .max(Integer::compareTo).orElse(0);
+            int nextCounterFromNames = policies.values().stream().map(p -> extractNextPolicyCounterFromName(p.getName())).max(Integer::compareTo)
+                .orElse(0);
             nextCounter = nextCounterFromIds > nextCounterFromNames ? nextCounterFromIds : nextCounterFromNames;
         }
         return nextCounter;
@@ -88,7 +80,8 @@ public class PolicyUtils {
      * @param policies       all the polices related to the component
      * @return validated and updated policy or an error as action status
      */
-    public static Either<PolicyDefinition, ActionStatus> validatePolicyFields(PolicyDefinition recievedPolicy, PolicyDefinition validPolicy, Map<String, PolicyDefinition> policies) {
+    public static Either<PolicyDefinition, ActionStatus> validatePolicyFields(PolicyDefinition recievedPolicy, PolicyDefinition validPolicy,
+                                                                              Map<String, PolicyDefinition> policies) {
         validateImmutablePolicyFields(recievedPolicy, validPolicy);
         return validateUpdateMutablePolicyFields(recievedPolicy, validPolicy, policies);
     }
@@ -99,28 +92,21 @@ public class PolicyUtils {
      * @return the set of the policies
      */
     public static Set<String> getExcludedPolicyTypesByComponent(Component component) {
-        if (isEmpty(ConfigurationManager.getConfigurationManager()
-                                        .getConfiguration()
-                                        .getExcludedPolicyTypesMapping())) {
+        if (isEmpty(ConfigurationManager.getConfigurationManager().getConfiguration().getExcludedPolicyTypesMapping())) {
             return Collections.emptySet();
         }
         if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
-            return ConfigurationManager.getConfigurationManager()
-                                       .getConfiguration()
-                                       .getExcludedPolicyTypesMapping()
-                                       .get(component.getComponentType().name());
+            return ConfigurationManager.getConfigurationManager().getConfiguration().getExcludedPolicyTypesMapping()
+                .get(component.getComponentType().name());
         }
-        return ConfigurationManager.getConfigurationManager()
-                                   .getConfiguration()
-                                   .getExcludedPolicyTypesMapping()
-                                   .get(((Resource) component).getResourceType().getValue());
+        return ConfigurationManager.getConfigurationManager().getConfiguration().getExcludedPolicyTypesMapping()
+            .get(((Resource) component).getResourceType().getValue());
     }
 
     public static PolicyDefinition getDeclaredPolicyDefinition(String componentInstanceId, ComponentInstanceProperty property) {
         PolicyDefinition policyDefinition = new PolicyDefinition(property);
         policyDefinition.setUniqueId(UniqueIdBuilder.buildPolicyUniqueId(componentInstanceId, property.getName()));
         policyDefinition.setInstanceUniqueId(componentInstanceId);
-
         return policyDefinition;
     }
 
@@ -146,14 +132,15 @@ public class PolicyUtils {
             int beginIndex = policyName.lastIndexOf(GROUP_POLICY_NAME_DELIMETER) + GROUP_POLICY_NAME_DELIMETER.length();
             String counterStr = policyName.substring(beginIndex, endIndex);
             counter = Integer.valueOf(counterStr) + 1;
-        }
-        catch (NumberFormatException | IndexOutOfBoundsException e) {
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
             log.error("#extractNextPolicyCounter - An error occurred when attempting to extract counter from policy name [{}]. ", policyName, e);
         }
         return counter;
     }
 
-    private static Either<PolicyDefinition, ActionStatus> validateUpdateMutablePolicyFields(PolicyDefinition recievedPolicy, PolicyDefinition validPolicy, Map<String, PolicyDefinition> policies) {
+    private static Either<PolicyDefinition, ActionStatus> validateUpdateMutablePolicyFields(PolicyDefinition recievedPolicy,
+                                                                                            PolicyDefinition validPolicy,
+                                                                                            Map<String, PolicyDefinition> policies) {
         return validateUpdatePolicyName(recievedPolicy, validPolicy, policies);
     }
 
@@ -168,15 +155,15 @@ public class PolicyUtils {
         logImmutableFieldUpdateWarning(receivedPolicy.getPolicyTypeUid(), validPolicy.getPolicyTypeUid(), JsonPresentationFields.TYPE_UNIQUE_ID);
         logImmutableFieldUpdateWarning(receivedPolicy.getPolicyUUID(), validPolicy.getPolicyUUID(), JsonPresentationFields.UUID);
         logImmutableFieldUpdateWarning(receivedPolicy.getVersion(), validPolicy.getVersion(), JsonPresentationFields.VERSION);
-        logImmutableFieldUpdateWarning(receivedPolicy.getIsFromCsar().toString(), validPolicy.getIsFromCsar().toString(), JsonPresentationFields.IS_FROM_CSAR);
+        logImmutableFieldUpdateWarning(receivedPolicy.getIsFromCsar().toString(), validPolicy.getIsFromCsar().toString(),
+            JsonPresentationFields.IS_FROM_CSAR);
     }
 
     private static boolean isUpdatedField(String oldField, String newField) {
         boolean isUpdatedField = false;
         if (isEmpty(oldField) && isNotEmpty(newField)) {
             isUpdatedField = true;
-        }
-        else if (isNotEmpty(oldField) && isNotEmpty(newField) && !oldField.equals(newField)) {
+        } else if (isNotEmpty(oldField) && isNotEmpty(newField) && !oldField.equals(newField)) {
             isUpdatedField = true;
         }
         return isUpdatedField;
@@ -184,27 +171,28 @@ public class PolicyUtils {
 
     private static void logImmutableFieldUpdateWarning(String oldValue, String newValue, JsonPresentationFields field) {
         if (isUpdatedField(oldValue, newValue)) {
-            log.warn("#logImmutableFieldUpdateWarning - Update of the field {} of a policy not allowed. The change will be ignored. The old value is {} , the new value is {}. ", field, oldValue, newValue);
+            log.warn(
+                "#logImmutableFieldUpdateWarning - Update of the field {} of a policy not allowed. The change will be ignored. The old value is {} , the new value is {}. ",
+                field, oldValue, newValue);
         }
     }
 
-    private static Either<PolicyDefinition, ActionStatus> validateUpdatePolicyName(PolicyDefinition receivedPolicy, PolicyDefinition validPolicy, Map<String, PolicyDefinition> policies) {
+    private static Either<PolicyDefinition, ActionStatus> validateUpdatePolicyName(PolicyDefinition receivedPolicy, PolicyDefinition validPolicy,
+                                                                                   Map<String, PolicyDefinition> policies) {
         Either<PolicyDefinition, ActionStatus> result = null;
         Optional<PolicyDefinition> sameNamePolicy = Optional.empty();
-        if (isEmpty(receivedPolicy.getName()) || !ValidationUtils.POLICY_NAME_PATTERN.matcher(receivedPolicy
-                .getName()).matches()) {
-            log.error("#validateUpdatePolicyName - Failed to validate the name {} of the policy {}. ", receivedPolicy.getName(), receivedPolicy.getUniqueId());
+        if (isEmpty(receivedPolicy.getName()) || !ValidationUtils.POLICY_NAME_PATTERN.matcher(receivedPolicy.getName()).matches()) {
+            log.error("#validateUpdatePolicyName - Failed to validate the name {} of the policy {}. ", receivedPolicy.getName(),
+                receivedPolicy.getUniqueId());
             result = Either.right(ActionStatus.INVALID_POLICY_NAME);
         }
         if (result == null && isNotEmpty(policies)) {
-            sameNamePolicy = policies.values()
-                                     .stream()
-                                     .filter(p -> p.getName().equals(receivedPolicy.getName()))
-                                     .findFirst();
+            sameNamePolicy = policies.values().stream().filter(p -> p.getName().equals(receivedPolicy.getName())).findFirst();
         }
         if (sameNamePolicy.isPresent()) {
-            log.error("#validateUpdatePolicyName - Failed to validate the name {} of the policy {}. The policy {} with the same name already exists. ", receivedPolicy
-                    .getName(), receivedPolicy.getUniqueId(), sameNamePolicy.get().getUniqueId());
+            log.error(
+                "#validateUpdatePolicyName - Failed to validate the name {} of the policy {}. The policy {} with the same name already exists. ",
+                receivedPolicy.getName(), receivedPolicy.getUniqueId(), sameNamePolicy.get().getUniqueId());
             result = Either.right(ActionStatus.POLICY_NAME_ALREADY_EXIST);
         }
         if (result == null) {

@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import org.onap.sdc.security.AuthenticationCookie;
 import org.onap.sdc.security.IUsersThreadLocalHolder;
 import org.onap.sdc.security.PortalClient;
@@ -32,31 +35,23 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 public class ThreadLocalUtils implements IUsersThreadLocalHolder {
 
+    private static final Logger log = Logger.getLogger(ThreadLocalUtils.class);
     @Autowired
     PortalClient portalClient;
-
     @Autowired
     UserBusinessLogic userBusinessLogic;
-
-    private static final Logger log = Logger.getLogger(ThreadLocalUtils.class);
 
     @Override
     public void setUserContext(AuthenticationCookie authenticationCookie) {
         UserContext userContext;
-        userContext = new UserContext(authenticationCookie.getUserID(), authenticationCookie.getRoles(), authenticationCookie.getFirstName(), authenticationCookie.getLastName());
+        userContext = new UserContext(authenticationCookie.getUserID(), authenticationCookie.getRoles(), authenticationCookie.getFirstName(),
+            authenticationCookie.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
     }
 
-
     protected void setUserContext(HttpServletRequest httpRequest) {
-
         String user_id = httpRequest.getHeader(Constants.USER_ID_HEADER);
         if (user_id != null) {
             String userRolesFromPortal = null;
@@ -70,7 +65,9 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
             }
             UserContext userContext = new UserContext(user_id, roles, null, null);
             ThreadLocalsHolder.setUserContext(userContext);
-        } else log.debug("user_id value in req header is null, userContext will not be initialized");
+        } else {
+            log.debug("user_id value in req header is null, userContext will not be initialized");
+        }
     }
 
     protected void setUserContextFromDB(HttpServletRequest httpRequest) {
@@ -78,7 +75,9 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
         //there are some internal request that have no user_id header e.g. healthcheck
         if (user_id != null) {
             updateUserContext(user_id);
-        } else log.debug("user_id value in req header is null, userContext will not be initialized");
+        } else {
+            log.debug("user_id value in req header is null, userContext will not be initialized");
+        }
     }
 
     private void updateUserContext(String user_id) {
@@ -87,5 +86,4 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
         UserContext userContext = new UserContext(user_id, roles, user.getFirstName(), user.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
     }
-
 }

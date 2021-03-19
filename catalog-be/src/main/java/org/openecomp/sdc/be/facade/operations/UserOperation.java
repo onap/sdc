@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.facade.operations;
 
 import org.openecomp.sdc.be.catalog.api.IStatus;
@@ -31,29 +30,27 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserOperation {
+
     private static final Logger log = Logger.getLogger(UserOperation.class);
-    private final DmaapProducer msProducer; 
-    
+    private final DmaapProducer msProducer;
+
     @Autowired
-    public UserOperation(DmaapProducer msProducer){
+    public UserOperation(DmaapProducer msProducer) {
         this.msProducer = msProducer;
     }
-    
-    public ActionStatus updateUserCache(UserOperationEnum operation, String userId, String role){
-       try {
-            UserMessage message = new UserMessage(operation, userId,role);
+
+    public ActionStatus updateUserCache(UserOperationEnum operation, String userId, String role) {
+        try {
+            UserMessage message = new UserMessage(operation, userId, role);
             IStatus status = msProducer.pushMessage(message);
             return FacadeOperationUtils.convertStatusToActionStatus(status);
-           
-       } catch(Exception e) {
-           log.debug("update user cache - failed to send notification to update user cache {}", e.getMessage());
-           return ActionStatus.OK;
-       }
+        } catch (Exception e) {
+            log.debug("update user cache - failed to send notification to update user cache {}", e.getMessage());
+            return ActionStatus.OK;
+        }
     }
-    
 
     public DmaapProducer getMsProducer() {
         return msProducer;
     }
-
 }

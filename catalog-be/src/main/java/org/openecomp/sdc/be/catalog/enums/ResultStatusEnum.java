@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.catalog.enums;
 
 /**
  * Simple Status Enum
- * @author ms172g
  *
+ * @author ms172g
  */
 public enum ResultStatusEnum {
-	SUCCESS, FAIL , SERVICE_DISABLED
+    SUCCESS, FAIL, SERVICE_DISABLED
 }

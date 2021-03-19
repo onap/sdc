@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
 import org.onap.sdc.security.IPortalConfiguration;
@@ -32,11 +31,16 @@ public class PortalConfiguration implements IPortalConfiguration {
     private String uebKey;
 
     public PortalConfiguration() throws org.onap.portalsdk.core.onboarding.exception.CipherUtilException {
-        this.portalUser = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.USER.value());
-        this.portalPassword = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(PortalClient.PortalPropertiesEnum.PASSWORD.value());
-        this.portalAppName = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(PortalClient.PortalPropertiesEnum.APP_NAME.value());
-        this.ecompPortalRestURL = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.ECOMP_REST_URL.value());
-        this.uebKey = org.onap.portalsdk.core.onboarding.util.PortalApiProperties.getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.UEB_APP_KEY.value());
+        this.portalUser = org.onap.portalsdk.core.onboarding.util.PortalApiProperties
+            .getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.USER.value());
+        this.portalPassword = org.onap.portalsdk.core.onboarding.util.PortalApiProperties
+            .getProperty(PortalClient.PortalPropertiesEnum.PASSWORD.value());
+        this.portalAppName = org.onap.portalsdk.core.onboarding.util.PortalApiProperties
+            .getProperty(PortalClient.PortalPropertiesEnum.APP_NAME.value());
+        this.ecompPortalRestURL = org.onap.portalsdk.core.onboarding.util.PortalApiProperties
+            .getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.ECOMP_REST_URL.value());
+        this.uebKey = org.onap.portalsdk.core.onboarding.util.PortalApiProperties
+            .getProperty(org.onap.sdc.security.PortalClient.PortalPropertiesEnum.UEB_APP_KEY.value());
     }
 
     @Override

@@ -21,6 +21,14 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.components.impl.BaseBusinessLogic.enumHasValueFilter;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -46,15 +54,6 @@ import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.components.impl.BaseBusinessLogic.enumHasValueFilter;
-
 @org.springframework.stereotype.Component
 public class GroupBusinessLogicNew {
 
@@ -63,7 +62,8 @@ public class GroupBusinessLogicNew {
     private final GroupsOperation groupsOperation;
     private final GroupOperation groupOperation;
 
-    public GroupBusinessLogicNew(AccessValidations accessValidations, ComponentValidations componentValidations, GroupsOperation groupsOperation, GroupOperation groupOperation) {
+    public GroupBusinessLogicNew(AccessValidations accessValidations, ComponentValidations componentValidations, GroupsOperation groupsOperation,
+                                 GroupOperation groupOperation) {
         this.accessValidations = accessValidations;
         this.componentValidations = componentValidations;
         this.groupsOperation = groupsOperation;
@@ -71,7 +71,8 @@ public class GroupBusinessLogicNew {
     }
 
     @LockingTransactional
-    public List<String> updateMembers(String componentId, ComponentTypeEnum componentType, String userId, String groupUniqueId, List<String> members) {
+    public List<String> updateMembers(String componentId, ComponentTypeEnum componentType, String userId, String groupUniqueId,
+                                      List<String> members) {
         Component component = accessValidations.validateUserCanWorkOnComponent(componentId, componentType, userId, "UPDATE GROUP MEMBERS");
         GroupDefinition groupDefinition = getGroup(component, groupUniqueId);
         groupDefinition.setMembers(buildMembersMap(component, members));
@@ -80,13 +81,13 @@ public class GroupBusinessLogicNew {
     }
 
     @LockingTransactional
-    public List<GroupProperty> updateProperties(String componentId, ComponentTypeEnum componentType, String userId, String groupUniqueId, List<GroupProperty> newProperties) {
+    public List<GroupProperty> updateProperties(String componentId, ComponentTypeEnum componentType, String userId, String groupUniqueId,
+                                                List<GroupProperty> newProperties) {
         Component component = accessValidations.validateUserCanWorkOnComponent(componentId, componentType, userId, "UPDATE GROUP PROPERTIES");
         GroupDefinition currentGroup = getGroup(component, groupUniqueId);
         validateUpdatedPropertiesAndSetEmptyValues(currentGroup, newProperties);
-        return groupsOperation.updateGroupPropertiesOnComponent(componentId, currentGroup, newProperties, PromoteVersionEnum.MINOR)
-                .left()
-                .on(this::onUpdatePropertyError);
+        return groupsOperation.updateGroupPropertiesOnComponent(componentId, currentGroup, newProperties, PromoteVersionEnum.MINOR).left()
+            .on(this::onUpdatePropertyError);
     }
 
     @Transactional
@@ -110,31 +111,26 @@ public class GroupBusinessLogicNew {
     }
 
     private ComponentInstance getComponentInstance(Component component, String memberUniqueId) {
-        return componentValidations.getComponentInstance(component, memberUniqueId)
-                .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
-                        memberUniqueId, "",
-                        component.getActualComponentType(), component.getSystemName()));
+        return componentValidations.getComponentInstance(component, memberUniqueId).orElseThrow(
+            () -> new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, memberUniqueId, "",
+                component.getActualComponentType(), component.getSystemName()));
     }
 
     private GroupDefinition getGroup(Component component, String groupUniqueId) {
-        return component.getGroupById(groupUniqueId)
-                .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.GROUP_IS_MISSING,
-                        component.getSystemName(), component.getActualComponentType()));
+        return component.getGroupById(groupUniqueId).orElseThrow(
+            () -> new ByActionStatusComponentException(ActionStatus.GROUP_IS_MISSING, component.getSystemName(), component.getActualComponentType()));
     }
 
     private void validateUpdatedPropertiesAndSetEmptyValues(GroupDefinition originalGroup, List<GroupProperty> groupPropertiesToUpdate) {
-
         if (CollectionUtils.isEmpty(groupPropertiesToUpdate)) {
             throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, StringUtils.EMPTY);
         }
         if (CollectionUtils.isEmpty(originalGroup.getProperties())) {
-            throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, groupPropertiesToUpdate.get(NumberUtils.INTEGER_ZERO).getName());
+            throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND,
+                groupPropertiesToUpdate.get(NumberUtils.INTEGER_ZERO).getName());
         }
-        Map<String, GroupProperty> originalProperties = originalGroup.convertToGroupProperties()
-                .stream()
-                .collect(Collectors.toMap(PropertyDataDefinition::getName, p -> p));
-
-
+        Map<String, GroupProperty> originalProperties = originalGroup.convertToGroupProperties().stream()
+            .collect(Collectors.toMap(PropertyDataDefinition::getName, p -> p));
         for (GroupProperty gp : groupPropertiesToUpdate) {
             String updatedPropertyName = gp.getName();
             if (!originalProperties.containsKey(updatedPropertyName)) {
@@ -151,12 +147,10 @@ public class GroupBusinessLogicNew {
                 throw new StorageException(sos, updatedPropertyName);
             }
         }
-
         validatePropertyBusinessLogic(groupPropertiesToUpdate, originalGroup);
     }
 
     private void validatePropertyBusinessLogic(List<GroupProperty> groupPropertiesToUpdate, GroupDefinition originalGroup) {
-
         Map<PropertyDefinition.PropertyNames, String> enumValueMap = new EnumMap<>(PropertyDefinition.PropertyNames.class);
         for (GroupProperty gp : groupPropertiesToUpdate) {
             // Filter out non special properties which does not have Enum
@@ -168,20 +162,19 @@ public class GroupBusinessLogicNew {
         if (MapUtils.isEmpty(enumValueMap)) {
             return;
         }
-
         validateVFInstancesLogic(enumValueMap, prepareMapWithOriginalProperties(originalGroup));
-
-        if (enumValueMap.containsKey(PropertyDefinition.PropertyNames.VF_MODULE_DESCRIPTION) || enumValueMap.containsKey(PropertyDefinition.PropertyNames.VF_MODULE_LABEL)) {
-            groupPropertiesToUpdate.stream()
-                    .filter(e -> enumHasValueFilter(e.getName(), PropertyDefinition.PropertyNames::findName, PropertyDefinition.PropertyNames.VF_MODULE_DESCRIPTION, PropertyDefinition.PropertyNames.VF_MODULE_LABEL))
-                    .forEach(this::validateFreeText);
+        if (enumValueMap.containsKey(PropertyDefinition.PropertyNames.VF_MODULE_DESCRIPTION) || enumValueMap
+            .containsKey(PropertyDefinition.PropertyNames.VF_MODULE_LABEL)) {
+            groupPropertiesToUpdate.stream().filter(e -> enumHasValueFilter(e.getName(), PropertyDefinition.PropertyNames::findName,
+                PropertyDefinition.PropertyNames.VF_MODULE_DESCRIPTION, PropertyDefinition.PropertyNames.VF_MODULE_LABEL))
+                .forEach(this::validateFreeText);
         }
     }
 
     private Map<PropertyDefinition.PropertyNames, String> prepareMapWithOriginalProperties(GroupDefinition originalGroup) {
         Map<PropertyDefinition.PropertyNames, String> oldValueMap = new EnumMap<>(PropertyDefinition.PropertyNames.class);
-        PropertyDefinition.PropertyNames[] propertiesToCheck = new PropertyDefinition.PropertyNames[] { PropertyDefinition.PropertyNames.INITIAL_COUNT, PropertyDefinition.PropertyNames.MAX_INSTANCES, PropertyDefinition.PropertyNames.MIN_INSTANCES };
-
+        PropertyDefinition.PropertyNames[] propertiesToCheck = new PropertyDefinition.PropertyNames[]{PropertyDefinition.PropertyNames.INITIAL_COUNT,
+            PropertyDefinition.PropertyNames.MAX_INSTANCES, PropertyDefinition.PropertyNames.MIN_INSTANCES};
         for (GroupProperty gp : originalGroup.convertToGroupProperties()) {
             if (enumHasValueFilter(gp.getName(), PropertyDefinition.PropertyNames::findName, propertiesToCheck)) {
                 oldValueMap.put(PropertyDefinition.PropertyNames.findName(gp.getName()), gp.getValue());
@@ -193,35 +186,39 @@ public class GroupBusinessLogicNew {
         return oldValueMap;
     }
 
-    private void validateVFInstancesLogic(Map<PropertyDefinition.PropertyNames, String> newValues, Map<PropertyDefinition.PropertyNames, String> parentValues) {
-        if (!newValues.containsKey(PropertyDefinition.PropertyNames.INITIAL_COUNT)
-                && !newValues.containsKey(PropertyDefinition.PropertyNames.MAX_INSTANCES)
-                && !newValues.containsKey(PropertyDefinition.PropertyNames.MIN_INSTANCES)) {
+    private void validateVFInstancesLogic(Map<PropertyDefinition.PropertyNames, String> newValues,
+                                          Map<PropertyDefinition.PropertyNames, String> parentValues) {
+        if (!newValues.containsKey(PropertyDefinition.PropertyNames.INITIAL_COUNT) && !newValues
+            .containsKey(PropertyDefinition.PropertyNames.MAX_INSTANCES) && !newValues.containsKey(PropertyDefinition.PropertyNames.MIN_INSTANCES)) {
             return;
         }
         int latestMaxInstances = getLatestIntProperty(newValues, parentValues, PropertyDefinition.PropertyNames.MAX_INSTANCES);
         int latestInitialCount = getLatestIntProperty(newValues, parentValues, PropertyDefinition.PropertyNames.INITIAL_COUNT);
         int latestMinInstances = getLatestIntProperty(newValues, parentValues, PropertyDefinition.PropertyNames.MIN_INSTANCES);
-
-        if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.INITIAL_COUNT)
-                && (latestInitialCount > latestMaxInstances || latestInitialCount < latestMinInstances)) {
-            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_INITIAL_COUNT_PROPERTY_VALUE, PropertyDefinition.PropertyNames.INITIAL_COUNT.getPropertyName(), String.valueOf(latestMinInstances), String.valueOf(latestMaxInstances));
+        if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.INITIAL_COUNT) && (latestInitialCount > latestMaxInstances
+            || latestInitialCount < latestMinInstances)) {
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_INITIAL_COUNT_PROPERTY_VALUE,
+                PropertyDefinition.PropertyNames.INITIAL_COUNT.getPropertyName(), String.valueOf(latestMinInstances),
+                String.valueOf(latestMaxInstances));
         }
-        if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.MAX_INSTANCES) &&
-                latestMaxInstances < latestInitialCount) {
-            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER, PropertyDefinition.PropertyNames.MAX_INSTANCES.getPropertyName(), "higher", String.valueOf(latestInitialCount));
+        if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.MAX_INSTANCES) && latestMaxInstances < latestInitialCount) {
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER,
+                PropertyDefinition.PropertyNames.MAX_INSTANCES.getPropertyName(), "higher", String.valueOf(latestInitialCount));
         }
-        if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.MIN_INSTANCES) &&
-                latestMinInstances > latestInitialCount) {
-            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER, PropertyDefinition.PropertyNames.MIN_INSTANCES.getPropertyName(), "lower", String.valueOf(latestInitialCount));
+        if (isPropertyChanged(newValues, parentValues, PropertyDefinition.PropertyNames.MIN_INSTANCES) && latestMinInstances > latestInitialCount) {
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER,
+                PropertyDefinition.PropertyNames.MIN_INSTANCES.getPropertyName(), "lower", String.valueOf(latestInitialCount));
         }
     }
 
-    private boolean isPropertyChanged(Map<PropertyDefinition.PropertyNames, String> newValues, Map<PropertyDefinition.PropertyNames, String> parentValues, final PropertyDefinition.PropertyNames minInstances) {
+    private boolean isPropertyChanged(Map<PropertyDefinition.PropertyNames, String> newValues,
+                                      Map<PropertyDefinition.PropertyNames, String> parentValues,
+                                      final PropertyDefinition.PropertyNames minInstances) {
         return newValues.containsKey(minInstances) && !newValues.get(minInstances).equals(parentValues.get(minInstances));
     }
 
-    private int getLatestIntProperty(Map<PropertyDefinition.PropertyNames, String> newValues, Map<PropertyDefinition.PropertyNames, String> parentValues, PropertyDefinition.PropertyNames propertyKey) {
+    private int getLatestIntProperty(Map<PropertyDefinition.PropertyNames, String> newValues,
+                                     Map<PropertyDefinition.PropertyNames, String> parentValues, PropertyDefinition.PropertyNames propertyKey) {
         String value;
         if (newValues.containsKey(propertyKey)) {
             value = newValues.get(propertyKey);
@@ -240,22 +237,19 @@ public class GroupBusinessLogicNew {
         groupProperty2Duplicate.setValue(null);
         groupProperty2Duplicate.setSchema(null);
         groupProperty2Duplicate.setParentUniqueId(null);
-        return StringUtils.equals(groupProperty1Duplicate.getValueUniqueUid(), groupProperty2Duplicate.getValueUniqueUid())
-                && groupProperty1Duplicate.equals(groupProperty2Duplicate);
+        return StringUtils.equals(groupProperty1Duplicate.getValueUniqueUid(), groupProperty2Duplicate.getValueUniqueUid()) && groupProperty1Duplicate
+            .equals(groupProperty2Duplicate);
     }
 
     private void validateFreeText(GroupProperty groupPropertyToUpdate) {
         final String groupTypeValue = groupPropertyToUpdate.getValue();
         if (!org.apache.commons.lang3.StringUtils.isEmpty(groupTypeValue)) {
             if (!ValidationUtils.validateDescriptionLength(groupTypeValue)) {
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
-                        NodeTypeEnum.Property.getName(),
-                        String.valueOf(ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH));
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, NodeTypeEnum.Property.getName(),
+                    String.valueOf(ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH));
             } else if (!ValidationUtils.validateIsEnglish(groupTypeValue)) {
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION,
-                        NodeTypeEnum.Property.getName());
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION, NodeTypeEnum.Property.getName());
             }
         }
     }
-
 }

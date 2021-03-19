@@ -21,6 +21,11 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static java.util.Collections.emptySet;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -33,12 +38,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.emptySet;
-
 @Component("groupTypeBusinessLogic")
 public class GroupTypeBusinessLogic {
 
@@ -47,13 +46,13 @@ public class GroupTypeBusinessLogic {
     private final UserValidations userValidations;
     private final ComponentsUtils componentsUtils;
 
-    public GroupTypeBusinessLogic(GroupTypeOperation groupTypeOperation, JanusGraphDao janusGraphDao, UserValidations userValidations, ComponentsUtils componentsUtils) {
+    public GroupTypeBusinessLogic(GroupTypeOperation groupTypeOperation, JanusGraphDao janusGraphDao, UserValidations userValidations,
+                                  ComponentsUtils componentsUtils) {
         this.groupTypeOperation = groupTypeOperation;
         this.janusGraphDao = janusGraphDao;
         this.userValidations = userValidations;
         this.componentsUtils = componentsUtils;
     }
-
 
     public List<GroupTypeDefinition> getAllGroupTypes(String userId, String internalComponentType) {
         try {
@@ -66,16 +65,15 @@ public class GroupTypeBusinessLogic {
     }
 
     public GroupTypeDefinition getLatestGroupTypeByType(String groupTypeName) {
-        return groupTypeOperation.getLatestGroupTypeByType(groupTypeName, true)
-                .left()
-                .on(e -> failOnGetGroupType(e, groupTypeName));
+        return groupTypeOperation.getLatestGroupTypeByType(groupTypeName, true).left().on(e -> failOnGetGroupType(e, groupTypeName));
     }
 
     public Set<String> getExcludedGroupTypes(String internalComponentType) {
         if (StringUtils.isEmpty(internalComponentType)) {
             return emptySet();
         }
-        Map<String, Set<String>> excludedGroupTypesMapping = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludedGroupTypesMapping();
+        Map<String, Set<String>> excludedGroupTypesMapping = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getExcludedGroupTypesMapping();
         Set<String> excludedTypes = excludedGroupTypesMapping.get(internalComponentType);
         return excludedTypes == null ? emptySet() : excludedTypes;
     }

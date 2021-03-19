@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.info;
 
 import java.util.Set;
@@ -31,6 +30,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GenericArtifactQueryInfo {
+
     private Set<String> fields;
     private String parentId;
     private String artifactUniqueId;

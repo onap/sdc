@@ -15,11 +15,10 @@
  */
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +29,7 @@ public class AbstractResourceInfo {
     //获得abstractResourceUniqueId
     private String abstractResourceUniqueId;
     //private String abstractResourceNormalizedName;
+
     //获得componentInstancesRelations
     private List<RequirementCapabilityRelDef> componentInstancesRelations;
 }

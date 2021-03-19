@@ -18,24 +18,19 @@ package org.openecomp.sdc.be.externalapi.servlet.representation;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-
-import java.util.List;
 
 @Getter
 @Setter
 public class ReplaceVNFInfo {
+
     /*
         delete vnf param
      */
     private String serviceUniqueId;
-
     private String abstractResourceUniqueId;
-
     /*
         add vnf param
      */
     private ComponentInstance realVNFComponentInstance;
-
     //private List<RequirementCapabilityRelDef> componentInstancesRelations;
-}
+} 

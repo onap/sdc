@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
+import java.util.List;
 import org.onap.sdc.security.ISessionValidationFilterConfiguration;
 import org.openecomp.sdc.be.config.Configuration;
-
-import java.util.List;
 
 public class FilterConfiguration implements ISessionValidationFilterConfiguration {
 

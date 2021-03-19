@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.Gson;
@@ -27,6 +26,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import org.onap.sdc.gab.GABService;
 import org.onap.sdc.gab.GABServiceImpl;
 import org.onap.sdc.gab.model.GABQuery;
@@ -41,24 +42,18 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-
 @org.springframework.stereotype.Component
 public class GenericArtifactBrowserBusinessLogic extends BaseBusinessLogic {
 
     private GABService gabService;
 
     @Autowired
-    public GenericArtifactBrowserBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public GenericArtifactBrowserBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
+                                               IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation,
+                                               InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                               ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
         gabService = new GABServiceImpl();
     }
 
@@ -67,17 +62,15 @@ public class GenericArtifactBrowserBusinessLogic extends BaseBusinessLogic {
         return createGsonForGABResult().toJson(gabResults);
     }
 
-    private Gson createGsonForGABResult(){
-        return new GsonBuilder().setPrettyPrinting()
-            .registerTypeAdapter(GABResult.class, new GABResultSerializer())
-            .registerTypeAdapter(GABResults.class, new GABResultsSerializer())
-            .create();
+    private Gson createGsonForGABResult() {
+        return new GsonBuilder().setPrettyPrinting().registerTypeAdapter(GABResult.class, new GABResultSerializer())
+            .registerTypeAdapter(GABResults.class, new GABResultsSerializer()).create();
     }
 
     private class GABResultsSerializer implements JsonSerializer<GABResults> {
+
         @Override
-        public JsonElement serialize(GABResults gabResults, Type type,
-            JsonSerializationContext jsonSerializationContext) {
+        public JsonElement serialize(GABResults gabResults, Type type, JsonSerializationContext jsonSerializationContext) {
             JsonObject result = new JsonObject();
             JsonArray jsonArray = new JsonArray();
             gabResults.getRows().stream().map(jsonSerializationContext::serialize).forEach(jsonArray::add);
@@ -87,6 +80,7 @@ public class GenericArtifactBrowserBusinessLogic extends BaseBusinessLogic {
     }
 
     private class GABResultSerializer implements JsonSerializer<GABResult> {
+
         @Override
         public JsonElement serialize(GABResult gabResult, Type type, JsonSerializationContext jsonSerializationContext) {
             JsonObject result = new JsonObject();
@@ -94,5 +88,4 @@ public class GenericArtifactBrowserBusinessLogic extends BaseBusinessLogic {
             return result;
         }
     }
-
 }

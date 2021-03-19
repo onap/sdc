@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.Date;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -45,8 +45,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 @Component("ConsumerBusinessLogic")
 public class ConsumerBusinessLogic extends BaseBusinessLogic {
 
@@ -54,35 +52,26 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
     private static final String CONSUMER_SALT = "Consumer salt";
     private static final String CONSUMER_PW = "Consumer password";
     private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
-
+    private static final Logger log = Logger.getLogger(ConsumerBusinessLogic.class.getName());
     @javax.annotation.Resource
     private ConsumerOperation consumerOperation;
 
-    private static final Logger log = Logger.getLogger(ConsumerBusinessLogic.class.getName());
-
     @Autowired
-    public ConsumerBusinessLogic(IElementOperation elementDao,
-                                 IGroupOperation groupOperation,
-                                 IGroupInstanceOperation groupInstanceOperation,
-                                 IGroupTypeOperation groupTypeOperation,
-                                 InterfaceOperation interfaceOperation,
-                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-                                 ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public ConsumerBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
+                                 IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
     }
 
     public Either<ConsumerDefinition, ResponseFormat> createConsumer(User user, ConsumerDefinition consumer) {
-
         Either<User, ResponseFormat> userValidation = validateUser(user, consumer, AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS);
-
         if (userValidation.isRight()) {
             return Either.right(userValidation.right().value());
         }
         checkFieldsForOverrideAttempt(consumer);
         user = userValidation.left().value();
         consumer.setLastModfierAtuid(user.getUserId());
-
         Either<ConsumerDefinition, ResponseFormat> consumerValidationResponse = validateConsumer(consumer);
         if (consumerValidationResponse.isRight()) {
             ResponseFormat responseFormat = consumerValidationResponse.right().value();
@@ -95,7 +84,6 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError("createConsumer", NodeTypeEnum.ConsumerCredentials.getName(), consumerName);
             log.debug("Failed to lock consumer: {} error - {}", consumerName, lockResult);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-
             componentsUtils.auditConsumerCredentialsEvent(AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS, consumer, responseFormat, user);
             return Either.right(responseFormat);
         }
@@ -104,15 +92,13 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             if (getResponse.isLeft() && getResponse.left().value() != null) {
                 return updateConsumer(consumer);
             }
-
             Date date = new Date();
             consumer.setConsumerDetailsLastupdatedtime(date.getTime());
             consumer.setConsumerLastAuthenticationTime(Long.valueOf(0));
-
             Either<ConsumerData, StorageOperationStatus> createResponse = consumerOperation.createCredentials(new ConsumerData(consumer));
-
             if (createResponse.isRight()) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForConsumer(createResponse.right().value()));
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponseForConsumer(createResponse.right().value()));
                 componentsUtils.auditConsumerCredentialsEvent(AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS, consumer, responseFormat, user);
                 return Either.right(responseFormat);
             }
@@ -127,7 +113,6 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<User, ResponseFormat> validateUser(User user, ConsumerDefinition consumer, AuditingActionEnum auditAction) {
-
         if (user.getUserId() == null || user.getUserId().trim().isEmpty()) {
             log.debug("createEcompUser method - user is missing. userId= {}", user.getUserId());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION);
@@ -139,14 +124,13 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         User userFromDB;
         try {
             userFromDB = userAdmin.getUser(user.getUserId(), false);
-        }catch (ByActionStatusComponentException e){
+        } catch (ByActionStatusComponentException e) {
             log.debug("createEcompUser method - user is not listed. userId= {}", user.getUserId());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_ACCESS);
             log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
             componentsUtils.auditConsumerCredentialsEvent(auditAction, consumer, responseFormat, user);
             return Either.right(responseFormat);
         }
-
         user = userFromDB;
         // validate user role
         log.debug("validate user role");
@@ -175,7 +159,6 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             return Either.right(validateEcompUserSalt.right().value());
         }
         return Either.left(consumer);
-
     }
 
     private Either<ConsumerDefinition, ResponseFormat> validateConsumerName(ConsumerDefinition consumer) {
@@ -190,13 +173,13 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         }
         if (!ValidationUtils.validateLength(name, ValidationUtils.CONSUMER_NAME_MAX_LENGTH)) {
             log.debug("Consumer name exceeds limit.");
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.EXCEEDS_LIMIT, CONSUMER_NAME, String.valueOf(ValidationUtils.CONSUMER_NAME_MAX_LENGTH)));
+            return Either.right(componentsUtils
+                .getResponseFormat(ActionStatus.EXCEEDS_LIMIT, CONSUMER_NAME, String.valueOf(ValidationUtils.CONSUMER_NAME_MAX_LENGTH)));
         }
         if (!ValidationUtils.isUTF8Str(name)) {
             log.debug("Consumer name includes non UTF 8 characters.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, CONSUMER_NAME));
         }
-
         return Either.left(consumer);
     }
 
@@ -215,7 +198,6 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             log.debug("Consumer password is invalid.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, CONSUMER_PW));
         }
-
         return Either.left(consumer);
     }
 
@@ -233,7 +215,6 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             log.debug("Consumer salt is invalid.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, CONSUMER_SALT));
         }
-
         return Either.left(consumer);
     }
 
@@ -299,7 +280,8 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
     public Either<ConsumerDefinition, ResponseFormat> updateConsumer(ConsumerDefinition consumer) {
         Either<ConsumerData, StorageOperationStatus> updateResult = consumerOperation.updateCredentials(new ConsumerData(consumer));
         if (updateResult.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForConsumer(updateResult.right().value()));
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(componentsUtils.convertFromStorageResponseForConsumer(updateResult.right().value()));
             return Either.right(responseFormat);
         }
         consumer = new ConsumerDefinition(updateResult.left().value().getConsumerDataDefinition());
@@ -317,5 +299,4 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             log.info("Consumer Last Modifier USER_ID cannot be defined by user. This field will be overridden by the application");
         }
     }
-
 }

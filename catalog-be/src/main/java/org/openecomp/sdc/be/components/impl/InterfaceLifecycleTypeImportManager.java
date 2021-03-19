@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
@@ -46,18 +45,15 @@ import org.springframework.stereotype.Component;
 @Component("interfaceLifecycleTypeImportManager")
 public class InterfaceLifecycleTypeImportManager {
 
+    private static final Logger log = Logger.getLogger(InterfaceLifecycleTypeImportManager.class);
     @Resource
     private IInterfaceLifecycleOperation interfaceLifecycleOperation;
-
     @Resource
     private ComponentsUtils componentsUtils;
     @Resource
     private CommonImportManager commonImportManager;
 
-    private static final Logger log = Logger.getLogger(InterfaceLifecycleTypeImportManager.class);
-
     public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml) {
-
         Either<List<InterfaceDefinition>, ActionStatus> interfaces = createInterfaceTypeFromYml(interfaceLifecycleTypesYml);
         if (interfaces.isRight()) {
             ActionStatus status = interfaces.right().value();
@@ -65,12 +61,10 @@ public class InterfaceLifecycleTypeImportManager {
             return Either.right(responseFormat);
         }
         return createInterfacesByDao(interfaces.left().value());
-
     }
 
     private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml) {
         return commonImportManager.createElementTypesFromYml(interfaceTypesYml, this::createInterfaceDefinition);
-
     }
 
     private Either<List<InterfaceDefinition>, ResponseFormat> createInterfacesByDao(List<InterfaceDefinition> interfacesToCreate) {
@@ -80,18 +74,17 @@ public class InterfaceLifecycleTypeImportManager {
         boolean stopDao = false;
         while (interfaceItr.hasNext() && !stopDao) {
             InterfaceDefinition interfaceDef = interfaceItr.next();
-
             log.info("send interfaceDefinition {} to dao for create", interfaceDef.getType());
-
             Either<InterfaceDefinition, StorageOperationStatus> dataModelResponse = interfaceLifecycleOperation.createInterfaceType(interfaceDef);
             if (dataModelResponse.isRight()) {
                 log.info("failed to create interface : {}  error: {}", interfaceDef.getType(), dataModelResponse.right().value().name());
                 if (dataModelResponse.right().value() != StorageOperationStatus.SCHEMA_VIOLATION) {
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForLifecycleType(dataModelResponse.right().value()), interfaceDef.getType());
+                    ResponseFormat responseFormat = componentsUtils
+                        .getResponseFormat(componentsUtils.convertFromStorageResponseForLifecycleType(dataModelResponse.right().value()),
+                            interfaceDef.getType());
                     eitherResult = Either.right(responseFormat);
                     stopDao = true;
                 }
-
             } else {
                 createdInterfaces.add(dataModelResponse.left().value());
             }
@@ -102,8 +95,7 @@ public class InterfaceLifecycleTypeImportManager {
         return eitherResult;
     }
 
-    private InterfaceDefinition createInterfaceDefinition(final String interfaceDefinition,
-                                                          final Map<String, Object> toscaJson) {
+    private InterfaceDefinition createInterfaceDefinition(final String interfaceDefinition, final Map<String, Object> toscaJson) {
         final InterfaceDefinition interfaceDef = new InterfaceDefinition();
         interfaceDef.setType(interfaceDefinition);
         final Object descriptionObj = toscaJson.get(ToscaTagNamesEnum.DESCRIPTION.getElementName());
@@ -118,25 +110,19 @@ public class InterfaceLifecycleTypeImportManager {
         if (versionObj instanceof String) {
             interfaceDef.setVersion((String) versionObj);
         }
-
         final Object metadataObj = toscaJson.get(ToscaTagNamesEnum.METADATA.getElementName());
         if (metadataObj instanceof Map) {
             interfaceDef.setToscaPresentationValue(JsonPresentationFields.METADATA, metadataObj);
         }
-
         final Map<String, Object> operationsMap;
         if (toscaJson.containsKey(ToscaTagNamesEnum.OPERATIONS.getElementName())) {
             operationsMap = (Map<String, Object>) toscaJson.get(ToscaTagNamesEnum.OPERATIONS.getElementName());
         } else {
             final List<String> entitySchemaEntryList = Arrays
-                .asList(ToscaTagNamesEnum.DERIVED_FROM.getElementName(),
-                    ToscaTagNamesEnum.DESCRIPTION.getElementName(),
-                    ToscaTagNamesEnum.VERSION.getElementName(),
-                    ToscaTagNamesEnum.METADATA.getElementName(),
-                    ToscaTagNamesEnum.INPUTS.getElementName(),
-                    ToscaTagNamesEnum.NOTIFICATIONS.getElementName());
-            operationsMap = toscaJson.entrySet().stream()
-                .filter(interfaceEntry -> !entitySchemaEntryList.contains(interfaceEntry.getKey()))
+                .asList(ToscaTagNamesEnum.DERIVED_FROM.getElementName(), ToscaTagNamesEnum.DESCRIPTION.getElementName(),
+                    ToscaTagNamesEnum.VERSION.getElementName(), ToscaTagNamesEnum.METADATA.getElementName(),
+                    ToscaTagNamesEnum.INPUTS.getElementName(), ToscaTagNamesEnum.NOTIFICATIONS.getElementName());
+            operationsMap = toscaJson.entrySet().stream().filter(interfaceEntry -> !entitySchemaEntryList.contains(interfaceEntry.getKey()))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         }
         interfaceDef.setOperationsMap(handleOperations(operationsMap));
@@ -148,8 +134,7 @@ public class InterfaceLifecycleTypeImportManager {
             return Collections.emptyMap();
         }
         return operationsToscaEntry.entrySet().stream()
-            .collect(Collectors.toMap(Entry::getKey,
-                operationEntry -> createOperation((Map<String, Object>) operationEntry.getValue())));
+            .collect(Collectors.toMap(Entry::getKey, operationEntry -> createOperation((Map<String, Object>) operationEntry.getValue())));
     }
 
     private Operation createOperation(final Map<String, Object> toscaOperationMap) {

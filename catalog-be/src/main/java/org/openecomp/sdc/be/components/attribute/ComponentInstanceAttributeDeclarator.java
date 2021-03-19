@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.attribute;
 
 import fj.data.Either;
@@ -39,15 +38,13 @@ import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 @org.springframework.stereotype.Component
-public class ComponentInstanceAttributeDeclarator extends
-    DefaultAttributeDeclarator<ComponentInstance, ComponentInstanceAttribute> {
+public class ComponentInstanceAttributeDeclarator extends DefaultAttributeDeclarator<ComponentInstance, ComponentInstanceAttribute> {
 
     private static final Logger log = Logger.getLogger(ComponentInstanceAttributeDeclarator.class);
     private ToscaOperationFacade toscaOperationFacade;
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
-    public ComponentInstanceAttributeDeclarator(final ComponentsUtils componentsUtils,
-                                                final AttributeOperation attributeOperation,
+    public ComponentInstanceAttributeDeclarator(final ComponentsUtils componentsUtils, final AttributeOperation attributeOperation,
                                                 final ToscaOperationFacade toscaOperationFacade,
                                                 final ComponentInstanceBusinessLogic componentInstanceBusinessLogic) {
 //        super(componentsUtils, attributeOperation);
@@ -61,8 +58,7 @@ public class ComponentInstanceAttributeDeclarator extends
     }
 
     @Override
-    public Either<?, StorageOperationStatus> updateAttributesValues(final Component component,
-                                                                    final String cmptInstanceId,
+    public Either<?, StorageOperationStatus> updateAttributesValues(final Component component, final String cmptInstanceId,
                                                                     final List<ComponentInstanceAttribute> attributetypeList) {
         log.debug("#updateAttributesValues - updating component instance attributes for instance {} on component {}", cmptInstanceId,
             component.getUniqueId());
@@ -78,17 +74,15 @@ public class ComponentInstanceAttributeDeclarator extends
 
     @Override
     public StorageOperationStatus unDeclareAttributesAsOutputs(final Component component, final OutputDefinition output) {
-
-        final List<ComponentInstanceAttribute> componentInstancePropertiesDeclaredAsInput
-            = componentInstanceBusinessLogic.getComponentInstanceAttributesByOutputId(component, output.getUniqueId());
+        final List<ComponentInstanceAttribute> componentInstancePropertiesDeclaredAsInput = componentInstanceBusinessLogic
+            .getComponentInstanceAttributesByOutputId(component, output.getUniqueId());
         if (CollectionUtils.isEmpty(componentInstancePropertiesDeclaredAsInput)) {
             return StorageOperationStatus.OK;
         }
-        componentInstancePropertiesDeclaredAsInput.forEach(cmptInstanceProperty -> prepareValueBeforeDelete(output,
-            cmptInstanceProperty, cmptInstanceProperty.getPath()));
-        return toscaOperationFacade.updateComponentInstanceAttributes(component,
-            componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(),
-            componentInstancePropertiesDeclaredAsInput);
+        componentInstancePropertiesDeclaredAsInput
+            .forEach(cmptInstanceProperty -> prepareValueBeforeDelete(output, cmptInstanceProperty, cmptInstanceProperty.getPath()));
+        return toscaOperationFacade
+            .updateComponentInstanceAttributes(component, componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(),
+                componentInstancePropertiesDeclaredAsInput);
     }
-
 }

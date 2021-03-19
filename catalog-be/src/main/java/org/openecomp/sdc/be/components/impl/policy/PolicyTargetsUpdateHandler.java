@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.policy;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
+import java.util.List;
+import java.util.function.Consumer;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -29,11 +32,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.util.List;
-import java.util.function.Consumer;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
 @org.springframework.stereotype.Component
 public class PolicyTargetsUpdateHandler {
 
@@ -42,7 +40,8 @@ public class PolicyTargetsUpdateHandler {
     private final ComponentsUtils componentsUtils;
     private final PolicyTargetsUpdater policyTargetsUpdater;
 
-    public PolicyTargetsUpdateHandler(ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils, PolicyTargetsUpdater policyTargetsUpdater) {
+    public PolicyTargetsUpdateHandler(ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils,
+                                      PolicyTargetsUpdater policyTargetsUpdater) {
         this.toscaOperationFacade = toscaOperationFacade;
         this.componentsUtils = componentsUtils;
         this.policyTargetsUpdater = policyTargetsUpdater;
@@ -56,11 +55,13 @@ public class PolicyTargetsUpdateHandler {
 
     public ActionStatus replacePoliciesTargets(Component container, String prevTargetId, String newTargetId, PolicyTargetType targetType) {
         log.debug("#replacePoliciesTargets - replacing all policy targets referencing target {} with target {}", prevTargetId, newTargetId);
-        Consumer<List<PolicyDefinition>> replaceTarget = policies -> policyTargetsUpdater.replaceTarget(policies, prevTargetId, newTargetId, targetType);
+        Consumer<List<PolicyDefinition>> replaceTarget = policies -> policyTargetsUpdater
+            .replaceTarget(policies, prevTargetId, newTargetId, targetType);
         return updatePolicyTargets(container, prevTargetId, targetType, replaceTarget);
     }
 
-    private ActionStatus updatePolicyTargets(Component container, String targetId, PolicyTargetType targetType, Consumer<List<PolicyDefinition>> updatePolicyTargetTaskRunner) {
+    private ActionStatus updatePolicyTargets(Component container, String targetId, PolicyTargetType targetType,
+                                             Consumer<List<PolicyDefinition>> updatePolicyTargetTaskRunner) {
         List<PolicyDefinition> policiesWithPrevInstanceAsTarget = container.resolvePoliciesContainingTarget(targetId, targetType);
         if (isEmpty(policiesWithPrevInstanceAsTarget)) {
             return ActionStatus.OK;
@@ -74,5 +75,4 @@ public class PolicyTargetsUpdateHandler {
         StorageOperationStatus updatePolicyResult = toscaOperationFacade.updatePoliciesOfComponent(policiesContainer.getUniqueId(), policiesToUpdate);
         return componentsUtils.convertFromStorageResponse(updatePolicyResult, policiesContainer.getComponentType());
     }
-
 }

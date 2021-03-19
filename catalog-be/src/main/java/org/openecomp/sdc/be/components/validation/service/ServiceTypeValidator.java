@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.service;
 
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -62,7 +61,7 @@ public class ServiceTypeValidator implements ServiceFieldValidator {
         }
         if (!ValidationUtils.validateServiceMetadata(serviceType)) {
             log.info("service type is not valid.");
-            throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERY,"" + SERVICE_TYPE);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERY, "" + SERVICE_TYPE);
         }
     }
 }

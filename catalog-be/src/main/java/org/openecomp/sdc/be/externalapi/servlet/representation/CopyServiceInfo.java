@@ -21,9 +21,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CopyServiceInfo {
+
     private String newServiceUUid;
-
     private String newServiceName;
-
     private String oldServiceUUid;
 }

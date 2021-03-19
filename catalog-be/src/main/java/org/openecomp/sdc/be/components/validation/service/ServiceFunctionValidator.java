@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.service;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +46,7 @@ public class ServiceFunctionValidator implements ServiceFieldValidator {
     public void validateAndCorrectField(User user, Service service, AuditingActionEnum actionEnum) {
         log.debug("validate service function");
         String serviceFunction = service.getServiceFunction();
-        if(serviceFunction == null) {
+        if (serviceFunction == null) {
             log.info("service function is null, assigned to empty value.");
             service.setServiceFunction("");
             return;
@@ -56,7 +55,7 @@ public class ServiceFunctionValidator implements ServiceFieldValidator {
     }
 
     private void validateServiceFunction(String serviceFunction) {
-        if (StringUtils.isEmpty(serviceFunction)){
+        if (StringUtils.isEmpty(serviceFunction)) {
             return;
         } else {
             if (!ValidationUtils.validateServiceFunctionLength(serviceFunction)) {
@@ -64,7 +63,6 @@ public class ServiceFunctionValidator implements ServiceFieldValidator {
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_EXCEEDS_LIMIT, "" + SERVICE_FUNCTION);
                 throw new ByResponseFormatComponentException(errorResponse);
             }
-
             if (!ValidationUtils.validateServiceMetadata(serviceFunction)) {
                 log.info("service function is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERY, "" + SERVICE_FUNCTION);

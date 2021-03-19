@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.externalapi.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,19 +73,15 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ServiceActivationServlet extends AbstractValidationsServlet {
 
+    private static final Logger log = Logger.getLogger(ServiceActivationServlet.class);
+    private final ServiceBusinessLogic serviceBusinessLogic;
     @Context
     private HttpServletRequest request;
 
-    private static final Logger log = Logger.getLogger(ServiceActivationServlet.class);
-
-    private final ServiceBusinessLogic serviceBusinessLogic;
-
     @Inject
-    public ServiceActivationServlet(UserBusinessLogic userBusinessLogic,
-        ComponentInstanceBusinessLogic componentInstanceBL,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
-        ResourceImportManager resourceImportManager,
-        ServiceBusinessLogic serviceBusinessLogic) {
+    public ServiceActivationServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+                                    ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
+                                    ServiceBusinessLogic serviceBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.serviceBusinessLogic = serviceBusinessLogic;
     }
@@ -99,67 +94,43 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "activate a service", method = "POST", summary = "Activates a service", responses = {
-            @ApiResponse(responseCode = "202",
-                    description = "ECOMP component is authenticated and required service may be distributed"),
-            @ApiResponse(responseCode = "400", description = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401",
-                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404",
-                    description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
-            @ApiResponse(responseCode = "405",
-                    description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500",
-                    description = "The request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid field format. One of the provided fields does not comply with the field rules - SVC4126"),
-            @ApiResponse(responseCode = "400",
-                    description = "Missing request body. The post request did not contain the expected body - SVC4500"),
-            @ApiResponse(responseCode = "400",
-                    description = "The resource name is missing in the request body - SVC4062"),
-            @ApiResponse(responseCode = "409", description = "Service state is invalid for this action"),
-            @ApiResponse(responseCode = "502",
-                    description = "The server was acting as a gateway or proxy and received an invalid response from the upstream server")})
+        @ApiResponse(responseCode = "202", description = "ECOMP component is authenticated and required service may be distributed"),
+        @ApiResponse(responseCode = "400", description = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
+        @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+        @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+        @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+        @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+        @ApiResponse(responseCode = "500", description = "The request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+        @ApiResponse(responseCode = "400", description = "Invalid field format. One of the provided fields does not comply with the field rules - SVC4126"),
+        @ApiResponse(responseCode = "400", description = "Missing request body. The post request did not contain the expected body - SVC4500"),
+        @ApiResponse(responseCode = "400", description = "The resource name is missing in the request body - SVC4062"),
+        @ApiResponse(responseCode = "409", description = "Service state is invalid for this action"),
+        @ApiResponse(responseCode = "502", description = "The server was acting as a gateway or proxy and received an invalid response from the upstream server")})
     @PermissionAllowed({AafPermission.PermNames.WRITE_VALUE})
     public Response activateServiceExternal(
-            @Parameter(description = "Determines the format of the body of the request",
-                    required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
-            @Parameter(description = "The user id",
-                    required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
-            @Parameter(description = "X-ECOMP-RequestID header",
-                    required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(
-                    value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @Parameter(description = "Determines the format of the body of the response",
-                    required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @Parameter(description = "The username and password",
-                    required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(description = "The serviceUUid to activate",
-                    required = true) @PathParam("serviceUUID") final String serviceUUID,
-            @Parameter(description = "The operational environment on which to activate the service on",
-                    required = true) @PathParam("opEnvId") final String opEnvId,
-            String data) throws IOException {
-
+        @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
+        @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
+        @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+        @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+        @Parameter(description = "Determines the format of the body of the response", required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+        @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+        @Parameter(description = "The serviceUUid to activate", required = true) @PathParam("serviceUUID") final String serviceUUID,
+        @Parameter(description = "The operational environment on which to activate the service on", required = true) @PathParam("opEnvId") final String opEnvId,
+        String data) throws IOException {
         init();
-
         ResponseFormat responseFormat = null;
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
-
         User modifier = new User();
-
         try {
-
             Wrapper<ResponseFormat> responseWrapper = validateRequestHeaders(instanceIdHeader, userId);
-
             if (responseWrapper.isEmpty()) {
                 modifier.setUserId(userId);
                 log.debug("modifier id is {}", userId);
-
                 ServiceDistributionReqInfo reqMetadata = convertJsonToActivationMetadata(data);
-                Either<String, ResponseFormat> distResponse = serviceBusinessLogic.activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
-
+                Either<String, ResponseFormat> distResponse = serviceBusinessLogic
+                    .activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
                 if (distResponse.isRight()) {
                     log.debug("failed to activate service distribution");
                     responseFormat = distResponse.right().value();
@@ -179,8 +150,8 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
             log.debug("activate distribution failed with exception", e);
             throw e;
         } finally {
-            getComponentsUtils().auditExternalActivateService(responseFormat,
-                    new DistributionData(instanceIdHeader, requestURI), requestId, serviceUUID, modifier);
+            getComponentsUtils()
+                .auditExternalActivateService(responseFormat, new DistributionData(instanceIdHeader, requestURI), requestId, serviceUUID, modifier);
         }
     }
 
@@ -208,13 +179,10 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
     @Override
     protected void validateHttpCspUserIdHeader(String header, Wrapper<ResponseFormat> responseWrapper) {
         ResponseFormat responseFormat;
-        if( StringUtils.isEmpty(header)){
+        if (StringUtils.isEmpty(header)) {
             log.debug("MissingUSER_ID");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
             responseWrapper.setInnerElement(responseFormat);
         }
     }
 }
-
-
-

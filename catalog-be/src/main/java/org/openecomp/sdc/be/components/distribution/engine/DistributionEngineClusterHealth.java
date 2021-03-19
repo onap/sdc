@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,20 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,220 +31,47 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.api.HealthCheckInfo;
+import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Component;
+
 @Component("distribution-engine-cluster-health")
 public class DistributionEngineClusterHealth {
 
+    private static final String UEB_HEALTH_CHECK_STR = "uebHealthCheck";
+    private static final Logger logger = Logger.getLogger(DistributionEngineClusterHealth.class.getName());
     protected static String UEB_HEALTH_LOG_CONTEXT = "ueb.healthcheck";
-
     //TODO use LoggerMetric instead
     private static final Logger healthLogger = Logger.getLogger(UEB_HEALTH_LOG_CONTEXT);
-
-    private static final String UEB_HEALTH_CHECK_STR = "uebHealthCheck";
-
     boolean lastHealthState = false;
-
     Object lockOject = new Object();
-
-    private long reconnectInterval = 5;
-
-    private long healthCheckReadTimeout = 20;
-
-    private static final Logger logger = Logger.getLogger(DistributionEngineClusterHealth.class.getName());
-
-    private List<String> uebServers = null;
-
-    private String publicApiKey = null;
-
-    public enum HealthCheckInfoResult {
-
-        OK(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UP, null, ClusterStatusDescription.OK.getDescription())),
-        UNAVAILABLE(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.UNAVAILABLE.getDescription())),
-        NOT_CONFIGURED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.NOT_CONFIGURED.getDescription())),
-        DISABLED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription())),
-        UNKNOWN(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UNKNOWN, null, ClusterStatusDescription.UNKNOWN.getDescription()));
-
-        private HealthCheckInfo healthCheckInfo;
-
-        HealthCheckInfoResult(HealthCheckInfo healthCheckInfo) {
-            this.healthCheckInfo = healthCheckInfo;
-        }
-
-        public HealthCheckInfo getHealthCheckInfo() {
-            return healthCheckInfo;
-        }
-
-    }
-
-    private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
-
-    private Map<String, AtomicBoolean> envNamePerStatus = null;
-
-    private ScheduledFuture<?> scheduledFuture = null;
-
     ScheduledExecutorService healthCheckScheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
             return new Thread(r, "UEB-Health-Check-Task");
         }
     });
-
     HealthCheckScheduledTask healthCheckScheduledTask = null;
-
-    public enum ClusterStatusDescription {
-
-        OK("OK"), UNAVAILABLE("U-EB cluster is not available"), NOT_CONFIGURED("U-EB cluster is not configured"), DISABLED("DE is disabled in configuration"), UNKNOWN("U-EB cluster is currently unknown (try again in few minutes)");
-
-        private String desc;
-
-        ClusterStatusDescription(String desc) {
-            this.desc = desc;
-        }
-
-        public String getDescription() {
-            return desc;
-        }
-
-    }
-
-    /**
-     * Health Check Task Scheduler.
-     *
-     * It schedules a task which send a apiKey get query towards the UEB servers. In case a query to the first UEB server is failed, then a second query is sent to the next UEB server.
-     *
-     *
-     * @author esofer
-     *
-     */
-    public class HealthCheckScheduledTask implements Runnable {
-
-        List<UebHealthCheckCall> healthCheckCalls = new ArrayList<>();
-
-        public HealthCheckScheduledTask(List<String> uebServers) {
-
-            logger.debug("Create health check calls for servers {}", uebServers);
-            if (uebServers != null) {
-                for (String server : uebServers) {
-                    healthCheckCalls.add(new UebHealthCheckCall(server, publicApiKey));
-                }
-            }
-        }
-
-        @Override
-        public void run() {
-
-            healthLogger.trace("Executing UEB Health Check Task - Start");
-
-            boolean healthStatus = verifyAtLeastOneEnvIsUp();
-
-            if (healthStatus) {
-                boolean queryUebStatus = queryUeb();
-                if (queryUebStatus == lastHealthState) {
-                    return;
-                }
-
-                synchronized (lockOject) {
-                    if (queryUebStatus != lastHealthState) {
-                        logger.trace("UEB Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
-                        lastHealthState = queryUebStatus;
-                        logAlarm(lastHealthState);
-                        if (queryUebStatus) {
-                            healthCheckInfo = HealthCheckInfoResult.OK.getHealthCheckInfo();
-                        } else {
-                            healthCheckInfo = HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
-                        }
-                    }
-                }
-            } else {
-                healthLogger.trace("Not all UEB Environments are up");
-            }
-
-        }
-
-        /**
-         * verify that at least one environment is up.
-         *
-         */
-        private boolean verifyAtLeastOneEnvIsUp() {
-
-            boolean healthStatus = false;
-
-            if (envNamePerStatus != null) {
-                Collection<AtomicBoolean> values = envNamePerStatus.values();
-                if (values != null) {
-                    for (AtomicBoolean status : values) {
-                        if (status.get()) {
-                            healthStatus = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return healthStatus;
-        }
-
-        /**
-         * executor for the query itself
-         */
-        ExecutorService healthCheckExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "UEB-Health-Check-Thread");
-            }
-        });
-
-        /**
-         * go all UEB servers and send a get apiKeys query. In case a query is succeed, no query is sent to the rest of UEB servers.
-         *
-         *
-         * @return
-         */
-        private boolean queryUeb() {
-
-            Boolean result = false;
-            int retryNumber = 1;
-            for (UebHealthCheckCall healthCheckCall : healthCheckCalls) {
-                try {
-
-                    healthLogger.debug("Before running Health Check retry query number {} towards UEB server {}", retryNumber, healthCheckCall.getServer());
-
-                    Future<Boolean> future = healthCheckExecutor.submit(healthCheckCall);
-                    result = future.get(healthCheckReadTimeout, TimeUnit.SECONDS);
-
-                    healthLogger.debug("After running Health Check retry query number {} towards UEB server {}. Result is {}", retryNumber, healthCheckCall.getServer(), result);
-
-                    if (result != null && result.booleanValue()) {
-                        break;
-                    }
-
-                } catch (Exception e) {
-                    String message = e.getMessage();
-                    if (message == null) {
-                        message = e.getClass().getName();
-                    }
-                    healthLogger.debug("Error occured during running Health Check retry query towards UEB server {}. Result is {}", healthCheckCall.getServer(), message);
-                    healthLogger.trace("Error occured during running Health Check retry query towards UEB server {}. Result is {}", healthCheckCall.getServer(), message, e);
-                }
-                retryNumber++;
-
-            }
-
-            return result;
-
-        }
-
-        public List<UebHealthCheckCall> getHealthCheckCalls() {
-            return healthCheckCalls;
-        }
-
-    }
+    private long reconnectInterval = 5;
+    private long healthCheckReadTimeout = 20;
+    private List<String> uebServers = null;
+    private String publicApiKey = null;
+    private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
+    private Map<String, AtomicBoolean> envNamePerStatus = null;
+    private ScheduledFuture<?> scheduledFuture = null;
 
     @PostConstruct
     protected void init() {
-
         logger.trace("Enter init method of DistributionEngineClusterHealth");
-
-        Long reconnectIntervalConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getUebHealthCheckReconnectIntervalInSeconds();
+        Long reconnectIntervalConfig = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getUebHealthCheckReconnectIntervalInSeconds();
         if (reconnectIntervalConfig != null) {
             reconnectInterval = reconnectIntervalConfig.longValue();
         }
@@ -264,30 +79,23 @@ public class DistributionEngineClusterHealth {
         if (healthCheckReadTimeoutConfig != null) {
             healthCheckReadTimeout = healthCheckReadTimeoutConfig.longValue();
         }
-
-        DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
-
+        DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager()
+            .getDistributionEngineConfiguration();
         this.uebServers = distributionEngineConfiguration.getUebServers();
         this.publicApiKey = distributionEngineConfiguration.getUebPublicKey();
-
         this.healthCheckScheduledTask = new HealthCheckScheduledTask(this.uebServers);
-
         logger.trace("Exit init method of DistributionEngineClusterHealth");
-
     }
 
     @PreDestroy
     protected void destroy() {
-
         if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
             scheduledFuture = null;
         }
-
         if (healthCheckScheduler != null) {
             healthCheckScheduler.shutdown();
         }
-
     }
 
     /**
@@ -298,7 +106,6 @@ public class DistributionEngineClusterHealth {
      */
     public void startHealthCheckTask(Map<String, AtomicBoolean> envNamePerStatus, boolean startTask) {
         this.envNamePerStatus = envNamePerStatus;
-
         if (startTask && this.scheduledFuture == null) {
             this.scheduledFuture = this.healthCheckScheduler.scheduleAtFixedRate(healthCheckScheduledTask, 0, reconnectInterval, TimeUnit.SECONDS);
         }
@@ -335,7 +142,6 @@ public class DistributionEngineClusterHealth {
     }
 
     public void setHealthCheckOkAndReportInCaseLastStateIsDown() {
-
         if (lastHealthState) {
             return;
         }
@@ -347,7 +153,155 @@ public class DistributionEngineClusterHealth {
                 logAlarm(lastHealthState);
             }
         }
-
     }
 
+    public enum HealthCheckInfoResult {
+        OK(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UP, null,
+            ClusterStatusDescription.OK.getDescription())), UNAVAILABLE(
+            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null,
+                ClusterStatusDescription.UNAVAILABLE.getDescription())), NOT_CONFIGURED(
+            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null,
+                ClusterStatusDescription.NOT_CONFIGURED.getDescription())), DISABLED(
+            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null,
+                ClusterStatusDescription.DISABLED.getDescription())), UNKNOWN(
+            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UNKNOWN, null,
+                ClusterStatusDescription.UNKNOWN.getDescription()));
+        private HealthCheckInfo healthCheckInfo;
+
+        HealthCheckInfoResult(HealthCheckInfo healthCheckInfo) {
+            this.healthCheckInfo = healthCheckInfo;
+        }
+
+        public HealthCheckInfo getHealthCheckInfo() {
+            return healthCheckInfo;
+        }
+    }
+
+    public enum ClusterStatusDescription {
+        OK("OK"), UNAVAILABLE("U-EB cluster is not available"), NOT_CONFIGURED("U-EB cluster is not configured"), DISABLED(
+            "DE is disabled in configuration"), UNKNOWN("U-EB cluster is currently unknown (try again in few minutes)");
+        private String desc;
+
+        ClusterStatusDescription(String desc) {
+            this.desc = desc;
+        }
+
+        public String getDescription() {
+            return desc;
+        }
+    }
+
+    /**
+     * Health Check Task Scheduler.
+     * <p>
+     * It schedules a task which send a apiKey get query towards the UEB servers. In case a query to the first UEB server is failed, then a second
+     * query is sent to the next UEB server.
+     *
+     * @author esofer
+     */
+    public class HealthCheckScheduledTask implements Runnable {
+
+        List<UebHealthCheckCall> healthCheckCalls = new ArrayList<>();
+        /**
+         * executor for the query itself
+         */
+        ExecutorService healthCheckExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "UEB-Health-Check-Thread");
+            }
+        });
+
+        public HealthCheckScheduledTask(List<String> uebServers) {
+            logger.debug("Create health check calls for servers {}", uebServers);
+            if (uebServers != null) {
+                for (String server : uebServers) {
+                    healthCheckCalls.add(new UebHealthCheckCall(server, publicApiKey));
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            healthLogger.trace("Executing UEB Health Check Task - Start");
+            boolean healthStatus = verifyAtLeastOneEnvIsUp();
+            if (healthStatus) {
+                boolean queryUebStatus = queryUeb();
+                if (queryUebStatus == lastHealthState) {
+                    return;
+                }
+                synchronized (lockOject) {
+                    if (queryUebStatus != lastHealthState) {
+                        logger.trace("UEB Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
+                        lastHealthState = queryUebStatus;
+                        logAlarm(lastHealthState);
+                        if (queryUebStatus) {
+                            healthCheckInfo = HealthCheckInfoResult.OK.getHealthCheckInfo();
+                        } else {
+                            healthCheckInfo = HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
+                        }
+                    }
+                }
+            } else {
+                healthLogger.trace("Not all UEB Environments are up");
+            }
+        }
+
+        /**
+         * verify that at least one environment is up.
+         */
+        private boolean verifyAtLeastOneEnvIsUp() {
+            boolean healthStatus = false;
+            if (envNamePerStatus != null) {
+                Collection<AtomicBoolean> values = envNamePerStatus.values();
+                if (values != null) {
+                    for (AtomicBoolean status : values) {
+                        if (status.get()) {
+                            healthStatus = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return healthStatus;
+        }
+
+        /**
+         * go all UEB servers and send a get apiKeys query. In case a query is succeed, no query is sent to the rest of UEB servers.
+         *
+         * @return
+         */
+        private boolean queryUeb() {
+            Boolean result = false;
+            int retryNumber = 1;
+            for (UebHealthCheckCall healthCheckCall : healthCheckCalls) {
+                try {
+                    healthLogger
+                        .debug("Before running Health Check retry query number {} towards UEB server {}", retryNumber, healthCheckCall.getServer());
+                    Future<Boolean> future = healthCheckExecutor.submit(healthCheckCall);
+                    result = future.get(healthCheckReadTimeout, TimeUnit.SECONDS);
+                    healthLogger.debug("After running Health Check retry query number {} towards UEB server {}. Result is {}", retryNumber,
+                        healthCheckCall.getServer(), result);
+                    if (result != null && result.booleanValue()) {
+                        break;
+                    }
+                } catch (Exception e) {
+                    String message = e.getMessage();
+                    if (message == null) {
+                        message = e.getClass().getName();
+                    }
+                    healthLogger.debug("Error occured during running Health Check retry query towards UEB server {}. Result is {}",
+                        healthCheckCall.getServer(), message);
+                    healthLogger.trace("Error occured during running Health Check retry query towards UEB server {}. Result is {}",
+                        healthCheckCall.getServer(), message, e);
+                }
+                retryNumber++;
+            }
+            return result;
+        }
+
+        public List<UebHealthCheckCall> getHealthCheckCalls() {
+            return healthCheckCalls;
+        }
+    }
 }

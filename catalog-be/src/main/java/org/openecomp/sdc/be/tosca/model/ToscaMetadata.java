@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 public class ToscaMetadata implements IToscaMetadata {
+
     private String invariantUUID;
     private String UUID;
     private String customizationUUID;
@@ -44,7 +44,6 @@ public class ToscaMetadata implements IToscaMetadata {
     private String sourceModelName;
     private String sourceModelUuid;
     private String serviceFunction;
-
 
     public String getName() {
         return name;
@@ -141,6 +140,10 @@ public class ToscaMetadata implements IToscaMetadata {
         return serviceRole;
     }
 
+    public void setServiceRole(String serviceRole) {
+        this.serviceRole = serviceRole;
+    }
+
     public String getServiceFunction() {
         return serviceFunction;
     }
@@ -149,16 +152,12 @@ public class ToscaMetadata implements IToscaMetadata {
         this.serviceFunction = serviceFunction;
     }
 
-    public void setInstantiationType(String instantiationType) {
-        this.instantiationType = instantiationType;
-    }
-
     public String getInstantiationType() {
         return instantiationType;
     }
 
-    public void setServiceRole(String serviceRole) {
-        this.serviceRole = serviceRole;
+    public void setInstantiationType(String instantiationType) {
+        this.instantiationType = instantiationType;
     }
 
     public Boolean isEcompGeneratedNaming() {
@@ -166,7 +165,7 @@ public class ToscaMetadata implements IToscaMetadata {
     }
 
     public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
-    	this.ecompGeneratedNaming = ecompGeneratedNaming == null ? null : ecompGeneratedNaming.toString();
+        this.ecompGeneratedNaming = ecompGeneratedNaming == null ? null : ecompGeneratedNaming.toString();
     }
 
     public String isNamingPolicy() {
@@ -182,7 +181,7 @@ public class ToscaMetadata implements IToscaMetadata {
     }
 
     public void setServiceEcompNaming(Boolean serviceEcompNaming) {
-    	this.serviceEcompNaming = serviceEcompNaming == null ? null : serviceEcompNaming.toString();
+        this.serviceEcompNaming = serviceEcompNaming == null ? null : serviceEcompNaming.toString();
     }
 
     public String getVersion() {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.instance;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
+import java.util.List;
+import java.util.function.Consumer;
 import org.openecomp.sdc.be.components.impl.group.GroupMembersUpdater;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
@@ -30,10 +33,6 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.util.List;
-import java.util.function.Consumer;
-
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 @org.springframework.stereotype.Component
 public class GroupMembersUpdateOperation implements OnComponentInstanceChangeOperation {
 
@@ -50,8 +49,10 @@ public class GroupMembersUpdateOperation implements OnComponentInstanceChangeOpe
 
     @Override
     public ActionStatus onChangeVersion(Component container, ComponentInstance prevVersion, ComponentInstance newVersion) {
-        log.debug("#onChangeVersion - replacing all group members for component instance {} with new component instance on component", prevVersion.getUniqueId(), newVersion.getUniqueId(), container.getUniqueId());
-        Consumer<List<GroupDefinition>> replaceGroupMemberTask = (groups) -> groupMembersUpdater.replaceMember(groups, prevVersion.getUniqueId(), newVersion.getUniqueId());
+        log.debug("#onChangeVersion - replacing all group members for component instance {} with new component instance on component",
+            prevVersion.getUniqueId(), newVersion.getUniqueId(), container.getUniqueId());
+        Consumer<List<GroupDefinition>> replaceGroupMemberTask = (groups) -> groupMembersUpdater
+            .replaceMember(groups, prevVersion.getUniqueId(), newVersion.getUniqueId());
         return doUpdateGroupMembers(container, prevVersion.getUniqueId(), replaceGroupMemberTask);
     }
 
@@ -75,9 +76,6 @@ public class GroupMembersUpdateOperation implements OnComponentInstanceChangeOpe
     private ActionStatus updateGroups(Component container, List<GroupDefinition> groupsToUpdate) {
         log.debug("#updateGroups - updating {} groups for container {}", groupsToUpdate.size(), container.getUniqueId());
         return groupsOperation.updateGroups(container, groupsToUpdate, PromoteVersionEnum.MINOR)
-                .either(groupsUpdated -> ActionStatus.OK,
-                        err -> componentsUtils.convertFromStorageResponse(err, container.getComponentType()));
+            .either(groupsUpdated -> ActionStatus.OK, err -> componentsUtils.convertFromStorageResponse(err, container.getComponentType()));
     }
-
-
 }

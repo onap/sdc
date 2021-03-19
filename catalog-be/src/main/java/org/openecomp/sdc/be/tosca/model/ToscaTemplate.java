@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
@@ -43,6 +42,4 @@ public class ToscaTemplate {
     public ToscaTemplate(final String toscaDefinitionsVersion) {
         this.tosca_definitions_version = toscaDefinitionsVersion;
     }
-
 }
-

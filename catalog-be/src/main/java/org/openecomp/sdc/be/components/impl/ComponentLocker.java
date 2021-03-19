@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -28,9 +27,8 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-
 @org.springframework.stereotype.Component
-public class ComponentLocker  {
+public class ComponentLocker {
 
     private static final Logger log = Logger.getLogger(ComponentLocker.class.getName());
     private final GraphLockOperation graphLockOperation;
@@ -55,7 +53,7 @@ public class ComponentLocker  {
         log.debug("#doLockComponent - locking component {} of type {}", id, nodeTypeEnum);
         StorageOperationStatus storageOperationStatus = graphLockOperation.lockComponent(id, nodeTypeEnum);
         if (storageOperationStatus != StorageOperationStatus.OK) {
-     		log.debug("#doLockComponent - failed to lock component {} with status {}", id, storageOperationStatus);
+            log.debug("#doLockComponent - failed to lock component {} with status {}", id, storageOperationStatus);
             throw new StorageException(storageOperationStatus);
         }
     }

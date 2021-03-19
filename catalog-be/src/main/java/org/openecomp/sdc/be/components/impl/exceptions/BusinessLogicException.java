@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.exceptions;
 
 import lombok.AllArgsConstructor;
@@ -28,5 +27,4 @@ public class BusinessLogicException extends Exception {
 
     @Getter
     private final ResponseFormat responseFormat;
-
 }

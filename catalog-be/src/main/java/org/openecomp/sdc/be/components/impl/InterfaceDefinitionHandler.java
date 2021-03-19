@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
@@ -64,7 +63,6 @@ import org.springframework.stereotype.Component;
 public class InterfaceDefinitionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceDefinitionHandler.class);
-
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
 
     public InterfaceDefinitionHandler(final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
@@ -78,9 +76,7 @@ public class InterfaceDefinitionHandler {
      * @return an interface definition representation
      */
     public InterfaceDefinition create(final Map<String, Object> interfaceDefinitionToscaMap) {
-
         final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
-
         if (interfaceDefinitionToscaMap.containsKey(TYPE.getElementName())) {
             final Object typeObj = interfaceDefinitionToscaMap.get(TYPE.getElementName());
             if (!(typeObj instanceof String)) {
@@ -90,11 +86,10 @@ public class InterfaceDefinitionHandler {
             interfaceDefinition.setType(type);
             interfaceDefinition.setUniqueId(type.toLowerCase());
         }
-
         final Map<String, InputDefinition> inputDefinitionMap = handleInputs(interfaceDefinitionToscaMap);
         if (!inputDefinitionMap.isEmpty()) {
-            final Map<String, InputDataDefinition> collect = inputDefinitionMap.entrySet().stream().
-                collect(Collectors.toMap(Entry::getKey, value -> new InputDataDefinition(value.getValue())));
+            final Map<String, InputDataDefinition> collect = inputDefinitionMap.entrySet().stream()
+                .collect(Collectors.toMap(Entry::getKey, value -> new InputDataDefinition(value.getValue())));
             interfaceDefinition.setInputs(collect);
         }
         final Map<String, OperationDataDefinition> operationMap;
@@ -109,88 +104,63 @@ public class InterfaceDefinitionHandler {
             validateOperations(interfaceDefinition.getType(), operationMap);
             interfaceDefinition.setOperations(operationMap);
         }
-
         return interfaceDefinition;
     }
 
-    private void validateOperations(final String interfaceType,
-                                    final Map<String, OperationDataDefinition> operationMap) {
+    private void validateOperations(final String interfaceType, final Map<String, OperationDataDefinition> operationMap) {
         if (MapUtils.isEmpty(operationMap)) {
             return;
         }
-        Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceDefinitionMapEither =
-            interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
+        Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceDefinitionMapEither = interfaceOperationBusinessLogic
+            .getAllInterfaceLifecycleTypes();
         if (interfaceDefinitionMapEither.isRight() || MapUtils.isEmpty(interfaceDefinitionMapEither.left().value())) {
             throw new ByActionStatusComponentException(ActionStatus.INTERFACE_UNKNOWN, interfaceType);
         }
-
         final Map<String, InterfaceDefinition> interfaceDefinitionMap = interfaceDefinitionMapEither.left().value();
         final Optional<InterfaceDefinition> interfaceDefinitionOptional = interfaceDefinitionMap.entrySet().stream()
-            .filter(interfaceDefinitionEntry -> interfaceDefinitionEntry.getKey().equalsIgnoreCase(interfaceType))
-            .map(Entry::getValue).findFirst();
+            .filter(interfaceDefinitionEntry -> interfaceDefinitionEntry.getKey().equalsIgnoreCase(interfaceType)).map(Entry::getValue).findFirst();
         if (interfaceDefinitionOptional.isEmpty()) {
             throw new ByActionStatusComponentException(ActionStatus.INTERFACE_UNKNOWN, interfaceType);
         }
         final InterfaceDefinition interfaceDefinition = interfaceDefinitionOptional.get();
         operationMap.keySet().forEach(operation1 -> {
             if (!interfaceDefinition.hasOperation(operation1)) {
-                throw new ByActionStatusComponentException(ActionStatus.INTERFACE_OPERATION_NOT_DEFINED,
-                    operation1, interfaceType);
+                throw new ByActionStatusComponentException(ActionStatus.INTERFACE_OPERATION_NOT_DEFINED, operation1, interfaceType);
             }
         });
     }
 
-    private Map<String, OperationDataDefinition> handleOperations(
-        final Map<String, Object> interfaceDefinitionToscaMap) {
+    private Map<String, OperationDataDefinition> handleOperations(final Map<String, Object> interfaceDefinitionToscaMap) {
         if (!interfaceDefinitionToscaMap.containsKey(OPERATIONS.getElementName())) {
             return Collections.emptyMap();
         }
-        final Map<String, Object> operationMap =
-            (Map<String, Object>) interfaceDefinitionToscaMap.get(OPERATIONS.getElementName());
+        final Map<String, Object> operationMap = (Map<String, Object>) interfaceDefinitionToscaMap.get(OPERATIONS.getElementName());
         return operationMap.entrySet().stream()
-            .map(interfaceEntry -> createOperation(interfaceEntry.getKey(),
-                (Map<String, Object>) interfaceEntry.getValue()))
-            .collect(
-                Collectors.toMap(OperationDataDefinition::getName, operationDataDefinition -> operationDataDefinition));
+            .map(interfaceEntry -> createOperation(interfaceEntry.getKey(), (Map<String, Object>) interfaceEntry.getValue()))
+            .collect(Collectors.toMap(OperationDataDefinition::getName, operationDataDefinition -> operationDataDefinition));
     }
 
-    private Map<String, OperationDataDefinition> handleLegacyOperations(
-        final Map<String, Object> interfaceDefinitionToscaMap) {
+    private Map<String, OperationDataDefinition> handleLegacyOperations(final Map<String, Object> interfaceDefinitionToscaMap) {
         final List<String> notALegacyOperationEntry = Arrays
-            .asList(OPERATIONS.getElementName(),
-                TYPE.getElementName(),
-                INPUTS.getElementName(),
-                NOTIFICATIONS.getElementName());
-        return interfaceDefinitionToscaMap.entrySet().stream()
-            .filter(interfaceEntry -> !notALegacyOperationEntry.contains(interfaceEntry.getKey()))
-            .map(interfaceEntry -> createOperation(interfaceEntry.getKey(),
-                (Map<String, Object>) interfaceEntry.getValue()))
-            .collect(
-                Collectors.toMap(OperationDataDefinition::getName, operationDataDefinition -> operationDataDefinition));
+            .asList(OPERATIONS.getElementName(), TYPE.getElementName(), INPUTS.getElementName(), NOTIFICATIONS.getElementName());
+        return interfaceDefinitionToscaMap.entrySet().stream().filter(interfaceEntry -> !notALegacyOperationEntry.contains(interfaceEntry.getKey()))
+            .map(interfaceEntry -> createOperation(interfaceEntry.getKey(), (Map<String, Object>) interfaceEntry.getValue()))
+            .collect(Collectors.toMap(OperationDataDefinition::getName, operationDataDefinition -> operationDataDefinition));
     }
 
-
-    private OperationDataDefinition createOperation(final String operationName,
-                                                    final Map<String, Object> operationDefinitionMap) {
+    private OperationDataDefinition createOperation(final String operationName, final Map<String, Object> operationDefinitionMap) {
         final OperationDataDefinition operation = new OperationDataDefinition();
         operation.setUniqueId(UUID.randomUUID().toString());
         operation.setName(operationName);
-
-        operation.setImplementation(
-            handleOperationImplementation(operationDefinitionMap)
-                .orElse(new ArtifactDataDefinition())
-        );
+        operation.setImplementation(handleOperationImplementation(operationDefinitionMap).orElse(new ArtifactDataDefinition()));
         if (operationDefinitionMap.containsKey(INPUTS.getElementName())) {
-            final Map<String, Object> interfaceInputs =
-                (Map<String, Object>) operationDefinitionMap.get(INPUTS.getElementName());
+            final Map<String, Object> interfaceInputs = (Map<String, Object>) operationDefinitionMap.get(INPUTS.getElementName());
             operation.setInputs(handleInterfaceOperationInputs(interfaceInputs));
         }
-
         return operation;
     }
 
-    private ListDataDefinition<OperationInputDefinition> handleInterfaceOperationInputs(
-        final Map<String, Object> interfaceInputs) {
+    private ListDataDefinition<OperationInputDefinition> handleInterfaceOperationInputs(final Map<String, Object> interfaceInputs) {
         final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
         for (final Entry<String, Object> interfaceInput : interfaceInputs.entrySet()) {
             final OperationInputDefinition operationInput = new OperationInputDefinition();
@@ -198,10 +168,9 @@ public class InterfaceDefinitionHandler {
             operationInput.setInputId(operationInput.getUniqueId());
             operationInput.setName(interfaceInput.getKey());
             if (interfaceInput.getValue() instanceof Map) {
-                final LinkedHashMap<String, Object> inputPropertyValue =
-                    (LinkedHashMap<String, Object>) interfaceInput.getValue();
-                LOGGER.info("createModuleInterface: i interfaceInput.getKey() {}, {} , {}  ",
-                    interfaceInput.getKey(), inputPropertyValue.keySet(), inputPropertyValue.values());
+                final LinkedHashMap<String, Object> inputPropertyValue = (LinkedHashMap<String, Object>) interfaceInput.getValue();
+                LOGGER.info("createModuleInterface: i interfaceInput.getKey() {}, {} , {}  ", interfaceInput.getKey(), inputPropertyValue.keySet(),
+                    inputPropertyValue.values());
                 if (inputPropertyValue.get(TYPE.getElementName()) != null) {
                     operationInput.setType(inputPropertyValue.get(TYPE.getElementName()).toString());
                 }
@@ -209,8 +178,7 @@ public class InterfaceDefinitionHandler {
                     operationInput.setDescription(inputPropertyValue.get(DESCRIPTION.getElementName()).toString());
                 }
                 if (inputPropertyValue.get(REQUIRED.getElementName()) != null) {
-                    operationInput.setRequired(
-                        Boolean.getBoolean(inputPropertyValue.get(REQUIRED.getElementName()).toString()));
+                    operationInput.setRequired(Boolean.getBoolean(inputPropertyValue.get(REQUIRED.getElementName()).toString()));
                 }
                 if (inputPropertyValue.get(DEFAULT.getElementName()) != null) {
                     operationInput.setToscaDefaultValue(inputPropertyValue.get(DEFAULT.getElementName()).toString());
@@ -218,7 +186,6 @@ public class InterfaceDefinitionHandler {
                 if (inputPropertyValue.get(STATUS.getElementName()) != null) {
                     operationInput.setStatus(inputPropertyValue.get(STATUS.getElementName()).toString());
                 }
-
             } else if (interfaceInput.getValue() instanceof String) {
                 final String value = (String) interfaceInput.getValue();
                 operationInput.setDefaultValue(value);
@@ -230,8 +197,7 @@ public class InterfaceDefinitionHandler {
         return inputs;
     }
 
-    private Optional<ArtifactDataDefinition> handleOperationImplementation(
-        final Map<String, Object> operationDefinitionMap) {
+    private Optional<ArtifactDataDefinition> handleOperationImplementation(final Map<String, Object> operationDefinitionMap) {
         if (!operationDefinitionMap.containsKey(IMPLEMENTATION.getElementName())) {
             return Optional.empty();
         }
@@ -249,14 +215,10 @@ public class InterfaceDefinitionHandler {
         if (!interfaceDefinitionToscaMap.containsKey(INPUTS.getElementName())) {
             return Collections.emptyMap();
         }
-
-        final Either<Map<String, InputDefinition>, ResultStatusEnum> inputMapEither =
-            ImportUtils.getInputs(interfaceDefinitionToscaMap);
+        final Either<Map<String, InputDefinition>, ResultStatusEnum> inputMapEither = ImportUtils.getInputs(interfaceDefinitionToscaMap);
         if (inputMapEither.isRight()) {
             return Collections.emptyMap();
         }
-
         return inputMapEither.left().value();
     }
-
 }

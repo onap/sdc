@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import static java.util.stream.Collectors.joining;
@@ -151,21 +150,17 @@ public class ServiceImportParseLogic {
 
     public Either<Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(
         Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Service oldResource) {
-
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
-        Either<Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> nodeTypesArtifactsToHandleRes
-            = Either.left(nodeTypesArtifactsToHandle);
-
+        Either<Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> nodeTypesArtifactsToHandleRes = Either
+            .left(nodeTypesArtifactsToHandle);
         try {
             Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csarInfo.getCsar());
-            Map<String, ImmutablePair<String, String>> extractedVfcToscaNames =
-                extractVfcToscaNames(nodeTypesInfo, oldResource.getName(), csarInfo);
-            log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ",
-                oldResource.getName(), csarInfo.getCsarUUID());
-            extractedVfcToscaNames
-                .forEach((namespace, vfcToscaNames) -> findAddNodeTypeArtifactsToHandle(csarInfo, nodeTypesArtifactsToHandle, oldResource,
-                    extractedVfcsArtifacts,
-                    namespace, vfcToscaNames));
+            Map<String, ImmutablePair<String, String>> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, oldResource.getName(), csarInfo);
+            log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ", oldResource.getName(),
+                csarInfo.getCsarUUID());
+            extractedVfcToscaNames.forEach(
+                (namespace, vfcToscaNames) -> findAddNodeTypeArtifactsToHandle(csarInfo, nodeTypesArtifactsToHandle, oldResource,
+                    extractedVfcsArtifacts, namespace, vfcToscaNames));
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             nodeTypesArtifactsToHandleRes = Either.right(responseFormat);
@@ -174,45 +169,41 @@ public class ServiceImportParseLogic {
         return nodeTypesArtifactsToHandleRes;
     }
 
-    private Map<String, ImmutablePair<String, String>> extractVfcToscaNames(Map<String, NodeTypeInfo> nodeTypesInfo,
-                                                                            String vfResourceName, CsarInfo csarInfo) {
+    private Map<String, ImmutablePair<String, String>> extractVfcToscaNames(Map<String, NodeTypeInfo> nodeTypesInfo, String vfResourceName,
+                                                                            CsarInfo csarInfo) {
         Map<String, ImmutablePair<String, String>> vfcToscaNames = new HashMap<>();
-
         Map<String, Object> nodes = extractAllNodes(nodeTypesInfo, csarInfo);
         if (!nodes.isEmpty()) {
             Iterator<Map.Entry<String, Object>> nodesNameEntry = nodes.entrySet().iterator();
             while (nodesNameEntry.hasNext()) {
                 Map.Entry<String, Object> nodeType = nodesNameEntry.next();
-                ImmutablePair<String, String> toscaResourceName = buildNestedToscaResourceName(
-                    ResourceTypeEnum.VFC.name(), vfResourceName, nodeType.getKey());
+                ImmutablePair<String, String> toscaResourceName = buildNestedToscaResourceName(ResourceTypeEnum.VFC.name(), vfResourceName,
+                    nodeType.getKey());
                 vfcToscaNames.put(nodeType.getKey(), toscaResourceName);
             }
         }
         for (NodeTypeInfo cvfc : nodeTypesInfo.values()) {
-            vfcToscaNames.put(cvfc.getType(),
-                buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), vfResourceName, cvfc.getType()));
+            vfcToscaNames.put(cvfc.getType(), buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), vfResourceName, cvfc.getType()));
         }
         return vfcToscaNames;
     }
 
-    public String buildNodeTypeYaml(Map.Entry<String, Object> nodeNameValue, Map<String, Object> mapToConvert,
-                                    String nodeResourceType, CsarInfo csarInfo) {
+    public String buildNodeTypeYaml(Map.Entry<String, Object> nodeNameValue, Map<String, Object> mapToConvert, String nodeResourceType,
+                                    CsarInfo csarInfo) {
         // We need to create a Yaml from each node_types in order to create
+
         // resource from each node type using import normative flow.
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Yaml yaml = new Yaml(options);
-
         Map<String, Object> node = new HashMap<>();
-        node.put(buildNestedToscaResourceName(nodeResourceType, csarInfo.getVfResourceName(), nodeNameValue.getKey())
-            .getLeft(), nodeNameValue.getValue());
+        node.put(buildNestedToscaResourceName(nodeResourceType, csarInfo.getVfResourceName(), nodeNameValue.getKey()).getLeft(),
+            nodeNameValue.getValue());
         mapToConvert.put(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName(), node);
-
         return yaml.dumpAsMap(mapToConvert);
     }
 
-    ImmutablePair<String, String> buildNestedToscaResourceName(String nodeResourceType, String vfResourceName,
-                                                               String nodeTypeFullName) {
+    ImmutablePair<String, String> buildNestedToscaResourceName(String nodeResourceType, String vfResourceName, String nodeTypeFullName) {
         String actualType;
         String actualVfName;
         if (ResourceTypeEnum.CVFC.name().equals(nodeResourceType)) {
@@ -228,24 +219,19 @@ public class ServiceImportParseLogic {
             if (!nodeTypeFullName.contains(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
                 nameWithouNamespacePrefix = nodeTypeFullName;
             } else {
-                nameWithouNamespacePrefix = nodeTypeFullName
-                    .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+                nameWithouNamespacePrefix = nodeTypeFullName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
             }
             String[] findTypes = nameWithouNamespacePrefix.split("\\.");
             String resourceType = findTypes[0];
             String actualName = nameWithouNamespacePrefix.substring(resourceType.length());
-
             if (actualName.startsWith(Constants.ABSTRACT)) {
-                toscaResourceName.append(resourceType.toLowerCase()).append('.')
-                    .append(ValidationUtils.convertToSystemName(actualVfName));
+                toscaResourceName.append(resourceType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(actualVfName));
             } else {
                 toscaResourceName.append(actualType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(actualVfName));
             }
             StringBuilder previousToscaResourceName = new StringBuilder(toscaResourceName);
             return new ImmutablePair<>(toscaResourceName.append(actualName.toLowerCase()).toString(),
-                previousToscaResourceName
-                    .append(actualName.substring(actualName.split("\\.")[1].length() + 1).toLowerCase())
-                    .toString());
+                previousToscaResourceName.append(actualName.substring(actualName.split("\\.")[1].length() + 1).toLowerCase()).toString());
         } catch (Exception e) {
             componentsUtils.getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
             log.debug("Exception occured when buildNestedToscaResourceName, error is:{}", e.getMessage(), e);
@@ -274,7 +260,6 @@ public class ServiceImportParseLogic {
                                                     Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
                                                     Service resource, Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts, String namespace,
                                                     ImmutablePair<String, String> vfcToscaNames) {
-
         EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
         log.debug("Going to fetch node type with tosca name {}. ", vfcToscaNames.getLeft());
         Resource curNodeType = findVfcResource(csarInfo, resource, vfcToscaNames.getLeft(), vfcToscaNames.getRight(), null);
@@ -286,19 +271,19 @@ public class ServiceImportParseLogic {
             curNodeTypeArtifactsToHandle = findNodeTypeArtifactsToHandle(curNodeType, currArtifacts);
         } else if (curNodeType != null) {
             // delete all artifacts if have not received artifacts from
+
             // csar
             try {
                 curNodeTypeArtifactsToHandle = new EnumMap<>(ArtifactsBusinessLogic.ArtifactOperationEnum.class);
                 List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
                 // delete all informational artifacts
-                artifactsToDelete.addAll(curNodeType.getArtifacts().values().stream()
-                    .filter(a -> a.getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
-                    .collect(toList()));
+                artifactsToDelete.addAll(
+                    curNodeType.getArtifacts().values().stream().filter(a -> a.getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
+                        .collect(toList()));
                 // delete all deployment artifacts
                 artifactsToDelete.addAll(curNodeType.getDeploymentArtifacts().values());
                 if (!artifactsToDelete.isEmpty()) {
-                    curNodeTypeArtifactsToHandle
-                        .put(ArtifactsBusinessLogic.ArtifactOperationEnum.DELETE, artifactsToDelete);
+                    curNodeTypeArtifactsToHandle.put(ArtifactsBusinessLogic.ArtifactOperationEnum.DELETE, artifactsToDelete);
                 }
             } catch (Exception e) {
                 componentsUtils.getResponseFormat(ActionStatus.INVALID_TOSCA_TEMPLATE);
@@ -311,10 +296,8 @@ public class ServiceImportParseLogic {
         }
     }
 
-    protected void handleAndAddExtractedVfcsArtifacts(List<ArtifactDefinition> vfcArtifacts,
-                                                      List<ArtifactDefinition> artifactsToAdd) {
-        List<String> vfcArtifactNames = vfcArtifacts.stream().map(ArtifactDataDefinition::getArtifactName)
-            .collect(toList());
+    protected void handleAndAddExtractedVfcsArtifacts(List<ArtifactDefinition> vfcArtifacts, List<ArtifactDefinition> artifactsToAdd) {
+        List<String> vfcArtifactNames = vfcArtifacts.stream().map(ArtifactDataDefinition::getArtifactName).collect(toList());
         artifactsToAdd.stream().forEach(a -> {
             if (!vfcArtifactNames.contains(a.getArtifactName())) {
                 vfcArtifacts.add(a);
@@ -330,16 +313,14 @@ public class ServiceImportParseLogic {
             log.debug("Error occured during fetching node type with tosca name {}, error: {}", currVfcToscaName, status);
             throw new ComponentException(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
         } else if (org.apache.commons.lang.StringUtils.isNotEmpty(currVfcToscaName)) {
-            return (Resource) toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName)
-                .left()
+            return (Resource) toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName).left()
                 .on(st -> findVfcResource(csarInfo, resource, previousVfcToscaName, null, st));
         }
         return null;
     }
 
-    protected EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> findNodeTypeArtifactsToHandle(
-        Resource curNodeType, List<ArtifactDefinition> extractedArtifacts) {
-
+    protected EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> findNodeTypeArtifactsToHandle(Resource curNodeType,
+                                                                                                                            List<ArtifactDefinition> extractedArtifacts) {
         EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
         try {
             List<ArtifactDefinition> artifactsToUpload = new ArrayList<>(extractedArtifacts);
@@ -364,10 +345,8 @@ public class ServiceImportParseLogic {
             existingArtifacts.putAll(curNodeType.getDeploymentArtifacts());
         }
         if (MapUtils.isNotEmpty(curNodeType.getArtifacts())) {
-            existingArtifacts
-                .putAll(curNodeType.getArtifacts().entrySet()
-                    .stream()
-                    .filter(e -> e.getValue().getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
+            existingArtifacts.putAll(
+                curNodeType.getArtifacts().entrySet().stream().filter(e -> e.getValue().getArtifactGroupType() == ArtifactGroupTypeEnum.INFORMATIONAL)
                     .collect(toMap(Map.Entry::getKey, Map.Entry::getValue)));
         }
         return existingArtifacts;
@@ -396,23 +375,19 @@ public class ServiceImportParseLogic {
                                                     Map<String, ArtifactDefinition> existingArtifacts) {
         try {
             if (!existingArtifacts.isEmpty()) {
-                extractedArtifacts.stream()
-                    .forEach(a -> processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, a));
+                extractedArtifacts.stream().forEach(a -> processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, a));
                 artifactsToDelete.addAll(existingArtifacts.values());
             }
         } catch (Exception e) {
             log.debug("Exception occured when processExistingNodeTypeArtifacts, error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
-
     }
 
     protected void processNodeTypeArtifact(List<ArtifactDefinition> artifactsToUpload, List<ArtifactDefinition> artifactsToUpdate,
                                            Map<String, ArtifactDefinition> existingArtifacts, ArtifactDefinition currNewArtifact) {
-        Optional<ArtifactDefinition> foundArtifact = existingArtifacts.values()
-            .stream()
-            .filter(a -> a.getArtifactName().equals(currNewArtifact.getArtifactName()))
-            .findFirst();
+        Optional<ArtifactDefinition> foundArtifact = existingArtifacts.values().stream()
+            .filter(a -> a.getArtifactName().equals(currNewArtifact.getArtifactName())).findFirst();
         if (foundArtifact.isPresent()) {
             if (foundArtifact.get().getArtifactType().equals(currNewArtifact.getArtifactType())) {
                 updateFoundArtifact(artifactsToUpdate, currNewArtifact, foundArtifact.get());
@@ -420,9 +395,8 @@ public class ServiceImportParseLogic {
                 artifactsToUpload.remove(currNewArtifact);
             } else {
                 log.debug("Can't upload two artifact with the same name {}.", currNewArtifact.getArtifactName());
-                throw new ComponentException(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
-                    currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
-                    foundArtifact.get().getArtifactType());
+                throw new ComponentException(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, currNewArtifact.getArtifactName(),
+                    currNewArtifact.getArtifactType(), foundArtifact.get().getArtifactType());
             }
         }
     }
@@ -431,16 +405,13 @@ public class ServiceImportParseLogic {
                                        ArtifactDefinition foundArtifact) {
         if (!foundArtifact.getArtifactChecksum().equals(currNewArtifact.getArtifactChecksum())) {
             foundArtifact.setPayload(currNewArtifact.getPayloadData());
-            foundArtifact.setPayloadData(
-                Base64.encodeBase64String(currNewArtifact.getPayloadData()));
-            foundArtifact.setArtifactChecksum(GeneralUtility
-                .calculateMD5Base64EncodedByByteArray(currNewArtifact.getPayloadData()));
+            foundArtifact.setPayloadData(Base64.encodeBase64String(currNewArtifact.getPayloadData()));
+            foundArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(currNewArtifact.getPayloadData()));
             artifactsToUpdate.add(foundArtifact);
         }
     }
 
-    public void addNonMetaCreatedArtifactsToSupportRollback(ArtifactOperationInfo operation,
-                                                            List<ArtifactDefinition> createdArtifacts,
+    public void addNonMetaCreatedArtifactsToSupportRollback(ArtifactOperationInfo operation, List<ArtifactDefinition> createdArtifacts,
                                                             Either<Either<ArtifactDefinition, Operation>, ResponseFormat> eitherNonMetaArtifacts) {
         if (ArtifactsBusinessLogic.ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum()) && createdArtifacts != null
             && eitherNonMetaArtifacts.isLeft()) {
@@ -472,7 +443,6 @@ public class ServiceImportParseLogic {
 
     protected boolean isfillGroupMemebersRecursivlyStopCondition(String groupName, Map<String, GroupDefinition> allGroups,
                                                                  Set<String> allGroupMembers) {
-
         boolean stop = false;
         // In Case Not Group Stop
         if (!allGroups.containsKey(groupName)) {
@@ -482,7 +452,6 @@ public class ServiceImportParseLogic {
         if (!stop) {
             GroupDefinition groupDefinition = allGroups.get(groupName);
             stop = MapUtils.isEmpty(groupDefinition.getMembers());
-
         }
         // In Case all group members already contained stop
         if (!stop) {
@@ -497,19 +466,15 @@ public class ServiceImportParseLogic {
         return stop;
     }
 
-    public Resource buildValidComplexVfc(Resource resource, CsarInfo csarInfo, String nodeName,
-                                         Map<String, NodeTypeInfo> nodesInfo) {
-
+    public Resource buildValidComplexVfc(Resource resource, CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
         Resource complexVfc = buildComplexVfcMetadata(resource, csarInfo, nodeName, nodesInfo);
         log.debug("************* Going to validate complex VFC from yaml {}", complexVfc.getName());
         csarInfo.addNodeToQueue(nodeName);
-        return validateResourceBeforeCreate(complexVfc, csarInfo.getModifier(),
-            AuditingActionEnum.IMPORT_RESOURCE, true, csarInfo);
+        return validateResourceBeforeCreate(complexVfc, csarInfo.getModifier(), AuditingActionEnum.IMPORT_RESOURCE, true, csarInfo);
     }
 
     public Resource validateResourceBeforeCreate(Resource resource, User user, AuditingActionEnum actionEnum, boolean inTransaction,
                                                  CsarInfo csarInfo) {
-
         validateResourceFieldsBeforeCreate(user, resource, actionEnum, inTransaction);
         validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), resource, actionEnum, inTransaction);
         validateLifecycleTypesCreate(user, resource, actionEnum);
@@ -524,21 +489,20 @@ public class ServiceImportParseLogic {
             } else {
                 resourceSystemName = resource.getSystemName();
             }
-            resource.setToscaResourceName(CommonBeUtils
-                .generateToscaResourceName(resource.getResourceType().name().toLowerCase(), resourceSystemName));
+            resource
+                .setToscaResourceName(CommonBeUtils.generateToscaResourceName(resource.getResourceType().name().toLowerCase(), resourceSystemName));
         }
-
         // Generate invariant UUID - must be here and not in operation since it
+
         // should stay constant during clone
+
         // TODO
         String invariantUUID = UniqueIdBuilder.buildInvariantUUID();
         resource.setInvariantUUID(invariantUUID);
-
         return resource;
     }
 
-    protected Either<Boolean, ResponseFormat> validateResourceType(User user, Resource resource,
-                                                                   AuditingActionEnum actionEnum) {
+    protected Either<Boolean, ResponseFormat> validateResourceType(User user, Resource resource, AuditingActionEnum actionEnum) {
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         if (resource.getResourceType() == null) {
             log.debug("Invalid resource type for resource");
@@ -549,8 +513,7 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    protected Either<Boolean, ResponseFormat> validateLifecycleTypesCreate(User user, Resource resource,
-                                                                           AuditingActionEnum actionEnum) {
+    protected Either<Boolean, ResponseFormat> validateLifecycleTypesCreate(User user, Resource resource, AuditingActionEnum actionEnum) {
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         if (resource.getInterfaces() != null && resource.getInterfaces().size() > 0) {
             log.debug("validate interface lifecycle Types Exist");
@@ -558,21 +521,16 @@ public class ServiceImportParseLogic {
             while (intItr.hasNext() && eitherResult.isLeft()) {
                 InterfaceDefinition interfaceDefinition = intItr.next();
                 String intType = interfaceDefinition.getUniqueId();
-                Either<InterfaceDefinition, StorageOperationStatus> eitherCapTypeFound = interfaceTypeOperation
-                    .getInterface(intType);
+                Either<InterfaceDefinition, StorageOperationStatus> eitherCapTypeFound = interfaceTypeOperation.getInterface(intType);
                 if (eitherCapTypeFound.isRight()) {
                     if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
-                        BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(
-                            "Create Resource - validateLifecycleTypesCreate", "Interface", intType);
-                        log.debug("Lifecycle Type: {} is required by resource: {} but does not exist in the DB",
-                            intType, resource.getName());
                         BeEcompErrorManager.getInstance()
-                            .logBeDaoSystemError("Create Resource - validateLifecycleTypesCreate");
-                        log.debug("request to data model failed with error: {}",
-                            eitherCapTypeFound.right().value().name());
+                            .logBeGraphObjectMissingError("Create Resource - validateLifecycleTypesCreate", "Interface", intType);
+                        log.debug("Lifecycle Type: {} is required by resource: {} but does not exist in the DB", intType, resource.getName());
+                        BeEcompErrorManager.getInstance().logBeDaoSystemError("Create Resource - validateLifecycleTypesCreate");
+                        log.debug("request to data model failed with error: {}", eitherCapTypeFound.right().value().name());
                     }
-                    ResponseFormat errorResponse = componentsUtils
-                        .getResponseFormat(ActionStatus.MISSING_LIFECYCLE_TYPE, intType);
+                    ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_LIFECYCLE_TYPE, intType);
                     eitherResult = Either.right(errorResponse);
                     componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
                 }
@@ -581,19 +539,14 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    public Either<Boolean, ResponseFormat> validateCapabilityTypesCreate(User user,
-                                                                         ICapabilityTypeOperation capabilityTypeOperation, Resource resource,
-                                                                         AuditingActionEnum actionEnum,
-                                                                         boolean inTransaction) {
-
+    public Either<Boolean, ResponseFormat> validateCapabilityTypesCreate(User user, ICapabilityTypeOperation capabilityTypeOperation,
+                                                                         Resource resource, AuditingActionEnum actionEnum, boolean inTransaction) {
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         if (resource.getCapabilities() != null && resource.getCapabilities().size() > 0) {
             log.debug("validate capability Types Exist - capabilities section");
-
             for (Map.Entry<String, List<CapabilityDefinition>> typeEntry : resource.getCapabilities().entrySet()) {
-
-                eitherResult = validateCapabilityTypeExists(user, capabilityTypeOperation, resource, actionEnum,
-                    eitherResult, typeEntry, inTransaction);
+                eitherResult = validateCapabilityTypeExists(user, capabilityTypeOperation, resource, actionEnum, eitherResult, typeEntry,
+                    inTransaction);
                 if (eitherResult.isRight()) {
                     return Either.right(eitherResult.right().value());
                 }
@@ -602,8 +555,8 @@ public class ServiceImportParseLogic {
         if (resource.getRequirements() != null && resource.getRequirements().size() > 0) {
             log.debug("validate capability Types Exist - requirements section");
             for (String type : resource.getRequirements().keySet()) {
-                eitherResult = validateCapabilityTypeExists(user, capabilityTypeOperation, resource,
-                    resource.getRequirements().get(type), actionEnum, eitherResult, type, inTransaction);
+                eitherResult = validateCapabilityTypeExists(user, capabilityTypeOperation, resource, resource.getRequirements().get(type), actionEnum,
+                    eitherResult, type, inTransaction);
                 if (eitherResult.isRight()) {
                     return Either.right(eitherResult.right().value());
                 }
@@ -612,9 +565,8 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    protected Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user,
-                                                                           ICapabilityTypeOperation capabilityTypeOperation, Resource resource,
-                                                                           AuditingActionEnum actionEnum,
+    protected Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user, ICapabilityTypeOperation capabilityTypeOperation,
+                                                                           Resource resource, AuditingActionEnum actionEnum,
                                                                            Either<Boolean, ResponseFormat> eitherResult,
                                                                            Map.Entry<String, List<CapabilityDefinition>> typeEntry,
                                                                            boolean inTransaction) {
@@ -622,17 +574,13 @@ public class ServiceImportParseLogic {
             .getCapabilityType(typeEntry.getKey(), inTransaction);
         if (eitherCapTypeFound.isRight()) {
             if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
-                BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(
-                    CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", typeEntry.getKey());
-                log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB",
-                    typeEntry.getKey(), resource.getName());
                 BeEcompErrorManager.getInstance()
-                    .logBeDaoSystemError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES);
+                    .logBeGraphObjectMissingError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", typeEntry.getKey());
+                log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB", typeEntry.getKey(), resource.getName());
+                BeEcompErrorManager.getInstance().logBeDaoSystemError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES);
             }
-            log.debug("Trying to get capability type {} failed with error: {}", typeEntry.getKey(),
-                eitherCapTypeFound.right().value().name());
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE,
-                typeEntry.getKey());
+            log.debug("Trying to get capability type {} failed with error: {}", typeEntry.getKey(), eitherCapTypeFound.right().value().name());
+            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, typeEntry.getKey());
             eitherResult = Either.right(errorResponse);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
             return Either.right(eitherResult.right().value());
@@ -668,9 +616,8 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    protected Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user,
-                                                                           ICapabilityTypeOperation capabilityTypeOperation, Resource resource,
-                                                                           List<?> validationObjects,
+    protected Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user, ICapabilityTypeOperation capabilityTypeOperation,
+                                                                           Resource resource, List<?> validationObjects,
                                                                            AuditingActionEnum actionEnum,
                                                                            Either<Boolean, ResponseFormat> eitherResult, String type,
                                                                            boolean inTransaction) {
@@ -679,26 +626,21 @@ public class ServiceImportParseLogic {
                 .getCapabilityType(type, inTransaction);
             if (eitherCapTypeFound.isRight()) {
                 if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
-                    BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(
-                        CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", type);
-                    log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB", type,
-                        resource.getName());
                     BeEcompErrorManager.getInstance()
-                        .logBeDaoSystemError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES);
+                        .logBeGraphObjectMissingError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", type);
+                    log.debug("Capability Type: {} is required by resource: {} but does not exist in the DB", type, resource.getName());
+                    BeEcompErrorManager.getInstance().logBeDaoSystemError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES);
                 }
-                log.debug("Trying to get capability type {} failed with error: {}", type,
-                    eitherCapTypeFound.right().value().name());
+                log.debug("Trying to get capability type {} failed with error: {}", type, eitherCapTypeFound.right().value().name());
                 ResponseFormat errorResponse = null;
                 if (type != null) {
                     errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, type);
                 } else {
-                    errorResponse = componentsUtils.getResponseFormatByElement(ActionStatus.MISSING_CAPABILITY_TYPE,
-                        validationObjects);
+                    errorResponse = componentsUtils.getResponseFormatByElement(ActionStatus.MISSING_CAPABILITY_TYPE, validationObjects);
                 }
                 eitherResult = Either.right(errorResponse);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
             }
-
         } catch (Exception e) {
             log.debug("Exception occured when validateCapabilityTypeExists, error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE, resource.getName());
@@ -706,8 +648,8 @@ public class ServiceImportParseLogic {
         return eitherResult;
     }
 
-    protected Either<Boolean, ResponseFormat> validateResourceFieldsBeforeCreate(User user, Resource resource,
-                                                                                 AuditingActionEnum actionEnum, boolean inTransaction) {
+    protected Either<Boolean, ResponseFormat> validateResourceFieldsBeforeCreate(User user, Resource resource, AuditingActionEnum actionEnum,
+                                                                                 boolean inTransaction) {
         serviceBusinessLogic.validateComponentFieldsBeforeCreate(user, resource, actionEnum);
         // validate category
         log.debug("validate category");
@@ -736,22 +678,18 @@ public class ServiceImportParseLogic {
         if (currentCreatorFullName != null) {
             log.debug("Resource Creator fullname is automatically set and cannot be updated");
         }
-
         String currentLastUpdaterFullName = resource.getLastUpdaterFullName();
         if (currentLastUpdaterFullName != null) {
             log.debug("Resource LastUpdater fullname is automatically set and cannot be updated");
         }
-
         Long currentLastUpdateDate = resource.getLastUpdateDate();
         if (currentLastUpdateDate != null) {
             log.debug("Resource last update date is automatically set and cannot be updated");
         }
-
         Boolean currentAbstract = resource.isAbstract();
         if (currentAbstract != null) {
             log.debug("Resource abstract is automatically set and cannot be updated");
         }
-
         return Either.left(true);
     }
 
@@ -760,8 +698,7 @@ public class ServiceImportParseLogic {
             return;
         }
         String templateName = resource.getDerivedFrom().get(0);
-        Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
-            .validateToscaResourceNameExists(templateName);
+        Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateToscaResourceNameExists(templateName);
         if (dataModelResponse.isRight()) {
             StorageOperationStatus storageStatus = dataModelResponse.right().value();
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Create Resource - validateDerivedFromExist");
@@ -779,13 +716,11 @@ public class ServiceImportParseLogic {
         }
     }
 
-    protected void validateLicenseType(User user, Resource resource,
-                                       AuditingActionEnum actionEnum) {
+    protected void validateLicenseType(User user, Resource resource, AuditingActionEnum actionEnum) {
         log.debug("validate licenseType");
         String licenseType = resource.getLicenseType();
         if (licenseType != null) {
-            List<String> licenseTypes = ConfigurationManager.getConfigurationManager().getConfiguration()
-                .getLicenseTypes();
+            List<String> licenseTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getLicenseTypes();
             if (!licenseTypes.contains(licenseType)) {
                 log.debug("License type {} isn't configured", licenseType);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
@@ -813,19 +748,18 @@ public class ServiceImportParseLogic {
         if (org.apache.commons.lang.StringUtils.isNotEmpty(resourceVendorModelNumber)) {
             if (!ValidationUtils.validateResourceVendorModelNumberLength(resourceVendorModelNumber)) {
                 log.info("resource vendor model number exceeds limit.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(
-                    ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
+                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
                     "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
                 throw new ComponentException(ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
                     "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
             }
             // resource vendor model number is currently validated as vendor
+
             // name
             if (!ValidationUtils.validateVendorName(resourceVendorModelNumber)) {
                 log.info("resource vendor model number  is not valid.");
-                ResponseFormat errorResponse = componentsUtils
-                    .getResponseFormat(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
+                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
                 throw new ComponentException(ActionStatus.INVALID_RESOURCE_VENDOR_MODEL_NUMBER);
             }
@@ -841,7 +775,6 @@ public class ServiceImportParseLogic {
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
             throw new ComponentException(ActionStatus.MISSING_VENDOR_RELEASE);
         }
-
         validateVendorReleaseName(vendorRelease, user, resource, actionEnum);
     }
 
@@ -849,12 +782,11 @@ public class ServiceImportParseLogic {
         if (vendorRelease != null) {
             if (!ValidationUtils.validateVendorReleaseLength(vendorRelease)) {
                 log.info("vendor release exceds limit.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(
-                    ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
                 throw new ComponentException(ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
             }
-
             if (!ValidationUtils.validateVendorRelease(vendorRelease)) {
                 log.info("vendor release  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_RELEASE);
@@ -864,17 +796,14 @@ public class ServiceImportParseLogic {
         }
     }
 
-    protected void validateCategory(User user, Resource resource,
-                                    AuditingActionEnum actionEnum, boolean inTransaction) {
-
+    protected void validateCategory(User user, Resource resource, AuditingActionEnum actionEnum, boolean inTransaction) {
         List<CategoryDefinition> categories = resource.getCategories();
         if (CollectionUtils.isEmpty(categories)) {
             log.debug(CATEGORY_IS_EMPTY);
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY,
-                ComponentTypeEnum.RESOURCE.getValue());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
-                ComponentTypeEnum.RESOURCE.getValue());
+            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
         if (categories.size() > 1) {
             log.debug("Must be only one category for resource");
@@ -890,30 +819,26 @@ public class ServiceImportParseLogic {
             log.debug("Must be only one sub category for resource");
             throw new ComponentException(ActionStatus.RESOURCE_TOO_MUCH_SUBCATEGORIES);
         }
-
         SubCategoryDefinition subcategory = subcategories.get(0);
-
         if (!ValidationUtils.validateStringNotEmpty(category.getName())) {
             log.debug(CATEGORY_IS_EMPTY);
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY,
-                ComponentTypeEnum.RESOURCE.getValue());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
-                ComponentTypeEnum.RESOURCE.getValue());
+            throw new ComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
         if (!ValidationUtils.validateStringNotEmpty(subcategory.getName())) {
             log.debug(CATEGORY_IS_EMPTY);
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(
-                ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
             throw new ComponentException(ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
-
         validateCategoryListed(category, subcategory, user, resource, actionEnum, inTransaction);
     }
 
-    protected void validateCategoryListed(CategoryDefinition category, SubCategoryDefinition subcategory,
-                                          User user, Resource resource, AuditingActionEnum actionEnum, boolean inTransaction) {
+    protected void validateCategoryListed(CategoryDefinition category, SubCategoryDefinition subcategory, User user, Resource resource,
+                                          AuditingActionEnum actionEnum, boolean inTransaction) {
         ResponseFormat responseFormat;
         if (category != null && subcategory != null) {
             try {
@@ -927,24 +852,17 @@ public class ServiceImportParseLogic {
                     throw new ComponentException(categories.right().value());
                 }
                 List<CategoryDefinition> categoryList = categories.left().value();
-                Optional<CategoryDefinition> foundCategory = categoryList.stream()
-                    .filter(cat -> cat.getName().equals(category.getName()))
+                Optional<CategoryDefinition> foundCategory = categoryList.stream().filter(cat -> cat.getName().equals(category.getName()))
                     .findFirst();
                 if (!foundCategory.isPresent()) {
-                    log.debug(
-                        "Category {} is not part of resource category group. Resource category valid values are {}",
-                        category, categoryList);
+                    log.debug("Category {} is not part of resource category group. Resource category valid values are {}", category, categoryList);
                     failOnInvalidCategory(user, resource, actionEnum);
                 }
-                Optional<SubCategoryDefinition> foundSubcategory = foundCategory.get()
-                    .getSubcategories()
-                    .stream()
-                    .filter(subcat -> subcat.getName().equals(subcategory.getName()))
-                    .findFirst();
+                Optional<SubCategoryDefinition> foundSubcategory = foundCategory.get().getSubcategories().stream()
+                    .filter(subcat -> subcat.getName().equals(subcategory.getName())).findFirst();
                 if (!foundSubcategory.isPresent()) {
-                    log.debug(
-                        "SubCategory {} is not part of resource category group. Resource subcategory valid values are {}",
-                        subcategory, foundCategory.get().getSubcategories());
+                    log.debug("SubCategory {} is not part of resource category group. Resource subcategory valid values are {}", subcategory,
+                        foundCategory.get().getSubcategories());
                     failOnInvalidCategory(user, resource, actionEnum);
                 }
             } catch (Exception e) {
@@ -956,15 +874,12 @@ public class ServiceImportParseLogic {
 
     protected void failOnInvalidCategory(User user, Resource resource, AuditingActionEnum actionEnum) {
         ResponseFormat responseFormat;
-        responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY,
-            ComponentTypeEnum.RESOURCE.getValue());
+        responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-        throw new ComponentException(ActionStatus.COMPONENT_INVALID_CATEGORY,
-            ComponentTypeEnum.RESOURCE.getValue());
+        throw new ComponentException(ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
     }
 
-    protected void validateVendorName(User user, Resource resource,
-                                      AuditingActionEnum actionEnum) {
+    protected void validateVendorName(User user, Resource resource, AuditingActionEnum actionEnum) {
         String vendorName = resource.getVendorName();
         if (!ValidationUtils.validateStringNotEmpty(vendorName)) {
             log.info("vendor name is missing.");
@@ -975,18 +890,15 @@ public class ServiceImportParseLogic {
         validateVendorName(vendorName, user, resource, actionEnum);
     }
 
-    protected void validateVendorName(String vendorName, User user, Resource resource,
-                                      AuditingActionEnum actionEnum) {
+    protected void validateVendorName(String vendorName, User user, Resource resource, AuditingActionEnum actionEnum) {
         if (vendorName != null) {
             if (!ValidationUtils.validateVendorNameLength(vendorName)) {
                 log.info("vendor name exceds limit.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
-                    "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ComponentException(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
-                    "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
+                throw new ComponentException(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
             }
-
             if (!ValidationUtils.validateVendorName(vendorName)) {
                 log.info("vendor name  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_NAME);
@@ -996,8 +908,7 @@ public class ServiceImportParseLogic {
         }
     }
 
-    private Resource buildComplexVfcMetadata(Resource resourceVf, CsarInfo csarInfo, String nodeName,
-                                             Map<String, NodeTypeInfo> nodesInfo) {
+    private Resource buildComplexVfcMetadata(Resource resourceVf, CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
         Resource cvfc = new Resource();
         NodeTypeInfo nodeTypeInfo = nodesInfo.get(nodeName);
         cvfc.setName(buildCvfcName(csarInfo.getVfResourceName(), nodeName));
@@ -1013,15 +924,11 @@ public class ServiceImportParseLogic {
         cvfc.setVendorName(resourceVf.getVendorName());
         cvfc.setVendorRelease(resourceVf.getVendorRelease());
         cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());
-        cvfc.setToscaResourceName(
-            buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName)
-                .getLeft());
+        cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getLeft());
         cvfc.setInvariantUUID(UniqueIdBuilder.buildInvariantUUID());
-
         List<String> tags = new ArrayList<>();
         tags.add(cvfc.getName());
         cvfc.setTags(tags);
-
         CategoryDefinition category = new CategoryDefinition();
         category.setName(ImportUtils.Constants.ABSTRACT_CATEGORY_NAME);
         SubCategoryDefinition subCategory = new SubCategoryDefinition();
@@ -1030,17 +937,14 @@ public class ServiceImportParseLogic {
         List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(category);
         cvfc.setCategories(categories);
-
         cvfc.setVersion(ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION);
         cvfc.setLifecycleState(ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT);
         cvfc.setHighestVersion(ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
-
         return cvfc;
     }
 
     private String buildCvfcName(String resourceVfName, String nodeName) {
-        String nameWithouNamespacePrefix = nodeName
-            .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+        String nameWithouNamespacePrefix = nodeName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
         String[] findTypes = nameWithouNamespacePrefix.split("\\.");
         String resourceType = findTypes[0];
         String resourceName = resourceVfName + "-" + nameWithouNamespacePrefix.substring(resourceType.length() + 1);
@@ -1051,54 +955,43 @@ public class ServiceImportParseLogic {
         return resourceName + "VF";
     }
 
-    public UploadResourceInfo fillResourceMetadata(String yamlName, Resource resourceVf,
-                                                   String nodeName, User user) {
+    public UploadResourceInfo fillResourceMetadata(String yamlName, Resource resourceVf, String nodeName, User user) {
         UploadResourceInfo resourceMetaData = new UploadResourceInfo();
-
         // validate nodetype name prefix
         if (!nodeName.startsWith(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
-            log.debug("invalid nodeName:{} does not start with {}.", nodeName,
-                Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
-                yamlName, resourceMetaData.getName(), nodeName);
+            log.debug("invalid nodeName:{} does not start with {}.", nodeName, Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
+            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeName);
         }
-
         String actualName = this.getNodeTypeActualName(nodeName);
         String namePrefix = nodeName.replace(actualName, "");
         String resourceType = namePrefix.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
-
         // if we import from csar, the node_type name can be
+
         // org.openecomp.resource.abstract.node_name - in this case we always
+
         // create a vfc
         if (resourceType.equals(Constants.ABSTRACT)) {
             resourceType = ResourceTypeEnum.VFC.name().toLowerCase();
         }
         // validating type
         if (!ResourceTypeEnum.containsName(resourceType.toUpperCase())) {
-            log.debug("invalid resourceType:{} the type is not one of the valide types:{}.", resourceType.toUpperCase(),
-                ResourceTypeEnum.values());
-            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
-                yamlName, resourceMetaData.getName(), nodeName);
+            log.debug("invalid resourceType:{} the type is not one of the valide types:{}.", resourceType.toUpperCase(), ResourceTypeEnum.values());
+            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeName);
         }
-
         // Setting name
         resourceMetaData.setName(resourceVf.getSystemName() + actualName);
-
         // Setting type from name
         String type = resourceType.toUpperCase();
         resourceMetaData.setResourceType(type);
-
         resourceMetaData.setDescription(ImportUtils.Constants.INNER_VFC_DESCRIPTION);
         resourceMetaData.setIcon(ImportUtils.Constants.DEFAULT_ICON);
         resourceMetaData.setContactId(user.getUserId());
         resourceMetaData.setVendorName(resourceVf.getVendorName());
         resourceMetaData.setVendorRelease(resourceVf.getVendorRelease());
-
         // Setting tag
         List<String> tags = new ArrayList<>();
         tags.add(resourceMetaData.getName());
         resourceMetaData.setTags(tags);
-
         // Setting category
         CategoryDefinition category = new CategoryDefinition();
         category.setName(ImportUtils.Constants.ABSTRACT_CATEGORY_NAME);
@@ -1108,13 +1001,11 @@ public class ServiceImportParseLogic {
         List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(category);
         resourceMetaData.setCategories(categories);
-
         return resourceMetaData;
     }
 
     protected String getNodeTypeActualName(String fullName) {
-        String nameWithouNamespacePrefix = fullName
-            .substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+        String nameWithouNamespacePrefix = fullName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
         String[] findTypes = nameWithouNamespacePrefix.split("\\.");
         String resourceType = findTypes[0];
         return nameWithouNamespacePrefix.substring(resourceType.length());
@@ -1129,8 +1020,7 @@ public class ServiceImportParseLogic {
 
     public Either<RequirementDefinition, ResponseFormat> findAviableRequiremen(String regName, String yamlName,
                                                                                UploadComponentInstanceInfo uploadComponentInstanceInfo,
-                                                                               ComponentInstance currentCompInstance,
-                                                                               String capName) {
+                                                                               ComponentInstance currentCompInstance, String capName) {
         Map<String, List<RequirementDefinition>> comInstRegDefMap = currentCompInstance.getRequirements();
         List<RequirementDefinition> list = comInstRegDefMap.get(capName);
         RequirementDefinition validRegDef = null;
@@ -1138,8 +1028,7 @@ public class ServiceImportParseLogic {
             for (Map.Entry<String, List<RequirementDefinition>> entry : comInstRegDefMap.entrySet()) {
                 for (RequirementDefinition reqDef : entry.getValue()) {
                     if (reqDef.getName().equals(regName)) {
-                        if (reqDef.getMaxOccurrences() != null
-                            && !reqDef.getMaxOccurrences().equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
+                        if (reqDef.getMaxOccurrences() != null && !reqDef.getMaxOccurrences().equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
                             String leftOccurrences = reqDef.getLeftOccurrences();
                             if (leftOccurrences == null) {
                                 leftOccurrences = reqDef.getMaxOccurrences();
@@ -1157,7 +1046,6 @@ public class ServiceImportParseLogic {
                             validRegDef = reqDef;
                             break;
                         }
-
                     }
                 }
                 if (validRegDef != null) {
@@ -1167,8 +1055,7 @@ public class ServiceImportParseLogic {
         } else {
             for (RequirementDefinition reqDef : list) {
                 if (reqDef.getName().equals(regName)) {
-                    if (reqDef.getMaxOccurrences() != null
-                        && !reqDef.getMaxOccurrences().equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
+                    if (reqDef.getMaxOccurrences() != null && !reqDef.getMaxOccurrences().equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
                         String leftOccurrences = reqDef.getLeftOccurrences();
                         if (leftOccurrences == null) {
                             leftOccurrences = reqDef.getMaxOccurrences();
@@ -1190,18 +1077,18 @@ public class ServiceImportParseLogic {
             }
         }
         if (validRegDef == null) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE,
-                yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(),
+                    uploadComponentInstanceInfo.getType());
             return Either.right(responseFormat);
         }
         return Either.left(validRegDef);
     }
 
-    public CapabilityDefinition findAvailableCapabilityByTypeOrName(RequirementDefinition validReq,
-                                                                    ComponentInstance currentCapCompInstance, UploadReqInfo uploadReqInfo) {
+    public CapabilityDefinition findAvailableCapabilityByTypeOrName(RequirementDefinition validReq, ComponentInstance currentCapCompInstance,
+                                                                    UploadReqInfo uploadReqInfo) {
         try {
-            if (null == uploadReqInfo.getCapabilityName()
-                || validReq.getCapability().equals(uploadReqInfo.getCapabilityName())) {
+            if (null == uploadReqInfo.getCapabilityName() || validReq.getCapability().equals(uploadReqInfo.getCapabilityName())) {
                 // get by capability type
                 return findAvailableCapability(validReq, currentCapCompInstance);
             }
@@ -1216,11 +1103,9 @@ public class ServiceImportParseLogic {
         Map<String, List<CapabilityDefinition>> capMap = instance.getCapabilities();
         if (capMap.containsKey(validReq.getCapability())) {
             List<CapabilityDefinition> capList = capMap.get(validReq.getCapability());
-
             for (CapabilityDefinition cap : capList) {
                 if (isBoundedByOccurrences(cap)) {
-                    String leftOccurrences = cap.getLeftOccurrences() != null ?
-                        cap.getLeftOccurrences() : cap.getMaxOccurrences();
+                    String leftOccurrences = cap.getLeftOccurrences() != null ? cap.getLeftOccurrences() : cap.getMaxOccurrences();
                     int left = Integer.parseInt(leftOccurrences);
                     if (left > 0) {
                         --left;
@@ -1235,8 +1120,8 @@ public class ServiceImportParseLogic {
         return null;
     }
 
-    protected CapabilityDefinition findAvailableCapability(RequirementDefinition validReq,
-                                                           ComponentInstance currentCapCompInstance, UploadReqInfo uploadReqInfo) {
+    protected CapabilityDefinition findAvailableCapability(RequirementDefinition validReq, ComponentInstance currentCapCompInstance,
+                                                           UploadReqInfo uploadReqInfo) {
         CapabilityDefinition cap = null;
         Map<String, List<CapabilityDefinition>> capMap = currentCapCompInstance.getCapabilities();
         if (!capMap.containsKey(validReq.getCapability())) {
@@ -1248,16 +1133,13 @@ public class ServiceImportParseLogic {
             return null;
         }
         cap = capByName.get();
-
         if (isBoundedByOccurrences(cap)) {
             String leftOccurrences = cap.getLeftOccurrences();
             int left = Integer.parseInt(leftOccurrences);
             if (left > 0) {
                 --left;
                 cap.setLeftOccurrences(String.valueOf(left));
-
             }
-
         }
         return cap;
     }
@@ -1283,6 +1165,7 @@ public class ServiceImportParseLogic {
         parametersView.setIgnoreComponentInstances(false);
         parametersView.setIgnoreInputs(false);
         // inputs are read when creating
+
         // property values on instances
         parametersView.setIgnoreUsers(false);
         return parametersView;
@@ -1309,13 +1192,10 @@ public class ServiceImportParseLogic {
         if (isNotEmpty(defaultCapabilities.get(capabilityType).get(0).getProperties())) {
             defaultCapability = defaultCapabilities.get(capabilityType).get(0);
         } else {
-            Either<Component, StorageOperationStatus> getFullComponentRes = toscaOperationFacade
-                .getToscaFullElement(resourceId);
+            Either<Component, StorageOperationStatus> getFullComponentRes = toscaOperationFacade.getToscaFullElement(resourceId);
             if (getFullComponentRes.isRight()) {
-                log.debug("Failed to get full component {}. Status is {}. ", resourceId,
-                    getFullComponentRes.right().value());
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND,
-                    resourceId));
+                log.debug("Failed to get full component {}. Status is {}. ", resourceId, getFullComponentRes.right().value());
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND, resourceId));
             }
             defaultCapability = getFullComponentRes.left().value().getCapabilities().get(capabilityType).get(0);
         }
@@ -1323,33 +1203,27 @@ public class ServiceImportParseLogic {
     }
 
     protected void validateCapabilityProperties(List<UploadCapInfo> capabilities, String resourceId, CapabilityDefinition defaultCapability) {
-        if (CollectionUtils.isEmpty(defaultCapability.getProperties())
-            && isNotEmpty(capabilities.get(0).getProperties())) {
-            log.debug("Failed to validate capability {} of component {}. Property list is empty. ",
-                defaultCapability.getName(), resourceId);
-            log.debug(
-                "Failed to update capability property values. Property list of fetched capability {} is empty. ",
-                defaultCapability.getName());
+        if (CollectionUtils.isEmpty(defaultCapability.getProperties()) && isNotEmpty(capabilities.get(0).getProperties())) {
+            log.debug("Failed to validate capability {} of component {}. Property list is empty. ", defaultCapability.getName(), resourceId);
+            log.debug("Failed to update capability property values. Property list of fetched capability {} is empty. ", defaultCapability.getName());
             throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, resourceId));
         } else if (isNotEmpty(capabilities.get(0).getProperties())) {
             validateUniquenessUpdateUploadedComponentInstanceCapability(defaultCapability, capabilities.get(0));
         }
     }
 
-    protected void validateUniquenessUpdateUploadedComponentInstanceCapability(
-        CapabilityDefinition defaultCapability, UploadCapInfo uploadedCapability) {
+    protected void validateUniquenessUpdateUploadedComponentInstanceCapability(CapabilityDefinition defaultCapability,
+                                                                               UploadCapInfo uploadedCapability) {
         List<ComponentInstanceProperty> validProperties = new ArrayList<>();
         Map<String, PropertyDefinition> defaultProperties = defaultCapability.getProperties().stream()
-            .collect(toMap(PropertyDefinition::getName, Function
-                .identity()));
+            .collect(toMap(PropertyDefinition::getName, Function.identity()));
         List<UploadPropInfo> uploadedProperties = uploadedCapability.getProperties();
         for (UploadPropInfo property : uploadedProperties) {
             String propertyName = property.getName().toLowerCase();
             String propertyType = property.getType();
             ComponentInstanceProperty validProperty;
             if (defaultProperties.containsKey(propertyName) && propertTypeEqualsTo(defaultProperties, propertyName, propertyType)) {
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,
-                    propertyName));
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS, propertyName));
             }
             validProperty = new ComponentInstanceProperty();
             validProperty.setName(propertyName);
@@ -1381,15 +1255,14 @@ public class ServiceImportParseLogic {
             if (artifactMap == null) {
                 artifactMap = new HashMap<>();
             }
-            Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager()
-                .getConfiguration().getDeploymentResourceArtifacts();
+            Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
+                .getDeploymentResourceArtifacts();
             if (deploymentResourceArtifacts != null) {
                 Map<String, ArtifactDefinition> finalArtifactMap = artifactMap;
                 deploymentResourceArtifacts.forEach((k, v) -> processDeploymentResourceArtifacts(user, resource, finalArtifactMap, k, v));
             }
             resource.setDeploymentArtifacts(artifactMap);
         }
-
     }
 
     protected void processDeploymentResourceArtifacts(User user, Resource resource, Map<String, ArtifactDefinition> artifactMap, String k, Object v) {
@@ -1402,16 +1275,13 @@ public class ServiceImportParseLogic {
                 return;
             }
         } else {
-            log.info("resource types for artifact placeholder {} were not defined. default is all resources",
-                k);
+            log.info("resource types for artifact placeholder {} were not defined. default is all resources", k);
         }
         if (shouldCreateArtifact) {
             if (serviceBusinessLogic.artifactsBusinessLogic != null) {
-                ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-                    resource.getUniqueId(), k, (Map<String, Object>) v,
-                    user, ArtifactGroupTypeEnum.DEPLOYMENT);
-                if (artifactDefinition != null
-                    && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
+                ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic
+                    .createArtifactPlaceHolderInfo(resource.getUniqueId(), k, (Map<String, Object>) v, user, ArtifactGroupTypeEnum.DEPLOYMENT);
+                if (artifactDefinition != null && !artifactMap.containsKey(artifactDefinition.getArtifactLabel())) {
                     artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
                 }
             }
@@ -1419,25 +1289,19 @@ public class ServiceImportParseLogic {
     }
 
     public void mergeOldResourceMetadataWithNew(Resource oldResource, Resource newResource) {
-
         if (newResource.getTags() == null || newResource.getTags().isEmpty()) {
             newResource.setTags(oldResource.getTags());
         }
-
         if (newResource.getDescription() == null) {
             newResource.setDescription(oldResource.getDescription());
         }
-
         if (newResource.getContactId() == null) {
             newResource.setContactId(oldResource.getContactId());
         }
-
         newResource.setCategories(oldResource.getCategories());
-
     }
 
-    protected Resource buildComplexVfcMetadata(CsarInfo csarInfo, String nodeName,
-                                               Map<String, NodeTypeInfo> nodesInfo) {
+    protected Resource buildComplexVfcMetadata(CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
         Resource cvfc = new Resource();
         NodeTypeInfo nodeTypeInfo = nodesInfo.get(nodeName);
         cvfc.setName(buildCvfcName(csarInfo.getVfResourceName(), nodeName));
@@ -1453,15 +1317,11 @@ public class ServiceImportParseLogic {
         cvfc.setVendorName("cmri");
         cvfc.setVendorRelease("1.0");
         cvfc.setResourceVendorModelNumber("");
-        cvfc.setToscaResourceName(
-            buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName)
-                .getLeft());
+        cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getLeft());
         cvfc.setInvariantUUID(UniqueIdBuilder.buildInvariantUUID());
-
         List<String> tags = new ArrayList<>();
         tags.add(cvfc.getName());
         cvfc.setTags(tags);
-
         CategoryDefinition category = new CategoryDefinition();
         category.setName(ImportUtils.Constants.ABSTRACT_CATEGORY_NAME);
         SubCategoryDefinition subCategory = new SubCategoryDefinition();
@@ -1470,11 +1330,9 @@ public class ServiceImportParseLogic {
         List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(category);
         cvfc.setCategories(categories);
-
         cvfc.setVersion(ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION);
         cvfc.setLifecycleState(ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT);
         cvfc.setHighestVersion(ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
-
         return cvfc;
     }
 
@@ -1485,13 +1343,11 @@ public class ServiceImportParseLogic {
 
     private void validateDerivedFromNotEmpty(User user, Resource resource, AuditingActionEnum actionEnum) {
         log.debug("validate resource derivedFrom field");
-        if ((resource.getDerivedFrom() == null) || (resource.getDerivedFrom().isEmpty())
-            || (resource.getDerivedFrom().get(0)) == null || (resource.getDerivedFrom().get(0).trim().isEmpty())) {
+        if ((resource.getDerivedFrom() == null) || (resource.getDerivedFrom().isEmpty()) || (resource.getDerivedFrom().get(0)) == null || (resource
+            .getDerivedFrom().get(0).trim().isEmpty())) {
             log.info("derived from (template) field is missing for the resource");
-            ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
-
             throw new ComponentException(ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
         }
     }
@@ -1499,46 +1355,40 @@ public class ServiceImportParseLogic {
     public Service createInputsOnService(Service service, Map<String, InputDefinition> inputs) {
         List<InputDefinition> resourceProperties = service.getInputs();
         if (MapUtils.isNotEmpty(inputs) || isNotEmpty(resourceProperties)) {
-
-            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs,
-                service);
+            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, service);
             if (createInputs.isRight()) {
                 throw new ComponentException(createInputs.right().value());
             }
         } else {
             return service;
         }
-        Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade
-            .getToscaElement(service.getUniqueId());
+        Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
         if (updatedResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByComponent(
-                componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service, ComponentTypeEnum.SERVICE));
+            throw new ComponentException(componentsUtils
+                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
+                    ComponentTypeEnum.SERVICE));
         }
         return updatedResource.left().value();
     }
 
-
     public Service createServiceTransaction(Service service, User user, boolean isNormative) {
         // validate resource name uniqueness
         log.debug("validate resource name");
-        Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade.validateComponentNameExists(
-            service.getName(), null, service.getComponentType());
+        Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
+            .validateComponentNameExists(service.getName(), null, service.getComponentType());
         if (eitherValidation.isRight()) {
-            log.debug("Failed to validate component name {}. Status is {}. ", service.getName(),
-                eitherValidation.right().value());
+            log.debug("Failed to validate component name {}. Status is {}. ", service.getName(), eitherValidation.right().value());
             ResponseFormat errorResponse = componentsUtils
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
             throw new ComponentException(errorResponse);
         }
         if (eitherValidation.left().value()) {
             log.debug("resource with name: {}, already exists", service.getName());
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
-                ComponentTypeEnum.RESOURCE.getValue(), service.getName());
+            ResponseFormat errorResponse = componentsUtils
+                .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), service.getName());
             throw new ComponentException(errorResponse);
         }
-
         log.debug("send resource {} to dao for create", service.getName());
-
         createArtifactsPlaceHolderData(service, user);
         // enrich object
         if (!isNormative) {
@@ -1547,17 +1397,14 @@ public class ServiceImportParseLogic {
             service.setVersion(INITIAL_VERSION);
             service.setHighestVersion(true);
         }
-        return toscaOperationFacade.createToscaComponent(service)
-            .left()
-            .on(r -> throwComponentExceptionByResource(r, service));
+        return toscaOperationFacade.createToscaComponent(service).left().on(r -> throwComponentExceptionByResource(r, service));
     }
 
     public Service throwComponentExceptionByResource(StorageOperationStatus status, Service service) {
-        ResponseFormat responseFormat = componentsUtils.getResponseFormatByComponent(
-            componentsUtils.convertFromStorageResponse(status), service, ComponentTypeEnum.SERVICE);
+        ResponseFormat responseFormat = componentsUtils
+            .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(status), service, ComponentTypeEnum.SERVICE);
         throw new ComponentException(responseFormat);
     }
-
 
     protected void createArtifactsPlaceHolderData(Service service, User user) {
         setInformationalArtifactsPlaceHolder(service, user);
@@ -1567,40 +1414,34 @@ public class ServiceImportParseLogic {
 
     @SuppressWarnings("unchecked")
     protected void setInformationalArtifactsPlaceHolder(Service service, User user) {
-
         Map<String, ArtifactDefinition> artifactMap = service.getArtifacts();
         if (artifactMap == null) {
             artifactMap = new HashMap<>();
         }
         String resourceUniqueId = service.getUniqueId();
-        List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
-            .getExcludeResourceCategory();
-        List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration()
-            .getExcludeResourceType();
-        Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager()
-            .getConfiguration().getInformationalResourceArtifacts();
+        List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeResourceCategory();
+        List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeResourceType();
+        Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getInformationalResourceArtifacts();
         List<CategoryDefinition> categories = service.getCategories();
         boolean isCreateArtifact = true;
         if (exludeResourceCategory != null) {
             String category = categories.get(0).getName();
             isCreateArtifact = exludeResourceCategory.stream().noneMatch(e -> e.equalsIgnoreCase(category));
         }
-
         if (informationalResourceArtifacts != null && isCreateArtifact) {
             Set<String> keys = informationalResourceArtifacts.keySet();
             for (String informationalResourceArtifactName : keys) {
-                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts
-                    .get(informationalResourceArtifactName);
+                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts.get(informationalResourceArtifactName);
                 if (serviceBusinessLogic.artifactsBusinessLogic != null) {
-                    ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-                        resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
-                        ArtifactGroupTypeEnum.INFORMATIONAL);
+                    ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic
+                        .createArtifactPlaceHolderInfo(resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
+                            ArtifactGroupTypeEnum.INFORMATIONAL);
                     artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
                 }
             }
         }
         service.setArtifacts(artifactMap);
-
     }
 
     public void rollback(boolean inTransaction, Service service, List<ArtifactDefinition> createdArtifacts,
@@ -1615,48 +1456,40 @@ public class ServiceImportParseLogic {
     }
 
     public Map<String, Object> getNodeTypesFromTemplate(Map<String, Object> mappedToscaTemplate) {
-        return ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES)
-            .left().orValue(HashMap::new);
+        return ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES).left().orValue(HashMap::new);
     }
 
-    private Resource nodeForceCertification(Resource resource, User user,
-                                            LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock) {
-        return lifecycleBusinessLogic.forceResourceCertification(resource, user, lifecycleChangeInfo, inTransaction,
-            needLock);
+    private Resource nodeForceCertification(Resource resource, User user, LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction,
+                                            boolean needLock) {
+        return lifecycleBusinessLogic.forceResourceCertification(resource, user, lifecycleChangeInfo, inTransaction, needLock);
     }
 
-    private Resource nodeFullCertification(String uniqueId, User user,
-                                           LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock) {
+    private Resource nodeFullCertification(String uniqueId, User user, LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction,
+                                           boolean needLock) {
         Either<Resource, ResponseFormat> resourceResponse = lifecycleBusinessLogic
-            .changeState(uniqueId, user, LifeCycleTransitionEnum.CERTIFY, lifecycleChangeInfo,
-                inTransaction, needLock);
+            .changeState(uniqueId, user, LifeCycleTransitionEnum.CERTIFY, lifecycleChangeInfo, inTransaction, needLock);
         if (resourceResponse.isRight()) {
             throw new ByResponseFormatComponentException(resourceResponse.right().value());
         }
         return resourceResponse.left().value();
     }
 
-    public Either<Boolean, ResponseFormat> validateNestedDerivedFromDuringUpdate(Resource currentResource,
-                                                                                 Resource updateInfoResource, boolean hasBeenCertified) {
-
+    public Either<Boolean, ResponseFormat> validateNestedDerivedFromDuringUpdate(Resource currentResource, Resource updateInfoResource,
+                                                                                 boolean hasBeenCertified) {
         List<String> currentDerivedFrom = currentResource.getDerivedFrom();
         List<String> updatedDerivedFrom = updateInfoResource.getDerivedFrom();
-        if (currentDerivedFrom == null || currentDerivedFrom.isEmpty() || updatedDerivedFrom == null
-            || updatedDerivedFrom.isEmpty()) {
+        if (currentDerivedFrom == null || currentDerivedFrom.isEmpty() || updatedDerivedFrom == null || updatedDerivedFrom.isEmpty()) {
             log.trace("Update normative types");
             return Either.left(true);
         }
-
         String derivedFromCurrent = currentDerivedFrom.get(0);
         String derivedFromUpdated = updatedDerivedFrom.get(0);
-
         if (!derivedFromCurrent.equals(derivedFromUpdated)) {
             if (!hasBeenCertified) {
                 validateDerivedFromExist(null, updateInfoResource, null);
             } else {
-                Either<Boolean, ResponseFormat> validateDerivedFromExtending = validateDerivedFromExtending(null,
-                    currentResource, updateInfoResource, null);
-
+                Either<Boolean, ResponseFormat> validateDerivedFromExtending = validateDerivedFromExtending(null, currentResource, updateInfoResource,
+                    null);
                 if (validateDerivedFromExtending.isRight() || !validateDerivedFromExtending.left().value()) {
                     log.debug("Derived from cannot be updated if it doesnt inherits directly or extends inheritance");
                     return validateDerivedFromExtending;
@@ -1666,45 +1499,35 @@ public class ServiceImportParseLogic {
         return Either.left(true);
     }
 
-    protected Either<Boolean, ResponseFormat> validateDerivedFromExtending(User user, Resource currentResource,
-                                                                           Resource updateInfoResource, AuditingActionEnum actionEnum) {
+    protected Either<Boolean, ResponseFormat> validateDerivedFromExtending(User user, Resource currentResource, Resource updateInfoResource,
+                                                                           AuditingActionEnum actionEnum) {
         String currentTemplateName = currentResource.getDerivedFrom().get(0);
         String updatedTemplateName = updateInfoResource.getDerivedFrom().get(0);
-
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
             .validateToscaResourceNameExtends(currentTemplateName, updatedTemplateName);
         if (dataModelResponse.isRight()) {
             StorageOperationStatus storageStatus = dataModelResponse.right().value();
-            BeEcompErrorManager.getInstance()
-                .logBeDaoSystemError("Create/Update Resource - validateDerivingFromExtendingType");
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                componentsUtils.convertFromStorageResponse(storageStatus), currentResource);
+            BeEcompErrorManager.getInstance().logBeDaoSystemError("Create/Update Resource - validateDerivingFromExtendingType");
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus), currentResource);
             log.trace("audit before sending response");
             componentsUtils.auditResource(responseFormat, user, currentResource, actionEnum);
             return Either.right(responseFormat);
         }
-
         if (!dataModelResponse.left().value()) {
-            log.info("resource template with name {} does not inherit as original {}", updatedTemplateName,
-                currentTemplateName);
-            ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.PARENT_RESOURCE_DOES_NOT_EXTEND);
+            log.info("resource template with name {} does not inherit as original {}", updatedTemplateName, currentTemplateName);
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PARENT_RESOURCE_DOES_NOT_EXTEND);
             componentsUtils.auditResource(responseFormat, user, currentResource, actionEnum);
-
             return Either.right(responseFormat);
-
         }
         return Either.left(true);
     }
 
-    public void validateResourceFieldsBeforeUpdate(Resource currentResource, Resource updateInfoResource,
-                                                   boolean inTransaction, boolean isNested) {
+    public void validateResourceFieldsBeforeUpdate(Resource currentResource, Resource updateInfoResource, boolean inTransaction, boolean isNested) {
         validateFields(currentResource, updateInfoResource, inTransaction, isNested);
     }
 
-
     private void validateFields(Resource currentResource, Resource updateInfoResource, boolean inTransaction, boolean isNested) {
-
         boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentResource.getVersion());
         log.debug("validate resource name before update");
         validateResourceName(currentResource, updateInfoResource, hasBeenCertified, isNested);
@@ -1726,12 +1549,9 @@ public class ServiceImportParseLogic {
         }
         log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
         log.debug("validate category before update");
-
     }
 
-
-    protected void validateResourceName(Resource currentResource, Resource updateInfoResource,
-                                        boolean hasBeenCertified, boolean isNested) {
+    protected void validateResourceName(Resource currentResource, Resource updateInfoResource, boolean hasBeenCertified, boolean isNested) {
         String resourceNameUpdated = updateInfoResource.getName();
         if (!isResourceNameEquals(currentResource, updateInfoResource)) {
             if (isNested || !hasBeenCertified) {
@@ -1739,10 +1559,8 @@ public class ServiceImportParseLogic {
                 currentResource.setName(resourceNameUpdated);
                 currentResource.setNormalizedName(ValidationUtils.normaliseComponentName(resourceNameUpdated));
                 currentResource.setSystemName(ValidationUtils.convertToSystemName(resourceNameUpdated));
-
             } else {
-                log.info("Resource name: {}, cannot be updated once the resource has been certified once.",
-                    resourceNameUpdated);
+                log.info("Resource name: {}, cannot be updated once the resource has been certified once.", resourceNameUpdated);
                 throw new ComponentException(ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
             }
         }
@@ -1754,34 +1572,25 @@ public class ServiceImportParseLogic {
         if (resourceNameCurrent.equals(resourceNameUpdated)) {
             return true;
         }
-        return currentResource.getResourceType().equals(ResourceTypeEnum.VF) &&
-            resourceNameUpdated.equals(addCvfcSuffixToResourceName(resourceNameCurrent));
+        return currentResource.getResourceType().equals(ResourceTypeEnum.VF) && resourceNameUpdated
+            .equals(addCvfcSuffixToResourceName(resourceNameCurrent));
     }
 
-    public Resource prepareResourceForUpdate(Resource oldResource, Resource newResource, User user,
-                                             boolean inTransaction, boolean needLock) {
-
+    public Resource prepareResourceForUpdate(Resource oldResource, Resource newResource, User user, boolean inTransaction, boolean needLock) {
         if (!ComponentValidationUtils.canWorkOnResource(oldResource, user.getUserId())) {
             // checkout
-            return lifecycleBusinessLogic.changeState(
-                oldResource.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT,
-                new LifecycleChangeInfoWithAction("update by import"), inTransaction, needLock)
-                .left()
-                .on(response -> failOnChangeState(response, user, oldResource, newResource));
+            return lifecycleBusinessLogic
+                .changeState(oldResource.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT, new LifecycleChangeInfoWithAction("update by import"),
+                    inTransaction, needLock).left().on(response -> failOnChangeState(response, user, oldResource, newResource));
         }
         return oldResource;
     }
 
     protected Resource failOnChangeState(ResponseFormat response, User user, Resource oldResource, Resource newResource) {
         if (response.getRequestError() != null) {
-            log.info("resource {} cannot be updated. reason={}", oldResource.getUniqueId(),
-                response.getFormattedMessage());
-
+            log.info("resource {} cannot be updated. reason={}", oldResource.getUniqueId(), response.getFormattedMessage());
             componentsUtils.auditResource(response, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
-                ResourceVersionInfo.newBuilder()
-                    .state(oldResource.getLifecycleState().name())
-                    .version(oldResource.getVersion())
-                    .build());
+                ResourceVersionInfo.newBuilder().state(oldResource.getLifecycleState().name()).version(oldResource.getVersion()).build());
         }
         throw new ComponentException(response);
     }
@@ -1797,20 +1606,17 @@ public class ServiceImportParseLogic {
     public Resource createInputsOnResource(Resource resource, Map<String, InputDefinition> inputs) {
         List<InputDefinition> resourceProperties = resource.getInputs();
         if (MapUtils.isNotEmpty(inputs) || isNotEmpty(resourceProperties)) {
-
-            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs,
-                resource);
+            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, resource);
             if (createInputs.isRight()) {
                 throw new ComponentException(createInputs.right().value());
             }
         } else {
             return resource;
         }
-        Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade
-            .getToscaElement(resource.getUniqueId());
+        Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
         if (updatedResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByResource(
-                componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
+            throw new ComponentException(
+                componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
         }
         return updatedResource.left().value();
     }
@@ -1830,25 +1636,18 @@ public class ServiceImportParseLogic {
         if (isNotEmpty(groupsToCreate)) {
             fillGroupsFinalFields(groupsToCreate);
             if (isNotEmpty(groupsFromResource)) {
-                serviceBusinessLogic.groupBusinessLogic.addGroups(resource,
-                    groupsToCreate, true)
-                    .left()
+                serviceBusinessLogic.groupBusinessLogic.addGroups(resource, groupsToCreate, true).left()
                     .on(serviceBusinessLogic::throwComponentException);
             } else {
-                serviceBusinessLogic.groupBusinessLogic.createGroups(resource,
-                    groupsToCreate, true)
-                    .left()
+                serviceBusinessLogic.groupBusinessLogic.createGroups(resource, groupsToCreate, true).left()
                     .on(serviceBusinessLogic::throwComponentException);
             }
         }
         if (isNotEmpty(groupsToDelete)) {
-            serviceBusinessLogic.groupBusinessLogic.deleteGroups(resource, groupsToDelete)
-                .left()
-                .on(serviceBusinessLogic::throwComponentException);
+            serviceBusinessLogic.groupBusinessLogic.deleteGroups(resource, groupsToDelete).left().on(serviceBusinessLogic::throwComponentException);
         }
         if (isNotEmpty(groupsToUpdate)) {
-            serviceBusinessLogic.groupBusinessLogic.updateGroups(resource, groupsToUpdate, true)
-                .left()
+            serviceBusinessLogic.groupBusinessLogic.updateGroups(resource, groupsToUpdate, true).left()
                 .on(serviceBusinessLogic::throwComponentException);
         }
     }
@@ -1856,8 +1655,8 @@ public class ServiceImportParseLogic {
     protected void addGroupsToCreateOrUpdate(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList,
                                              List<GroupDefinition> groupsToUpdate, List<GroupDefinition> groupsToCreate) {
         for (GroupDefinition group : groupsAsList) {
-            Optional<GroupDefinition> op = groupsFromResource.stream()
-                .filter(p -> p.getInvariantName().equalsIgnoreCase(group.getInvariantName())).findAny();
+            Optional<GroupDefinition> op = groupsFromResource.stream().filter(p -> p.getInvariantName().equalsIgnoreCase(group.getInvariantName()))
+                .findAny();
             if (op.isPresent()) {
                 GroupDefinition groupToUpdate = op.get();
                 groupToUpdate.setMembers(group.getMembers());
@@ -1873,8 +1672,7 @@ public class ServiceImportParseLogic {
     protected void addGroupsToDelete(List<GroupDefinition> groupsFromResource, List<GroupDefinition> groupsAsList,
                                      List<GroupDefinition> groupsToDelete) {
         for (GroupDefinition group : groupsFromResource) {
-            Optional<GroupDefinition> op = groupsAsList.stream()
-                .filter(p -> p.getName().equalsIgnoreCase(group.getName())).findAny();
+            Optional<GroupDefinition> op = groupsAsList.stream().filter(p -> p.getName().equalsIgnoreCase(group.getName())).findAny();
             if (!op.isPresent() && (group.getArtifacts() == null || group.getArtifacts().isEmpty())) {
                 groupsToDelete.add(group);
             }
@@ -1882,10 +1680,8 @@ public class ServiceImportParseLogic {
     }
 
     protected List<GroupDefinition> updateGroupsMembersUsingResource(Map<String, GroupDefinition> groups, Service component) {
-
         List<GroupDefinition> result = new ArrayList<>();
         List<ComponentInstance> componentInstances = component.getComponentInstances();
-
         if (groups != null) {
             Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies = validateCyclicGroupsDependencies(groups);
             if (validateCyclicGroupsDependencies.isRight()) {
@@ -1909,42 +1705,35 @@ public class ServiceImportParseLogic {
     public void updateGroupMembers(Map<String, GroupDefinition> groups, GroupDefinition updatedGroupDefinition, Service component,
                                    List<ComponentInstance> componentInstances, String groupName, Map<String, String> members) {
         Set<String> compInstancesNames = members.keySet();
-
         if (CollectionUtils.isEmpty(componentInstances)) {
             String membersAstString = compInstancesNames.stream().collect(joining(","));
-            log.debug("The members: {}, in group: {}, cannot be found in component {}. There are no component instances.",
-                membersAstString, groupName, component.getNormalizedName());
-            throw new ComponentException(componentsUtils.getResponseFormat(
-                ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
-                component.getNormalizedName(), getComponentTypeForResponse(component)));
+            log.debug("The members: {}, in group: {}, cannot be found in component {}. There are no component instances.", membersAstString,
+                groupName, component.getNormalizedName());
+            throw new ComponentException(componentsUtils
+                .getResponseFormat(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName, component.getNormalizedName(),
+                    getComponentTypeForResponse(component)));
         }
         // Find all component instances with the member names
-        Map<String, String> memberNames = componentInstances.stream()
-            .collect(toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
+        Map<String, String> memberNames = componentInstances.stream().collect(toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
         memberNames.putAll(groups.keySet().stream().collect(toMap(g -> g, g -> "")));
-        Map<String, String> relevantInstances = memberNames.entrySet().stream()
-            .filter(n -> compInstancesNames.contains(n.getKey()))
+        Map<String, String> relevantInstances = memberNames.entrySet().stream().filter(n -> compInstancesNames.contains(n.getKey()))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-
         if (relevantInstances == null || relevantInstances.size() != compInstancesNames.size()) {
-
             List<String> foundMembers = new ArrayList<>();
             if (relevantInstances != null) {
                 foundMembers = relevantInstances.keySet().stream().collect(toList());
             }
             compInstancesNames.removeAll(foundMembers);
             String membersAstString = compInstancesNames.stream().collect(joining(","));
-            log.debug("The members: {}, in group: {}, cannot be found in component: {}", membersAstString,
-                groupName, component.getNormalizedName());
-            throw new ComponentException(componentsUtils.getResponseFormat(
-                ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
-                component.getNormalizedName(), getComponentTypeForResponse(component)));
+            log.debug("The members: {}, in group: {}, cannot be found in component: {}", membersAstString, groupName, component.getNormalizedName());
+            throw new ComponentException(componentsUtils
+                .getResponseFormat(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName, component.getNormalizedName(),
+                    getComponentTypeForResponse(component)));
         }
         updatedGroupDefinition.setMembers(relevantInstances);
     }
 
     public Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies(Map<String, GroupDefinition> allGroups) {
-
         Either<Boolean, ResponseFormat> result = Either.left(true);
         try {
             Iterator<Map.Entry<String, GroupDefinition>> allGroupsItr = allGroups.entrySet().iterator();
@@ -1957,8 +1746,7 @@ public class ServiceImportParseLogic {
                 fillAllGroupMemebersRecursivly(groupAEntry.getKey(), allGroups, allGroupAMembersNames);
                 // If A is a group member of itself found cyclic dependency
                 if (allGroupAMembersNames.contains(groupAName)) {
-                    ResponseFormat responseFormat = componentsUtils
-                        .getResponseFormat(ActionStatus.GROUP_HAS_CYCLIC_DEPENDENCY, groupAName);
+                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GROUP_HAS_CYCLIC_DEPENDENCY, groupAName);
                     result = Either.right(responseFormat);
                 }
             }
@@ -1970,9 +1758,7 @@ public class ServiceImportParseLogic {
         return result;
     }
 
-    protected void fillAllGroupMemebersRecursivly(String groupName, Map<String, GroupDefinition> allGroups,
-                                                  Set<String> allGroupMembers) {
-
+    protected void fillAllGroupMemebersRecursivly(String groupName, Map<String, GroupDefinition> allGroups, Set<String> allGroupMembers) {
         // Found Cyclic dependency
         if (isfillGroupMemebersRecursivlyStopCondition(groupName, allGroups, allGroupMembers)) {
             return;
@@ -1981,6 +1767,7 @@ public class ServiceImportParseLogic {
         // All Members Of Current Group Resource Instances & Other Groups
         Set<String> currGroupMembers = groupDefinition.getMembers().keySet();
         // Filtered Members Of Current Group containing only members which
+
         // are groups
         List<String> currGroupFilteredMembers = currGroupMembers.stream().
             // Keep Only Elements of type group and not Resource Instances
@@ -1989,7 +1776,6 @@ public class ServiceImportParseLogic {
                 peek(allGroupMembers::add).
             // Collect results
                 collect(toList());
-
         // Recursively call the method for all the filtered group members
         for (String innerGroupName : currGroupFilteredMembers) {
             fillAllGroupMemebersRecursivly(innerGroupName, allGroups, allGroupMembers);
@@ -2000,83 +1786,65 @@ public class ServiceImportParseLogic {
                                                                             boolean isInTransaction, boolean needLock,
                                                                             Map<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
                                                                             List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
-                                                                            boolean forceCertificationAllowed, CsarInfo csarInfo,
-                                                                            String nodeName, boolean isNested) {
-
+                                                                            boolean forceCertificationAllowed, CsarInfo csarInfo, String nodeName,
+                                                                            boolean isNested) {
         LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction(CERTIFICATION_ON_IMPORT,
             LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR);
-
-        Function<Resource, Boolean> validator = resource -> validateResourceCreationFromNodeType(
-            resource, creator);
-
-        return resourceImportManager.importCertifiedResource(nodeTypeYaml, resourceMetaData, creator, validator,
-            lifecycleChangeInfo, isInTransaction, true, needLock, nodeTypeArtifactsToHandle,
-            nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeName, isNested);
+        Function<Resource, Boolean> validator = resource -> validateResourceCreationFromNodeType(resource, creator);
+        return resourceImportManager
+            .importCertifiedResource(nodeTypeYaml, resourceMetaData, creator, validator, lifecycleChangeInfo, isInTransaction, true, needLock,
+                nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeName, isNested);
     }
 
-    public ImmutablePair<Resource, ActionStatus> createNodeTypeResourceFromYaml(
-        String yamlName, Map.Entry<String, Object> nodeNameValue, User user, Map<String, Object> mapToConvert,
-        Service resourceVf, boolean needLock,
-        Map<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
-        List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo,
-        boolean isNested) {
-
+    public ImmutablePair<Resource, ActionStatus> createNodeTypeResourceFromYaml(String yamlName, Map.Entry<String, Object> nodeNameValue, User user,
+                                                                                Map<String, Object> mapToConvert, Service resourceVf,
+                                                                                boolean needLock,
+                                                                                Map<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
+                                                                                List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
+                                                                                boolean forceCertificationAllowed, CsarInfo csarInfo,
+                                                                                boolean isNested) {
         UploadResourceInfo resourceMetaData = fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
-
-        String singleVfcYaml = buildNodeTypeYaml(nodeNameValue, mapToConvert,
-            resourceMetaData.getResourceType(), csarInfo);
+        String singleVfcYaml = buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.getResourceType(), csarInfo);
         user = serviceBusinessLogic.validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE, true);
-        return createResourceFromNodeType(singleVfcYaml, resourceMetaData, user, true, needLock,
-            nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo,
-            nodeNameValue.getKey(), isNested);
+        return createResourceFromNodeType(singleVfcYaml, resourceMetaData, user, true, needLock, nodeTypeArtifactsToHandle,
+            nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeNameValue.getKey(), isNested);
     }
 
-    protected UploadResourceInfo fillResourceMetadata(String yamlName, Service resourceVf,
-                                                      String nodeName, User user) {
+    protected UploadResourceInfo fillResourceMetadata(String yamlName, Service resourceVf, String nodeName, User user) {
         UploadResourceInfo resourceMetaData = new UploadResourceInfo();
-
         // validate nodetype name prefix
         if (!nodeName.startsWith(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
-            log.debug("invalid nodeName:{} does not start with {}.", nodeName,
-                Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
-                yamlName, resourceMetaData.getName(), nodeName);
+            log.debug("invalid nodeName:{} does not start with {}.", nodeName, Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
+            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeName);
         }
-
         String actualName = this.getNodeTypeActualName(nodeName);
         String namePrefix = nodeName.replace(actualName, "");
         String resourceType = namePrefix.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
-
         // if we import from csar, the node_type name can be
+
         // org.openecomp.resource.abstract.node_name - in this case we always
+
         // create a vfc
         if (resourceType.equals(Constants.ABSTRACT)) {
             resourceType = ResourceTypeEnum.VFC.name().toLowerCase();
         }
         // validating type
         if (!ResourceTypeEnum.containsName(resourceType.toUpperCase())) {
-            log.debug("invalid resourceType:{} the type is not one of the valide types:{}.", resourceType.toUpperCase(),
-                ResourceTypeEnum.values());
-            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE,
-                yamlName, resourceMetaData.getName(), nodeName);
+            log.debug("invalid resourceType:{} the type is not one of the valide types:{}.", resourceType.toUpperCase(), ResourceTypeEnum.values());
+            throw new ComponentException(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeName);
         }
-
         // Setting name
         resourceMetaData.setName(resourceVf.getSystemName() + actualName);
-
         // Setting type from name
         String type = resourceType.toUpperCase();
         resourceMetaData.setResourceType(type);
-
         resourceMetaData.setDescription(ImportUtils.Constants.INNER_VFC_DESCRIPTION);
         resourceMetaData.setIcon(ImportUtils.Constants.DEFAULT_ICON);
         resourceMetaData.setContactId(user.getUserId());
-
         // Setting tag
         List<String> tags = new ArrayList<>();
         tags.add(resourceMetaData.getName());
         resourceMetaData.setTags(tags);
-
         // Setting category
         CategoryDefinition category = new CategoryDefinition();
         category.setName(ImportUtils.Constants.ABSTRACT_CATEGORY_NAME);
@@ -2086,24 +1854,20 @@ public class ServiceImportParseLogic {
         List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(category);
         resourceMetaData.setCategories(categories);
-
         return resourceMetaData;
     }
 
-
-    public Resource propagateStateToCertified(User user, Resource resource,
-                                              LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock,
-                                              boolean forceCertificationAllowed) {
-
+    public Resource propagateStateToCertified(User user, Resource resource, LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction,
+                                              boolean needLock, boolean forceCertificationAllowed) {
         Either<Resource, ResponseFormat> result = null;
         try {
-            if (resource.getLifecycleState() != LifecycleStateEnum.CERTIFIED && forceCertificationAllowed
-                && lifecycleBusinessLogic.isFirstCertification(resource.getVersion())) {
+            if (resource.getLifecycleState() != LifecycleStateEnum.CERTIFIED && forceCertificationAllowed && lifecycleBusinessLogic
+                .isFirstCertification(resource.getVersion())) {
                 nodeForceCertification(resource, user, lifecycleChangeInfo, inTransaction, needLock);
             }
             if (resource.getLifecycleState() == LifecycleStateEnum.CERTIFIED) {
-                Either<ArtifactDefinition, Operation> eitherPopulated = serviceBusinessLogic.populateToscaArtifacts(
-                    resource, user, false, inTransaction, needLock);
+                Either<ArtifactDefinition, Operation> eitherPopulated = serviceBusinessLogic
+                    .populateToscaArtifacts(resource, user, false, inTransaction, needLock);
                 return resource;
             }
             return nodeFullCertification(resource.getUniqueId(), user, lifecycleChangeInfo, inTransaction, needLock);
@@ -2122,14 +1886,11 @@ public class ServiceImportParseLogic {
         }
     }
 
-    public Resource buildValidComplexVfc(CsarInfo csarInfo, String nodeName,
-                                         Map<String, NodeTypeInfo> nodesInfo) {
-
+    public Resource buildValidComplexVfc(CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
         Resource complexVfc = buildComplexVfcMetadata(csarInfo, nodeName, nodesInfo);
         log.debug("************* Going to validate complex VFC from yaml {}", complexVfc.getName());
         csarInfo.addNodeToQueue(nodeName);
-        return validateResourceBeforeCreate(complexVfc, csarInfo.getModifier(),
-            AuditingActionEnum.IMPORT_RESOURCE, true, csarInfo);
+        return validateResourceBeforeCreate(complexVfc, csarInfo.getModifier(), AuditingActionEnum.IMPORT_RESOURCE, true, csarInfo);
     }
 
     public Resource updateGroupsOnResource(Resource resource, Map<String, GroupDefinition> groups) {
@@ -2138,28 +1899,24 @@ public class ServiceImportParseLogic {
         } else {
             updateOrCreateGroups(resource, groups);
         }
-        Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade
-            .getToscaElement(resource.getUniqueId());
+        Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
         if (updatedResource.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormatByResource(
-                componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
+            throw new ComponentException(
+                componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource));
         }
         return updatedResource.left().value();
     }
 
     protected void setInformationalArtifactsPlaceHolder(Resource resource, User user) {
-
         Map<String, ArtifactDefinition> artifactMap = resource.getArtifacts();
         if (artifactMap == null) {
             artifactMap = new HashMap<>();
         }
         String resourceUniqueId = resource.getUniqueId();
-        List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration()
-            .getExcludeResourceCategory();
-        List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration()
-            .getExcludeResourceType();
-        Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager()
-            .getConfiguration().getInformationalResourceArtifacts();
+        List<String> exludeResourceCategory = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeResourceCategory();
+        List<String> exludeResourceType = ConfigurationManager.getConfigurationManager().getConfiguration().getExcludeResourceType();
+        Map<String, Object> informationalResourceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getInformationalResourceArtifacts();
         List<CategoryDefinition> categories = resource.getCategories();
         boolean isCreateArtifact = true;
         if (exludeResourceCategory != null) {
@@ -2173,18 +1930,16 @@ public class ServiceImportParseLogic {
         if (informationalResourceArtifacts != null && isCreateArtifact) {
             Set<String> keys = informationalResourceArtifacts.keySet();
             for (String informationalResourceArtifactName : keys) {
-                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts
-                    .get(informationalResourceArtifactName);
+                Map<String, Object> artifactInfoMap = (Map<String, Object>) informationalResourceArtifacts.get(informationalResourceArtifactName);
                 if (serviceBusinessLogic.artifactsBusinessLogic != null) {
-                    ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic.createArtifactPlaceHolderInfo(
-                        resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
-                        ArtifactGroupTypeEnum.INFORMATIONAL);
+                    ArtifactDefinition artifactDefinition = serviceBusinessLogic.artifactsBusinessLogic
+                        .createArtifactPlaceHolderInfo(resourceUniqueId, informationalResourceArtifactName, artifactInfoMap, user,
+                            ArtifactGroupTypeEnum.INFORMATIONAL);
                     artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
                 }
             }
         }
         resource.setArtifacts(artifactMap);
-
     }
 
     public void rollback(boolean inTransaction, Resource resource, List<ArtifactDefinition> createdArtifacts,
@@ -2207,10 +1962,7 @@ public class ServiceImportParseLogic {
     public void handleGroupsProperties(Service service, Map<String, GroupDefinition> groups) {
         List<InputDefinition> inputs = service.getInputs();
         if (MapUtils.isNotEmpty(groups)) {
-            groups.values()
-                .stream()
-                .filter(g -> isNotEmpty(g.getProperties()))
-                .flatMap(g -> g.getProperties().stream())
+            groups.values().stream().filter(g -> isNotEmpty(g.getProperties())).flatMap(g -> g.getProperties().stream())
                 .forEach(p -> handleGetInputs(p, inputs));
         }
     }
@@ -2218,10 +1970,7 @@ public class ServiceImportParseLogic {
     public void handleGroupsProperties(Resource resource, Map<String, GroupDefinition> groups) {
         List<InputDefinition> inputs = resource.getInputs();
         if (MapUtils.isNotEmpty(groups)) {
-            groups.values()
-                .stream()
-                .filter(g -> isNotEmpty(g.getProperties()))
-                .flatMap(g -> g.getProperties().stream())
+            groups.values().stream().filter(g -> isNotEmpty(g.getProperties())).flatMap(g -> g.getProperties().stream())
                 .forEach(p -> handleGetInputs(p, inputs));
         }
     }
@@ -2230,10 +1979,8 @@ public class ServiceImportParseLogic {
         if (isNotEmpty(property.getGetInputValues())) {
             if (inputs == null || inputs.isEmpty()) {
                 log.debug("Failed to add property {} to group. Inputs list is empty ", property);
-                serviceBusinessLogic.rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, property.getGetInputValues()
-                    .stream()
-                    .map(GetInputValueDataDefinition::getInputName)
-                    .collect(toList()).toString());
+                serviceBusinessLogic.rollbackWithException(ActionStatus.INPUTS_NOT_FOUND,
+                    property.getGetInputValues().stream().map(GetInputValueDataDefinition::getInputName).collect(toList()).toString());
             }
             ListIterator<GetInputValueDataDefinition> getInputValuesIter = property.getGetInputValues().listIterator();
             while (getInputValuesIter.hasNext()) {
@@ -2251,9 +1998,7 @@ public class ServiceImportParseLogic {
     }
 
     public InputDefinition findInputByName(List<InputDefinition> inputs, GetInputValueDataDefinition getInput) {
-        Optional<InputDefinition> inputOpt = inputs.stream()
-            .filter(p -> p.getName().equals(getInput.getInputName()))
-            .findFirst();
+        Optional<InputDefinition> inputOpt = inputs.stream().filter(p -> p.getName().equals(getInput.getInputName())).findFirst();
         if (!inputOpt.isPresent()) {
             log.debug("#findInputByName - Failed to find the input {} ", getInput.getInputName());
             serviceBusinessLogic.rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, getInput.getInputName());
@@ -2267,10 +2012,9 @@ public class ServiceImportParseLogic {
             Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addPropToInst = toscaOperationFacade
                 .associateComponentInstancePropertiesToComponent(instProperties, resource.getUniqueId());
             if (addPropToInst.isRight()) {
-                log.debug("failed to associate properties of resource {} status is {}", resource.getUniqueId(),
-                    addPropToInst.right().value());
-                throw new ComponentException(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
+                log.debug("failed to associate properties of resource {} status is {}", resource.getUniqueId(), addPropToInst.right().value());
+                throw new ComponentException(
+                    componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
             }
         } catch (Exception e) {
             log.debug("Exception occured when findNodeTypeArtifactsToHandle, error is:{}", e.getMessage());
@@ -2284,71 +2028,55 @@ public class ServiceImportParseLogic {
             Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> addInputToInst = toscaOperationFacade
                 .associateComponentInstanceInputsToComponent(instInputs, resource.getUniqueId());
             if (addInputToInst.isRight()) {
-                log.debug("failed to associate inputs value of resource {} status is {}", resource.getUniqueId(),
-                    addInputToInst.right().value());
-                throw new ComponentException(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
+                log.debug("failed to associate inputs value of resource {} status is {}", resource.getUniqueId(), addInputToInst.right().value());
+                throw new ComponentException(
+                    componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
             }
         }
     }
 
     public void associateDeploymentArtifactsToInstances(User user, String yamlName, Resource resource,
                                                         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts) {
-        StorageOperationStatus addArtToInst = toscaOperationFacade
-            .associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource, user);
+        StorageOperationStatus addArtToInst = toscaOperationFacade.associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource, user);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
     public void associateArtifactsToInstances(String yamlName, Resource resource, Map<String, Map<String, ArtifactDefinition>> instArtifacts) {
-
         StorageOperationStatus addArtToInst;
-
         addArtToInst = toscaOperationFacade.associateArtifactsToInstances(instArtifacts, resource);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
     public void associateOrAddCalculatedCapReq(String yamlName, Resource resource,
                                                Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities,
                                                Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements) {
-
         StorageOperationStatus addArtToInst;
-        addArtToInst = toscaOperationFacade.associateOrAddCalculatedCapReq(instCapabilities, instRequirements,
-            resource);
+        addArtToInst = toscaOperationFacade.associateOrAddCalculatedCapReq(instCapabilities, instRequirements, resource);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate cap and req of resource {} status is {}", resource.getUniqueId(),
-                addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            log.debug("failed to associate cap and req of resource {} status is {}", resource.getUniqueId(), addArtToInst);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
     public void associateInstAttributeToComponentToInstances(String yamlName, Resource resource,
                                                              Map<String, List<AttributeDefinition>> instAttributes) {
-
         StorageOperationStatus addArtToInst;
-        addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,
-            resource);
+        addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes, resource);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
-                addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(), addArtToInst);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
     public Resource getResourceAfterCreateRelations(Resource resource) {
         ComponentParametersView parametersView = getComponentFilterAfterCreateRelations();
-        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade
-            .getToscaElement(resource.getUniqueId(), parametersView);
-
+        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(resource.getUniqueId(), parametersView);
         if (eitherGetResource.isRight()) {
             throwComponentExceptionByResource(eitherGetResource.right().value(), resource);
         }
@@ -2356,8 +2084,7 @@ public class ServiceImportParseLogic {
     }
 
     public Resource throwComponentExceptionByResource(StorageOperationStatus status, Resource resource) {
-        ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-            componentsUtils.convertFromStorageResponse(status), resource);
+        ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(status), resource);
         throw new ComponentException(responseFormat);
     }
 
@@ -2380,10 +2107,9 @@ public class ServiceImportParseLogic {
         }
     }
 
-    public Map<String, List<CapabilityDefinition>> getValidComponentInstanceCapabilities(
-        String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities,
-        Map<String, List<UploadCapInfo>> uploadedCapabilities) {
-
+    public Map<String, List<CapabilityDefinition>> getValidComponentInstanceCapabilities(String resourceId,
+                                                                                         Map<String, List<CapabilityDefinition>> defaultCapabilities,
+                                                                                         Map<String, List<UploadCapInfo>> uploadedCapabilities) {
         Map<String, List<CapabilityDefinition>> validCapabilitiesMap = new HashMap<>();
         uploadedCapabilities.forEach((k, v) -> addValidComponentInstanceCapabilities(k, v, resourceId, defaultCapabilities, validCapabilitiesMap));
         return validCapabilitiesMap;
@@ -2394,10 +2120,9 @@ public class ServiceImportParseLogic {
             Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> addInputToInst = toscaOperationFacade
                 .associateComponentInstanceInputsToComponent(instInputs, service.getUniqueId());
             if (addInputToInst.isRight()) {
-                log.debug("failed to associate inputs value of resource {} status is {}", service.getUniqueId(),
-                    addInputToInst.right().value());
-                throw new ComponentException(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
+                log.debug("failed to associate inputs value of resource {} status is {}", service.getUniqueId(), addInputToInst.right().value());
+                throw new ComponentException(
+                    componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
             }
         }
     }
@@ -2407,30 +2132,26 @@ public class ServiceImportParseLogic {
         Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addPropToInst = toscaOperationFacade
             .associateComponentInstancePropertiesToComponent(instProperties, service.getUniqueId());
         if (addPropToInst.isRight()) {
-            throw new ComponentException(componentsUtils.getResponseFormat(
-                componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
+            throw new ComponentException(
+                componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addPropToInst.right().value()), yamlName));
         }
     }
 
     public void associateDeploymentArtifactsToInstances(User user, String yamlName, Service resource,
                                                         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts) {
-        StorageOperationStatus addArtToInst = toscaOperationFacade
-            .associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource, user);
+        StorageOperationStatus addArtToInst = toscaOperationFacade.associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource, user);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
     public void associateArtifactsToInstances(String yamlName, Service resource, Map<String, Map<String, ArtifactDefinition>> instArtifacts) {
         StorageOperationStatus addArtToInst;
-
         addArtToInst = toscaOperationFacade.associateArtifactsToInstances(instArtifacts, resource);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
             log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
@@ -2438,86 +2159,66 @@ public class ServiceImportParseLogic {
                                                Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities,
                                                Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements) {
         StorageOperationStatus addArtToInst;
-        addArtToInst = toscaOperationFacade.associateOrAddCalculatedCapReq(instCapabilities, instRequirements,
-            resource);
-        log.debug("enter associateOrAddCalculatedCapReq,get instCapabilities:{},get instRequirements:{}",
-            instCapabilities, instRequirements);
+        addArtToInst = toscaOperationFacade.associateOrAddCalculatedCapReq(instCapabilities, instRequirements, resource);
+        log.debug("enter associateOrAddCalculatedCapReq,get instCapabilities:{},get instRequirements:{}", instCapabilities, instRequirements);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate cap and req of resource {} status is {}", resource.getUniqueId(),
-                addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            log.debug("failed to associate cap and req of resource {} status is {}", resource.getUniqueId(), addArtToInst);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
     public void associateInstAttributeToComponentToInstances(String yamlName, Service resource,
                                                              Map<String, List<AttributeDefinition>> instAttributes) {
         StorageOperationStatus addArtToInst;
-
-        addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,
-            resource);
+        addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes, resource);
         if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
-                addArtToInst);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
+            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(), addArtToInst);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName));
         }
     }
 
     public void associateRequirementsToService(String yamlName, Service resource, Map<String, ListRequirementDataDefinition> requirements) {
         StorageOperationStatus addReqToService;
-        addReqToService = toscaOperationFacade.associateRequirementsToService(requirements,
-            resource.getUniqueId());
+        addReqToService = toscaOperationFacade.associateRequirementsToService(requirements, resource.getUniqueId());
         if (addReqToService != StorageOperationStatus.OK && addReqToService != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
-                addReqToService);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addReqToService), yamlName));
+            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(), addReqToService);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addReqToService), yamlName));
         }
     }
 
     public void associateCapabilitiesToService(String yamlName, Service resource, Map<String, ListCapabilityDataDefinition> capabilities) {
         StorageOperationStatus addCapToService;
-        addCapToService = toscaOperationFacade.associateCapabilitiesToService(capabilities,
-            resource.getUniqueId());
+        addCapToService = toscaOperationFacade.associateCapabilitiesToService(capabilities, resource.getUniqueId());
         if (addCapToService != StorageOperationStatus.OK && addCapToService != StorageOperationStatus.NOT_FOUND) {
-            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
-                addCapToService);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(addCapToService), yamlName));
+            log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(), addCapToService);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addCapToService), yamlName));
         }
     }
 
     public void associateResourceInstances(String yamlName, Service service, List<RequirementCapabilityRelDef> relations) {
         Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> relationsEither = toscaOperationFacade
             .associateResourceInstances(service, service.getUniqueId(), relations);
-
         if (relationsEither.isRight() && relationsEither.right().value() != StorageOperationStatus.NOT_FOUND) {
             StorageOperationStatus status = relationsEither.right().value();
-            log.debug("failed to associate instances of service {} status is {}", service.getUniqueId(),
-                status);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(status), yamlName));
+            log.debug("failed to associate instances of service {} status is {}", service.getUniqueId(), status);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), yamlName));
         }
     }
 
     public void addCapabilities(Map<String, List<CapabilityDefinition>> originCapabilities, String type, List<CapabilityDefinition> capabilities) {
-        List<CapabilityDefinition> list = capabilities.stream().map(CapabilityDefinition::new)
-            .collect(toList());
+        List<CapabilityDefinition> list = capabilities.stream().map(CapabilityDefinition::new).collect(toList());
         originCapabilities.put(type, list);
     }
 
     public void addCapabilitiesProperties(Map<String, Map<String, UploadPropInfo>> newPropertiesMap, List<UploadCapInfo> capabilities) {
         for (UploadCapInfo capability : capabilities) {
             if (isNotEmpty(capability.getProperties())) {
-                newPropertiesMap.put(capability.getName(), capability.getProperties().stream()
-                    .collect(toMap(UploadInfo::getName, p -> p)));
+                newPropertiesMap.put(capability.getName(), capability.getProperties().stream().collect(toMap(UploadInfo::getName, p -> p)));
             }
         }
     }
 
     public Service getServiceWithGroups(String resourceId) {
-
         ComponentParametersView filter = new ComponentParametersView();
         filter.setIgnoreGroups(false);
         Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(resourceId, filter);
@@ -2528,7 +2229,6 @@ public class ServiceImportParseLogic {
     }
 
     public Resource getResourceWithGroups(String resourceId) {
-
         ComponentParametersView filter = new ComponentParametersView();
         filter.setIgnoreGroups(false);
         Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(resourceId, filter);
@@ -2539,15 +2239,12 @@ public class ServiceImportParseLogic {
     }
 
     public void associateResourceInstances(String yamlName, Resource resource, List<RequirementCapabilityRelDef> relations) {
-
         Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> relationsEither = toscaOperationFacade
             .associateResourceInstances(resource, resource.getUniqueId(), relations);
         if (relationsEither.isRight() && relationsEither.right().value() != StorageOperationStatus.NOT_FOUND) {
             StorageOperationStatus status = relationsEither.right().value();
-            log.debug("failed to associate instances of resource {} status is {}", resource.getUniqueId(),
-                status);
-            throw new ComponentException(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(status), yamlName));
+            log.debug("failed to associate instances of resource {} status is {}", resource.getUniqueId(), status);
+            throw new ComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), yamlName));
         }
     }
 
@@ -2557,23 +2254,19 @@ public class ServiceImportParseLogic {
             UploadComponentInstanceInfo uploadComponentInstanceInfo = entry.getValue();
             ComponentInstance currentCompInstance = null;
             for (ComponentInstance compInstance : componentInstancesList) {
-
                 if (compInstance.getName().equals(uploadComponentInstanceInfo.getName())) {
                     currentCompInstance = compInstance;
                     break;
                 }
             }
             if (currentCompInstance == null) {
-                log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(),
-                    resource.getUniqueId());
-                BeEcompErrorManager.getInstance().logInternalDataError(
-                    COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE,
-                    resource.getUniqueId(), BeEcompErrorManager.ErrorSeverity.ERROR);
-                ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
+                log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(), resource.getUniqueId());
+                BeEcompErrorManager.getInstance()
+                    .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, resource.getUniqueId(),
+                        BeEcompErrorManager.ErrorSeverity.ERROR);
+                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                 throw new ComponentException(responseFormat);
             }
-
             ResponseFormat addRelationToRiRes = addRelationToRI(yamlName, resource, entry.getValue(), relations);
             if (addRelationToRiRes.getStatus() != 200) {
                 throw new ComponentException(addRelationToRiRes);
@@ -2581,30 +2274,25 @@ public class ServiceImportParseLogic {
         }
     }
 
-    protected ResponseFormat addRelationToRI(String yamlName, Resource resource,
-                                             UploadComponentInstanceInfo nodesInfoValue, List<RequirementCapabilityRelDef> relations) {
+    protected ResponseFormat addRelationToRI(String yamlName, Resource resource, UploadComponentInstanceInfo nodesInfoValue,
+                                             List<RequirementCapabilityRelDef> relations) {
         List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
         ComponentInstance currentCompInstance = null;
-
         for (ComponentInstance compInstance : componentInstancesList) {
-
             if (compInstance.getName().equals(nodesInfoValue.getName())) {
                 currentCompInstance = compInstance;
                 break;
             }
         }
         if (currentCompInstance == null) {
-            log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, nodesInfoValue.getName(),
-                resource.getUniqueId());
-            BeEcompErrorManager.getInstance().logInternalDataError(
-                COMPONENT_INSTANCE_WITH_NAME + nodesInfoValue.getName() + IN_RESOURCE,
-                resource.getUniqueId(), BeEcompErrorManager.ErrorSeverity.ERROR);
-            return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE,
-                yamlName);
+            log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, nodesInfoValue.getName(), resource.getUniqueId());
+            BeEcompErrorManager.getInstance()
+                .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + nodesInfoValue.getName() + IN_RESOURCE, resource.getUniqueId(),
+                    BeEcompErrorManager.ErrorSeverity.ERROR);
+            return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
         }
         String resourceInstanceId = currentCompInstance.getUniqueId();
         Map<String, List<UploadReqInfo>> regMap = nodesInfoValue.getRequirements();
-
         if (regMap != null) {
             Iterator<Map.Entry<String, List<UploadReqInfo>>> nodesRegValue = regMap.entrySet().iterator();
             while (nodesRegValue.hasNext()) {
@@ -2616,16 +2304,13 @@ public class ServiceImportParseLogic {
                     RequirementCapabilityRelDef regCapRelDef = new RequirementCapabilityRelDef();
                     regCapRelDef.setFromNode(resourceInstanceId);
                     log.debug("try to find available requirement {} ", regName);
-                    Either<RequirementDefinition, ResponseFormat> eitherReqStatus = findAviableRequiremen(regName,
-                        yamlName, nodesInfoValue, currentCompInstance,
-                        uploadRegInfo.getCapabilityName());
+                    Either<RequirementDefinition, ResponseFormat> eitherReqStatus = findAviableRequiremen(regName, yamlName, nodesInfoValue,
+                        currentCompInstance, uploadRegInfo.getCapabilityName());
                     if (eitherReqStatus.isRight()) {
                         return eitherReqStatus.right().value();
                     }
-
                     RequirementDefinition validReq = eitherReqStatus.left().value();
-                    List<CapabilityRequirementRelationship> reqAndRelationshipPairList = regCapRelDef
-                        .getRelationships();
+                    List<CapabilityRequirementRelationship> reqAndRelationshipPairList = regCapRelDef.getRelationships();
                     if (reqAndRelationshipPairList == null) {
                         reqAndRelationshipPairList = new ArrayList<>();
                     }
@@ -2636,7 +2321,6 @@ public class ServiceImportParseLogic {
                     RelationshipImpl relationship = new RelationshipImpl();
                     relationship.setType(validReq.getCapability());
                     reqAndRelationshipPair.setRelationships(relationship);
-
                     ComponentInstance currentCapCompInstance = null;
                     for (ComponentInstance compInstance : componentInstancesList) {
                         if (compInstance.getName().equals(uploadRegInfo.getNode())) {
@@ -2644,30 +2328,24 @@ public class ServiceImportParseLogic {
                             break;
                         }
                     }
-
                     if (currentCapCompInstance == null) {
-                        log.debug("The component instance  with name {} not found on resource {} ",
-                            uploadRegInfo.getNode(), resource.getUniqueId());
-                        BeEcompErrorManager.getInstance().logInternalDataError(
-                            COMPONENT_INSTANCE_WITH_NAME + uploadRegInfo.getNode() + IN_RESOURCE,
-                            resource.getUniqueId(), BeEcompErrorManager.ErrorSeverity.ERROR);
-                        return componentsUtils
-                            .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
+                        log.debug("The component instance  with name {} not found on resource {} ", uploadRegInfo.getNode(), resource.getUniqueId());
+                        BeEcompErrorManager.getInstance()
+                            .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadRegInfo.getNode() + IN_RESOURCE, resource.getUniqueId(),
+                                BeEcompErrorManager.ErrorSeverity.ERROR);
+                        return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                     }
                     regCapRelDef.setToNode(currentCapCompInstance.getUniqueId());
                     log.debug("try to find aviable Capability  req name is {} ", validReq.getName());
-                    CapabilityDefinition aviableCapForRel = findAvailableCapabilityByTypeOrName(validReq,
-                        currentCapCompInstance, uploadRegInfo);
+                    CapabilityDefinition aviableCapForRel = findAvailableCapabilityByTypeOrName(validReq, currentCapCompInstance, uploadRegInfo);
                     reqAndRelationshipPair.setCapability(aviableCapForRel.getName());
                     reqAndRelationshipPair.setCapabilityUid(aviableCapForRel.getUniqueId());
                     reqAndRelationshipPair.setCapabilityOwnerId(aviableCapForRel.getOwnerId());
                     if (aviableCapForRel == null) {
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                            "aviable capability was not found. req name is " + validReq.getName()
-                                + " component instance is " + currentCapCompInstance.getUniqueId(),
-                            resource.getUniqueId(), BeEcompErrorManager.ErrorSeverity.ERROR);
-                        return componentsUtils
-                            .getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
+                            "aviable capability was not found. req name is " + validReq.getName() + " component instance is " + currentCapCompInstance
+                                .getUniqueId(), resource.getUniqueId(), BeEcompErrorManager.ErrorSeverity.ERROR);
+                        return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                     }
                     CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
                     capReqRel.setRelation(reqAndRelationshipPair);
@@ -2681,5 +2359,4 @@ public class ServiceImportParseLogic {
         }
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
-
 }

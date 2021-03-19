@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.artifact;
 
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE;
@@ -34,8 +33,7 @@ public final class ArtifactOperationInfo {
     private final boolean isExternalApi;
     private final boolean ignoreLifecycleState;
 
-    public ArtifactOperationInfo(boolean isExternalApi, boolean ignoreLifecycleState,
-        ArtifactOperationEnum artifactOperationEnum) {
+    public ArtifactOperationInfo(boolean isExternalApi, boolean ignoreLifecycleState, ArtifactOperationEnum artifactOperationEnum) {
         this.artifactOperationEnum = artifactOperationEnum;
         this.isExternalApi = isExternalApi;
         this.ignoreLifecycleState = ignoreLifecycleState;

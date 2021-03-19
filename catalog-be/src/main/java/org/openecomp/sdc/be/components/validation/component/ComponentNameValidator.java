@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.component;
 
 import fj.data.Either;
@@ -56,20 +55,18 @@ public class ComponentNameValidator implements ComponentFieldValidator {
         String componentName = component.getName();
         if (StringUtils.isEmpty(componentName)) {
             log.debug("component name is empty");
-            auditErrorAndThrow(user,component, actionEnum, ActionStatus.MISSING_COMPONENT_NAME);
+            auditErrorAndThrow(user, component, actionEnum, ActionStatus.MISSING_COMPONENT_NAME);
         }
-
         if (!ValidationUtils.validateComponentNameLength(componentName)) {
             log.debug("Component name exceeds max length {} ", ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
-            auditErrorAndThrow(user,component, actionEnum, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT);
+            auditErrorAndThrow(user, component, actionEnum, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT);
         }
-
         if (!ValidationUtils.validateComponentNamePattern(componentName)) {
             log.debug("Component name {} has invalid format", componentName);
-            auditErrorAndThrow(user,component, actionEnum, ActionStatus.INVALID_COMPONENT_NAME);
+            auditErrorAndThrow(user, component, actionEnum, ActionStatus.INVALID_COMPONENT_NAME);
         }
         if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
-            validateComponentNameUnique(user,component,actionEnum);
+            validateComponentNameUnique(user, component, actionEnum);
         }
         //TODO remove assignment here
         component.setNormalizedName(ValidationUtils.normaliseComponentName(componentName));
@@ -80,15 +77,16 @@ public class ComponentNameValidator implements ComponentFieldValidator {
         log.debug("validate component name uniqueness for: {}", component.getName());
         ComponentTypeEnum type = component.getComponentType();
         ResourceTypeEnum resourceType = null;
-        if(component instanceof Resource){
-            resourceType = ((Resource)component).getResourceType();
+        if (component instanceof Resource) {
+            resourceType = ((Resource) component).getResourceType();
         }
-        Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateComponentNameExists(component.getName(), resourceType, type);
-
+        Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
+            .validateComponentNameExists(component.getName(), resourceType, type);
         if (dataModelResponse.isLeft()) {
             if (dataModelResponse.left().value()) {
                 log.info("Component with name {} already exists", component.getName());
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, type.getValue(), component.getName());
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, type.getValue(), component.getName());
                 componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
                 throw new ByResponseFormatComponentException(errorResponse);
             }
@@ -101,7 +99,8 @@ public class ComponentNameValidator implements ComponentFieldValidator {
         throw new ByResponseFormatComponentException(errorResponse);
     }
 
-    private void auditErrorAndThrow(User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum, ActionStatus actionStatus) {
+    private void auditErrorAndThrow(User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum,
+                                    ActionStatus actionStatus) {
         ResponseFormat errorResponse = componentsUtils.getResponseFormat(actionStatus, component.getComponentType().getValue());
         componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, component.getComponentType());
         throw new ByActionStatusComponentException(actionStatus, component.getComponentType().getValue());

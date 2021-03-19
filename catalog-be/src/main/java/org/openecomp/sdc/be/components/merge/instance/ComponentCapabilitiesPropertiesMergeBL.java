@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.merge.instance;
 
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
+
 import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.capability.CapabilityResolver;
@@ -37,23 +40,19 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.core.annotation.Order;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.ANY_ORDER_COMMAND;
-
 @org.springframework.stereotype.Component
 @Order(ANY_ORDER_COMMAND)
 public class ComponentCapabilitiesPropertiesMergeBL implements VspComponentsMergeCommand {
 
     private static final Logger log = Logger.getLogger(ComponentCapabilitiesPropertiesMergeBL.class);
-
     private final DataDefinitionsValuesMergingBusinessLogic dataDefinitionsValuesMergingBusinessLogic;
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentsUtils componentsUtils;
     private final CapabilityResolver capabilityResolver;
 
-    public ComponentCapabilitiesPropertiesMergeBL(DataDefinitionsValuesMergingBusinessLogic dataDefinitionsValuesMergingBusinessLogic, ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils, CapabilityResolver capabilityResolver) {
+    public ComponentCapabilitiesPropertiesMergeBL(DataDefinitionsValuesMergingBusinessLogic dataDefinitionsValuesMergingBusinessLogic,
+                                                  ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils,
+                                                  CapabilityResolver capabilityResolver) {
         this.dataDefinitionsValuesMergingBusinessLogic = dataDefinitionsValuesMergingBusinessLogic;
         this.toscaOperationFacade = toscaOperationFacade;
         this.componentsUtils = componentsUtils;
@@ -68,16 +67,17 @@ public class ComponentCapabilitiesPropertiesMergeBL implements VspComponentsMerg
     @Override
     public ActionStatus mergeComponents(Component prevComponent, Component currentComponent) {
         StorageOperationStatus mergeStatus = getCmptWithCapabilitiesProps(currentComponent.getUniqueId())
-                .either(currCmptWithCap -> mergeCmptCalculatedCapabilitiesProperties(prevComponent, currCmptWithCap),
-                        err -> err);
+            .either(currCmptWithCap -> mergeCmptCalculatedCapabilitiesProperties(prevComponent, currCmptWithCap), err -> err);
         return componentsUtils.convertFromStorageResponse(mergeStatus);
     }
 
-    public ActionStatus mergeComponentInstanceCapabilities(Component currentComponent, Component origInstanceCmpt, String instanceId, List<CapabilityDefinition> prevInstanceCapabilities) {
+    public ActionStatus mergeComponentInstanceCapabilities(Component currentComponent, Component origInstanceCmpt, String instanceId,
+                                                           List<CapabilityDefinition> prevInstanceCapabilities) {
         if (CollectionUtils.isEmpty(prevInstanceCapabilities)) {
             return ActionStatus.OK;
         }
-        Map<CapabilityDefinition, CapabilityDefinition> oldToNewCap = capabilityResolver.resolvePrevCapToNewCapability(currentComponent, origInstanceCmpt, instanceId, prevInstanceCapabilities);
+        Map<CapabilityDefinition, CapabilityDefinition> oldToNewCap = capabilityResolver
+            .resolvePrevCapToNewCapability(currentComponent, origInstanceCmpt, instanceId, prevInstanceCapabilities);
         oldToNewCap.forEach(this::mergeCapabilityProperties);
         StorageOperationStatus updateStatus = updateInstanceCapabilitiesProperties(currentComponent, instanceId);
         return componentsUtils.convertFromStorageResponse(updateStatus);
@@ -94,7 +94,8 @@ public class ComponentCapabilitiesPropertiesMergeBL implements VspComponentsMerg
 
     private void mergeInstanceCapabilities(ComponentInstance prevInstance, Component currComponent) {
         ComponentInstance currInstance = MapUtil.toMap(currComponent.getComponentInstances(), ComponentInstance::getName).get(prevInstance.getName());
-        Map<CapabilityDefinition, CapabilityDefinition> oldToNewCapabilities = capabilityResolver.resolvePrevCapIdToNewCapability(prevInstance, currInstance);
+        Map<CapabilityDefinition, CapabilityDefinition> oldToNewCapabilities = capabilityResolver
+            .resolvePrevCapIdToNewCapability(prevInstance, currInstance);
         oldToNewCapabilities.forEach(this::mergeCapabilityProperties);
     }
 
@@ -116,13 +117,9 @@ public class ComponentCapabilitiesPropertiesMergeBL implements VspComponentsMerg
         propertiesCapabilitiesFilter.setIgnoreComponentInstances(false);
         propertiesCapabilitiesFilter.setIgnoreCapabilities(false);
         propertiesCapabilitiesFilter.setIgnoreGroups(false);
-        return toscaOperationFacade.getToscaElement(cmptId, propertiesCapabilitiesFilter)
-                .right()
-                .map(err -> {
-                   log.debug("failed to fetch cmpt {} with properties capabilities. status: {}", cmptId, err);
-                   return err;
-                });
-
+        return toscaOperationFacade.getToscaElement(cmptId, propertiesCapabilitiesFilter).right().map(err -> {
+            log.debug("failed to fetch cmpt {} with properties capabilities. status: {}", cmptId, err);
+            return err;
+        });
     }
-
 }

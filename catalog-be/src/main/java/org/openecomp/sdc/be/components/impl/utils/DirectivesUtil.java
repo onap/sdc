@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.utils;
 
 import java.util.List;
@@ -29,9 +28,7 @@ public class DirectivesUtil {
     private static Optional<String> getDirective(final String directiveValue) {
         final List<String> directives = ConfigurationManager.getConfigurationManager().getConfiguration().getDirectives();
         if (CollectionUtils.isNotEmpty(directives)) {
-            return directives.stream()
-                .filter(directiveValues -> directiveValues.equalsIgnoreCase(directiveValue))
-                .findFirst();
+            return directives.stream().filter(directiveValues -> directiveValues.equalsIgnoreCase(directiveValue)).findFirst();
         }
         return Optional.empty();
     }
@@ -42,5 +39,4 @@ public class DirectivesUtil {
         }
         return inDirectives.stream().allMatch(directive -> getDirective(directive).isPresent());
     }
-
 }

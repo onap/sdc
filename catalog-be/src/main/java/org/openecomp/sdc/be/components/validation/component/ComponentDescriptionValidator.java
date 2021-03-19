@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.component;
 
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -47,13 +46,12 @@ public class ComponentDescriptionValidator implements ComponentFieldValidator {
         ComponentTypeEnum type = component.getComponentType();
         String description = component.getDescription();
         if (!ValidationUtils.validateStringNotEmpty(description)) {
-            auditErrorAndThrow(user,component, actionEnum, ActionStatus.COMPONENT_MISSING_DESCRIPTION);
+            auditErrorAndThrow(user, component, actionEnum, ActionStatus.COMPONENT_MISSING_DESCRIPTION);
         }
-
         description = ValidationUtils.cleanUpText(description);
-        try{
+        try {
             validateComponentDescription(description, type);
-        } catch(ComponentException e){
+        } catch (ComponentException e) {
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(e.getActionStatus(), component.getComponentType().getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, component.getComponentType());
             throw e;
@@ -61,7 +59,8 @@ public class ComponentDescriptionValidator implements ComponentFieldValidator {
         component.setDescription(description);
     }
 
-    private void auditErrorAndThrow(User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum, ActionStatus actionStatus) {
+    private void auditErrorAndThrow(User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum,
+                                    ActionStatus actionStatus) {
         ResponseFormat errorResponse = componentsUtils.getResponseFormat(actionStatus, component.getComponentType().getValue());
         componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, component.getComponentType());
         throw new ByActionStatusComponentException(actionStatus, component.getComponentType().getValue());
@@ -70,9 +69,9 @@ public class ComponentDescriptionValidator implements ComponentFieldValidator {
     private void validateComponentDescription(String description, ComponentTypeEnum type) {
         if (description != null) {
             if (!ValidationUtils.validateDescriptionLength(description)) {
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, type.getValue(),
+                    "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
             }
-
             if (!ValidationUtils.validateCommentPattern(description)) {
                 throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION, type.getValue());
             }

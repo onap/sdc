@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl.utils;
 
 import java.util.List;
@@ -37,46 +36,28 @@ public final class ComponentUtils {
     private ComponentUtils() {
     }
 
-    public static boolean checkArtifactInComponent(
-        Component component, String artifactId
-    ) {
-        Predicate<ArtifactDefinition> hasSameArtifactId =
-            ad -> ad != null && ad.getUniqueId().equals(artifactId);
-
-        return exists(component.getArtifacts(), hasSameArtifactId) ||
-            exists(component.getDeploymentArtifacts(), hasSameArtifactId) ||
-            exists(component.getToscaArtifacts(), hasSameArtifactId) ||
-            hasOperationImplementationWithUniqueId(component, artifactId) ||
-            isServiceAndHasApiArtifactWithUniqueId(component, hasSameArtifactId);
+    public static boolean checkArtifactInComponent(Component component, String artifactId) {
+        Predicate<ArtifactDefinition> hasSameArtifactId = ad -> ad != null && ad.getUniqueId().equals(artifactId);
+        return exists(component.getArtifacts(), hasSameArtifactId) || exists(component.getDeploymentArtifacts(), hasSameArtifactId) || exists(
+            component.getToscaArtifacts(), hasSameArtifactId) || hasOperationImplementationWithUniqueId(component, artifactId)
+            || isServiceAndHasApiArtifactWithUniqueId(component, hasSameArtifactId);
     }
 
-    private static boolean isServiceAndHasApiArtifactWithUniqueId(Component component,
-        Predicate<ArtifactDefinition> hasSameArtifactId) {
-        return component.getComponentType() == ComponentTypeEnum.SERVICE && exists(
-            ((Service) component).getServiceApiArtifacts(), hasSameArtifactId);
+    private static boolean isServiceAndHasApiArtifactWithUniqueId(Component component, Predicate<ArtifactDefinition> hasSameArtifactId) {
+        return component.getComponentType() == ComponentTypeEnum.SERVICE && exists(((Service) component).getServiceApiArtifacts(), hasSameArtifactId);
     }
 
     private static boolean hasOperationImplementationWithUniqueId(Component component, String artifactId) {
-        return findFirst(valueStream(component.getInterfaces())
-                .flatMap(v -> valueStream(v.getOperationsMap()))
-                .map(OperationDataDefinition::getImplementation),
-            e -> e != null && e.getUniqueId().equals(artifactId)
-        ).isPresent();
+        return findFirst(
+            valueStream(component.getInterfaces()).flatMap(v -> valueStream(v.getOperationsMap())).map(OperationDataDefinition::getImplementation),
+            e -> e != null && e.getUniqueId().equals(artifactId)).isPresent();
     }
 
-    public static boolean checkArtifactInResourceInstance(
-        Component component, String resourceInstanceId, String artifactId
-    ) {
-        Predicate<ComponentInstance> hasSameResourceId =
-            ri -> ri != null && ri.getUniqueId().equals(resourceInstanceId);
-
-        Predicate<ArtifactDefinition> hasSameArtifactId =
-            ad -> ad != null && ad.getUniqueId().equals(artifactId);
-
-        return findFirst(component.getComponentInstances(), hasSameResourceId).map(ri ->
-            exists(ri.getDeploymentArtifacts(), hasSameArtifactId) ||
-                exists(ri.getArtifacts(), hasSameArtifactId)
-        ).isPresent();
+    public static boolean checkArtifactInResourceInstance(Component component, String resourceInstanceId, String artifactId) {
+        Predicate<ComponentInstance> hasSameResourceId = ri -> ri != null && ri.getUniqueId().equals(resourceInstanceId);
+        Predicate<ArtifactDefinition> hasSameArtifactId = ad -> ad != null && ad.getUniqueId().equals(artifactId);
+        return findFirst(component.getComponentInstances(), hasSameResourceId)
+            .map(ri -> exists(ri.getDeploymentArtifacts(), hasSameArtifactId) || exists(ri.getArtifacts(), hasSameArtifactId)).isPresent();
     }
 
     private static <V> Optional<V> findFirst(List<V> ovs, Predicate<V> p) {
@@ -84,9 +65,7 @@ public final class ComponentUtils {
     }
 
     private static <K, V> boolean exists(Map<K, V> okvs, Predicate<V> p) {
-        return Optional.ofNullable(okvs)
-            .flatMap(kvs -> findFirst(kvs.values().stream(), p))
-            .isPresent();
+        return Optional.ofNullable(okvs).flatMap(kvs -> findFirst(kvs.values().stream(), p)).isPresent();
     }
 
     private static <V> Optional<V> findFirst(Stream<V> vs, Predicate<V> p) {

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.exception;
 
 public class ToscaExportException extends Exception {
@@ -24,5 +23,4 @@ public class ToscaExportException extends Exception {
     public ToscaExportException(String message) {
         super(message);
     }
-
 }

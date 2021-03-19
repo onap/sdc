@@ -17,9 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -33,18 +43,6 @@ import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 @Component("reqValidationFilter")
 public class ReqValidationFilter implements Filter {
 
@@ -53,18 +51,17 @@ public class ReqValidationFilter implements Filter {
     public ComponentExceptionMapper componentExceptionMapper;
 
     @Override
-    public void init(FilterConfig filterConfig){
-
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+        throws IOException, ServletException {
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
         try {
             log.debug("Validating User roles - filter");
             List<String> validRoles = Arrays.asList(UserRoleEnum.ADMIN.getName(), UserRoleEnum.DESIGNER.getName());
             UserContext userContext = ThreadLocalsHolder.getUserContext();
-
             if (userContext != null && CollectionUtils.isNotEmpty(userContext.getUserRoles())) {
                 Set<String> userRoles = userContext.getUserRoles();
                 if (!userRoles.stream().anyMatch(role -> validRoles.contains(role))) {
@@ -80,6 +77,5 @@ public class ReqValidationFilter implements Filter {
 
     @Override
     public void destroy() {
-
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.auditing.impl.distribution;
 
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -26,11 +25,10 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
 
 public class AuditAddRemoveKeyDistributionEngineEventFactory extends AuditDistributionEngineEventFactory {
 
-    private static final String LOG_STR = "ACTION = \"%s\" D_ENV = \"%s\" TOPIC_NAME = \"%s\" ROLE = \"%s\" " +
-            "API_KEY = \"%s\" STATUS = \"%s\"";
+    private static final String LOG_STR = "ACTION = \"%s\" D_ENV = \"%s\" TOPIC_NAME = \"%s\" ROLE = \"%s\" " + "API_KEY = \"%s\" STATUS = \"%s\"";
 
-    AuditAddRemoveKeyDistributionEngineEventFactory(AuditingActionEnum action, CommonAuditData commonFields, DistributionTopicData distributionTopicData,
-                                                           String apiKey, String envName, String role) {
+    AuditAddRemoveKeyDistributionEngineEventFactory(AuditingActionEnum action, CommonAuditData commonFields,
+                                                    DistributionTopicData distributionTopicData, String apiKey, String envName, String role) {
         super(action, commonFields, distributionTopicData, null, apiKey, envName, role);
     }
 
@@ -42,8 +40,6 @@ public class AuditAddRemoveKeyDistributionEngineEventFactory extends AuditDistri
     @Override
     public String[] getLogMessageParams() {
         String topicName = event.getDnotifTopic() != null ? event.getDnotifTopic() : event.getDstatusTopic();
-        return new String[] {event.getAction(), event.getEnvironmentName(), topicName,
-                event.getRole(), event.getApiKey(), event.getStatus()};
+        return new String[]{event.getAction(), event.getEnvironmentName(), topicName, event.getRole(), event.getApiKey(), event.getStatus()};
     }
-
 }

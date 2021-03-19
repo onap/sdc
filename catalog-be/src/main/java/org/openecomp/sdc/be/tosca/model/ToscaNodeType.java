@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
@@ -34,12 +33,9 @@ public class ToscaNodeType {
     private ToscaMetadata metadata;
     private String derived_from;
     private String description;
-
     private Map<String, ToscaProperty> properties;
     private Map<String, Object> interfaces;
     private Map<String, ToscaCapability> capabilities;
-
     private List<Map<String, ToscaRequirement>> requirements;
     private Map<String, ToscaAttribute> attributes;
-
 }

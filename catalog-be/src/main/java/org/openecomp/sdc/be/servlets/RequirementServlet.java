@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -28,6 +27,22 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import java.util.List;
+import java.util.Optional;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RequirementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -48,23 +63,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.Optional;
-
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -73,15 +71,14 @@ import java.util.Optional;
 @Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class RequirementServlet extends AbstractValidationsServlet {
+
     private static final Logger LOGGER = Logger.getLogger(RequirementServlet.class);
     private final RequirementBusinessLogic requirementBusinessLogic;
 
     @Inject
-    public RequirementServlet(UserBusinessLogic userBusinessLogic,
-            ComponentInstanceBusinessLogic componentInstanceBL,
-            ComponentsUtils componentsUtils, ServletUtils servletUtils,
-            ResourceImportManager resourceImportManager,
-            RequirementBusinessLogic requirementBusinessLogic) {
+    public RequirementServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+                              ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
+                              RequirementBusinessLogic requirementBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.requirementBusinessLogic = requirementBusinessLogic;
     }
@@ -90,61 +87,50 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements")
-    @Operation(description = "Create requirements on resource", method = "POST",
-            summary = "Create requirements on resource", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "201", description = "Create requirements"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "409", description = "requirement already exist")})
+    @Operation(description = "Create requirements on resource", method = "POST", summary = "Create requirements on resource", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "Create requirements"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "requirement already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response createRequirementsOnResource(
-            @Parameter(description = "Requirement to create", required = true) String data,
-            @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        return createOrUpdate(data, "resources" , resourceId, request,
-                userId, false, "createRequirements");
+    public Response createRequirementsOnResource(@Parameter(description = "Requirement to create", required = true) String data,
+                                                 @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
+                                                 @Context final HttpServletRequest request,
+                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        return createOrUpdate(data, "resources", resourceId, request, userId, false, "createRequirements");
     }
-
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements")
-    @Operation(description = "Update Requirements on resource", method = "PUT",
-            summary = "Update Requirements on resource", responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
-            @ApiResponse(responseCode = "201", description = "Update Requirements"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Update Requirements on resource", method = "PUT", summary = "Update Requirements on resource", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+        @ApiResponse(responseCode = "201", description = "Update Requirements"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response updateRequirementsOnResource(
-            @Parameter(description = "Requirements to update", required = true) String data,
-            @Parameter(description = "Component Id") @PathParam("resourceId") String resourceId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        return createOrUpdate(data, "resources", resourceId, request,
-                userId, true, "updateRequirements");
+    public Response updateRequirementsOnResource(@Parameter(description = "Requirements to update", required = true) String data,
+                                                 @Parameter(description = "Component Id") @PathParam("resourceId") String resourceId,
+                                                 @Context final HttpServletRequest request,
+                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        return createOrUpdate(data, "resources", resourceId, request, userId, true, "updateRequirements");
     }
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements/{requirementId}")
-    @Operation(description = "Get Requirement from resource", method = "GET", summary = "GET Requirement from resource",
-            responses = {@ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
-                    @ApiResponse(responseCode = "201", description = "GET requirement"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Get Requirement from resource", method = "GET", summary = "GET Requirement from resource", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+        @ApiResponse(responseCode = "201", description = "GET requirement"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getRequirementsFromResource(
-            @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
-            @Parameter(description = "Requirement Id") @PathParam("requirementId") String requirementId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response getRequirementsFromResource(@Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
+                                                @Parameter(description = "Requirement Id") @PathParam("requirementId") String requirementId,
+                                                @Context final HttpServletRequest request,
+                                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return get(requirementId, resourceId, request, userId);
     }
 
@@ -152,18 +138,16 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements/{requirementId}")
-    @Operation(description = "Delete requirements from resource", method = "DELETE",
-            summary = "Delete requirements from resource", responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
-            @ApiResponse(responseCode = "201", description = "Delete requirement"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Delete requirements from resource", method = "DELETE", summary = "Delete requirements from resource", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+        @ApiResponse(responseCode = "201", description = "Delete requirement"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteRequirementsFromResource(
-            @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
-            @Parameter(description = "requirement Id") @PathParam("requirementId") String requirementId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    public Response deleteRequirementsFromResource(@Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
+                                                   @Parameter(description = "requirement Id") @PathParam("requirementId") String requirementId,
+                                                   @Context final HttpServletRequest request,
+                                                   @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return delete(requirementId, resourceId, request, userId);
     }
 
@@ -171,120 +155,97 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements")
-    @Operation(description = "Create requirements on service", method = "POST",
-            summary = "Create requirements on service", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-            @ApiResponse(responseCode = "201", description = "Create Requirements"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "409", description = "Requirement already exist")})
+    @Operation(description = "Create requirements on service", method = "POST", summary = "Create requirements on service", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "Create Requirements"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "Requirement already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response createRequirementsOnService(
-            @Parameter(description = "Requirements to create", required = true) String data,
-            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        return createOrUpdate(data, "services" , serviceId, request, userId,
-                false , "createRequirements");
+    public Response createRequirementsOnService(@Parameter(description = "Requirements to create", required = true) String data,
+                                                @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
+                                                @Context final HttpServletRequest request,
+                                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        return createOrUpdate(data, "services", serviceId, request, userId, false, "createRequirements");
     }
-
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements")
-    @Operation(description = "Update requirements on service", method = "PUT",
-            summary = "Update requirements on service", responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
-            @ApiResponse(responseCode = "201", description = "Update requirements"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Update requirements on service", method = "PUT", summary = "Update requirements on service", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+        @ApiResponse(responseCode = "201", description = "Update requirements"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response updateRequirementsOnService(
-            @Parameter(description = "Requirements to update", required = true) String data,
-            @Parameter(description = "Component Id") @PathParam("serviceId") String serviceId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        return createOrUpdate(data, "services", serviceId, request, userId,
-                true, "updateRequirements");
+    public Response updateRequirementsOnService(@Parameter(description = "Requirements to update", required = true) String data,
+                                                @Parameter(description = "Component Id") @PathParam("serviceId") String serviceId,
+                                                @Context final HttpServletRequest request,
+                                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        return createOrUpdate(data, "services", serviceId, request, userId, true, "updateRequirements");
     }
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements/{requirementId}")
-    @Operation(description = "Get requirement from service", method = "GET", summary = "GET requirement from service",
-            responses = {@ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
-                    @ApiResponse(responseCode = "201", description = "GET Requirements"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Get requirement from service", method = "GET", summary = "GET requirement from service", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+        @ApiResponse(responseCode = "201", description = "GET Requirements"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getRequirementsOnService(
-            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
-            @Parameter(description = "Requirement Id") @PathParam("requirementId") String requirementId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response getRequirementsOnService(@Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
+                                             @Parameter(description = "Requirement Id") @PathParam("requirementId") String requirementId,
+                                             @Context final HttpServletRequest request,
+                                             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return get(requirementId, serviceId, request, userId);
     }
-
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements/{requirementId}")
-    @Operation(description = "Delete requirement from service", method = "DELETE",
-            summary = "Delete requirement from service", responses = {@ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
-            @ApiResponse(responseCode = "201", description = "Delete Requirements"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Delete requirement from service", method = "DELETE", summary = "Delete requirement from service", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+        @ApiResponse(responseCode = "201", description = "Delete Requirements"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteRequirementsOnService(
-            @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
-            @Parameter(description = "Requirement Id") @PathParam("requirementId") String requirementId,
-            @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    public Response deleteRequirementsOnService(@Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
+                                                @Parameter(description = "Requirement Id") @PathParam("requirementId") String requirementId,
+                                                @Context final HttpServletRequest request,
+                                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return delete(requirementId, serviceId, request, userId);
     }
 
-
-    private Response createOrUpdate (String data, String componentType, String componentId,
-                                     HttpServletRequest request, String userId,
-                                     boolean isUpdate, String errorContext) {
+    private Response createOrUpdate(String data, String componentType, String componentId, HttpServletRequest request, String userId,
+                                    boolean isUpdate, String errorContext) {
         String url = request.getMethod() + " " + request.getRequestURI();
-
         User modifier = new User();
         modifier.setUserId(userId);
         LOGGER.debug("Start create or update request of {} with modifier id {}", url, userId);
-
         try {
             String componentIdLower = componentId.toLowerCase();
-
-            Either<List<RequirementDefinition>, ResponseFormat> mappedRequirementDataEither =
-                    getMappedRequirementData(data, modifier, ComponentTypeEnum.findByParamName(componentType));
-            if(mappedRequirementDataEither.isRight()) {
+            Either<List<RequirementDefinition>, ResponseFormat> mappedRequirementDataEither = getMappedRequirementData(data, modifier,
+                ComponentTypeEnum.findByParamName(componentType));
+            if (mappedRequirementDataEither.isRight()) {
                 LOGGER.error("Failed to create or update requirements");
                 return buildErrorResponse(mappedRequirementDataEither.right().value());
             }
             List<RequirementDefinition> mappedRequirementData = mappedRequirementDataEither.left().value();
             Either<List<RequirementDefinition>, ResponseFormat> actionResponse;
-            if(isUpdate) {
-                actionResponse = requirementBusinessLogic.updateRequirements(componentIdLower, mappedRequirementData, modifier,
-                        errorContext, true);
+            if (isUpdate) {
+                actionResponse = requirementBusinessLogic.updateRequirements(componentIdLower, mappedRequirementData, modifier, errorContext, true);
             } else {
-                actionResponse = requirementBusinessLogic.createRequirements(componentIdLower, mappedRequirementData, modifier,
-                        errorContext, true);
+                actionResponse = requirementBusinessLogic.createRequirements(componentIdLower, mappedRequirementData, modifier, errorContext, true);
             }
-
             if (actionResponse.isRight()) {
                 LOGGER.error("Failed to create or update requirements");
                 return buildErrorResponse(actionResponse.right().value());
             }
-
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                    actionResponse.left().value());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("requirements create or update");
             LOGGER.error("Failed to create or update requirements with an error", e);
@@ -292,19 +253,15 @@ public class RequirementServlet extends AbstractValidationsServlet {
         }
     }
 
-    private Response get (String requirementIdToGet,  String componentId,
-                          HttpServletRequest request, String userId){
+    private Response get(String requirementIdToGet, String componentId, HttpServletRequest request, String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
-
         User modifier = new User();
         modifier.setUserId(userId);
         LOGGER.debug("Start get request of {} with modifier id {}", url, userId);
-
         try {
             String componentIdLower = componentId.toLowerCase();
-
             Either<RequirementDefinition, ResponseFormat> actionResponse = requirementBusinessLogic
-                    .getRequirement(componentIdLower, requirementIdToGet, modifier, true);
+                .getRequirement(componentIdLower, requirementIdToGet, modifier, true);
             if (actionResponse.isRight()) {
                 LOGGER.error("failed to get requirements");
                 return buildErrorResponse(actionResponse.right().value());
@@ -318,19 +275,15 @@ public class RequirementServlet extends AbstractValidationsServlet {
         }
     }
 
-    private Response delete (String requirementId, String componentId, HttpServletRequest
-                                        request, String userId){
+    private Response delete(String requirementId, String componentId, HttpServletRequest request, String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
-
         User modifier = new User();
         modifier.setUserId(userId);
         LOGGER.debug("Start delete request of {} with modifier id {}", url, userId);
-
         try {
             String componentIdLower = componentId.toLowerCase();
-
             Either<RequirementDefinition, ResponseFormat> actionResponse = requirementBusinessLogic
-                    .deleteRequirement(componentIdLower, requirementId, modifier, true);
+                .deleteRequirement(componentIdLower, requirementId, modifier, true);
             if (actionResponse.isRight()) {
                 LOGGER.error("failed to delete requirements");
                 return buildErrorResponse(actionResponse.right().value());
@@ -345,14 +298,12 @@ public class RequirementServlet extends AbstractValidationsServlet {
     }
 
     private Either<List<RequirementDefinition>, ResponseFormat> getMappedRequirementData(String inputJson, User user,
-                                                                 ComponentTypeEnum componentTypeEnum){
+                                                                                         ComponentTypeEnum componentTypeEnum) {
         Either<UiComponentDataTransfer, ResponseFormat> mappedData = getComponentsUtils()
-                .convertJsonToObjectUsingObjectMapper(inputJson, user, UiComponentDataTransfer.class,
-                        AuditingActionEnum.CREATE_RESOURCE, componentTypeEnum);
-        Optional<List<RequirementDefinition>> requirementDefinitionList = mappedData.left().value()
-                .getRequirements().values().stream().findFirst();
-        return requirementDefinitionList.<Either<List<RequirementDefinition>, ResponseFormat>>
-                map(Either::left).orElseGet(() -> Either.right(getComponentsUtils()
-                .getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            .convertJsonToObjectUsingObjectMapper(inputJson, user, UiComponentDataTransfer.class, AuditingActionEnum.CREATE_RESOURCE,
+                componentTypeEnum);
+        Optional<List<RequirementDefinition>> requirementDefinitionList = mappedData.left().value().getRequirements().values().stream().findFirst();
+        return requirementDefinitionList.<Either<List<RequirementDefinition>, ResponseFormat>>map(Either::left)
+            .orElseGet(() -> Either.right(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
     }
 }

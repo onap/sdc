@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
@@ -59,32 +58,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger LOGGER = Logger.getLogger(ComponentNodeFilterBusinessLogic.class.getName());
-
     private final NodeFilterOperation nodeFilterOperation;
     private final NodeFilterValidator nodeFilterValidator;
 
     @Autowired
-    public ComponentNodeFilterBusinessLogic(final IElementOperation elementDao,
-                                            final IGroupOperation groupOperation,
-                                            final IGroupInstanceOperation groupInstanceOperation,
-                                            final IGroupTypeOperation groupTypeOperation,
+    public ComponentNodeFilterBusinessLogic(final IElementOperation elementDao, final IGroupOperation groupOperation,
+                                            final IGroupInstanceOperation groupInstanceOperation, final IGroupTypeOperation groupTypeOperation,
                                             final InterfaceOperation interfaceOperation,
                                             final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-                                            final ArtifactsOperations artifactToscaOperation,
-                                            final NodeFilterOperation nodeFilterOperation,
+                                            final ArtifactsOperations artifactToscaOperation, final NodeFilterOperation nodeFilterOperation,
                                             final NodeFilterValidator nodeFilterValidator) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
-            interfaceLifecycleTypeOperation, artifactToscaOperation);
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
         this.nodeFilterOperation = nodeFilterOperation;
         this.nodeFilterValidator = nodeFilterValidator;
     }
 
-    public Optional<CINodeFilterDataDefinition> createNodeFilterIfNotExist(final String componentId,
-                                                                           final String componentInstanceId,
-                                                                           final boolean shouldLock,
-                                                                           final ComponentTypeEnum componentTypeEnum)
+    public Optional<CINodeFilterDataDefinition> createNodeFilterIfNotExist(final String componentId, final String componentInstanceId,
+                                                                           final boolean shouldLock, final ComponentTypeEnum componentTypeEnum)
         throws BusinessLogicException {
-
         final Component component = getComponent(componentId);
         final Optional<ComponentInstance> componentInstance = getComponentInstance(componentInstanceId, component);
         Optional<CINodeFilterDataDefinition> filterDataDefinition = getCiNodeFilterDataDefinition(componentInstance);
@@ -95,28 +87,24 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(component.getUniqueId(), component,"Create Node Filter on component");
+                lockComponent(component.getUniqueId(), component, "Create Node Filter on component");
                 wasLocked = true;
             }
             result = nodeFilterOperation.createNodeFilter(componentId, componentInstanceId);
             if (result.isRight()) {
                 janusGraphDao.rollback();
-                LOGGER.error(BUSINESS_PROCESS_ERROR,
-                    "Failed to Create Node filter on component with id {}", componentId);
-                throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
-                    .convertFromStorageResponse(result.right().value()), component.getSystemName()));
+                LOGGER.error(BUSINESS_PROCESS_ERROR, "Failed to Create Node filter on component with id {}", componentId);
+                throw new BusinessLogicException(componentsUtils
+                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result.right().value()), component.getSystemName()));
             } else {
                 filterDataDefinition = Optional.ofNullable(result.left().value());
             }
             janusGraphDao.commit();
             LOGGER.debug("Node filter successfully created in component {} . ", component.getSystemName());
-
         } catch (final Exception e) {
             janusGraphDao.rollback();
-            LOGGER.error(BUSINESS_PROCESS_ERROR,
-                "Exception occurred during add Component node filter property values: {}", e.getMessage(), e);
+            LOGGER.error(BUSINESS_PROCESS_ERROR, "Exception occurred during add Component node filter property values: {}", e.getMessage(), e);
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         } finally {
             if (wasLocked) {
                 unlockComponent(component.getUniqueId(), componentTypeEnum);
@@ -125,41 +113,32 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return filterDataDefinition;
     }
 
-    public Optional<String> deleteNodeFilterIfExists(final String componentId,
-                                                     final String componentInstanceId,
-                                                     final boolean shouldLock,
-                                                     final ComponentTypeEnum componentTypeEnum)
-        throws BusinessLogicException {
-
+    public Optional<String> deleteNodeFilterIfExists(final String componentId, final String componentInstanceId, final boolean shouldLock,
+                                                     final ComponentTypeEnum componentTypeEnum) throws BusinessLogicException {
         final Component component = getComponent(componentId);
-        final Optional<CINodeFilterDataDefinition> nodeFilterDataDefinition =
-            getCiNodeFilterDataDefinition(componentInstanceId, component);
+        final Optional<CINodeFilterDataDefinition> nodeFilterDataDefinition = getCiNodeFilterDataDefinition(componentInstanceId, component);
         if (!nodeFilterDataDefinition.isPresent()) {
             return Optional.ofNullable(componentInstanceId);
         }
-
         final Either<String, StorageOperationStatus> result;
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(component.getUniqueId(), component,"Delete Node Filter from component");
+                lockComponent(component.getUniqueId(), component, "Delete Node Filter from component");
                 wasLocked = true;
             }
             result = nodeFilterOperation.deleteNodeFilter(component, componentInstanceId);
             if (result.isRight()) {
-                LOGGER.error(BUSINESS_PROCESS_ERROR,
-                    "Failed to delete node filter in component {}. Response is {}. ", component.getName(),
+                LOGGER.error(BUSINESS_PROCESS_ERROR, "Failed to delete node filter in component {}. Response is {}. ", component.getName(),
                     result.right().value());
                 janusGraphDao.rollback();
-                throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
-                    .convertFromStorageResponse(result.right().value()), component.getSystemName()));
+                throw new BusinessLogicException(componentsUtils
+                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result.right().value()), component.getSystemName()));
             }
             janusGraphDao.commit();
             LOGGER.debug("Node filter successfully deleted in component {} . ", component.getSystemName());
-
         } catch (final Exception e) {
-            LOGGER.error(BUSINESS_PROCESS_ERROR,"Exception occurred during delete deleting node filter: {}",
-                e.getMessage(), e);
+            LOGGER.error(BUSINESS_PROCESS_ERROR, "Exception occurred during delete deleting node filter: {}", e.getMessage(), e);
             janusGraphDao.rollback();
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
@@ -170,50 +149,39 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return Optional.ofNullable(result.left().value());
     }
 
-    public Optional<CINodeFilterDataDefinition> addNodeFilter(final String componentId,
-                                                              final String componentInstanceId,
-                                                              final NodeFilterConstraintAction action,
-                                                              final String propertyName,
-                                                              final String constraint,
-                                                              final boolean shouldLock,
+    public Optional<CINodeFilterDataDefinition> addNodeFilter(final String componentId, final String componentInstanceId,
+                                                              final NodeFilterConstraintAction action, final String propertyName,
+                                                              final String constraint, final boolean shouldLock,
                                                               final ComponentTypeEnum componentTypeEnum,
-                                                              final NodeFilterConstraintType nodeFilterConstraintType,
-                                                              final String capabilityName)
+                                                              final NodeFilterConstraintType nodeFilterConstraintType, final String capabilityName)
         throws BusinessLogicException {
-
         final Component component = getComponent(componentId);
-        CINodeFilterDataDefinition nodeFilterDataDefinition = validateAndReturnNodeFilterDefinition(componentInstanceId,
-            action, constraint, component, nodeFilterConstraintType);
+        CINodeFilterDataDefinition nodeFilterDataDefinition = validateAndReturnNodeFilterDefinition(componentInstanceId, action, constraint,
+            component, nodeFilterConstraintType);
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(component.getUniqueId(), component,"Add Node Filter on Component");
+                lockComponent(component.getUniqueId(), component, "Add Node Filter on Component");
                 wasLocked = true;
             }
-            final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition =
-                new RequirementNodeFilterPropertyDataDefinition();
+            final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
             requirementNodeFilterPropertyDataDefinition.setName(propertyName);
             requirementNodeFilterPropertyDataDefinition.setConstraints(Collections.singletonList(constraint));
-
-            final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = addNewNodeFilter(componentId,
-                componentInstanceId, nodeFilterConstraintType, nodeFilterDataDefinition,
-                requirementNodeFilterPropertyDataDefinition, capabilityName);
+            final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = addNewNodeFilter(componentId, componentInstanceId,
+                nodeFilterConstraintType, nodeFilterDataDefinition, requirementNodeFilterPropertyDataDefinition, capabilityName);
             if (result.isRight()) {
                 janusGraphDao.rollback();
-                throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
-                    .convertFromStorageResponse(result.right().value()), component.getSystemName()));
+                throw new BusinessLogicException(componentsUtils
+                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result.right().value()), component.getSystemName()));
             } else {
                 nodeFilterDataDefinition = result.left().value();
             }
             janusGraphDao.commit();
             LOGGER.debug("Node filter successfully created in component {} . ", component.getSystemName());
-
         } catch (final Exception e) {
             janusGraphDao.rollback();
-            LOGGER.error(BUSINESS_PROCESS_ERROR,
-                "Exception occurred during add component node filter property values: {}", e.getMessage(), e);
+            LOGGER.error(BUSINESS_PROCESS_ERROR, "Exception occurred during add component node filter property values: {}", e.getMessage(), e);
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         } finally {
             if (wasLocked) {
                 unlockComponent(component.getUniqueId(), componentTypeEnum);
@@ -222,44 +190,35 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return Optional.ofNullable(nodeFilterDataDefinition);
     }
 
-    public Optional<CINodeFilterDataDefinition> deleteNodeFilter(final String componentId,
-                                                                 final String componentInstanceId,
-                                                                 final NodeFilterConstraintAction action,
-                                                                 final String constraint,
-                                                                 final int position,
-                                                                 final boolean shouldLock,
-                                                                 final ComponentTypeEnum componentTypeEnum,
+    public Optional<CINodeFilterDataDefinition> deleteNodeFilter(final String componentId, final String componentInstanceId,
+                                                                 final NodeFilterConstraintAction action, final String constraint, final int position,
+                                                                 final boolean shouldLock, final ComponentTypeEnum componentTypeEnum,
                                                                  final NodeFilterConstraintType nodeFilterConstraintType)
         throws BusinessLogicException {
-
         final Component component = getComponent(componentId);
-        CINodeFilterDataDefinition nodeFilterDataDefinition =
-            validateAndReturnNodeFilterDefinition(componentInstanceId, action, constraint, component, nodeFilterConstraintType);
+        CINodeFilterDataDefinition nodeFilterDataDefinition = validateAndReturnNodeFilterDefinition(componentInstanceId, action, constraint,
+            component, nodeFilterConstraintType);
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(component.getUniqueId(), component,"Add Node Filter on Component");
+                lockComponent(component.getUniqueId(), component, "Add Node Filter on Component");
                 wasLocked = true;
             }
             final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = nodeFilterOperation
-                .deleteConstraint(componentId, componentInstanceId, nodeFilterDataDefinition, position,
-                    nodeFilterConstraintType);
+                .deleteConstraint(componentId, componentInstanceId, nodeFilterDataDefinition, position, nodeFilterConstraintType);
             if (result.isRight()) {
                 janusGraphDao.rollback();
-                throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(componentsUtils
-                    .convertFromStorageResponse(result.right().value()), component.getSystemName()));
+                throw new BusinessLogicException(componentsUtils
+                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result.right().value()), component.getSystemName()));
             } else {
                 nodeFilterDataDefinition = result.left().value();
             }
             janusGraphDao.commit();
             LOGGER.debug("Node filter successfully deleted in component {} . ", component.getSystemName());
-
         } catch (final Exception e) {
             janusGraphDao.rollback();
-            LOGGER.error(BUSINESS_PROCESS_ERROR,
-                "Exception occurred during delete component node filter property values: {}", e.getMessage(), e);
+            LOGGER.error(BUSINESS_PROCESS_ERROR, "Exception occurred during delete component node filter property values: {}", e.getMessage(), e);
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         } finally {
             if (wasLocked) {
                 unlockComponent(component.getUniqueId(), componentTypeEnum);
@@ -268,33 +227,26 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return Optional.ofNullable(nodeFilterDataDefinition);
     }
 
-    private Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewNodeFilter(
-        final String componentId,
-        final String componentInstanceId,
-        final NodeFilterConstraintType nodeFilterConstraintType,
-        final CINodeFilterDataDefinition nodeFilterDataDefinition,
-        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition,
-        final String capabilityName) {
-
+    private Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewNodeFilter(final String componentId, final String componentInstanceId,
+                                                                                        final NodeFilterConstraintType nodeFilterConstraintType,
+                                                                                        final CINodeFilterDataDefinition nodeFilterDataDefinition,
+                                                                                        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition,
+                                                                                        final String capabilityName) {
         if (NodeFilterConstraintType.PROPERTIES.equals(nodeFilterConstraintType)) {
-            return nodeFilterOperation.addNewProperty(componentId, componentInstanceId, nodeFilterDataDefinition,
-                requirementNodeFilterPropertyDataDefinition);
+            return nodeFilterOperation
+                .addNewProperty(componentId, componentInstanceId, nodeFilterDataDefinition, requirementNodeFilterPropertyDataDefinition);
         }
-        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition =
-            new RequirementNodeFilterCapabilityDataDefinition();
+        final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition = new RequirementNodeFilterCapabilityDataDefinition();
         requirementNodeFilterCapabilityDataDefinition.setName(capabilityName);
-        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>
-            propertyDataDefinitionListDataDefinition = new ListDataDefinition<>();
-        propertyDataDefinitionListDataDefinition.getListToscaDataDefinition().addAll(
-            Collections.singleton(requirementNodeFilterPropertyDataDefinition));
+        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propertyDataDefinitionListDataDefinition = new ListDataDefinition<>();
+        propertyDataDefinitionListDataDefinition.getListToscaDataDefinition()
+            .addAll(Collections.singleton(requirementNodeFilterPropertyDataDefinition));
         requirementNodeFilterCapabilityDataDefinition.setProperties(propertyDataDefinitionListDataDefinition);
-        return nodeFilterOperation.addNewCapabilities(componentId, componentInstanceId, nodeFilterDataDefinition,
-            requirementNodeFilterCapabilityDataDefinition);
+        return nodeFilterOperation
+            .addNewCapabilities(componentId, componentInstanceId, nodeFilterDataDefinition, requirementNodeFilterCapabilityDataDefinition);
     }
 
-
-    private void unlockComponent(final String componentUniqueId,
-                                 final ComponentTypeEnum componentType) {
+    private void unlockComponent(final String componentUniqueId, final ComponentTypeEnum componentType) {
         graphLockOperation.unlockComponent(componentUniqueId, componentType.getNodeType());
     }
 
@@ -304,29 +256,23 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return user;
     }
 
-    private Optional<ComponentInstance> getComponentInstance(final String componentInstanceId,
-                                                             final Component component) {
+    private Optional<ComponentInstance> getComponentInstance(final String componentInstanceId, final Component component) {
         return component.getComponentInstanceById(componentInstanceId);
     }
 
-    private Optional<CINodeFilterDataDefinition> getCiNodeFilterDataDefinition(
-        final Optional<ComponentInstance> componentInstance) {
-
+    private Optional<CINodeFilterDataDefinition> getCiNodeFilterDataDefinition(final Optional<ComponentInstance> componentInstance) {
         if (componentInstance.isPresent()) {
             return Optional.ofNullable(componentInstance.get().getNodeFilter());
         }
         return Optional.empty();
     }
 
-    private Optional<CINodeFilterDataDefinition> getCiNodeFilterDataDefinition(final String componentInstanceId,
-                                                                               final Component component)
+    private Optional<CINodeFilterDataDefinition> getCiNodeFilterDataDefinition(final String componentInstanceId, final Component component)
         throws BusinessLogicException {
-
-        final Either<Boolean, ResponseFormat> response = nodeFilterValidator
-            .validateComponentInstanceExist(component, componentInstanceId);
+        final Either<Boolean, ResponseFormat> response = nodeFilterValidator.validateComponentInstanceExist(component, componentInstanceId);
         if (response.isRight()) {
-            throw new BusinessLogicException(componentsUtils
-                .getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
+            throw new BusinessLogicException(
+                componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
         }
         final Optional<ComponentInstance> componentInstance = getComponentInstance(componentInstanceId, component);
         if (componentInstance.isPresent()) {
@@ -336,55 +282,40 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
     }
 
     private CINodeFilterDataDefinition validateAndReturnNodeFilterDefinition(final String componentInstanceId,
-                                                                             final NodeFilterConstraintAction action,
-                                                                             final String constraint,
+                                                                             final NodeFilterConstraintAction action, final String constraint,
                                                                              final Component component,
                                                                              final NodeFilterConstraintType nodeFilterConstraintType)
         throws BusinessLogicException {
-
         validateNodeFilter(component, componentInstanceId, action, constraint, nodeFilterConstraintType);
-        final Optional<CINodeFilterDataDefinition> cINodeFilterDataDefinition = getCiNodeFilterDataDefinition(
-            componentInstanceId, component);
+        final Optional<CINodeFilterDataDefinition> cINodeFilterDataDefinition = getCiNodeFilterDataDefinition(componentInstanceId, component);
         if (!cINodeFilterDataDefinition.isPresent()) {
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
         }
         return cINodeFilterDataDefinition.get();
     }
 
-    private void validateNodeFilter(final Component component,
-                                    final String componentInstanceId,
-                                    final NodeFilterConstraintAction action,
-                                    final String constraint,
-                                    final NodeFilterConstraintType nodeFilterConstraintType) throws BusinessLogicException {
+    private void validateNodeFilter(final Component component, final String componentInstanceId, final NodeFilterConstraintAction action,
+                                    final String constraint, final NodeFilterConstraintType nodeFilterConstraintType) throws BusinessLogicException {
         final Either<Boolean, ResponseFormat> response = nodeFilterValidator
             .validateFilter(component, componentInstanceId, Collections.singletonList(constraint), action, nodeFilterConstraintType);
         if (response.isRight()) {
-            throw new BusinessLogicException(componentsUtils
-                .getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
+            throw new BusinessLogicException(
+                componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
         }
     }
 
-    public Optional<CINodeFilterDataDefinition> updateNodeFilter(final String componentId,
-                                                                 final String componentInstanceId,
-                                                                 final UIConstraint uiConstraint,
-                                                                 final ComponentTypeEnum componentTypeEnum,
-                                                                 final NodeFilterConstraintType nodeFilterConstraintType,
-                                                                 final int index)
+    public Optional<CINodeFilterDataDefinition> updateNodeFilter(final String componentId, final String componentInstanceId,
+                                                                 final UIConstraint uiConstraint, final ComponentTypeEnum componentTypeEnum,
+                                                                 final NodeFilterConstraintType nodeFilterConstraintType, final int index)
         throws BusinessLogicException {
-
-        final Optional<CINodeFilterDataDefinition> deleteActionResponse = deleteNodeFilter(componentId,
-            componentInstanceId,
-            NodeFilterConstraintAction.DELETE, null, index, true, componentTypeEnum,
-            nodeFilterConstraintType);
-
+        final Optional<CINodeFilterDataDefinition> deleteActionResponse = deleteNodeFilter(componentId, componentInstanceId,
+            NodeFilterConstraintAction.DELETE, null, index, true, componentTypeEnum, nodeFilterConstraintType);
         if (!deleteActionResponse.isPresent()) {
-            throw new BusinessLogicException(componentsUtils
-                .getResponseFormat(ActionStatus.GENERAL_ERROR, "Failed to delete node filter capabilities"));
+            throw new BusinessLogicException(
+                componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR, "Failed to delete node filter capabilities"));
         }
-
-        return addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD,
-            uiConstraint.getServicePropertyName(), new ConstraintConvertor().convert(uiConstraint), true,
-            componentTypeEnum, nodeFilterConstraintType,
+        return addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD, uiConstraint.getServicePropertyName(),
+            new ConstraintConvertor().convert(uiConstraint), true, componentTypeEnum, nodeFilterConstraintType,
             StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
     }
 }

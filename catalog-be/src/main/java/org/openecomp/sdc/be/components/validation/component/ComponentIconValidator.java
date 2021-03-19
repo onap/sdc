@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.validation.component;
 
+import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -32,8 +32,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.Arrays;
 
 @org.springframework.stereotype.Component
 public class ComponentIconValidator implements ComponentFieldValidator {
@@ -59,12 +57,11 @@ public class ComponentIconValidator implements ComponentFieldValidator {
             if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
                 validateAndSetDefaultIcon(icon, component);
             } else {
-                validateIcon(icon,component.getComponentType());
+                validateIcon(icon, component.getComponentType());
             }
-
-        } catch(ComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat() != null ? e.getResponseFormat()
-                    : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+        } catch (ComponentException e) {
+            ResponseFormat responseFormat =
+                e.getResponseFormat() != null ? e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
             throw e;
         }
@@ -81,8 +78,7 @@ public class ComponentIconValidator implements ComponentFieldValidator {
                 }
             }
         } catch (NullPointerException exp) {
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY,
-                    ComponentTypeEnum.SERVICE.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
         }
         componnet.setIcon(DEFAULT_ICON);
     }
@@ -91,9 +87,9 @@ public class ComponentIconValidator implements ComponentFieldValidator {
         if (icon != null) {
             if (!ValidationUtils.validateIconLength(icon)) {
                 log.debug("icon exceeds max length");
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, type.getValue(),
+                    "" + ValidationUtils.ICON_MAX_LENGTH);
             }
-
             if (!ValidationUtils.validateIcon(icon)) {
                 log.info("icon is invalid.");
                 throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_ICON, type.getValue());

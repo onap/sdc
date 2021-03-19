@@ -17,9 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
+import java.io.IOException;
+import java.util.function.Supplier;
+import javax.annotation.Priority;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
@@ -34,24 +43,12 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.annotation.Priority;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.function.Supplier;
-
 @Priority(2)
 public class BeCadiServletFilter extends CadiFilter {
 
     private static final Logger log = Logger.getLogger(BeCadiServletFilter.class);
-    private ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
     private static final String BE_CADI_SERVICE_FILTER = "BeCadiServletFilter: ";
-
+    private ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
 
     public BeCadiServletFilter() {
         super();
@@ -70,7 +67,6 @@ public class BeCadiServletFilter extends CadiFilter {
         log.debug(BE_CADI_SERVICE_FILTER);
     }
 
-
     /**
      * Use this to pass in a PreContructed CADI Filter, but with initializing... let Servlet do it
      *
@@ -80,7 +76,6 @@ public class BeCadiServletFilter extends CadiFilter {
      * @throws ServletException
      */
     public BeCadiServletFilter(boolean init, PropAccess access, Object... moreTafLurs) throws ServletException {
-
         super(init, access, moreTafLurs);
         log.debug(BE_CADI_SERVICE_FILTER);
     }
@@ -88,7 +83,7 @@ public class BeCadiServletFilter extends CadiFilter {
     private void checkIfNullProperty(String key, String value) {
         /* When value is null, so not defined in application.properties
            set nothing in System properties */
-        if (value != null) {
+        if (value != null) { 
             /* Ensure that any properties already defined in System.prop by JVM params
                 won't be overwritten by Spring application.properties values */
             System.setProperty(key, System.getProperty(key, value));
@@ -97,26 +92,21 @@ public class BeCadiServletFilter extends CadiFilter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
         // set some properties in System so that Cadi filter will find its config
+
         // The JVM values set will always overwrite the Spring ones.
         CadiFilterParams cadiFilterParams = configurationManager.getConfiguration().getCadiFilterParams();
         checkIfNullProperty(Config.HOSTNAME, cadiFilterParams.getHostname());
         log.debug("BeCadiServletFilter: HOSTNAME", cadiFilterParams.getHostname());
-
         checkIfNullProperty(Config.CADI_KEYFILE, cadiFilterParams.getCadi_keyfile());
         checkIfNullProperty(Config.CADI_LOGLEVEL, cadiFilterParams.getCadi_loglevel());
-
-
         checkIfNullProperty(Config.CADI_LATITUDE, cadiFilterParams.getAFT_LATITUDE());
         checkIfNullProperty(Config.CADI_LONGITUDE, cadiFilterParams.getAFT_LONGITUDE());
-
         checkIfNullProperty(Config.AAF_URL, cadiFilterParams.getAaf_url());
         //checkIfNullProperty(Config.AAF_LOCATE_URL, cadiFilterParams.getAafLocateUrl());
         checkIfNullProperty(Config.AAF_APPID, cadiFilterParams.getAaf_id());
         checkIfNullProperty(Config.AAF_APPPASS, cadiFilterParams.getAaf_password());
         checkIfNullProperty(Config.AAF_ENV, cadiFilterParams.getAFT_ENVIRONMENT());
-
         checkIfNullProperty(Config.CADI_X509_ISSUERS, cadiFilterParams.getCadiX509Issuers());
         checkIfNullProperty(Config.CADI_TRUSTSTORE, cadiFilterParams.getCadi_truststore());
         checkIfNullProperty(Config.CADI_TRUSTSTORE_PASSWORD, cadiFilterParams.getCadi_truststore_password());
@@ -129,10 +119,8 @@ public class BeCadiServletFilter extends CadiFilter {
         }
     }
 
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         if (ThreadLocalsHolder.isExternalRequest() && isNeedAuth()) {
             log.debug("doFilter: {}", request.getContentType());
             HttpServletRequest hreq = (HttpServletRequest) request;
@@ -150,31 +138,14 @@ public class BeCadiServletFilter extends CadiFilter {
         return configurationManager.getConfiguration().getAafAuthNeeded();
     }
 
-
     ThreadLocalUtils getThreadLocalUtils(ServletContext context) {
         return getClassFromWebAppContext(context, () -> ThreadLocalUtils.class);
     }
 
     <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(businessLogicClassGen.get());
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

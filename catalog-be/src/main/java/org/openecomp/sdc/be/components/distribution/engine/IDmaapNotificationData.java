@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.getEnumValueByFieldValue;
 
 public interface IDmaapNotificationData {
+
     String getOperationalEnvironmentId();
 
     OperationaEnvironmentTypeEnum getOperationalEnvironmentType();
@@ -30,12 +30,13 @@ public interface IDmaapNotificationData {
     DmaapActionEnum getAction();
 
     enum DmaapActionEnum {
+        // @formatter:off
         DELETE("Delete"),
         CREATE("Create"),
         UPDATE("Update"),
-        UNKONW("UNKONW")
+        UNKONW("UNKONW");
+        // @formatter:on
 
-        ;
         private String actionName;
 
         private DmaapActionEnum(String actionName) {
@@ -46,15 +47,17 @@ public interface IDmaapNotificationData {
             return actionName;
         }
 
-        public static DmaapActionEnum findByName(String actionName){
+        public static DmaapActionEnum findByName(String actionName) {
             return getEnumValueByFieldValue(actionName, DmaapActionEnum.values(), DmaapActionEnum::getActionName, UNKONW, false);
         }
     }
 
     enum OperationaEnvironmentTypeEnum {
+        // @formatter:off
         ECOMP("ECOMP"),
-        UNKONW("UNKONW")
-        ;
+        UNKONW("UNKONW");
+        // @formatter:on
+
         private String eventTypenName;
 
         private OperationaEnvironmentTypeEnum(String eventTypenName) {
@@ -65,8 +68,9 @@ public interface IDmaapNotificationData {
             return eventTypenName;
         }
 
-        public static OperationaEnvironmentTypeEnum findByName(String operationalEnvironmentTypeName){
-            return getEnumValueByFieldValue(operationalEnvironmentTypeName, OperationaEnvironmentTypeEnum.values(), OperationaEnvironmentTypeEnum::getEventTypenName, UNKONW, false);
+        public static OperationaEnvironmentTypeEnum findByName(String operationalEnvironmentTypeName) {
+            return getEnumValueByFieldValue(operationalEnvironmentTypeName, OperationaEnvironmentTypeEnum.values(),
+                OperationaEnvironmentTypeEnum::getEventTypenName, UNKONW, false);
         }
     }
 }

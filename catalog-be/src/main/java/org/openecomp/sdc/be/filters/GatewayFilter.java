@@ -17,9 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.filters;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Stream;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.WebApplicationException;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.Configuration;
@@ -30,31 +41,16 @@ import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Stream;
-
 @Component("gatewayFilter")
 public class GatewayFilter implements Filter {
 
+    private static final Logger log = Logger.getLogger(BeServletFilter.class);
     private Configuration.CookieConfig authCookieConf;
     private Configuration config;
-    private static final Logger log = Logger.getLogger(BeServletFilter.class);
-
     @Autowired
     private ThreadLocalUtils threadLocalUtils;
     @Autowired
     private ComponentExceptionMapper componentExceptionMapper;
-
 
     public GatewayFilter(org.openecomp.sdc.be.config.Configuration configuration) {
         this.authCookieConf = configuration.getAuthCookie();
@@ -66,7 +62,6 @@ public class GatewayFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
-
         HttpServletRequest httpRequest = (HttpServletRequest) req;
         HttpServletResponse httpResponse = (HttpServletResponse) res;
         try {
@@ -77,12 +72,10 @@ public class GatewayFilter implements Filter {
             }
         } catch (ComponentException ce) {
             componentExceptionMapper.writeToResponse(ce, httpResponse);
-
         } catch (WebApplicationException we) {
             httpResponse.setStatus(we.getResponse().getStatus());
             setDefaultHttpParams(httpResponse);
             httpResponse.getWriter().write(we.getMessage());
-
         } catch (Exception ex) {
             httpResponse.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             setDefaultHttpParams(httpResponse);
@@ -106,10 +99,10 @@ public class GatewayFilter implements Filter {
     }
 
     private Boolean isConsumerBusinessLogic() {
-       return config.getConsumerBusinessLogic();
+        return config.getConsumerBusinessLogic();
     }
+
     @Override
     public void destroy() {
-
     }
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.Map;
@@ -23,13 +22,11 @@ import java.util.Objects;
  * @author KATYR
  * @since March 26, 2018
  */
-
 public class ToscaLifecycleOperationDefinition {
 
     private String description;
     private String implementation;
     private Map<String, ToscaProperty> inputs;
-
 
     public String getImplementation() {
         return implementation;
@@ -47,7 +44,6 @@ public class ToscaLifecycleOperationDefinition {
         this.inputs = inputs;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -62,7 +58,6 @@ public class ToscaLifecycleOperationDefinition {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(implementation, inputs);
     }
 

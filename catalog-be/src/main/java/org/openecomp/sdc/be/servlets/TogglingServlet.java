@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
@@ -59,36 +58,31 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 @Singleton
 public class TogglingServlet extends AbstractValidationsServlet {
 
-    private final TogglingBusinessLogic togglingBusinessLogic;
-
-    @Inject
-    public TogglingServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
-            ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
-            TogglingBusinessLogic togglingBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
-        this.togglingBusinessLogic = togglingBusinessLogic;
-    }
-
     private static final Logger log = Logger.getLogger(TogglingServlet.class);
     private static final String ALL_FEATURES_STATES_WERE_SET_SUCCESSFULLY = "All features states were set successfully";
     private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
     private static final String FEATURE_STATE_WAS_UPDATED_SUCCESSFULLY = "Feature state was updated successfully";
+    private final TogglingBusinessLogic togglingBusinessLogic;
 
+    @Inject
+    public TogglingServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+                           ServletUtils servletUtils, ResourceImportManager resourceImportManager, TogglingBusinessLogic togglingBusinessLogic) {
+        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.togglingBusinessLogic = togglingBusinessLogic;
+    }
 
     @GET
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get all Toggleable features", method = "GET", summary = "Returns list of toggleable features", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
-            @ApiResponse(responseCode = "200", description = "Success"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Toggleable features not found")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Toggleable features not found")})
     public Response getAllFeatures(@Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         try {
             Map<String, Boolean> features = togglingBusinessLogic.getAllFeatureStates();
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), features);
@@ -102,15 +96,13 @@ public class TogglingServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get Toggleable feature state", method = "GET", summary = "Returns one toggleable feature state", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
-            @ApiResponse(responseCode = "200", description = "Success"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Toggleable feature not found")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Toggleable feature not found")})
     public Response getToggleableFeature(@PathParam("featureName") String featureName, @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         try {
             boolean featureState = togglingBusinessLogic.getFeatureState(featureName);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), featureState);
@@ -124,15 +116,13 @@ public class TogglingServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update all feature toggle state", method = "PUT", summary = "Update all feature status", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
-            @ApiResponse(responseCode = "200", description = "Success"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Toggleable features not found")})
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Toggleable features not found")})
     public Response setAllFeatures(@PathParam("state") boolean state, @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-
         try {
             togglingBusinessLogic.setAllFeatures(state);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), ALL_FEATURES_STATES_WERE_SET_SUCCESSFULLY);
@@ -146,16 +136,14 @@ public class TogglingServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update feature toggle state", method = "PUT", summary = "Update feature status", responses = {
-            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
-            @ApiResponse(responseCode = "200", description = "Success"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Toggleable features not found")})
-    public Response updateFeatureState(@PathParam("featureName") String featureName,
-            @PathParam("state") boolean state, @Context final HttpServletRequest request) {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = javax.ws.rs.core.Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Toggleable features not found")})
+    public Response updateFeatureState(@PathParam("featureName") String featureName, @PathParam("state") boolean state,
+                                       @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
-
         try {
             togglingBusinessLogic.updateFeatureState(featureName, state);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), FEATURE_STATE_WAS_UPDATED_SUCCESSFULLY);
@@ -163,6 +151,4 @@ public class TogglingServlet extends AbstractValidationsServlet {
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
-
-
 }

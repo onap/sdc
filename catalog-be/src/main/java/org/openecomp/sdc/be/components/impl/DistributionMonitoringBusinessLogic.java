@@ -17,11 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -45,44 +49,28 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Component("distributionMonitoringBusinessLogic")
 public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
+
     private static final String DEPLOYED = "Deployed";
-
     private static final String ERROR = "Error";
-
     private static final String DISTRIBUTED = "Distributed";
-
     private static final String IN_PROGRESS = "In Progress";
-
     private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class.getName());
-
     private final AuditCassandraDao cassandraDao;
 
     @Autowired
-    public DistributionMonitoringBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        AuditCassandraDao cassandraDao,
-        ArtifactsOperations artifactToscaOperation) {
-        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+    public DistributionMonitoringBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
+                                               IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation,
+                                               InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                               AuditCassandraDao cassandraDao, ArtifactsOperations artifactToscaOperation) {
+        super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactToscaOperation);
         this.cassandraDao = cassandraDao;
     }
 
     public Either<DistributionStatusListResponse, ResponseFormat> getListOfDistributionStatus(String did, String userId) {
-
         validateUserExists(userId);
-
         log.trace("getListOfDistributionStatus for did {}", did);
         Either<List<DistributionStatusEvent>, ActionStatus> distributionStatus = cassandraDao.getListOfDistributionStatuses(did);
         if (distributionStatus.isRight()) {
@@ -96,7 +84,6 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
                 distribStatusInfoList.add(new DistributionStatusInfo(distributionStatusEvent));
             }
         }
-
         DistributionStatusListResponse distributionStatusListResponse = new DistributionStatusListResponse();
         distributionStatusListResponse.setDistributionStatusList(distribStatusInfoList);
         log.trace("list statuses for did {} is {} ", did, distribStatusInfoList);
@@ -105,7 +92,6 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
 
     public Either<DistributionStatusOfServiceListResponce, ResponseFormat> getListOfDistributionServiceStatus(String serviceUuid, String userId) {
         validateUserExists(userId);
-
         log.trace("getListOfDistributionServiceStatus for serviceUUID {}", serviceUuid);
         Either<List<? extends AuditingGenericEvent>, ActionStatus> status = cassandraDao.getServiceDistributionStatusesList(serviceUuid);
         if (status.isRight()) {
@@ -134,15 +120,12 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
             AuditingGenericEvent resAuditingGenericEvent = null;
             for (AuditingGenericEvent auditingGenericEvent : auditingGenericEventList) {
                 auditingGenericEvent.fillFields();
-
                 String action = (String) auditingGenericEvent.getFields().get(AuditingFieldsKey.AUDIT_ACTION.getDisplayName());
                 Object modifierUserId = auditingGenericEvent.getFields().get(AuditingFieldsKey.AUDIT_MODIFIER_UID.getDisplayName());
                 if (modifierUserId != null) {
                     distributionStatusOfServiceInfo.setUserId((String) modifierUserId);
                 }
-
                 if (action.equals(AuditingActionEnum.DISTRIBUTION_DEPLOY.getName())) {
-
                     isResult = true;
                     resAuditingGenericEvent = auditingGenericEvent;
                     break;
@@ -151,38 +134,34 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
                 } else if (action.equals(AuditingActionEnum.DISTRIBUTION_NOTIFY.getName())) {
                     dNotifyStatus = getStatusFromAuditEvent(auditingGenericEvent);
                 }
-
                 resAuditingGenericEvent = auditingGenericEvent;
             }
-
             if (resAuditingGenericEvent != null) {
                 Map<String, Object> fields = resAuditingGenericEvent.getFields();
-
                 if (fields != null) {
-                    Optional.ofNullable(
-                        fields.get(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName()))
+                    Optional.ofNullable(fields.get(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName()))
                         .ifPresent(timestamp -> distributionStatusOfServiceInfo.setTimestamp((String) timestamp));
                 }
             }
-
             if (!isResult) {
                 if (dReguestStatus.equals(String.valueOf(HttpStatus.SC_OK))) {
                     if (dNotifyStatus.isEmpty()) {
                         distributionStatusOfServiceInfo.setDeployementStatus(IN_PROGRESS);
-
                     } else {
-                        if (dNotifyStatus.equals(String.valueOf(HttpStatus.SC_OK)))
+                        if (dNotifyStatus.equals(String.valueOf(HttpStatus.SC_OK))) {
                             distributionStatusOfServiceInfo.setDeployementStatus(DISTRIBUTED);
-                        else
+                        } else {
                             distributionStatusOfServiceInfo.setDeployementStatus(ERROR);
+                        }
                     }
-                } else
+                } else {
                     distributionStatusOfServiceInfo.setDeployementStatus(ERROR);
-            } else
+                }
+            } else {
                 distributionStatusOfServiceInfo.setDeployementStatus(DEPLOYED);
+            }
             reslist.add(distributionStatusOfServiceInfo);
         }
-
         return reslist;
     }
 
@@ -196,25 +175,21 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
     }
 
     private Map<String, List<AuditingGenericEvent>> createServiceDidMap(List<? extends AuditingGenericEvent> distribStatusInfoList) {
-
         Map<String, List<AuditingGenericEvent>> serviceDidMap = new HashMap<>();
         for (AuditingGenericEvent auditingGenericEvent : distribStatusInfoList) {
             List<AuditingGenericEvent> auditingGenericEventList = null;
             String did = "";
             auditingGenericEvent.fillFields();
-
             Object didValue = auditingGenericEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID.getDisplayName());
             if (didValue != null) {
                 did = (String) didValue;
             }
-
             if (!did.isEmpty()) {
                 if (serviceDidMap.containsKey(did)) {
                     auditingGenericEventList = serviceDidMap.get(did);
                 }
                 if (auditingGenericEventList == null) {
                     auditingGenericEventList = new ArrayList<>();
-
                 }
                 auditingGenericEventList.add(auditingGenericEvent);
                 serviceDidMap.put(did, auditingGenericEventList);
@@ -222,5 +197,4 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
         }
         return serviceDidMap;
     }
-
 }

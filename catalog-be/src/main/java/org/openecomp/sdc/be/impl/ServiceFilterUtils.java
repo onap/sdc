@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.impl;
 
 import java.util.List;
@@ -33,56 +32,45 @@ import org.openecomp.sdc.be.ui.model.UIConstraint;
 
 public class ServiceFilterUtils {
 
-
     private ServiceFilterUtils() {
     }
 
-
-     public static boolean isNodeFilterAffectedByPropertyRemoval(Service service, String ciName, String propertyName) {
+    public static boolean isNodeFilterAffectedByPropertyRemoval(Service service, String ciName, String propertyName) {
         return service.getComponentInstances().stream().filter(ci -> ci.getNodeFilter() != null)
-                      .anyMatch(ci -> propertyIsUsedInCI(ci, ciName, propertyName));
+            .anyMatch(ci -> propertyIsUsedInCI(ci, ciName, propertyName));
     }
-
 
     private static boolean propertyIsUsedInCI(ComponentInstance ci, String ciName, String propertyName) {
         if (CollectionUtils.isEmpty(ci.getDirectives())) {
             return false;
         }
         if (ci.getNodeFilter() == null || ci.getNodeFilter().getProperties() == null
-                    || ci.getNodeFilter().getProperties().getListToscaDataDefinition() == null) {
+            || ci.getNodeFilter().getProperties().getListToscaDataDefinition() == null) {
             return false;
         }
-        return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
-                 .flatMap(prop -> prop.getConstraints().stream()).map(String::new)
-                 .filter(constraint -> new ConstraintConvertor().convert(constraint).getSourceType()
-                                                                .equals(ConstraintConvertor.PROPERTY_CONSTRAINT))
-                 .anyMatch(constraintStr -> {
-                     UIConstraint uiConstraint = new ConstraintConvertor().convert(constraintStr);
-                     return uiConstraint.getSourceName().equals(ciName) && uiConstraint.getValue().equals(propertyName);
-                 });
-
+        return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream().flatMap(prop -> prop.getConstraints().stream())
+            .map(String::new)
+            .filter(constraint -> new ConstraintConvertor().convert(constraint).getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT))
+            .anyMatch(constraintStr -> {
+                UIConstraint uiConstraint = new ConstraintConvertor().convert(constraintStr);
+                return uiConstraint.getSourceName().equals(ciName) && uiConstraint.getValue().equals(propertyName);
+            });
     }
 
-    public static Map<String, CINodeFilterDataDefinition> getRenamedNodesFilter(Service service, String oldName,
-            String newName) {
+    public static Map<String, CINodeFilterDataDefinition> getRenamedNodesFilter(Service service, String oldName, String newName) {
         return service.getComponentInstances().stream().filter(ci -> isNodeFilterUsingChangedCi(ci, oldName))
-                      .map(ci -> renameOldCiNames(ci, oldName, newName))
-                      .collect(Collectors.toMap(Pair::getValue0, Pair::getValue1));
+            .map(ci -> renameOldCiNames(ci, oldName, newName)).collect(Collectors.toMap(Pair::getValue0, Pair::getValue1));
     }
 
-    private static Pair<String, CINodeFilterDataDefinition> renameOldCiNames(ComponentInstance ci, String oldName,
-            String newName) {
+    private static Pair<String, CINodeFilterDataDefinition> renameOldCiNames(ComponentInstance ci, String oldName, String newName) {
         ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
-          .filter(property -> isPropertyConstraintChangedByCi(property, oldName))
-          .forEach(property -> renamePropertyCiNames(property, oldName, newName));
-
+            .filter(property -> isPropertyConstraintChangedByCi(property, oldName))
+            .forEach(property -> renamePropertyCiNames(property, oldName, newName));
         return new Pair<>(ci.getUniqueId(), ci.getNodeFilter());
     }
 
-    private static void renamePropertyCiNames(RequirementNodeFilterPropertyDataDefinition property, String oldName,
-            String newName) {
-        final List<String> constraints = property.getConstraints().stream().map(getConstraintString(oldName, newName))
-                                                 .collect(Collectors.toList());
+    private static void renamePropertyCiNames(RequirementNodeFilterPropertyDataDefinition property, String oldName, String newName) {
+        final List<String> constraints = property.getConstraints().stream().map(getConstraintString(oldName, newName)).collect(Collectors.toList());
         property.setConstraints(constraints);
     }
 
@@ -97,34 +85,29 @@ public class ServiceFilterUtils {
         };
     }
 
-
     public static Set<String> getNodesFiltersToBeDeleted(Service service, String ciName) {
-        return service.getComponentInstances().stream().filter(ci -> isNodeFilterUsingChangedCi(ci, ciName))
-                      .map(ComponentInstance::getName).collect(Collectors.toSet());
+        return service.getComponentInstances().stream().filter(ci -> isNodeFilterUsingChangedCi(ci, ciName)).map(ComponentInstance::getName)
+            .collect(Collectors.toSet());
     }
-
-
 
     public static Set<String> getNodesFiltersToBeDeleted(Service service, ComponentInstance inCi) {
         return getNodesFiltersToBeDeleted(service, inCi.getName());
     }
-
-
 
     private static boolean isNodeFilterUsingChangedCi(ComponentInstance ci, String name) {
         if (CollectionUtils.isEmpty(ci.getDirectives())) {
             return false;
         }
         if (ci.getNodeFilter() == null || ci.getNodeFilter().getProperties() == null
-                    || ci.getNodeFilter().getProperties().getListToscaDataDefinition() == null) {
+            || ci.getNodeFilter().getProperties().getListToscaDataDefinition() == null) {
             return false;
         }
         return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
-                 .anyMatch(property -> isPropertyConstraintChangedByCi(property, name));
+            .anyMatch(property -> isPropertyConstraintChangedByCi(property, name));
     }
 
-    private static boolean isPropertyConstraintChangedByCi(
-            RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition, String name) {
+    private static boolean isPropertyConstraintChangedByCi(RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition,
+                                                           String name) {
         List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
         if (constraints == null) {
             return false;
@@ -144,8 +127,8 @@ public class ServiceFilterUtils {
     }
 
     public static Set<String> getNodesFiltersToBeDeleted(Service service, InputDefinition changedInput) {
-        return service.getComponentInstances().stream().filter(ci -> isNodeFilterUsingChangedInput(ci, changedInput))
-                      .map(ComponentInstance::getName).collect(Collectors.toSet());
+        return service.getComponentInstances().stream().filter(ci -> isNodeFilterUsingChangedInput(ci, changedInput)).map(ComponentInstance::getName)
+            .collect(Collectors.toSet());
     }
 
     private static boolean isNodeFilterUsingChangedInput(ComponentInstance ci, InputDefinition changedInput) {
@@ -153,12 +136,11 @@ public class ServiceFilterUtils {
             return false;
         }
         return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
-                 .anyMatch(property -> isPropertyConstraintChangedByInput(property, changedInput));
+            .anyMatch(property -> isPropertyConstraintChangedByInput(property, changedInput));
     }
 
-    private static boolean isPropertyConstraintChangedByInput(
-            RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition,
-            InputDefinition changedInput) {
+    private static boolean isPropertyConstraintChangedByInput(RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition,
+                                                              InputDefinition changedInput) {
         List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
         return constraints.stream().anyMatch(constraint -> isConstraintChangedByInput(constraint, changedInput));
     }
@@ -170,5 +152,4 @@ public class ServiceFilterUtils {
         }
         return uiConstraint.getValue().equals(changedInput.getName());
     }
-
 }

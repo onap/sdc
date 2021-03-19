@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.info;
 
 import lombok.Getter;
@@ -28,8 +27,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ServiceVersionInfo {
+
     private String version;
     private String url;
+    private String artifactUuid;
+    private String state;
+    private String distributionStatus;
 
     public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
         super();
@@ -39,12 +42,6 @@ public class ServiceVersionInfo {
         url = sb.toString();
     }
 
-
-    private String artifactUuid;
-    private String state;
-    private String distributionStatus;
-
-
     public static Builder newBuilder() {
         return new Builder();
     }
@@ -52,13 +49,17 @@ public class ServiceVersionInfo {
     public String getArtifactUuid() {
         return artifactUuid;
     }
+
     public String getState() {
         return state;
     }
-    public String getDistributionStatus() { return distributionStatus; }
 
+    public String getDistributionStatus() {
+        return distributionStatus;
+    }
 
     public static class Builder {
+
         private final ServiceVersionInfo instance;
 
         private Builder() {

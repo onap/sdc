@@ -29,7 +29,6 @@ public final class RelationshipData {
 
     @JsonProperty("relationship-key")
     private String relationshipKey;
-
     @JsonProperty("relationship-value")
     private String relationshipValue;
 }

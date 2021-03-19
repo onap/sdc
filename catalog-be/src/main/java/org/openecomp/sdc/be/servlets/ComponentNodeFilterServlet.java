@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.servlets;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,30 +71,22 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentNodeFilterServlet.class);
     private static final String START_HANDLE_REQUEST_OF = "Start handle {} request of {}";
     private static final String MODIFIER_ID_IS = "modifier id is {}";
-
     private static final String FAILED_TO_PARSE_COMPONENT = "failed to parse component";
-
     private static final String FAILED_TO_CREATE_NODE_FILTER = "failed to create node filter";
     private static final String NODE_FILTER_CREATION = "Node Filter Creation";
     private static final String CREATE_NODE_FILTER_WITH_AN_ERROR = "create node filter with an error";
-
     private static final String FAILED_TO_UPDATE_NODE_FILTER = "failed to update node filter";
     private static final String NODE_FILTER_UPDATE = "Node Filter Update";
     private static final String UPDATE_NODE_FILTER_WITH_AN_ERROR = "update node filter with an error";
-
     private static final String FAILED_TO_DELETE_NODE_FILTER = "failed to delete node filter";
     private static final String NODE_FILTER_DELETE = "Node Filter Delete";
     private static final String DELETE_NODE_FILTER_WITH_AN_ERROR = "delete node filter with an error";
-
-    private static  final String INVALID_NODE_FILTER_CONSTRAINT_TYPE = "Invalid value for NodeFilterConstraintType enum {}";
-
+    private static final String INVALID_NODE_FILTER_CONSTRAINT_TYPE = "Invalid value for NodeFilterConstraintType enum {}";
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
     @Inject
-    public ComponentNodeFilterServlet(final UserBusinessLogic userBusinessLogic,
-                                      final ComponentInstanceBusinessLogic componentInstanceBL,
-                                      final ComponentsUtils componentsUtils,
-                                      final ServletUtils servletUtils,
+    public ComponentNodeFilterServlet(final UserBusinessLogic userBusinessLogic, final ComponentInstanceBusinessLogic componentInstanceBL,
+                                      final ComponentsUtils componentsUtils, final ServletUtils servletUtils,
                                       final ResourceImportManager resourceImportManager,
                                       final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
@@ -106,62 +97,50 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/nodeFilter")
-    @Operation(description = "Add Component Filter Constraint", method = "POST",
-        summary = "Add Component Filter Constraint", responses = {
+    @Operation(description = "Add Component Filter Constraint", method = "POST", summary = "Add Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Create Component Filter"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response addComponentFilterConstraint(
-        @Parameter(description = "UIConstraint data", required = true) String constraintData,
-        @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
-        @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
-        @Parameter(description = "valid values: resources / services",
-            schema = @Schema(allowableValues = {
-                ComponentTypeEnum.RESOURCE_PARAM_NAME,
-                ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
-        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
-            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
-                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
-        @PathParam("constraintType") final String constraintType,
-        @Context final HttpServletRequest request,
-        @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response addComponentFilterConstraint(@Parameter(description = "UIConstraint data", required = true) String constraintData,
+                                                 @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+                                                 @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
+                                                 @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
+                                                     ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                                                     ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+                                                 @Parameter(description = "Constraint type. Valid values: properties / capabilities", schema = @Schema(allowableValues = {
+                                                     NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                                                     NodeFilterConstraintType.CAPABILITIES_PARAM_NAME})) @PathParam("constraintType") final String constraintType,
+                                                 @Context final HttpServletRequest request,
+                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
         final User userModifier = componentNodeFilterBusinessLogic.validateUser(userId);
-
         final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         try {
-            final Optional<UIConstraint> convertResponse = componentsUtils
-                .parseToConstraint(constraintData, userModifier, componentTypeEnum);
+            final Optional<UIConstraint> convertResponse = componentsUtils.parseToConstraint(constraintData, userModifier, componentTypeEnum);
             if (convertResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_PARSE_COMPONENT);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
-                NodeFilterConstraintType.parse(constraintType);
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintType = NodeFilterConstraintType.parse(constraintType);
             if (nodeFilterConstraintType.isEmpty()) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                    INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
+                return buildErrorResponse(
+                    getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
             final UIConstraint uiConstraint = convertResponse.get();
             final String constraint = new ConstraintConvertor().convert(uiConstraint);
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD,
-                    uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum,
-                    nodeFilterConstraintType.get(),
+                .addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD, uiConstraint.getServicePropertyName(),
+                    constraint, true, componentTypeEnum, nodeFilterConstraintType.get(),
                     StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
-
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                 new NodeFilterConverter().convertToUi(actionResponse.get()));
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_CREATION);
             LOGGER.error(CREATE_NODE_FILTER_WITH_AN_ERROR, e);
@@ -173,60 +152,49 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{constraintIndex}/nodeFilter")
-    @Operation(description = "Update Component Filter Constraint", method = "PUT",
-        summary = "Update Component Filter Constraint", responses = {
+    @Operation(description = "Update Component Filter Constraint", method = "PUT", summary = "Update Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Create Component Filter"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response updateComponentFilterConstraint(
-        @Parameter(description = "UIConstraint data", required = true) String constraintData,
-        @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
-        @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
-        @Parameter(description = "valid values: resources / services",
-            schema = @Schema(allowableValues = {
-                ComponentTypeEnum.RESOURCE_PARAM_NAME,
-                ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
-        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
-            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
-                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
-        @PathParam("constraintType") final String constraintType,
-        @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
-        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response updateComponentFilterConstraint(@Parameter(description = "UIConstraint data", required = true) String constraintData,
+                                                    @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+                                                    @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
+                                                    @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
+                                                        ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                                                        ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+                                                    @Parameter(description = "Constraint type. Valid values: properties / capabilities", schema = @Schema(allowableValues = {
+                                                        NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                                                        NodeFilterConstraintType.CAPABILITIES_PARAM_NAME})) @PathParam("constraintType") final String constraintType,
+                                                    @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
+                                                    @Context final HttpServletRequest request,
+                                                    @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
         final User userModifier = componentNodeFilterBusinessLogic.validateUser(userId);
-
         try {
-            final Optional<NodeFilterConstraintType> nodeFilterConstraintTypeOptional =
-                NodeFilterConstraintType.parse(constraintType);
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintTypeOptional = NodeFilterConstraintType.parse(constraintType);
             if (nodeFilterConstraintTypeOptional.isEmpty()) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                    INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
+                return buildErrorResponse(
+                    getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
-
             final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            final Optional<UIConstraint> convertResponse = componentsUtils
-                .parseToConstraint(constraintData, userModifier, componentTypeEnum);
+            final Optional<UIConstraint> convertResponse = componentsUtils.parseToConstraint(constraintData, userModifier, componentTypeEnum);
             if (convertResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_PARSE_COMPONENT);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             final NodeFilterConstraintType nodeFilterConstraintType = nodeFilterConstraintTypeOptional.get();
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, convertResponse.get(),
-                    componentTypeEnum, nodeFilterConstraintType, index);
-
+                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, convertResponse.get(), componentTypeEnum, nodeFilterConstraintType,
+                    index);
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_UPDATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                 new NodeFilterConverter().convertToUi(actionResponse.get()));
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_UPDATE);
             LOGGER.error(UPDATE_NODE_FILTER_WITH_AN_ERROR, e);
@@ -238,56 +206,45 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{constraintIndex}/nodeFilter")
-    @Operation(description = "Delete Component Filter Constraint", method = "Delete",
-        summary = "Delete Component Filter Constraint", responses = {
+    @Operation(description = "Delete Component Filter Constraint", method = "Delete", summary = "Delete Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Delete Component Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteComponentFilterConstraint(
-        @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
-        @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
-        @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
-        @Parameter(description = "valid values: resources / services",
-            schema = @Schema(allowableValues = {
-                ComponentTypeEnum.RESOURCE_PARAM_NAME,
-                ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
-        @Parameter(description = "Constraint type. Valid values: properties / capabilities",
-            schema = @Schema(allowableValues = {NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
-                NodeFilterConstraintType.CAPABILITIES_PARAM_NAME}))
-        @PathParam("constraintType") final String constraintType,
-        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+    public Response deleteComponentFilterConstraint(@Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+                                                    @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
+                                                    @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
+                                                    @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
+                                                        ComponentTypeEnum.RESOURCE_PARAM_NAME,
+                                                        ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+                                                    @Parameter(description = "Constraint type. Valid values: properties / capabilities", schema = @Schema(allowableValues = {
+                                                        NodeFilterConstraintType.PROPERTIES_PARAM_NAME,
+                                                        NodeFilterConstraintType.CAPABILITIES_PARAM_NAME})) @PathParam("constraintType") final String constraintType,
+                                                    @Context final HttpServletRequest request,
+                                                    @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
         componentNodeFilterBusinessLogic.validateUser(userId);
-
         try {
-            final Optional<NodeFilterConstraintType> nodeFilterConstraintType =
-                NodeFilterConstraintType.parse(constraintType);
+            final Optional<NodeFilterConstraintType> nodeFilterConstraintType = NodeFilterConstraintType.parse(constraintType);
             if (nodeFilterConstraintType.isEmpty()) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM,
-                    INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
+                return buildErrorResponse(
+                    getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.DELETE,
-                    null, index, true, ComponentTypeEnum.findByParamName(componentType),
-                    nodeFilterConstraintType.get());
-
+                .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.DELETE, null, index, true,
+                    ComponentTypeEnum.findByParamName(componentType), nodeFilterConstraintType.get());
             if (actionResponse.isEmpty()) {
                 LOGGER.debug(FAILED_TO_DELETE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                 new NodeFilterConverter().convertToUi(actionResponse.get()));
-
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_DELETE);
             LOGGER.debug(DELETE_NODE_FILTER_WITH_AN_ERROR, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
-
 }

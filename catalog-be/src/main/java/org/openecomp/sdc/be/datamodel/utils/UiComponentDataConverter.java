@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datamodel.utils;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -63,19 +62,35 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 @org.springframework.stereotype.Component("uiComponentDataConverter")
 public class UiComponentDataConverter {
 
-    private static final Logger log = Logger.getLogger(UiComponentDataConverter.class);
     public static final String INVALID_INPUT_GIVEN_TO_DATA_CONVERTER = "Invalid input given to data converter: {}";
+    private static final Logger log = Logger.getLogger(UiComponentDataConverter.class);
     private final GroupTypeBusinessLogic groupTypeBusinessLogic;
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
 
-    public UiComponentDataConverter(GroupTypeBusinessLogic groupTypeBusinessLogic,
-                                    PolicyTypeBusinessLogic policyTypeBusinessLogic) {
+    public UiComponentDataConverter(GroupTypeBusinessLogic groupTypeBusinessLogic, PolicyTypeBusinessLogic policyTypeBusinessLogic) {
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
         this.policyTypeBusinessLogic = policyTypeBusinessLogic;
     }
 
-    private void setUiTranferDataByFieldName(UiComponentDataTransfer dataTransfer, Component component,
-                                             String fieldName) {
+    public static UiComponentMetadata convertToUiComponentMetadata(Component component) {
+        UiComponentMetadata uiComponentMetadata = null;
+        switch (component.getComponentType()) {
+            case RESOURCE:
+                Resource resource = (Resource) component;
+                uiComponentMetadata = new UiResourceMetadata(component.getCategories(), resource.getDerivedFrom(),
+                    (ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition().getMetadataDataDefinition());
+                break;
+            case SERVICE:
+                uiComponentMetadata = new UiServiceMetadata(component.getCategories(),
+                    (ServiceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition());
+                break;
+            default:
+                break;
+        }
+        return uiComponentMetadata;
+    }
+
+    private void setUiTranferDataByFieldName(UiComponentDataTransfer dataTransfer, Component component, String fieldName) {
         ComponentFieldsEnum field = ComponentFieldsEnum.findByValue(fieldName);
         if (field == null) {
             log.error(INVALID_INPUT_GIVEN_TO_DATA_CONVERTER, fieldName);
@@ -161,8 +176,7 @@ public class UiComponentDataConverter {
         }
     }
 
-    private void setSubstitutionFilter(final UiComponentDataTransfer dataTransfer,
-                                       final Component component) {
+    private void setSubstitutionFilter(final UiComponentDataTransfer dataTransfer, final Component component) {
         if (component.getSubstitutionFilterComponents() == null) {
             dataTransfer.setSubstitutionFilter(null);
         } else {
@@ -172,33 +186,24 @@ public class UiComponentDataConverter {
 
     private void setPolicies(UiComponentDataTransfer dataTransfer, Component component) {
         Map<String, PolicyDefinition> policies = component.getPolicies();
-        Set<PolicyDefinition> policyDefinitions =
-            MapUtils.isEmpty(policies) ? new HashSet<>() : new HashSet<>(policies.values());
-
+        Set<PolicyDefinition> policyDefinitions = MapUtils.isEmpty(policies) ? new HashSet<>() : new HashSet<>(policies.values());
         policyDefinitions.addAll(getDeclaredPolicies(component.getComponentInstancesProperties()));
-
         dataTransfer.setPolicies(new ArrayList<>(policyDefinitions));
     }
 
-    private Set<PolicyDefinition> getDeclaredPolicies(
-        Map<String, List<ComponentInstanceProperty>> componentInstanceProperties) {
+    private Set<PolicyDefinition> getDeclaredPolicies(Map<String, List<ComponentInstanceProperty>> componentInstanceProperties) {
         if (MapUtils.isEmpty(componentInstanceProperties)) {
             return new HashSet<>();
         }
-
         Set<PolicyDefinition> declaredPolicies = new HashSet<>();
-        for (Map.Entry<String, List<ComponentInstanceProperty>> instancePropertyEntry : componentInstanceProperties
-            .entrySet()) {
-            declaredPolicies.addAll(instancePropertyEntry.getValue().stream()
-                .filter(property -> CollectionUtils.isNotEmpty(property.getGetPolicyValues()))
-                .map(instanceProperty -> PolicyUtils
-                    .getDeclaredPolicyDefinition(instancePropertyEntry.getKey(), instanceProperty))
-                .collect(Collectors.toSet()));
+        for (Map.Entry<String, List<ComponentInstanceProperty>> instancePropertyEntry : componentInstanceProperties.entrySet()) {
+            declaredPolicies.addAll(
+                instancePropertyEntry.getValue().stream().filter(property -> CollectionUtils.isNotEmpty(property.getGetPolicyValues()))
+                    .map(instanceProperty -> PolicyUtils.getDeclaredPolicyDefinition(instancePropertyEntry.getKey(), instanceProperty))
+                    .collect(Collectors.toSet()));
         }
-
         return declaredPolicies;
     }
-
 
     private void setComponentInstanceRelation(UiComponentDataTransfer dataTransfer, Component component) {
         if (component.getComponentInstancesRelations() == null) {
@@ -278,9 +283,7 @@ public class UiComponentDataConverter {
 
     private Map<String, List<CapabilityDefinition>> getFilteredCapabilities(Component component) {
         if (component.getComponentType() != ComponentTypeEnum.SERVICE) {
-            return component.getCapabilities().values()
-                .stream()
-                .flatMap(Collection::stream)
+            return component.getCapabilities().values().stream().flatMap(Collection::stream)
                 .filter(c -> c.getOwnerType() != CapabilityDataDefinition.OwnerType.GROUP)
                 .collect(groupingBy(CapabilityDefinition::getType, toList()));
         }
@@ -348,31 +351,23 @@ public class UiComponentDataConverter {
         if (groups == null) {
             dataTransfer.setGroups(new ArrayList<>());
         } else {
-            Set<String> nonExcludedGroupTypes = groupTypeBusinessLogic
-                .getExcludedGroupTypes(component.getActualComponentType());
-            List<GroupDefinition> nonExcludedGroups = groups.stream()
-                .filter(gd -> !nonExcludedGroupTypes.contains(gd.getType()))
-                .collect(toList());
+            Set<String> nonExcludedGroupTypes = groupTypeBusinessLogic.getExcludedGroupTypes(component.getActualComponentType());
+            List<GroupDefinition> nonExcludedGroups = groups.stream().filter(gd -> !nonExcludedGroupTypes.contains(gd.getType())).collect(toList());
             dataTransfer.setGroups(nonExcludedGroups);
         }
     }
 
     private void setNonExcludedPolicies(UiComponentDataTransfer dataTransfer, Component component) {
         List<PolicyDefinition> policyDefinitions = component.resolvePoliciesList();
-        Set<String> nonExcludedPolicyTypes = policyTypeBusinessLogic
-            .getExcludedPolicyTypes(component.getActualComponentType());
-        List<PolicyDefinition> nonExcludedPolicies = policyDefinitions.stream()
-            .filter(pd -> !nonExcludedPolicyTypes.contains(pd.getPolicyTypeName()))
+        Set<String> nonExcludedPolicyTypes = policyTypeBusinessLogic.getExcludedPolicyTypes(component.getActualComponentType());
+        List<PolicyDefinition> nonExcludedPolicies = policyDefinitions.stream().filter(pd -> !nonExcludedPolicyTypes.contains(pd.getPolicyTypeName()))
             .collect(toList());
         dataTransfer.setPolicies(nonExcludedPolicies);
     }
 
-    public UiComponentDataTransfer getUiDataTransferFromResourceByParams(Resource resource,
-                                                                         List<String> paramsToReturn) {
+    public UiComponentDataTransfer getUiDataTransferFromResourceByParams(Resource resource, List<String> paramsToReturn) {
         UiResourceDataTransfer dataTransfer = new UiResourceDataTransfer();
-
         for (String fieldName : paramsToReturn) {
-
             ComponentFieldsEnum field = ComponentFieldsEnum.findByValue(fieldName);
             if (field == null) {
                 log.error(INVALID_INPUT_GIVEN_TO_DATA_CONVERTER, fieldName);
@@ -386,10 +381,8 @@ public class UiComponentDataConverter {
                     setAdditionalInfo(resource, dataTransfer);
                     break;
                 case METADATA:
-                    UiResourceMetadata metadata = new UiResourceMetadata(resource.getCategories(),
-                        resource.getDerivedFrom(),
-                        (ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition()
-                            .getMetadataDataDefinition());
+                    UiResourceMetadata metadata = new UiResourceMetadata(resource.getCategories(), resource.getDerivedFrom(),
+                        (ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition().getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
                     break;
                 case SUBSTITUTION_FILTER:
@@ -398,27 +391,22 @@ public class UiComponentDataConverter {
                     } else {
                         final SubstitutionFilterConverter substitutionFilterConverter = new SubstitutionFilterConverter();
                         final Map<String, UINodeFilter> filterUiMap = new HashMap<>();
-                        filterUiMap.put(resource.getUniqueId(),
-                            substitutionFilterConverter.convertToUi(resource.getSubstitutionFilter()));
+                        filterUiMap.put(resource.getUniqueId(), substitutionFilterConverter.convertToUi(resource.getSubstitutionFilter()));
                         dataTransfer.setSubstitutionFilterForTopologyTemplate(filterUiMap);
                     }
                     break;
-
                 case NODE_FILTER:
                     if (resource.getNodeFilterComponents() == null) {
                         dataTransfer.setNodeFilterforNode(null);
                     } else {
                         final NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
-                        dataTransfer.setNodeFilterforNode(
-                            nodeFilterConverter.convertDataMapToUI(resource.getNodeFilterComponents()));
+                        dataTransfer.setNodeFilterforNode(nodeFilterConverter.convertDataMapToUI(resource.getNodeFilterComponents()));
                     }
                     break;
-
                 default:
                     setUiTranferDataByFieldName(dataTransfer, resource, fieldName);
             }
         }
-
         return dataTransfer;
     }
 
@@ -455,8 +443,7 @@ public class UiComponentDataConverter {
                     break;
                 case METADATA:
                     UiServiceMetadata metadata = new UiServiceMetadata(service.getCategories(),
-                        (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition()
-                            .getMetadataDataDefinition());
+                        (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition().getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
                     break;
                 case NODE_FILTER:
@@ -464,8 +451,7 @@ public class UiComponentDataConverter {
                         dataTransfer.setNodeFilterforNode(null);
                     } else {
                         final NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
-                        dataTransfer.setNodeFilterforNode(
-                            nodeFilterConverter.convertDataMapToUI(service.getNodeFilterComponents()));
+                        dataTransfer.setNodeFilterforNode(nodeFilterConverter.convertDataMapToUI(service.getNodeFilterComponents()));
                     }
                     break;
                 case SUBSTITUTION_FILTER:
@@ -474,8 +460,7 @@ public class UiComponentDataConverter {
                     } else {
                         final SubstitutionFilterConverter substitutionFilterConverter = new SubstitutionFilterConverter();
                         final Map<String, UINodeFilter> filterUiMap = new HashMap<>();
-                        filterUiMap.put(service.getUniqueId(),
-                            substitutionFilterConverter.convertToUi(service.getSubstitutionFilter()));
+                        filterUiMap.put(service.getUniqueId(), substitutionFilterConverter.convertToUi(service.getSubstitutionFilter()));
                         dataTransfer.setSubstitutionFilterForTopologyTemplate(filterUiMap);
                     }
                     break;
@@ -500,26 +485,5 @@ public class UiComponentDataConverter {
         } else {
             dataTransfer.setForwardingPaths(service.getForwardingPaths());
         }
-    }
-
-    public static UiComponentMetadata convertToUiComponentMetadata(Component component) {
-
-        UiComponentMetadata uiComponentMetadata = null;
-        switch (component.getComponentType()) {
-            case RESOURCE:
-                Resource resource = (Resource) component;
-                uiComponentMetadata = new UiResourceMetadata(component.getCategories(), resource.getDerivedFrom(),
-                    (ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition()
-                        .getMetadataDataDefinition());
-                break;
-            case SERVICE:
-                uiComponentMetadata = new UiServiceMetadata(component.getCategories(),
-                    (ServiceMetadataDataDefinition) component.getComponentMetadataDefinition()
-                        .getMetadataDataDefinition());
-                break;
-            default:
-                break;
-        }
-        return uiComponentMetadata;
     }
 }
