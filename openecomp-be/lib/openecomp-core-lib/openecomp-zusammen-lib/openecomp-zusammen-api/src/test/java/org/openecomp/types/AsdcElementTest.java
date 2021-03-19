@@ -19,15 +19,75 @@
  */
 package org.openecomp.types;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
-import static org.junit.Assert.assertThat;
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
+import com.amdocs.zusammen.datatypes.Id;
+import com.amdocs.zusammen.datatypes.item.Action;
+import com.amdocs.zusammen.datatypes.item.Info;
+import com.amdocs.zusammen.datatypes.item.Relation;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashMap;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AsdcElementTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(AsdcElement.class,
             hasValidGettersAndSettersExcluding("data", "info", "searchableData", "visualization"));
+    }
+
+    @Test
+    public void getInfoTest() {
+        AsdcElement element =  new AsdcElement();
+        element.setName("name");
+        element.setType("type");
+        element.setProperties(new HashMap<>());
+        element.setDescription("desc");
+
+        Info actualInfo = element.getInfo();
+        assertEquals("name", actualInfo.getName());
+        assertEquals(1, actualInfo.getProperties().size());
+        assertEquals("type", actualInfo.getProperty("elementType"));
+        assertEquals("desc", actualInfo.getDescription());
+    }
+
+    @Test
+    public void getSearchableDataTest() {
+        AsdcElement element =  new AsdcElement();
+        assertNull(element.getSearchableData());
+    }
+
+    @Test
+    public void getVisualizationTest() {
+        AsdcElement element =  new AsdcElement();
+        assertNull(element.getVisualization());
+    }
+
+    @Test
+    public void dataTest() throws IOException {
+        AsdcElement element =  new AsdcElement();
+        InputStream inputStream = new ByteArrayInputStream( "testString".getBytes(StandardCharsets.UTF_8) );
+        element.setData(inputStream);
+
+        assertEquals("testString", IOUtils.toString(element.getData(), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void addSubElementTest() throws IOException {
+        AsdcElement element =  new AsdcElement();
+        assertEquals(0, element.getSubElements().size());
+
+        element.addSubElement(new AsdcElement());
+        assertEquals(1, element.getSubElements().size());
     }
 }

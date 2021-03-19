@@ -17,14 +17,14 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
@@ -57,7 +57,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -66,7 +66,7 @@ import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.creat
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createProperties;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     @InjectMocks
@@ -90,7 +90,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     public void declarePropertiesAsInputs_componentInstanceNotExist() {
         Component cmpt = new Resource();
         Either<List<InputDefinition>, StorageOperationStatus> createdInputs = testInstance.declarePropertiesAsInputs(cmpt, "someCmptInstId", Collections.emptyList());
-        assertThat(createdInputs.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
+        assertEquals(StorageOperationStatus.NOT_FOUND, createdInputs.right().value());
         verifyZeroInteractions(toscaOperationFacade);
     }
 
@@ -128,7 +128,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
 
         Either<List<InputDefinition>, StorageOperationStatus> createdInputs = testInstance
                 .declarePropertiesAsInputs(resource, "inst1", propsToDeclare);
-        Assert.assertTrue(createdInputs.isLeft());
+        assertTrue(createdInputs.isLeft());
     }
 
     @Test
@@ -161,7 +161,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
                 any(ComponentInstanceProperty.class), any(CapabilityDefinition.class))).thenReturn(StorageOperationStatus.OK);
 
         StorageOperationStatus result = testInstance.unDeclarePropertiesAsInputs(component, input);
-        Assert.assertEquals(StorageOperationStatus.OK, result);
+        assertEquals(StorageOperationStatus.OK, result);
     }
 
     @Test
@@ -207,8 +207,8 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         PropertyDefinition propertyDefinition = getPropertyForDeclaration();
         ComponentInstanceProperty declaredProperty = testInstance.createDeclaredProperty(propertyDefinition);
 
-        assertThat(declaredProperty).isNotNull();
-        assertThat(declaredProperty.getUniqueId()).isEqualTo(propertyDefinition.getUniqueId());
+        assertNotNull(declaredProperty);
+        assertEquals(propertyDefinition.getUniqueId(), declaredProperty.getUniqueId());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         StorageOperationStatus undeclareStatus =
                 testInstance.unDeclarePropertiesAsInputs(service, inputToDelete);
 
-        assertThat(undeclareStatus).isEqualTo(StorageOperationStatus.OK);
+        assertEquals(StorageOperationStatus.OK, undeclareStatus);
     }
 
     private List<GetInputValueDataDefinition> getGetInputListForDeclaration() {
@@ -271,16 +271,16 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         when(toscaOperationFacade.addComponentInstancePropertiesToComponent(eq(resource), instancePropertiesCaptor.capture())).thenReturn(Either.left(Collections.emptyMap()));
         Either<InputDefinition, StorageOperationStatus> result = testInstance.declarePropertiesAsListInput(resource, "inst1", propsToDeclare, input);
         // validate result
-        assertThat(result.isLeft()).isTrue();
+        assertTrue(result.isLeft());
         List<ComponentInstanceProperty> capturedInstanceProperties = instancePropertiesCaptor.getValue().get(INSTANCE_ID);
-        assertThat(capturedInstanceProperties.size()).isEqualTo(2);
+        assertEquals(2, capturedInstanceProperties.size());
         Map<String, PropertyDataDefinition> propertiesMap =
                 properties.stream().collect(Collectors.toMap(PropertyDataDefinition::getName, e->e));
         for(ComponentInstanceProperty instanceProperty: capturedInstanceProperties) {
-            assertThat(propertiesMap.containsKey(instanceProperty.getName())).isTrue();
+            assertTrue(propertiesMap.containsKey(instanceProperty.getName()));
             PropertyDataDefinition property = propertiesMap.get(instanceProperty.getName());
-            assertThat(instanceProperty.getType()).isEqualTo(property.getType());
-            assertThat(instanceProperty.isGetInputProperty()).isTrue();
+            assertEquals(property.getType(), instanceProperty.getType());
+            assertTrue(instanceProperty.isGetInputProperty());
         }
     }
 
@@ -297,8 +297,8 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
                 .build());
         Either<InputDefinition, StorageOperationStatus> result = testInstance.declarePropertiesAsListInput(resource, "inst2", propsToDeclare, input);
         // validate result
-        assertThat(result.isRight()).isTrue();
-        assertThat(result.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
+        assertTrue(result.isRight());
+        assertEquals(StorageOperationStatus.NOT_FOUND, result.right().value());
     }
 
     @Test
@@ -335,7 +335,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         when(toscaOperationFacade.updateComponentInstanceProperties(eq(component), eq(ciProp.getComponentInstanceId()), eq(ciPropList))).thenReturn(StorageOperationStatus.OK);
         StorageOperationStatus storageOperationStatus = testInstance.unDeclarePropertiesAsListInputs(component, inputToDelete);
 
-        assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.OK);
+        assertEquals(StorageOperationStatus.OK, storageOperationStatus);
     }
 
     @Test
@@ -347,29 +347,29 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         List<ComponentInstanceProperty> resList = new ArrayList<>();
         when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(eq(resource), eq(INPUT_ID))).thenReturn(resList);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.OK);
+        assertEquals(status, StorageOperationStatus.OK);
     }
 
     private void verifyUpdatedProperties(List<PropertyDataDefinition> properties, List<ComponentInstanceProperty> capturedInstanceProperties, List<InputDefinition> inputs) {
-        assertThat(capturedInstanceProperties).hasSize(properties.size());
+        assertEquals(properties.size(), capturedInstanceProperties.size());
         Map<String, ComponentInstanceProperty> updatedPropertiesByName = MapUtil.toMap(capturedInstanceProperties, ComponentInstanceProperty::getName);
         properties.forEach(prop -> verifyUpdatedInstanceProperty(prop, updatedPropertiesByName.get(prop.getName()), inputs));
     }
 
     private void verifyUpdatedComplexProperty(List<ComponentInstanceProperty> capturedInstanceProperties, List<InputDefinition> inputs) {
-        assertThat(capturedInstanceProperties).hasSize(1);
+        assertEquals(1, capturedInstanceProperties.size());
         verifyUpdatedInstanceComplexProperty(capturedInstanceProperties.get(0), inputs);
     }
 
     private void verifyCreatedInputs(List<PropertyDataDefinition> originalPropsToDeclare, List<ComponentInstanceProperty> capturedUpdatedProperties, List<InputDefinition> inputs) {
-        assertThat(inputs).hasSize(originalPropsToDeclare.size());
+        assertEquals(originalPropsToDeclare.size(), inputs.size());
         Map<String, InputDefinition> propertyIdToCreatedInput = MapUtil.toMap(inputs, InputDefinition::getPropertyId);
         originalPropsToDeclare.forEach(propToDeclare -> verifyCreatedInput(propToDeclare, propertyIdToCreatedInput.get(propToDeclare.getUniqueId())));
         capturedUpdatedProperties.forEach(updatedProperty -> verifyInputPropertiesList(updatedProperty, propertyIdToCreatedInput.get(updatedProperty.getUniqueId())));
     }
 
     private void verifyCreatedInputsFromComplexProperty(List<ComponentInstancePropInput> propsToDeclare, List<ComponentInstanceProperty> capturedInstanceProperties, List<InputDefinition> inputs) {
-        assertThat(inputs).hasSize(propsToDeclare.size());
+        assertEquals(propsToDeclare.size(), inputs.size());
         Map<String, InputDefinition> inputsByName = MapUtil.toMap(inputs, InputDefinition::getName);
         propsToDeclare.forEach(propToDeclare -> verifyCreatedInputFromComplexProperty(propToDeclare, inputsByName));
         Map<String, List<InputDefinition>> propertyIdToCreatedInput = MapUtil.groupListBy(inputs, InputDefinition::getPropertyId);
@@ -384,18 +384,17 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         PropertyDefinition innerProperty = parentProperty.getInput();
         String expectedInputName = generateExpectedInputName(parentProperty, innerProperty);
         InputDefinition input = inputsByName.get(expectedInputName);
-        assertThat(input.getType()).isEqualTo(innerProperty.getType());
-        assertThat(input.getValue()).isEqualTo(innerProperty.getValue());
+        assertEquals(innerProperty.getType(), input.getType());
+        assertEquals(innerProperty.getValue(), input.getValue());
 //        assertThat(input.getDefaultValue()).isEqualTo(innerProperty.getValue());//bug
-        assertThat(input.getUniqueId()).isEqualTo(UniqueIdBuilder.buildPropertyUniqueId(RESOURCE_ID, input.getName()));
-        assertThat(input.getPropertyId()).isEqualTo(parentProperty.getUniqueId());
-        assertThat(input.getInstanceUniqueId()).isEqualTo(INSTANCE_ID);
+        assertEquals(UniqueIdBuilder.buildPropertyUniqueId(RESOURCE_ID, input.getName()), input.getUniqueId());
+        assertEquals(INSTANCE_ID, input.getInstanceUniqueId());
 
     }
 
     private void verifyInputPropertiesList(ComponentInstanceProperty updatedProperty, InputDefinition input) {
-        assertThat(input.getProperties()).hasSize(1);
-        assertThat(updatedProperty).isEqualTo(input.getProperties().get(0));
+        assertEquals(1, input.getProperties().size());
+        assertEquals(input.getProperties().get(0), updatedProperty);
     }
 
 
@@ -411,17 +410,17 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     }
 
     private void verifyUpdatedInstanceProperty(PropertyDataDefinition originalProperty, ComponentInstanceProperty updatedProperty, List<InputDefinition> inputs) {
-        assertThat(updatedProperty.getValue()).isEqualTo(generateGetInputValue(generateExpectedInputName(originalProperty)));
-        assertThat(updatedProperty.isGetInputProperty()).isTrue();
-        assertThat(updatedProperty.getName()).isEqualTo(originalProperty.getName());
+        assertEquals(generateGetInputValue(generateExpectedInputName(originalProperty)), updatedProperty.getValue());
+        assertTrue(updatedProperty.isGetInputProperty());
+        assertEquals(originalProperty.getName(), updatedProperty.getName());
         List<GetInputValueDataDefinition> getInputValues = updatedProperty.getGetInputValues();
         verifyGetInputValues(getInputValues, inputs);
     }
 
     private void verifyUpdatedInstanceComplexProperty(ComponentInstanceProperty updatedComplexProperty, List<InputDefinition> inputs) {
-        assertThat(updatedComplexProperty.getValue()).isEqualTo(generateComplexGetInputValue(inputs));
-        assertThat(updatedComplexProperty.isGetInputProperty()).isTrue();
-        assertThat(updatedComplexProperty.getName()).isEqualTo(complexProperty.getName());
+        assertEquals(generateComplexGetInputValue(inputs), updatedComplexProperty.getValue());
+        assertTrue(updatedComplexProperty.isGetInputProperty());
+        assertEquals(complexProperty.getName(), updatedComplexProperty.getName());
         List<GetInputValueDataDefinition> getInputValues = updatedComplexProperty.getGetInputValues();
         verifyGetInputValues(getInputValues, inputs);
     }
@@ -430,7 +429,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         Map<String, InputDefinition> inputsByName = MapUtil.toMap(inputs, InputDefinition::getName);
         getInputValues.forEach(getInputVal -> {
             InputDefinition input = inputsByName.get(getInputVal.getInputName());
-            assertThat(input.getUniqueId()).isEqualTo(getInputVal.getInputId());
+            assertEquals(getInputVal.getInputId(), input.getUniqueId());
         });
     }
 
@@ -447,13 +446,13 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     }
 
     private void verifyCreatedInput(PropertyDataDefinition property, InputDefinition input) {
-        assertThat(input.getType()).isEqualTo(property.getType());
-        assertThat(input.getName()).isEqualTo(generateExpectedInputName(property));
-        assertThat(input.getValue()).isEqualTo(property.getValue());
-        assertThat(input.getDefaultValue()).isEqualTo(property.getValue());
-        assertThat(input.getUniqueId()).isEqualTo(UniqueIdBuilder.buildPropertyUniqueId(RESOURCE_ID, input.getName()));
-        assertThat(input.getPropertyId()).isEqualTo(property.getUniqueId());
-        assertThat(input.getInstanceUniqueId()).isEqualTo(INSTANCE_ID);
+        assertEquals(property.getType(), input.getType());
+        assertEquals(generateExpectedInputName(property), input.getName());
+        assertEquals(property.getValue(), input.getValue());
+        assertEquals(property.getValue(), input.getDefaultValue());
+        assertEquals(UniqueIdBuilder.buildPropertyUniqueId(RESOURCE_ID, input.getName()), input.getUniqueId());
+        assertEquals(property.getUniqueId(), input.getPropertyId());
+        assertEquals(INSTANCE_ID, input.getInstanceUniqueId());
     }
 
     private Component createComponentWithListInput(String inputName, String propName) {

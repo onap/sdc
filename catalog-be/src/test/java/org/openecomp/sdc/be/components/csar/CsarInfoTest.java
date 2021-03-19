@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.components.csar;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.NonManoArtifactType;
@@ -54,9 +54,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CsarInfoTest {
 
     private CsarInfo csarInfo;
@@ -72,7 +73,7 @@ public class CsarInfoTest {
     private static final String NODE_TYPE = "tosca.nodes.Compute";
     private static final String DELIVER_FOR = "tosca.nodes.Root";
 
-    @Before
+    @BeforeEach
     public void setup() throws ZipException, URISyntaxException {
         // given
         csarInfo = createCsarInfo(PAYLOAD_NAME, MAIN_TEMPLATE_NAME);
@@ -113,6 +114,16 @@ public class CsarInfoTest {
         csarInfo.addNodeToQueue(NEW_NODE_NAME);
         csarInfo.removeNodeFromQueue();
         csarInfo.addNodeToQueue(NEW_NODE_NAME);
+    }
+
+    @Test
+    public void setUpdateTest() {
+
+        csarInfo.setUpdate(true);
+        assertTrue(csarInfo.isUpdate());
+
+        csarInfo.setUpdate(false);
+        assertFalse(csarInfo.isUpdate());
     }
 
     @Test

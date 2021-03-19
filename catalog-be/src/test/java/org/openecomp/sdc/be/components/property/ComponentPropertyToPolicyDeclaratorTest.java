@@ -22,15 +22,15 @@ package org.openecomp.sdc.be.components.property;
 
 
 import fj.data.Either;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.ComponentPropertyToPolicyDeclarator;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
@@ -43,10 +43,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     @InjectMocks
@@ -72,7 +74,7 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
         Either<List<PolicyDefinition>, StorageOperationStatus> declareEither = declarator.declarePropertiesAsPolicies(
                 service, OWNER_ID, createInstancePropInputList(Collections.singletonList(prop1)));
 
-        Assert.assertTrue(declareEither.isLeft());
+        assertTrue(declareEither.isLeft());
     }
 
     @Test
@@ -92,8 +94,8 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
 
         PropertyDefinition actualProperty = propertyCaptor.getValue();
 
-        Assert.assertEquals(storageOperationStatus, storageOperationStatus.OK);
-        Assert.assertEquals(expectedProperty, actualProperty);
+        assertEquals(storageOperationStatus.OK, storageOperationStatus);
+        assertEquals(expectedProperty, actualProperty);
 
     }
 
@@ -111,7 +113,7 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
         Either<List<PolicyDefinition>, StorageOperationStatus> declareEither = declarator.declarePropertiesAsPolicies(
                 service, OWNER_ID, createInstancePropInputList(Collections.singletonList(prop1)));
 
-        Assert.assertTrue(declareEither.isLeft());
+        assertTrue(declareEither.isLeft());
 
         PolicyDefinition policyDefinition = createPolicyDefinition(prop1.getUniqueId());
         StorageOperationStatus storageOperationStatus =
@@ -119,9 +121,9 @@ public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorT
 
         List<PropertyDefinition> actualProperties = propertyCaptor.getAllValues();
 
-        Assert.assertEquals(storageOperationStatus, storageOperationStatus.OK);
-        Assert.assertEquals(actualProperties.size(), 2);
-        Assert.assertEquals(prop1.getValue(), actualProperties.get(1).getValue());
+        assertEquals(storageOperationStatus.OK, storageOperationStatus);
+        assertEquals(2, actualProperties.size());
+        assertEquals(prop1.getValue(), actualProperties.get(1).getValue());
     }
 
     private PropertyDefinition createPropertyWithDeclaredPolicy(String policyId) {

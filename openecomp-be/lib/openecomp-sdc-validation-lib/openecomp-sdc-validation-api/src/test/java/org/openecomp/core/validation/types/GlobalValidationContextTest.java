@@ -18,18 +18,23 @@ package org.openecomp.core.validation.types;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GlobalValidationContextTest {
   private static String filename = "testName";
@@ -45,7 +50,7 @@ public class GlobalValidationContextTest {
     ErrorMessageCode error = new ErrorMessageCode("Error");
     globalValidationContext.setMessageCode(error);
 
-    Assert.assertEquals(error, globalValidationContext.getMessageCode());
+    assertEquals(error, globalValidationContext.getMessageCode());
   }
 
   @Test
@@ -54,8 +59,8 @@ public class GlobalValidationContextTest {
     globalValidationContext.addFileContext(filename, content.getBytes());
     Map<String, FileValidationContext> fileContextMap = globalValidationContext.getFileContextMap();
 
-    Assert.assertTrue(MapUtils.isNotEmpty(fileContextMap));
-    Assert.assertTrue(fileContextMap.containsKey(filename));
+    assertTrue(MapUtils.isNotEmpty(fileContextMap));
+    assertTrue(fileContextMap.containsKey(filename));
   }
 
   @Test
@@ -82,6 +87,18 @@ public class GlobalValidationContextTest {
   }
 
   @Test
+  public void testGetFileContent() {
+    GlobalValidationContext globalValidationContext = new GlobalValidationContext();
+
+    assertTrue(globalValidationContext.getFileContent(yaml1).isEmpty());
+
+    byte[] bytes = content.getBytes();
+    globalValidationContext.addFileContext(yaml1, bytes);
+
+    assertTrue(globalValidationContext.getFileContent(yaml1).get() instanceof InputStream);
+  }
+
+  @Test
   public void testGetFiles() {
     GlobalValidationContext globalValidationContext = new GlobalValidationContext();
     byte[] bytes = content.getBytes();
@@ -94,7 +111,7 @@ public class GlobalValidationContextTest {
     testGetFilesByFileType((fileName, globalContext) -> fileName.endsWith(".txt"),
         1, Collections.singletonList(text1), globalValidationContext);
 
-
+    assertEquals(3, globalValidationContext.getFiles().size());
   }
 
   private void testGetFilesByFileType(BiPredicate<String, GlobalValidationContext> func,
@@ -102,23 +119,23 @@ public class GlobalValidationContextTest {
                                       List<String> expectedFileNames,
                                       GlobalValidationContext globalValidationContext) {
     Collection<String> files = globalValidationContext.files(func);
-    Assert.assertTrue(CollectionUtils.isNotEmpty(files));
-    Assert.assertEquals(files.size(), expectedFilesNumberToFind);
-    expectedFileNames.forEach(filename -> Assert.assertTrue(files.contains(filename)));
+    assertTrue(CollectionUtils.isNotEmpty(files));
+    assertEquals(files.size(), expectedFilesNumberToFind);
+    expectedFileNames.forEach(filename -> assertTrue(files.contains(filename)));
   }
 
   private void testIfFileHasMessageContainer(Map<String, MessageContainer> messageContainers) {
-    Assert.assertNotNull(messageContainers);
-    Assert.assertTrue(messageContainers.containsKey(filename));
+    assertNotNull(messageContainers);
+    assertTrue(messageContainers.containsKey(filename));
   }
 
   private void testIfFileHasErrorMessage(Map<String, MessageContainer> messageContainers,
                                          int expectedErrorsNumber) {
     MessageContainer messageContainer = messageContainers.get(filename);
-    Assert.assertEquals(messageContainer.getErrorMessageList().size(), expectedErrorsNumber);
+    assertEquals(messageContainer.getErrorMessageList().size(), expectedErrorsNumber);
 
     ErrorMessage errorMessage =
         new ErrorMessage(ErrorLevel.ERROR, ErrorLevel.ERROR.toString() + ": " + message);
-    Assert.assertTrue(messageContainer.getErrorMessageList().contains(errorMessage));
+    assertTrue(messageContainer.getErrorMessageList().contains(errorMessage));
   }
 }

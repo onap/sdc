@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class TagDataTest {
 
@@ -90,6 +92,7 @@ public class TagDataTest {
 		result = testSubject.hashCode();
 	}
 
+
 	@Test
 	public void testEquals() throws Exception {
 		TagData testSubject;
@@ -100,7 +103,7 @@ public class TagDataTest {
 		testSubject = createTestSubject();
 		obj = null;
 		result = testSubject.equals(obj);
-		Assert.assertEquals(false, result);
+		assertEquals(false, result);
 	}
 
 	@Test

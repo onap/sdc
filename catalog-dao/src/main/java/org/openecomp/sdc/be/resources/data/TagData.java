@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.be.resources.data;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -27,6 +31,10 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class TagData extends GraphNode {
 
 	private String name;
@@ -54,49 +62,6 @@ public class TagData extends GraphNode {
 		Map<String, Object> map = new HashMap<>();
 		addIfExists(map, GraphPropertiesDictionary.NAME, name);
 		return map;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return "Tag [Name=" + name + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		TagData other = (TagData) obj;
-		if (name == null) {
-			if (other.getClass() != null) {
-				return false;
-			}
-		} else if (!name.equals(other.getName())) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

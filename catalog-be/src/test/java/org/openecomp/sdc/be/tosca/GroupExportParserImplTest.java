@@ -22,19 +22,17 @@ package org.openecomp.sdc.be.tosca;
 
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.tosca.model.ToscaGroupTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
@@ -48,9 +46,11 @@ import java.util.stream.Stream;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GroupExportParserImplTest {
 
 	private static final String GROUP_DEFINITION_NAME = "groupDefinitionName";
@@ -73,7 +73,7 @@ public class GroupExportParserImplTest {
 	@Mock
 	private PropertyConvertor propertyConvertor;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		initGroupExportParser();
 	}
@@ -95,6 +95,22 @@ public class GroupExportParserImplTest {
 		when(component.getGroups()).thenReturn(null);
 		Map<String, ToscaGroupTemplate> groups = groupExportParser.getGroups(component);
 		assertThat(groups).isNull();
+	}
+
+	@Test
+	public void testGetToscaGroupTemplate() {
+		GroupInstance groupInstance = new GroupInstance();
+		groupInstance.setName("name");
+		groupInstance.setGroupUUID("groupUUID");
+		groupInstance.setInvariantUUID("invariantUUID");
+		groupInstance.setVersion("version");
+		groupInstance.setType("type");
+		groupInstance.setCustomizationUUID("customizationUUID");
+		ToscaGroupTemplate toscaGroupTemplate = groupExportParser.getToscaGroupTemplate(groupInstance, "invariantName");
+
+		assertEquals("type", toscaGroupTemplate.getType());
+		assertNotNull(toscaGroupTemplate);
+
 	}
 
 	@Test
