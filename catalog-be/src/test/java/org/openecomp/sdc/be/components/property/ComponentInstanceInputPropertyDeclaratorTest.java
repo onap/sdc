@@ -17,14 +17,13 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.AnnotationBuilder;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
@@ -51,15 +50,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.MockGenerator.mockComponentUtils;
 import static org.openecomp.sdc.be.MockGenerator.mockExceptionUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
 
@@ -82,7 +83,7 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
     private Annotation annotation2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         testInstance = new ComponentInstanceInputPropertyDeclarator(mockComponentUtils(), propertyOperation,
@@ -110,9 +111,9 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         when(toscaOperationFacade.getToscaElement(eq(ORIGIN_INSTANCE_ID), inputsFilterCaptor.capture())).thenReturn(Either.left(originInstanceNodeType));
         Either<List<InputDefinition>, StorageOperationStatus> createdInputs = testInstance.declarePropertiesAsInputs(resource, "inst1", propsToDeclare);
         List<InputDefinition> inputs = createdInputs.left().value();
-        assertThat(inputs).hasSize(1);
+        assertEquals(1, inputs.size());
         verifyInputAnnotations(inputs.get(0));
-        assertThat(inputsFilterCaptor.getValue().isIgnoreInputs()).isFalse();
+        assertFalse(inputsFilterCaptor.getValue().isIgnoreInputs());
     }
 
     @Test
@@ -120,13 +121,15 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         List<PropertyDataDefinition> properties = Collections.singletonList(prop1);
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
         when(toscaOperationFacade.getToscaElement(eq(ORIGIN_INSTANCE_ID), inputsFilterCaptor.capture())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        assertThatExceptionOfType(StorageException.class).isThrownBy(() -> testInstance.declarePropertiesAsInputs(resource, "inst1", propsToDeclare));
+        assertThrows(StorageException.class, () -> {
+            testInstance.declarePropertiesAsInputs(resource, "inst1", propsToDeclare);
+        });
     }
 
     @Test
     public void testCreateDeclaredProperty() {
         ComponentInstanceInput declaredProperty = testInstance.createDeclaredProperty(prop1);
-        assertThat(declaredProperty.getUniqueId()).isEqualTo(prop1.getUniqueId());
+        assertEquals(prop1.getUniqueId(), declaredProperty.getUniqueId());
     }
 
     @Test
@@ -141,18 +144,18 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> updateEither =
                 (Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus>) testInstance.updatePropertiesValues(resource, resource.getUniqueId(), expectedProperties);
 
-        assertThat(updateEither.isLeft());
+        assertTrue(updateEither.isLeft());
         Map<String, List<ComponentInstanceInput>> actualProperties = updateEither.left().value();
-        assertThat(actualProperties.values().size()).isEqualTo(expectedProperties.size());
-        assertThat(actualProperties.values().iterator().next()).isEqualTo(expectedProperties);
+        assertEquals(expectedProperties.size(), actualProperties.values().size());
+        assertEquals(expectedProperties, actualProperties.values().iterator().next());
     }
 
     @Test
     public void testResolvePropertiesOwner() {
         Optional<ComponentInstance> componentInstance = testInstance.resolvePropertiesOwner(resource, INSTANCE_ID);
 
-        assertThat(componentInstance.isPresent());
-        assertThat(componentInstance.get().getUniqueId()).isEqualTo(INSTANCE_ID);
+        assertTrue(componentInstance.isPresent());
+        assertEquals(INSTANCE_ID, componentInstance.get().getUniqueId());
     }
 
     @Test
@@ -189,7 +192,7 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         when(toscaOperationFacade.updateComponentInstanceInputs(eq(component), eq(ciProp.getComponentInstanceId()), eq(ciPropList))).thenReturn(StorageOperationStatus.OK);
         StorageOperationStatus storageOperationStatus = testInstance.unDeclarePropertiesAsListInputs(component, inputToDelete);
 
-        assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.OK);
+        assertEquals(StorageOperationStatus.OK, storageOperationStatus);
     }
 
     @Test
@@ -201,13 +204,13 @@ public class ComponentInstanceInputPropertyDeclaratorTest extends PropertyDeclar
         List<ComponentInstanceInput> resList = new ArrayList<>();
         when(componentInstanceBusinessLogic.getComponentInstanceInputsByInputId(eq(resource), eq(INPUT_ID))).thenReturn(resList);
         StorageOperationStatus status = testInstance.unDeclarePropertiesAsListInputs(resource, input);
-        Assert.assertEquals(status, StorageOperationStatus.OK);
+        assertEquals(status, StorageOperationStatus.OK);
     }
 
     private void verifyInputAnnotations(InputDefinition inputDefinition) {
         List<Annotation> annotations = inputDefinition.getAnnotations();
-        assertThat(annotations)
-                .containsExactlyInAnyOrder(annotation1, annotation2);
+        assertTrue(annotations.contains(annotation1));
+        assertTrue(annotations.contains(annotation2));
     }
 
     private Component createComponentWithInputAndAnnotation(String inputName) {

@@ -20,7 +20,9 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ToscaMetadataTest {
@@ -29,7 +31,67 @@ public class ToscaMetadataTest {
 		return new ToscaMetadata();
 	}
 
-	
+
+	@Test
+	public void testServiceFunction() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setServiceFunction("testServiceFunction");
+		assertEquals("testServiceFunction", testSubject.getServiceFunction());
+	}
+
+	@Test
+	public void testInstantiationType() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setInstantiationType("testInstantiationType");
+		assertEquals("testInstantiationType", testSubject.getInstantiationType());
+	}
+
+	@Test
+	public void testEcompGeneratedNaming() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setEcompGeneratedNaming(null);
+		assertEquals(false, testSubject.isEcompGeneratedNaming());
+		testSubject.setEcompGeneratedNaming(true);
+		assertEquals(true, testSubject.isEcompGeneratedNaming());
+	}
+
+	@Test
+	public void testServiceEcompNaming() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setServiceEcompNaming(null);
+		assertEquals(false, testSubject.getServiceEcompNaming());
+		testSubject.setServiceEcompNaming(false);
+		assertEquals(false, testSubject.getServiceEcompNaming());
+	}
+
+	@Test
+	public void testSourceModelInvariant() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setSourceModelInvariant("sourceModelInvariant");
+		assertEquals("sourceModelInvariant", testSubject.getSourceModelInvariant());
+	}
+
+	@Test
+	public void testSourceModelName() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setSourceModelName("sourceModelName");
+		assertEquals("sourceModelName", testSubject.getSourceModelName());
+	}
+
+	@Test
+	public void testSourceModelUuid() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setSourceModelUuid("sourceModelUuid");
+		assertEquals("sourceModelUuid", testSubject.getSourceModelUuid());
+	}
+
+	@Test
+	public void testEnvironmentContext() {
+		ToscaMetadata testSubject = createTestSubject();
+		testSubject.setEnvironmentContext("environmentContext");
+		assertEquals("environmentContext", testSubject.getEnvironmentContext());
+	}
+
 	@Test
 	public void testGetName() throws Exception {
 		ToscaMetadata testSubject;
