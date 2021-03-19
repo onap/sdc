@@ -17,6 +17,7 @@ package org.openecomp.sdc.vendorlicense.dao.impl.zusammen.convertor;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
@@ -36,7 +37,9 @@ public class ElementToFeatureGroupConvertorTest {
 
     @Test
     public void shouldConvertElementToFeatureGroupEntity() {
-        ZusammenElement elementToConvert = new ZusammenElement();
+        ZusammenElement elementToConvert = null;
+        assertNull(converter.convert(elementToConvert));
+        elementToConvert = new ZusammenElement();
         elementToConvert.setElementId(new Id(ENTITY_ID));
         elementToConvert.setInfo(createInfo());
         FeatureGroupEntity result = converter.convert(elementToConvert);
@@ -47,7 +50,9 @@ public class ElementToFeatureGroupConvertorTest {
 
     @Test
     public void shouldConvertElementInfoToFeatureGroupEntity(){
-        ElementInfo elementToConvert = new ElementInfo();
+        ElementInfo elementToConvert = null;
+        assertNull(converter.convert(elementToConvert));
+        elementToConvert = new ElementInfo();
         elementToConvert.setId(new Id(ENTITY_ID));
         elementToConvert.setInfo(createInfo());
         FeatureGroupEntity result = converter.convert(elementToConvert);

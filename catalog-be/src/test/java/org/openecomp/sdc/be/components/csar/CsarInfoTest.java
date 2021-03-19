@@ -21,7 +21,8 @@
 package org.openecomp.sdc.be.components.csar;
 
 import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -113,6 +114,16 @@ public class CsarInfoTest {
         csarInfo.addNodeToQueue(NEW_NODE_NAME);
         csarInfo.removeNodeFromQueue();
         csarInfo.addNodeToQueue(NEW_NODE_NAME);
+    }
+
+    @Test
+    public void setUpdateTest() {
+
+        csarInfo.setUpdate(true);
+        assertEquals(true, csarInfo.isUpdate());
+
+        csarInfo.setUpdate(false);
+        assertEquals(false, csarInfo.isUpdate());
     }
 
     @Test
