@@ -20,12 +20,15 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TagDataTest {
 
@@ -92,15 +95,20 @@ public class TagDataTest {
 
 	@Test
 	public void testEquals() throws Exception {
-		TagData testSubject;
-		Object obj = null;
-		boolean result;
+		TagData testSubject = createTestSubject();
+		assertFalse(testSubject.equals(null));
+		assertFalse(testSubject.equals("string"));
 
-		// test 1
-		testSubject = createTestSubject();
-		obj = null;
-		result = testSubject.equals(obj);
-		Assert.assertEquals(false, result);
+		TagData testSubject2 = createTestSubject();
+		testSubject2.setName("name2");
+		assertFalse(testSubject.equals(testSubject2));
+
+		testSubject.setName("name");
+		assertFalse(testSubject.equals(testSubject2));
+
+		testSubject2.setName("name");
+		testSubject2.setAction(ActionEnum.Create);
+		assertTrue(testSubject.equals(testSubject2));
 	}
 
 	@Test

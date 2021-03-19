@@ -18,13 +18,15 @@ package org.openecomp.sdc.be.components.utils;
 
 
 import fj.data.Either;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -34,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createCapabilityDefinition;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createProperties;
 
@@ -71,6 +75,20 @@ public class ConsumptionUtilsTest {
                 .handleConsumptionInputMappedToCapabilityProperty(operation, operationInputDefinition,
                         serviceConsumptionData, capabilityMap, "componentName");
 
-        Assert.assertTrue(operationResponseFormatEither.isLeft());
+        assertTrue(operationResponseFormatEither.isLeft());
+    }
+
+    @Test
+    public void testIsAssignedValueFromValidType() {
+        assertTrue(ConsumptionUtils.isAssignedValueFromValidType("string", "testString"));
+        assertFalse(ConsumptionUtils.isAssignedValueFromValidType("string", true));
+
+        PropertyDefinition propertyDef =  new PropertyDefinition();
+        propertyDef.setType("propertyType");
+        assertTrue(ConsumptionUtils.isAssignedValueFromValidType("PROPERTYTYPE", propertyDef));
+
+        OperationOutputDefinition opOutputDef =  new OperationOutputDefinition();
+        opOutputDef.setType("opOutputDef");
+        assertTrue(ConsumptionUtils.isAssignedValueFromValidType("OPOUTPUTDEF", opOutputDef));
     }
 }
