@@ -582,10 +582,9 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
-			Either<ZipOutputStream, ResponseFormat> output = Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName, false);
+		    List<Triple<String, String, Component>> output = Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName, false);
 
 			assertNotNull(output);
-			assertTrue(output.isLeft());
 		}
 	}
 

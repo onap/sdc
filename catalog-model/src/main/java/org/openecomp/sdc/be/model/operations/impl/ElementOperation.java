@@ -21,8 +21,10 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,14 +42,22 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
 import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.BaseType;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Tag;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -71,10 +81,12 @@ public class ElementOperation implements IElementOperation {
     private static final String UNKNOWN_CATEGORY_TYPE = "Unknown category type {}";
     private static final Logger log = Logger.getLogger(ElementOperation.class.getName());
     private JanusGraphGenericDao janusGraphGenericDao;
+    private HealingJanusGraphDao janusGraphDao;
 
-    public ElementOperation(@Qualifier("janusgraph-generic-dao") JanusGraphGenericDao janusGraphGenericDao) {
+    public ElementOperation(@Qualifier("janusgraph-generic-dao") JanusGraphGenericDao janusGraphGenericDao, @Qualifier("janusgraph-dao") HealingJanusGraphDao janusGraphDao) {
         super();
         this.janusGraphGenericDao = janusGraphGenericDao;
+        this.janusGraphDao = janusGraphDao;
     }
 
     private static NodeTypeEnum getChildNodeType(NodeTypeEnum parentTypeEnum) {
@@ -365,6 +377,55 @@ public class ElementOperation implements IElementOperation {
                 janusGraphGenericDao.commit();
             }
         }
+    }
+
+    @Override
+    public List<BaseType> getBaseTypes(final String categoryName){
+        final ArrayList<BaseType> baseTypes = new ArrayList<>();
+        final Map<String, String> categoriesSpecificBaseTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes();
+        final String categorySpecificBaseType = categoriesSpecificBaseTypes == null ? null : categoriesSpecificBaseTypes.get(categoryName);
+        final String generalBaseType = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get("Service");
+        final String baseToscaResourceName = categorySpecificBaseType == null? generalBaseType : categorySpecificBaseType;
+
+        final Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+        props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, baseToscaResourceName);
+        props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> baseTypeVertex = janusGraphDao
+                .getByCriteria(VertexTypeEnum.NODE_TYPE, props, JsonParseFlagEnum.ParseAll);
+
+        if (baseTypeVertex.isLeft()) {
+            BaseType baseType = new BaseType(baseToscaResourceName);
+            baseTypes.add(baseType);
+
+            final Map<String, List<String>> typesDerivedFromBaseType = new LinkedHashMap<>();
+            baseTypeVertex.left().value().forEach(v -> {
+                baseType.addVersion((String)v.getMetadataProperty(GraphPropertyEnum.VERSION));
+                addTypesDerivedFromVertex(typesDerivedFromBaseType, v);
+            });
+
+            typesDerivedFromBaseType.forEach((k,v) -> baseTypes.add(new BaseType(k, v)));
+        }
+
+        return baseTypes;
+    }
+
+    private Map<String, List<String>> addTypesDerivedFromVertex(final Map<String, List<String>> types, final GraphVertex vertex) {
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> derivedFromVertex =
+                janusGraphDao.getParentVertices(vertex, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseAll);
+        if (derivedFromVertex.isLeft()) {
+            derivedFromVertex.left().value().stream().filter(v -> v.getMetadataProperty(GraphPropertyEnum.STATE).equals(LifecycleStateEnum.CERTIFIED.name()))
+                .forEach(v -> {
+                        addBaseTypeVersion(types, (String) v.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME), (String) v.getMetadataProperty(GraphPropertyEnum.VERSION));
+                        addTypesDerivedFromVertex(types, v);
+                });
+        }
+        return types;
+    }
+
+    private void addBaseTypeVersion(final Map<String, List<String>> baseTypes, final String baseTypeToscaResourceName, final String baseTypeVersion) {
+        List<String> versions = baseTypes.get(baseTypeToscaResourceName) == null ? new ArrayList<>(): baseTypes.get(baseTypeToscaResourceName);
+        versions.add(baseTypeVersion);
+        baseTypes.put(baseTypeToscaResourceName, versions);
     }
 
     private JanusGraphOperationStatus setSubCategories(NodeTypeEnum parentNodeType, CategoryDefinition parentCategory) {

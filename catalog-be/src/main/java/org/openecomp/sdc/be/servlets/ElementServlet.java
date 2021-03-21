@@ -65,6 +65,7 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTypesInfo;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.CatalogUpdateTimestamp;
 import org.openecomp.sdc.be.model.Category;
 import org.openecomp.sdc.be.model.Component;
@@ -186,6 +187,39 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create resource category");
             log.debug("createResourceCategory failed with exception", e);
+            throw e;
+        }
+    }
+    
+    @GET
+    @Path("/category/{componentType}/{categoryName}/baseTypes")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get base types for category", method = "GET", summary = "Get base types for category",
+            responses = {@ApiResponse(responseCode = "200", description = "Returns base types Ok"),
+                    @ApiResponse(responseCode = "404", description = "No base types were found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getCategoryBaseTypes(@PathParam(value = "categoryName") final String categoryName,
+            @PathParam(value = "componentType") final String componentType, @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+        try {
+            final ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            final Either<List<BaseType>, ActionStatus> either = elementBL.getBaseTypes(categoryName, userId);
+            
+            if (either.isRight() || either.left().value() == null) {
+                log.debug("No base types were found");
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
+            } else {
+                final Map<String, Object> baseTypesMap = new HashMap<>();
+                baseTypesMap.put("baseTypes", either.left().value());
+
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), baseTypesMap);
+            }
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get base types of category");
+            log.debug("getCategoryBaseTypes failed with exception", e);
             throw e;
         }
     }

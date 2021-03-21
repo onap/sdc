@@ -23,7 +23,7 @@ import * as _ from "lodash";
 import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
     ResourceType, ComponentState, instantiationType, ComponentFactory} from "app/utils";
 import { EventListenerService, ProgressService} from "app/services";
-import {CacheService, OnboardingService, ImportVSPService} from "app/services-ng2";
+import {CacheService, OnboardingService, ImportVSPService, ElementService} from "app/services-ng2";
 import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent, Component, IMetadataKey} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {Dictionary} from "lodash";
@@ -79,10 +79,12 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     convertCategoryStringToOneArray(category:string, subcategory:string):Array<IMainCategory>;
     onCategoryChange():void;
     onEcompGeneratedNamingChange():void;
+    onBaseTypeChange():void;
     openOnBoardingModal():void;
     initCategoreis():void;
     initEnvironmentContext():void;
     initInstantiationTypes():void;
+    initBaseTypes():void;
     onInstantiationTypeChange():void;
     updateIcon():void;
     possibleToUpdateIcon():boolean;
@@ -114,6 +116,7 @@ export class GeneralViewModel {
         'OnboardingService',
         'ComponentFactory',
         'ImportVSPService',
+        'ElementService',
         '$stateParams'
     ];
 
@@ -139,6 +142,7 @@ export class GeneralViewModel {
                 private onBoardingService: OnboardingService,
                 private ComponentFactory:ComponentFactory,
                 private importVSPService: ImportVSPService,
+                private elementService: ElementService,
                 private $stateParams: any) {
 
         this.initScopeValidation();
@@ -225,6 +229,7 @@ export class GeneralViewModel {
         this.$scope.componentCategories = new componentCategories();
         this.$scope.componentCategories.selectedCategory = this.$scope.component.selectedCategory;
 
+
         // Init UIModel
         this.$scope.component.tags = _.without(this.$scope.component.tags, this.$scope.component.name);
 
@@ -257,6 +262,7 @@ export class GeneralViewModel {
             }
             // Init Instantiation types
             this.$scope.initInstantiationTypes();
+            this.$scope.initBaseTypes();
         }
 
         if (this.cacheService.get(PREVIOUS_CSAR_COMPONENT)) { //keep the old component in the cache until checkout, so we dont need to pass it around
@@ -431,6 +437,20 @@ export class GeneralViewModel {
                     (<Service>this.$scope.component).instantiationType = instantiationType.A_LA_CARTE;
 
                 }
+            }
+        };
+
+        this.$scope.initBaseTypes = ():void => {
+            if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.component.categories) {
+                 this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name).subscribe((data: BaseTypeResponse[]) => {
+	                 this.$scope.baseTypes = []
+                     this.$scope.baseTypeVersions = []
+                     data.forEach(baseType => {
+	                     this.$scope.baseTypes.push(baseType.toscaResourceName)
+                         if (baseType.toscaResourceName === this.$scope.component.derivedFromGenericType){
+	                         baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+                     }});
+                 })
             }
         };
 
@@ -645,12 +665,43 @@ export class GeneralViewModel {
                    }
                 }
             }
+            if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component.categories[0]) {
+	            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name).subscribe((data: BaseTypeResponse[]) => {
+		
+                    if(this.$scope.isCreateMode()){
+                        this.$scope.baseTypes = []
+                        this.$scope.baseTypeVersions = []
+                        data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
+                        data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+                        this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
+                        this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
+                    } else {
+                        var isValidForBaseType:boolean = false;
+                        data.forEach(baseType => {if (!this.$scope.component.derivedFromGenericType || baseType.toscaResourceName === this.$scope.component.derivedFromGenericType){
+                            isValidForBaseType = true;
+                        };});
+                        this.$scope.editForm['category'].$setValidity('validForBaseType', isValidForBaseType);
+                    }
+                });
+            }   
         };
 
         this.$scope.onEcompGeneratedNamingChange = (): void => {
             if (!(this.$scope.component as Service).ecompGeneratedNaming) {
                 (this.$scope.component as Service).namingPolicy = '';
             }
+        };
+
+        this.$scope.onBaseTypeChange = (): void => {
+            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name).subscribe((data: BaseTypeResponse[]) => {
+                     this.$scope.baseTypeVersions = []
+                     data.forEach(baseType => {
+	                     if(baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
+		                     baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+                             this.$scope.component.derivedFromGenericVersion = baseType.versions[0];
+	                     };
+                     });
+             })
         };
 
         this.$scope.onVendorNameChange = (oldVendorName: string): void => {

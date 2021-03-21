@@ -16,6 +16,7 @@ export * from './ng2/services/window.service';
 export * from './ng2/services/dynamic-component.service';
 export * from './ng2/services/event-bus.service';
 export * from './ng2/services/groups.service';
+export * from './ng2/services/element.service';
 
 export * from './ng2/services/component-services/component.service';
 export * from './ng2/services/component-services/component.service.factory';

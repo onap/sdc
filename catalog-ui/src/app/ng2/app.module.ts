@@ -98,6 +98,7 @@ import {ToscaTypesServiceNg2} from "./services/tosca-types.service";
 import {CapabilitiesFilterPropertiesEditorComponentModule} from "./pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.module";
 import {InterfaceOperationHandlerModule} from "./pages/composition/interface-operatons/operation-creator/interface-operation-handler.module";
 import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-outputs.module";
+import { ElementService } from "./services/element.service";
 
 
 declare const __ENV__: string;
@@ -195,6 +196,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ModalService,
     ImportVSPService,
     OnboardingService,
+    ElementService,
     ServiceServiceNg2,
     AutomatedUpgradeService,
     WorkflowServiceNg2,

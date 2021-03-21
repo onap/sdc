@@ -445,6 +445,27 @@ public class ToscaOperationFacade {
         });
     }
 
+    public <T extends Component> Either<T, StorageOperationStatus> getByToscaResourceNameAndVersion(final String toscaResourceName, final String version) {
+        Either<T, StorageOperationStatus> result;
+
+        Map<GraphPropertyEnum, Object> hasProperties = new EnumMap<>(GraphPropertyEnum.class);
+        Map<GraphPropertyEnum, Object> hasNotProperties = new EnumMap<>(GraphPropertyEnum.class);
+
+        hasProperties.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
+        hasProperties.put(GraphPropertyEnum.VERSION, version);
+        hasNotProperties.put(GraphPropertyEnum.IS_DELETED, true);
+
+        Either<List<GraphVertex>, JanusGraphOperationStatus> getResourceRes = janusGraphDao
+            .getByCriteria(VertexTypeEnum.NODE_TYPE, hasProperties, hasNotProperties, JsonParseFlagEnum.ParseAll);
+        if (getResourceRes.isRight()) {
+            JanusGraphOperationStatus status = getResourceRes.right().value();
+            log.debug("failed to find resource with toscaResourceName {}, version {}. Status is {} ", toscaResourceName, version, status);
+            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+            return result;
+        }
+        return getToscaElementByOperation(getResourceRes.left().value().get(0));
+    }
+
     private Map<String, Entry<JanusGraphPredicate, Object>> getVendorVersionPredicate(final String vendorRelease) {
         Map<String, Entry<JanusGraphPredicate, Object>> predicateCriteria = new HashMap<>();
         if (!"1.0".equals(vendorRelease)) {
