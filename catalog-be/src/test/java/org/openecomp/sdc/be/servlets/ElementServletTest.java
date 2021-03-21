@@ -68,6 +68,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Tag;
@@ -1104,4 +1105,40 @@ class ElementServletTest extends JerseyTest {
             })
             .property("contextConfig", context);
     }
+    
+    @Test
+    void getBaseTypesTest() {
+        String path = "/v1/category/services/CAT1/baseTypes";
+        Either<List<BaseType>, ActionStatus> baseTypesEither = Either.left(new ArrayList<>());
+        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId()))
+            .thenReturn(baseTypesEither);
+
+        Response response = target()
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+    
+    @Test
+    void getBaseTypesNoBaseTypesFoundTest() {
+        String path = "/v1/category/services/CAT1/baseTypes";
+        Either<List<BaseType>, ActionStatus> baseTypesEither = Either.right(ActionStatus.NO_CONTENT);
+
+        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId()))
+            .thenReturn(baseTypesEither);
+
+        Response response = target()
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .get();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+    
 }

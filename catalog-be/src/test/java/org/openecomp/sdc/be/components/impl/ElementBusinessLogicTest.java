@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
@@ -303,5 +304,24 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
         Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"SERVICE_PARAM_NAME", "USR");
         Assert.assertTrue(response.isRight());
         Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+    }
+    
+    @Test
+    public void testGetBaseTypes_givenValidUserAndComponentType_thenReturnsSuccessful() {
+
+        List<BaseType> baseTypes = new ArrayList<>();
+        baseTypes.add(new BaseType("org.openecomp.type"));
+        String categoryName = "CAT01";
+
+        when(userValidations.validateUserExistsActionStatus(eq(user.getUserId()))).thenReturn(ActionStatus.OK);
+        when(elementDao.getBaseTypes(categoryName)).thenReturn(baseTypes);
+        Assert.assertTrue(elementBusinessLogic.getBaseTypes(categoryName, user.getUserId())
+        .isLeft());
+    }
+    
+    @Test
+    public void testGetBaseTypes_givenUserValidationFails_thenReturnsException() {
+        when(userValidations.validateUserExistsActionStatus(eq(user.getUserId()))).thenReturn(ActionStatus.RESTRICTED_OPERATION);
+        Assert.assertTrue(elementBusinessLogic.getBaseTypes("CAT01", user.getUserId()).isRight());
     }
 }

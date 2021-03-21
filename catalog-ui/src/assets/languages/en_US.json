@@ -217,6 +217,7 @@
     "NEW_SERVICE_RESOURCE_ERROR_NAME_EXISTS": "Name already exists.",
     "NEW_SERVICE_RESOURCE_ERROR_SPECIAL_CHARS": "Special characters not allowed.",
     "NEW_SERVICE_RESOURCE_ERROR_CATEGORY_REQUIRED": "category is required.",
+    "NEW_SERVICE_RESOURCE_ERROR_CATEGORY_NOT_VALID": "Category not valid for base type.",
     "NEW_SERVICE_RESOURCE_ERROR_CONTACT_REQUIRED": "Contact is required.",
     "NEW_SERVICE_RESOURCE_ERROR_CONTACT_NOT_VALID": "Contact is not valid.",
     "NEW_SERVICE_RESOURCE_ERROR_SERVICE_DESCRIPTION_REQUIRED": "Service description is required.",

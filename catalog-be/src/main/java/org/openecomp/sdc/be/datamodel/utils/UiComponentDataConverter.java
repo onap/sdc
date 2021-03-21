@@ -445,6 +445,8 @@ public class UiComponentDataConverter {
                     UiServiceMetadata metadata = new UiServiceMetadata(service.getCategories(),
                         (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition().getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
+                    dataTransfer.setDerivedFromGenericType(service.getDerivedFromGenericType());
+                    dataTransfer.setDerivedFromGenericVersion(service.getDerivedFromGenericVersion());
                     break;
                 case NODE_FILTER:
                     if (service.getNodeFilterComponents() == null) {

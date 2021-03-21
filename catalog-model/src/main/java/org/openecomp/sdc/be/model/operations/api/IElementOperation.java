@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.openecomp.sdc.be.config.Configuration;
@@ -27,6 +28,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Tag;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -83,6 +85,8 @@ public interface IElementOperation {
                                                                   boolean inTransaction);
 
     Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction);
+    
+    List<BaseType> getBaseTypes(String categoryName);
 
     Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId);
 

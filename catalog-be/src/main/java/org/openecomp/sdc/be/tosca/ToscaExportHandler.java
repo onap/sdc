@@ -199,17 +199,27 @@ public class ToscaExportHandler {
     }
 
     public Either<ToscaRepresentation, ToscaError> exportComponentInterface(final Component component, final boolean isAssociatedComponent) {
-        final List<Map<String, Map<String, String>>> defaultToscaImportConfig = getDefaultToscaImportConfig();
-        if (CollectionUtils.isEmpty(defaultToscaImportConfig)) {
+        final List<Map<String, Map<String, String>>> imports = getDefaultToscaImportConfig();
+        if (CollectionUtils.isEmpty(imports)) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
         }
+        List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+        if (component.getDerivedFromGenericType() != null && !component.getDerivedFromGenericType().startsWith("org.openecomp.resource.abstract.nodes.")) {
+            final Either<Component, StorageOperationStatus> baseType = toscaOperationFacade.getByToscaResourceNameAndVersion(component.getDerivedFromGenericType(), component.getDerivedFromGenericVersion());
+            if (baseType.isLeft() && baseType.left().value() != null) {
+                addDependencies(imports, dependencies , baseType.left().value());
+            } else {
+                log.debug("Failed to fetch derived from type {}", component.getDerivedFromGenericType());
+            }
+        }
+
         String toscaVersion = null;
         if (component instanceof Resource) {
             toscaVersion = ((Resource) component).getToscaVersion();
         }
         ToscaTemplate toscaTemplate = new ToscaTemplate(toscaVersion != null ? toscaVersion : TOSCA_VERSION);
-        toscaTemplate.setImports(new ArrayList<>(defaultToscaImportConfig));
+        toscaTemplate.setImports(new ArrayList<>(imports));
         final Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         final Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertInterfaceNodeType(new HashMap<>(), component, toscaTemplate, nodeTypes,
             isAssociatedComponent);
@@ -217,6 +227,7 @@ public class ToscaExportHandler {
             return Either.right(toscaTemplateRes.right().value());
         }
         toscaTemplate = toscaTemplateRes.left().value();
+        toscaTemplate.setDependencies(dependencies);
         ToscaRepresentation toscaRepresentation = this.createToscaRepresentation(toscaTemplate);
         return Either.left(toscaRepresentation);
     }
@@ -493,7 +504,7 @@ public class ToscaExportHandler {
         if (!ModelConverter.isAtomicComponent(component)) {
             final List<Map<String, Map<String, String>>> additionalImports =
                 toscaTemplate.getImports() == null ? new ArrayList<>(defaultToscaImportConfig) : new ArrayList<>(toscaTemplate.getImports());
-            List<Triple<String, String, Component>> dependecies = new ArrayList<>();
+            List<Triple<String, String, Component>> dependencies = new ArrayList<>();
             Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
             if (isNotEmpty(toscaArtifacts)) {
                 ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
@@ -510,9 +521,9 @@ public class ToscaExportHandler {
             }
             List<ComponentInstance> componentInstances = component.getComponentInstances();
             if (componentInstances != null && !componentInstances.isEmpty()) {
-                componentInstances.forEach(ci -> createDependency(componentCache, additionalImports, dependecies, ci));
+                componentInstances.forEach(ci -> createDependency(componentCache, additionalImports, dependencies, ci));
             }
-            toscaTemplate.setDependencies(dependecies);
+            toscaTemplate.setDependencies(dependencies);
             toscaTemplate.setImports(additionalImports);
         } else {
             log.debug("currently imports supported for VF and service only");
