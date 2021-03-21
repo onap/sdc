@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -62,13 +63,19 @@ public class GenericTypeBusinessLogic {
             log.debug("Failed to fetch certified generic node type for component {}", component.getName());
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
-        Either<Resource, StorageOperationStatus> findLatestGeneric = toscaOperationFacade
+        Either<Resource, StorageOperationStatus> genericType;
+        if (StringUtils.isEmpty(component.getDerivedFromGenericVersion())){
+            genericType = toscaOperationFacade
             .getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
-        if (findLatestGeneric.isRight()) {
-            log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
+            if (genericType.isRight()) {
+                log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
+            }
+        } else {
+            genericType = toscaOperationFacade.getByToscaResourceNameAndVersion(genericTypeToscaName, component.getDerivedFromGenericVersion());
         }
-        Resource genericTypeResource = findLatestGeneric.left().value();
+
+        Resource genericTypeResource = genericType.left().value();
         return Either.left(genericTypeResource);
     }
 

@@ -197,6 +197,8 @@ export class ComponentFactory {
         component.setUniqueId(componentId);
         this.ComponentServiceNg2.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
             component.setComponentMetadata(response.metadata);
+            component.derivedFromGenericType = response.derivedFromGenericType;
+            component.derivedFromGenericVersion = response.derivedFromGenericVersion;
             deferred.resolve(component);
         });
         return deferred.promise;

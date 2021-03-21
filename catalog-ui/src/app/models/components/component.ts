@@ -144,6 +144,8 @@ export abstract class Component implements IComponent {
     public vspArchived: boolean;
     public componentMetadata: ComponentMetadata;
     public categorySpecificMetadata: Metadata = new Metadata();
+    public derivedFromGenericType: string;
+    public derivedFromGenericVersion: string;
 
     constructor(componentService:IComponentService, protected $q:ng.IQService, component?:Component) {
         if (component) {
@@ -205,6 +207,9 @@ export abstract class Component implements IComponent {
                 this.copyCategoryMetadata(component);
                 this.copySubcategoryMetadata(component);
             }
+
+            this.derivedFromGenericType = component.derivedFromGenericType;
+            this.derivedFromGenericVersion = component.derivedFromGenericVersion;
         }
 
         //custom properties
