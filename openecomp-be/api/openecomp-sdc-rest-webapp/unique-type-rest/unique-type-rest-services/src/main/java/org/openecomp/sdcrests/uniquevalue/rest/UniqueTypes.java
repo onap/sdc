@@ -15,22 +15,24 @@
  */
 package org.openecomp.sdcrests.uniquevalue.rest;
 
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+import org.springframework.validation.annotation.Validated;
 
 @Path("/v1.0/unique-types")
 @Produces(MediaType.APPLICATION_JSON)
@@ -39,19 +41,17 @@ import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG
 @Validated
 public interface UniqueTypes {
 
-  @GET
-  @Path("/")
-  @Operation(description = "Lists unique value types")
-  Response listUniqueTypes(@NotNull(message = USER_MISSING_ERROR_MSG)
-                           @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    @GET
+    @Path("/")
+    @Operation(description = "Lists unique value types")
+    Response listUniqueTypes(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
-  @GET
-  @Path("/{type}/values/{value}")
-  @Operation(description = "Gets unique value")
-  @ApiResponse(responseCode = "200", description = "Indication whether the unique value is occupied")
-  @ApiResponse(responseCode = "404", description = "Unsupported unique type")
-  Response getUniqueValue(
-      @Parameter(description = "The unique value type, for example: 'VlmName'") @PathParam("type") String type,
-      @Parameter(description = "The unique value") @PathParam("value") String value,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    @GET
+    @Path("/{type}/values/{value}")
+    @Operation(description = "Gets unique value")
+    @ApiResponse(responseCode = "200", description = "Indication whether the unique value is occupied")
+    @ApiResponse(responseCode = "404", description = "Unsupported unique type")
+    Response getUniqueValue(@Parameter(description = "The unique value type, for example: 'VlmName'") @PathParam("type") String type,
+                            @Parameter(description = "The unique value") @PathParam("value") String value,
+                            @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 }

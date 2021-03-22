@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
-
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -24,6 +22,5 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateAction
 @FunctionalInterface
 public interface OrchestrationTemplateProcessHandler {
 
-  OrchestrationTemplateActionResponse process(VspDetails vspDetails,
-                                              OrchestrationTemplateCandidateData candidateData);
+    OrchestrationTemplateActionResponse process(VspDetails vspDetails, OrchestrationTemplateCandidateData candidateData);
 }

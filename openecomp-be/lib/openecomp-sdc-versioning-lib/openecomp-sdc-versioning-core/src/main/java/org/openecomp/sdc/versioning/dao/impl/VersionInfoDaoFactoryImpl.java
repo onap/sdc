@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning.dao.impl;
 
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
@@ -21,10 +20,11 @@ import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
 
 public class VersionInfoDaoFactoryImpl extends VersionInfoDaoFactory {
-  private static VersionInfoDao INSTANCE = new VersionInfoDaoImpl(NoSqlDbFactory.getInstance().createInterface());
 
-  @Override
-  public VersionInfoDao createInterface() {
-    return INSTANCE;
-  }
+    private static VersionInfoDao INSTANCE = new VersionInfoDaoImpl(NoSqlDbFactory.getInstance().createInterface());
+
+    @Override
+    public VersionInfoDao createInterface() {
+        return INSTANCE;
+    }
 }

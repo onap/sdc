@@ -19,17 +19,16 @@
  */
 package org.openecomp.sdc.conflicts.impl;
 
-
 import org.openecomp.conflicts.dao.ConflictsDaoFactory;
 import org.openecomp.sdc.conflicts.ConflictsManager;
 import org.openecomp.sdc.conflicts.ConflictsManagerFactory;
 
 public class ConflictsManagerFactoryImpl extends ConflictsManagerFactory {
-  private static final ConflictsManager INSTANCE =
-      new ConflictsManagerImpl(ConflictsDaoFactory.getInstance().createInterface());
 
-  @Override
-  public ConflictsManager createInterface() {
-    return INSTANCE;
-  }
+    private static final ConflictsManager INSTANCE = new ConflictsManagerImpl(ConflictsDaoFactory.getInstance().createInterface());
+
+    @Override
+    public ConflictsManager createInterface() {
+        return INSTANCE;
+    }
 }

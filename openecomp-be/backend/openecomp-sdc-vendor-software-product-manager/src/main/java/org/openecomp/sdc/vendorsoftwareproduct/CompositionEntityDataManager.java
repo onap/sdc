@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
@@ -25,44 +31,36 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 public interface CompositionEntityDataManager {
 
-  Map<CompositionEntityId, Collection<String>> validateEntitiesQuestionnaire();
+    Map<CompositionEntityId, Collection<String>> validateEntitiesQuestionnaire();
 
-  void addEntity(CompositionEntity entity, SchemaTemplateInput schemaTemplateInput);
+    void addEntity(CompositionEntity entity, SchemaTemplateInput schemaTemplateInput);
 
-  CompositionEntityValidationData validateEntity(CompositionEntity entity,
-                                                 SchemaTemplateContext schemaTemplateContext,
-                                                 SchemaTemplateInput schemaTemplateInput);
+    CompositionEntityValidationData validateEntity(CompositionEntity entity, SchemaTemplateContext schemaTemplateContext,
+                                                   SchemaTemplateInput schemaTemplateInput);
 
-  void buildTrees();
+    void buildTrees();
 
-  void addErrorsToTrees(Map<CompositionEntityId, Collection<String>> errors);
+    void addErrorsToTrees(Map<CompositionEntityId, Collection<String>> errors);
 
-  Set<CompositionEntityValidationData> getEntityListWithErrors();
+    Set<CompositionEntityValidationData> getEntityListWithErrors();
 
-  Collection<CompositionEntityValidationData> getTrees();
+    Collection<CompositionEntityValidationData> getTrees();
 
-  void saveCompositionData(String vspId, Version version, CompositionData compositionData);
+    void saveCompositionData(String vspId, Version version, CompositionData compositionData);
 
-  Set<CompositionEntityValidationData> getAllErrorsByVsp(String vspId);
+    Set<CompositionEntityValidationData> getAllErrorsByVsp(String vspId);
 
-  ComponentEntity createComponent(ComponentEntity component, boolean isManualVsp);
+    ComponentEntity createComponent(ComponentEntity component, boolean isManualVsp);
 
-  NicEntity createNic(NicEntity nic);
+    NicEntity createNic(NicEntity nic);
 
-  DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavor);
+    DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavor);
 
-  ImageEntity createImage(ImageEntity image);
+    ImageEntity createImage(ImageEntity image);
 
-  void saveComputesFlavorByComponent(String vspId, Version version, Component component,
-                                     String componentId);
+    void saveComputesFlavorByComponent(String vspId, Version version, Component component, String componentId);
 
-  void saveImagesByComponent(String vspId, Version version, Component component,
-                             String componentId);
-
+    void saveImagesByComponent(String vspId, Version version, Component component, String componentId);
 }

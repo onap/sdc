@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.Collections;
@@ -45,21 +44,19 @@ public class PnfdCustomNodeTypeBlockParser extends AbstractPnfdBlockParser {
         if (customNodeTypeMap.isEmpty() || MapUtils.isEmpty(nodeTemplateMap)) {
             return Collections.emptySet();
         }
-        return customNodeTypeMap.entrySet().stream()
-            .map(customNode -> {
-                final Map<String, Object> map = new HashMap<>();
-                nodeTemplateMap.entrySet().stream()
-                    .filter(nodeTemplate ->
-                        extractObjectValue(nodeTemplate.getValue()).equalsIgnoreCase(customNode.getKey()))
-                    .forEach(nodeType -> map.put(nodeType.getKey(), nodeType.getValue()));
-                return map;
-            }).collect(Collectors.toSet());
+        return customNodeTypeMap.entrySet().stream().map(customNode -> {
+            final Map<String, Object> map = new HashMap<>();
+            nodeTemplateMap.entrySet().stream()
+                .filter(nodeTemplate -> extractObjectValue(nodeTemplate.getValue()).equalsIgnoreCase(customNode.getKey()))
+                .forEach(nodeType -> map.put(nodeType.getKey(), nodeType.getValue()));
+            return map;
+        }).collect(Collectors.toSet());
     }
 
     @Override
     protected Optional<Map<String, Object>> buildParsedBlock(final Map<String, Object> attributeQuery,
-        final Map<String, Object> fromNodeTemplateAttributeMap,
-        final ConversionDefinition conversionDefinition) {
+                                                             final Map<String, Object> fromNodeTemplateAttributeMap,
+                                                             final ConversionDefinition conversionDefinition) {
         //cannot query for more than one attribute
         if (attributeQuery.keySet().size() > 1) {
             return Optional.empty();
@@ -84,5 +81,4 @@ public class PnfdCustomNodeTypeBlockParser extends AbstractPnfdBlockParser {
             DataModelUtil.addNodeTemplate(templateTo, nodeTemplateName, parsedNodeTemplate);
         }
     }
-
 }

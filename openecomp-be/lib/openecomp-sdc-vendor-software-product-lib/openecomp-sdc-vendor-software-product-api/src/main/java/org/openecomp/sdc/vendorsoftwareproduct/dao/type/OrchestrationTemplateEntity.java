@@ -13,131 +13,127 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
+import java.nio.ByteBuffer;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-import java.nio.ByteBuffer;
-
 public class OrchestrationTemplateEntity implements VersionableEntity {
-  private static final String ENTITY_TYPE = "Vendor Software Product Orchestration Template";
 
-  private String id;
-  private Version version;
-  private String fileSuffix;
-  private String fileName;
-  private String packageName;
-  private String packageVersion;
-  private String validationData;
-  private ByteBuffer contentData;
-  private String filesDataStructure;
+    private static final String ENTITY_TYPE = "Vendor Software Product Orchestration Template";
+    private String id;
+    private Version version;
+    private String fileSuffix;
+    private String fileName;
+    private String packageName;
+    private String packageVersion;
+    private String validationData;
+    private ByteBuffer contentData;
+    private String filesDataStructure;
 
-  public OrchestrationTemplateEntity() {
-    //default constructor implementation is not provided for OrchestrationTemplateEntity
-  }
+    public OrchestrationTemplateEntity() {
+        //default constructor implementation is not provided for OrchestrationTemplateEntity
+    }
 
-  public OrchestrationTemplateEntity(String id, Version version) {
-    this.id = id;
-    this.version = version;
-  }
+    public OrchestrationTemplateEntity(String id, Version version) {
+        this.id = id;
+        this.version = version;
+    }
 
-  @Override
-  public String getEntityType() {
-    return ENTITY_TYPE;
-  }
+    @Override
+    public String getEntityType() {
+        return ENTITY_TYPE;
+    }
 
-  @Override
-  public String getFirstClassCitizenId() {
-    return getId();
-  }
+    @Override
+    public String getFirstClassCitizenId() {
+        return getId();
+    }
 
-  @Override
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getId() {
+        return id;
+    }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  @Override
-  public Version getVersion() {
-    return version;
-  }
+    @Override
+    public Version getVersion() {
+        return version;
+    }
 
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
-  }
+    @Override
+    public void setVersion(Version version) {
+        this.version = version;
+    }
 
-  public String getFileSuffix() {
-    return fileSuffix;
-  }
+    public String getFileSuffix() {
+        return fileSuffix;
+    }
 
-  public void setFileSuffix(String fileSuffix) {
-    this.fileSuffix = fileSuffix;
-  }
+    public void setFileSuffix(String fileSuffix) {
+        this.fileSuffix = fileSuffix;
+    }
 
-  public String getFileName() {
-    return fileName;
-  }
+    public String getFileName() {
+        return fileName;
+    }
 
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
-  }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-  public String getPackageName() {
-    return packageName;
-  }
+    public String getPackageName() {
+        return packageName;
+    }
 
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
-  }
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
 
-  public String getPackageVersion() {
-    return packageVersion;
-  }
+    public String getPackageVersion() {
+        return packageVersion;
+    }
 
-  public void setPackageVersion(String packageVersion) {
-    this.packageVersion = packageVersion;
-  }
+    public void setPackageVersion(String packageVersion) {
+        this.packageVersion = packageVersion;
+    }
 
-  public String getValidationData() {
-    return validationData;
-  }
+    public String getValidationData() {
+        return validationData;
+    }
 
-  public void setValidationData(String validationData) {
-    this.validationData = validationData;
-  }
+    public void setValidationData(String validationData) {
+        this.validationData = validationData;
+    }
 
-  public ValidationStructureList getValidationDataStructure() {
-    return validationData == null ? null
-        : JsonUtil.json2Object(validationData, ValidationStructureList.class);
-  }
+    public ValidationStructureList getValidationDataStructure() {
+        return validationData == null ? null : JsonUtil.json2Object(validationData, ValidationStructureList.class);
+    }
 
-  public void setValidationDataStructure(ValidationStructureList validationData) {
-    this.validationData = validationData == null ? null
-        : JsonUtil.object2Json(validationData);
-  }
+    public void setValidationDataStructure(ValidationStructureList validationData) {
+        this.validationData = validationData == null ? null : JsonUtil.object2Json(validationData);
+    }
 
-  public ByteBuffer getContentData() {
-    return contentData;
-  }
+    public ByteBuffer getContentData() {
+        return contentData;
+    }
 
-  public void setContentData(ByteBuffer contentData) {
-    this.contentData = contentData;
-  }
+    public void setContentData(ByteBuffer contentData) {
+        this.contentData = contentData;
+    }
 
-  public String getFilesDataStructure() {
-    return filesDataStructure;
-  }
+    public String getFilesDataStructure() {
+        return filesDataStructure;
+    }
 
-  public void setFilesDataStructure(String filesDataStructure) {
-    this.filesDataStructure = filesDataStructure;
-  }
+    public void setFilesDataStructure(String filesDataStructure) {
+        this.filesDataStructure = filesDataStructure;
+    }
 }

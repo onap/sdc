@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +27,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AlgorithmDigest {
+
     private final String hashAlgorithm;
     private final String digest;
 }

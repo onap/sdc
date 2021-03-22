@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 
 public abstract class NetworkManagerFactory extends AbstractComponentFactory<NetworkManager> {
 
-  public static NetworkManagerFactory getInstance() {
-    return getInstance(NetworkManagerFactory.class);
-  }
+    public static NetworkManagerFactory getInstance() {
+        return getInstance(NetworkManagerFactory.class);
+    }
 }

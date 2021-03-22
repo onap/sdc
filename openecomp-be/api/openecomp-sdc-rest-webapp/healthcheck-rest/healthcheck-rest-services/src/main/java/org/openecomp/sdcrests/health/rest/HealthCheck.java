@@ -17,25 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.health.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import org.openecomp.sdcrests.health.types.HealthInfoDtos;
-import org.springframework.validation.annotation.Validated;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.openecomp.sdcrests.health.types.HealthInfoDtos;
+import org.springframework.validation.annotation.Validated;
 
 @Path("/v1.0/healthcheck")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,8 +41,7 @@ import javax.ws.rs.core.Response;
 @Validated
 public interface HealthCheck {
 
-  @GET
-  @Operation(description = "Perform health check", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = HealthInfoDtos.class))))
-  Response checkHealth();
-
+    @GET
+    @Operation(description = "Perform health check", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = HealthInfoDtos.class))))
+    Response checkHealth();
 }

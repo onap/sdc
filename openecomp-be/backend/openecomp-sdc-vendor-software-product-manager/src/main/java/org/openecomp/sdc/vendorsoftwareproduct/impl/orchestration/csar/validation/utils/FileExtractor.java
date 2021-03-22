@@ -48,8 +48,7 @@ public class FileExtractor {
         Map<String, List<String>> nonManoSources = extractNonManoSources();
         List<String> pathsToSources = nonManoSources.getOrDefault(fileType.getType(), new ArrayList<>());
         List<String> pathsToLocalFiles = internalFilesFilter.filter(pathsToSources);
-        return pathsToLocalFiles.stream()
-            .map(contentHandler::getFileContent);
+        return pathsToLocalFiles.stream().map(contentHandler::getFileContent);
     }
 
     private Map<String, List<String>> extractNonManoSources() {

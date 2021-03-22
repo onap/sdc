@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.Objects;
@@ -35,60 +34,43 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
 
     @Override
     public void addNodesConnectedOut(TranslateTo translateTo, String nodeTemplateId, String requirementId,
-                                            RequirementAssignment requirementAssignment) {
-
-        EntityConsolidationData entityConsolidationData =
-                getPortTemplateConsolidationData(translateTo, translateTo.getResourceId(),
-                        translateTo.getResource().getType(), translateTo.getTranslatedId());
-
+                                     RequirementAssignment requirementAssignment) {
+        EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(translateTo, translateTo.getResourceId(),
+            translateTo.getResource().getType(), translateTo.getTranslatedId());
         entityConsolidationData.addNodesConnectedOut(nodeTemplateId, requirementId, requirementAssignment);
-
     }
 
     @Override
-    public void addNodesConnectedIn(TranslateTo translateTo, String sourceNodeTemplateId,
-               String dependentNodeTemplateId, String targetResourceId, String requirementId,
-               RequirementAssignment requirementAssignment) {
-
-        EntityConsolidationData entityConsolidationData =
-                getPortTemplateConsolidationData(translateTo, translateTo.getResourceId(),
-                        translateTo.getResource().getType(), dependentNodeTemplateId);
-
+    public void addNodesConnectedIn(TranslateTo translateTo, String sourceNodeTemplateId, String dependentNodeTemplateId, String targetResourceId,
+                                    String requirementId, RequirementAssignment requirementAssignment) {
+        EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(translateTo, translateTo.getResourceId(),
+            translateTo.getResource().getType(), dependentNodeTemplateId);
         entityConsolidationData.addNodesConnectedIn(sourceNodeTemplateId, requirementId, requirementAssignment);
-
     }
 
     @Override
-    public void removeParamNameFromAttrFuncList(ServiceTemplate serviceTemplate,
-                HeatOrchestrationTemplate heatOrchestrationTemplate, String paramName,
-                String contrailSharedResourceId, String sharedTranslatedResourceId) {
-
+    public void removeParamNameFromAttrFuncList(ServiceTemplate serviceTemplate, HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                String paramName, String contrailSharedResourceId, String sharedTranslatedResourceId) {
         Resource resource = heatOrchestrationTemplate.getResources().get(contrailSharedResourceId);
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
-        EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(serviceTemplateFileName,
-                contrailSharedResourceId, resource.getType(), sharedTranslatedResourceId, null);
+        EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(serviceTemplateFileName, contrailSharedResourceId,
+            resource.getType(), sharedTranslatedResourceId, null);
         entityConsolidationData.removeParamNameFromAttrFuncList(paramName);
-
     }
 
     /**
      * Add port in consolidation data base on given parameters.
-     *
      */
-    public void addConsolidationData(String serviceTemplateFileName,
-                String portResourceId, String portResourceType, String portNodeTemplateId, String portType) {
-        getPortTemplateConsolidationData(
-                serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId, portType);
+    public void addConsolidationData(String serviceTemplateFileName, String portResourceId, String portResourceType, String portNodeTemplateId,
+                                     String portType) {
+        getPortTemplateConsolidationData(serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId, portType);
     }
 
     @Override
-    public void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId,
-            String resourceTranslatedId, String propertyName, String attributeName) {
-
+    public void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId, String resourceTranslatedId, String propertyName,
+                                   String attributeName) {
         String resourceId = functionTranslator.getResourceId();
-        EntityConsolidationData entityConsolidationData =
-                getPortTemplateConsolidationData(functionTranslator, resourceId, resourceTranslatedId);
-
+        EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(functionTranslator, resourceId, resourceTranslatedId);
         if (Objects.nonNull(entityConsolidationData)) {
             GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
             entityConsolidationData.addNodesGetAttrOut(nodeTemplateId, getAttrFuncData);
@@ -96,11 +78,10 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
     }
 
     @Override
-    public void addNodesGetAttrIn(FunctionTranslator functionTranslator,String nodeTemplateId,
-            String targetResourceId, String targetResourceTranslatedId,  String propertyName, String attributeName) {
-        EntityConsolidationData entityConsolidationData =
-                getPortTemplateConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId);
-
+    public void addNodesGetAttrIn(FunctionTranslator functionTranslator, String nodeTemplateId, String targetResourceId,
+                                  String targetResourceTranslatedId, String propertyName, String attributeName) {
+        EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(functionTranslator, targetResourceId,
+            targetResourceTranslatedId);
         if (Objects.nonNull(entityConsolidationData)) {
             GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
             entityConsolidationData.addNodesGetAttrIn(nodeTemplateId, getAttrFuncData);
@@ -108,12 +89,10 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
     }
 
     @Override
-    public void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId,
-            String targetResourceTranslatedId, String propertyName, String attributeName) {
-
-        EntityConsolidationData entityConsolidationData =
-                getPortTemplateConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId);
-
+    public void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId, String targetResourceTranslatedId,
+                                        String propertyName, String attributeName) {
+        EntityConsolidationData entityConsolidationData = getPortTemplateConsolidationData(functionTranslator, targetResourceId,
+            targetResourceTranslatedId);
         if (Objects.nonNull(entityConsolidationData)) {
             GetAttrFuncData getAttrFuncData = createGetAttrFuncData(propertyName, attributeName);
             entityConsolidationData.addOutputParamGetAttrIn(getAttrFuncData);
@@ -127,28 +106,25 @@ public class PortConsolidationDataHandler implements ConsolidationDataHandler {
         return getAttrFuncData;
     }
 
-    private EntityConsolidationData getPortTemplateConsolidationData(FunctionTranslator functionTranslator,
-            String targetResourceId, String targetResourceTranslatedId) {
+    private EntityConsolidationData getPortTemplateConsolidationData(FunctionTranslator functionTranslator, String targetResourceId,
+                                                                     String targetResourceTranslatedId) {
         HeatOrchestrationTemplate heatOrchestrationTemplate = functionTranslator.getHeatOrchestrationTemplate();
         Resource resource = heatOrchestrationTemplate.getResources().get(targetResourceId);
         ServiceTemplate serviceTemplate = functionTranslator.getServiceTemplate();
-        return getPortTemplateConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-                targetResourceId, resource.getType(), targetResourceTranslatedId, null);
+        return getPortTemplateConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate), targetResourceId, resource.getType(),
+            targetResourceTranslatedId, null);
     }
 
-    private PortTemplateConsolidationData getPortTemplateConsolidationData(TranslateTo translateTo,
-            String portResourceId, String portResourceType, String portNodeTemplateId) {
+    private PortTemplateConsolidationData getPortTemplateConsolidationData(TranslateTo translateTo, String portResourceId, String portResourceType,
+                                                                           String portNodeTemplateId) {
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
-        return getPortTemplateConsolidationData(serviceTemplateFileName,
-                portResourceId, portResourceType, portNodeTemplateId, null);
+        return getPortTemplateConsolidationData(serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId, null);
     }
 
-    private PortTemplateConsolidationData getPortTemplateConsolidationData(String serviceTemplateFileName,
-            String portResourceId, String portResourceType, String portNodeTemplateId, String portType) {
-
-        return portConsolidationData.addPortTemplateConsolidationData(serviceTemplateFileName,
-                        portNodeTemplateId, portResourceId, portResourceType, portType);
-
+    private PortTemplateConsolidationData getPortTemplateConsolidationData(String serviceTemplateFileName, String portResourceId,
+                                                                           String portResourceType, String portNodeTemplateId, String portType) {
+        return portConsolidationData
+            .addPortTemplateConsolidationData(serviceTemplateFileName, portNodeTemplateId, portResourceId, portResourceType, portType);
     }
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.manifest;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,9 +35,7 @@ import org.apache.commons.collections4.CollectionUtils;
 @Data
 public class FileData {
 
-    protected static final Set<Type> heatFileTypes =
-            new HashSet<>(Arrays.asList(Type.HEAT, Type.HEAT_NET, Type.HEAT_VOL));
-
+    protected static final Set<Type> heatFileTypes = new HashSet<>(Arrays.asList(Type.HEAT, Type.HEAT_NET, Type.HEAT_VOL));
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private Boolean isBase;
@@ -79,6 +75,7 @@ public class FileData {
     @AllArgsConstructor
     @Getter
     public enum Type {
+        // @formatter:off
         HEAT("HEAT"),
         HEAT_ENV("HEAT_ENV"),
         HEAT_NET("HEAT_NET"),
@@ -99,6 +96,7 @@ public class FileData {
         OTHER("OTHER"),
         PNF_SW_INFORMATION("PNF_SW_INFORMATION"),
         PM_DICTIONARY("PM_DICTIONARY");
+        // @formatter:on
 
         private String displayName;
 

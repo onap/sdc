@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding;
 
 import java.util.ArrayList;
@@ -29,11 +28,9 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 
 public class ManifestAnalyzer {
 
-    private final ManifestContent manifest;
-
     private final static Set<Type> HEAT_TYPES = Collections.singleton(Type.HEAT);
-
     private final static Set<Type> HELM_TYPES = Collections.singleton(Type.HELM);
+    private final ManifestContent manifest;
 
     public ManifestAnalyzer(ManifestContent manifest) {
         this.manifest = manifest;

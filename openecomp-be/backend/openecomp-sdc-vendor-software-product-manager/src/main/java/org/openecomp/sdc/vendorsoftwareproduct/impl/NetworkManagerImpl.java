@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import java.util.Collection;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
@@ -35,88 +35,74 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-
 public class NetworkManagerImpl implements NetworkManager {
-  private final NetworkDao networkDao;
-  private final CompositionEntityDataManager compositionEntityDataManager;
-  private final VendorSoftwareProductInfoDao vspInfoDao;
 
-  public NetworkManagerImpl(NetworkDao networkDao,
-                            CompositionEntityDataManager compositionEntityDataManager,
-                            VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao) {
-    this.networkDao = networkDao;
-    this.compositionEntityDataManager = compositionEntityDataManager;
-    this.vspInfoDao = vendorSoftwareProductInfoDao;
-  }
+    private final NetworkDao networkDao;
+    private final CompositionEntityDataManager compositionEntityDataManager;
+    private final VendorSoftwareProductInfoDao vspInfoDao;
 
-  @Override
-  public Collection<NetworkEntity> listNetworks(String vspId, Version version) {
-    return networkDao.list(new NetworkEntity(vspId, version, null));
-  }
-
-  @Override
-  public NetworkEntity createNetwork(NetworkEntity network) {
-    if (!vspInfoDao.isManual(network.getVspId(), network.getVersion())) {
-      throw new CoreException(
-          new CompositionEditNotAllowedErrorBuilder(network.getVspId(), network.getVersion())
-              .build());
+    public NetworkManagerImpl(NetworkDao networkDao, CompositionEntityDataManager compositionEntityDataManager,
+                              VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao) {
+        this.networkDao = networkDao;
+        this.compositionEntityDataManager = compositionEntityDataManager;
+        this.vspInfoDao = vendorSoftwareProductInfoDao;
     }
-    return null;
-  }
 
-  @Override
-  public CompositionEntityValidationData updateNetwork(NetworkEntity network) {
-    NetworkEntity retrieved = getValidatedNetwork(network.getVspId(), network.getVersion(), network.getId());
-
-    NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
-    schemaInput.setManual(vspInfoDao.isManual(network.getVspId(), network.getVersion()));
-    schemaInput.setNetwork(retrieved.getNetworkCompositionData());
-
-    CompositionEntityValidationData validationData = compositionEntityDataManager
-        .validateEntity(network, SchemaTemplateContext.composition, schemaInput);
-    if (CollectionUtils.isEmpty(validationData.getErrors())) {
-      networkDao.update(network);
+    @Override
+    public Collection<NetworkEntity> listNetworks(String vspId, Version version) {
+        return networkDao.list(new NetworkEntity(vspId, version, null));
     }
-    return validationData;
-  }
 
-  @Override
-  public CompositionEntityResponse<Network> getNetwork(String vspId, Version version,
-                                                       String networkId) {
-    NetworkEntity networkEntity = getValidatedNetwork(vspId, version, networkId);
-    Network network = networkEntity.getNetworkCompositionData();
-
-    NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
-    schemaInput.setManual(vspInfoDao.isManual(vspId, version));
-    schemaInput.setNetwork(network);
-
-    CompositionEntityResponse<Network> response = new CompositionEntityResponse<>();
-    response.setId(networkId);
-    response.setData(network);
-    response.setSchema(getCompositionSchema(schemaInput));
-    return response;
-  }
-
-
-  private NetworkEntity getValidatedNetwork(String vspId, Version version, String networkId) {
-    NetworkEntity retrieved = networkDao.get(new NetworkEntity(vspId, version, networkId));
-    VersioningUtil.validateEntityExistence(retrieved, new NetworkEntity(vspId, version, networkId),
-        VspDetails.ENTITY_TYPE);
-    return retrieved;
-  }
-
-  @Override
-  public void deleteNetwork(String vspId, Version version, String networkId) {
-    if (!vspInfoDao.isManual(vspId, version)) {
-      throw new CoreException(
-          new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
+    @Override
+    public NetworkEntity createNetwork(NetworkEntity network) {
+        if (!vspInfoDao.isManual(network.getVspId(), network.getVersion())) {
+            throw new CoreException(new CompositionEditNotAllowedErrorBuilder(network.getVspId(), network.getVersion()).build());
+        }
+        return null;
     }
-  }
 
+    @Override
+    public CompositionEntityValidationData updateNetwork(NetworkEntity network) {
+        NetworkEntity retrieved = getValidatedNetwork(network.getVspId(), network.getVersion(), network.getId());
+        NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
+        schemaInput.setManual(vspInfoDao.isManual(network.getVspId(), network.getVersion()));
+        schemaInput.setNetwork(retrieved.getNetworkCompositionData());
+        CompositionEntityValidationData validationData = compositionEntityDataManager
+            .validateEntity(network, SchemaTemplateContext.composition, schemaInput);
+        if (CollectionUtils.isEmpty(validationData.getErrors())) {
+            networkDao.update(network);
+        }
+        return validationData;
+    }
 
-  protected String getCompositionSchema(NetworkCompositionSchemaInput schemaInput) {
-    return SchemaGenerator
-        .generate(SchemaTemplateContext.composition, CompositionEntityType.network, schemaInput);
-  }
+    @Override
+    public CompositionEntityResponse<Network> getNetwork(String vspId, Version version, String networkId) {
+        NetworkEntity networkEntity = getValidatedNetwork(vspId, version, networkId);
+        Network network = networkEntity.getNetworkCompositionData();
+        NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
+        schemaInput.setManual(vspInfoDao.isManual(vspId, version));
+        schemaInput.setNetwork(network);
+        CompositionEntityResponse<Network> response = new CompositionEntityResponse<>();
+        response.setId(networkId);
+        response.setData(network);
+        response.setSchema(getCompositionSchema(schemaInput));
+        return response;
+    }
+
+    private NetworkEntity getValidatedNetwork(String vspId, Version version, String networkId) {
+        NetworkEntity retrieved = networkDao.get(new NetworkEntity(vspId, version, networkId));
+        VersioningUtil.validateEntityExistence(retrieved, new NetworkEntity(vspId, version, networkId), VspDetails.ENTITY_TYPE);
+        return retrieved;
+    }
+
+    @Override
+    public void deleteNetwork(String vspId, Version version, String networkId) {
+        if (!vspInfoDao.isManual(vspId, version)) {
+            throw new CoreException(new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
+        }
+    }
+
+    protected String getCompositionSchema(NetworkCompositionSchemaInput schemaInput) {
+        return SchemaGenerator.generate(SchemaTemplateContext.composition, CompositionEntityType.network, schemaInput);
+    }
 }

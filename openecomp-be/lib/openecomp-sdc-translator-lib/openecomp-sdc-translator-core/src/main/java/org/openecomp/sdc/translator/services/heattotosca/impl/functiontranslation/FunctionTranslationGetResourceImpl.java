@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
+import java.util.Optional;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 
-import java.util.Optional;
-
 public class FunctionTranslationGetResourceImpl implements FunctionTranslation {
+
     @Override
     public Object translateFunction(FunctionTranslator functionTranslator) {
         Object returnValue;
-        Optional<String> resourceTranslatedId = ResourceTranslationBase.getResourceTranslatedId(functionTranslator
-                .getHeatFileName(), functionTranslator.getHeatOrchestrationTemplate(),
+        Optional<String> resourceTranslatedId = ResourceTranslationBase
+            .getResourceTranslatedId(functionTranslator.getHeatFileName(), functionTranslator.getHeatOrchestrationTemplate(),
                 (String) functionTranslator.getFunctionValue(), functionTranslator.getContext());
-        returnValue = resourceTranslatedId.orElseGet(() -> functionTranslator.getUnsupportedResourcePrefix()
-                + functionTranslator.getFunctionValue());
+        returnValue = resourceTranslatedId.orElseGet(() -> functionTranslator.getUnsupportedResourcePrefix() + functionTranslator.getFunctionValue());
         return returnValue;
     }
 }

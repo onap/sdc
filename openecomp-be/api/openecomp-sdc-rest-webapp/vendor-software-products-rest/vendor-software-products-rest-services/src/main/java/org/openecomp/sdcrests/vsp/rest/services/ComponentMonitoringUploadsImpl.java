@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import java.io.InputStream;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -36,88 +38,67 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapMonitoringUploadStatusToDto;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.io.InputStream;
-
 /**
  * @author katyr
  * @since June 26, 2017
  */
-
 @Named
 @Service("componentMonitoringUploads")
 @Scope(value = "prototype")
 //@Validated
 public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUploads {
-  private final MonitoringUploadsManager monitoringUploadsManager;
-  private final ComponentManager componentManager;
 
-  public ComponentMonitoringUploadsImpl() {
-    this.monitoringUploadsManager = MonitoringUploadsManagerFactory.getInstance().createInterface();
-    this.componentManager = ComponentManagerFactory.getInstance().createInterface();
-  }
+    private final MonitoringUploadsManager monitoringUploadsManager;
+    private final ComponentManager componentManager;
 
-  public ComponentMonitoringUploadsImpl(MonitoringUploadsManager monitoringUploadsManager,
-      ComponentManager componentManager) {
-    this.monitoringUploadsManager = monitoringUploadsManager;
-    this.componentManager = componentManager;
-  }
-
-  @Override
-  public Response upload(Attachment attachment,
-                         String vspId, String versionId, String componentId, String type,
-                         String user) throws Exception {
-
-    Version version = new Version(versionId);
-    componentManager.validateComponentExistence(vspId, version, componentId);
-
-    MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
-    monitoringUploadsManager.upload(attachment.getObject(InputStream.class),
-        attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
-        monitoringUploadType);
-    return Response.ok().build();
-  }
-
-  private MonitoringUploadType getMonitoringUploadType(String vspId, String componentId,
-                                                       String type) throws Exception {
-    MonitoringUploadType monitoringUploadType;
-    try {
-      monitoringUploadType = MonitoringUploadType.valueOf(type);
-    } catch (IllegalArgumentException exception) {
-      String errorWithParameters = ErrorMessagesFormatBuilder
-          .getErrorWithParameters(Messages.ILLEGAL_MONITORING_ARTIFACT_TYPE.getErrorMessage(),
-              componentId, vspId);
-      throw new Exception(errorWithParameters, exception);
+    public ComponentMonitoringUploadsImpl() {
+        this.monitoringUploadsManager = MonitoringUploadsManagerFactory.getInstance().createInterface();
+        this.componentManager = ComponentManagerFactory.getInstance().createInterface();
     }
-    return monitoringUploadType;
-  }
 
-  @Override
-  public Response delete(String vspId, String versionId, String componentId,
-                         String type, String user) throws Exception {
+    public ComponentMonitoringUploadsImpl(MonitoringUploadsManager monitoringUploadsManager, ComponentManager componentManager) {
+        this.monitoringUploadsManager = monitoringUploadsManager;
+        this.componentManager = componentManager;
+    }
 
-    MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
+    @Override
+    public Response upload(Attachment attachment, String vspId, String versionId, String componentId, String type, String user) throws Exception {
+        Version version = new Version(versionId);
+        componentManager.validateComponentExistence(vspId, version, componentId);
+        MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
+        monitoringUploadsManager
+            .upload(attachment.getObject(InputStream.class), attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
+                monitoringUploadType);
+        return Response.ok().build();
+    }
 
-    Version version = new Version(versionId);
-    componentManager.validateComponentExistence(vspId, version, componentId);
-    monitoringUploadsManager.delete(vspId, version, componentId, monitoringUploadType);
-    return Response.ok().build();
-  }
+    private MonitoringUploadType getMonitoringUploadType(String vspId, String componentId, String type) throws Exception {
+        MonitoringUploadType monitoringUploadType;
+        try {
+            monitoringUploadType = MonitoringUploadType.valueOf(type);
+        } catch (IllegalArgumentException exception) {
+            String errorWithParameters = ErrorMessagesFormatBuilder
+                .getErrorWithParameters(Messages.ILLEGAL_MONITORING_ARTIFACT_TYPE.getErrorMessage(), componentId, vspId);
+            throw new Exception(errorWithParameters, exception);
+        }
+        return monitoringUploadType;
+    }
 
-  @Override
-  public Response list(String vspId, String versionId, String componentId,
-                       String user) {
+    @Override
+    public Response delete(String vspId, String versionId, String componentId, String type, String user) throws Exception {
+        MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
+        Version version = new Version(versionId);
+        componentManager.validateComponentExistence(vspId, version, componentId);
+        monitoringUploadsManager.delete(vspId, version, componentId, monitoringUploadType);
+        return Response.ok().build();
+    }
 
-    Version version = new Version(versionId);
-    componentManager.validateComponentExistence(vspId, version, componentId);
-
-    MonitoringUploadStatus response =
-        monitoringUploadsManager.listFilenames(vspId, version, componentId);
-
-    MonitoringUploadStatusDto returnEntity =
-        new MapMonitoringUploadStatusToDto()
-            .applyMapping(response, MonitoringUploadStatusDto.class);
-    return Response.status(Response.Status.OK).entity(returnEntity).build();
-  }
+    @Override
+    public Response list(String vspId, String versionId, String componentId, String user) {
+        Version version = new Version(versionId);
+        componentManager.validateComponentExistence(vspId, version, componentId);
+        MonitoringUploadStatus response = monitoringUploadsManager.listFilenames(vspId, version, componentId);
+        MonitoringUploadStatusDto returnEntity = new MapMonitoringUploadStatusToDto().applyMapping(response, MonitoringUploadStatusDto.class);
+        return Response.status(Response.Status.OK).entity(returnEntity).build();
+    }
 }

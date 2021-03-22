@@ -15,9 +15,15 @@
  *
  * Modifications copyright (c) 2021 Nokia
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -30,61 +36,42 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.AnalyzedZipHe
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 public interface CandidateService {
-  Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream heatFileToUpload,
-                                                      String fileSuffix);
 
-  Optional<ErrorMessage> validateRawZipData(String fileSuffix, byte[] uploadedFileData);
+    Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream heatFileToUpload, String fileSuffix);
 
-  OrchestrationTemplateCandidateData createCandidateDataEntity(
-      CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest,
-      AnalyzedZipHeatFiles analyzedZipHeatFiles);
+    Optional<ErrorMessage> validateRawZipData(String fileSuffix, byte[] uploadedFileData);
 
-  void updateCandidateUploadData(String vspId, Version version,
-                                 OrchestrationTemplateCandidateData uploadData);
+    OrchestrationTemplateCandidateData createCandidateDataEntity(CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest,
+                                                                 AnalyzedZipHeatFiles analyzedZipHeatFiles);
 
-  Optional<FilesDataStructure> getOrchestrationTemplateCandidateFileDataStructure(String vspId,
-                                                                                  Version version);
+    void updateCandidateUploadData(String vspId, Version version, OrchestrationTemplateCandidateData uploadData);
 
-  void updateOrchestrationTemplateCandidateFileDataStructure(String vspId, Version version,
-                                                             FilesDataStructure fileDataStructure);
+    Optional<FilesDataStructure> getOrchestrationTemplateCandidateFileDataStructure(String vspId, Version version);
 
-  Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidate(String vspId,
-                                                                                 Version version);
+    void updateOrchestrationTemplateCandidateFileDataStructure(String vspId, Version version, FilesDataStructure fileDataStructure);
 
-  Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidateInfo(String vspId,
-                                                                                     Version version);
+    Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidate(String vspId, Version version);
 
-  byte[] getZipData(ByteBuffer contentData) throws IOException;
+    Optional<OrchestrationTemplateCandidateData> getOrchestrationTemplateCandidateInfo(String vspId, Version version);
 
-  void deleteOrchestrationTemplateCandidate(String vspId, Version version);
+    byte[] getZipData(ByteBuffer contentData) throws IOException;
 
-  Optional<ByteArrayInputStream> fetchZipFileByteArrayInputStream(String vspId,
-                                                                  OrchestrationTemplateCandidateData candidateDataEntity,
-                                                                  String manifest,
-                                                                  OnboardingTypesEnum type,
-                                                                  Map<String, List<ErrorMessage>> uploadErrors);
+    void deleteOrchestrationTemplateCandidate(String vspId, Version version);
 
-  byte[] replaceManifestInZip(ByteBuffer contentData, String manifest,
-                              OnboardingTypesEnum type) throws IOException;
+    Optional<ByteArrayInputStream> fetchZipFileByteArrayInputStream(String vspId, OrchestrationTemplateCandidateData candidateDataEntity,
+                                                                    String manifest, OnboardingTypesEnum type,
+                                                                    Map<String, List<ErrorMessage>> uploadErrors);
 
-  Optional<ManifestContent> createManifest(VspDetails vspDetails,
-                                           FileContentHandler fileContentHandler,
-                                           AnalyzedZipHeatFiles analyzedZipHeatFiles);
+    byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, OnboardingTypesEnum type) throws IOException;
 
-  String createManifest(VspDetails vspDetails, FilesDataStructure structure);
+    Optional<ManifestContent> createManifest(VspDetails vspDetails, FileContentHandler fileContentHandler, AnalyzedZipHeatFiles analyzedZipHeatFiles);
 
-  String createManifestFromExisting(VspDetails vspDetails, FilesDataStructure structure, ManifestContent existingManifest);
+    String createManifest(VspDetails vspDetails, FilesDataStructure structure);
 
-  Optional<List<ErrorMessage>> validateFileDataStructure(FilesDataStructure filesDataStructure);
+    String createManifestFromExisting(VspDetails vspDetails, FilesDataStructure structure, ManifestContent existingManifest);
 
-  void updateValidationData(String vspId, Version version, ValidationStructureList validationData);
+    Optional<List<ErrorMessage>> validateFileDataStructure(FilesDataStructure filesDataStructure);
+
+    void updateValidationData(String vspId, Version version, ValidationStructureList validationData);
 }

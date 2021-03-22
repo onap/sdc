@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.itempermissions.dao;
 
 import java.util.Set;
@@ -22,8 +21,5 @@ public interface UserPermissionsDao {
 
     Set<String> listUserPermittedItems(String userId, String permission);
 
-    void updatePermissions(String itemId, String permission, Set<String> addedUsersIds,
-                           Set<String> removedUsersIds);
-
+    void updatePermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds);
 }
-

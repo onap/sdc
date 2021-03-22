@@ -17,7 +17,6 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_7_1;
@@ -29,8 +28,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImp
 
 public class ValidatorFactory {
 
-    private ValidatorFactory(){
-
+    private ValidatorFactory() {
     }
 
     /**
@@ -45,7 +43,7 @@ public class ValidatorFactory {
         if (!etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
             return new ONAPCsarValidator();
         }
-        if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler).isLowerThan(ETSI_VERSION_2_7_1)){
+        if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler).isLowerThan(ETSI_VERSION_2_7_1)) {
             if (etsiService.hasCnfEnhancements(fileContentHandler)) {
                 return new SOL004Version4MetaDirectoryValidator();
             }

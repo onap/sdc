@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.util.Map;
@@ -27,7 +26,6 @@ import java.util.Map;
 class MDCRunnableWrapper implements Runnable {
 
     private final Context context = new Context();
-
     private final Runnable task;
 
     MDCRunnableWrapper(Runnable task) {
@@ -36,9 +34,7 @@ class MDCRunnableWrapper implements Runnable {
 
     @Override
     public void run() {
-
         Map<ContextField, String> oldContext = context.replace();
-
         try {
             task.run();
         } finally {

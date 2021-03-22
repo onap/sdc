@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.notification.dao.types;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-
 import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +32,6 @@ public class SubscribersEntity {
     @PartitionKey
     @Column(name = "entity_id")
     private String entityId;
-
     @Column(name = "subscribers")
     private Set<String> subscribers;
 }

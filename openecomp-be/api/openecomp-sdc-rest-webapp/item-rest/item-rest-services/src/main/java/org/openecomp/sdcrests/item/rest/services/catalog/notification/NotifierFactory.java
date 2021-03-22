@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.item.rest.services.catalog.notification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,29 +30,27 @@ import org.openecomp.sdcrests.item.rest.services.catalog.notification.http.HttpT
 import org.openecomp.sdcrests.item.types.ItemAction;
 
 /**
- * Creates an instance of {@link Notifier}, initialized according to current configuration.
- * The configuration must be passed via the {@link #CONFIG_FILE_PROPERTY} JVM argument.
+ * Creates an instance of {@link Notifier}, initialized according to current configuration. The configuration must be passed via the {@link
+ * #CONFIG_FILE_PROPERTY} JVM argument.
  */
 public class NotifierFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotifierFactory.class);
-
     private static final String CONFIG_FILE_PROPERTY = "configuration.yaml";
     private static final String CONFIG_SECTION = "catalogNotificationsConfig";
-
     private static final Notifier INSTANCE;
-
-    private NotifierFactory() {
-        // prevent instantiation
-    }
 
     static {
         INSTANCE = createInstance();
     }
 
+    private NotifierFactory() {
+        // prevent instantiation
+    }
+
     /**
-     * Returns a {@link Notifier} instance according to the provided configuration. If no configuration was not
-     * provided, or the given configuration is incorrect, then an instance with reduced functionality will be returned.
+     * Returns a {@link Notifier} instance according to the provided configuration. If no configuration was not provided, or the given configuration
+     * is incorrect, then an instance with reduced functionality will be returned.
      *
      * @return available instance of {@link Notifier}
      */
@@ -62,18 +59,13 @@ public class NotifierFactory {
     }
 
     static Notifier createInstance() {
-
         try {
-
             String file = Objects.requireNonNull(System.getProperty(CONFIG_FILE_PROPERTY),
-                    "Config file location must be specified via system property " + CONFIG_FILE_PROPERTY);
-
+                "Config file location must be specified via system property " + CONFIG_FILE_PROPERTY);
             Object config = getNotificationConfiguration(file);
             ObjectMapper mapper = new ObjectMapper();
             HttpConfiguration httpConfig = mapper.convertValue(config, HttpConfiguration.class);
-
             return new AsyncNotifier(new HttpTaskProducer(httpConfig));
-
         } catch (Exception e) {
             LOGGER.warn("Failed to initialize notifier. Notifications will not be sent", e);
             return new UnsupportedConfigurationNotifier();
@@ -81,18 +73,15 @@ public class NotifierFactory {
     }
 
     private static Object getNotificationConfiguration(String file) throws IOException {
-
         Map<?, ?> configuration = Objects.requireNonNull(readConfigurationFile(file), "Configuration cannot be empty");
         Object notificationConfig = configuration.get(CONFIG_SECTION);
         if (notificationConfig == null) {
             throw new EntryNotConfiguredException(CONFIG_SECTION + " section");
         }
-
         return notificationConfig;
     }
 
     private static Map<?, ?> readConfigurationFile(String file) throws IOException {
-
         try (InputStream fileInput = new FileInputStream(file)) {
             YamlUtil yamlUtil = new YamlUtil();
             return yamlUtil.yamlToMap(fileInput);

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.strategy;
 
 import java.util.Map;
@@ -35,5 +34,4 @@ public abstract class AbstractPnfdConversionStrategy<T, U> implements PnfdConver
     public ConversionStrategyType getStrategyType() {
         return strategyType;
     }
-
 }

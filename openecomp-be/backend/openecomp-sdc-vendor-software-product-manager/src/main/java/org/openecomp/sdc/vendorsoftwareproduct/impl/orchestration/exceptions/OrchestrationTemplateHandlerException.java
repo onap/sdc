@@ -17,12 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions;
 
-public class OrchestrationTemplateHandlerException extends RuntimeException{
+public class OrchestrationTemplateHandlerException extends RuntimeException {
 
-    public OrchestrationTemplateHandlerException(String message, Throwable throwable){
+    public OrchestrationTemplateHandlerException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }

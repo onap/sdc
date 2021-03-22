@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator;
 
 import java.util.Collection;
@@ -34,5 +33,4 @@ public class NicCompositionSchemaInput implements SchemaTemplateInput {
     private boolean manual;
     private Nic nic;
     private Collection<String> networkIds;
-
 }

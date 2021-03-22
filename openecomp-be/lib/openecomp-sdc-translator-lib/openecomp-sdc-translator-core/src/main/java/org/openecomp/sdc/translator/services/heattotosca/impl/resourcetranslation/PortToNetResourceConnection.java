@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_PORT_NETWORK_REQUIREMENT_CONNECTION;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
@@ -40,12 +39,9 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
-import com.google.common.collect.ImmutableList;
-
 public class PortToNetResourceConnection extends ResourceConnectionUsingRequirementHelper {
 
-    PortToNetResourceConnection(ResourceTranslationBase resourceTranslationBase,
-                                TranslateTo translateTo, FileData nestedFileData,
+    PortToNetResourceConnection(ResourceTranslationBase resourceTranslationBase, TranslateTo translateTo, FileData nestedFileData,
                                 NodeTemplate substitutionNodeTemplate, NodeType nodeType) {
         super(resourceTranslationBase, translateTo, nestedFileData, substitutionNodeTemplate, nodeType);
     }
@@ -58,33 +54,24 @@ public class PortToNetResourceConnection extends ResourceConnectionUsingRequirem
     @Override
     protected List<Predicate<RequirementDefinition>> getPredicatesListForConnectionPoints() {
         ArrayList<Predicate<RequirementDefinition>> predicates = new ArrayList<>();
-        predicates.add(
-                req -> req.getCapability().equals(ToscaCapabilityType.NATIVE_NETWORK_LINKABLE)
-                        && (req.getNode() == null || req.getNode().equals(ToscaNodeType.NATIVE_ROOT))
-                        && req.getRelationship().equals(
-                        ToscaRelationshipType.NATIVE_NETWORK_LINK_TO));
+        predicates.add(req -> req.getCapability().equals(ToscaCapabilityType.NATIVE_NETWORK_LINKABLE) && (req.getNode() == null || req.getNode()
+            .equals(ToscaNodeType.NATIVE_ROOT)) && req.getRelationship().equals(ToscaRelationshipType.NATIVE_NETWORK_LINK_TO));
         return predicates;
     }
 
     @Override
-    protected Optional<List<String>> getConnectorPropertyParamName(String heatResourceId,
-                                                                   Resource heatResource,
-                                                                   HeatOrchestrationTemplate
-                                                                           nestedHeatOrchestrationTemplate,
+    protected Optional<List<String>> getConnectorPropertyParamName(String heatResourceId, Resource heatResource,
+                                                                   HeatOrchestrationTemplate nestedHeatOrchestrationTemplate,
                                                                    String nestedHeatFileName) {
         Optional<AttachedResourceId> network = HeatToToscaUtil
-                .extractAttachedResourceId(nestedHeatFileName, nestedHeatOrchestrationTemplate, translateTo
-                        .getContext(), heatResource.getProperties().get(HeatConstants.NETWORK_PROPERTY_NAME));
-        if (network.isPresent() && network.get().isGetParam()
-                && network.get().getEntityId() instanceof String) {
+            .extractAttachedResourceId(nestedHeatFileName, nestedHeatOrchestrationTemplate, translateTo.getContext(),
+                heatResource.getProperties().get(HeatConstants.NETWORK_PROPERTY_NAME));
+        if (network.isPresent() && network.get().isGetParam() && network.get().getEntityId() instanceof String) {
             return Optional.of(Collections.singletonList((String) network.get().getEntityId()));
         } else {
-            network = HeatToToscaUtil
-                    .extractAttachedResourceId(nestedHeatFileName, nestedHeatOrchestrationTemplate, translateTo
-                            .getContext(), heatResource.getProperties().get(HeatConstants.NETWORK_ID_PROPERTY_NAME));
-            if (network.isPresent()
-                    && network.get().isGetParam()
-                    && network.get().getEntityId() instanceof String) {
+            network = HeatToToscaUtil.extractAttachedResourceId(nestedHeatFileName, nestedHeatOrchestrationTemplate, translateTo.getContext(),
+                heatResource.getProperties().get(HeatConstants.NETWORK_ID_PROPERTY_NAME));
+            if (network.isPresent() && network.get().isGetParam() && network.get().getEntityId() instanceof String) {
                 return Optional.of(Collections.singletonList((String) network.get().getEntityId()));
             } else {
                 return Optional.empty();
@@ -98,37 +85,28 @@ public class PortToNetResourceConnection extends ResourceConnectionUsingRequirem
     }
 
     @Override
-    protected void addRequirementToConnectResources(
-            Map.Entry<String, RequirementDefinition> requirementDefinitionEntry,
-            List<String> paramNames) {
+    protected void addRequirementToConnectResources(Map.Entry<String, RequirementDefinition> requirementDefinitionEntry, List<String> paramNames) {
         if (paramNames == null || paramNames.isEmpty()) {
             return;
         }
         String paramName = paramNames.get(0); // port can connect to one network only and we are
+
         // expecting to have only one param(unlike security rules to port)
         Object paramValue = translateTo.getResource().getProperties().get(paramName);
-        List<String> supportedNetworkTypes = ImmutableList.of(
-                HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
-                HeatResourcesTypes.CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource(),
-                HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource());
-
-        addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue,
-                supportedNetworkTypes);
+        List<String> supportedNetworkTypes = ImmutableList.of(HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
+            HeatResourcesTypes.CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource(),
+            HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource());
+        addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue, supportedNetworkTypes);
     }
 
     @Override
-    boolean validateResourceTypeSupportedForReqCreation(String nestedResourceId,
-                                                        final String nestedPropertyName,
-                                                        String connectionPointId,
-                                                        Resource connectedResource,
-                                                        List<String> supportedTypes) {
+    boolean validateResourceTypeSupportedForReqCreation(String nestedResourceId, final String nestedPropertyName, String connectionPointId,
+                                                        Resource connectedResource, List<String> supportedTypes) {
         if (resourceTranslationBase.isUnsupportedResourceType(connectedResource, supportedTypes)) {
-            logger.warn(LOG_UNSUPPORTED_PORT_NETWORK_REQUIREMENT_CONNECTION, nestedResourceId,
-                    nestedPropertyName, connectedResource.getType(), connectionPointId, supportedTypes.toString());
+            logger.warn(LOG_UNSUPPORTED_PORT_NETWORK_REQUIREMENT_CONNECTION, nestedResourceId, nestedPropertyName, connectedResource.getType(),
+                connectionPointId, supportedTypes.toString());
             return false;
         }
         return true;
     }
-
-
 }

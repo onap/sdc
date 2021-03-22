@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.validation.impl;
 
 import java.io.IOException;
@@ -44,76 +43,60 @@ import org.openecomp.sdc.validation.UploadValidationManager;
 import org.openecomp.sdc.validation.types.ValidationFileResponse;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
 
-
 /**
  * Created by TALIO on 4/20/2016.
  */
 public class UploadValidationManagerImpl implements UploadValidationManager {
 
-  private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData) throws IOException {
-    final Map<String, byte[]> zipFileAndByteMap;
-    try {
-      zipFileAndByteMap = ZipUtils.readZip(uploadFileData, true);
-    } catch (final ZipException e) {
-      throw new IOException(e);
+    private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData) throws IOException {
+        final Map<String, byte[]> zipFileAndByteMap;
+        try {
+            zipFileAndByteMap = ZipUtils.readZip(uploadFileData, true);
+        } catch (final ZipException e) {
+            throw new IOException(e);
+        }
+        final boolean zipHasFolders = zipFileAndByteMap.values().stream().anyMatch(Objects::isNull);
+        if (zipHasFolders) {
+            throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
+                .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage()).withCategory(ErrorCategory.APPLICATION).build());
+        }
+        final FileContentHandler mapFileContent = new FileContentHandler();
+        zipFileAndByteMap.entrySet().stream().filter(entry -> entry.getValue() != null)
+            .forEach(zipEntry -> mapFileContent.addFile(zipEntry.getKey(), zipEntry.getValue()));
+        return mapFileContent;
     }
 
-    final boolean zipHasFolders = zipFileAndByteMap.values().stream().anyMatch(Objects::isNull);
-    if (zipHasFolders) {
-      throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-          .withMessage(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
-          .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
-          .withCategory(ErrorCategory.APPLICATION).build());
+    @Override
+    public ValidationFileResponse validateFile(String type, InputStream fileToValidate) throws IOException {
+        ValidationFileResponse validationFileResponse = new ValidationFileResponse();
+        HeatTreeManager tree;
+        ValidationStructureList validationStructureList = new ValidationStructureList();
+        if (type.equalsIgnoreCase("heat")) {
+            FileContentHandler content = getFileContent(fileToValidate);
+            if (!content.containsFile(SdcCommon.MANIFEST_NAME)) {
+                throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(Messages.MANIFEST_NOT_EXIST.getErrorMessage())
+                    .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage()).withCategory(ErrorCategory.APPLICATION).build());
+            }
+            Map<String, List<ErrorMessage>> errors = validateHeatUploadData(content);
+            tree = HeatTreeManagerUtil.initHeatTreeManager(content);
+            tree.createTree();
+            if (MapUtils.isNotEmpty(errors)) {
+                tree.addErrors(errors);
+                validationStructureList.setImportStructure(tree.getTree());
+            }
+        } else {
+            throw new RuntimeException("invalid type:" + type);
+        }
+        validationFileResponse.setValidationData(validationStructureList);
+        return validationFileResponse;
     }
-    final FileContentHandler mapFileContent = new FileContentHandler();
-    zipFileAndByteMap.entrySet().stream()
-        .filter(entry -> entry.getValue() != null)
-        .forEach(zipEntry -> mapFileContent.addFile(zipEntry.getKey(), zipEntry.getValue()));
 
-    return mapFileContent;
-  }
-
-  @Override
-  public ValidationFileResponse validateFile(String type, InputStream fileToValidate)
-      throws IOException {
-    ValidationFileResponse validationFileResponse = new ValidationFileResponse();
-
-    HeatTreeManager tree;
-    ValidationStructureList validationStructureList = new ValidationStructureList();
-    if (type.equalsIgnoreCase("heat")) {
-      FileContentHandler content = getFileContent(fileToValidate);
-      if (!content.containsFile(SdcCommon.MANIFEST_NAME)) {
-        throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-            .withMessage(Messages.MANIFEST_NOT_EXIST.getErrorMessage())
-            .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
-            .withCategory(ErrorCategory.APPLICATION).build());
-      }
-      Map<String, List<ErrorMessage>> errors = validateHeatUploadData(content);
-      tree = HeatTreeManagerUtil.initHeatTreeManager(content);
-      tree.createTree();
-
-      if (MapUtils.isNotEmpty(errors)) {
-        tree.addErrors(errors);
-        validationStructureList.setImportStructure(tree.getTree());
-      }
-
-    } else {
-      throw new RuntimeException("invalid type:" + type);
+    private Map<String, List<ErrorMessage>> validateHeatUploadData(FileContentHandler fileContentMap) {
+        ValidationManager validationManager = ValidationManagerUtil.initValidationManager(fileContentMap);
+        return validationManager.validate();
     }
-    validationFileResponse.setValidationData(validationStructureList);
-    return validationFileResponse;
-  }
 
-  private Map<String, List<ErrorMessage>> validateHeatUploadData(FileContentHandler fileContentMap) {
-    ValidationManager validationManager =
-        ValidationManagerUtil.initValidationManager(fileContentMap);
-    return validationManager.validate();
-  }
-
-  private FileContentHandler getFileContent(InputStream is) throws IOException {
-    return getFileContentMapFromZip(FileUtils.toByteArray(is));
-
-
-  }
-
+    private FileContentHandler getFileContent(InputStream is) throws IOException {
+        return getFileContentMapFromZip(FileUtils.toByteArray(is));
+    }
 }

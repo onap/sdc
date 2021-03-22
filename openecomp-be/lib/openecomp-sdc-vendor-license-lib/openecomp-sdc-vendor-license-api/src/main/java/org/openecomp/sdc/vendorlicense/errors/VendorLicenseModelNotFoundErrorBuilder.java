@@ -13,30 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorlicense.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class VendorLicenseModelNotFoundErrorBuilder {
 
-  private static final String VENDOR_LICENSE_MODEL_NOT_FOUND_MSG =
-      "Vendor license model with id %s not found.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+    private static final String VENDOR_LICENSE_MODEL_NOT_FOUND_MSG = "Vendor license model with id %s not found.";
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  /**
-   * Instantiates a new Vendor license model not found error builder.
-   *
-   * @param vendorLicenseModelId the vendor license model id
-   */
-  public VendorLicenseModelNotFoundErrorBuilder(String vendorLicenseModelId) {
-    builder.withId(VendorLicenseErrorCodes.VENDOR_LICENSE_MODEL_NOT_FOUND);
-    builder.withMessage(String.format(VENDOR_LICENSE_MODEL_NOT_FOUND_MSG, vendorLicenseModelId));
-  }
+    /**
+     * Instantiates a new Vendor license model not found error builder.
+     *
+     * @param vendorLicenseModelId the vendor license model id
+     */
+    public VendorLicenseModelNotFoundErrorBuilder(String vendorLicenseModelId) {
+        builder.withId(VendorLicenseErrorCodes.VENDOR_LICENSE_MODEL_NOT_FOUND);
+        builder.withMessage(String.format(VENDOR_LICENSE_MODEL_NOT_FOUND_MSG, vendorLicenseModelId));
+    }
 
-  public ErrorCode build() {
-    return builder.build();
-  }
-
-
+    public ErrorCode build() {
+        return builder.build();
+    }
 }

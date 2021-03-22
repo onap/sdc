@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
 import java.io.ByteArrayInputStream;
@@ -58,125 +57,107 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
-  private static final String SDC_ONBOARDED_PACKAGE_DIR = "Deployment/" + ArtifactTypeEnum.ETSI_PACKAGE.getType() + "/";
-  private static final String EXT_SEPARATOR = ".";
-  private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
-  private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
+    private static final String SDC_ONBOARDED_PACKAGE_DIR = "Deployment/" + ArtifactTypeEnum.ETSI_PACKAGE.getType() + "/";
+    private static final String EXT_SEPARATOR = ".";
+    private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
+    private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
 
-  @Override
-  public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
-                                  OrchestrationTemplateCandidateData candidateData) {
-
-
-    UploadFileResponse uploadFileResponse = new UploadFileResponse();
-    Optional<FileContentHandler> fileContent = OrchestrationUtil
-        .getFileContentMap(OnboardingTypesEnum.CSAR, uploadFileResponse,
-            candidateData.getContentData().array());
-
-    OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
-    if (fileContent.isPresent()) {
-      try {
-        FileContentHandler fileContentHandler = fileContent.get();
-        processCsar(vspDetails, fileContentHandler, candidateData, response);
-      } catch (CoreException e) {
-        LOGGER.error(e.getMessage(), e);
-        response.addErrorMessageToMap(e.code().id(), e.code().message(),ErrorLevel.ERROR);
-      }catch (IOException e){
-        LOGGER.error(e.getMessage(), e);
-        response.addErrorMessageToMap(SdcCommon.PROCESS_FILE, e.getMessage(), ErrorLevel.ERROR);
-      }
-    } else {
-      if (!uploadFileResponse.getErrors().isEmpty()) {
-        response.addStructureErrors(uploadFileResponse.getErrors());
-      }
-    }
-    return response;
-  }
-
-  private void processCsar(VspDetails vspDetails,
-                           FileContentHandler fileContentHandler,
-                           OrchestrationTemplateCandidateData candidateData,
-                           OrchestrationTemplateActionResponse response) throws IOException{
-    response.setFileNames(new ArrayList<>(fileContentHandler.getFileList()));
-    Map<String, List<ErrorMessage>> errors = validateCsar(fileContentHandler);
-    toscaTreeManager.createTree();
-
-    if (!isValid(errors)) {
-      response.addStructureErrors(errors);
-      toscaTreeManager.addErrors(errors);
-      candidateService.updateValidationData(vspDetails.getId(), vspDetails.getVersion(),
-          new ValidationStructureList(toscaTreeManager.getTree()));
-      return;
+    @Override
+    public OrchestrationTemplateActionResponse process(VspDetails vspDetails, OrchestrationTemplateCandidateData candidateData) {
+        UploadFileResponse uploadFileResponse = new UploadFileResponse();
+        Optional<FileContentHandler> fileContent = OrchestrationUtil
+            .getFileContentMap(OnboardingTypesEnum.CSAR, uploadFileResponse, candidateData.getContentData().array());
+        OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
+        if (fileContent.isPresent()) {
+            try {
+                FileContentHandler fileContentHandler = fileContent.get();
+                processCsar(vspDetails, fileContentHandler, candidateData, response);
+            } catch (CoreException e) {
+                LOGGER.error(e.getMessage(), e);
+                response.addErrorMessageToMap(e.code().id(), e.code().message(), ErrorLevel.ERROR);
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+                response.addErrorMessageToMap(SdcCommon.PROCESS_FILE, e.getMessage(), ErrorLevel.ERROR);
+            }
+        } else {
+            if (!uploadFileResponse.getErrors().isEmpty()) {
+                response.addStructureErrors(uploadFileResponse.getErrors());
+            }
+        }
+        return response;
     }
 
-    HeatStructureTree tree = toscaTreeManager.getTree();
-
-    Map<String, String> componentsQuestionnaire = new HashMap<>();
-    Map<String, Map<String, String>> componentNicsQuestionnaire = new HashMap<>();
-    Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList = new HashMap<>();
-    Map<String, Collection<ProcessEntity>> processes = new HashMap<>();
-    Map<String, ProcessEntity> processArtifact = new HashMap<>();
-    OrchestrationUtil orchestrationUtil = new OrchestrationUtil();
-    orchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspDetails.getId(),
-        vspDetails.getVersion(), componentsQuestionnaire,
-        componentNicsQuestionnaire, componentMibList, processes, processArtifact);
-
-    Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
-        .fetchZipFileByteArrayInputStream(vspDetails.getId(), candidateData, null,
-            OnboardingTypesEnum.CSAR, errors);
-
-    orchestrationUtil.deleteUploadDataAndContent(vspDetails.getId(), vspDetails.getVersion());
-    zipByteArrayInputStream.ifPresent(byteArrayInputStream -> orchestrationUtil
-            .saveUploadData(vspDetails, candidateData, byteArrayInputStream,
-            fileContentHandler, tree));
-
-    ETSIService etsiService = new ETSIServiceImpl();
-    ToscaServiceModel toscaServiceModel;
-    if (etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
-      if (OnboardingTypesEnum.CSAR.toString().equalsIgnoreCase(candidateData.getFileSuffix())) {
-        fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getOriginalFileName() +
-            EXT_SEPARATOR + candidateData.getOriginalFileSuffix(), candidateData.getOriginalFileContentData().array());
-      } else {
-        fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() +
-            EXT_SEPARATOR + candidateData.getFileSuffix(), candidateData.getContentData().array());
-      }
-      final ResourceTypeEnum resourceType = etsiService.getResourceType(fileContentHandler);
-      toscaServiceModel = instantiateToscaConverterFor(resourceType).convert(fileContentHandler);
-    } else {
-      toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
+    private void processCsar(VspDetails vspDetails, FileContentHandler fileContentHandler, OrchestrationTemplateCandidateData candidateData,
+                             OrchestrationTemplateActionResponse response) throws IOException {
+        response.setFileNames(new ArrayList<>(fileContentHandler.getFileList()));
+        Map<String, List<ErrorMessage>> errors = validateCsar(fileContentHandler);
+        toscaTreeManager.createTree();
+        if (!isValid(errors)) {
+            response.addStructureErrors(errors);
+            toscaTreeManager.addErrors(errors);
+            candidateService
+                .updateValidationData(vspDetails.getId(), vspDetails.getVersion(), new ValidationStructureList(toscaTreeManager.getTree()));
+            return;
+        }
+        HeatStructureTree tree = toscaTreeManager.getTree();
+        Map<String, String> componentsQuestionnaire = new HashMap<>();
+        Map<String, Map<String, String>> componentNicsQuestionnaire = new HashMap<>();
+        Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList = new HashMap<>();
+        Map<String, Collection<ProcessEntity>> processes = new HashMap<>();
+        Map<String, ProcessEntity> processArtifact = new HashMap<>();
+        OrchestrationUtil orchestrationUtil = new OrchestrationUtil();
+        orchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspDetails.getId(), vspDetails.getVersion(), componentsQuestionnaire,
+            componentNicsQuestionnaire, componentMibList, processes, processArtifact);
+        Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
+            .fetchZipFileByteArrayInputStream(vspDetails.getId(), candidateData, null, OnboardingTypesEnum.CSAR, errors);
+        orchestrationUtil.deleteUploadDataAndContent(vspDetails.getId(), vspDetails.getVersion());
+        zipByteArrayInputStream.ifPresent(
+            byteArrayInputStream -> orchestrationUtil.saveUploadData(vspDetails, candidateData, byteArrayInputStream, fileContentHandler, tree));
+        ETSIService etsiService = new ETSIServiceImpl();
+        ToscaServiceModel toscaServiceModel;
+        if (etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
+            if (OnboardingTypesEnum.CSAR.toString().equalsIgnoreCase(candidateData.getFileSuffix())) {
+                fileContentHandler
+                    .addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getOriginalFileName() + EXT_SEPARATOR + candidateData.getOriginalFileSuffix(),
+                        candidateData.getOriginalFileContentData().array());
+            } else {
+                fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() + EXT_SEPARATOR + candidateData.getFileSuffix(),
+                    candidateData.getContentData().array());
+            }
+            final ResourceTypeEnum resourceType = etsiService.getResourceType(fileContentHandler);
+            toscaServiceModel = instantiateToscaConverterFor(resourceType).convert(fileContentHandler);
+        } else {
+            toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
+        }
+        orchestrationUtil.saveServiceModel(vspDetails.getId(), vspDetails.getVersion(), toscaServiceModel, toscaServiceModel);
+        candidateService.deleteOrchestrationTemplateCandidate(vspDetails.getId(), vspDetails.getVersion());
     }
-    orchestrationUtil.saveServiceModel(vspDetails.getId(),
-            vspDetails.getVersion(), toscaServiceModel,
-        toscaServiceModel);
-    candidateService
-        .deleteOrchestrationTemplateCandidate(vspDetails.getId(), vspDetails.getVersion());
-  }
 
-  private AbstractToscaSolConverter instantiateToscaConverterFor(ResourceTypeEnum resourceType) {
-    if (resourceType == ResourceTypeEnum.PNF) {
-      return new ToscaSolModelDrivenConverterPnf();
+    private AbstractToscaSolConverter instantiateToscaConverterFor(ResourceTypeEnum resourceType) {
+        if (resourceType == ResourceTypeEnum.PNF) {
+            return new ToscaSolModelDrivenConverterPnf();
+        }
+        // default is VF
+        return new ToscaSolConverterVnf();
     }
-    // default is VF
-    return new ToscaSolConverterVnf();
-  }
 
-  private void addFiles(FileContentHandler fileContentHandler) {
-    for (Map.Entry<String, byte[]> fileEntry : fileContentHandler.getFiles().entrySet()) {
-      toscaTreeManager.addFile(fileEntry.getKey(), fileEntry.getValue());
+    private void addFiles(FileContentHandler fileContentHandler) {
+        for (Map.Entry<String, byte[]> fileEntry : fileContentHandler.getFiles().entrySet()) {
+            toscaTreeManager.addFile(fileEntry.getKey(), fileEntry.getValue());
+        }
     }
-  }
 
-  private Map<String, List<ErrorMessage>> validateCsar(FileContentHandler fileContentHandler) {
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    addFiles(fileContentHandler);
-    toscaTreeManager.createTree();
-    toscaTreeManager.addErrors(errors);
-    //todo - add tosca validation here to the existing validation framework
-    return errors;
-  }
+    private Map<String, List<ErrorMessage>> validateCsar(FileContentHandler fileContentHandler) {
+        Map<String, List<ErrorMessage>> errors = new HashMap<>();
+        addFiles(fileContentHandler);
+        toscaTreeManager.createTree();
+        toscaTreeManager.addErrors(errors);
+        //todo - add tosca validation here to the existing validation framework
+        return errors;
+    }
 
-  private boolean isValid(Map<String, List<ErrorMessage>> errors) {
-    return MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, errors));
-  }
+    private boolean isValid(Map<String, List<ErrorMessage>> errors) {
+        return MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, errors));
+    }
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.action.types;
 
 import lombok.Getter;
@@ -28,5 +27,4 @@ import lombok.Setter;
 public class ActionVersionDto {
 
     String status;
-
 }

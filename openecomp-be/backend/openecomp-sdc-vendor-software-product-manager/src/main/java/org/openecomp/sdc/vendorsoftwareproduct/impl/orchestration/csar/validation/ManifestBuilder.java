@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ALGORITHM;
@@ -36,19 +35,18 @@ import java.util.TreeMap;
  */
 public class ManifestBuilder {
 
+    private static final String PROPERTY_FORMAT = "%s: %s%n";
+    private static final String SECTION_FORMAT = "%s:%n";
     private final Map<String, Map<String, String>> sourceWithPropertiesMap = new TreeMap<>();
     private final Map<String, List<String>> nonManoArtifactMap = new TreeMap<>();
     private final Map<String, String> metadataMap = new TreeMap<>();
-    private static final String PROPERTY_FORMAT = "%s: %s%n";
-    private static final String SECTION_FORMAT = "%s:%n";
 
     /**
      * Adds a metadata property.
      *
-     * @param metadataProperty      the property name
-     * @param value                 the property value
-     * @return
-     *  a reference to this object.
+     * @param metadataProperty the property name
+     * @param value            the property value
+     * @return a reference to this object.
      */
     public ManifestBuilder withMetaData(final String metadataProperty, final String value) {
         metadataMap.put(metadataProperty, value);
@@ -58,9 +56,8 @@ public class ManifestBuilder {
     /**
      * Adds a manifest source path.
      *
-     * @param sourcePath    The source path
-     * @return
-     *  a reference to this object.
+     * @param sourcePath The source path
+     * @return a reference to this object.
      */
     public ManifestBuilder withSource(final String sourcePath) {
         sourceWithPropertiesMap.put(sourcePath, null);
@@ -71,10 +68,9 @@ public class ManifestBuilder {
      * Adds a manifest source path with the source sign.
      *
      * @param sourcePath    The source path
-     * @param hashAlgorithm     The hash algorithm
+     * @param hashAlgorithm The hash algorithm
      * @param hash          The hash representing the sign
-     * @return
-     *  a reference to this object.
+     * @return a reference to this object.
      */
     public ManifestBuilder withSignedSource(final String sourcePath, final String hashAlgorithm, final String hash) {
         TreeMap<String, String> sourcePropertiesMap = new TreeMap<>();
@@ -87,10 +83,9 @@ public class ManifestBuilder {
     /**
      * Adds a non mano artifact.
      *
-     * @param artifactType  the artifact type
-     * @param sourcePath    the artifact source path
-     * @return
-     *  a reference to this object.
+     * @param artifactType the artifact type
+     * @param sourcePath   the artifact source path
+     * @return a reference to this object.
      */
     public ManifestBuilder withNonManoArtifact(final String artifactType, final String sourcePath) {
         nonManoArtifactMap.putIfAbsent(artifactType, new ArrayList<>());
@@ -98,27 +93,22 @@ public class ManifestBuilder {
         return this;
     }
 
-
     /**
      * Builds the String representing the manifest file.
-     * @return
-     *  The manifest file as String
+     *
+     * @return The manifest file as String
      */
     public String build() {
         final StringBuilder stringBuilder = new StringBuilder();
-
         if (!metadataMap.isEmpty()) {
             stringBuilder.append(buildMetadata());
         }
-
         if (!sourceWithPropertiesMap.isEmpty()) {
             stringBuilder.append(buildSource());
         }
-
         if (!nonManoArtifactMap.isEmpty()) {
             stringBuilder.append(buildNonManoArtifact());
         }
-
         return stringBuilder.toString();
     }
 
@@ -143,7 +133,6 @@ public class ManifestBuilder {
                 if (algorithm != null) {
                     stringBuilder.append(String.format(PROPERTY_FORMAT, ALGORITHM.getToken(), algorithm));
                 }
-
                 final String hash = propertiesMap.get(HASH.getToken());
                 if (hash != null) {
                     stringBuilder.append(String.format(PROPERTY_FORMAT, HASH.getToken(), hash));
@@ -167,5 +156,4 @@ public class ManifestBuilder {
         }
         return stringBuilder.toString();
     }
-
 }

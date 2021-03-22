@@ -17,13 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.dao.types;
 
 public enum EntitlementPoolType {
-    Universal,
-    Unique,
-    One_Time;
+    Universal, Unique, One_Time;
 
     public static EntitlementPoolType permissiveValueOf(String name) {
         return name == null ? Universal : EntitlementPoolType.valueOf(name);

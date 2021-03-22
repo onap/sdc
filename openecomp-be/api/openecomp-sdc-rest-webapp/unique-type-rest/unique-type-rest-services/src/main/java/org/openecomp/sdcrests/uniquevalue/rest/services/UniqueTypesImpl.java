@@ -18,7 +18,16 @@
  */
 package org.openecomp.sdcrests.uniquevalue.rest.services;
 
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
 import com.google.common.annotations.VisibleForTesting;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ServiceLoader;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -30,65 +39,48 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-
-import java.util.*;
-
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-
 @Named
 @Service("uniqueTypes")
 @Scope(value = "prototype")
 public class UniqueTypesImpl implements UniqueTypes {
 
-  private static final String UNIQUE_TYPE_NOT_FOUND_ERR_ID = "UNIQUE_TYPE_NOT_FOUND";
-  private static final String UNIQUE_TYPE_NOT_FOUND_MSG = "%s is not a supported unique type.";
+    private static final String UNIQUE_TYPE_NOT_FOUND_ERR_ID = "UNIQUE_TYPE_NOT_FOUND";
+    private static final String UNIQUE_TYPE_NOT_FOUND_MSG = "%s is not a supported unique type.";
+    private static final Map<String, String> UNIQUE_TYPE_TO_INTERNAL;
 
-  private static final Map<String, String> UNIQUE_TYPE_TO_INTERNAL;
-  private UniqueValueUtil uniqueValueUtil;
-
-  static {
-    Map<String, String> uniqueTypes = new HashMap<>();
-    ServiceLoader.load(UniqueTypesProvider.class)
-        .forEach(typesProvider -> uniqueTypes.putAll(typesProvider.listUniqueTypes()));
-    UNIQUE_TYPE_TO_INTERNAL = Collections.unmodifiableMap(uniqueTypes);
-  }
-
-
-  @Override
-  public Response listUniqueTypes(String user) {
-    return Response.ok(
-        new GenericCollectionWrapper<>(new ArrayList<>(UNIQUE_TYPE_TO_INTERNAL.keySet())))
-        .build();
-  }
-
-  @Override
-  public Response getUniqueValue(String type, String value, String user) {
-    String internalType = UNIQUE_TYPE_TO_INTERNAL.get(type);
-
-    if (internalType == null) {
-      ErrorCode error = new ErrorCode.ErrorCodeBuilder()
-          .withCategory(ErrorCategory.APPLICATION)
-          .withId(UNIQUE_TYPE_NOT_FOUND_ERR_ID)
-          .withMessage(String.format(UNIQUE_TYPE_NOT_FOUND_MSG, type)).build();
-      return Response.status(NOT_FOUND).entity(new ErrorCodeAndMessage(NOT_FOUND, error)).build();
+    static {
+        Map<String, String> uniqueTypes = new HashMap<>();
+        ServiceLoader.load(UniqueTypesProvider.class).forEach(typesProvider -> uniqueTypes.putAll(typesProvider.listUniqueTypes()));
+        UNIQUE_TYPE_TO_INTERNAL = Collections.unmodifiableMap(uniqueTypes);
     }
 
-    return Response.ok(Collections
-        .singletonMap("occupied", getUniqueValueUtil().isUniqueValueOccupied(internalType, value)))
-        .build();
-  }
+    private UniqueValueUtil uniqueValueUtil;
 
-  @VisibleForTesting
-  void setUniqueValueUtil(UniqueValueUtil uniqueValueUtil) {
-    this.uniqueValueUtil = uniqueValueUtil;
-  }
-
-  private UniqueValueUtil getUniqueValueUtil() {
-    if (uniqueValueUtil == null){
-      uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+    @Override
+    public Response listUniqueTypes(String user) {
+        return Response.ok(new GenericCollectionWrapper<>(new ArrayList<>(UNIQUE_TYPE_TO_INTERNAL.keySet()))).build();
     }
-    return uniqueValueUtil;
-  }
+
+    @Override
+    public Response getUniqueValue(String type, String value, String user) {
+        String internalType = UNIQUE_TYPE_TO_INTERNAL.get(type);
+        if (internalType == null) {
+            ErrorCode error = new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(UNIQUE_TYPE_NOT_FOUND_ERR_ID)
+                .withMessage(String.format(UNIQUE_TYPE_NOT_FOUND_MSG, type)).build();
+            return Response.status(NOT_FOUND).entity(new ErrorCodeAndMessage(NOT_FOUND, error)).build();
+        }
+        return Response.ok(Collections.singletonMap("occupied", getUniqueValueUtil().isUniqueValueOccupied(internalType, value))).build();
+    }
+
+    private UniqueValueUtil getUniqueValueUtil() {
+        if (uniqueValueUtil == null) {
+            uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+        }
+        return uniqueValueUtil;
+    }
+
+    @VisibleForTesting
+    void setUniqueValueUtil(UniqueValueUtil uniqueValueUtil) {
+        this.uniqueValueUtil = uniqueValueUtil;
+    }
 }

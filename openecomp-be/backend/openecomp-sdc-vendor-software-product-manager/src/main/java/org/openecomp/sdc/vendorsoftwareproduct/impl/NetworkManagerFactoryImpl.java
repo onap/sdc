@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
@@ -27,14 +26,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 
 public class NetworkManagerFactoryImpl extends NetworkManagerFactory {
-  private static final NetworkManager INSTANCE =
-      new NetworkManagerImpl(
-          NetworkDaoFactory.getInstance().createInterface(),
-          CompositionEntityDataManagerFactory.getInstance().createInterface(),
-          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
 
-  @Override
-  public NetworkManager createInterface() {
-    return INSTANCE;
-  }
+    private static final NetworkManager INSTANCE = new NetworkManagerImpl(NetworkDaoFactory.getInstance().createInterface(),
+        CompositionEntityDataManagerFactory.getInstance().createInterface(), VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
+
+    @Override
+    public NetworkManager createInterface() {
+        return INSTANCE;
+    }
 }

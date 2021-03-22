@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.util.EnumMap;
@@ -21,8 +20,7 @@ import java.util.Map;
 import org.slf4j.MDC;
 
 /**
- * Because we don't know which information should be carried over from MDC, and which shouldn't, copy just the keys that
- * the logging service uses.
+ * Because we don't know which information should be carried over from MDC, and which shouldn't, copy just the keys that the logging service uses.
  *
  * @author evitaliy
  * @since 23 Mar 2018
@@ -37,7 +35,6 @@ class MDCDelegate {
      * Get a copy of logging MDC fields.
      */
     static Map<ContextField, String> copy() {
-
         Map<ContextField, String> copy = new EnumMap<>(ContextField.class);
         for (ContextField k : ContextField.values()) {
             String v = MDC.get(k.asKey());
@@ -45,7 +42,6 @@ class MDCDelegate {
                 copy.put(k, v);
             }
         }
-
         return copy;
     }
 
@@ -60,22 +56,18 @@ class MDCDelegate {
      * Reads selected fields from MDC.
      */
     static Map<ContextField, String> get(ContextField... fields) {
-
         Map<ContextField, String> values = new EnumMap<>(ContextField.class);
-
         for (ContextField key : fields) {
             values.put(key, MDC.get(key.asKey()));
         }
-
         return values;
     }
 
     /**
-     * Entirely replaces the logging MDC context with the content of the argument. Logging keys that are not present in
-     * the input map will be cleared from MDC.
+     * Entirely replaces the logging MDC context with the content of the argument. Logging keys that are not present in the input map will be cleared
+     * from MDC.
      */
     static void replace(Map<ContextField, String> values) {
-
         for (ContextField key : ContextField.values()) {
             updateKey(key, values.get(key));
         }
@@ -85,27 +77,23 @@ class MDCDelegate {
      * Push data by multiple data providers on MDC.
      */
     static void put(ContextProvider... dataProviders) {
-
         clear();
-
         for (ContextProvider provider : dataProviders) {
             push(provider.values());
         }
     }
 
     /**
-     * Updates the logging MDC context with the content of the argument. Logging keys that are not present in the input
-     * map will remain "as is", keys with null values will be cleared from MDC.
+     * Updates the logging MDC context with the content of the argument. Logging keys that are not present in the input map will remain "as is", keys
+     * with null values will be cleared from MDC.
      */
     private static void push(Map<ContextField, String> values) {
-
         for (Map.Entry<ContextField, String> entry : values.entrySet()) {
             updateKey(entry.getKey(), entry.getValue());
         }
     }
 
     private static void updateKey(ContextField key, String value) {
-
         if (value != null) {
             MDC.put(key.asKey(), value);
         } else {
@@ -114,7 +102,6 @@ class MDCDelegate {
     }
 
     static void clear() {
-
         for (ContextField field : ContextField.values()) {
             MDC.remove(field.asKey());
         }

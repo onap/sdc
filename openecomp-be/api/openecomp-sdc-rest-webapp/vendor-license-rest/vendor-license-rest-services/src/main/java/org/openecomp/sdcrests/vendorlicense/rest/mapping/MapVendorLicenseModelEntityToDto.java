@@ -17,20 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelEntityDto;
 
-public class MapVendorLicenseModelEntityToDto
-    extends MappingBase<VendorLicenseModelEntity, VendorLicenseModelEntityDto> {
-  @Override
-  public void doMapping(VendorLicenseModelEntity source, VendorLicenseModelEntityDto target) {
-    target.setId(source.getId());
-    target.setVendorName(source.getVendorName());
-    target.setDescription(source.getDescription());
-    target.setIconRef(source.getIconRef());
-  }
+public class MapVendorLicenseModelEntityToDto extends MappingBase<VendorLicenseModelEntity, VendorLicenseModelEntityDto> {
+
+    @Override
+    public void doMapping(VendorLicenseModelEntity source, VendorLicenseModelEntityDto target) {
+        target.setId(source.getId());
+        target.setVendorName(source.getVendorName());
+        target.setDescription(source.getDescription());
+        target.setIconRef(source.getIconRef());
+    }
 }

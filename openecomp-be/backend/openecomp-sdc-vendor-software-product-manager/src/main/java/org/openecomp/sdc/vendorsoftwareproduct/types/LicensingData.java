@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.util.List;
@@ -27,22 +26,22 @@ import java.util.List;
  */
 public class LicensingData {
 
-  private String licenseAgreement;
-  private List<String> featureGroups;
+    private String licenseAgreement;
+    private List<String> featureGroups;
 
-  public String getLicenseAgreement() {
-    return licenseAgreement;
-  }
+    public String getLicenseAgreement() {
+        return licenseAgreement;
+    }
 
-  public void setLicenseAgreement(String licenseAgreement) {
-    this.licenseAgreement = licenseAgreement;
-  }
+    public void setLicenseAgreement(String licenseAgreement) {
+        this.licenseAgreement = licenseAgreement;
+    }
 
-  public List<String> getFeatureGroups() {
-    return featureGroups;
-  }
+    public List<String> getFeatureGroups() {
+        return featureGroups;
+    }
 
-  public void setFeatureGroups(List<String> featureGroups) {
-    this.featureGroups = featureGroups;
-  }
+    public void setFeatureGroups(List<String> featureGroups) {
+        this.featureGroups = featureGroups;
+    }
 }

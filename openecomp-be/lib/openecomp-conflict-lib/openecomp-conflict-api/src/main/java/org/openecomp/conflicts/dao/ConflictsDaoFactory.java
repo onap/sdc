@@ -17,16 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.conflicts.dao;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
-public abstract class ConflictsDaoFactory
-    extends AbstractComponentFactory<ConflictsDao> {
+public abstract class ConflictsDaoFactory extends AbstractComponentFactory<ConflictsDao> {
 
-  public static ConflictsDaoFactory getInstance() {
-    return AbstractFactory.getInstance(ConflictsDaoFactory.class);
-  }
+    public static ConflictsDaoFactory getInstance() {
+        return AbstractFactory.getInstance(ConflictsDaoFactory.class);
+    }
 }

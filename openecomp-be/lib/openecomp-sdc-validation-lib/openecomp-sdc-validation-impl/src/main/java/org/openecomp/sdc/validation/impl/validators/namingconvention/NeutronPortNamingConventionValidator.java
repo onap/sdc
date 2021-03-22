@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
+import static java.util.Objects.nonNull;
+
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -30,75 +33,51 @@ import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.NamingConventionValidationContext;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Objects.nonNull;
-
 public class NeutronPortNamingConventionValidator implements ResourceValidator {
+
     private static final ErrorMessageCode ERROR_CODE_NNP1 = new ErrorMessageCode("NNP1");
     private static final ErrorMessageCode ERROR_CODE_NNP2 = new ErrorMessageCode("NNP2");
     private static final ErrorMessageCode ERROR_CODE_NNP3 = new ErrorMessageCode("NNP3");
 
     @Override
-    public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
-                         GlobalValidationContext globalContext, ValidationContext validationContext) {
+    public void validate(String fileName, Map.Entry<String, Resource> resourceEntry, GlobalValidationContext globalContext,
+                         ValidationContext validationContext) {
         NamingConventionValidationContext namingConventionValidationContext = (NamingConventionValidationContext) validationContext;
         validatePortNetworkNamingConvention(fileName, namingConventionValidationContext.getHeatOrchestrationTemplate(), globalContext);
         validateFixedIpsNamingConvention(fileName, namingConventionValidationContext.getHeatOrchestrationTemplate(), globalContext);
     }
 
-    private void validatePortNetworkNamingConvention(String fileName,
-                                                     HeatOrchestrationTemplate heatOrchestrationTemplate,
+    private void validatePortNetworkNamingConvention(String fileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                      GlobalValidationContext globalContext) {
         if (MapUtils.isEmpty(heatOrchestrationTemplate.getResources())) {
             return;
         }
         String[] regexList = {".*_net_id", ".*_net_name", ".*_net_fqdn"};
-
-        heatOrchestrationTemplate
-                .getResources()
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().getType().equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource()))
-                .forEach(entry -> entry.getValue()
-                        .getProperties()
-                        .entrySet()
-                        .stream()
-                        .filter(propertyEntry -> ("network").equalsIgnoreCase(propertyEntry.getKey()) || ("network_id").equals(propertyEntry.getKey()))
-                        .forEach(propertyEntry -> validateParamNamingConvention(fileName, entry.getKey(),
-                                propertyEntry.getValue(), regexList,
-                                Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES, globalContext)));
+        heatOrchestrationTemplate.getResources().entrySet().stream()
+            .filter(entry -> entry.getValue().getType().equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())).forEach(
+            entry -> entry.getValue().getProperties().entrySet().stream()
+                .filter(propertyEntry -> ("network").equalsIgnoreCase(propertyEntry.getKey()) || ("network_id").equals(propertyEntry.getKey()))
+                .forEach(propertyEntry -> validateParamNamingConvention(fileName, entry.getKey(), propertyEntry.getValue(), regexList,
+                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES, globalContext)));
     }
 
-    private void validateFixedIpsNamingConvention(String fileName,
-                                                  HeatOrchestrationTemplate heatOrchestrationTemplate,
+    private void validateFixedIpsNamingConvention(String fileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                   GlobalValidationContext globalContext) {
         if (MapUtils.isEmpty(heatOrchestrationTemplate.getResources())) {
             return;
         }
-
-        heatOrchestrationTemplate.getResources()
-                .entrySet()
-                .stream()
-                .filter(entry -> HeatResourcesTypes.findByHeatResource(entry.getValue().getType()) != null)
-                .filter(entry -> HeatResourcesTypes.findByHeatResource(entry.getValue().getType())
-                        .equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE))
-                .forEach(entry -> checkNeutronPortFixedIpsName(fileName, entry, globalContext));
+        heatOrchestrationTemplate.getResources().entrySet().stream()
+            .filter(entry -> HeatResourcesTypes.findByHeatResource(entry.getValue().getType()) != null)
+            .filter(entry -> HeatResourcesTypes.findByHeatResource(entry.getValue().getType()).equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE))
+            .forEach(entry -> checkNeutronPortFixedIpsName(fileName, entry, globalContext));
     }
 
-    private void checkNeutronPortFixedIpsName(String fileName,
-                                              Map.Entry<String, Resource> resourceEntry,
-                                              GlobalValidationContext globalContext) {
-        String[] regexList = {"[^_]+_[^_]+_ips", "[^_]+_[^_]+_v6_ips", "[^_]+_[^_]+_ip_(\\d+)",
-                "[^_]+_[^_]+_v6_ip_(\\d+)", "[^_]+_[^_]+_[^_]+_ips", "[^_]+_[^_]+_[^_]+_v6_ips",
-                "[^_]+_[^_]+_[^_]+_ip_(\\d+)", "[^_]+_[^_]+_[^_]+_v6_ip_(\\d+)"};
-
+    private void checkNeutronPortFixedIpsName(String fileName, Map.Entry<String, Resource> resourceEntry, GlobalValidationContext globalContext) {
+        String[] regexList = {"[^_]+_[^_]+_ips", "[^_]+_[^_]+_v6_ips", "[^_]+_[^_]+_ip_(\\d+)", "[^_]+_[^_]+_v6_ip_(\\d+)", "[^_]+_[^_]+_[^_]+_ips",
+            "[^_]+_[^_]+_[^_]+_v6_ips", "[^_]+_[^_]+_[^_]+_ip_(\\d+)", "[^_]+_[^_]+_[^_]+_v6_ip_(\\d+)"};
         if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
             return;
         }
-
         Map<String, Object> propertiesMap = resourceEntry.getValue().getProperties();
         Object fixedIps = propertiesMap.get("fixed_ips");
         if (nonNull(fixedIps) && fixedIps instanceof List) {
@@ -117,27 +96,27 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
                 String fixedIpsName = ValidationUtil.getWantedNameFromPropertyValueGetParam(fixedIpsEntry.getValue());
                 if (nonNull(fixedIpsName) && !ValidationUtil.evalPattern(fixedIpsName, regexList)) {
                     globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                            .getErrorWithParameters(ERROR_CODE_NNP1, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
-                                    "Port", "Fixed_IPS", fixedIpsName, resourceEntry.getKey()));
+                        .getErrorWithParameters(ERROR_CODE_NNP1, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(), "Port",
+                            "Fixed_IPS", fixedIpsName, resourceEntry.getKey()));
                 }
             } else {
-                globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder.
-                        getErrorWithParameters(ERROR_CODE_NNP2, Messages.MISSING_GET_PARAM.getErrorMessage(), "fixed_ips", resourceEntry.getKey()));
+                globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                    .getErrorWithParameters(ERROR_CODE_NNP2, Messages.MISSING_GET_PARAM.getErrorMessage(), "fixed_ips", resourceEntry.getKey()));
             }
         }
     }
 
-    private void validateParamNamingConvention(String fileName, String resourceId, Object propertyValue, String[] regexList,
-                                               Messages message, GlobalValidationContext globalContext) {
+    private void validateParamNamingConvention(String fileName, String resourceId, Object propertyValue, String[] regexList, Messages message,
+                                               GlobalValidationContext globalContext) {
         if (propertyValue instanceof Map) {
             Object paramName = ((Map) propertyValue).get("get_param");
             if (paramName instanceof String && !ValidationUtil.evalPattern(paramName, regexList)) {
                 globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                        .getErrorWithParameters(ERROR_CODE_NNP3, message.getErrorMessage(), "Port", "Network", (String) paramName, resourceId));
+                    .getErrorWithParameters(ERROR_CODE_NNP3, message.getErrorMessage(), "Port", "Network", (String) paramName, resourceId));
             }
         } else {
             globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                    .getErrorWithParameters(ERROR_CODE_NNP2, Messages.MISSING_GET_PARAM.getErrorMessage(), "network or network_id", resourceId));
+                .getErrorWithParameters(ERROR_CODE_NNP2, Messages.MISSING_GET_PARAM.getErrorMessage(), "network or network_id", resourceId));
         }
     }
 }

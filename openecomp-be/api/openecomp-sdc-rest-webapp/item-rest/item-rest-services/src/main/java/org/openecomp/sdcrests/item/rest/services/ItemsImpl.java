@@ -13,10 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.item.rest.services;
 
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+
 import com.google.common.annotations.VisibleForTesting;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.datatypes.model.ItemType;
@@ -42,17 +59,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-
 @Named
 @Service("items")
 @Scope(value = "prototype")
@@ -61,26 +67,21 @@ public class ItemsImpl implements Items {
 
     private static final String ONBOARDING_METHOD = "onboardingMethod";
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemsImpl.class);
-
     private Map<ItemAction, ActionSideAffects> actionSideAffectsMap = new EnumMap<>(ItemAction.class);
     private ManagersProvider managersProvider;
 
     @PostConstruct
     public void initActionSideAffectsMap() {
-        actionSideAffectsMap
-                .put(ItemAction.ARCHIVE, new ActionSideAffects(ActivityType.Archive, NotificationEventTypes.ARCHIVE));
-        actionSideAffectsMap
-                .put(ItemAction.RESTORE, new ActionSideAffects(ActivityType.Restore, NotificationEventTypes.RESTORE));
+        actionSideAffectsMap.put(ItemAction.ARCHIVE, new ActionSideAffects(ActivityType.Archive, NotificationEventTypes.ARCHIVE));
+        actionSideAffectsMap.put(ItemAction.RESTORE, new ActionSideAffects(ActivityType.Restore, NotificationEventTypes.RESTORE));
     }
 
     @Override
     public Response actOn(ItemActionRequestDto request, String itemId, String user) {
-
         Item item = getManagersProvider().getItemManager().get(itemId);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).entity(new Exception("Item does not exist.")).build();
         }
-
         switch (request.getAction()) {
             case ARCHIVE:
                 getManagersProvider().getItemManager().archive(item);
@@ -90,7 +91,6 @@ public class ItemsImpl implements Items {
                 break;
             default:
         }
-
         actionSideAffectsMap.get(request.getAction()).execute(item, user);
         try {
             Notifier catalogNotifier = NotifierFactory.getInstance();
@@ -98,81 +98,32 @@ public class ItemsImpl implements Items {
         } catch (Exception e) {
             LOGGER.error("Failed to send catalog notification on item {}", itemId, e);
         }
-
         return Response.ok().build();
     }
 
     @Override
-    public Response list(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter,
-            String permissionFilter, String onboardingMethodFilter, String user) {
-
-        Predicate<Item> itemPredicate =
-                createItemPredicate(itemStatusFilter, versionStatusFilter, itemTypeFilter, onboardingMethodFilter,
-                        permissionFilter, user);
-
+    public Response list(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter, String permissionFilter,
+                         String onboardingMethodFilter, String user) {
+        Predicate<Item> itemPredicate = createItemPredicate(itemStatusFilter, versionStatusFilter, itemTypeFilter, onboardingMethodFilter,
+            permissionFilter, user);
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
         getManagersProvider().getItemManager().list(itemPredicate).stream()
-                   .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                   .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
-
+            .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+            .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
         return Response.ok(results).build();
-
     }
 
     @Override
     public Response getItem(String itemId, String user) {
         Item item = getManagersProvider().getItemManager().get(itemId);
         ItemDto itemDto = new MapItemToDto().applyMapping(item, ItemDto.class);
-
         return Response.ok(itemDto).build();
     }
 
-    private class ActionSideAffects {
-
-        private ActivityType activityType;
-        private NotificationEventTypes notificationType;
-
-        private ActionSideAffects(ActivityType activityType, NotificationEventTypes notificationType) {
-            this.activityType = activityType;
-            this.notificationType = notificationType;
-
-        }
-
-        private Version getLatestVersion(String itemId) {
-            List<Version> list = getManagersProvider().getVersioningManager().list(itemId);
-            Optional<Version> max = list.stream().max(Version::compareTo);
-
-            return max.orElse(null);
-        }
-
-        private void execute(Item item, String user) {
-            notifyUsers(item.getId(), item.getName(), user, this.notificationType);
-            getManagersProvider().getActivityLogManager().logActivity(
-                    new ActivityLogEntity(item.getId(), getLatestVersion(item.getId()), this.activityType, user, true,
-                            "", ""));
-        }
-
-        private void notifyUsers(String itemId, String itemName, String userName, NotificationEventTypes eventType) {
-            Map<String, Object> eventProperties = new HashMap<>();
-            eventProperties.put(ITEM_NAME, itemName == null ? getManagersProvider().getItemManager().get(itemId).getName() : itemName);
-            eventProperties.put(ITEM_ID, itemId);
-
-            eventProperties.put(PERMISSION_USER, userName);
-
-            Event syncEvent = new SyncEvent(eventType.getEventName(), itemId, eventProperties, itemId);
-            try {
-                getManagersProvider().getNotificationPropagationManager().notifySubscribers(syncEvent, userName);
-            } catch (Exception e) {
-                LOGGER.error("Failed to send sync notification to users subscribed to item '{}'", itemId, e);
-            }
-        }
-    }
-
-    private Predicate<Item> createItemPredicate(String itemStatusFilter, String versionStatusFilter,
-            String itemTypeFilter, String onboardingMethodFilter, String permissionsFilter, String user) {
+    private Predicate<Item> createItemPredicate(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter,
+                                                String onboardingMethodFilter, String permissionsFilter, String user) {
         Predicate<Item> itemPredicate = item -> true;
-
         if (itemStatusFilter != null) {
             validateItemStatusValue(itemStatusFilter);
             itemPredicate = itemPredicate.and(createItemStatusPredicate(itemStatusFilter));
@@ -205,8 +156,7 @@ public class ItemsImpl implements Items {
     }
 
     private Predicate<Item> createVersionStatusPredicate(String filterValue) {
-        Set<VersionStatus> versionStatuses =
-                Arrays.stream(filterValue.split(",")).map(VersionStatus::valueOf).collect(Collectors.toSet());
+        Set<VersionStatus> versionStatuses = Arrays.stream(filterValue.split(",")).map(VersionStatus::valueOf).collect(Collectors.toSet());
         return item -> item.getVersionStatusCounters().keySet().stream().anyMatch(versionStatuses::contains);
     }
 
@@ -215,9 +165,8 @@ public class ItemsImpl implements Items {
     }
 
     private Predicate<Item> createOnboardingMethodPredicate(String filterValue) {
-        return item -> !ItemType.vsp.name().equals(item.getType()) || ((String) item.getProperties()
-                                                                                    .get(ONBOARDING_METHOD))
-                                                                              .matches(formatFilter(filterValue));
+        return item -> !ItemType.vsp.name().equals(item.getType()) || ((String) item.getProperties().get(ONBOARDING_METHOD))
+            .matches(formatFilter(filterValue));
     }
 
     private Predicate<Item> createPermissionsPredicate(String user, String filterValue) {
@@ -241,7 +190,6 @@ public class ItemsImpl implements Items {
         for (String value : values) {
             VersionStatus.valueOf(value);
         }
-
     }
 
     private void validateItemTypeValue(String itemTypeFilter) {
@@ -265,9 +213,16 @@ public class ItemsImpl implements Items {
         }
     }
 
-    //Do not delete - is in use, duplicates code to prevent dependency on openecomp-sdc-vendor-software-product-api
-    private enum OnboardingMethod {
-        NetworkPackage, Manual
+    @VisibleForTesting
+    Map<ItemAction, ActionSideAffects> getActionSideAffectsMap() {
+        return actionSideAffectsMap;
+    }
+
+    private ManagersProvider getManagersProvider() {
+        if (managersProvider == null) {
+            managersProvider = new ManagersProvider();
+        }
+        return managersProvider;
     }
 
     @VisibleForTesting
@@ -275,16 +230,42 @@ public class ItemsImpl implements Items {
         this.managersProvider = managersProvider;
     }
 
-    @VisibleForTesting
-    Map<ItemAction, ActionSideAffects> getActionSideAffectsMap() {
-        return actionSideAffectsMap;
-    }
+    //Do not delete - is in use, duplicates code to prevent dependency on openecomp-sdc-vendor-software-product-api
+    private enum OnboardingMethod {NetworkPackage, Manual}
 
-    private ManagersProvider getManagersProvider() {
-        if (managersProvider == null){
-            managersProvider = new ManagersProvider();
+    private class ActionSideAffects {
+
+        private ActivityType activityType;
+        private NotificationEventTypes notificationType;
+
+        private ActionSideAffects(ActivityType activityType, NotificationEventTypes notificationType) {
+            this.activityType = activityType;
+            this.notificationType = notificationType;
         }
-        return managersProvider;
-    }
 
+        private Version getLatestVersion(String itemId) {
+            List<Version> list = getManagersProvider().getVersioningManager().list(itemId);
+            Optional<Version> max = list.stream().max(Version::compareTo);
+            return max.orElse(null);
+        }
+
+        private void execute(Item item, String user) {
+            notifyUsers(item.getId(), item.getName(), user, this.notificationType);
+            getManagersProvider().getActivityLogManager()
+                .logActivity(new ActivityLogEntity(item.getId(), getLatestVersion(item.getId()), this.activityType, user, true, "", ""));
+        }
+
+        private void notifyUsers(String itemId, String itemName, String userName, NotificationEventTypes eventType) {
+            Map<String, Object> eventProperties = new HashMap<>();
+            eventProperties.put(ITEM_NAME, itemName == null ? getManagersProvider().getItemManager().get(itemId).getName() : itemName);
+            eventProperties.put(ITEM_ID, itemId);
+            eventProperties.put(PERMISSION_USER, userName);
+            Event syncEvent = new SyncEvent(eventType.getEventName(), itemId, eventProperties, itemId);
+            try {
+                getManagersProvider().getNotificationPropagationManager().notifySubscribers(syncEvent, userName);
+            } catch (Exception e) {
+                LOGGER.error("Failed to send sync notification to users subscribed to item '{}'", itemId, e);
+            }
+        }
+    }
 }

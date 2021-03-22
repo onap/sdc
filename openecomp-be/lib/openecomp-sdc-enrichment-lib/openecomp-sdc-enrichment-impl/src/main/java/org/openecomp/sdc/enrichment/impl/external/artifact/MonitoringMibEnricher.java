@@ -12,8 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-
+ */
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
 import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
@@ -61,251 +60,187 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface {
 
-  private EnrichedServiceModelDao enrichedServiceModelDao;
-  private ComponentDao componentDao;
-  private ComponentArtifactDao componentArtifactDao;
-  private static final String COMPONENT_PREFIX = "org.openecomp.resource.vfc.";
+    private static final String COMPONENT_PREFIX = "org.openecomp.resource.vfc.";
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+    private EnrichedServiceModelDao enrichedServiceModelDao;
+    private ComponentDao componentDao;
+    private ComponentArtifactDao componentArtifactDao;
 
-  private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
-
-  /**
-   * Enrich map.
-   *
-   * @param enrichmentInfo the enrichmentInfo
-   * @return the map
-   */
-  @Override
-  public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo,
-                                                ToscaServiceModel serviceModel) {
-
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    String vspId = enrichmentInfo.getKey();
-    Version version = enrichmentInfo.getVersion();
-
-    Collection<ComponentEntity> components =
-        getComponentDao().list(new ComponentEntity(vspId, version, null));
-    components
-        .forEach(componentEntry -> errors.putAll(enrichComponent(vspId, version, componentEntry,
-            serviceModel)));
-
-    return errors;
-  }
-
-  private Map<String, List<ErrorMessage>> enrichComponent(String vspId,
-                                                  Version version,
-                                                  ComponentEntity component,
-                                                  ToscaServiceModel serviceModel) {
-    Set<String> abstractNodeTypes =
-        extractAbstractTypesFromSameTypeFromServiceModel(component, serviceModel);
-    return enrichComponent(vspId, version, component, abstractNodeTypes);
-  }
-
-  private Set<String> extractAbstractTypesFromSameTypeFromServiceModel(ComponentEntity component,
-                                                                       ToscaServiceModel serviceModel) {
-    Set<String> abstractNodeTypes = new HashSet<>();
-    Map<String, ServiceTemplate> serviceTemplates = serviceModel.getServiceTemplates();
-    String typeToCheck =
-        getComponentVfcTypeToCheck(component.getComponentCompositionData().getName());
-
-    for (ServiceTemplate serviceTemplate : serviceTemplates.values()) {
-      collectAllAbstractNodeTypesPointingToType(
-          typeToCheck, serviceTemplate, serviceTemplates, abstractNodeTypes);
+    /**
+     * Enrich map.
+     *
+     * @param enrichmentInfo the enrichmentInfo
+     * @return the map
+     */
+    @Override
+    public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo, ToscaServiceModel serviceModel) {
+        Map<String, List<ErrorMessage>> errors = new HashMap<>();
+        String vspId = enrichmentInfo.getKey();
+        Version version = enrichmentInfo.getVersion();
+        Collection<ComponentEntity> components = getComponentDao().list(new ComponentEntity(vspId, version, null));
+        components.forEach(componentEntry -> errors.putAll(enrichComponent(vspId, version, componentEntry, serviceModel)));
+        return errors;
     }
 
-    return abstractNodeTypes;
-  }
-
-  private String getComponentVfcTypeToCheck(String type) {
-    return Objects.isNull(type) ? ""
-        : type.replace(COMPONENT_PREFIX, COMPONENT_PREFIX + "compute.");
-  }
-
-  private void collectAllAbstractNodeTypesPointingToType(String typeToCheck,
-                                                         ServiceTemplate serviceTemplate,
-                                                         Map<String, ServiceTemplate> serviceTemplates,
-                                                         Set<String> abstractNodeTypes) {
-    Map<String, NodeTemplate> nodeTemplates =
-        DataModelUtil.getNodeTemplates(serviceTemplate);
-
-    for (Map.Entry<String, NodeTemplate> nodeTemplateEntry : nodeTemplates.entrySet()) {
-      handleNodeTemplate(nodeTemplateEntry.getValue(), typeToCheck,
-          serviceTemplates, abstractNodeTypes);
+    private Map<String, List<ErrorMessage>> enrichComponent(String vspId, Version version, ComponentEntity component,
+                                                            ToscaServiceModel serviceModel) {
+        Set<String> abstractNodeTypes = extractAbstractTypesFromSameTypeFromServiceModel(component, serviceModel);
+        return enrichComponent(vspId, version, component, abstractNodeTypes);
     }
-  }
 
-  private void handleNodeTemplate(NodeTemplate nodeTemplate,
-                                  String typeToCheck,
-                                  Map<String, ServiceTemplate> serviceTemplates,
-                                  Set<String> abstractNodeTypes) {
-    List<String> directives = DataModelUtil.getDirectives(nodeTemplate);
-    if (directives.contains(Directive.SUBSTITUTABLE.getDisplayName())) {
-      handleSubstitutionServiceTemplate(typeToCheck, nodeTemplate, serviceTemplates,
-          abstractNodeTypes);
+    private Set<String> extractAbstractTypesFromSameTypeFromServiceModel(ComponentEntity component, ToscaServiceModel serviceModel) {
+        Set<String> abstractNodeTypes = new HashSet<>();
+        Map<String, ServiceTemplate> serviceTemplates = serviceModel.getServiceTemplates();
+        String typeToCheck = getComponentVfcTypeToCheck(component.getComponentCompositionData().getName());
+        for (ServiceTemplate serviceTemplate : serviceTemplates.values()) {
+            collectAllAbstractNodeTypesPointingToType(typeToCheck, serviceTemplate, serviceTemplates, abstractNodeTypes);
+        }
+        return abstractNodeTypes;
     }
-  }
 
-  private void handleSubstitutionServiceTemplate(String typeToCheck,
-                                                 NodeTemplate nodeTemplate,
-                                                 Map<String, ServiceTemplate> serviceTemplates,
-                                                 Set<String> abstractNodeTypes) {
-    Object serviceTemplateFilter =
-        DataModelUtil.getPropertyValue(nodeTemplate, SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
-    if (Objects.nonNull(serviceTemplateFilter) && serviceTemplateFilter instanceof Map) {
-      String substituteServiceTemplateName =
-          (String) ((Map<String, Object>) serviceTemplateFilter)
-              .get(SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME);
-      ServiceTemplate substituteServiceTemplate =
-          serviceTemplates.get(substituteServiceTemplateName);
-      if (doesNodeTypeExistInSubServiceTemplate(typeToCheck, substituteServiceTemplate)) {
-        abstractNodeTypes.add(nodeTemplate.getType());
-      }
+    private String getComponentVfcTypeToCheck(String type) {
+        return Objects.isNull(type) ? "" : type.replace(COMPONENT_PREFIX, COMPONENT_PREFIX + "compute.");
     }
-  }
 
-  private boolean doesNodeTypeExistInSubServiceTemplate(String nodeTypeId,
-                                                        ServiceTemplate substituteServiceTemplate) {
-    return Objects
-        .nonNull(DataModelUtil.getNodeType(substituteServiceTemplate, nodeTypeId));
-  }
-
-  Map<String, List<ErrorMessage>> enrichComponent(String vspId,
-                                                  Version version,
-                                                  ComponentEntity componentEntry,
-                                                  Set<String> abstractNodeTypes) {
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
-
-    List<ComponentMonitoringUploadInfo> componentMonitoringUploadInfoList =
-        extractComponentMibInfo(vspId, version, componentEntry, abstractNodeTypes);
-
-    componentMonitoringUploadInfoList.forEach(
-        componentUploadInfo -> enrichComponentMib(vspId, version, componentUploadInfo, errors));
-    return errors;
-  }
-
-  private List<ComponentMonitoringUploadInfo> extractComponentMibInfo(String vspId, Version version,
-                                                                      ComponentEntity componentEntity,
-                                                                      Set<String> abstractNodeTypes) {
-    String componentId = componentEntity.getId();
-    ComponentMonitoringUploadEntity entity = new ComponentMonitoringUploadEntity();
-
-    entity.setVspId(vspId);
-    entity.setVersion(version);
-    entity.setComponentId(componentId);
-    List<ComponentMonitoringUploadInfo> componentMonitoringUploadInfoList = new ArrayList<>();
-
-    abstractNodeTypes.forEach(unifiedComponentNodeType -> componentMonitoringUploadInfoList
-        .add(updComponentMibInfoByType(unifiedComponentNodeType, entity)));
-    return componentMonitoringUploadInfoList;
-  }
-
-  private ComponentMonitoringUploadInfo updComponentMibInfoByType(String componentName,
-                                                                  ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-    ComponentMonitoringUploadInfo componentMonitoringUploadInfo =
-        new ComponentMonitoringUploadInfo();
-
-    for (MonitoringUploadType type : MonitoringUploadType.values()) {
-      componentMonitoringUploadEntity.setType(type);
-      Optional<ComponentMonitoringUploadEntity> artifact =
-          getComponentArtifactDao().getByType(componentMonitoringUploadEntity);
-
-      if (!artifact.isPresent()) {
-        continue;
-      }
-      ComponentMonitoringUploadEntity mibArtifact = artifact.get();
-      updateComponentMonitoringUploadInfoWithMib(getArtifactPath(type, componentName), type,
-          mibArtifact,
-          componentMonitoringUploadInfo);
+    private void collectAllAbstractNodeTypesPointingToType(String typeToCheck, ServiceTemplate serviceTemplate,
+                                                           Map<String, ServiceTemplate> serviceTemplates, Set<String> abstractNodeTypes) {
+        Map<String, NodeTemplate> nodeTemplates = DataModelUtil.getNodeTemplates(serviceTemplate);
+        for (Map.Entry<String, NodeTemplate> nodeTemplateEntry : nodeTemplates.entrySet()) {
+            handleNodeTemplate(nodeTemplateEntry.getValue(), typeToCheck, serviceTemplates, abstractNodeTypes);
+        }
     }
-    return componentMonitoringUploadInfo;
-  }
 
-  private String getArtifactPath(MonitoringUploadType type, String unifiedComponentNodeType) {
-    return unifiedComponentNodeType + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName()
-        + File.separator + type.name();
-  }
-
-  private void updateComponentMonitoringUploadInfoWithMib(String path,
-                                                          MonitoringUploadType type,
-                                                          ComponentMonitoringUploadEntity mibArtifact,
-                                                          ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
-    MonitoringArtifactInfo monitoringArtifactInfo = new MonitoringArtifactInfo();
-    monitoringArtifactInfo.setName(path);
-    monitoringArtifactInfo.setContent(mibArtifact.getArtifact().array());
-    componentMonitoringUploadInfo.setMonitoringArtifactFile(type, monitoringArtifactInfo);
-  }
-
-  private void enrichComponentMib(String vspId,
-                                  Version version,
-                                  ComponentMonitoringUploadInfo componentUploadInfo,
-                                  Map<String, List<ErrorMessage>> errors) {
-    ServiceArtifact mibServiceArtifact = new ServiceArtifact();
-    mibServiceArtifact.setVspId(vspId);
-    mibServiceArtifact.setVersion(version);
-    enrichMibFiles(mibServiceArtifact, componentUploadInfo, errors);
-  }
-
-  private void enrichMibFiles(ServiceArtifact monitoringArtifact,
-                              ComponentMonitoringUploadInfo componentMonitoringUploadInfo,
-                              Map<String, List<ErrorMessage>> errors) {
-    if (componentMonitoringUploadInfo == null) {
-      return;
+    private void handleNodeTemplate(NodeTemplate nodeTemplate, String typeToCheck, Map<String, ServiceTemplate> serviceTemplates,
+                                    Set<String> abstractNodeTypes) {
+        List<String> directives = DataModelUtil.getDirectives(nodeTemplate);
+        if (directives.contains(Directive.SUBSTITUTABLE.getDisplayName())) {
+            handleSubstitutionServiceTemplate(typeToCheck, nodeTemplate, serviceTemplates, abstractNodeTypes);
+        }
     }
-    enrichMibByType(componentMonitoringUploadInfo.getSnmpTrap(), MonitoringUploadType.SNMP_TRAP,
-        monitoringArtifact,
-        errors);
-    enrichMibByType(componentMonitoringUploadInfo.getSnmpPoll(), MonitoringUploadType.SNMP_POLL,
-        monitoringArtifact,
-        errors);
-    enrichMibByType(componentMonitoringUploadInfo.getVesEvent(), MonitoringUploadType.VES_EVENTS,
-        monitoringArtifact,
-        errors);
-  }
 
-  private void enrichMibByType(MonitoringArtifactInfo monitoringArtifactInfo,
-                               MonitoringUploadType type,
-                               ServiceArtifact mibServiceArtifact,
-                               Map<String, List<ErrorMessage>> errors) {
-    if (monitoringArtifactInfo == null) {
-      return;
+    private void handleSubstitutionServiceTemplate(String typeToCheck, NodeTemplate nodeTemplate, Map<String, ServiceTemplate> serviceTemplates,
+                                                   Set<String> abstractNodeTypes) {
+        Object serviceTemplateFilter = DataModelUtil.getPropertyValue(nodeTemplate, SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+        if (Objects.nonNull(serviceTemplateFilter) && serviceTemplateFilter instanceof Map) {
+            String substituteServiceTemplateName = (String) ((Map<String, Object>) serviceTemplateFilter)
+                .get(SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME);
+            ServiceTemplate substituteServiceTemplate = serviceTemplates.get(substituteServiceTemplateName);
+            if (doesNodeTypeExistInSubServiceTemplate(typeToCheck, substituteServiceTemplate)) {
+                abstractNodeTypes.add(nodeTemplate.getType());
+            }
+        }
     }
-    FileContentHandler mibs;
-    try {
-      mibs = FileUtils
-          .getFileContentMapFromZip(FileUtils.toByteArray(monitoringArtifactInfo.getContent()));
-    } catch (ZipException ex) {
-      log.error("Failed to get file content map from zip ", ex);
-      ErrorMessage.ErrorMessageUtil
-          .addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
-          .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
-      return;
-    }
-    Set<String> fileList = mibs.getFileList();
-    for (String fileName : fileList) {
-      mibServiceArtifact.setContentData(mibs.getFileContent(fileName));
-      mibServiceArtifact.setName(monitoringArtifactInfo.getName() + File.separator + fileName);
-      getEnrichedServiceModelDao().storeExternalArtifact(mibServiceArtifact);
-    }
-  }
 
-  private EnrichedServiceModelDao getEnrichedServiceModelDao() {
-    if (enrichedServiceModelDao == null) {
-      enrichedServiceModelDao = EnrichedServiceModelDaoFactory.getInstance().createInterface();
+    private boolean doesNodeTypeExistInSubServiceTemplate(String nodeTypeId, ServiceTemplate substituteServiceTemplate) {
+        return Objects.nonNull(DataModelUtil.getNodeType(substituteServiceTemplate, nodeTypeId));
     }
-    return enrichedServiceModelDao;
-  }
 
-  private ComponentDao getComponentDao() {
-    if (componentDao == null) {
-      componentDao = ComponentDaoFactory.getInstance().createInterface();
+    Map<String, List<ErrorMessage>> enrichComponent(String vspId, Version version, ComponentEntity componentEntry, Set<String> abstractNodeTypes) {
+        Map<String, List<ErrorMessage>> errors = new HashMap<>();
+        List<ComponentMonitoringUploadInfo> componentMonitoringUploadInfoList = extractComponentMibInfo(vspId, version, componentEntry,
+            abstractNodeTypes);
+        componentMonitoringUploadInfoList.forEach(componentUploadInfo -> enrichComponentMib(vspId, version, componentUploadInfo, errors));
+        return errors;
     }
-    return componentDao;
-  }
 
-  private ComponentArtifactDao getComponentArtifactDao() {
-    if (componentArtifactDao == null) {
-      componentArtifactDao = MonitoringUploadDaoFactory.getInstance().createInterface();
+    private List<ComponentMonitoringUploadInfo> extractComponentMibInfo(String vspId, Version version, ComponentEntity componentEntity,
+                                                                        Set<String> abstractNodeTypes) {
+        String componentId = componentEntity.getId();
+        ComponentMonitoringUploadEntity entity = new ComponentMonitoringUploadEntity();
+        entity.setVspId(vspId);
+        entity.setVersion(version);
+        entity.setComponentId(componentId);
+        List<ComponentMonitoringUploadInfo> componentMonitoringUploadInfoList = new ArrayList<>();
+        abstractNodeTypes
+            .forEach(unifiedComponentNodeType -> componentMonitoringUploadInfoList.add(updComponentMibInfoByType(unifiedComponentNodeType, entity)));
+        return componentMonitoringUploadInfoList;
     }
-    return componentArtifactDao;
-  }
 
+    private ComponentMonitoringUploadInfo updComponentMibInfoByType(String componentName,
+                                                                    ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
+        ComponentMonitoringUploadInfo componentMonitoringUploadInfo = new ComponentMonitoringUploadInfo();
+        for (MonitoringUploadType type : MonitoringUploadType.values()) {
+            componentMonitoringUploadEntity.setType(type);
+            Optional<ComponentMonitoringUploadEntity> artifact = getComponentArtifactDao().getByType(componentMonitoringUploadEntity);
+            if (!artifact.isPresent()) {
+                continue;
+            }
+            ComponentMonitoringUploadEntity mibArtifact = artifact.get();
+            updateComponentMonitoringUploadInfoWithMib(getArtifactPath(type, componentName), type, mibArtifact, componentMonitoringUploadInfo);
+        }
+        return componentMonitoringUploadInfo;
+    }
+
+    private String getArtifactPath(MonitoringUploadType type, String unifiedComponentNodeType) {
+        return unifiedComponentNodeType + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() + File.separator + type.name();
+    }
+
+    private void updateComponentMonitoringUploadInfoWithMib(String path, MonitoringUploadType type, ComponentMonitoringUploadEntity mibArtifact,
+                                                            ComponentMonitoringUploadInfo componentMonitoringUploadInfo) {
+        MonitoringArtifactInfo monitoringArtifactInfo = new MonitoringArtifactInfo();
+        monitoringArtifactInfo.setName(path);
+        monitoringArtifactInfo.setContent(mibArtifact.getArtifact().array());
+        componentMonitoringUploadInfo.setMonitoringArtifactFile(type, monitoringArtifactInfo);
+    }
+
+    private void enrichComponentMib(String vspId, Version version, ComponentMonitoringUploadInfo componentUploadInfo,
+                                    Map<String, List<ErrorMessage>> errors) {
+        ServiceArtifact mibServiceArtifact = new ServiceArtifact();
+        mibServiceArtifact.setVspId(vspId);
+        mibServiceArtifact.setVersion(version);
+        enrichMibFiles(mibServiceArtifact, componentUploadInfo, errors);
+    }
+
+    private void enrichMibFiles(ServiceArtifact monitoringArtifact, ComponentMonitoringUploadInfo componentMonitoringUploadInfo,
+                                Map<String, List<ErrorMessage>> errors) {
+        if (componentMonitoringUploadInfo == null) {
+            return;
+        }
+        enrichMibByType(componentMonitoringUploadInfo.getSnmpTrap(), MonitoringUploadType.SNMP_TRAP, monitoringArtifact, errors);
+        enrichMibByType(componentMonitoringUploadInfo.getSnmpPoll(), MonitoringUploadType.SNMP_POLL, monitoringArtifact, errors);
+        enrichMibByType(componentMonitoringUploadInfo.getVesEvent(), MonitoringUploadType.VES_EVENTS, monitoringArtifact, errors);
+    }
+
+    private void enrichMibByType(MonitoringArtifactInfo monitoringArtifactInfo, MonitoringUploadType type, ServiceArtifact mibServiceArtifact,
+                                 Map<String, List<ErrorMessage>> errors) {
+        if (monitoringArtifactInfo == null) {
+            return;
+        }
+        FileContentHandler mibs;
+        try {
+            mibs = FileUtils.getFileContentMapFromZip(FileUtils.toByteArray(monitoringArtifactInfo.getContent()));
+        } catch (ZipException ex) {
+            log.error("Failed to get file content map from zip ", ex);
+            ErrorMessage.ErrorMessageUtil.addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
+                .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
+            return;
+        }
+        Set<String> fileList = mibs.getFileList();
+        for (String fileName : fileList) {
+            mibServiceArtifact.setContentData(mibs.getFileContent(fileName));
+            mibServiceArtifact.setName(monitoringArtifactInfo.getName() + File.separator + fileName);
+            getEnrichedServiceModelDao().storeExternalArtifact(mibServiceArtifact);
+        }
+    }
+
+    private EnrichedServiceModelDao getEnrichedServiceModelDao() {
+        if (enrichedServiceModelDao == null) {
+            enrichedServiceModelDao = EnrichedServiceModelDaoFactory.getInstance().createInterface();
+        }
+        return enrichedServiceModelDao;
+    }
+
+    private ComponentDao getComponentDao() {
+        if (componentDao == null) {
+            componentDao = ComponentDaoFactory.getInstance().createInterface();
+        }
+        return componentDao;
+    }
+
+    private ComponentArtifactDao getComponentArtifactDao() {
+        if (componentArtifactDao == null) {
+            componentArtifactDao = MonitoringUploadDaoFactory.getInstance().createInterface();
+        }
+        return componentArtifactDao;
+    }
 }

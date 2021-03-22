@@ -17,18 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.versioning.VersionCalculator;
 import org.openecomp.sdc.versioning.VersionCalculatorFactory;
 
 public class VersionCalculatorFactoryImpl extends VersionCalculatorFactory {
-  private static final VersionCalculator INSTANCE =
-      new VersionCalculatorImpl();
 
-  @Override
-  public VersionCalculator createInterface() {
-    return INSTANCE;
-  }
+    private static final VersionCalculator INSTANCE = new VersionCalculatorImpl();
+
+    @Override
+    public VersionCalculator createInterface() {
+        return INSTANCE;
+    }
 }

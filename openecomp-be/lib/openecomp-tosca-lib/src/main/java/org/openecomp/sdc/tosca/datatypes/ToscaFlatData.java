@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +28,6 @@ public class ToscaFlatData {
 
     private Object flatEntity;
     private ToscaElementTypes elementType;
-
     @Setter(AccessLevel.NONE)
     private List<String> inheritanceHierarchyType;
 

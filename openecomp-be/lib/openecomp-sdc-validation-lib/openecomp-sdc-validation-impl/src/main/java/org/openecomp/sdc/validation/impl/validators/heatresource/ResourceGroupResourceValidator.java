@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -41,114 +39,81 @@ import org.openecomp.sdc.validation.impl.util.HeatValidationService;
  * Created by TALIO on 2/22/2017.
  */
 public class ResourceGroupResourceValidator implements ResourceValidator {
-  private static final ErrorMessageCode ERROR_CODE_HRR1 = new ErrorMessageCode("HRR1");
-  private static final ErrorMessageCode ERROR_CODE_HRR2 = new ErrorMessageCode("HRR2");
-  private static final ErrorMessageCode ERROR_CODE_HRR3 = new ErrorMessageCode("HRR3");
-  private static final ErrorMessageCode ERROR_CODE_HRR4 = new ErrorMessageCode("HRR4");
-  private static final ErrorMessageCode ERROR_CODE_HRR5 = new ErrorMessageCode("HRR5");
-  private static final ErrorMessageCode ERROR_CODE_HRR6 = new ErrorMessageCode("HRR6");
-  private static final ErrorMessageCode ERROR_CODE_HRR7 = new ErrorMessageCode("HRR7");
-  private static final ErrorMessageCode ERROR_CODE_HRR8 = new ErrorMessageCode("HRR8");
 
-  @Override
-  public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
-                       GlobalValidationContext globalContext, ValidationContext validationContext) {
-    validateResourceGroupType(fileName, resourceEntry, globalContext);
-  }
+    private static final ErrorMessageCode ERROR_CODE_HRR1 = new ErrorMessageCode("HRR1");
+    private static final ErrorMessageCode ERROR_CODE_HRR2 = new ErrorMessageCode("HRR2");
+    private static final ErrorMessageCode ERROR_CODE_HRR3 = new ErrorMessageCode("HRR3");
+    private static final ErrorMessageCode ERROR_CODE_HRR4 = new ErrorMessageCode("HRR4");
+    private static final ErrorMessageCode ERROR_CODE_HRR5 = new ErrorMessageCode("HRR5");
+    private static final ErrorMessageCode ERROR_CODE_HRR6 = new ErrorMessageCode("HRR6");
+    private static final ErrorMessageCode ERROR_CODE_HRR7 = new ErrorMessageCode("HRR7");
+    private static final ErrorMessageCode ERROR_CODE_HRR8 = new ErrorMessageCode("HRR8");
 
-  private static void validateResourceGroupType(String fileName,
-                                                Map.Entry<String, Resource> resourceEntry,
-                                                GlobalValidationContext globalContext) {
-    globalContext.setMessageCode(ERROR_CODE_HRR6);
-    HeatTreeManagerUtil
-            .checkResourceTypeValid(fileName, resourceEntry.getKey(), resourceEntry.getValue(),
-                    globalContext);
-    globalContext.setMessageCode(ERROR_CODE_HRR7);
-    HeatTreeManagerUtil
-            .checkResourceGroupTypeValid(fileName, resourceEntry.getKey(), resourceEntry.getValue(),
-                    globalContext);
-    globalContext.setMessageCode(ERROR_CODE_HRR8);
-    HeatTreeManagerUtil.checkIfResourceGroupTypeIsNested(fileName, resourceEntry.getKey(),
-            resourceEntry.getValue(), globalContext);
-    Resource resourceDef = HeatTreeManagerUtil
-            .getResourceDef( resourceEntry.getValue());
-
-      if (resourceDef != null  && Objects.nonNull(resourceDef.getType())
-              && HeatValidationService.isNestedResource(resourceDef.getType())) {
-        Optional<String> indexVarValue =
-                getResourceGroupIndexVarValue(resourceEntry, fileName, globalContext);
-        handleNestedResourceType(fileName, resourceEntry.getKey(), resourceDef, indexVarValue,
-                globalContext);
-
-    }
-  }
-
-  private static Optional<String> getResourceGroupIndexVarValue(
-          Map.Entry<String, Resource> resourceEntry, String fileName,
-          GlobalValidationContext globalContext) {
-    Object indexVar =
-            resourceEntry.getValue().getProperties().get(HeatConstants.INDEX_PROPERTY_NAME);
-    if (indexVar == null) {
-      return Optional.of(HeatConstants.RESOURCE_GROUP_INDEX_VAR_DEFAULT_VALUE);
+    private static void validateResourceGroupType(String fileName, Map.Entry<String, Resource> resourceEntry, GlobalValidationContext globalContext) {
+        globalContext.setMessageCode(ERROR_CODE_HRR6);
+        HeatTreeManagerUtil.checkResourceTypeValid(fileName, resourceEntry.getKey(), resourceEntry.getValue(), globalContext);
+        globalContext.setMessageCode(ERROR_CODE_HRR7);
+        HeatTreeManagerUtil.checkResourceGroupTypeValid(fileName, resourceEntry.getKey(), resourceEntry.getValue(), globalContext);
+        globalContext.setMessageCode(ERROR_CODE_HRR8);
+        HeatTreeManagerUtil.checkIfResourceGroupTypeIsNested(fileName, resourceEntry.getKey(), resourceEntry.getValue(), globalContext);
+        Resource resourceDef = HeatTreeManagerUtil.getResourceDef(resourceEntry.getValue());
+        if (resourceDef != null && Objects.nonNull(resourceDef.getType()) && HeatValidationService.isNestedResource(resourceDef.getType())) {
+            Optional<String> indexVarValue = getResourceGroupIndexVarValue(resourceEntry, fileName, globalContext);
+            handleNestedResourceType(fileName, resourceEntry.getKey(), resourceDef, indexVarValue, globalContext);
+        }
     }
 
-    if (indexVar instanceof String) {
-      return Optional.of((String) indexVar);
-    } else {
-      globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                      .getErrorWithParameters(
-                              ERROR_CODE_HRR1, Messages.RESOURCE_GROUP_INVALID_INDEX_VAR.getErrorMessage(),
-                              resourceEntry.getKey()));
-      return Optional.empty();
+    private static Optional<String> getResourceGroupIndexVarValue(Map.Entry<String, Resource> resourceEntry, String fileName,
+                                                                  GlobalValidationContext globalContext) {
+        Object indexVar = resourceEntry.getValue().getProperties().get(HeatConstants.INDEX_PROPERTY_NAME);
+        if (indexVar == null) {
+            return Optional.of(HeatConstants.RESOURCE_GROUP_INDEX_VAR_DEFAULT_VALUE);
+        }
+        if (indexVar instanceof String) {
+            return Optional.of((String) indexVar);
+        } else {
+            globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                .getErrorWithParameters(ERROR_CODE_HRR1, Messages.RESOURCE_GROUP_INVALID_INDEX_VAR.getErrorMessage(), resourceEntry.getKey()));
+            return Optional.empty();
+        }
     }
-  }
 
-  private static void handleNestedResourceType(String fileName, String resourceName,
-                                               Resource resource, Optional<String> indexVarValue,
-                                               GlobalValidationContext globalContext) {
-    validateAllPropertiesMatchNestedParameters(fileName, resourceName, resource, indexVarValue,
-            globalContext);
-    validateLoopsOfNestingFromFile(fileName, resource.getType(), globalContext);
-  }
-
-  private static void validateAllPropertiesMatchNestedParameters(String fileName,
-                                                                 String resourceName,
-                                                                 Resource resource,
-                                                                 Optional<String> indexVarValue,
-                                                                 GlobalValidationContext
-                                                                         globalContext) {
-    String resourceType = resource.getType();
-    if (globalContext.getFileContextMap().containsKey(resourceType)) {
-      Set<String> propertiesNames =
-              resource.getProperties() == null ? null : resource.getProperties().keySet();
-      if (CollectionUtils.isNotEmpty(propertiesNames)) {
-        globalContext.setMessageCode(ERROR_CODE_HRR4);
-        HeatValidationService
-                .checkNestedParametersNoMissingParameterInNested(fileName, resourceType, resourceName,
-                         propertiesNames,
-                         globalContext);
-        globalContext.setMessageCode(ERROR_CODE_HRR5);
-        HeatValidationService
-                .checkNestedInputValuesAlignWithType(fileName, resourceType, resourceName, resource,
-                        indexVarValue, globalContext);
-      }
-    } else {
-      globalContext.addMessage(resourceType, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                      .getErrorWithParameters(
-                              ERROR_CODE_HRR2, Messages.MISSING_NESTED_FILE.getErrorMessage(),
-                              resourceType));
+    private static void handleNestedResourceType(String fileName, String resourceName, Resource resource, Optional<String> indexVarValue,
+                                                 GlobalValidationContext globalContext) {
+        validateAllPropertiesMatchNestedParameters(fileName, resourceName, resource, indexVarValue, globalContext);
+        validateLoopsOfNestingFromFile(fileName, resource.getType(), globalContext);
     }
-  }
 
-  private static void validateLoopsOfNestingFromFile(String fileName, String resourceType,
-                                                     GlobalValidationContext globalContext) {
-    List<String> filesInLoop = new ArrayList<>(Collections.singletonList(fileName));
-    if (HeatValidationService
-            .isNestedLoopExistInFile(fileName, resourceType, filesInLoop, globalContext)) {
-      globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                      .getErrorWithParameters(
-                              ERROR_CODE_HRR3, Messages.NESTED_LOOP.getErrorMessage(),
-                              HeatValidationService.drawFilesLoop(filesInLoop)));
+    private static void validateAllPropertiesMatchNestedParameters(String fileName, String resourceName, Resource resource,
+                                                                   Optional<String> indexVarValue, GlobalValidationContext globalContext) {
+        String resourceType = resource.getType();
+        if (globalContext.getFileContextMap().containsKey(resourceType)) {
+            Set<String> propertiesNames = resource.getProperties() == null ? null : resource.getProperties().keySet();
+            if (CollectionUtils.isNotEmpty(propertiesNames)) {
+                globalContext.setMessageCode(ERROR_CODE_HRR4);
+                HeatValidationService
+                    .checkNestedParametersNoMissingParameterInNested(fileName, resourceType, resourceName, propertiesNames, globalContext);
+                globalContext.setMessageCode(ERROR_CODE_HRR5);
+                HeatValidationService
+                    .checkNestedInputValuesAlignWithType(fileName, resourceType, resourceName, resource, indexVarValue, globalContext);
+            }
+        } else {
+            globalContext.addMessage(resourceType, ErrorLevel.ERROR,
+                ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_HRR2, Messages.MISSING_NESTED_FILE.getErrorMessage(), resourceType));
+        }
     }
-  }
+
+    private static void validateLoopsOfNestingFromFile(String fileName, String resourceType, GlobalValidationContext globalContext) {
+        List<String> filesInLoop = new ArrayList<>(Collections.singletonList(fileName));
+        if (HeatValidationService.isNestedLoopExistInFile(fileName, resourceType, filesInLoop, globalContext)) {
+            globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                .getErrorWithParameters(ERROR_CODE_HRR3, Messages.NESTED_LOOP.getErrorMessage(), HeatValidationService.drawFilesLoop(filesInLoop)));
+        }
+    }
+
+    @Override
+    public void validate(String fileName, Map.Entry<String, Resource> resourceEntry, GlobalValidationContext globalContext,
+                         ValidationContext validationContext) {
+        validateResourceGroupType(fileName, resourceEntry, globalContext);
+    }
 }

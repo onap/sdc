@@ -26,11 +26,9 @@ import java.util.Set;
  */
 public interface PermissionsRules {
 
-  boolean isAllowed(String userId,String action);
+    boolean isAllowed(String userId, String action);
 
-  void executeAction(String itemId, String userId, String action);
+    void executeAction(String itemId, String userId, String action);
 
-  void updatePermission(String itemId,String currentUserId, String permission,Set<String>
-      addedUsersIds, Set<String> removedUsersIds);
-
+    void updatePermission(String itemId, String currentUserId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds);
 }

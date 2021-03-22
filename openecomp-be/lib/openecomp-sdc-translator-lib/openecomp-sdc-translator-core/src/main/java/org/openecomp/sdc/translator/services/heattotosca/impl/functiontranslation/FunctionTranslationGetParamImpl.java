@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
 import java.util.ArrayList;
@@ -21,21 +20,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.openecomp.sdc.heat.datatypes.model.HeatPseudoParameters;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 
 public class FunctionTranslationGetParamImpl implements FunctionTranslation {
+
     private static Object translateGetParamFunctionExpression(FunctionTranslator functionTranslator) {
         Object functionValue = functionTranslator.getFunctionValue();
         Object returnValue = null;
         if (functionValue instanceof String) {
             returnValue = functionValue;
             if (HeatPseudoParameters.getPseudoParameterNames().contains(functionValue)) {
-                functionTranslator.getContext().addUsedHeatPseudoParams(functionTranslator.getHeatFileName(),
-                        (String) functionValue, (String) functionValue);
+                functionTranslator.getContext()
+                    .addUsedHeatPseudoParams(functionTranslator.getHeatFileName(), (String) functionValue, (String) functionValue);
             }
         } else if (functionValue instanceof List) {
             returnValue = new ArrayList<>();
@@ -49,15 +48,13 @@ public class FunctionTranslationGetParamImpl implements FunctionTranslation {
                 }
             }
         }
-
         return returnValue;
     }
 
     private static Object translatedInnerMap(FunctionTranslator functionTranslator, Map<String, Object> paramMap) {
         Map<String, Object> translatedInnerMapValue = new HashMap<>();
         for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
-            Optional<FunctionTranslation> functionTranslationInstance =
-                    FunctionTranslationFactory.getInstance(entry.getKey());
+            Optional<FunctionTranslation> functionTranslationInstance = FunctionTranslationFactory.getInstance(entry.getKey());
             if (functionTranslationInstance.isPresent()) {
                 functionTranslator.setFunctionValue(entry.getValue());
                 return functionTranslationInstance.get().translateFunction(functionTranslator);
@@ -68,8 +65,7 @@ public class FunctionTranslationGetParamImpl implements FunctionTranslation {
         return translatedInnerMapValue;
     }
 
-    private static Object translatedInnerValue(FunctionTranslator functionTranslator,
-                                               Object value) {
+    private static Object translatedInnerValue(FunctionTranslator functionTranslator, Object value) {
         if (value instanceof String) {
             return value;
         } else if (value instanceof Map) {
@@ -81,15 +77,13 @@ public class FunctionTranslationGetParamImpl implements FunctionTranslation {
             }
             return returnedList;
         }
-
         return value;
     }
 
     @Override
     public Object translateFunction(FunctionTranslator functionTranslator) {
         Map<String, Object> returnValue = new HashMap<>();
-        returnValue.put(ToscaFunctions.GET_INPUT.getFunctionName(),
-                translateGetParamFunctionExpression(functionTranslator));
+        returnValue.put(ToscaFunctions.GET_INPUT.getFunctionName(), translateGetParamFunctionExpression(functionTranslator));
         return returnValue;
     }
 }

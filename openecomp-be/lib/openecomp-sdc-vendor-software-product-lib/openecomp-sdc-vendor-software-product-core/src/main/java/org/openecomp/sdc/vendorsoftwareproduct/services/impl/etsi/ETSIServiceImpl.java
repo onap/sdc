@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ARTIFACTS_FOLDER;
@@ -63,7 +62,6 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 public class ETSIServiceImpl implements ETSIService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ETSIServiceImpl.class);
-
     private final NonManoConfiguration nonManoConfiguration;
 
     public ETSIServiceImpl() {
@@ -99,25 +97,19 @@ public class ETSIServiceImpl implements ETSIService {
             .forEach(manifestNonManoSourceEntry -> {
                 final NonManoFolderType nonManoFolderType = nonManoKeyFolderMapping.get(manifestNonManoSourceEntry.getKey());
                 final List<String> nonManoFileList = manifestNonManoSourceEntry.getValue();
-                final Map<String, Path> actualFromToPathMap = nonManoFileList.stream()
-                    .map(nonManoFilePath -> {
-                        final Path normalizedFilePath = resolveNonManoFilePath(originalManifestPath, nonManoFilePath);
-                        final Optional<Path> changedPath = updateNonManoPathInHandler(handler, nonManoFolderType, normalizedFilePath);
-                        if (changedPath.isPresent()) {
-                            final Map<String, Path> fromAndToPathMap = new HashMap<>();
-                            fromAndToPathMap.put(nonManoFilePath, Paths.get(ARTIFACTS_FOLDER).resolve(changedPath.get()));
-                            return fromAndToPathMap;
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toMap(
-                        fromToPathEntry -> fromToPathEntry.keySet().iterator().next(),
-                        fromToPathEntry -> fromToPathEntry.values().iterator().next()
-                    ));
+                final Map<String, Path> actualFromToPathMap = nonManoFileList.stream().map(nonManoFilePath -> {
+                    final Path normalizedFilePath = resolveNonManoFilePath(originalManifestPath, nonManoFilePath);
+                    final Optional<Path> changedPath = updateNonManoPathInHandler(handler, nonManoFolderType, normalizedFilePath);
+                    if (changedPath.isPresent()) {
+                        final Map<String, Path> fromAndToPathMap = new HashMap<>();
+                        fromAndToPathMap.put(nonManoFilePath, Paths.get(ARTIFACTS_FOLDER).resolve(changedPath.get()));
+                        return fromAndToPathMap;
+                    }
+                    return null;
+                }).filter(Objects::nonNull).collect(Collectors.toMap(fromToPathEntry -> fromToPathEntry.keySet().iterator().next(),
+                    fromToPathEntry -> fromToPathEntry.values().iterator().next()));
                 fromToPathMap.putAll(actualFromToPathMap);
             });
-
         return MapUtils.isEmpty(fromToPathMap) ? Optional.empty() : Optional.of(fromToPathMap);
     }
 
@@ -125,7 +117,7 @@ public class ETSIServiceImpl implements ETSIService {
      * Resolves the non mano file path based on the original manifest path of the onboarded package.
      *
      * @param originalManifestPath The original path from the onboarded package manifest
-     * @param nonManoFilePath The non mano file path defined in the manifest
+     * @param nonManoFilePath      The non mano file path defined in the manifest
      * @return The resolved and normalized non mano path.
      */
     private Path resolveNonManoFilePath(final Path originalManifestPath, final String nonManoFilePath) {
@@ -135,8 +127,8 @@ public class ETSIServiceImpl implements ETSIService {
     /**
      * Updates the non mano file path in the package file handler based on the non mano type.
      *
-     * @param handler The package file handler
-     * @param nonManoFolderType The Non Mano type of the file to update
+     * @param handler                 The package file handler
+     * @param nonManoFolderType       The Non Mano type of the file to update
      * @param nonManoOriginalFilePath The Non Mano file original path
      * @return The new file path if it was updated in the package file handler, otherwise empty.
      */
@@ -144,23 +136,22 @@ public class ETSIServiceImpl implements ETSIService {
                                                       final Path nonManoOriginalFilePath) {
         final Path fixedSourcePath = fixNonManoPath(nonManoOriginalFilePath);
         if (handler.containsFile(fixedSourcePath.toString())) {
-            final Path newNonManoPath = Paths.get(nonManoFolderType.getType(), nonManoFolderType.getLocation()
-                , fixedSourcePath.getFileName().toString());
+            final Path newNonManoPath = Paths
+                .get(nonManoFolderType.getType(), nonManoFolderType.getLocation(), fixedSourcePath.getFileName().toString());
             if (!handler.containsFile(newNonManoPath.toString())) {
                 handler.addFile(newNonManoPath.toString(), handler.remove(fixedSourcePath.toString()));
                 return Optional.of(newNonManoPath);
             }
         }
-
         return Optional.empty();
     }
 
     /**
      * Fix the original non mano file path to the ONAP package file path.
-     *
-     * Non mano artifacts that were inside the {@link org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} path
-     * are not moved when parsed to ONAP package, but the Manifest declaration can still have the {@link
-     * org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} reference in it. If so, that reference is removed.
+     * <p>
+     * Non mano artifacts that were inside the {@link org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} path are not moved when parsed to
+     * ONAP package, but the Manifest declaration can still have the {@link org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} reference in
+     * it. If so, that reference is removed.
      *
      * @param nonManoOriginalFilePath The original non mano file path
      * @return The non mano fixed path to ONAP package structure.
@@ -174,28 +165,22 @@ public class ETSIServiceImpl implements ETSIService {
         if (nonManoOriginalFilePath.startsWith(relativeArtifactsPath)) {
             return relativeArtifactsPath.relativize(nonManoOriginalFilePath);
         }
-
         return nonManoOriginalFilePath;
     }
 
     @Override
-    public void updateMainDescriptorPaths(final ToscaServiceModel toscaServiceModel,
-                                          final Map<String, Path> fromToMovedArtifactMap) {
-        final ServiceTemplate entryDefinition = toscaServiceModel.getServiceTemplates()
-            .get(toscaServiceModel.getEntryDefinitionServiceTemplate());
+    public void updateMainDescriptorPaths(final ToscaServiceModel toscaServiceModel, final Map<String, Path> fromToMovedArtifactMap) {
+        final ServiceTemplate entryDefinition = toscaServiceModel.getServiceTemplates().get(toscaServiceModel.getEntryDefinitionServiceTemplate());
         final YamlUtil yamlUtil = new YamlUtil();
         final String[] entryDefinitionYaml = {yamlUtil.objectToYaml(entryDefinition)};
-        fromToMovedArtifactMap.forEach((fromPath, toPath) -> entryDefinitionYaml[0] = entryDefinitionYaml[0]
-            .replaceAll(fromPath, toPath.toString()));
-
-        toscaServiceModel.addServiceTemplate(toscaServiceModel.getEntryDefinitionServiceTemplate()
-            , yamlUtil.yamlToObject(entryDefinitionYaml[0], ServiceTemplate.class));
+        fromToMovedArtifactMap.forEach((fromPath, toPath) -> entryDefinitionYaml[0] = entryDefinitionYaml[0].replaceAll(fromPath, toPath.toString()));
+        toscaServiceModel.addServiceTemplate(toscaServiceModel.getEntryDefinitionServiceTemplate(),
+            yamlUtil.yamlToObject(entryDefinitionYaml[0], ServiceTemplate.class));
     }
 
     private boolean hasMetaMandatoryEntries(final ToscaMetadata toscaMetadata) {
         final Map<String, String> metaDataEntries = toscaMetadata.getMetaEntries();
-        return metaDataEntries.containsKey(ENTRY_DEFINITIONS.getName()) && metaDataEntries
-            .containsKey(ETSI_ENTRY_MANIFEST.getName())
+        return metaDataEntries.containsKey(ENTRY_DEFINITIONS.getName()) && metaDataEntries.containsKey(ETSI_ENTRY_MANIFEST.getName())
             && metaDataEntries.containsKey(ETSI_ENTRY_CHANGE_LOG.getName());
     }
 
@@ -204,23 +189,21 @@ public class ETSIServiceImpl implements ETSIService {
         try {
             Map<String, String> metadata = getManifest(handler).getMetadata();
             if (metadata.containsKey(COMPATIBLE_SPECIFICATION_VERSIONS.getToken())) {
-                return Arrays.asList(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(","))
-                        .stream().map(Semver::new).max((v1, v2) -> v1.compareTo(v2))
-                        .orElse(new Semver(ETSI_VERSION_2_6_1));
+                return Arrays.asList(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(",")).stream().map(Semver::new)
+                    .max((v1, v2) -> v1.compareTo(v2)).orElse(new Semver(ETSI_VERSION_2_6_1));
             }
         } catch (Exception ex) {
             LOGGER.error("An error occurred while getting highest compatible version from manifest file", ex);
         }
         return new Semver(ETSI_VERSION_2_6_1);
-
     }
 
     @Override
     public boolean hasCnfEnhancements(final FileContentHandler fileContentHandler) throws IOException {
         final Manifest manifest = loadManifest(fileContentHandler);
         return manifest.getNonManoSources().entrySet().stream()
-            .filter(manifestNonManoSourceEntry ->  NonManoArtifactType.ONAP_CNF_HELM.getType()
-                .equalsIgnoreCase(manifestNonManoSourceEntry.getKey())).findFirst().isPresent();
+            .filter(manifestNonManoSourceEntry -> NonManoArtifactType.ONAP_CNF_HELM.getType().equalsIgnoreCase(manifestNonManoSourceEntry.getKey()))
+            .findFirst().isPresent();
     }
 
     private Manifest loadManifest(final FileContentHandler handler) throws IOException {
@@ -248,9 +231,10 @@ public class ETSIServiceImpl implements ETSIService {
 
     public ResourceTypeEnum getResourceType(Manifest manifest) {
         // Valid manifest should contain whether vnf or pnf related metadata data exclusively in SOL004 standard,
+
         // validation of manifest done during package upload stage
-        if (manifest != null && !manifest.getMetadata().isEmpty()
-            && MANIFEST_PNF_METADATA.stream().anyMatch(e -> manifest.getMetadata().containsKey(e))) {
+        if (manifest != null && !manifest.getMetadata().isEmpty() && MANIFEST_PNF_METADATA.stream()
+            .anyMatch(e -> manifest.getMetadata().containsKey(e))) {
             return ResourceTypeEnum.PNF;
         }
         // VNF is default resource type
@@ -280,11 +264,9 @@ public class ETSIServiceImpl implements ETSIService {
     private ToscaMetadata getMetadata(FileContentHandler handler) throws IOException {
         ToscaMetadata metadata;
         if (handler.containsFile(TOSCA_META_PATH_FILE_NAME)) {
-            metadata = OnboardingToscaMetadata
-                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
+            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
         } else if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
-            metadata = OnboardingToscaMetadata
-                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));
+            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));
         } else {
             throw new IOException("TOSCA.meta file not found!");
         }
@@ -293,8 +275,7 @@ public class ETSIServiceImpl implements ETSIService {
 
     private ToscaMetadata getOriginalMetadata(final FileContentHandler handler) throws IOException {
         if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
-            return OnboardingToscaMetadata
-                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));
+            return OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));
         } else {
             throw new IOException(String.format("%s file not found", TOSCA_META_ORIG_PATH_FILE_NAME));
         }
@@ -307,7 +288,6 @@ public class ETSIServiceImpl implements ETSIService {
         } else {
             io = handler.getFileContentAsStream(manifestLocation);
         }
-
         if (io == null) {
             throw new IOException("Manifest file not found!");
         }

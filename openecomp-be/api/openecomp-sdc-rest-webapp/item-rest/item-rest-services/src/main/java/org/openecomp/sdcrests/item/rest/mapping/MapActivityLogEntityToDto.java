@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.item.rest.mapping;
 
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -25,17 +24,15 @@ import org.openecomp.sdcrests.item.types.ActivityLogDto;
 import org.openecomp.sdcrests.item.types.ActivityStatus;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
-public class MapActivityLogEntityToDto
-    extends MappingBase<ActivityLogEntity, ActivityLogDto> {
+public class MapActivityLogEntityToDto extends MappingBase<ActivityLogEntity, ActivityLogDto> {
 
-
-  @Override
-  public void doMapping(ActivityLogEntity source, ActivityLogDto target) {
-    target.setId(source.getId());
-    target.setTimestamp(source.getTimestamp());
-    target.setType(source.getType().name());
-    target.setComment(source.getComment());
-    target.setUser(source.getUser());
-    target.setStatus(new ActivityStatus(source.isSuccess(), source.getMessage()));
-  }
+    @Override
+    public void doMapping(ActivityLogEntity source, ActivityLogDto target) {
+        target.setId(source.getId());
+        target.setTimestamp(source.getTimestamp());
+        target.setType(source.getType().name());
+        target.setComment(source.getComment());
+        target.setUser(source.getUser());
+        target.setStatus(new ActivityStatus(source.isSuccess(), source.getMessage()));
+    }
 }

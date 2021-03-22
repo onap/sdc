@@ -17,11 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.validation.impl.validators;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Set;
 import org.onap.validation.yaml.YamlContentValidator;
 import org.onap.validation.yaml.error.YamlDocumentValidationError;
 import org.openecomp.core.validation.ErrorMessageCode;
@@ -29,10 +31,6 @@ import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.validation.Validator;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Set;
 
 public class PmDictionaryValidator implements Validator {
 
@@ -44,11 +42,8 @@ public class PmDictionaryValidator implements Validator {
         validatePmDictionaryFiles(globalContext, pmDictionaryFiles);
     }
 
-
     private void validatePmDictionaryFiles(GlobalValidationContext globalContext, Set<String> pmDictionaryFiles) {
-        pmDictionaryFiles.stream()
-                .map(fileName -> new ValidationHelper(globalContext, fileName))
-                .forEach(ValidationHelper::validate);
+        pmDictionaryFiles.stream().map(fileName -> new ValidationHelper(globalContext, fileName)).forEach(ValidationHelper::validate);
     }
 
     private static class ValidationHelper {
@@ -62,36 +57,27 @@ public class PmDictionaryValidator implements Validator {
         }
 
         public void validate() {
-            Option.ofOptional(globalContext.getFileContent(fileName))
-                    .peek(this::validateFileContent)
-                    .onEmpty(() -> addErrorToContext(formatMessage("File is empty")));
+            Option.ofOptional(globalContext.getFileContent(fileName)).peek(this::validateFileContent)
+                .onEmpty(() -> addErrorToContext(formatMessage("File is empty")));
         }
 
         private void validateFileContent(InputStream inputStream) {
-            Try.of(inputStream::readAllBytes)
-                    .mapTry(fileContent -> new YamlContentValidator().validate(fileContent))
-                    .onSuccess(this::reportValidationErrorsIfPresent)
-                    .onFailure(e -> addErrorToContext(formatMessage(e.getMessage())));
+            Try.of(inputStream::readAllBytes).mapTry(fileContent -> new YamlContentValidator().validate(fileContent))
+                .onSuccess(this::reportValidationErrorsIfPresent).onFailure(e -> addErrorToContext(formatMessage(e.getMessage())));
         }
 
         private void reportValidationErrorsIfPresent(List<YamlDocumentValidationError> validationErrors) {
-            validationErrors.stream()
-                    .map(this::prepareValidationMessage)
-                    .forEach(this::addErrorToContext);
+            validationErrors.stream().map(this::prepareValidationMessage).forEach(this::addErrorToContext);
         }
 
         private String prepareValidationMessage(YamlDocumentValidationError error) {
-            final String errorMessage = String.format("Document Number: %s, Path: %s, Problem: %s",
-                    error.getYamlDocumentNumber(),
-                    error.getPath(),
-                    error.getMessage()
-            );
+            final String errorMessage = String
+                .format("Document Number: %s, Path: %s, Problem: %s", error.getYamlDocumentNumber(), error.getPath(), error.getMessage());
             return formatMessage(errorMessage);
         }
 
         private String formatMessage(String message) {
-            return ErrorMessagesFormatBuilder
-                    .getErrorWithParameters(PM_DICT_ERROR_CODE, message);
+            return ErrorMessagesFormatBuilder.getErrorWithParameters(PM_DICT_ERROR_CODE, message);
         }
 
         private void addErrorToContext(String message) {

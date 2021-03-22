@@ -26,6 +26,8 @@ import org.openecomp.sdc.notification.dtos.Event;
  * @since July 09, 2017
  */
 public interface NotificationPropagationManager {
-    void notifySubscribers(Event event, String ... excludedSubscribers);
+
+    void notifySubscribers(Event event, String... excludedSubscribers);
+
     void directNotification(Event event, String destinationId);
 }

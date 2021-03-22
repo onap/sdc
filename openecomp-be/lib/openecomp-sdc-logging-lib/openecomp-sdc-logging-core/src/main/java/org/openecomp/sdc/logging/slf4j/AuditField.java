@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -25,7 +24,7 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
  * @since 25 Mar 2018
  */
 enum AuditField implements MDCField {
-
+    // @formatter:off
     BEGIN_TIMESTAMP(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP),
     END_TIMESTAMP("EndTimestamp"),
     ELAPSED_TIME("ElapsedTime"),
@@ -34,6 +33,7 @@ enum AuditField implements MDCField {
     RESPONSE_DESCRIPTION(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION),
     CLIENT_IP_ADDRESS(ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS),
     INVOCATION_ID(ONAPLogConstants.MDCs.INVOCATION_ID);
+    // @formatter:on
 
     private final String key;
 

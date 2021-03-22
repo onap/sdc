@@ -17,18 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.dao;
 
+import java.util.UUID;
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.notification.dao.types.LastSeenNotificationEntity;
 
-import java.util.UUID;
-
 public interface LastNotificationDao extends BaseDao<LastSeenNotificationEntity> {
 
-  UUID getOwnerLastEventId(String ownerId);
+    UUID getOwnerLastEventId(String ownerId);
 
-  void persistOwnerLastEventId(String ownerId, UUID eventId);
-
+    void persistOwnerLastEventId(String ownerId, UUID eventId);
 }

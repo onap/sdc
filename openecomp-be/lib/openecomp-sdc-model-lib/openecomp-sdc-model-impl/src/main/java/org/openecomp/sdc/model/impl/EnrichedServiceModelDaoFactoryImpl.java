@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.model.impl;
 
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
@@ -26,11 +25,12 @@ import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.model.impl.zusammen.EnrichedServiceModelDaoZusammenImpl;
 
 public class EnrichedServiceModelDaoFactoryImpl extends EnrichedServiceModelDaoFactory {
-  private static final EnrichedServiceModelDao INSTANCE = new EnrichedServiceModelDaoZusammenImpl( ZusammenAdaptorFactory
-      .getInstance().createInterface());
 
-  @Override
-  public EnrichedServiceModelDao createInterface() {
-    return INSTANCE;
-  }
+    private static final EnrichedServiceModelDao INSTANCE = new EnrichedServiceModelDaoZusammenImpl(
+        ZusammenAdaptorFactory.getInstance().createInterface());
+
+    @Override
+    public EnrichedServiceModelDao createInterface() {
+        return INSTANCE;
+    }
 }

@@ -17,36 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.dao.impl;
+
+import static java.util.Objects.isNull;
 
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import com.google.common.collect.Sets;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.notification.dao.SubscribersDao;
 import org.openecomp.sdc.notification.dao.types.SubscribersEntity;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
-
-import static java.util.Objects.isNull;
-
-public class SubscribersDaoCassandraImpl extends CassandraBaseDao<SubscribersEntity> implements
-        SubscribersDao {
+public class SubscribersDaoCassandraImpl extends CassandraBaseDao<SubscribersEntity> implements SubscribersDao {
 
     private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final Mapper<SubscribersEntity> mapper =
-            noSqlDb.getMappingManager().mapper(SubscribersEntity.class);
-    private static final SubscribersAccessor accessor =
-            noSqlDb.getMappingManager().createAccessor(SubscribersAccessor.class);
-
+    private static final Mapper<SubscribersEntity> mapper = noSqlDb.getMappingManager().mapper(SubscribersEntity.class);
+    private static final SubscribersAccessor accessor = noSqlDb.getMappingManager().createAccessor(SubscribersAccessor.class);
 
     @Override
     protected Object[] getKeys(SubscribersEntity entity) {
@@ -100,5 +94,4 @@ public class SubscribersDaoCassandraImpl extends CassandraBaseDao<SubscribersEnt
         @Query("update notification_subscribers set subscribers=subscribers-? WHERE entity_id=?")
         void unsubscribe(Set<String> ownerId, String entityId);
     }
-
 }

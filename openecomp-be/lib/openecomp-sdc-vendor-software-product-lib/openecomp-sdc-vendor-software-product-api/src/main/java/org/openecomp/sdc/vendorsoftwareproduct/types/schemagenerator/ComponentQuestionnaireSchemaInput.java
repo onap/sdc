@@ -14,7 +14,6 @@
  * limitations under the License.
  * Modifications copyright (c) 2019 Nokia
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator;
 
 import java.util.List;
@@ -30,5 +29,4 @@ public class ComponentQuestionnaireSchemaInput implements SchemaTemplateInput {
     private Map componentQuestionnaireData;
     private String componentDisplayName;
     private boolean manual;
-
 }

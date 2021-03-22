@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.image;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ public class ImageDetails {
     private String version;
     private String format;
     private String md5;
-
 }

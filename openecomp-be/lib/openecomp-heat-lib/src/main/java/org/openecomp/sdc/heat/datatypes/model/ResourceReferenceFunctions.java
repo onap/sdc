@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import lombok.AllArgsConstructor;
@@ -26,11 +25,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ResourceReferenceFunctions {
-    GET_RESOURCE("get_resource"),
-    GET_PARAM("get_param"),
-    GET_ATTR("get_attr"),
-    GET_FILE("get_file"),
-    SCHEDULER_HINTS("scheduler_hints");
-
+    GET_RESOURCE("get_resource"), GET_PARAM("get_param"), GET_ATTR("get_attr"), GET_FILE("get_file"), SCHEDULER_HINTS("scheduler_hints");
     private String function;
 }

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation;
 
 import static org.openecomp.sdc.common.errors.Messages.MANIFEST_VALIDATION_HELM_IS_BASE_MISSING;
@@ -32,12 +31,10 @@ public class CnfPackageValidator {
 
     public List<String> validateHelmPackage(List<FileData> modules) {
         List<String> messages = Collections.emptyList();
-
         if (modules != null && !modules.isEmpty()) {
             Stats stats = calculateStats(modules);
             messages = createErrorMessages(stats);
         }
-
         return messages;
     }
 
@@ -55,17 +52,14 @@ public class CnfPackageValidator {
 
     private List<String> createErrorMessages(Stats stats) {
         List<String> messages = new ArrayList<>();
-
         if (stats.without > 0) {
             messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_MISSING.formatMessage(stats.without));
         }
-
         if (stats.base == 0) {
             messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_NOT_SET.getErrorMessage());
         } else if (stats.base > 1) {
             messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_NOT_UNIQUE.getErrorMessage());
         }
-
         return messages;
     }
 

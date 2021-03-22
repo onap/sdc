@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_MULTIPLE_VIRTUAL_NETWORK_REFS_VALUES;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_VMI_NETWORK_REQUIREMENT_CONNECTION;
+
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
@@ -32,63 +40,44 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
-import java.util.*;
-import java.util.function.Predicate;
+public class ContrailV2VmInterfaceToNetResourceConnection extends ResourceConnectionUsingRequirementHelper {
 
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_MULTIPLE_VIRTUAL_NETWORK_REFS_VALUES;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_VMI_NETWORK_REQUIREMENT_CONNECTION;
-
-public class ContrailV2VmInterfaceToNetResourceConnection
-        extends ResourceConnectionUsingRequirementHelper {
-
-    ContrailV2VmInterfaceToNetResourceConnection(ResourceTranslationBase resourceTranslationBase,
-                                                 TranslateTo translateTo, FileData nestedFileData,
+    ContrailV2VmInterfaceToNetResourceConnection(ResourceTranslationBase resourceTranslationBase, TranslateTo translateTo, FileData nestedFileData,
                                                  NodeTemplate substitutionNodeTemplate, NodeType nodeType) {
         super(resourceTranslationBase, translateTo, nestedFileData, substitutionNodeTemplate, nodeType);
     }
 
     @Override
     protected boolean isDesiredNodeTemplateType(NodeTemplate nodeTemplate) {
-        return (nodeTemplate.getType()
-                .equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE)
-                || nodeTemplate.getType()
-                .equals(ToscaNodeType.CONTRAILV2_VLAN_SUB_INTERFACE));
+        return (nodeTemplate.getType().equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE) || nodeTemplate.getType()
+            .equals(ToscaNodeType.CONTRAILV2_VLAN_SUB_INTERFACE));
     }
 
     @Override
     protected List<Predicate<RequirementDefinition>> getPredicatesListForConnectionPoints() {
         ArrayList<Predicate<RequirementDefinition>> predicates = new ArrayList<>();
-        predicates.add(
-                req -> req.getCapability().equals(ToscaCapabilityType.NATIVE_NETWORK_LINKABLE)
-                        && (req.getNode() == null || req.getNode().equals(ToscaNodeType.NATIVE_ROOT))
-                        && req.getRelationship()
-                        .equals(ToscaRelationshipType.NATIVE_NETWORK_LINK_TO));
+        predicates.add(req -> req.getCapability().equals(ToscaCapabilityType.NATIVE_NETWORK_LINKABLE) && (req.getNode() == null || req.getNode()
+            .equals(ToscaNodeType.NATIVE_ROOT)) && req.getRelationship().equals(ToscaRelationshipType.NATIVE_NETWORK_LINK_TO));
         return predicates;
     }
 
     @Override
-    protected Optional<List<String>> getConnectorPropertyParamName(String heatResourceId,
-                                                                   Resource heatResource,
-                                                                   HeatOrchestrationTemplate
-                                                                           nestedHeatOrchestrationTemplate,
+    protected Optional<List<String>> getConnectorPropertyParamName(String heatResourceId, Resource heatResource,
+                                                                   HeatOrchestrationTemplate nestedHeatOrchestrationTemplate,
                                                                    String nestedHeatFileName) {
         List<String> networks = new ArrayList<>();
         Object virtualNetworkRefs = heatResource.getProperties().get(HeatConstants.VIRTUAL_NETWORK_REFS_PROPERTY_NAME);
-        if (Objects.isNull(virtualNetworkRefs) || !(virtualNetworkRefs instanceof List)
-                || ((List) virtualNetworkRefs).isEmpty()) {
+        if (Objects.isNull(virtualNetworkRefs) || !(virtualNetworkRefs instanceof List) || ((List) virtualNetworkRefs).isEmpty()) {
             return Optional.empty();
         }
         if (((List) virtualNetworkRefs).size() > 1) {
-            logger.warn(LOG_MULTIPLE_VIRTUAL_NETWORK_REFS_VALUES, translateTo.getResourceId(),
-                    translateTo.getResource().getType(), heatResourceId,
-                    HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
+            logger.warn(LOG_MULTIPLE_VIRTUAL_NETWORK_REFS_VALUES, translateTo.getResourceId(), translateTo.getResource().getType(), heatResourceId,
+                HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource());
         }
         Object virtualNetworkRef = ((List) virtualNetworkRefs).get(0);
         Optional<AttachedResourceId> network = HeatToToscaUtil
-                .extractAttachedResourceId(nestedFileData.getFile(), nestedHeatOrchestrationTemplate,
-                        translateTo.getContext(), virtualNetworkRef);
-        if (network.isPresent() && network.get().isGetParam()
-                && network.get().getEntityId() instanceof String) {
+            .extractAttachedResourceId(nestedFileData.getFile(), nestedHeatOrchestrationTemplate, translateTo.getContext(), virtualNetworkRef);
+        if (network.isPresent() && network.get().isGetParam() && network.get().getEntityId() instanceof String) {
             networks.add((String) network.get().getEntityId());
         }
         return Optional.of(networks);
@@ -100,33 +89,24 @@ public class ContrailV2VmInterfaceToNetResourceConnection
     }
 
     @Override
-    protected void addRequirementToConnectResources(
-            Map.Entry<String, RequirementDefinition> requirementDefinitionEntry,
-            List<String> paramNames) {
+    protected void addRequirementToConnectResources(Map.Entry<String, RequirementDefinition> requirementDefinitionEntry, List<String> paramNames) {
         if (paramNames == null || paramNames.isEmpty()) {
             return;
         }
         for (String paramName : paramNames) {
             Object paramValue = translateTo.getResource().getProperties().get(paramName);
-            List<String> supportedNetworkTypes =
-                    ImmutableList.of(HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
-                            HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource());
-
-            addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue,
-                    supportedNetworkTypes);
+            List<String> supportedNetworkTypes = ImmutableList.of(HeatResourcesTypes.NEUTRON_NET_RESOURCE_TYPE.getHeatResource(),
+                HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource());
+            addRequirementToConnectResource(requirementDefinitionEntry, paramName, paramValue, supportedNetworkTypes);
         }
     }
 
     @Override
-    boolean validateResourceTypeSupportedForReqCreation(String nestedResourceId,
-                                                        final String nestedPropertyName,
-                                                        String connectionPointId,
-                                                        Resource connectedResource,
-                                                        List<String> supportedTypes) {
+    boolean validateResourceTypeSupportedForReqCreation(String nestedResourceId, final String nestedPropertyName, String connectionPointId,
+                                                        Resource connectedResource, List<String> supportedTypes) {
         if (resourceTranslationBase.isUnsupportedResourceType(connectedResource, supportedTypes)) {
-            logger.warn(LOG_UNSUPPORTED_VMI_NETWORK_REQUIREMENT_CONNECTION,
-                    nestedResourceId, nestedPropertyName, connectedResource.getType(), connectionPointId,
-                    supportedTypes.toString());
+            logger.warn(LOG_UNSUPPORTED_VMI_NETWORK_REQUIREMENT_CONNECTION, nestedResourceId, nestedPropertyName, connectedResource.getType(),
+                connectionPointId, supportedTypes.toString());
             return false;
         }
         return true;

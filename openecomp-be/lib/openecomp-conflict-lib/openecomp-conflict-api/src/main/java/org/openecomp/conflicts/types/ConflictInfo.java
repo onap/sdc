@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,48 +17,48 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.conflicts.types;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.sdc.datatypes.model.ElementType;
 
 public class ConflictInfo {
-  private String id;
-  private ElementType type;
-  private String name;
 
-  @VisibleForTesting
-  ConflictInfo() {
-  }
+    private String id;
+    private ElementType type;
+    private String name;
 
-  public ConflictInfo(String id, ElementType type, String name) {
-    this.id = id;
-    this.type = type;
-    this.name = name;
-  }
+    @VisibleForTesting
+    ConflictInfo() {
+    }
 
-  public String getId() {
-    return id;
-  }
+    public ConflictInfo(String id, ElementType type, String name) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public ElementType getType() {
-    return type;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setType(ElementType type) {
-    this.type = type;
-  }
+    public ElementType getType() {
+        return type;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public void setType(ElementType type) {
+        this.type = type;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

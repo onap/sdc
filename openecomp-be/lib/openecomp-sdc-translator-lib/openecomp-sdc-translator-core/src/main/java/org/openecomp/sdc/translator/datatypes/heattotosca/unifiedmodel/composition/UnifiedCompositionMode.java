@@ -24,9 +24,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composit
  * @since March 02, 2017.
  */
 public enum UnifiedCompositionMode {
-  SingleSubstitution,
-  ScalingInstances,
-  // todo - support B1 SingleSubstitution, but create diff types/services vm_type+<index>
-  CatalogInstance,
-  NestedSingleCompute;
+    SingleSubstitution, ScalingInstances,
+    // todo - support B1 SingleSubstitution, but create diff types/services vm_type+<index>
+    CatalogInstance, NestedSingleCompute;
 }

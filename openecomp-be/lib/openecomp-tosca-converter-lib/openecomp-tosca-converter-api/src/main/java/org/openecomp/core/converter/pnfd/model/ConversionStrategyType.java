@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import java.util.Optional;
@@ -25,25 +24,18 @@ import java.util.Optional;
  * Represents a type of a conversion strategy
  */
 public enum ConversionStrategyType {
-    COPY("copy"),
-    REPLACE("replace"),
-    REPLACE_IN_LIST("replaceInList");
-
+    COPY("copy"), REPLACE("replace"), REPLACE_IN_LIST("replaceInList");
     private final String type;
 
     ConversionStrategyType(final String type) {
         this.type = type;
     }
 
-    public String getType() {
-        return type;
-    }
-
     /**
      * Parse a String to the related {@link ConversionStrategyType}.
-     * @param type  the {@link ConversionStrategyType} type
-     * @return
-     *  The {@link ConversionStrategyType} representing the given type.
+     *
+     * @param type the {@link ConversionStrategyType} type
+     * @return The {@link ConversionStrategyType} representing the given type.
      */
     public static Optional<ConversionStrategyType> parse(final String type) {
         for (final ConversionStrategyType conversionStrategyType : values()) {
@@ -51,7 +43,10 @@ public enum ConversionStrategyType {
                 return Optional.of(conversionStrategyType);
             }
         }
-
         return Optional.empty();
+    }
+
+    public String getType() {
+        return type;
     }
 }

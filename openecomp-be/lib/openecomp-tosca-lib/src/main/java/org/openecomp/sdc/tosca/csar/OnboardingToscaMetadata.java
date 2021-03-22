@@ -17,101 +17,96 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import java.util.Optional;
-import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import java.io.InputStream;
-import java.io.IOException;
-import org.apache.commons.io.IOUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.io.IOUtils;
+import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+
 public class OnboardingToscaMetadata implements ToscaMetadata {
 
-  private Map<String, String> metaEntries;
-  private List<ErrorMessage> errors;
+    private Map<String, String> metaEntries;
+    private List<ErrorMessage> errors;
 
-  private OnboardingToscaMetadata(){
-    metaEntries = new HashMap<>();
-    errors = new ArrayList<>();
-  }
-
-  /**
-   * Method parses input stream of meta file, only block_0 is parsed, the rest of metadata ignored
-   * @param st meta file input stream
-   * @return OnboardingToscaMetadata instance
-   * @throws IOException
-   */
-  public static ToscaMetadata parseToscaMetadataFile(InputStream st) throws IOException {
-    if(st == null) {
-        throw new IOException(Messages.METADATA_PARSER_INTERNAL.getErrorMessage());
+    private OnboardingToscaMetadata() {
+        metaEntries = new HashMap<>();
+        errors = new ArrayList<>();
     }
-    OnboardingToscaMetadata meta = new OnboardingToscaMetadata();
-    List<String> metadataLines = IOUtils.readLines(st, "utf-8");
-    for (String line : metadataLines) {
-      line = line.trim();
-      if (line.isEmpty()) {
+
+    /**
+     * Method parses input stream of meta file, only block_0 is parsed, the rest of metadata ignored
+     *
+     * @param st meta file input stream
+     * @return OnboardingToscaMetadata instance
+     * @throws IOException
+     */
+    public static ToscaMetadata parseToscaMetadataFile(InputStream st) throws IOException {
+        if (st == null) {
+            throw new IOException(Messages.METADATA_PARSER_INTERNAL.getErrorMessage());
+        }
+        OnboardingToscaMetadata meta = new OnboardingToscaMetadata();
+        List<String> metadataLines = IOUtils.readLines(st, "utf-8");
+        for (String line : metadataLines) {
+            line = line.trim();
+            if (line.isEmpty()) {
+                return meta;
+            }
+            String[] entry = line.split(ATTRIBUTE_VALUE_SEPARATOR.getToken());
+            //No empty keys allowed, no empty values allowed
+            if (entry.length < 2 || entry[0].isEmpty()) {
+                meta.errors.add(
+                    new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(Messages.METADATA_INVALID_ENTRY_DEFINITIONS.getErrorMessage(), line)));
+                //want to get all error lines in meta file block_0, no breaking loop
+            } else {
+                meta.metaEntries.put(entry[0].trim(), entry[1].trim());
+            }
+        }
+        if (!meta.metaEntries.containsKey(ENTRY_DEFINITIONS.getName())) {
+            meta.errors.add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage())));
+        }
         return meta;
-      }
-      String[] entry = line.split(ATTRIBUTE_VALUE_SEPARATOR.getToken());
-      //No empty keys allowed, no empty values allowed
-      if (entry.length < 2 || entry[0].isEmpty()) {
-        meta.errors.add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(
-                Messages.METADATA_INVALID_ENTRY_DEFINITIONS.getErrorMessage(), line)));
-        //want to get all error lines in meta file block_0, no breaking loop
-      } else {
-        meta.metaEntries.put(entry[0].trim(), entry[1].trim());
-      }
     }
 
-    if (!meta.metaEntries.containsKey(ENTRY_DEFINITIONS.getName())) {
-      meta.errors.add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(
-              Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage())));
+    @Override
+    public boolean isValid() {
+        return errors.isEmpty();
     }
-    return meta;
-  }
 
-  @Override  public boolean isValid(){
-    return errors.isEmpty();
-  }
-
-  @Override
-  public List<ErrorMessage> getErrors() {
-    return ImmutableList.copyOf(errors);
-  }
-
-
-  @Override
-  public Map<String, String> getMetaEntries() {
-    if (!isValid()){
-      return Collections.emptyMap();
+    @Override
+    public List<ErrorMessage> getErrors() {
+        return ImmutableList.copyOf(errors);
     }
-    return ImmutableMap.copyOf(metaEntries);
-  }
 
-  @Override
-  public boolean hasEntry(final String entry) {
-    return metaEntries.containsKey(entry);
+    @Override
+    public Map<String, String> getMetaEntries() {
+        if (!isValid()) {
+            return Collections.emptyMap();
+        }
+        return ImmutableMap.copyOf(metaEntries);
+    }
 
-  }
+    @Override
+    public boolean hasEntry(final String entry) {
+        return metaEntries.containsKey(entry);
+    }
 
-  @Override
-  public Optional<String> getEntry(final ToscaMetaEntry entry) {
-    return Optional.ofNullable(metaEntries.get(entry.getName()));
-  }
+    @Override
+    public Optional<String> getEntry(final ToscaMetaEntry entry) {
+        return Optional.ofNullable(metaEntries.get(entry.getName()));
+    }
 }
-

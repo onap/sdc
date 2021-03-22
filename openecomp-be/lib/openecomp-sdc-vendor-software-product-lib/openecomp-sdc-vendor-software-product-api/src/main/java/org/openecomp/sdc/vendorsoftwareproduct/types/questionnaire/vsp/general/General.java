@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general;
 
 import lombok.Getter;
@@ -33,5 +32,4 @@ public class General {
     private Availability availability;
     private RegionsData regionsData;
     private StorageDataReplication storageDataReplication;
-
 }

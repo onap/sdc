@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DERIVED_FROM;
@@ -46,17 +45,12 @@ public class PnfdNodeTypeBlockParser extends AbstractPnfdBlockParser {
         if (customNodeTypeMap.isEmpty()) {
             return Collections.emptySet();
         }
-
-        final String nodeNamePrefix =
-            transformation.getPropertyValue(TransformationPropertyType.NODE_NAME_PREFIX, String.class)
-                .orElse("");
-
-        return customNodeTypeMap.entrySet().parallelStream()
-            .map(nodeEntry -> {
-                final Map<String, Object> map = new HashMap<>();
-                map.put(nodeNamePrefix.concat(nodeEntry.getKey()), nodeEntry.getValue());
-                return map;
-            }).collect(Collectors.toSet());
+        final String nodeNamePrefix = transformation.getPropertyValue(TransformationPropertyType.NODE_NAME_PREFIX, String.class).orElse("");
+        return customNodeTypeMap.entrySet().parallelStream().map(nodeEntry -> {
+            final Map<String, Object> map = new HashMap<>();
+            map.put(nodeNamePrefix.concat(nodeEntry.getKey()), nodeEntry.getValue());
+            return map;
+        }).collect(Collectors.toSet());
     }
 
     @Override
@@ -74,8 +68,7 @@ public class PnfdNodeTypeBlockParser extends AbstractPnfdBlockParser {
         if (queryValue == null) {
             PnfdConversionStrategy pnfdConversionStrategy = conversionDefinition.getPnfdConversionStrategy();
             final Optional convertedAttribute = pnfdConversionStrategy
-                .convert(DERIVED_FROM.getElementName()
-                    .equalsIgnoreCase(attribute) ? attributeValueToBeConverted : attributeValueToConvert);
+                .convert(DERIVED_FROM.getElementName().equalsIgnoreCase(attribute) ? attributeValueToBeConverted : attributeValueToConvert);
             if (convertedAttribute.isPresent()) {
                 parsedNodeTemplate.put(conversionDefinition.getToAttributeName(), convertedAttribute.get());
             }
@@ -90,5 +83,4 @@ public class PnfdNodeTypeBlockParser extends AbstractPnfdBlockParser {
             DataModelUtil.addNodeType(templateTo, blockName, nodeTypeYamlParser);
         }
     }
-
 }

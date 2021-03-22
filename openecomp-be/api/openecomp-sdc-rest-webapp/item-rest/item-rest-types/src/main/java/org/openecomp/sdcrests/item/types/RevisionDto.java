@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,47 +17,46 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.item.types;
 
 import java.util.Date;
 
 public class RevisionDto {
-  private String id;
-  private String message;
-  private Date time;
-  private String user;
 
-  public String getId() {
-    return id;
-  }
+    private String id;
+    private String message;
+    private Date time;
+    private String user;
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setTime(Date time) {
-    this.time = time;
-  }
+    public String getMessage() {
+        return message;
+    }
 
-  public String getMessage() {
-    return message;
-  }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-  public Date getTime() {
-    return time;
-  }
+    public Date getTime() {
+        return time;
+    }
 
-  public String getUser() {
-    return user;
-  }
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public String getUser() {
+        return user;
+    }
 
+    public void setUser(String user) {
+        this.user = user;
+    }
 }

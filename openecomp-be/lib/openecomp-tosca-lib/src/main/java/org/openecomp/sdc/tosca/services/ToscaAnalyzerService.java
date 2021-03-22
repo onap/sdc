@@ -13,78 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.services;
-
-import org.onap.sdc.tosca.datatypes.model.*;
-import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
-import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
+import org.onap.sdc.tosca.datatypes.model.DefinitionOfDataType;
+import org.onap.sdc.tosca.datatypes.model.InterfaceDefinitionType;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.PropertyDefinition;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
+import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 public interface ToscaAnalyzerService {
 
     /*
         node template with type equal to node type or derived from node type
          */
-    Map<String, NodeTemplate> getNodeTemplatesByType(ServiceTemplate serviceTemplate, String nodeType,
-                                                            ToscaServiceModel toscaServiceModel);
+    Map<String, NodeTemplate> getNodeTemplatesByType(ServiceTemplate serviceTemplate, String nodeType, ToscaServiceModel toscaServiceModel);
 
     Optional<NodeType> fetchNodeType(String nodeTypeKey, Collection<ServiceTemplate> serviceTemplates);
 
-    boolean isTypeOf(NodeTemplate nodeTemplate, String nodeType, ServiceTemplate serviceTemplate,
-                            ToscaServiceModel toscaServiceModel);
+    boolean isTypeOf(NodeTemplate nodeTemplate, String nodeType, ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel);
 
     boolean isTypeOf(InterfaceDefinitionType interfaceDefinition, String interfaceType, ServiceTemplate serviceTemplate,
-                            ToscaServiceModel toscaServiceModel);
+                     ToscaServiceModel toscaServiceModel);
 
-    boolean isTypeOf(DefinitionOfDataType parameterDefinition, String dataType, ServiceTemplate serviceTemplate,
-                            ToscaServiceModel toscaServiceModel);
+    boolean isTypeOf(DefinitionOfDataType parameterDefinition, String dataType, ServiceTemplate serviceTemplate, ToscaServiceModel toscaServiceModel);
 
     boolean isTypeOf(CapabilityDefinition capabilityDefinition, String capabilityType, ServiceTemplate serviceTemplate,
-                            ToscaServiceModel toscaServiceModel);
+                     ToscaServiceModel toscaServiceModel);
 
     List<RequirementAssignment> getRequirements(NodeTemplate nodeTemplate, String requirementId);
 
     Optional<NodeTemplate> getNodeTemplateById(ServiceTemplate serviceTemplate, String nodeTemplateId);
 
-    Optional<String> getSubstituteServiceTemplateName(String substituteNodeTemplateId,
-                                                             NodeTemplate substitutableNodeTemplate);
+    Optional<String> getSubstituteServiceTemplateName(String substituteNodeTemplateId, NodeTemplate substitutableNodeTemplate);
 
     Map<String, NodeTemplate> getSubstitutableNodeTemplates(ServiceTemplate serviceTemplate);
 
     Optional<Map.Entry<String, NodeTemplate>> getSubstitutionMappedNodeTemplateByExposedReq(String substituteServiceTemplateFileName,
-                                                                                                   ServiceTemplate substituteServiceTemplate,
-                                                                                                   String requirementId);
+                                                                                            ServiceTemplate substituteServiceTemplate,
+                                                                                            String requirementId);
 
     /*
         match only for the input which is not null
          */
-    boolean isDesiredRequirementAssignment(RequirementAssignment requirementAssignment, String capability, String node,
-                                                  String relationship);
+    boolean isDesiredRequirementAssignment(RequirementAssignment requirementAssignment, String capability, String node, String relationship);
 
-    ToscaFlatData getFlatEntity(ToscaElementTypes elementType, String type, ServiceTemplate serviceTemplate,
-                                       ToscaServiceModel toscaModel);
+    ToscaFlatData getFlatEntity(ToscaElementTypes elementType, String type, ServiceTemplate serviceTemplate, ToscaServiceModel toscaModel);
 
     boolean isSubstitutableNodeTemplate(NodeTemplate nodeTemplate);
 
-    NodeType createInitSubstitutionNodeType(ServiceTemplate substitutionServiceTemplate,
-                                                   String nodeTypeDerivedFromValue);
+    NodeType createInitSubstitutionNodeType(ServiceTemplate substitutionServiceTemplate, String nodeTypeDerivedFromValue);
 
-    boolean isRequirementExistInNodeTemplate(NodeTemplate nodeTemplate, String requirementId,
-                                                    RequirementAssignment requirementAssignment);
+    boolean isRequirementExistInNodeTemplate(NodeTemplate nodeTemplate, String requirementId, RequirementAssignment requirementAssignment);
 
     Map<String, PropertyDefinition> manageSubstitutionNodeTypeProperties(ServiceTemplate substitutionServiceTemplate);
 
     Map<String, CapabilityDefinition> calculateExposedCapabilities(Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
-                                                                          Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinitionMap);
+                                                                   Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinitionMap);
 
     List<Map<String, RequirementDefinition>> calculateExposedRequirements(List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
-                                                                                 Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment);
+                                                                          Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment);
 
     ToscaServiceModel loadToscaCsarPackage(byte[] toscaCsarPackage);
 }

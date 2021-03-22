@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.session;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
-public abstract class SessionContextProviderFactory
-        extends AbstractComponentFactory<SessionContextProvider> {
+public abstract class SessionContextProviderFactory extends AbstractComponentFactory<SessionContextProvider> {
 
     public static SessionContextProviderFactory getInstance() {
         return AbstractFactory.getInstance(SessionContextProviderFactory.class);

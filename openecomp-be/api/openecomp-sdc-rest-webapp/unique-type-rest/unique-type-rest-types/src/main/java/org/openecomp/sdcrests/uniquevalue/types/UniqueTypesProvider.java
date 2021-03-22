@@ -18,12 +18,10 @@ package org.openecomp.sdcrests.uniquevalue.types;
 import java.util.Map;
 
 /**
- * The unique value service exposes APIs to list unique types and check whether a value is
- * already taken.
- * The modules which uses the unique value logic and would like to enable these APIs must
- * implement this class.
+ * The unique value service exposes APIs to list unique types and check whether a value is already taken. The modules which uses the unique value
+ * logic and would like to enable these APIs must implement this class.
  */
 public interface UniqueTypesProvider {
 
-  Map<String, String> listUniqueTypes();
+    Map<String, String> listUniqueTypes();
 }

@@ -17,13 +17,13 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 public enum ManifestTokenType {
+    // @formatter:off
     ALGORITHM("Algorithm"),
     ATTRIBUTE_VALUE_SEPARATOR(":"),
     CMS_BEGIN("-----BEGIN CMS-----"),
@@ -46,7 +46,7 @@ public enum ManifestTokenType {
     SIGNATURE("Signature"),
     CERTIFICATE("Certificate"),
     COMPATIBLE_SPECIFICATION_VERSIONS("compatible_specification_versions");
-
+    // @formatter:on
 
     private final String token;
 
@@ -54,12 +54,12 @@ public enum ManifestTokenType {
         this.token = token;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public static Optional<ManifestTokenType> parse(final String token) {
         return Arrays.stream(values()).filter(it -> it.getToken() != null && it.getToken().equals(token)).findFirst();
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public boolean isMetadataEntry() {

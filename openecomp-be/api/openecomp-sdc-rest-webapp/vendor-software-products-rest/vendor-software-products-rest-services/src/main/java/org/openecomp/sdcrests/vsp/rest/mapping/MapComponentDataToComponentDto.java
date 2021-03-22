@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
@@ -21,11 +20,11 @@ import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDto;
 
 public class MapComponentDataToComponentDto extends MappingBase<ComponentData, ComponentDto> {
-  @Override
-  public void doMapping(ComponentData source, ComponentDto target) {
-    target.setName(source.getName());
-    target.setDisplayName(
-        source.getDisplayName() == null ? source.getName() : source.getDisplayName());
-    target.setDescription(source.getDescription());
-  }
+
+    @Override
+    public void doMapping(ComponentData source, ComponentDto target) {
+        target.setName(source.getName());
+        target.setDisplayName(source.getDisplayName() == null ? source.getName() : source.getDisplayName());
+        target.setDescription(source.getDescription());
+    }
 }

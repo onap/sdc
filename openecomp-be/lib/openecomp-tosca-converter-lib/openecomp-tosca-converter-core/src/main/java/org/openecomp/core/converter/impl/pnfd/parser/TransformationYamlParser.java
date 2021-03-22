@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import static org.openecomp.core.converter.pnfd.model.PnfTransformationToken.CONVERSIONS;
@@ -59,14 +58,13 @@ public class TransformationYamlParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransformationYamlParser.class);
 
     private TransformationYamlParser() {
-
     }
 
     /**
      * Parses the given YAML object to a {@link Transformation} instance.
-     * @param transformationYaml      the YAML object representing a transformation
-     * @return
-     *  A new instance of {@link Transformation}.
+     *
+     * @param transformationYaml the YAML object representing a transformation
+     * @return A new instance of {@link Transformation}.
      */
     public static Optional<Transformation> parse(final Map<String, Object> transformationYaml) {
         final Transformation transformation = new Transformation();
@@ -77,7 +75,6 @@ public class TransformationYamlParser {
         transformation.setName(name.orElse(null));
         transformation.setDescription(parseStringAttribute(DESCRIPTION.getName(), transformationYaml).orElse(null));
         transformation.setPropertySet(readProperties(transformationYaml));
-
         final String block = parseStringAttribute(TRANSFORMATION_FOR.getName(), transformationYaml).orElse(null);
         final Optional<TransformationBlock> transformationBlockOptional = TransformationBlock.parse(block);
         if (transformationBlockOptional.isPresent()) {
@@ -85,14 +82,11 @@ public class TransformationYamlParser {
             transformation.setBlock(transformationBlock);
             parseTransformationBlock(transformationBlock, transformation, transformationYaml);
         } else {
-            LOGGER.warn("Invalid '{}' value in transformation '{}'", TRANSFORMATION_FOR.getName(),
-                transformationYaml.toString());
+            LOGGER.warn("Invalid '{}' value in transformation '{}'", TRANSFORMATION_FOR.getName(), transformationYaml.toString());
         }
-
         if (transformation.isValid()) {
             return Optional.of(transformation);
         }
-
         return Optional.empty();
     }
 
@@ -101,14 +95,10 @@ public class TransformationYamlParser {
         if (MapUtils.isEmpty(propertyMap)) {
             return Collections.emptySet();
         }
-
         final Set<TransformationProperty> propertySet = new HashSet<>();
-
         propertyMap.forEach((key, value) -> {
-            final TransformationPropertyType transformationPropertyType = TransformationPropertyType.parse(key)
-                .orElse(null);
-
-            if(transformationPropertyType != null) {
+            final TransformationPropertyType transformationPropertyType = TransformationPropertyType.parse(key).orElse(null);
+            if (transformationPropertyType != null) {
                 if (value instanceof String) {
                     propertySet.add(new TransformationProperty<>(transformationPropertyType, (String) value));
                 } else if (value instanceof Boolean) {
@@ -120,72 +110,57 @@ public class TransformationYamlParser {
                 }
             }
         });
-
         return propertySet;
     }
 
-    private static void parseTransformationBlock(final TransformationBlock transformationBlock,
-                                                 final Transformation transformationReference,
+    private static void parseTransformationBlock(final TransformationBlock transformationBlock, final Transformation transformationReference,
                                                  final Map<String, Object> transformationYaml) {
         if (transformationBlock == TransformationBlock.CUSTOM_NODE_TYPE) {
             parseCustomNodeTypeBlock(transformationReference, transformationYaml);
             return;
         }
-
-        ConversionQueryYamlParser.parse(transformationYaml.get(QUERY.getName()))
-            .ifPresent(transformationReference::setConversionQuery);
-
+        ConversionQueryYamlParser.parse(transformationYaml.get(QUERY.getName())).ifPresent(transformationReference::setConversionQuery);
         transformationReference.setConversionDefinitionList(parseConversions(transformationYaml));
     }
 
-    private static void parseCustomNodeTypeBlock(final Transformation transformationReference,
-                                                 final Map<String, Object> transformationYaml) {
+    private static void parseCustomNodeTypeBlock(final Transformation transformationReference, final Map<String, Object> transformationYaml) {
         final Object fromAttribute = transformationYaml.get(FROM.getName());
         if (!(fromAttribute instanceof String)) {
             return;
         }
         final String from = parseStringAttribute(FROM.getName(), transformationYaml).orElse(null);
-
         final Object toAttribute = transformationYaml.get(TO.getName());
         if (!(toAttribute instanceof String)) {
             return;
         }
         final String to = parseStringAttribute(TO.getName(), transformationYaml).orElse(null);
-
         final HashMap<String, String> transformationQuery = new HashMap<>();
         transformationQuery.put(ToscaTagNamesEnum.DERIVED_FROM.getElementName(), from);
         transformationReference.setConversionQuery(new ConversionQuery(transformationQuery));
-
         final List<ConversionDefinition> conversionDefinitionList = new ArrayList<>();
         final HashMap<String, String> conversionDefinitionQuery = new HashMap<>();
         conversionDefinitionQuery.put(ToscaTagNamesEnum.TYPE.getElementName(), null);
-        ConversionDefinition conversionDefinition = new ConversionDefinition(new ConversionQuery(conversionDefinitionQuery)
-            , ToscaTagNamesEnum.TYPE.getElementName(), new ReplaceConversionStrategy(from, to));
+        ConversionDefinition conversionDefinition = new ConversionDefinition(new ConversionQuery(conversionDefinitionQuery),
+            ToscaTagNamesEnum.TYPE.getElementName(), new ReplaceConversionStrategy(from, to));
         conversionDefinitionList.add(conversionDefinition);
         transformationReference.setConversionDefinitionList(conversionDefinitionList);
     }
 
     private static List<ConversionDefinition> parseConversions(final Map<String, Object> conversionYaml) {
         final List<Object> conversionList = (List<Object>) conversionYaml.get(CONVERSIONS.getName());
-
         if (CollectionUtils.isEmpty(conversionList)) {
             return Collections.emptyList();
         }
-
-        return conversionList.stream()
-            .map(conversion -> ConversionDefinitionYamlParser.parse((Map<String, Object>) conversion).orElse(null))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        return conversionList.stream().map(conversion -> ConversionDefinitionYamlParser.parse((Map<String, Object>) conversion).orElse(null))
+            .filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private static Optional<String> parseStringAttribute(final String attribute, final Map<String, Object> transformationYaml) {
         try {
             return Optional.of((String) transformationYaml.get(attribute));
         } catch (final Exception e) {
-            LOGGER.warn("Could not parse the String '{}' in transformation '{}'",
-                attribute, transformationYaml.toString(), e);
+            LOGGER.warn("Could not parse the String '{}' in transformation '{}'", attribute, transformationYaml.toString(), e);
             return Optional.empty();
         }
     }
-
 }

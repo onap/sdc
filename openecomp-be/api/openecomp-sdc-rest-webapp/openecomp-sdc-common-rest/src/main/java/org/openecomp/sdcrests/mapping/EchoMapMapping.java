@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.mapping;
 
 import java.util.Map;
@@ -23,8 +22,8 @@ import java.util.Map;
  */
 public class EchoMapMapping extends MappingBase<Map<String, String>, Map<String, String>> {
 
-  @Override
-  public void doMapping(Map<String, String> source, Map<String, String> target) {
-    target.putAll(source);
-  }
+    @Override
+    public void doMapping(Map<String, String> source, Map<String, String> target) {
+        target.putAll(source);
+    }
 }

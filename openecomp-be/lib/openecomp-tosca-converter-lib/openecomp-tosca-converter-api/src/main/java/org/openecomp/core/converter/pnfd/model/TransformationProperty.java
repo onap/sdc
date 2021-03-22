@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import lombok.AllArgsConstructor;
@@ -34,7 +33,6 @@ import lombok.Getter;
 public class TransformationProperty<T> {
 
     private TransformationPropertyType type;
-
     @EqualsAndHashCode.Exclude
     private T value;
 }

@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.heat.services;
 
-
 public class HeatConstants {
+
     public static final String GET_ATTR_FROM_RESOURCE_GROUP_PREFIX = "resource.";
     public static final String RESOURCE_GROUP_INDEX_VAR_DEFAULT_VALUE = "%index%";
-
     public static final String INDEX_PROPERTY_NAME = "index_var";
     public static final String SERVICE_SCALING_PROPERTY_NAME = "service_scaling";
     public static final String INSTANCE_UUID_PROPERTY_NAME = "instance_uuid";
@@ -32,13 +30,11 @@ public class HeatConstants {
     public static final String VIRTUAL_NETWORK_PROPERTY_NAME = "virtual_network";
     public static final String BLOCK_DEVICE_MAPPING = "block_device_mapping";
     public static final String BLOCK_DEVICE_MAPPING_V2 = "block_device_mapping_v2";
-    public static final String VMI_SUB_INTERFACE_VLAN_TAG_PROPERTY_NAME
-            = "virtual_machine_interface_properties_sub_interface_vlan_tag";
+    public static final String VMI_SUB_INTERFACE_VLAN_TAG_PROPERTY_NAME = "virtual_machine_interface_properties_sub_interface_vlan_tag";
     public static final String VMI_PROPERTIES_PROPERTY_NAME = "virtual_machine_interface_properties";
     public static final String VMI_REFS_PROPERTY_NAME = "virtual_machine_interface_refs";
     public static final String VMI_MAC_ADDRESSES = "virtual_machine_interface_mac_addresses";
-    public static final String VMI_MAC_ADDRESSES_MAC_ADDRESSES =
-            "virtual_machine_interface_mac_addresses#virtual_machine_interface_mac_addresses_mac_address";
+    public static final String VMI_MAC_ADDRESSES_MAC_ADDRESSES = "virtual_machine_interface_mac_addresses#virtual_machine_interface_mac_addresses_mac_address";
     public static final String VIRTUAL_NETWORK_REFS_PROPERTY_NAME = "virtual_network_refs";
     public static final String READ_ONLY_PROPERTY_NAME = "read_only";
     public static final String VOL_ID_PROPERTY_NAME = "volume_id";
@@ -48,8 +44,7 @@ public class HeatConstants {
     public static final String ORDERED_INTERFACES_PROPERTY_NAME = "ordered_interfaces";
     public static final String SHARED_IP_LIST_PROPERTY_NAME = "shared_ip_list";
     public static final String STATIC_ROUTES_LIST_PROPERTY_NAME = "static_routes_list";
-    public static final String SERVICE_INTERFCAE_TYPE_LIST_PROPERTY_NAME =
-            "service_interface_type_list";
+    public static final String SERVICE_INTERFCAE_TYPE_LIST_PROPERTY_NAME = "service_interface_type_list";
     public static final String PORT_SECURITY_ENABLED_PROPERTY_NAME = "port_security_enabled";
     public static final String SHARED_PROPERTY_NAME = "shared";
     public static final String ADMIN_STATE_UP_PROPERTY_NAME = "admin_state_up";
@@ -70,5 +65,4 @@ public class HeatConstants {
     private HeatConstants() {
         //Hide the implicit constructor
     }
-
 }

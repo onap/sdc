@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat;
 
 import java.util.ArrayList;
@@ -35,5 +34,4 @@ public class FilesDataStructure {
     private List<String> unassigned = new ArrayList<>();
     private List<String> artifacts = new ArrayList<>();
     private List<String> nested = new ArrayList<>();
-
 }

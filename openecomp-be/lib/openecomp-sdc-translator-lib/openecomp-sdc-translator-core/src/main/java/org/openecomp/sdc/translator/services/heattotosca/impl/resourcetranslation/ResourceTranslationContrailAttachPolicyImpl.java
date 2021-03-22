@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import static org.openecomp.sdc.heat.services.HeatConstants.NETWORK_PROPERTY_NAME;
+import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_POLICY_NETWORK_PROPERTY;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_POLICY_PROPERTY_GET_ATTR;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_POLICY_RESOURCE;
+
+import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -30,12 +36,6 @@ import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatoryPropertyErrorBuilder;
 
-import java.util.Optional;
-
-import static org.openecomp.sdc.heat.services.HeatConstants.NETWORK_PROPERTY_NAME;
-import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.*;
-
 public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTranslationBase {
 
     protected static Logger logger = LoggerFactory.getLogger(ResourceTranslationContrailAttachPolicyImpl.class);
@@ -47,11 +47,10 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
         if (translatedNetworkResourceId == null) {
             return;
         }
-
         NodeTemplate policyNodeTemplate = getTranslatedPolicyNodeTemplate(translateTo, heatFileName);
         if (policyNodeTemplate != null) {
             DataModelUtil.addRequirementAssignment(policyNodeTemplate, ToscaConstants.NETWORK_REQUIREMENT_ID,
-                    createAttachmentRequirementAssignment(translatedNetworkResourceId));
+                createAttachmentRequirementAssignment(translatedNetworkResourceId));
         }
     }
 
@@ -61,35 +60,27 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
     }
 
     @Override
-    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(
-            TranslateTo translateTo) {
+    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(TranslateTo translateTo) {
         return Optional.empty();
     }
 
-    private NodeTemplate getTranslatedPolicyNodeTemplate(TranslateTo translateTo,
-                                                         String heatFileName) {
+    private NodeTemplate getTranslatedPolicyNodeTemplate(TranslateTo translateTo, String heatFileName) {
         AttachedResourceId attachedPolicyResourceId = extractAttachedResourceIdHandleMissing(translateTo, "policy");
         NodeTemplate policyNodeTemplate = new NodeTemplate();
-        Optional<String> policyResourceId =
-                HeatToToscaUtil.getContrailAttachedHeatResourceId(attachedPolicyResourceId);
+        Optional<String> policyResourceId = HeatToToscaUtil.getContrailAttachedHeatResourceId(attachedPolicyResourceId);
         if (policyResourceId.isPresent()) {
             policyNodeTemplate = getPolicyNodeTemplate(translateTo, heatFileName, policyResourceId.get());
         } else {
-            logger.warn(LOG_UNSUPPORTED_POLICY_PROPERTY_GET_ATTR, translateTo.getResourceId(),
-                    translateTo.getResource().getType());
+            logger.warn(LOG_UNSUPPORTED_POLICY_PROPERTY_GET_ATTR, translateTo.getResourceId(), translateTo.getResource().getType());
         }
         return policyNodeTemplate;
     }
 
-    private NodeTemplate getPolicyNodeTemplate(TranslateTo translateTo, String heatFileName,
-                                               String policyResourceId) {
-        Resource policyResource = HeatToToscaUtil
-                .getResource(translateTo.getHeatOrchestrationTemplate(), policyResourceId, heatFileName);
-        Optional<String> translatedPolicyResourceId =
-                ResourceTranslationFactory.getInstance(policyResource)
-                        .translateResource(heatFileName, translateTo.getServiceTemplate(),
-                                translateTo.getHeatOrchestrationTemplate(), policyResource, policyResourceId,
-                                translateTo.getContext());
+    private NodeTemplate getPolicyNodeTemplate(TranslateTo translateTo, String heatFileName, String policyResourceId) {
+        Resource policyResource = HeatToToscaUtil.getResource(translateTo.getHeatOrchestrationTemplate(), policyResourceId, heatFileName);
+        Optional<String> translatedPolicyResourceId = ResourceTranslationFactory.getInstance(policyResource)
+            .translateResource(heatFileName, translateTo.getServiceTemplate(), translateTo.getHeatOrchestrationTemplate(), policyResource,
+                policyResourceId, translateTo.getContext());
         if (!translatedPolicyResourceId.isPresent()) {
             logger.warn(LOG_UNSUPPORTED_POLICY_RESOURCE, translateTo.getResourceId(), translateTo.getResource().getType());
             return null;
@@ -98,24 +89,18 @@ public class ResourceTranslationContrailAttachPolicyImpl extends ResourceTransla
     }
 
     private String getTranslatedNetworkResourceId(TranslateTo translateTo) {
-        AttachedResourceId attachedNetworkResourceId = extractAttachedResourceIdHandleMissing(translateTo,
-                NETWORK_PROPERTY_NAME);
-
+        AttachedResourceId attachedNetworkResourceId = extractAttachedResourceIdHandleMissing(translateTo, NETWORK_PROPERTY_NAME);
         String translatedNetworkResourceId = null;
         if (attachedNetworkResourceId.isGetResource()) {
             translatedNetworkResourceId = (String) attachedNetworkResourceId.getTranslatedId();
         } else {
-            logger.warn(LOG_UNSUPPORTED_POLICY_NETWORK_PROPERTY, translateTo.getResourceId(),
-                    translateTo.getResource().getType());
+            logger.warn(LOG_UNSUPPORTED_POLICY_NETWORK_PROPERTY, translateTo.getResourceId(), translateTo.getResource().getType());
         }
         return translatedNetworkResourceId;
     }
 
-    private AttachedResourceId extractAttachedResourceIdHandleMissing(
-            TranslateTo translateTo, String propertyName) {
-        Optional<AttachedResourceId> attachedResourceId =
-                HeatToToscaUtil.extractAttachedResourceId(translateTo, propertyName);
-
+    private AttachedResourceId extractAttachedResourceIdHandleMissing(TranslateTo translateTo, String propertyName) {
+        Optional<AttachedResourceId> attachedResourceId = HeatToToscaUtil.extractAttachedResourceId(translateTo, propertyName);
         if (!attachedResourceId.isPresent()) {
             throw new CoreException(new MissingMandatoryPropertyErrorBuilder(propertyName).build());
         }

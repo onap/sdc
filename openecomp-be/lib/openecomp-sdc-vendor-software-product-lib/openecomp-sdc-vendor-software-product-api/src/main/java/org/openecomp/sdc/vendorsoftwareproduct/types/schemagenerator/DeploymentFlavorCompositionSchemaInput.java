@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator;
-
 
 import java.util.Collection;
 import lombok.Getter;
@@ -35,5 +33,4 @@ public class DeploymentFlavorCompositionSchemaInput implements SchemaTemplateInp
     private boolean manual;
     private DeploymentFlavor deploymentFlavor;
     private Collection<String> featureGroupIds;
-
 }

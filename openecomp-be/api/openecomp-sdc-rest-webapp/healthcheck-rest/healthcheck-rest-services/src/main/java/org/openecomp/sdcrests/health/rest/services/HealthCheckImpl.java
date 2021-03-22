@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.health.rest.services;
 
+import java.util.Arrays;
+import java.util.Collection;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.health.HealthCheckManager;
@@ -32,60 +35,45 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.Collection;
-
 @Named
 @Service("healthCheck")
 @Scope(value = "prototype")
 public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.HealthCheck {
 
-  private HealthCheckManager healthCheckManager;
-  private static final Logger logger = LoggerFactory.getLogger(HealthCheckImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HealthCheckImpl.class);
+    private HealthCheckManager healthCheckManager;
 
-  public HealthCheckImpl() {
-    try {
-      healthCheckManager = HealthCheckManagerFactory.getInstance().createInterface();
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
+    public HealthCheckImpl() {
+        try {
+            healthCheckManager = HealthCheckManagerFactory.getInstance().createInterface();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
-  }
 
-  @Override
-  public Response checkHealth() {
-    HealthCheckResult healthCheckResult = new HealthCheckResult();
-
-    SessionContextProviderFactory.getInstance().createInterface().create("public", "dox");
-
-    try {
-      Collection<HealthInfo> healthInfos = healthCheckManager.checkHealth();
-      healthCheckResult.setComponentsInfo(healthInfos);
-      boolean someIsDown = healthInfos.stream()
-          .anyMatch(healthInfo -> healthInfo.getHealthCheckStatus().equals(HealthCheckStatus.DOWN));
-      healthInfos.stream()
-          .filter(healthInfo -> healthInfo.getHealthCheckComponent()
-              .equals(org.openecomp.sdc.health.data.MonitoredModules.BE))
-          .findFirst()
-          .ifPresent(healthInfo -> healthCheckResult.setSdcVersion(healthInfo.getVersion()));
-      if (someIsDown) {
-        Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
-        return responseBuilder.entity(healthCheckResult).status(500).build();
-      }
-      return Response.ok(healthCheckResult).build();
-    } catch (Exception ex) {
-      logger.error("Health check failed", ex);
-      Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
-      HealthInfo healthInfo = new HealthInfo(org.openecomp.sdc.health.data.MonitoredModules.BE,
-          HealthCheckStatus.DOWN,
-          "", "Failed to perform Health Check");
-      Collection<HealthInfo> healthInfos = Arrays.asList(healthInfo);
-      healthCheckResult.setComponentsInfo(healthInfos);
-      return responseBuilder.entity(healthCheckResult).status(500).build();
+    @Override
+    public Response checkHealth() {
+        HealthCheckResult healthCheckResult = new HealthCheckResult();
+        SessionContextProviderFactory.getInstance().createInterface().create("public", "dox");
+        try {
+            Collection<HealthInfo> healthInfos = healthCheckManager.checkHealth();
+            healthCheckResult.setComponentsInfo(healthInfos);
+            boolean someIsDown = healthInfos.stream().anyMatch(healthInfo -> healthInfo.getHealthCheckStatus().equals(HealthCheckStatus.DOWN));
+            healthInfos.stream().filter(healthInfo -> healthInfo.getHealthCheckComponent().equals(org.openecomp.sdc.health.data.MonitoredModules.BE))
+                .findFirst().ifPresent(healthInfo -> healthCheckResult.setSdcVersion(healthInfo.getVersion()));
+            if (someIsDown) {
+                Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
+                return responseBuilder.entity(healthCheckResult).status(500).build();
+            }
+            return Response.ok(healthCheckResult).build();
+        } catch (Exception ex) {
+            logger.error("Health check failed", ex);
+            Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
+            HealthInfo healthInfo = new HealthInfo(org.openecomp.sdc.health.data.MonitoredModules.BE, HealthCheckStatus.DOWN, "",
+                "Failed to perform Health Check");
+            Collection<HealthInfo> healthInfos = Arrays.asList(healthInfo);
+            healthCheckResult.setComponentsInfo(healthInfos);
+            return responseBuilder.entity(healthCheckResult).status(500).build();
+        }
     }
-  }
-
-
 }
-

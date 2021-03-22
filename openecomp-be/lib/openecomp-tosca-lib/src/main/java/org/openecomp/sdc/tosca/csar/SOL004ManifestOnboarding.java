@@ -18,7 +18,6 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
@@ -27,16 +26,14 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA_L
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_VNF_METADATA_LIMIT_VERSION_3;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.COMPATIBLE_SPECIFICATION_VERSIONS;
 
+import com.vdurmont.semver4j.Semver;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.common.errors.Messages;
-
-import com.vdurmont.semver4j.Semver;
 
 /**
  * Processes a SOL004 Manifest.
@@ -86,7 +83,6 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
                 getCurrentLine().ifPresent(line -> reportInvalidLine());
                 break;
             }
-
             switch (manifestTokenType) {
                 case CMS_BEGIN:
                     readCmsSignature();
@@ -158,7 +154,6 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             if (manifestTokenType != ManifestTokenType.SOURCE) {
                 break;
             }
-
             final String value = readCurrentEntryValue().orElse(null);
             if (!StringUtils.isEmpty(value)) {
                 nonManoSourceList.add(value);
@@ -166,7 +161,6 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
                 reportError(Messages.MANIFEST_EMPTY_NON_MANO_SOURCE);
                 break;
             }
-
             readNextNonEmptyLine();
         }
         return nonManoSourceList;
@@ -182,10 +176,9 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             return;
         }
         final StringBuilder cmsSignatureBuilder = new StringBuilder();
-
         cmsSignatureBuilder.append(currentLine).append("\n");
         Optional<String> currentLine = readNextNonEmptyLine();
-        if(!getCurrentLine().isPresent()) {
+        if (!getCurrentLine().isPresent()) {
             return;
         }
         while (currentLine.isPresent()) {
@@ -196,12 +189,10 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             cmsSignatureBuilder.append(currentLine.get()).append("\n");
             currentLine = readNextNonEmptyLine();
         }
-
         if (currentLine.isPresent()) {
             cmsSignature = cmsSignatureBuilder.toString();
             readNextNonEmptyLine();
         }
-
         if (getCurrentLine().isPresent()) {
             reportError(Messages.MANIFEST_SIGNATURE_LAST_ENTRY);
             continueToProcess = false;
@@ -237,32 +228,28 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             reportError(Messages.MANIFEST_NO_METADATA);
             return false;
         }
-        String key = metadata.keySet().stream().filter(k -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(k))
-                .findFirst().orElse(null);
+        String key = metadata.keySet().stream().filter(k -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(k)).findFirst().orElse(null);
         final ManifestTokenType firstManifestEntryTokenType = ManifestTokenType.parse(key).orElse(null);
         if (firstManifestEntryTokenType == null) {
             reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, key);
             return false;
         }
         for (final Entry<String, String> manifestEntry : metadata.entrySet()) {
-            final ManifestTokenType manifestEntryTokenType = ManifestTokenType.parse(manifestEntry.getKey())
-                .orElse(null);
+            final ManifestTokenType manifestEntryTokenType = ManifestTokenType.parse(manifestEntry.getKey()).orElse(null);
             if (manifestEntryTokenType == null) {
                 reportError(Messages.MANIFEST_METADATA_INVALID_ENTRY1, manifestEntry.getKey());
                 return false;
             }
-            if ((firstManifestEntryTokenType.isMetadataVnfEntry() && !manifestEntryTokenType.isMetadataVnfEntry())
-                || (firstManifestEntryTokenType.isMetadataPnfEntry() && !manifestEntryTokenType.isMetadataPnfEntry())) {
+            if ((firstManifestEntryTokenType.isMetadataVnfEntry() && !manifestEntryTokenType.isMetadataVnfEntry()) || (
+                firstManifestEntryTokenType.isMetadataPnfEntry() && !manifestEntryTokenType.isMetadataPnfEntry())) {
                 reportError(Messages.MANIFEST_METADATA_UNEXPECTED_ENTRY_TYPE);
                 return false;
             }
         }
-
         if (metadata.entrySet().size() != getMaxAllowedManifestMetaEntries()) {
             reportError(Messages.MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT, getMaxAllowedManifestMetaEntries());
             return false;
         }
-
         return true;
     }
 
@@ -278,10 +265,8 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
         if (manifestTokenType != ManifestTokenType.SOURCE) {
             return;
         }
-
         final String sourceLine = currentLine.get();
         final String sourcePath = readEntryValue(sourceLine).orElse(null);
-
         if (sourcePath == null) {
             reportError(Messages.MANIFEST_EXPECTED_SOURCE_PATH);
             return;
@@ -293,13 +278,12 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
     }
 
     /**
-     * Processes entries  {@link ManifestTokenType#ALGORITHM} and {@link ManifestTokenType#HASH} of a {@link
-     * ManifestTokenType#SOURCE} entry.
+     * Processes entries  {@link ManifestTokenType#ALGORITHM} and {@link ManifestTokenType#HASH} of a {@link ManifestTokenType#SOURCE} entry.
      *
      * @param sourcePath the source path related to the algorithm entry.
      */
     private void readAlgorithmEntry(final String sourcePath) {
-        Optional<String> currentLine =  getCurrentLine();
+        Optional<String> currentLine = getCurrentLine();
         if (!currentLine.isPresent()) {
             return;
         }
@@ -319,14 +303,12 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             continueToProcess = false;
             return;
         }
-
         currentLine = readNextNonEmptyLine();
         if (!currentLine.isPresent() || detectLineEntry().orElse(null) != ManifestTokenType.HASH) {
             reportError(Messages.MANIFEST_EXPECTED_HASH_ENTRY);
             continueToProcess = false;
             return;
         }
-
         final String hashLine = currentLine.get();
         final String hash = readEntryValue(hashLine).orElse(null);
         if (hash == null) {
@@ -339,13 +321,12 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
     }
 
     /**
-     * Processes entries  {@link ManifestTokenType#SIGNATURE} and {@link ManifestTokenType#CERTIFICATE} of a {@link
-     * ManifestTokenType#SOURCE} entry.
+     * Processes entries  {@link ManifestTokenType#SIGNATURE} and {@link ManifestTokenType#CERTIFICATE} of a {@link ManifestTokenType#SOURCE} entry.
      *
      * @param sourcePath the source path related to the algorithm entry.
      */
     private void readSignatureEntry(final String sourcePath) {
-        Optional<String> currentLine =  getCurrentLine();
+        Optional<String> currentLine = getCurrentLine();
         if (!currentLine.isPresent()) {
             return;
         }
@@ -365,13 +346,11 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
             continueToProcess = false;
             return;
         }
-
         currentLine = readNextNonEmptyLine();
         if (!currentLine.isPresent() || detectLineEntry().orElse(null) != ManifestTokenType.CERTIFICATE) {
             sourceAndSignatureMap.put(sourcePath, new SignatureData(signatureFile, null));
             return;
         }
-
         final String certLine = currentLine.get();
         final String certFile = readEntryValue(certLine).orElse(null);
         if (certFile == null) {
@@ -385,23 +364,22 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
 
     private int getMaxAllowedManifestMetaEntries() {
         if (maxAllowedMetaEntries == 0) {
-            boolean isVersion3 = metadata.containsKey(COMPATIBLE_SPECIFICATION_VERSIONS.getToken())
-                && !getHighestCompatibleVersion().isLowerThan(ETSI_VERSION_2_7_1);
+            boolean isVersion3 =
+                metadata.containsKey(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()) && !getHighestCompatibleVersion().isLowerThan(ETSI_VERSION_2_7_1);
             //Both PNF and VNF share attribute COMPATIBLE_SPECIFICATION_VERSIONS
-            if (isVersion3)
-                maxAllowedMetaEntries = metadata.keySet().stream()
-                    .anyMatch(k -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(k)
-                            && isMetadataEntry(k) && ManifestTokenType.parse(k).get().isMetadataPnfEntry())
-                    ? MANIFEST_PNF_METADATA_LIMIT_VERSION_3 : MANIFEST_VNF_METADATA_LIMIT_VERSION_3;
-            else
+            if (isVersion3) {
+                maxAllowedMetaEntries = metadata.keySet().stream().anyMatch(
+                    k -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(k) && isMetadataEntry(k) && ManifestTokenType.parse(k).get()
+                        .isMetadataPnfEntry()) ? MANIFEST_PNF_METADATA_LIMIT_VERSION_3 : MANIFEST_VNF_METADATA_LIMIT_VERSION_3;
+            } else {
                 maxAllowedMetaEntries = MAX_ALLOWED_MANIFEST_META_ENTRIES;
+            }
         }
         return maxAllowedMetaEntries;
     }
 
     private Semver getHighestCompatibleVersion() {
-        return Arrays.asList(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(","))
-                .stream().map(Semver::new).max((v1, v2) -> v1.compareTo(v2))
-                .orElse(new Semver(ETSI_VERSION_2_6_1));
+        return Arrays.asList(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(",")).stream().map(Semver::new)
+            .max((v1, v2) -> v1.compareTo(v2)).orElse(new Semver(ETSI_VERSION_2_6_1));
     }
 }

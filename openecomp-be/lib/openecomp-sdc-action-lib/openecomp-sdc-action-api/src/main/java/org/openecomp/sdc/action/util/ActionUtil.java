@@ -17,24 +17,106 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.action.util;
 
+import static org.openecomp.sdc.action.ActionConstants.BEGIN_TIMESTAMP;
+import static org.openecomp.sdc.action.ActionConstants.ELAPSED_TIME;
+import static org.openecomp.sdc.action.ActionConstants.END_TIMESTAMP;
+import static org.openecomp.sdc.action.ActionConstants.ERROR_CATEGORY;
+import static org.openecomp.sdc.action.ActionConstants.ERROR_CODE;
+import static org.openecomp.sdc.action.ActionConstants.ERROR_DESCRIPTION;
+import static org.openecomp.sdc.action.ActionConstants.RESPONSE_CODE;
+import static org.openecomp.sdc.action.ActionConstants.RESPONSE_DESCRIPTION;
+import static org.openecomp.sdc.action.ActionConstants.SERVICE_METRIC_BEGIN_TIMESTAMP;
+import static org.openecomp.sdc.action.ActionConstants.STATUS_CODE;
+import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY;
+import static org.openecomp.sdc.action.ActionConstants.TARGET_SERVICE_NAME;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_ALREADY_EXISTS_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_CHECKSUM_ERROR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DELETE_READ_ONLY;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_NAME_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_PROTECTION_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_TOO_BIG_ERROR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_UPDATE_READ_ONLY;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_AUTHENTICATION_ERR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_AUTHORIZATION_ERR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_CHECKIN_ON_UNLOCKED_ENTITY;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_CHECKOUT_ON_LOCKED_ENTITY;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_CHECKOUT_ON_LOCKED_ENTITY_OTHER_USER;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_DELETE_ON_LOCKED_ENTITY_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_UNIQUE_VALUE_ERROR;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_INSTANCE_ID_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_PARAM_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_REQUEST_BODY_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_REQUEST_ID_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_SEARCH_CRITERIA;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_MULT_SEARCH_CRITERIA;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LOCKED_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_INVALID_GENERIC_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_SUBMIT_LOCKED_ENTITY_NOT_ALLOWED;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UNDO_CHECKOUT_ON_UNLOCKED_ENTITY;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_INVALID_VERSION;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE_NAME;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_ON_UNLOCKED_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ACTION_NAME_ALREADY_EXISTS;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ACTION_NAME_UPDATE_NOT_ALLOWED;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ACTION_NOT_FOUND;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ACTION_NOT_LOCKED;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ARTIFACT_ALREADY_EXISTS;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ARTIFACT_DELETE_READ_ONLY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ARTIFACT_NAME_INVALID;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ARTIFACT_NOT_FOUND;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ARTIFACT_PROTECTION_INVALID;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ARTIFACT_TOO_BIG;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.ARTIFACT_UPDATE_READ_ONLY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.CHECKIN_ON_LOCKED_ENTITY_OTHER_USER;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.CHECKIN_ON_UNLOCKED_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.CHECKOUT_ON_LOCKED_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.CHECKSUM_ERROR;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.DELETE_ARTIFACT_ON_LOCKED_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.DELETE_ON_LOCKED_ENTITY_OTHER_USER;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.INTERNAL_SERVER_ERROR;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.INVALID_REQUESTED_VERSION;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.INVALID_REQUEST_PARAM;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.INVALID_SEARCH_FILTER_CRITERIA;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.MISSING_AUTHORIZATION;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.MISSING_INSTANCE_ID_HEADER;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.MISSING_REQUEST_BODY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.MISSING_REQUEST_ID_HEADER;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.MULTIPLE_FILTER_CRITERIA_NOT_SUPPORTED;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.QUERY_FAILURE;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.SUBMIT_ON_FINAL_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.SUBMIT_ON_LOCKED_ENTITY_OTHER_USER;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.UNDO_CHECKOUT_ON_LOCKED_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.UNDO_CHECKOUT_ON_UNLOCKED_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.UPDATE_NOT_ALLOWED;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.UPDATE_ON_LOCKED_ENTITY;
+import static org.openecomp.sdc.action.types.ActionLogResponseCode.UPDATE_ON_UNLOCKED_ENTITY;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.function.LongSupplier;
 import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.action.logging.CategoryLogLevel;
 import org.openecomp.sdc.action.types.ActionLogResponseCode;
 import org.openecomp.sdc.action.types.ActionSubOperation;
 import org.slf4j.MDC;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
-import java.util.*;
-import java.util.function.LongSupplier;
-
-import static org.openecomp.sdc.action.ActionConstants.*;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
-import static org.openecomp.sdc.action.types.ActionLogResponseCode.*;
 
 public class ActionUtil {
 
@@ -43,6 +125,9 @@ public class ActionUtil {
     private static final ActionLogResponseCode defaultResponseCode = INTERNAL_SERVER_ERROR;
     private static final Map<String, ActionLogResponseCode> errorCodeMap = initErrorCodeMap();
     private static final EnumMap<CategoryLogLevel, String> errorTypeMap = initErrorTypeMap();
+
+    private ActionUtil() {
+    }
 
     private static Map<String, ActionLogResponseCode> initErrorCodeMap() {
         Map<String, ActionLogResponseCode> map = new HashMap<>();
@@ -94,9 +179,6 @@ public class ActionUtil {
         return map;
     }
 
-    private ActionUtil() {
-    }
-
     /**
      * Get Current Timestamp in UTC format.
      *
@@ -140,7 +222,6 @@ public class ActionUtil {
         if (subOperation != null) {
             MDC.put(TARGET_SERVICE_NAME, subOperation.name());
         }
-
         MDC.put(TARGET_ENTITY, targetEntity);
     }
 
@@ -157,8 +238,7 @@ public class ActionUtil {
         actionLogPostProcessor(statusCode, null, isServiceMetricLog);
     }
 
-    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
-                                              boolean isServiceMetricLog) {
+    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode, boolean isServiceMetricLog) {
         actionLogPostProcessor(statusCode, responseCode, null, isServiceMetricLog);
     }
 
@@ -170,8 +250,7 @@ public class ActionUtil {
      * @param responseDescription the response description
      * @param isServiceMetricLog  the is service metric log
      */
-    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
-                                              String responseDescription,
+    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode, String responseDescription,
                                               boolean isServiceMetricLog) {
         actionLogPostProcessor(statusCode, responseCode, responseDescription, isServiceMetricLog, System::currentTimeMillis);
     }
@@ -184,9 +263,7 @@ public class ActionUtil {
      * @param responseDescription the response description
      * @param isServiceMetricLog  the is service metric log
      */
-    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
-                                              String responseDescription,
-                                              boolean isServiceMetricLog,
+    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode, String responseDescription, boolean isServiceMetricLog,
                                               LongSupplier getCurrentTime) {
         MDC.put(STATUS_CODE, statusCode.name());
         if (responseCode != null) {
@@ -213,8 +290,7 @@ public class ActionUtil {
      * @param errorCode        Action Library exception code
      * @param errorDescription Description of the error
      */
-    public static void actionErrorLogProcessor(CategoryLogLevel errorCategory, String errorCode,
-                                               String errorDescription) {
+    public static void actionErrorLogProcessor(CategoryLogLevel errorCategory, String errorCode, String errorDescription) {
         MDC.put(ERROR_CATEGORY, errorCategory.name());
         if (errorCode != null) {
             MDC.put(ERROR_CODE, getLogResponseCode(errorCode) + (errorTypeMap.getOrDefault(errorCategory, "")));
@@ -223,8 +299,7 @@ public class ActionUtil {
     }
 
     /**
-     * Method to convert Action Library exception codes to OPENECOMP Audit codes in {@link
-     * ActionLogResponseCode} e.g: ACT1060 --> 201
+     * Method to convert Action Library exception codes to OPENECOMP Audit codes in {@link ActionLogResponseCode} e.g: ACT1060 --> 201
      *
      * @param errorCode Action library exception code
      * @return Audit log code corresponding to the Action Library exception

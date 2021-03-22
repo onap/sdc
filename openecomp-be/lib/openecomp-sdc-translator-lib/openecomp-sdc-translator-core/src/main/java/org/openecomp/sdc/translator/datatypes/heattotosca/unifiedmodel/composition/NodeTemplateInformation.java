@@ -25,32 +25,31 @@ import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
  * Created by Talio on 4/4/2017.
  */
 public class NodeTemplateInformation {
-  UnifiedCompositionEntity unifiedCompositionEntity;
-  private NodeTemplate nodeTemplate;
 
-  public NodeTemplateInformation(){}
+    UnifiedCompositionEntity unifiedCompositionEntity;
+    private NodeTemplate nodeTemplate;
 
-  public NodeTemplateInformation(
-      UnifiedCompositionEntity unifiedCompositionEntity,
-      NodeTemplate nodeTemplate) {
-    this.unifiedCompositionEntity = unifiedCompositionEntity;
-    this.nodeTemplate = nodeTemplate;
-  }
+    public NodeTemplateInformation() {
+    }
 
-  public UnifiedCompositionEntity getUnifiedCompositionEntity() {
-    return unifiedCompositionEntity;
-  }
+    public NodeTemplateInformation(UnifiedCompositionEntity unifiedCompositionEntity, NodeTemplate nodeTemplate) {
+        this.unifiedCompositionEntity = unifiedCompositionEntity;
+        this.nodeTemplate = nodeTemplate;
+    }
 
-  public void setUnifiedCompositionEntity(
-      UnifiedCompositionEntity unifiedCompositionEntity) {
-    this.unifiedCompositionEntity = unifiedCompositionEntity;
-  }
+    public UnifiedCompositionEntity getUnifiedCompositionEntity() {
+        return unifiedCompositionEntity;
+    }
 
-  public NodeTemplate getNodeTemplate() {
-    return nodeTemplate;
-  }
+    public void setUnifiedCompositionEntity(UnifiedCompositionEntity unifiedCompositionEntity) {
+        this.unifiedCompositionEntity = unifiedCompositionEntity;
+    }
 
-  public void setNodeTemplate(NodeTemplate nodeTemplate) {
-    this.nodeTemplate = nodeTemplate;
-  }
+    public NodeTemplate getNodeTemplate() {
+        return nodeTemplate;
+    }
+
+    public void setNodeTemplate(NodeTemplate nodeTemplate) {
+        this.nodeTemplate = nodeTemplate;
+    }
 }

@@ -25,10 +25,7 @@ import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 
 public abstract class NotificationPropagationManagerFactory extends AbstractComponentFactory<NotificationPropagationManager> {
 
-
     public static NotificationPropagationManagerFactory getInstance() {
         return AbstractFactory.getInstance(NotificationPropagationManagerFactory.class);
     }
-
-
 }

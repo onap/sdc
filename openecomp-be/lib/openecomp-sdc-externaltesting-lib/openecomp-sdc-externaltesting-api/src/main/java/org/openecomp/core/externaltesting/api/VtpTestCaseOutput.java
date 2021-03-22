@@ -24,8 +24,8 @@ import lombok.EqualsAndHashCode;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "VtpTestSuite")
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 class VtpTestCaseOutput extends VtpNameDescriptionPair {
 
-  private String type;
+    private String type;
 }

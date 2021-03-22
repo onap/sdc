@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd;
 
 import java.util.Collections;
@@ -40,15 +39,13 @@ import org.openecomp.core.converter.pnfd.model.TransformationBlock;
  */
 public class PnfdNodeTemplateTransformationEngine extends AbstractPnfdTransformationEngine {
 
-    public PnfdNodeTemplateTransformationEngine(final ServiceTemplateReaderService templateFrom,
-                                                final ServiceTemplate templateTo) {
+    public PnfdNodeTemplateTransformationEngine(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo) {
         super(templateFrom, templateTo);
     }
 
     //used for tests purposes
-    PnfdNodeTemplateTransformationEngine(final ServiceTemplateReaderService templateFrom,
-                                                final ServiceTemplate templateTo,
-                                                final String descriptorResourcePath) {
+    PnfdNodeTemplateTransformationEngine(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo,
+                                         final String descriptorResourcePath) {
         super(templateFrom, templateTo, descriptorResourcePath);
     }
 
@@ -75,7 +72,6 @@ public class PnfdNodeTemplateTransformationEngine extends AbstractPnfdTransforma
         }
     }
 
-
     /**
      * Execute all transformations specified in the descriptor.
      */
@@ -88,8 +84,7 @@ public class PnfdNodeTemplateTransformationEngine extends AbstractPnfdTransforma
         if (CollectionUtils.isEmpty(transformationSet)) {
             return;
         }
-        transformationGroupByBlockMap = transformationSet.stream()
-            .filter(Transformation::isValid)
+        transformationGroupByBlockMap = transformationSet.stream().filter(Transformation::isValid)
             .collect(Collectors.groupingBy(Transformation::getBlock));
         executeCustomTypeTransformations();
         final Map<String, String> inputsToConvertMap = executeNodeTemplateTransformations();
@@ -98,56 +93,45 @@ public class PnfdNodeTemplateTransformationEngine extends AbstractPnfdTransforma
 
     /**
      * Parses all topology_template node_template.
-     * @return
-     *  A map containing any input that was called with a get_input TOSCA function and its getInputFunction
-     *  transformation name
+     *
+     * @return A map containing any input that was called with a get_input TOSCA function and its getInputFunction transformation name
      */
     private Map<String, String> executeNodeTemplateTransformations() {
-        final List<Transformation> transformationList = transformationGroupByBlockMap
-            .get(TransformationBlock.NODE_TEMPLATE);
+        final List<Transformation> transformationList = transformationGroupByBlockMap.get(TransformationBlock.NODE_TEMPLATE);
         if (CollectionUtils.isEmpty(transformationList)) {
             return Collections.emptyMap();
         }
-
         final Map<String, String> inputsToConvertMap = new HashMap<>();
-        transformationList.forEach(transformation ->
-            PnfdBlockParserFactory.getInstance().get(transformation).ifPresent(pnfParser -> {
-                pnfParser.parse(templateFrom, templateTo);
-                if (pnfParser.getInputAndTransformationNameMap().isPresent()) {
-                    inputsToConvertMap.putAll(pnfParser.getInputAndTransformationNameMap().get());
-                }
-            }));
+        transformationList.forEach(transformation -> PnfdBlockParserFactory.getInstance().get(transformation).ifPresent(pnfParser -> {
+            pnfParser.parse(templateFrom, templateTo);
+            if (pnfParser.getInputAndTransformationNameMap().isPresent()) {
+                inputsToConvertMap.putAll(pnfParser.getInputAndTransformationNameMap().get());
+            }
+        }));
         return inputsToConvertMap;
     }
 
     /**
      * Parses all topology_template inputs called with a get_input TOSCA function.
-     * @param inputsToConvertMap    A map containing the topology_template input name and its conversion definition name
+     *
+     * @param inputsToConvertMap A map containing the topology_template input name and its conversion definition name
      */
     private void executeGetInputFunctionTransformations(final Map<String, String> inputsToConvertMap) {
-        final List<Transformation> transformationListOfGetInputFunction = transformationGroupByBlockMap
-            .get(TransformationBlock.GET_INPUT_FUNCTION);
-
-        if(MapUtils.isEmpty(inputsToConvertMap) || CollectionUtils.isEmpty(transformationListOfGetInputFunction)) {
+        final List<Transformation> transformationListOfGetInputFunction = transformationGroupByBlockMap.get(TransformationBlock.GET_INPUT_FUNCTION);
+        if (MapUtils.isEmpty(inputsToConvertMap) || CollectionUtils.isEmpty(transformationListOfGetInputFunction)) {
             return;
         }
-
         final Map<String, List<Transformation>> transformationByName = transformationListOfGetInputFunction.stream()
             .collect(Collectors.groupingBy(Transformation::getName));
-
         inputsToConvertMap.forEach((inputName, transformationName) -> {
             final List<Transformation> transformationList = transformationByName.get(transformationName);
             if (!CollectionUtils.isEmpty(transformationList)) {
-                final Transformation transformation = transformationList.stream()
-                    .findFirst().orElse(null);
+                final Transformation transformation = transformationList.stream().findFirst().orElse(null);
                 if (transformation != null) {
                     final Map<String, Object> conversionQueryMap = new HashMap<>();
                     conversionQueryMap.put(inputName, null);
-                    transformation.setConversionQuery(
-                        ConversionQueryYamlParser.parse(conversionQueryMap).orElse(null)
-                    );
-                    PnfdBlockParserFactory.getInstance().get(transformation)
-                        .ifPresent(pnfParser -> pnfParser.parse(templateFrom, templateTo));
+                    transformation.setConversionQuery(ConversionQueryYamlParser.parse(conversionQueryMap).orElse(null));
+                    PnfdBlockParserFactory.getInstance().get(transformation).ifPresent(pnfParser -> pnfParser.parse(templateFrom, templateTo));
                 }
             }
         });
@@ -157,14 +141,11 @@ public class PnfdNodeTemplateTransformationEngine extends AbstractPnfdTransforma
      * Parses a Customized Node Type that extend from a valid ONAP NodeType.
      */
     private void executeCustomTypeTransformations() {
-        final List<Transformation> transformationList =  transformationGroupByBlockMap
-            .get((TransformationBlock.CUSTOM_NODE_TYPE));
+        final List<Transformation> transformationList = transformationGroupByBlockMap.get((TransformationBlock.CUSTOM_NODE_TYPE));
         if (CollectionUtils.isEmpty(transformationList)) {
             return;
         }
-        transformationList.forEach(transformation ->
-            PnfdBlockParserFactory.getInstance().get(transformation).ifPresent(pnfdBlockParser ->
-                pnfdBlockParser.parse(templateFrom, templateTo)));
+        transformationList.forEach(transformation -> PnfdBlockParserFactory.getInstance().get(transformation)
+            .ifPresent(pnfdBlockParser -> pnfdBlockParser.parse(templateFrom, templateTo)));
     }
-
 }

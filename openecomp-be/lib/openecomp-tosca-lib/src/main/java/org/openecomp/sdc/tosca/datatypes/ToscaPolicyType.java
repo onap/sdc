@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import org.onap.config.api.Configuration;
@@ -26,14 +25,10 @@ import org.openecomp.sdc.tosca.services.ConfigConstants;
 
 public class ToscaPolicyType {
 
-    private static Configuration config = ConfigurationManager.lookup();
-
-    private static final String POLICY_TYPE_PREFIX =
-            config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_POLICY_TYPE);
-
     //TOSCA native types
     public static final String NATIVE_PLACEMENT = "tosca.policy.placement";
-
+    private static Configuration config = ConfigurationManager.lookup();
+    private static final String POLICY_TYPE_PREFIX = config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_POLICY_TYPE);
     //Additional types
     public static final String PLACEMENT_ANTILOCATE = POLICY_TYPE_PREFIX + "placement.Antilocate";
     public static final String PLACEMENT_COLOCATE = POLICY_TYPE_PREFIX + "placement.Colocate";

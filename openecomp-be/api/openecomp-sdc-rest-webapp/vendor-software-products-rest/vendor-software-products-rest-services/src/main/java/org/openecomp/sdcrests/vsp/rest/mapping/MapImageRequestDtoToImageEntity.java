@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
@@ -23,12 +22,11 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageRequestDto;
 
 public class MapImageRequestDtoToImageEntity extends MappingBase<ImageRequestDto, ImageEntity> {
 
-  @Override
-  public void doMapping(ImageRequestDto source, ImageEntity target) {
-    Image image = new Image();
-    image.setFileName(source.getFileName());
-    image.setDescription(source.getDescription());
-    target.setImageCompositionData(image);
-  }
-
+    @Override
+    public void doMapping(ImageRequestDto source, ImageEntity target) {
+        Image image = new Image();
+        image.setFileName(source.getFileName());
+        image.setDescription(source.getDescription());
+        target.setImageCompositionData(image);
+    }
 }

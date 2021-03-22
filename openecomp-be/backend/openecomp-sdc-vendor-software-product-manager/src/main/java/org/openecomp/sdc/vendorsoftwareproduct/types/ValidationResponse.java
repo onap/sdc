@@ -13,96 +13,92 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 public class ValidationResponse {
-  private boolean valid = true;
-  private Collection<ErrorCode> vspErrors;
-  private Collection<ErrorCode> licensingDataErrors;
-  private Map<String, List<ErrorMessage>> uploadDataErrors;
-  private QuestionnaireValidationResult questionnaireValidationResult;
 
-  public boolean isValid() {
-    return valid;
-  }
+    private boolean valid = true;
+    private Collection<ErrorCode> vspErrors;
+    private Collection<ErrorCode> licensingDataErrors;
+    private Map<String, List<ErrorMessage>> uploadDataErrors;
+    private QuestionnaireValidationResult questionnaireValidationResult;
 
-  public Collection<ErrorCode> getVspErrors() {
-    return vspErrors;
-  }
-
-  /**
-   * Sets vsp errors.
-   *  @param vspErrors         the vsp errors
-   */
-  public void setVspErrors(Collection<ErrorCode> vspErrors) {
-    this.vspErrors = vspErrors;
-    if (CollectionUtils.isNotEmpty(vspErrors)) {
-      valid = false;
+    public boolean isValid() {
+        return valid;
     }
 
-    VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors);
-  }
-
-
-  public Collection<ErrorCode> getLicensingDataErrors() {
-    return licensingDataErrors;
-  }
-
-  /**
-   * Sets licensing data errors.
-   *
-   * @param licensingDataErrors the licensing data errors
-   */
-  public void setLicensingDataErrors(Collection<ErrorCode> licensingDataErrors) {
-    this.licensingDataErrors = licensingDataErrors;
-    if (CollectionUtils.isNotEmpty(licensingDataErrors)) {
-      valid = false;
-    }
-  }
-
-  public Map<String, List<ErrorMessage>> getUploadDataErrors() {
-    return uploadDataErrors;
-  }
-
-  /**
-   * Sets upload data errors.
-   *  @param uploadDataErrors  the upload data errors
-   */
-  public void setUploadDataErrors(Map<String, List<ErrorMessage>> uploadDataErrors) {
-    this.uploadDataErrors = uploadDataErrors;
-    if (MapUtils.isNotEmpty(uploadDataErrors)) {
-      valid = false;
+    public Collection<ErrorCode> getVspErrors() {
+        return vspErrors;
     }
 
-    VendorSoftwareProductUtils
-            .setErrorsIntoLogger(uploadDataErrors);
-  }
-
-  public QuestionnaireValidationResult getQuestionnaireValidationResult() {
-    return questionnaireValidationResult;
-  }
-
-  /**
-   * Sets questionnaire validation result.
-   *
-   * @param questionnaireValidationResult the questionnaire validation result
-   */
-  public void setQuestionnaireValidationResult(
-          QuestionnaireValidationResult questionnaireValidationResult) {
-    this.questionnaireValidationResult = questionnaireValidationResult;
-    if (questionnaireValidationResult != null && !questionnaireValidationResult.isValid()) {
-      valid = false;
+    /**
+     * Sets vsp errors.
+     *
+     * @param vspErrors the vsp errors
+     */
+    public void setVspErrors(Collection<ErrorCode> vspErrors) {
+        this.vspErrors = vspErrors;
+        if (CollectionUtils.isNotEmpty(vspErrors)) {
+            valid = false;
+        }
+        VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors);
     }
-  }
+
+    public Collection<ErrorCode> getLicensingDataErrors() {
+        return licensingDataErrors;
+    }
+
+    /**
+     * Sets licensing data errors.
+     *
+     * @param licensingDataErrors the licensing data errors
+     */
+    public void setLicensingDataErrors(Collection<ErrorCode> licensingDataErrors) {
+        this.licensingDataErrors = licensingDataErrors;
+        if (CollectionUtils.isNotEmpty(licensingDataErrors)) {
+            valid = false;
+        }
+    }
+
+    public Map<String, List<ErrorMessage>> getUploadDataErrors() {
+        return uploadDataErrors;
+    }
+
+    /**
+     * Sets upload data errors.
+     *
+     * @param uploadDataErrors the upload data errors
+     */
+    public void setUploadDataErrors(Map<String, List<ErrorMessage>> uploadDataErrors) {
+        this.uploadDataErrors = uploadDataErrors;
+        if (MapUtils.isNotEmpty(uploadDataErrors)) {
+            valid = false;
+        }
+        VendorSoftwareProductUtils.setErrorsIntoLogger(uploadDataErrors);
+    }
+
+    public QuestionnaireValidationResult getQuestionnaireValidationResult() {
+        return questionnaireValidationResult;
+    }
+
+    /**
+     * Sets questionnaire validation result.
+     *
+     * @param questionnaireValidationResult the questionnaire validation result
+     */
+    public void setQuestionnaireValidationResult(QuestionnaireValidationResult questionnaireValidationResult) {
+        this.questionnaireValidationResult = questionnaireValidationResult;
+        if (questionnaireValidationResult != null && !questionnaireValidationResult.isValid()) {
+            valid = false;
+        }
+    }
 }

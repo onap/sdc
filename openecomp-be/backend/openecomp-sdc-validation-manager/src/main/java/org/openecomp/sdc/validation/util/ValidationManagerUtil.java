@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.validation.api.ValidationManager;
@@ -25,42 +28,36 @@ import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-
 public class ValidationManagerUtil {
 
-  private ValidationManagerUtil(){}
-
-  /**
-   * Handle missing manifest.
-   *
-   * @param fileContentMap the file content map
-   * @param errors         the errors
-   */
-  public static void handleMissingManifest(FileContentHandler fileContentMap,
-                                           Map<String, List<ErrorMessage>> errors) throws IOException {
-    try (InputStream manifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
-      if (manifest == null) {
-        ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.MANIFEST_NAME, errors)
-                .add(new ErrorMessage(ErrorLevel.ERROR, Messages.MANIFEST_NOT_EXIST.getErrorMessage()));
-      }
+    private ValidationManagerUtil() {
     }
-  }
 
-  /**
-   * Init validation manager validation manager.
-   *
-   * @param fileContentMap the file content map
-   * @return the validation manager
-   */
-  public static ValidationManager initValidationManager(FileContentHandler fileContentMap) {
-    ValidationManager validationManager = ValidationManagerFactory.getInstance().createInterface();
-    fileContentMap.getFileList().forEach(fileName -> validationManager
-        .addFile(fileName, FileUtils.toByteArray(fileContentMap.getFileContentAsStream(fileName))));
-    return validationManager;
-  }
+    /**
+     * Handle missing manifest.
+     *
+     * @param fileContentMap the file content map
+     * @param errors         the errors
+     */
+    public static void handleMissingManifest(FileContentHandler fileContentMap, Map<String, List<ErrorMessage>> errors) throws IOException {
+        try (InputStream manifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            if (manifest == null) {
+                ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.MANIFEST_NAME, errors)
+                    .add(new ErrorMessage(ErrorLevel.ERROR, Messages.MANIFEST_NOT_EXIST.getErrorMessage()));
+            }
+        }
+    }
+
+    /**
+     * Init validation manager validation manager.
+     *
+     * @param fileContentMap the file content map
+     * @return the validation manager
+     */
+    public static ValidationManager initValidationManager(FileContentHandler fileContentMap) {
+        ValidationManager validationManager = ValidationManagerFactory.getInstance().createInterface();
+        fileContentMap.getFileList()
+            .forEach(fileName -> validationManager.addFile(fileName, FileUtils.toByteArray(fileContentMap.getFileContentAsStream(fileName))));
+        return validationManager;
+    }
 }

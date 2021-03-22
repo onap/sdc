@@ -13,37 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
-import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
-
 import java.util.Optional;
+import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
 
 public class ConsolidationData {
 
     private final ComputeConsolidationData computeConsolidationData;
     private final ComputeConsolidationDataHandler computeConsolidationDataHandler;
-
     private final PortConsolidationData portConsolidationData;
     private final PortConsolidationDataHandler portConsolidationDataHandler;
     private final SubInterfaceConsolidationDataHandler subInterfaceConsolidationDataHandler;
-
-    private NestedConsolidationData nestedConsolidationData;
     private final NestedConsolidationDataHandler nestedConsolidationDataHandler;
+    private NestedConsolidationData nestedConsolidationData;
 
     public ConsolidationData() {
-
         computeConsolidationData = new ComputeConsolidationData();
         computeConsolidationDataHandler = new ComputeConsolidationDataHandler(computeConsolidationData);
-
         portConsolidationData = new PortConsolidationData();
         portConsolidationDataHandler = new PortConsolidationDataHandler(portConsolidationData);
         subInterfaceConsolidationDataHandler = new SubInterfaceConsolidationDataHandler(portConsolidationData);
-
         nestedConsolidationData = new NestedConsolidationData();
         nestedConsolidationDataHandler = new NestedConsolidationDataHandler(nestedConsolidationData);
-
     }
 
     /**
@@ -52,7 +44,6 @@ public class ConsolidationData {
      * @return If there is no consolidation handler for a type, return an empty {@link Optional}.
      */
     public Optional<ConsolidationDataHandler> getConsolidationDataHandler(ConsolidationEntityType type) {
-
         switch (type) {
             case COMPUTE:
                 return Optional.of(getComputeConsolidationDataHandler());

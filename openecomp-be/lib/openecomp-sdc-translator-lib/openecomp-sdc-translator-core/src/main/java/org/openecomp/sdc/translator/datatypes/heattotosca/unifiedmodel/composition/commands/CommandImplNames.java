@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands;
 
 public class CommandImplNames {
 
-  private static final String COMMANDS_IMPL_BASE_PACKAGE =
-      "org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl";
-
-  public static final String COMPUTE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL =
-      COMMANDS_IMPL_BASE_PACKAGE + ".ComputeNewNodeTemplateIdGenerator";
-  public static final String PORT_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL =
-      COMMANDS_IMPL_BASE_PACKAGE + ".PortNewNodeTemplateIdGenerator";
-  public static final String SUB_INTERFACE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL =
-      COMMANDS_IMPL_BASE_PACKAGE + ".SubInterfaceNewNodeTemplateIdGenerator";
+    private static final String COMMANDS_IMPL_BASE_PACKAGE = "org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl";
+    public static final String COMPUTE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL = COMMANDS_IMPL_BASE_PACKAGE + ".ComputeNewNodeTemplateIdGenerator";
+    public static final String PORT_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL = COMMANDS_IMPL_BASE_PACKAGE + ".PortNewNodeTemplateIdGenerator";
+    public static final String SUB_INTERFACE_NEW_NODE_TEMPLATE_ID_GENERATOR_IMPL =
+        COMMANDS_IMPL_BASE_PACKAGE + ".SubInterfaceNewNodeTemplateIdGenerator";
 }

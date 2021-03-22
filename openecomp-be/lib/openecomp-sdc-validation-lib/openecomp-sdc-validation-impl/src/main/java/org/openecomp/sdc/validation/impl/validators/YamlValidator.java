@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation.impl.validators;
 
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import org.onap.sdc.tosca.services.MyPropertyUtils;
 import org.onap.sdc.tosca.services.StrictMapAppenderConstructor;
 import org.openecomp.core.validation.ErrorMessageCode;
@@ -33,24 +37,16 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 public class YamlValidator implements Validator {
+
     private static final ErrorMessageCode ERROR_CODE_YML_1 = new ErrorMessageCode("YML1");
     private static final ErrorMessageCode ERROR_CODE_YML_2 = new ErrorMessageCode("YML2");
 
     @Override
     public void validate(GlobalValidationContext globalContext) {
         Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
-
-        Collection<String> files = globalContext.files(
-                (fileName, globalValidationContext) -> FileExtensionUtils.isYaml(fileName)
-                        && !pmDictionaryFiles.contains(fileName));
-
+        Collection<String> files = globalContext
+            .files((fileName, globalValidationContext) -> FileExtensionUtils.isYaml(fileName) && !pmDictionaryFiles.contains(fileName));
         files.forEach(fileName -> validate(fileName, globalContext));
     }
 
@@ -58,9 +54,8 @@ public class YamlValidator implements Validator {
         Optional<InputStream> rowContent = globalContext.getFileContent(fileName);
         if (rowContent.isEmpty()) {
             globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                    .getErrorWithParameters(ERROR_CODE_YML_1, Messages
-                                    .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-                            Messages.EMPTY_YAML_FILE.getErrorMessage()));
+                .getErrorWithParameters(ERROR_CODE_YML_1, Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+                    Messages.EMPTY_YAML_FILE.getErrorMessage()));
             return; /* no need to continue validation */
         }
 
@@ -80,10 +75,11 @@ public class YamlValidator implements Validator {
             }
         } catch (Exception exception) {
             globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                    .getErrorWithParameters(ERROR_CODE_YML_2, Messages
-                                    .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-                            YamlValidatorUtil.getParserExceptionReason(exception)));
+                .getErrorWithParameters(ERROR_CODE_YML_2, Messages
+                        .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+                    YamlValidatorUtil.getParserExceptionReason(exception)));
         }
     }
 
 }
+

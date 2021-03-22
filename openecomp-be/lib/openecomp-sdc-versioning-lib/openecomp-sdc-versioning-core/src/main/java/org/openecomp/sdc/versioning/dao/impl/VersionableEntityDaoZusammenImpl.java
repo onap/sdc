@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning.dao.impl;
 
 import com.amdocs.zusammen.datatypes.Id;
@@ -32,53 +31,47 @@ import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 
 public class VersionableEntityDaoZusammenImpl implements VersionableEntityDao {
 
-  private ZusammenAdaptor zusammenAdaptor;
+    private ZusammenAdaptor zusammenAdaptor;
 
-  public VersionableEntityDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
-    this.zusammenAdaptor = zusammenAdaptor;
-  }
+    public VersionableEntityDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
+        this.zusammenAdaptor = zusammenAdaptor;
+    }
 
-  @Override
-  public void initVersion(VersionableEntityMetadata versionableTableMetadata, String entityId,
-                          Version baseVersion, Version newVersion) {
-    // redundant in zusammen impl.
-  }
+    private static Comparator<ItemVersion> getVersionModificationTimeDescComparator() {
+        return (o1, o2) -> Integer.compare(o2.getId().getValue().length(), o1.getId().getValue().length());
+    }
 
-  @Override
-  public void deleteVersion(VersionableEntityMetadata versionableTableMetadata, String entityId,
-                            Version versionToDelete, Version backToVersion) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(entityId);
-    Id versionId = getItemVersionId(itemId, context);
-    zusammenAdaptor.resetVersionHistory(context, itemId, versionId, backToVersion.toString());
-  }
+    @Override
+    public void initVersion(VersionableEntityMetadata versionableTableMetadata, String entityId, Version baseVersion, Version newVersion) {
+        // redundant in zusammen impl.
+    }
 
-  @Override
-  public void closeVersion(VersionableEntityMetadata versionableTableMetadata, String entityId,
-                           Version versionToClose) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(entityId);
-    Id versionId = getItemVersionId(itemId, context);
-    zusammenAdaptor
-        .tagVersion(context, itemId, versionId, new Tag(versionToClose.toString(), null));
-  }
+    @Override
+    public void deleteVersion(VersionableEntityMetadata versionableTableMetadata, String entityId, Version versionToDelete, Version backToVersion) {
+        SessionContext context = ZusammenUtil.createSessionContext();
+        Id itemId = new Id(entityId);
+        Id versionId = getItemVersionId(itemId, context);
+        zusammenAdaptor.resetVersionHistory(context, itemId, versionId, backToVersion.toString());
+    }
 
-  // TODO: 3/19/2017 move to a common util
-  private Id getItemVersionId(Id itemId, SessionContext context) {
-    Optional<ItemVersion> itemVersionOptional = getFirstVersion(context, itemId);
-    ItemVersion itemVersion = itemVersionOptional.orElseThrow(() ->
-        new RuntimeException(String.format("No version was found for item %s.", itemId)));
-    return itemVersion.getId();
-  }
+    @Override
+    public void closeVersion(VersionableEntityMetadata versionableTableMetadata, String entityId, Version versionToClose) {
+        SessionContext context = ZusammenUtil.createSessionContext();
+        Id itemId = new Id(entityId);
+        Id versionId = getItemVersionId(itemId, context);
+        zusammenAdaptor.tagVersion(context, itemId, versionId, new Tag(versionToClose.toString(), null));
+    }
 
-  private Optional<ItemVersion> getFirstVersion(SessionContext context, Id itemId) {
-    Collection<ItemVersion> versions = zusammenAdaptor.listPublicVersions(context, itemId);
-    return CollectionUtils.isEmpty(versions)
-                   ? Optional.empty()
-                   : versions.stream().min(getVersionModificationTimeDescComparator());
-  }
+    // TODO: 3/19/2017 move to a common util
+    private Id getItemVersionId(Id itemId, SessionContext context) {
+        Optional<ItemVersion> itemVersionOptional = getFirstVersion(context, itemId);
+        ItemVersion itemVersion = itemVersionOptional
+            .orElseThrow(() -> new RuntimeException(String.format("No version was found for item %s.", itemId)));
+        return itemVersion.getId();
+    }
 
-  private static Comparator<ItemVersion> getVersionModificationTimeDescComparator() {
-    return (o1, o2) -> Integer.compare(o2.getId().getValue().length(), o1.getId().getValue().length());
-  }
+    private Optional<ItemVersion> getFirstVersion(SessionContext context, Id itemId) {
+        Collection<ItemVersion> versions = zusammenAdaptor.listPublicVersions(context, itemId);
+        return CollectionUtils.isEmpty(versions) ? Optional.empty() : versions.stream().min(getVersionModificationTimeDescComparator());
+    }
 }

@@ -17,28 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.workers;
-
-import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 
 import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
+import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class NotificationReceiver {
 
-	private String ownerId = null;
-	private UUID lastEventId = null;
-	private Consumer<NotificationsStatusDto> notesProcessor = null;
+    private String ownerId = null;
+    private UUID lastEventId = null;
+    private Consumer<NotificationsStatusDto> notesProcessor = null;
 
-	NotificationReceiver(String ownerId, Consumer<NotificationsStatusDto> notesProcessor) {
-		this(ownerId, null, notesProcessor);
-	}
+    NotificationReceiver(String ownerId, Consumer<NotificationsStatusDto> notesProcessor) {
+        this(ownerId, null, notesProcessor);
+    }
 }

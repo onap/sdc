@@ -17,15 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 
-public abstract class MonitoringUploadsManagerFactory
-    extends AbstractComponentFactory<MonitoringUploadsManager> {
+public abstract class MonitoringUploadsManagerFactory extends AbstractComponentFactory<MonitoringUploadsManager> {
 
-  public static MonitoringUploadsManagerFactory getInstance() {
-    return getInstance(MonitoringUploadsManagerFactory.class);
-  }
+    public static MonitoringUploadsManagerFactory getInstance() {
+        return getInstance(MonitoringUploadsManagerFactory.class);
+    }
 }

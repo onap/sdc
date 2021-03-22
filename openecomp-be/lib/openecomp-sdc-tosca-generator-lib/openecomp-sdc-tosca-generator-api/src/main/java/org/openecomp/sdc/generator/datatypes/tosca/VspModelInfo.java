@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.generator.datatypes.tosca;
 
 import java.util.List;
@@ -47,5 +46,4 @@ public class VspModelInfo {
     private Map<String, List<MultiFlavorVfcImage>> multiFlavorVfcImages;
     //Map of component and ports (NICs)
     private Map<String, List<Nic>> nics;
-
 }

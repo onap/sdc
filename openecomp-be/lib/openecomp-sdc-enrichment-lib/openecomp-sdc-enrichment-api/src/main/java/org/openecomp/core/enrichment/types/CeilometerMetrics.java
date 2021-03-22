@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.enrichment.types;
 
 import java.util.List;
@@ -21,5 +20,6 @@ import lombok.Data;
 
 @Data
 public class CeilometerMetrics {
+
     private List<CeilometerMetric> ceilometerMetricList;
 }

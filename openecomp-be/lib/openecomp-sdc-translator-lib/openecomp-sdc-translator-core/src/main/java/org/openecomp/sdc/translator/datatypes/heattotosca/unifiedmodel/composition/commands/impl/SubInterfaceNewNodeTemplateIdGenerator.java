@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl;
 
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewSubInterfaceNodeTemplateId;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
@@ -25,45 +31,31 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.SubInterfaceTemplateConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewSubInterfaceNodeTemplateId;
-
 public class SubInterfaceNewNodeTemplateIdGenerator implements UnifiedSubstitutionNodeTemplateIdGenerator {
 
-  @Override
-  public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId) {
-    SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData =
-        getSubInterfaceTemplateConsolidationDataById(unifiedCompositionTo.getUnifiedCompositionDataList(),
-            originalNodeTemplateId);
-    if (Objects.nonNull(subInterfaceTemplateConsolidationData)) {
-      String parentPortNodeTemplateId = subInterfaceTemplateConsolidationData.getParentPortNodeTemplateId();
-      ComputeTemplateConsolidationData connectedComputeConsolidationData =
-          getConnectedComputeConsolidationData(unifiedCompositionTo.getUnifiedCompositionDataList(),
-              parentPortNodeTemplateId);
-      if (Objects.nonNull(connectedComputeConsolidationData)) {
-        NodeTemplate connectedComputeNodeTemplate = DataModelUtil.getNodeTemplate(unifiedCompositionTo
-            .getServiceTemplate(), connectedComputeConsolidationData.getNodeTemplateId());
-        return Optional.of(getNewSubInterfaceNodeTemplateId(unifiedCompositionTo.getServiceTemplate(),
-            connectedComputeNodeTemplate.getType(), connectedComputeConsolidationData,
-            subInterfaceTemplateConsolidationData, unifiedCompositionTo.getContext()));
-      }
+    private static SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationDataById(
+        List<UnifiedCompositionData> unifiedCompositionDataList, String subInterfaceNodeTemplateId) {
+        return unifiedCompositionDataList.stream().map(UnifiedCompositionUtil::getSubInterfaceTemplateConsolidationDataList)
+            .flatMap(Collection::stream).filter(
+                subInterfaceTemplateConsolidationData -> subInterfaceNodeTemplateId.equals(subInterfaceTemplateConsolidationData.getNodeTemplateId()))
+            .findFirst().orElse(null);
     }
-    return Optional.empty();
-  }
 
-  private static SubInterfaceTemplateConsolidationData getSubInterfaceTemplateConsolidationDataById(
-      List<UnifiedCompositionData> unifiedCompositionDataList,
-      String subInterfaceNodeTemplateId) {
-    return unifiedCompositionDataList.stream()
-        .map(UnifiedCompositionUtil::getSubInterfaceTemplateConsolidationDataList)
-        .flatMap(Collection::stream)
-        .filter(subInterfaceTemplateConsolidationData -> subInterfaceNodeTemplateId
-            .equals(subInterfaceTemplateConsolidationData.getNodeTemplateId()))
-        .findFirst().orElse(null);
-  }
+    @Override
+    public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId) {
+        SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData = getSubInterfaceTemplateConsolidationDataById(
+            unifiedCompositionTo.getUnifiedCompositionDataList(), originalNodeTemplateId);
+        if (Objects.nonNull(subInterfaceTemplateConsolidationData)) {
+            String parentPortNodeTemplateId = subInterfaceTemplateConsolidationData.getParentPortNodeTemplateId();
+            ComputeTemplateConsolidationData connectedComputeConsolidationData = getConnectedComputeConsolidationData(
+                unifiedCompositionTo.getUnifiedCompositionDataList(), parentPortNodeTemplateId);
+            if (Objects.nonNull(connectedComputeConsolidationData)) {
+                NodeTemplate connectedComputeNodeTemplate = DataModelUtil
+                    .getNodeTemplate(unifiedCompositionTo.getServiceTemplate(), connectedComputeConsolidationData.getNodeTemplateId());
+                return Optional.of(getNewSubInterfaceNodeTemplateId(unifiedCompositionTo.getServiceTemplate(), connectedComputeNodeTemplate.getType(),
+                    connectedComputeConsolidationData, subInterfaceTemplateConsolidationData, unifiedCompositionTo.getContext()));
+            }
+        }
+        return Optional.empty();
+    }
 }

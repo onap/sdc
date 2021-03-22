@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -26,7 +25,6 @@ public class FunctionTranslator {
 
     private static final String UNSUPPORTED_RESOURCE_PREFIX = "UNSUPPORTED_RESOURCE_";
     private static final String UNSUPPORTED_ATTRIBUTE_PREFIX = "UNSUPPORTED_ATTRIBUTE_";
-
     private ServiceTemplate serviceTemplate;
     private String resourceId;
     private String propertyName;
@@ -40,8 +38,7 @@ public class FunctionTranslator {
         //default constructor
     }
 
-    public FunctionTranslator(TranslateTo functionTranslateTo, String propertyName, Object functionValue,
-                              Template toscaTemplate) {
+    public FunctionTranslator(TranslateTo functionTranslateTo, String propertyName, Object functionValue, Template toscaTemplate) {
         this.serviceTemplate = functionTranslateTo.getServiceTemplate();
         this.resourceId = functionTranslateTo.getResourceId();
         this.propertyName = propertyName;
@@ -52,11 +49,9 @@ public class FunctionTranslator {
         this.context = functionTranslateTo.getContext();
     }
 
-    public static TranslateTo getFunctionTranslateTo(ServiceTemplate serviceTemplate, String resourceId,
-                                              String heatFileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                              TranslationContext context) {
-        return new TranslateTo(heatFileName, serviceTemplate, heatOrchestrationTemplate, null, resourceId, null,
-                context);
+    public static TranslateTo getFunctionTranslateTo(ServiceTemplate serviceTemplate, String resourceId, String heatFileName,
+                                                     HeatOrchestrationTemplate heatOrchestrationTemplate, TranslationContext context) {
+        return new TranslateTo(heatFileName, serviceTemplate, heatOrchestrationTemplate, null, resourceId, null, context);
     }
 
     public ServiceTemplate getServiceTemplate() {

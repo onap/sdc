@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import java.util.HashMap;
@@ -25,16 +24,17 @@ import java.util.Map;
 import java.util.Objects;
 
 public enum ContrailV2ResourceTypes {
+    // @formatter:off
     NETWROK_IPAM("OS::ContrailV2::NetworkIpam"),
     VIRTUAL_NETWORK("OS::ContrailV2::VirtualNetwork"),
     NETWORK_POLICY("OS::ContrailV2::NetworkPolicy"),
     VIRTUAL_MACHINE_INTERFACE("OS::ContrailV2::VirtualMachineInterface");
+    // @formatter:on
 
     private static Map<String, ContrailV2ResourceTypes> stringToContrailV2ResourceTypeMap;
 
     static {
         stringToContrailV2ResourceTypeMap = new HashMap<>();
-
         for (ContrailV2ResourceTypes type : ContrailV2ResourceTypes.values()) {
             stringToContrailV2ResourceTypeMap.put(type.contrailV2ResourceType, type);
         }

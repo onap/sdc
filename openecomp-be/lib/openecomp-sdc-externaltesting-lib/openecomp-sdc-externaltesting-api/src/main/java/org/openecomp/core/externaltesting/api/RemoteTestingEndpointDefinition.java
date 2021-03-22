@@ -17,30 +17,30 @@
 package org.openecomp.core.externaltesting.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-
 import java.util.regex.Pattern;
+import lombok.Data;
 
 @Data
 public class RemoteTestingEndpointDefinition {
-  private boolean enabled;
-  private String title;
-  private String url;
-  private String id;
-  private String apiKey;
-  private String scenarioFilter;
 
-  // a compact way to specify and endpoint to ease docker configuration.
-  @JsonIgnore
-  private String config;
+    private boolean enabled;
+    private String title;
+    private String url;
+    private String id;
+    private String apiKey;
+    private String scenarioFilter;
 
-  private Pattern scenarioFilterPattern;
+    // a compact way to specify and endpoint to ease docker configuration.
+    @JsonIgnore
+    private String config;
 
-  @JsonIgnore
-  public Pattern getScenarioFilterPattern() {
-    if ((scenarioFilterPattern == null) && (scenarioFilter != null)) {
-      scenarioFilterPattern = Pattern.compile(scenarioFilter);
+    private Pattern scenarioFilterPattern;
+
+    @JsonIgnore
+    public Pattern getScenarioFilterPattern() {
+        if ((scenarioFilterPattern == null) && (scenarioFilter != null)) {
+            scenarioFilterPattern = Pattern.compile(scenarioFilter);
+        }
+        return scenarioFilterPattern;
     }
-    return scenarioFilterPattern;
-  }
 }

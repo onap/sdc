@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vendorlicense.types;
-
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,7 +25,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,109 +33,102 @@ import javax.validation.constraints.Size;
 @JsonIgnoreProperties({"time", "aggregationFunction", "entitlementMetric"})
 public class EntitlementPoolRequestDto {
 
-  @NotNull
-  @Size(max = 120)
-  private String name;
+    @NotNull
+    @Size(max = 120)
+    private String name;
+    @NotBlank(message = "is mandatory and should not be empty")
+    @Size(max = 100)
+    private String manufacturerReferenceNumber;
+    @Size(max = 1000)
+    private String description;
+    @NotNull
+    private EntitlementPoolType type;
+    private Integer thresholdValue;
+    private ThresholdUnit thresholdUnits;
+    @Size(max = 120)
+    private String increments;
+    @Valid
+    private MultiChoiceOrOtherDto<OperationalScope> operationalScope;
+    private String startDate;
+    private String expiryDate;
 
-  @NotBlank(message = "is mandatory and should not be empty")
-  @Size(max = 100)
-  private String manufacturerReferenceNumber;
+    public String getName() {
+        return name;
+    }
 
-  @Size(max = 1000)
-  private String description;
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  @NotNull
-  private EntitlementPoolType type;
+    public String getManufacturerReferenceNumber() {
+        return manufacturerReferenceNumber;
+    }
 
-  private Integer thresholdValue;
+    public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+        this.manufacturerReferenceNumber = manufacturerReferenceNumber;
+    }
 
-  private ThresholdUnit thresholdUnits;
-  @Size(max = 120)
-  private String increments;
+    public String getDescription() {
+        return description;
+    }
 
-  @Valid
-  private MultiChoiceOrOtherDto<OperationalScope> operationalScope;
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  private String startDate;
-  private String expiryDate;
+    public EntitlementPoolType getType() {
+        return type;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public void setType(EntitlementPoolType type) {
+        this.type = type;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public Integer getThresholdValue() {
+        return thresholdValue;
+    }
 
-  public String getManufacturerReferenceNumber() {
-    return manufacturerReferenceNumber;
-  }
+    public void setThresholdValue(Integer thresholdValue) {
+        this.thresholdValue = thresholdValue;
+    }
 
-  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
-    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
-  }
+    public ThresholdUnit getThresholdUnits() {
+        return thresholdUnits;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public void setThresholdUnits(ThresholdUnit thresholdUnits) {
+        this.thresholdUnits = thresholdUnits;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public String getIncrements() {
+        return increments;
+    }
 
-  public EntitlementPoolType getType() {
-    return type;
-  }
+    public void setIncrements(String increments) {
+        this.increments = increments;
+    }
 
-  public void setType(EntitlementPoolType type) {
-    this.type = type;
-  }
+    public MultiChoiceOrOtherDto<OperationalScope> getOperationalScope() {
+        return operationalScope;
+    }
 
-  public Integer getThresholdValue() {
-    return thresholdValue;
-  }
+    public void setOperationalScope(MultiChoiceOrOtherDto<OperationalScope> operationalScope) {
+        this.operationalScope = operationalScope;
+    }
 
-  public void setThresholdValue(Integer thresholdValue) {
-    this.thresholdValue = thresholdValue;
-  }
+    public String getStartDate() {
+        return startDate;
+    }
 
-  public ThresholdUnit getThresholdUnits() {
-    return thresholdUnits;
-  }
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
 
-  public void setThresholdUnits(ThresholdUnit thresholdUnits) {
-    this.thresholdUnits = thresholdUnits;
-  }
+    public String getExpiryDate() {
+        return expiryDate;
+    }
 
-  public String getIncrements() {
-    return increments;
-  }
-
-  public void setIncrements(String increments) {
-    this.increments = increments;
-  }
-
-  public MultiChoiceOrOtherDto<OperationalScope> getOperationalScope() {
-    return operationalScope;
-  }
-
-  public void setOperationalScope(MultiChoiceOrOtherDto<OperationalScope> operationalScope) {
-    this.operationalScope = operationalScope;
-  }
-
-  public String getStartDate() {
-    return startDate;
-  }
-
-  public void setStartDate(String startDate) {
-    this.startDate = startDate;
-  }
-
-  public String getExpiryDate() {
-    return expiryDate;
-  }
-
-  public void setExpiryDate(String expiryDate) {
-    this.expiryDate = expiryDate;
-  }
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
 }

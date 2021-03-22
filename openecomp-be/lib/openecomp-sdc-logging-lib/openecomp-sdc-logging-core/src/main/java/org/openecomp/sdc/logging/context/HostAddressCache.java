@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.context;
 
 import java.net.InetAddress;
@@ -25,10 +24,10 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * Holds a reference to local host address as returned by Java runtime. A value of host address will be cached for the
- * interval specified in the constructor or {@link #DEFAULT_REFRESH_INTERVAL}. The caching helps to avoid many low-level
- * calls, but at the same time pick up any IP or FQDN changes. Although the underlying JDK implementation uses caching
- * too, the refresh interval for logging may be much longer due to the nature of the use.
+ * Holds a reference to local host address as returned by Java runtime. A value of host address will be cached for the interval specified in the
+ * constructor or {@link #DEFAULT_REFRESH_INTERVAL}. The caching helps to avoid many low-level calls, but at the same time pick up any IP or FQDN
+ * changes. Although the underlying JDK implementation uses caching too, the refresh interval for logging may be much longer due to the nature of the
+ * use.
  *
  * @author evitaliy
  * @since 26 Mar 2018
@@ -37,12 +36,9 @@ import java.util.function.Supplier;
 public class HostAddressCache {
 
     private static final long DEFAULT_REFRESH_INTERVAL = 60000L; // 1 min
-
     private final long interval;
-
-    private volatile CacheEntry cachedAddress;
-
     private final Supplier<InetAddress> readAddress;
+    private volatile CacheEntry cachedAddress;
 
     public HostAddressCache() {
         this(DEFAULT_REFRESH_INTERVAL);
@@ -69,54 +65,27 @@ public class HostAddressCache {
         this.cachedAddress = new CacheEntry(System.currentTimeMillis(), this.readAddress.get());
     }
 
-    /**
-     * Returns an address (host name and IP address) of the local system.
-     *
-     * @return local host address or <code>null</code> if it could not be read for some reason
-     */
-    public synchronized Optional<InetAddress> get() {
-
-        long current = System.currentTimeMillis();
-        if (current - cachedAddress.lastUpdated < interval) {
-            return Optional.ofNullable(cachedAddress.address);
-        }
-
-        InetAddress address = readAddress.get(); // register the attempt even if null, i.e. failed to get a meaningful address
-        cachedAddress = new CacheEntry(current, address);
-        return Optional.ofNullable(address);
-    }
-
     private static InetAddress read() {
-
         try {
             return InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-            System.err.println(
-                    "[WARNING] Failed to get local host address. Using a fallback. If you are on Linux, make sure "
-                            + "/etc/hosts contains the host name of your machine, "
-                            + "e.g. '127.0.0.1 localhost my-host.example.com'.");
-
+            System.err.println("[WARNING] Failed to get local host address. Using a fallback. If you are on Linux, make sure "
+                + "/etc/hosts contains the host name of your machine, " + "e.g. '127.0.0.1 localhost my-host.example.com'.");
             e.printStackTrace(); // can't really use logging
             return getFallbackLocalHost();
         }
     }
 
     private static InetAddress getFallbackLocalHost() {
-
         try {
-
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-
             while (networkInterfaces.hasMoreElements()) {
-
                 InetAddress address = getAddress(networkInterfaces.nextElement());
                 if (address != null) {
                     return address;
                 }
             }
-
             return null;
-
         } catch (SocketException e) {
             e.printStackTrace(); // can't really use logging
             return null;
@@ -124,26 +93,36 @@ public class HostAddressCache {
     }
 
     private static InetAddress getAddress(NetworkInterface networkInterface) throws SocketException {
-
         if (networkInterface.isLoopback() || networkInterface.isUp()) {
             return null;
         }
-
         Enumeration<InetAddress> interfaceAddresses = networkInterface.getInetAddresses();
         while (interfaceAddresses.hasMoreElements()) {
-
             InetAddress address = interfaceAddresses.nextElement();
             if (isHostAddress(address)) {
                 return address;
             }
         }
-
         return null;
     }
 
     private static boolean isHostAddress(InetAddress address) {
-        return !address.isLoopbackAddress() && !address.isAnyLocalAddress() && !address.isLinkLocalAddress()
-                       && !address.isMulticastAddress();
+        return !address.isLoopbackAddress() && !address.isAnyLocalAddress() && !address.isLinkLocalAddress() && !address.isMulticastAddress();
+    }
+
+    /**
+     * Returns an address (host name and IP address) of the local system.
+     *
+     * @return local host address or <code>null</code> if it could not be read for some reason
+     */
+    public synchronized Optional<InetAddress> get() {
+        long current = System.currentTimeMillis();
+        if (current - cachedAddress.lastUpdated < interval) {
+            return Optional.ofNullable(cachedAddress.address);
+        }
+        InetAddress address = readAddress.get(); // register the attempt even if null, i.e. failed to get a meaningful address
+        cachedAddress = new CacheEntry(current, address);
+        return Optional.ofNullable(address);
     }
 
     private static class CacheEntry {

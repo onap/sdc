@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.versioning.ItemManager;
@@ -21,11 +20,11 @@ import org.openecomp.sdc.versioning.ItemManagerFactory;
 import org.openecomp.sdc.versioning.dao.ItemDaoFactory;
 
 public class ItemManagerFactoryImpl extends ItemManagerFactory {
-  private static final ItemManager instance =
-      new ItemManagerImpl(ItemDaoFactory.getInstance().createInterface());
 
-  @Override
-  public ItemManager createInterface() {
-    return instance;
-  }
+    private static final ItemManager instance = new ItemManagerImpl(ItemDaoFactory.getInstance().createInterface());
+
+    @Override
+    public ItemManager createInterface() {
+        return instance;
+    }
 }

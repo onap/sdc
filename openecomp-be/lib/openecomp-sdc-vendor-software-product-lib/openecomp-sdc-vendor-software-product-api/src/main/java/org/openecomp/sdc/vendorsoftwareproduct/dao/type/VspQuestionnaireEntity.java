@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import lombok.Getter;
@@ -33,7 +32,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 public class VspQuestionnaireEntity implements CompositionEntity {
 
     private static final String ENTITY_TYPE = "Vendor Software Product";
-
     private String id;
     private Version version;
     private String questionnaireData;
@@ -72,5 +70,4 @@ public class VspQuestionnaireEntity implements CompositionEntity {
     public void setCompositionData(String compositionData) {
         //none
     }
-
 }

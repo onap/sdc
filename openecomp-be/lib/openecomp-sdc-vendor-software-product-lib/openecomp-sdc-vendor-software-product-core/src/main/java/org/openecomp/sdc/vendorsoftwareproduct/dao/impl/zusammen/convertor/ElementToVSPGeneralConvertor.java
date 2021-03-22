@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
@@ -29,72 +28,51 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.VendorSoftwareP
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-
 public class ElementToVSPGeneralConvertor extends ElementConvertor {
-  @Override
-  public VspDetails convert(Element element) {
-    if (element == null) {
-      return null;
-    }
-    return mapInfoToVspDetails(element.getInfo());
 
-  }
-
-  @Override
-  public VspDetails convert(Item item) {
-    if (item == null) {
-      return null;
-    }
-    VspDetails vspDetails = mapInfoToVspDetails(item.getInfo());
-    vspDetails.setId(item.getId().getValue());
-    return vspDetails;
-  }
-
-  @Override
-  public VspDetails convert(ElementInfo elementInfo) {
-    if (elementInfo == null) {
-      return null;
-    }
-    return mapInfoToVspDetails(elementInfo.getInfo());
-
-  }
-
-
-  private VspDetails mapInfoToVspDetails(Info info) {
-
-    VspDetails vspDetails = new VspDetails();
-
-    vspDetails.setName(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl
-        .InfoPropertyName.NAME.getValue()));
-    vspDetails.setDescription(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.DESCRIPTION.getValue()));
-    vspDetails.setIcon(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ICON.getValue()));
-    vspDetails.setCategory(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.CATEGORY.getValue()));
-    vspDetails.setSubCategory(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.SUB_CATEGORY.getValue()));
-    vspDetails.setVendorId(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_ID.getValue()));
-    vspDetails.setVendorName(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_NAME.getValue()));
-    if (info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue()) != null) {
-      vspDetails.setVlmVersion(new Version(info.getProperty(
-          VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue())));
+    @Override
+    public VspDetails convert(Element element) {
+        if (element == null) {
+            return null;
+        }
+        return mapInfoToVspDetails(element.getInfo());
     }
 
-    vspDetails.setLicenseType(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_TYPE.getValue()));
-    vspDetails.setLicenseAgreement(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_AGREEMENT.getValue()));
-    vspDetails.setFeatureGroups(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.FEATURE_GROUPS.getValue()));
-    vspDetails.setOnboardingMethod(info.getProperty(
-        VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ON_BOARDING_METHOD.getValue()));
+    @Override
+    public VspDetails convert(Item item) {
+        if (item == null) {
+            return null;
+        }
+        VspDetails vspDetails = mapInfoToVspDetails(item.getInfo());
+        vspDetails.setId(item.getId().getValue());
+        return vspDetails;
+    }
 
-    return vspDetails;
-  }
+    @Override
+    public VspDetails convert(ElementInfo elementInfo) {
+        if (elementInfo == null) {
+            return null;
+        }
+        return mapInfoToVspDetails(elementInfo.getInfo());
+    }
 
-
+    private VspDetails mapInfoToVspDetails(Info info) {
+        VspDetails vspDetails = new VspDetails();
+        vspDetails.setName(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.NAME.getValue()));
+        vspDetails.setDescription(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.DESCRIPTION.getValue()));
+        vspDetails.setIcon(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ICON.getValue()));
+        vspDetails.setCategory(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.CATEGORY.getValue()));
+        vspDetails.setSubCategory(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.SUB_CATEGORY.getValue()));
+        vspDetails.setVendorId(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_ID.getValue()));
+        vspDetails.setVendorName(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_NAME.getValue()));
+        if (info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue()) != null) {
+            vspDetails
+                .setVlmVersion(new Version(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue())));
+        }
+        vspDetails.setLicenseType(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_TYPE.getValue()));
+        vspDetails.setLicenseAgreement(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_AGREEMENT.getValue()));
+        vspDetails.setFeatureGroups(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.FEATURE_GROUPS.getValue()));
+        vspDetails.setOnboardingMethod(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ON_BOARDING_METHOD.getValue()));
+        return vspDetails;
+    }
 }

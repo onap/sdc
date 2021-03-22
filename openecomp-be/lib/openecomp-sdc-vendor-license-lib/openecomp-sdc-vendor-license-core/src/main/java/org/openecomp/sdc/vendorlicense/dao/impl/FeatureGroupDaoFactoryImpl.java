@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
@@ -21,13 +20,12 @@ import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.FeatureGroupDaoZusammenImpl;
 
-
 public class FeatureGroupDaoFactoryImpl extends FeatureGroupDaoFactory {
-    private static FeatureGroupDao instance = new FeatureGroupDaoZusammenImpl(
-        ZusammenAdaptorFactory.getInstance().createInterface());
 
-  @Override
-  public FeatureGroupDao createInterface() {
-    return instance;
-  }
+    private static FeatureGroupDao instance = new FeatureGroupDaoZusammenImpl(ZusammenAdaptorFactory.getInstance().createInterface());
+
+    @Override
+    public FeatureGroupDao createInterface() {
+        return instance;
+    }
 }

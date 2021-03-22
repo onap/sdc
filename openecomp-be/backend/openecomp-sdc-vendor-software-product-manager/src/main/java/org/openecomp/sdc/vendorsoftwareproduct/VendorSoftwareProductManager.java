@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
@@ -26,13 +31,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public interface VendorSoftwareProductManager {
 
@@ -48,11 +46,9 @@ public interface VendorSoftwareProductManager {
 
     Map<String, List<ErrorMessage>> compile(String vspId, Version version);
 
-
     QuestionnaireResponse getVspQuestionnaire(String vspId, Version version);
 
     void updateVspQuestionnaire(String vspId, Version version, String questionnaireData);
-
 
     byte[] getOrchestrationTemplateFile(String vspId, Version version);
 
@@ -63,7 +59,6 @@ public interface VendorSoftwareProductManager {
     PackageInfo createPackage(String vspId, Version version) throws IOException;
 
     List<PackageInfo> listPackages(String category, String subCategory);
-
 
     File getTranslatedFile(String vspId, Version version);
 

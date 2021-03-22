@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.heat.services.tree;
 
 import java.io.InputStream;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -39,12 +37,9 @@ import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-
 public class HeatTreeManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeatTreeManager.class);
-
-
     private FileContentHandler heatContentMap = new FileContentHandler();
     private byte[] manifest;
     private HeatStructureTree tree = new HeatStructureTree();
@@ -65,7 +60,6 @@ public class HeatTreeManager {
     public void addFile(String fileName, InputStream content) {
         if (fileName.equals(SdcCommon.MANIFEST_NAME)) {
             manifest = FileUtils.toByteArray(content);
-
         } else {
             heatContentMap.addFile(fileName, content);
         }
@@ -79,25 +73,19 @@ public class HeatTreeManager {
             LOGGER.error("Missing manifest file in the zip.");
             return;
         }
-        ManifestContent manifestData =
-                JsonUtil.json2Object(new String(manifest), ManifestContent.class);
+        ManifestContent manifestData = JsonUtil.json2Object(new String(manifest), ManifestContent.class);
         scanTree(null, manifestData.getData());
         addNonNestedVolumeNetworkToTree(volumeFileToParent, nestedFiles.keySet(), true);
         addNonNestedVolumeNetworkToTree(networkFileToParent, nestedFiles.keySet(), false);
         handleOrphans();
-
         tree = fileTreeRef.get(SdcCommon.PARENT);
     }
 
     private void handleOrphans() {
         tree = fileTreeRef.get(SdcCommon.PARENT);
         candidateOrphanArtifacts.forEach((key, value) -> tree.addArtifactToArtifactList(value));
-        nestedFiles
-                .values().stream().filter(tree.getHeat()::contains)
-                .forEach(tree.getHeat()::remove);
-
-        heatContentMap.getFileList().stream().filter(this::isNotInManifestFiles)
-                .forEach(this::addTreeOther);
+        nestedFiles.values().stream().filter(tree.getHeat()::contains).forEach(tree.getHeat()::remove);
+        heatContentMap.getFileList().stream().filter(this::isNotInManifestFiles).forEach(this::addTreeOther);
     }
 
     private boolean isNotInManifestFiles(String fileName) {
@@ -113,18 +101,12 @@ public class HeatTreeManager {
         tree.getOther().add(other);
     }
 
-
-    private void handleHeatContentReference(HeatStructureTree fileHeatStructureTree,
-                                            GlobalValidationContext globalContext) {
-
+    private void handleHeatContentReference(HeatStructureTree fileHeatStructureTree, GlobalValidationContext globalContext) {
         String fileName = fileHeatStructureTree.getFileName();
         try (InputStream fileContent = this.heatContentMap.getFileContentAsStream(fileName)) {
-            HeatOrchestrationTemplate hot =
-                    new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
-
+            HeatOrchestrationTemplate hot = new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
             Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(hot);
             addHeatNestedFiles(fileHeatStructureTree, nestedSet);
-
             Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(fileName, hot, globalContext);
             addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
         } catch (Exception exp) {
@@ -132,21 +114,16 @@ public class HeatTreeManager {
         }
     }
 
-
-    private void addHeatArtifactFiles(HeatStructureTree fileHeatStructureTree,
-                                      Set<String> artifactSet) {
+    private void addHeatArtifactFiles(HeatStructureTree fileHeatStructureTree, Set<String> artifactSet) {
         Artifact artifact;
         for (String artifactName : artifactSet) {
-            FileData.Type type =
-                    candidateOrphanArtifacts.get(artifactName) != null ? candidateOrphanArtifacts
-                            .get(artifactName).getType() : null;
+            FileData.Type type = candidateOrphanArtifacts.get(artifactName) != null ? candidateOrphanArtifacts.get(artifactName).getType() : null;
             artifact = new Artifact(artifactName, type);
             artifactRef.put(artifactName, artifact);
             candidateOrphanArtifacts.remove(artifactName);
             fileHeatStructureTree.addArtifactToArtifactList(artifact);
         }
     }
-
 
     private void addHeatNestedFiles(HeatStructureTree fileHeatStructureTree, Set<String> nestedSet) {
         HeatStructureTree childHeatStructureTree;
@@ -162,22 +139,16 @@ public class HeatTreeManager {
         }
     }
 
-
     /**
      * Add errors.
      *
      * @param validationErrors the validation errors
      */
     public void addErrors(Map<String, List<ErrorMessage>> validationErrors) {
-
-        validationErrors.entrySet().stream()
-                .filter(entry -> fileTreeRef.get(entry.getKey()) != null)
-                .forEach(entry -> entry.getValue().forEach(fileTreeRef.get(entry.getKey())::addErrorToErrorsList));
-
-        validationErrors.entrySet().stream()
-                .filter(entry -> artifactRef.get(entry.getKey()) != null)
-                .forEach(entry -> artifactRef.get(entry.getKey()).setErrors(entry.getValue()));
-
+        validationErrors.entrySet().stream().filter(entry -> fileTreeRef.get(entry.getKey()) != null)
+            .forEach(entry -> entry.getValue().forEach(fileTreeRef.get(entry.getKey())::addErrorToErrorsList));
+        validationErrors.entrySet().stream().filter(entry -> artifactRef.get(entry.getKey()) != null)
+            .forEach(entry -> artifactRef.get(entry.getKey()).setErrors(entry.getValue()));
     }
 
     /**
@@ -200,12 +171,10 @@ public class HeatTreeManager {
         } else {
             parentHeatStructureTree = fileTreeRef.get(parent);
         }
-
         for (FileData fileData : data) {
             fileName = fileData.getFile();
             manifestFiles.add(fileName);
             type = fileData.getType();
-
             if (Objects.nonNull(type) && FileData.Type.HEAT.equals(type)) {
                 fileHeatStructureTree = fileTreeRef.get(fileName);
                 if (fileHeatStructureTree == null) {
@@ -226,7 +195,6 @@ public class HeatTreeManager {
                 childHeatStructureTree.setBase(fileData.getBase());
                 childHeatStructureTree.setType(type);
                 fileTreeRef.put(childHeatStructureTree.getFileName(), childHeatStructureTree);
-
                 if (type == null) {
                     parentHeatStructureTree.addOtherToOtherList(childHeatStructureTree);
                 } else if (FileData.Type.HEAT_NET.equals(type)) {
@@ -235,7 +203,6 @@ public class HeatTreeManager {
                         scanTree(fileName, fileData.getData());
                     }
                     handleHeatContentReference(childHeatStructureTree, null);
-
                 } else if (FileData.Type.HEAT_VOL.equals(type)) {
                     volumeFileToParent.put(childHeatStructureTree, parentHeatStructureTree);
                     if (fileData.getData() != null) {
@@ -253,8 +220,7 @@ public class HeatTreeManager {
                     }
                 } else if (FileData.Type.HELM.equals(type)) {
                     parentHeatStructureTree.addToHelmList(childHeatStructureTree);
-                    }
-                else {
+                } else {
                     artifact = new Artifact(fileName, type);
                     if (!artifactRef.keySet().contains(fileName)) {
                         artifactRef.put(fileName, artifact);
@@ -265,10 +231,8 @@ public class HeatTreeManager {
         }
     }
 
-
-    private void addNonNestedVolumeNetworkToTree(
-            Map<HeatStructureTree, HeatStructureTree> netVolToParent, Set<String> nestedFileNames,
-            boolean isVolume) {
+    private void addNonNestedVolumeNetworkToTree(Map<HeatStructureTree, HeatStructureTree> netVolToParent, Set<String> nestedFileNames,
+                                                 boolean isVolume) {
         for (Map.Entry<HeatStructureTree, HeatStructureTree> entry : netVolToParent.entrySet()) {
             HeatStructureTree netOrVolNode = entry.getKey();
             HeatStructureTree parent = entry.getValue();
@@ -281,7 +245,6 @@ public class HeatTreeManager {
             }
         }
     }
-
 
     public HeatStructureTree getTree() {
         return tree;

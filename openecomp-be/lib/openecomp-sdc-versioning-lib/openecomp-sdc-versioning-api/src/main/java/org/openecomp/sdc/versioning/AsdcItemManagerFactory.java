@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
@@ -21,7 +20,7 @@ import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class AsdcItemManagerFactory extends AbstractComponentFactory<AsdcItemManager> {
 
-  public static AsdcItemManagerFactory getInstance() {
-    return AbstractFactory.getInstance(AsdcItemManagerFactory.class);
-  }
+    public static AsdcItemManagerFactory getInstance() {
+        return AbstractFactory.getInstance(AsdcItemManagerFactory.class);
+    }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,27 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.errors;
 
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
-
 public class MissingMandatoryPropertyErrorBuilder extends BaseErrorBuilder {
 
-  private static final String MANDATORY_PROPERTY_IS_MISSING_MSG =
-      "Mandatory property '%s' is missing";
+    private static final String MANDATORY_PROPERTY_IS_MISSING_MSG = "Mandatory property '%s' is missing";
 
-  /**
-   * Instantiates a new Missing mandatory property error builder.
-   *
-   * @param propertyName the property name
-   */
-  public MissingMandatoryPropertyErrorBuilder(String propertyName) {
-    getErrorCodeBuilder().withId(TranslatorErrorCodes.MISSING_MANDATORY_PROPERTY);
-    getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
-    getErrorCodeBuilder()
-        .withMessage(String.format(MANDATORY_PROPERTY_IS_MISSING_MSG, propertyName));
-  }
+    /**
+     * Instantiates a new Missing mandatory property error builder.
+     *
+     * @param propertyName the property name
+     */
+    public MissingMandatoryPropertyErrorBuilder(String propertyName) {
+        getErrorCodeBuilder().withId(TranslatorErrorCodes.MISSING_MANDATORY_PROPERTY);
+        getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
+        getErrorCodeBuilder().withMessage(String.format(MANDATORY_PROPERTY_IS_MISSING_MSG, propertyName));
+    }
 }

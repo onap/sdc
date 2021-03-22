@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.model.types;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Frozen;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 @Table(keyspace = "dox", name = "vsp_service_artifact")
 public class ServiceArtifactEntity implements ServiceElementEntity {
+
     private static final String ENTITY_TYPE;
 
     static {
@@ -35,15 +38,12 @@ public class ServiceArtifactEntity implements ServiceElementEntity {
     @PartitionKey
     @Column(name = "vsp_id")
     public String id;
-
     @PartitionKey(value = 1)
     @Frozen
     public Version version;
-
     @ClusteringColumn
     @Column(name = "name")
     public String name;
-
     @Column(name = "content_data")
     public ByteBuffer contentData;
 
@@ -65,13 +65,11 @@ public class ServiceArtifactEntity implements ServiceElementEntity {
         this.id = entity.getVspId();
         this.version = entity.getVersion();
         this.name = entity.getName();
-
         try {
             this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
         } catch (IOException ioException) {
             throw new SdcRuntimeException(ioException);
         }
-
     }
 
     @Override
@@ -130,5 +128,4 @@ public class ServiceArtifactEntity implements ServiceElementEntity {
         serviceArtifact.setVspId(this.getId());
         return serviceArtifact;
     }
-
 }

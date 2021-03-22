@@ -22,10 +22,10 @@ package org.openecomp.core.validation;
 import java.util.Objects;
 
 public final class ErrorMessageCode {
+
     private final String messageCode;
 
     public ErrorMessageCode(String messageCode) {
-
         this.messageCode = messageCode;
     }
 
@@ -46,9 +46,7 @@ public final class ErrorMessageCode {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         ErrorMessageCode that = (ErrorMessageCode) o;
-
         return Objects.equals(this.messageCode, that.messageCode);
     }
 

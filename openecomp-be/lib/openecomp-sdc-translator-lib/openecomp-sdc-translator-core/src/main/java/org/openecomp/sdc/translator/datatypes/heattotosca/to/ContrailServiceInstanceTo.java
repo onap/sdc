@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.to;
 
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 
 public class ContrailServiceInstanceTo {
+
     private final ServiceTemplate nestedSubstitutionServiceTemplate;
     private final NodeTemplate substitutedNodeTemplate;
     private final String heatStackGroupKey;
     private final boolean orderedInterfaces;
     private final String computeNodeTemplateId;
 
-    public ContrailServiceInstanceTo(ServiceTemplate nestedSubstitutionServiceTemplate,
-                              NodeTemplate substitutedNodeTemplate, String heatStackGroupKey,
-                              boolean orderedInterfaces, String computeNodeTemplateId) {
+    public ContrailServiceInstanceTo(ServiceTemplate nestedSubstitutionServiceTemplate, NodeTemplate substitutedNodeTemplate,
+                                     String heatStackGroupKey, boolean orderedInterfaces, String computeNodeTemplateId) {
         this.nestedSubstitutionServiceTemplate = nestedSubstitutionServiceTemplate;
         this.substitutedNodeTemplate = substitutedNodeTemplate;
         this.heatStackGroupKey = heatStackGroupKey;

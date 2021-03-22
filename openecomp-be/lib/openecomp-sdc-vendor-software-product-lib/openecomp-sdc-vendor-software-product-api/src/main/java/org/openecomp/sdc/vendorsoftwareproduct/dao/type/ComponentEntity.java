@@ -17,10 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Frozen;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,72 +37,68 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_component")
 public class ComponentEntity implements CompositionEntity {
-  public static final String ENTITY_TYPE = "Vendor Software Product Component";
 
-  @PartitionKey
-  @Column(name = "vsp_id")
-  private String vspId;
-  @PartitionKey(value = 1)
-  @Frozen
-  private Version version;
-  @ClusteringColumn
-  @Column(name = "component_id")
-  private String id;
-  @Column(name = "composition_data")
-  private String compositionData;
-  @Column(name = "questionnaire_data")
-  private String questionnaireData;
-  @Transient
-  private List<NicEntity> nics = new ArrayList<>();
+    public static final String ENTITY_TYPE = "Vendor Software Product Component";
+    @PartitionKey
+    @Column(name = "vsp_id")
+    private String vspId;
+    @PartitionKey(value = 1)
+    @Frozen
+    private Version version;
+    @ClusteringColumn
+    @Column(name = "component_id")
+    private String id;
+    @Column(name = "composition_data")
+    private String compositionData;
+    @Column(name = "questionnaire_data")
+    private String questionnaireData;
+    @Transient
+    private List<NicEntity> nics = new ArrayList<>();
 
-  /**
-   * Instantiates a new Component entity.
-   *
-   * @param vspId   the vsp id
-   * @param version the version
-   * @param id      the id
-   */
-  public ComponentEntity(String vspId, Version version, String id) {
-    this.vspId = vspId;
-    this.version = version;
-    this.id = id;
-  }
+    /**
+     * Instantiates a new Component entity.
+     *
+     * @param vspId   the vsp id
+     * @param version the version
+     * @param id      the id
+     */
+    public ComponentEntity(String vspId, Version version, String id) {
+        this.vspId = vspId;
+        this.version = version;
+        this.id = id;
+    }
 
-  @Override
-  public CompositionEntityType getType() {
-    return CompositionEntityType.component;
-  }
+    @Override
+    public CompositionEntityType getType() {
+        return CompositionEntityType.component;
+    }
 
-  @Override
-  public CompositionEntityId getCompositionEntityId() {
-    return new CompositionEntityId(getId(), new CompositionEntityId(getVspId(), null));
-  }
+    @Override
+    public CompositionEntityId getCompositionEntityId() {
+        return new CompositionEntityId(getId(), new CompositionEntityId(getVspId(), null));
+    }
 
-  @Override
-  public String getEntityType() {
-    return ENTITY_TYPE;
-  }
+    @Override
+    public String getEntityType() {
+        return ENTITY_TYPE;
+    }
 
-  @Override
-  public String getFirstClassCitizenId() {
-    return getVspId();
-  }
+    @Override
+    public String getFirstClassCitizenId() {
+        return getVspId();
+    }
 
-  public ComponentData getComponentCompositionData() {
-    return compositionData == null ? null
-        : JsonUtil.json2Object(compositionData, ComponentData.class);
-  }
+    public ComponentData getComponentCompositionData() {
+        return compositionData == null ? null : JsonUtil.json2Object(compositionData, ComponentData.class);
+    }
 
-  public void setComponentCompositionData(ComponentData component) {
-    this.compositionData = component == null ? null : JsonUtil.object2Json(component);
-  }
+    public void setComponentCompositionData(ComponentData component) {
+        this.compositionData = component == null ? null : JsonUtil.object2Json(component);
+    }
 }

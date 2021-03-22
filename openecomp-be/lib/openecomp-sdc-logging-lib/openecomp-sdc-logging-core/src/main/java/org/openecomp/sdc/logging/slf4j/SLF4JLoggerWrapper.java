@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.text.SimpleDateFormat;
@@ -34,7 +33,6 @@ class SLF4JLoggerWrapper implements Logger {
 
     //The specified format presents time in UTC formatted per ISO 8601, as required by ONAP logging guidelines
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-
     private final org.slf4j.Logger logger;
 
     // May cause http://www.slf4j.org/codes.html#loggerNameMismatch
@@ -48,6 +46,16 @@ class SLF4JLoggerWrapper implements Logger {
 
     SLF4JLoggerWrapper(String className) {
         this(LoggerFactory.getLogger(className));
+    }
+
+    private static void unsafePutOnMdc(MDCField field, String value) {
+        MDC.put(field.asKey(), value);
+    }
+
+    private static void safePutOnMdc(MDCField field, String value) {
+        if (value != null) {
+            unsafePutOnMdc(field, value);
+        }
     }
 
     @Override
@@ -67,11 +75,9 @@ class SLF4JLoggerWrapper implements Logger {
 
     @Override
     public void metrics(MetricsData data) {
-
         if (data == null) {
             return; // not going to fail because of null
         }
-
         try {
             putMetricsOnMdc(data);
             logger.info(Markers.METRICS, "");
@@ -81,7 +87,6 @@ class SLF4JLoggerWrapper implements Logger {
     }
 
     private void putMetricsOnMdc(MetricsData metrics) {
-
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
         unsafePutOnMdc(MetricsField.BEGIN_TIMESTAMP, dateFormat.format(metrics.getStartTime()));
         unsafePutOnMdc(MetricsField.END_TIMESTAMP, dateFormat.format(metrics.getEndTime()));
@@ -91,7 +96,6 @@ class SLF4JLoggerWrapper implements Logger {
         safePutOnMdc(MetricsField.CLIENT_IP_ADDRESS, metrics.getClientIpAddress());
         safePutOnMdc(MetricsField.TARGET_ENTITY, metrics.getTargetEntity());
         safePutOnMdc(MetricsField.TARGET_VIRTUAL_ENTITY, metrics.getTargetVirtualEntity());
-
         if (metrics.getStatusCode() != null) {
             unsafePutOnMdc(MetricsField.STATUS_CODE, metrics.getStatusCode().name());
         }
@@ -103,16 +107,6 @@ class SLF4JLoggerWrapper implements Logger {
         }
     }
 
-    private static void unsafePutOnMdc(MDCField field, String value) {
-        MDC.put(field.asKey(), value);
-    }
-
-    private static void safePutOnMdc(MDCField field, String value) {
-        if (value != null) {
-            unsafePutOnMdc(field, value);
-        }
-    }
-
     @Override
     public boolean isAuditEnabled() {
         return logger.isInfoEnabled(Markers.EXIT);
@@ -120,11 +114,9 @@ class SLF4JLoggerWrapper implements Logger {
 
     @Override
     public void auditEntry(AuditData data) {
-
         if (data == null) {
             return; // not failing if null
         }
-
         try {
             putAuditOnMdc(data);
             logger.info(Markers.ENTRY, "");
@@ -133,14 +125,11 @@ class SLF4JLoggerWrapper implements Logger {
         }
     }
 
-
     @Override
     public void auditExit(AuditData data) {
-
         if (data == null) {
             return; // not failing if null
         }
-
         try {
             putAuditOnMdc(data);
             logger.info(Markers.EXIT, "");
@@ -150,7 +139,6 @@ class SLF4JLoggerWrapper implements Logger {
     }
 
     private void putAuditOnMdc(AuditData audit) {
-
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_PATTERN);
         unsafePutOnMdc(AuditField.BEGIN_TIMESTAMP, dateFormat.format(audit.getStartTime()));
         unsafePutOnMdc(AuditField.END_TIMESTAMP, dateFormat.format(audit.getEndTime()));
@@ -159,7 +147,6 @@ class SLF4JLoggerWrapper implements Logger {
         safePutOnMdc(AuditField.RESPONSE_DESCRIPTION, audit.getResponseDescription());
         safePutOnMdc(AuditField.CLIENT_IP_ADDRESS, audit.getClientIpAddress());
         unsafePutOnMdc(AuditField.INVOCATION_ID, UUID.randomUUID().toString());
-
         if (audit.getStatusCode() != null) {
             unsafePutOnMdc(AuditField.STATUS_CODE, audit.getStatusCode().name());
         }

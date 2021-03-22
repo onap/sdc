@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute;
 
 import lombok.Getter;
@@ -35,5 +34,4 @@ public class VmSizing {
     private Number IOOperationsPerSec;
     private String cpuOverSubscriptionRatio;
     private String memoryRAM;
-
 }

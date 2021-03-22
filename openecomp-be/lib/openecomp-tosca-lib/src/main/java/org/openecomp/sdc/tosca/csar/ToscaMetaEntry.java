@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  * (===========LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import java.util.Arrays;
@@ -30,6 +29,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ToscaMetaEntry {
+    // @formatter:off
     TOSCA_META_FILE_VERSION_ENTRY("TOSCA-Meta-File-Version"),
     CSAR_VERSION_ENTRY("CSAR-Version"),
     CREATED_BY_ENTRY("Created-By"),
@@ -40,6 +40,7 @@ public enum ToscaMetaEntry {
     ETSI_ENTRY_LICENSES("ETSI-Entry-Licenses"),
     ETSI_ENTRY_CERTIFICATE("ETSI-Entry-Certificate"),
     OTHER_DEFINITIONS("Other-Definitions");
+    // @formatter:on
 
     private final String name;
 

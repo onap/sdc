@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import java.nio.ByteBuffer;
@@ -37,11 +36,8 @@ public class OrchestrationTemplateCandidateData {
     private String originalFileName;
     private String originalFileSuffix;
 
-    public OrchestrationTemplateCandidateData(final ByteBuffer contentData,
-                                              final String dataStructureJson,
-                                              final String fileSuffix, final String fileName,
-                                              final String originalFileName,
-                                              final String originalFileSuffix,
+    public OrchestrationTemplateCandidateData(final ByteBuffer contentData, final String dataStructureJson, final String fileSuffix,
+                                              final String fileName, final String originalFileName, final String originalFileSuffix,
                                               final ByteBuffer originalFileContentData) {
         this.contentData = contentData;
         this.filesDataStructure = dataStructureJson;
@@ -53,8 +49,6 @@ public class OrchestrationTemplateCandidateData {
     }
 
     public ValidationStructureList getValidationDataStructure() {
-        return validationData == null ? null
-            : JsonUtil.json2Object(validationData, ValidationStructureList.class);
+        return validationData == null ? null : JsonUtil.json2Object(validationData, ValidationStructureList.class);
     }
-
 }

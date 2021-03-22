@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands;
 
+import java.util.Optional;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to.UnifiedCompositionTo;
 
-import java.util.Optional;
-
 public interface UnifiedSubstitutionNodeTemplateIdGenerator {
-  public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId);
+
+    public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId);
 }

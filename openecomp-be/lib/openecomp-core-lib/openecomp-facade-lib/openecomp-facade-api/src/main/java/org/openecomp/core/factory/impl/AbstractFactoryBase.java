@@ -13,30 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.factory.impl;
 
 public abstract class AbstractFactoryBase {
 
-  /**
-   * Instantiates the configured implementation of an abstract factory.
-   *
-   * @param <F>         Type specific abstract factory for concrete Java interface
-   * @param factoryType Java class of type specific abstract factory
-   * @return Instance of implementation class
-   */
-  public static <F extends AbstractFactoryBase> F getInstance(Class<F> factoryType) {
-      return FactoryManager.getInstance().getFactoryInstance(factoryType);
-  }
+    /**
+     * Instantiates the configured implementation of an abstract factory.
+     *
+     * @param <F>         Type specific abstract factory for concrete Java interface
+     * @param factoryType Java class of type specific abstract factory
+     * @return Instance of implementation class
+     */
+    public static <F extends AbstractFactoryBase> F getInstance(Class<F> factoryType) {
+        return FactoryManager.getInstance().getFactoryInstance(factoryType);
+    }
 
-  protected void init() {
-    // allows custom initialization
-    // noop by default
-  }
+    protected void init() {
+        // allows custom initialization
 
-  protected void stop() {
-    // allows custom shutdown
-    // noop by default
-  }
+        // noop by default
+    }
 
+    protected void stop() {
+        // allows custom shutdown
+
+        // noop by default
+    }
 }

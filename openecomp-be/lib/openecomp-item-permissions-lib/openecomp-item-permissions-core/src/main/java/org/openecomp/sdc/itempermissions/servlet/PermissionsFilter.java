@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.itempermissions.servlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.Messages;
@@ -43,9 +41,9 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class PermissionsFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsFilter.class);
-    private final PermissionsServices permissionsServices;
     private static final String IRRELEVANT_REQUEST = "Irrelevant_Request";
     private static final String EDIT_ITEM = "Edit_Item";
+    private final PermissionsServices permissionsServices;
 
     public PermissionsFilter() {
         this(PermissionsServicesFactory.getInstance().createInterface());
@@ -62,10 +60,8 @@ public class PermissionsFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
-
-        if ((servletRequest instanceof HttpServletRequest)
-                    && isRelevant((HttpServletRequest) servletRequest, servletResponse)) {
+        throws IOException, ServletException {
+        if ((servletRequest instanceof HttpServletRequest) && isRelevant((HttpServletRequest) servletRequest, servletResponse)) {
             filterChain.doFilter(servletRequest, servletResponse);
         }
     }
@@ -73,19 +69,15 @@ public class PermissionsFilter implements Filter {
     private boolean isRelevant(HttpServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
         String method = servletRequest.getMethod();
         if (method.equals(HttpMethod.POST) || method.equals(HttpMethod.PUT) || method.equals(HttpMethod.DELETE)) {
-
             String userId = servletRequest.getHeader("USER_ID");
             String itemId = parseItemIdFromPath(servletRequest.getPathInfo());
-
             if (!itemId.equals(IRRELEVANT_REQUEST) && !permissionsServices.isAllowed(itemId, userId, EDIT_ITEM)) {
                 ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_FORBIDDEN);
-                servletResponse.getWriter().print(buildResponse(Response.Status.FORBIDDEN,
-                        Messages.PERMISSIONS_ERROR.getErrorMessage(),
-                        Messages.PERMISSIONS_ERROR.name()));
+                servletResponse.getWriter()
+                    .print(buildResponse(Response.Status.FORBIDDEN, Messages.PERMISSIONS_ERROR.getErrorMessage(), Messages.PERMISSIONS_ERROR.name()));
                 return false;
             }
         }
-
         return true;
     }
 
@@ -104,9 +96,7 @@ public class PermissionsFilter implements Filter {
     }
 
     private String buildResponse(Response.Status status, String message, String id) {
-        ErrorCode errorCode = new ErrorCode.ErrorCodeBuilder()
-                                      .withId(id)
-                                      .withMessage(message).build();
+        ErrorCode errorCode = new ErrorCode.ErrorCodeBuilder().withId(id).withMessage(message).build();
         return objectToJsonString(new ErrorCodeAndMessage(status, errorCode));
     }
 

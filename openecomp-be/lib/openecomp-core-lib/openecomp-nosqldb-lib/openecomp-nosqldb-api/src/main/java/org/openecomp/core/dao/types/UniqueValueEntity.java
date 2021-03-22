@@ -17,12 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.dao.types;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +35,6 @@ public class UniqueValueEntity {
 
     @PartitionKey
     private String type;
-
     @PartitionKey(value = 1)
     private String value;
 }

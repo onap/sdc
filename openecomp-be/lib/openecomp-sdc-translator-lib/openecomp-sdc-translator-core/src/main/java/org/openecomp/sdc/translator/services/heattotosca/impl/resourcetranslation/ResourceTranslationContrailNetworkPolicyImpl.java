@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
@@ -26,19 +25,16 @@ import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatT
 
 public class ResourceTranslationContrailNetworkPolicyImpl extends ResourceTranslationBase {
 
-    protected static Logger logger =
-            (Logger) LoggerFactory.getLogger(ResourceTranslationContrailNetworkPolicyImpl.class);
+    protected static Logger logger = (Logger) LoggerFactory.getLogger(ResourceTranslationContrailNetworkPolicyImpl.class);
 
     @Override
     protected void translate(TranslateTo translateTo) {
         NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setType(ToscaNodeType.CONTRAIL_NETWORK_RULE);
         nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
-                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
-                        translateTo.getResourceId(), translateTo.getResource().getProperties(),
-                        nodeTemplate.getProperties(), translateTo.getHeatFileName(),
-                        translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
-                        nodeTemplate, translateTo.getContext()));
+            .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(), translateTo.getResourceId(),
+                translateTo.getResource().getProperties(), nodeTemplate.getProperties(), translateTo.getHeatFileName(),
+                translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(), nodeTemplate, translateTo.getContext()));
         DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), nodeTemplate);
     }
 }

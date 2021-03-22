@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.HashMap;
@@ -38,19 +37,17 @@ public class ComputeConsolidationData {
         return fileComputeConsolidationData.get(serviceTemplateFileName);
     }
 
-    public void setFileComputeConsolidationData(String serviceTemplateFileName,
-              FileComputeConsolidationData fileComputeConsolidationData) {
+    public void setFileComputeConsolidationData(String serviceTemplateFileName, FileComputeConsolidationData fileComputeConsolidationData) {
         this.fileComputeConsolidationData.put(serviceTemplateFileName, fileComputeConsolidationData);
     }
 
     /**
-     * add compute template consolidation data entity if it doesn't exist yet
-     * base on given parameters.
+     * add compute template consolidation data entity if it doesn't exist yet base on given parameters.
      *
      * @return compute template consolidation data entity by given keys
-    */
-    ComputeTemplateConsolidationData addComputeTemplateConsolidationData(
-            String serviceTemplateFileName, String computeNodeType, String computeNodeTemplateId) {
+     */
+    ComputeTemplateConsolidationData addComputeTemplateConsolidationData(String serviceTemplateFileName, String computeNodeType,
+                                                                         String computeNodeTemplateId) {
         FileComputeConsolidationData consolidationData = addFileComputeConsolidationData(serviceTemplateFileName);
         return consolidationData.addComputeTemplateConsolidationData(computeNodeType, computeNodeTemplateId);
     }
@@ -71,9 +68,7 @@ public class ComputeConsolidationData {
      * @return the boolean
      */
     public boolean isNumberOfComputeTypesLegal(String serviceTemplateName) {
-        FileComputeConsolidationData fileComputeConsolidationData =
-                getFileComputeConsolidationData(serviceTemplateName);
-        return Objects.nonNull(fileComputeConsolidationData)
-                       && fileComputeConsolidationData.isNumberOfComputeTypesLegal();
+        FileComputeConsolidationData fileComputeConsolidationData = getFileComputeConsolidationData(serviceTemplateName);
+        return Objects.nonNull(fileComputeConsolidationData) && fileComputeConsolidationData.isNumberOfComputeTypesLegal();
     }
 }

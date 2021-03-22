@@ -17,11 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-public enum LicenseType {
-    EXTERNAL,
-    INTERNAL
-}
+public enum LicenseType {EXTERNAL, INTERNAL}

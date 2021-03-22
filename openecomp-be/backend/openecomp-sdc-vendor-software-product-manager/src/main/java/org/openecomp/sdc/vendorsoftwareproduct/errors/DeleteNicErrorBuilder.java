@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class DeleteNicErrorBuilder {
-    private static final String DELETE_NIC_NOT_ALLOWED_MSG =
-            "NIC cannot be deleted for VSPs onboarded with HEAT.";
 
-    private DeleteNicErrorBuilder(){
+    private static final String DELETE_NIC_NOT_ALLOWED_MSG = "NIC cannot be deleted for VSPs onboarded with HEAT.";
 
+    private DeleteNicErrorBuilder() {
     }
 
     public static ErrorCode getDeleteNicForHeatOnboardedVspErrorBuilder() {
@@ -34,5 +32,4 @@ public class DeleteNicErrorBuilder {
         builder.withMessage(String.format(DELETE_NIC_NOT_ALLOWED_MSG));
         return builder.build();
     }
-
 }

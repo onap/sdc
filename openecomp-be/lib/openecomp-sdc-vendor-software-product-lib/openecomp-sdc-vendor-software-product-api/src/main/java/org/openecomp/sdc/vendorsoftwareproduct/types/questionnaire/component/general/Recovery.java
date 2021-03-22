@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ public class Recovery {
     private Number pointObjective;
     private Number timeObjective;
     private String vmProcessFailuresHandling;
-
 }

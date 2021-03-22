@@ -13,58 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.impl;
 
+import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
+import static org.openecomp.core.converter.datatypes.Constants.MAIN_ST_NAME;
+
+import java.util.HashMap;
+import java.util.Map;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.datatypes.CsarFileTypes;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
-import static org.openecomp.core.converter.datatypes.Constants.MAIN_ST_NAME;
-
 public class ToscaConverterImpl extends AbstractToscaConverter {
 
-  @Override
-  public ToscaServiceModel convert(FileContentHandler fileContentHandler) {
-      Map<String, byte[]> csarFiles = new HashMap<>(fileContentHandler.getFiles());
-      ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
-      Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
-      FileContentHandler artifacts = new FileContentHandler();
-      GlobalSubstitutionServiceTemplate gsst = new GlobalSubstitutionServiceTemplate();
-      csarFiles.putAll(fileContentHandler.getFiles());
-      for (Map.Entry<String, byte[]> fileEntry : csarFiles.entrySet()) {
-          CsarFileTypes fileType = getFileType(fileEntry.getKey());
-          switch (fileType) {
-              case mainServiceTemplate:
-                  handleServiceTemplate(MAIN_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
-                  break;
-
-              case globalServiceTemplate:
-                  handleServiceTemplate(GLOBAL_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
-                  break;
-
-              case externalFile:
-                  artifacts.addFile(
-                          getConcreteArtifactFileName(fileEntry.getKey()), fileEntry.getValue());
-                  break;
-
-              case definitionsFile:
-                  handleDefinitionTemplate(fileEntry.getKey(), csarFiles, gsst);
-                  break;
-
-              default:
-                  break;
-          }
-      }
-      handleMetadataFile(csarFiles);
-      updateToscaServiceModel(toscaServiceModel, serviceTemplates, artifacts, gsst, csarFiles, MAIN_ST_NAME);
-      return toscaServiceModel;
+    @Override
+    public ToscaServiceModel convert(FileContentHandler fileContentHandler) {
+        Map<String, byte[]> csarFiles = new HashMap<>(fileContentHandler.getFiles());
+        ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
+        Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
+        FileContentHandler artifacts = new FileContentHandler();
+        GlobalSubstitutionServiceTemplate gsst = new GlobalSubstitutionServiceTemplate();
+        csarFiles.putAll(fileContentHandler.getFiles());
+        for (Map.Entry<String, byte[]> fileEntry : csarFiles.entrySet()) {
+            CsarFileTypes fileType = getFileType(fileEntry.getKey());
+            switch (fileType) {
+                case mainServiceTemplate:
+                    handleServiceTemplate(MAIN_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
+                    break;
+                case globalServiceTemplate:
+                    handleServiceTemplate(GLOBAL_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
+                    break;
+                case externalFile:
+                    artifacts.addFile(getConcreteArtifactFileName(fileEntry.getKey()), fileEntry.getValue());
+                    break;
+                case definitionsFile:
+                    handleDefinitionTemplate(fileEntry.getKey(), csarFiles, gsst);
+                    break;
+                default:
+                    break;
+            }
+        }
+        handleMetadataFile(csarFiles);
+        updateToscaServiceModel(toscaServiceModel, serviceTemplates, artifacts, gsst, csarFiles, MAIN_ST_NAME);
+        return toscaServiceModel;
     }
 
     @Override

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.Optional;
@@ -28,20 +27,18 @@ import org.openecomp.core.converter.pnfd.model.ConversionQuery;
 public class ConversionQueryYamlParser {
 
     private ConversionQueryYamlParser() {
-
     }
 
     /**
      * Parses the given a YAML object to a {@link ConversionQuery} instance.
-     * @param conversionYaml    the YAML object representing a conversion query
-     * @return
-     *  A new instance of {@link ConversionQuery}.
+     *
+     * @param conversionYaml the YAML object representing a conversion query
+     * @return A new instance of {@link ConversionQuery}.
      */
     public static Optional<ConversionQuery> parse(final Object conversionYaml) {
         if (conversionYaml == null) {
             return Optional.empty();
         }
-
         return Optional.of(new ConversionQuery(conversionYaml));
     }
 }

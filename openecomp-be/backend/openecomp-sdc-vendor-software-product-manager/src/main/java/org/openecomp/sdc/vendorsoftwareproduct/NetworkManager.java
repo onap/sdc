@@ -17,25 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import java.util.Collection;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-
 public interface NetworkManager {
-  Collection<NetworkEntity> listNetworks(String vspId, Version version);
 
-  NetworkEntity createNetwork(NetworkEntity network);
+    Collection<NetworkEntity> listNetworks(String vspId, Version version);
 
-  CompositionEntityValidationData updateNetwork(NetworkEntity networkEntity);
+    NetworkEntity createNetwork(NetworkEntity network);
 
-  CompositionEntityResponse<Network> getNetwork(String vspId, Version version, String networkId);
+    CompositionEntityValidationData updateNetwork(NetworkEntity networkEntity);
 
-  void deleteNetwork(String vspId, Version version, String networkId);
+    CompositionEntityResponse<Network> getNetwork(String vspId, Version version, String networkId);
+
+    void deleteNetwork(String vspId, Version version, String networkId);
 }

@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.health.impl;
 
 import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.commons.health.data.HealthStatus;
 import com.amdocs.zusammen.datatypes.SessionContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
@@ -30,16 +34,9 @@ import org.openecomp.sdc.health.data.MonitoredModules;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class HealthCheckManagerImpl implements HealthCheckManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckManagerImpl.class);
-
     private HealthCheckDao healthCheckDao;
 
     public HealthCheckManagerImpl() {
@@ -53,22 +50,19 @@ public class HealthCheckManagerImpl implements HealthCheckManager {
     @Override
     public Collection<org.openecomp.sdc.health.data.HealthInfo> checkHealth() {
         org.openecomp.sdc.health.data.HealthInfo zeHealthInfo = null;
-        org.openecomp.sdc.health.data.HealthInfo beHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
-                MonitoredModules.BE, HealthCheckStatus.UP, getBEVersion(), "OK");
+        org.openecomp.sdc.health.data.HealthInfo beHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.BE,
+            HealthCheckStatus.UP, getBEVersion(), "OK");
         org.openecomp.sdc.health.data.HealthInfo cassandraHealthInfo = null;
         String zVersion = "Unknown";
         try {
             SessionContext context = ZusammenUtil.createSessionContext();
-            ZusammenAdaptor zusammenAdaptor = ZusammenAdaptorFactory
-                    .getInstance().createInterface();
+            ZusammenAdaptor zusammenAdaptor = ZusammenAdaptorFactory.getInstance().createInterface();
             Collection<HealthInfo> zeHealthInfos = new ArrayList<>();
             try {
                 zeHealthInfos = zusammenAdaptor.checkHealth(context);
             } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
-                zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
-                        MonitoredModules.ZU, HealthCheckStatus.DOWN,
-                        zVersion, ex.getMessage());
+                zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.ZU, HealthCheckStatus.DOWN, zVersion, ex.getMessage());
             }
             boolean cassandraHealth = false;
             String description = "OK";
@@ -77,47 +71,34 @@ public class HealthCheckManagerImpl implements HealthCheckManager {
             } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
                 description = ex.getMessage();
-                cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
-                        MonitoredModules.CAS, HealthCheckStatus.DOWN, zVersion, ex.getMessage());
+                cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.CAS, HealthCheckStatus.DOWN, zVersion,
+                    ex.getMessage());
             }
             zVersion = zusammenAdaptor.getVersion(context);
             if (cassandraHealthInfo == null) {
                 HealthCheckStatus status = cassandraHealth ? HealthCheckStatus.UP : HealthCheckStatus.DOWN;
-                if (!cassandraHealth){
+                if (!cassandraHealth) {
                     description = "Cassandra is not available";
                 }
-                cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.CAS, status,
-                        healthCheckDao.getVersion(), description);
+                cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.CAS, status, healthCheckDao.getVersion(),
+                    description);
             }
             if (zeHealthInfo == null) {
-                List<HealthInfo> downHealth = zeHealthInfos.stream().
-                        filter(h -> h.getHealthStatus().equals(HealthStatus.DOWN)).
-                        collect(Collectors.toList());
-
+                List<HealthInfo> downHealth = zeHealthInfos.stream().filter(h -> h.getHealthStatus().equals(HealthStatus.DOWN))
+                    .collect(Collectors.toList());
                 if (downHealth.isEmpty()) {
-                    zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
-                            MonitoredModules.ZU, HealthCheckStatus.UP,
-                            zVersion, "OK");
+                    zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.ZU, HealthCheckStatus.UP, zVersion, "OK");
                 } else {
-                    String desc = downHealth.stream().map(healthInfo -> healthInfo.getDescription())
-                            .collect(Collectors.joining(" , ", "[", "]"));
-                    zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
-                            MonitoredModules.ZU, HealthCheckStatus.DOWN,
-                            zVersion, desc);
+                    String desc = downHealth.stream().map(healthInfo -> healthInfo.getDescription()).collect(Collectors.joining(" , ", "[", "]"));
+                    zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.ZU, HealthCheckStatus.DOWN, zVersion, desc);
                 }
-
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
-                    MonitoredModules.ZU, HealthCheckStatus.DOWN, zVersion, e.getMessage()
-            );
-            cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(
-                    MonitoredModules.CAS, HealthCheckStatus.DOWN, zVersion, e.getMessage());
+            zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.ZU, HealthCheckStatus.DOWN, zVersion, e.getMessage());
+            cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.CAS, HealthCheckStatus.DOWN, zVersion,
+                e.getMessage());
         }
         return Arrays.asList(zeHealthInfo, beHealthInfo, cassandraHealthInfo);
     }
-
-
 }
-

@@ -19,7 +19,6 @@
  *  * ============LICENSE_END=========================================================
  *
  */
-
 package org.openecomp.core.impl;
 
 import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
@@ -39,7 +38,6 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-
 
 public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
 
@@ -75,21 +73,19 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
                 if (isGlobalServiceTemplate(fileEntry.getKey())) {
                     handleServiceTemplate(GLOBAL_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
                 } else {
-                    artifacts.addFile(
-                            getConcreteArtifactFileName(fileEntry.getKey()), fileEntry.getValue());
+                    artifacts.addFile(getConcreteArtifactFileName(fileEntry.getKey()), fileEntry.getValue());
                 }
             }
         }
     }
 
-    private void handleImportDefinitions(final String fileName, final Map<String, byte[]> csarFiles
-        , final GlobalSubstitutionServiceTemplate gsst) {
+    private void handleImportDefinitions(final String fileName, final Map<String, byte[]> csarFiles, final GlobalSubstitutionServiceTemplate gsst) {
         final ToscaDefinitionImportHandler toscaDefinitionImportHandler = new ToscaDefinitionImportHandler(csarFiles, fileName);
         if (toscaDefinitionImportHandler.hasError()) {
             throw new InvalidToscaDefinitionImportException(toscaDefinitionImportHandler.getErrors());
         }
-        final Map<String, ServiceTemplateReaderService> handledImportDefinitionFileMap =
-            toscaDefinitionImportHandler.getHandledImportDefinitionFileMap();
+        final Map<String, ServiceTemplateReaderService> handledImportDefinitionFileMap = toscaDefinitionImportHandler
+            .getHandledImportDefinitionFileMap();
         handledDefinitionFilesList.addAll(handledImportDefinitionFileMap.keySet());
         for (final String file : handledDefinitionFilesList) {
             handleDefinitionTemplate(file, csarFiles, gsst);
@@ -98,8 +94,8 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
 
     private String getMainServiceDefinitionFileName(FileContentHandler contentHandler) throws IOException {
         try {
-            ToscaMetadata toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(
-                    contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
+            ToscaMetadata toscaMetadata = OnboardingToscaMetadata
+                .parseToscaMetadataFile(contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
             return toscaMetadata.getMetaEntries().get(ENTRY_DEFINITIONS.getName());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
@@ -113,5 +109,4 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
         }
         return path;
     }
-
 }

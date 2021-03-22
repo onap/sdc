@@ -28,9 +28,8 @@ public class MapToggleableFeatureToDto extends MappingBase<Collection<Toggleable
 
     @Override
     public void doMapping(Collection<ToggleableFeature> source, FeatureSetDto target) {
-        if (source != null && !source.isEmpty()){
-            Set<FeatureDto> fDtos = source.stream().map(f -> new FeatureDto(f.name(), f.isActive()))
-                .collect(Collectors.toSet());
+        if (source != null && !source.isEmpty()) {
+            Set<FeatureDto> fDtos = source.stream().map(f -> new FeatureDto(f.name(), f.isActive())).collect(Collectors.toSet());
             target.setFeatures(fDtos);
         } else {
             target.setFeatures(Collections.emptySet());

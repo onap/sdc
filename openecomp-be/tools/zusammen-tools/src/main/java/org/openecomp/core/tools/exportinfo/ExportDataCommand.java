@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,83 +58,23 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-
 public final class ExportDataCommand extends Command {
 
+    public static final String JOIN_DELIMITER_SPLITTER = "\\$\\#";
+    public static final String MAP_DELIMITER_SPLITTER = "\\!\\@";
+    public static final String NULL_REPRESENTATION = "nnuullll";
+    static final String JOIN_DELIMITER = "$#";
+    static final String MAP_DELIMITER = "!@";
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportDataCommand.class);
     private static final String ITEM_ID_OPTION = "i";
-    static final String JOIN_DELIMITER = "$#";
-    public static final String JOIN_DELIMITER_SPLITTER = "\\$\\#";
-    static final String MAP_DELIMITER = "!@";
-    public static final String MAP_DELIMITER_SPLITTER = "\\!\\@";
     private static final int THREAD_POOL_SIZE = 6;
-    public static final String NULL_REPRESENTATION = "nnuullll";
 
     public ExportDataCommand() {
-        options.addOption(
-                Option.builder(ITEM_ID_OPTION).hasArg().argName("item id").desc("id of item to export, mandatory").build());
+        options.addOption(Option.builder(ITEM_ID_OPTION).hasArg().argName("item id").desc("id of item to export, mandatory").build());
     }
 
-    @Override
-    public boolean execute(String[] args) {
-        CommandLine cmd = parseArgs(args);
-
-        if (!cmd.hasOption(ITEM_ID_OPTION) || cmd.getOptionValue(ITEM_ID_OPTION) == null) {
-            LOGGER.error("Argument i is mandatory");
-            return false;
-        }
-
-        ExecutorService executor = null;
-        try {
-            CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
-            Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
-            initDir(rootDir);
-            try (Session session = CassandraSessionFactory.getSession()) {
-                final Set<String> filteredItems = Sets.newHashSet(cmd.getOptionValue(ITEM_ID_OPTION));
-                Set<String> fis =
-                        filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
-                Map<String, List<String>> queries;
-                Yaml yaml = new Yaml();
-                try (InputStream is = ExportDataCommand.class.getResourceAsStream("/queries.yaml")) {
-                    queries = (Map<String, List<String>>) yaml.load(is);
-                }
-                List<String> queriesList = queries.get("queries");
-                List<String> itemsColumns = queries.get("item_columns");
-                Set<String> vlms = new HashSet<>();
-                CountDownLatch doneQueries = new CountDownLatch(queriesList.size());
-                executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-                for (int i = 0; i < queriesList.size(); i++) {
-                    executeQuery(session, queriesList.get(i), fis, itemsColumns.get(i), vlms, doneQueries, executor);
-                }
-                doneQueries.await();
-                if (!vlms.isEmpty()) {
-                    CountDownLatch doneVmls = new CountDownLatch(queriesList.size());
-                    for (int i = 0; i < queriesList.size(); i++) {
-                        executeQuery(session, queriesList.get(i), vlms, itemsColumns.get(i), null, doneVmls, executor);
-                    }
-
-                    doneVmls.await();
-                }
-            }
-            zipPath(rootDir);
-            FileUtils.forceDelete(rootDir.toFile());
-        } catch (Exception ex) {
-            Utils.logError(LOGGER, ex);
-        } finally {
-            if (executor != null) {
-                executor.shutdown();
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public CommandName getCommandName() {
-        return EXPORT;
-    }
-
-    private static void executeQuery(final Session session, final String query, final Set<String> filteredItems,
-            final String filteredColumn, final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
+    private static void executeQuery(final Session session, final String query, final Set<String> filteredItems, final String filteredColumn,
+                                     final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
         ResultSetFuture resultSetFuture = session.executeAsync(query);
         Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
             @Override
@@ -161,12 +101,11 @@ public final class ExportDataCommand extends Command {
         final LocalDateTime date = LocalDateTime.now();
         final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         final String dateStr = date.format(formatter).replace(":", "_");
-        final Path zipFile = Paths.get(System.getProperty("user.home"),String.format("onboarding_import%s.zip", dateStr));
+        final Path zipFile = Paths.get(System.getProperty("user.home"), String.format("onboarding_import%s.zip", dateStr));
         ZipUtils.createZipFromPath(rootDir, zipFile);
         Utils.printMessage(LOGGER, "Zip file was created " + zipFile.toString());
         Utils.printMessage(LOGGER, "Exported file :" + zipFile.toString());
     }
-
 
     public static void initDir(Path rootDir) throws IOException {
         if (rootDir.toFile().exists()) {
@@ -175,4 +114,57 @@ public final class ExportDataCommand extends Command {
         createDirectories(rootDir);
     }
 
+    @Override
+    public boolean execute(String[] args) {
+        CommandLine cmd = parseArgs(args);
+        if (!cmd.hasOption(ITEM_ID_OPTION) || cmd.getOptionValue(ITEM_ID_OPTION) == null) {
+            LOGGER.error("Argument i is mandatory");
+            return false;
+        }
+        ExecutorService executor = null;
+        try {
+            CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
+            Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
+            initDir(rootDir);
+            try (Session session = CassandraSessionFactory.getSession()) {
+                final Set<String> filteredItems = Sets.newHashSet(cmd.getOptionValue(ITEM_ID_OPTION));
+                Set<String> fis = filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
+                Map<String, List<String>> queries;
+                Yaml yaml = new Yaml();
+                try (InputStream is = ExportDataCommand.class.getResourceAsStream("/queries.yaml")) {
+                    queries = (Map<String, List<String>>) yaml.load(is);
+                }
+                List<String> queriesList = queries.get("queries");
+                List<String> itemsColumns = queries.get("item_columns");
+                Set<String> vlms = new HashSet<>();
+                CountDownLatch doneQueries = new CountDownLatch(queriesList.size());
+                executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+                for (int i = 0; i < queriesList.size(); i++) {
+                    executeQuery(session, queriesList.get(i), fis, itemsColumns.get(i), vlms, doneQueries, executor);
+                }
+                doneQueries.await();
+                if (!vlms.isEmpty()) {
+                    CountDownLatch doneVmls = new CountDownLatch(queriesList.size());
+                    for (int i = 0; i < queriesList.size(); i++) {
+                        executeQuery(session, queriesList.get(i), vlms, itemsColumns.get(i), null, doneVmls, executor);
+                    }
+                    doneVmls.await();
+                }
+            }
+            zipPath(rootDir);
+            FileUtils.forceDelete(rootDir.toFile());
+        } catch (Exception ex) {
+            Utils.logError(LOGGER, ex);
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public CommandName getCommandName() {
+        return EXPORT;
+    }
 }

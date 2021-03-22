@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import java.util.Collections;
@@ -50,6 +49,16 @@ public class ToscaServiceModel implements AsdcModel {
     private String entryDefinitionServiceTemplate;
 
     /**
+     * Gets cloned service model.
+     *
+     * @param toscaServiceModel the tosca service model
+     * @return the cloned service model
+     */
+    public static ToscaServiceModel getClonedServiceModel(ToscaServiceModel toscaServiceModel) {
+        return ToscaServiceModel.class.cast(DataModelUtil.getClonedObject(toscaServiceModel));
+    }
+
+    /**
      * Gets service templates.
      *
      * @return the service templates
@@ -59,26 +68,13 @@ public class ToscaServiceModel implements AsdcModel {
     }
 
     public Optional<ServiceTemplate> getServiceTemplate(String serviceTemplateName) {
-        return MapUtils.isEmpty(this.serviceTemplates) ? Optional.empty()
-                : Optional.of(this.serviceTemplates.get(serviceTemplateName));
+        return MapUtils.isEmpty(this.serviceTemplates) ? Optional.empty() : Optional.of(this.serviceTemplates.get(serviceTemplateName));
     }
 
-    public void addServiceTemplate(String serviceTemplateName,
-                                   ServiceTemplate serviceTemplate) {
+    public void addServiceTemplate(String serviceTemplateName, ServiceTemplate serviceTemplate) {
         if (MapUtils.isEmpty(serviceTemplates)) {
             serviceTemplates = new HashMap<>();
         }
-
         serviceTemplates.put(serviceTemplateName, serviceTemplate);
-    }
-
-    /**
-     * Gets cloned service model.
-     *
-     * @param toscaServiceModel the tosca service model
-     * @return the cloned service model
-     */
-    public static ToscaServiceModel getClonedServiceModel(ToscaServiceModel toscaServiceModel) {
-        return ToscaServiceModel.class.cast(DataModelUtil.getClonedObject(toscaServiceModel));
     }
 }

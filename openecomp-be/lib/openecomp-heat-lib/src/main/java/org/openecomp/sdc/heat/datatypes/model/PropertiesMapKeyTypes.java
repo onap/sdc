@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import lombok.AllArgsConstructor;
@@ -26,10 +25,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PropertiesMapKeyTypes {
-    IMAGE("image"),
-    FLAVOR("flavor"),
-    NETWORKS("networks"),
-    RESOURCE_DEF("resource_def");
-
+    IMAGE("image"), FLAVOR("flavor"), NETWORKS("networks"), RESOURCE_DEF("resource_def");
     private String keyMap;
 }

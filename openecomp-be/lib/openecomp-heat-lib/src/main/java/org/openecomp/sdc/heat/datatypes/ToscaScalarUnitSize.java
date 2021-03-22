@@ -16,14 +16,9 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes;
 
 /**
  * This enum is responsible for defining properties that have scalar values measured in size units.
  */
-public enum ToscaScalarUnitSize {
-
-    B, KB, KIB, MB, MIB, GB, GIB, TB, TIB
-
-}
+public enum ToscaScalarUnitSize {B, KB, KIB, MB, MIB, GB, GIB, TB, TIB}

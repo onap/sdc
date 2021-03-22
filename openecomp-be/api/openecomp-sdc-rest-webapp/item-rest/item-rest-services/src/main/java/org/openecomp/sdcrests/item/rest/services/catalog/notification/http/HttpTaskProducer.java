@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.item.rest.services.catalog.notification.http;
 
 import java.util.Collection;
@@ -35,11 +34,9 @@ import org.openecomp.sdcrests.item.types.ItemAction;
  * @author evitaliy
  * @since 21 Nov 2018
  */
-public class HttpTaskProducer
-        implements BiFunction<Collection<String>, ItemAction, Callable<AsyncNotifier.NextAction>>, Notifier {
+public class HttpTaskProducer implements BiFunction<Collection<String>, ItemAction, Callable<AsyncNotifier.NextAction>>, Notifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpTaskProducer.class);
-
     private static final String CATALOG_HTTP_PROTOCOL = "HTTP";
     private static final String CATALOG_HTTPS_PROTOCOL = "HTTPS";
     private static final Map<ItemAction, String> ACTION_PATHS;
@@ -66,16 +63,13 @@ public class HttpTaskProducer
     }
 
     private static String ensureEntryConfigured(String value, String entryName) {
-
         if (value == null) {
             throw new EntryNotConfiguredException(entryName);
         }
-
         return value;
     }
 
     private static String getPortConfiguration(String protocol, HttpConfiguration config) {
-
         if (CATALOG_HTTP_PROTOCOL.equalsIgnoreCase(protocol)) {
             return ensureEntryConfigured(config.getCatalogBeHttpPort(), "HTTP port");
         } else if (CATALOG_HTTPS_PROTOCOL.equalsIgnoreCase(protocol)) {
@@ -83,6 +77,14 @@ public class HttpTaskProducer
         } else {
             throw new IllegalArgumentException("Unsupported protocol: " + protocol);
         }
+    }
+
+    static String getApiPath(ItemAction action) {
+        String path = ACTION_PATHS.get(action);
+        if (path == null) {
+            throw new IllegalArgumentException("Unsupported action: " + action.name());
+        }
+        return path;
     }
 
     @Override
@@ -97,20 +99,9 @@ public class HttpTaskProducer
         return new HttpNotificationTask(notificationEndpoint, userId, itemIds);
     }
 
-    static String getApiPath(ItemAction action) {
-
-        String path = ACTION_PATHS.get(action);
-        if (path == null) {
-            throw new IllegalArgumentException("Unsupported action: " + action.name());
-        }
-
-        return path;
-    }
-
     @Override
     public void execute(Collection<String> itemIds, ItemAction action) {
         HttpNotificationTask task = createNotificationTask(itemIds, action);
         task.call();
     }
-
 }

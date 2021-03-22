@@ -19,10 +19,9 @@
  */
 package org.openecomp.sdc.notification.dtos;
 
-import org.openecomp.sdc.notification.dao.types.NotificationEntity;
-
 import java.util.List;
 import java.util.UUID;
+import org.openecomp.sdc.notification.dao.types.NotificationEntity;
 
 /**
  * @author Avrahamg
@@ -30,14 +29,13 @@ import java.util.UUID;
  */
 public interface NotificationsStatus {
 
-  List<NotificationEntity> getNotifications();
+    List<NotificationEntity> getNotifications();
 
-  List<UUID> getNewEntries();
+    List<UUID> getNewEntries();
 
-  UUID getLastScanned();
+    UUID getLastScanned();
 
-  UUID getEndOfPage();
+    UUID getEndOfPage();
 
-  long getNumOfNotSeenNotifications();
-
+    long getNumOfNotSeenNotifications();
 }

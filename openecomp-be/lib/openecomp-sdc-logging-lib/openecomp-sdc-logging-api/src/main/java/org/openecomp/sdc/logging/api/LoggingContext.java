@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.api;
 
 import java.util.Objects;
@@ -24,9 +23,8 @@ import org.openecomp.sdc.logging.spi.LoggingContextService;
  * <p>Factory to hide a concrete, framework-specific implementation of diagnostic context.</p>
  *
  * <p>The service used by this factory must implement {@link LoggingContextService}. If no implementation has been
- * configured or could be instantiated, a <b>no-op context service</b> will be used, and <b>no context</b> will be
- * stored or propagated. No errors will be generated, so that the application can still work (albeit without proper
- * logging).</p>
+ * configured or could be instantiated, a <b>no-op context service</b> will be used, and <b>no context</b> will be stored or propagated. No errors
+ * will be generated, so that the application can still work (albeit without proper logging).</p>
  *
  * @author evitaliy
  * @see ServiceBinder
@@ -35,8 +33,7 @@ import org.openecomp.sdc.logging.spi.LoggingContextService;
  */
 public class LoggingContext {
 
-    private static final LoggingContextService SERVICE =
-            ServiceBinder.getContextServiceBinding().orElseGet(NoOpLoggingContextService::new);
+    private static final LoggingContextService SERVICE = ServiceBinder.getContextServiceBinding().orElseGet(NoOpLoggingContextService::new);
 
     private LoggingContext() {
         // prevent instantiation

@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil.ORCHESTRATION_CONFIG_NAMESPACE;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
@@ -23,49 +27,39 @@ import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ConfigConstants;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil.ORCHESTRATION_CONFIG_NAMESPACE;
 public class OrchestrationProcessFactory {
 
-  private static final Map<String, ImplementationConfiguration> PROCESS_IMPL_MAP;
-  private OrchestrationProcessFactory() {
+    private static final Map<String, ImplementationConfiguration> PROCESS_IMPL_MAP;
 
-  }
-
-  static {
-    Configuration config = ConfigurationManager.lookup();
-    PROCESS_IMPL_MAP = new ConcurrentHashMap<>(config.populateMap(ORCHESTRATION_CONFIG_NAMESPACE,
-        ConfigConstants.PROCESS_IMPL_KEY, ImplementationConfiguration.class));
-
-  }
-
-  public static Optional<OrchestrationTemplateProcessHandler> getInstance(String fileSuffix) {
-
-    if (fileSuffix == null) {
-      return Optional.empty();
-    }
-    String updatedFileSuffix = fileSuffix;
-    updatedFileSuffix = updatedFileSuffix.toLowerCase().trim();
-    OnboardingTypesEnum onboardingTypesEnum = OnboardingTypesEnum.getOnboardingTypesEnum(updatedFileSuffix);
-    if (onboardingTypesEnum == null) {
-      return Optional.empty();
+    static {
+        Configuration config = ConfigurationManager.lookup();
+        PROCESS_IMPL_MAP = new ConcurrentHashMap<>(
+            config.populateMap(ORCHESTRATION_CONFIG_NAMESPACE, ConfigConstants.PROCESS_IMPL_KEY, ImplementationConfiguration.class));
     }
 
-    try {
-      return Optional.of(createInstance(PROCESS_IMPL_MAP.get(onboardingTypesEnum.toString())));
-    }catch (Exception e){
-      return Optional.empty();
+    private OrchestrationProcessFactory() {
     }
-  }
 
-  private static OrchestrationTemplateProcessHandler createInstance(ImplementationConfiguration implClass)
-      throws Exception {
-    OrchestrationTemplateProcessHandler handler;
-    handler =
-        CommonMethods.newInstance(implClass.getImplementationClass(), OrchestrationTemplateProcessHandler.class);
-    return handler;
-  }
+    public static Optional<OrchestrationTemplateProcessHandler> getInstance(String fileSuffix) {
+        if (fileSuffix == null) {
+            return Optional.empty();
+        }
+        String updatedFileSuffix = fileSuffix;
+        updatedFileSuffix = updatedFileSuffix.toLowerCase().trim();
+        OnboardingTypesEnum onboardingTypesEnum = OnboardingTypesEnum.getOnboardingTypesEnum(updatedFileSuffix);
+        if (onboardingTypesEnum == null) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(createInstance(PROCESS_IMPL_MAP.get(onboardingTypesEnum.toString())));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    private static OrchestrationTemplateProcessHandler createInstance(ImplementationConfiguration implClass) throws Exception {
+        OrchestrationTemplateProcessHandler handler;
+        handler = CommonMethods.newInstance(implClass.getImplementationClass(), OrchestrationTemplateProcessHandler.class);
+        return handler;
+    }
 }

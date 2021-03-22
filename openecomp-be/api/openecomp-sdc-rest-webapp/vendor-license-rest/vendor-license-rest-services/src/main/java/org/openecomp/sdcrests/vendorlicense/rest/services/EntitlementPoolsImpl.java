@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 import java.util.Comparator;
@@ -42,115 +41,97 @@ import org.springframework.stereotype.Service;
 @Service("entitlementPools")
 @Scope(value = "prototype")
 public class EntitlementPoolsImpl implements EntitlementPools {
-  private VendorLicenseManager vendorLicenseManager =
-      VendorLicenseManagerFactory.getInstance().createInterface();
 
-  /**
-   * List entitlement pools response.
-   *
-   * @param vlmId     the vlm id
-   * @param versionId the version
-   * @param user      the user
-   * @return the response
-   */
-  public Response listEntitlementPools(String vlmId, String versionId, String user) {
+    private VendorLicenseManager vendorLicenseManager = VendorLicenseManagerFactory.getInstance().createInterface();
 
-        MapEntitlementPoolEntityToEntitlementPoolEntityDto outputMapper =
-                new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
-
+    /**
+     * List entitlement pools response.
+     *
+     * @param vlmId     the vlm id
+     * @param versionId the version
+     * @param user      the user
+     * @return the response
+     */
+    public Response listEntitlementPools(String vlmId, String versionId, String user) {
+        MapEntitlementPoolEntityToEntitlementPoolEntityDto outputMapper = new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
         GenericCollectionWrapper<EntitlementPoolEntityDto> result = new GenericCollectionWrapper<>(
-                vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId)).stream()
-                                    .sorted(Comparator.comparing(EntitlementPoolEntity::getName))
-                                    .map(item -> outputMapper.applyMapping(item, EntitlementPoolEntityDto.class))
-                                    .collect(Collectors.toList()));
-
+            vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId)).stream()
+                .sorted(Comparator.comparing(EntitlementPoolEntity::getName))
+                .map(item -> outputMapper.applyMapping(item, EntitlementPoolEntityDto.class)).collect(Collectors.toList()));
         return Response.ok(result).build();
     }
 
-  /**
-   * Create entitlement pool response.
-   *
-   * @param request the request
-   * @param vlmId   the vlm id
-   * @param user    the user
-   * @return the response
-   */
-  public Response createEntitlementPool(EntitlementPoolRequestDto request, String vlmId,
-                                        String versionId, String user) {
-    EntitlementPoolEntity entitlementPoolEntity =
-        new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
+    /**
+     * Create entitlement pool response.
+     *
+     * @param request the request
+     * @param vlmId   the vlm id
+     * @param user    the user
+     * @return the response
+     */
+    public Response createEntitlementPool(EntitlementPoolRequestDto request, String vlmId, String versionId, String user) {
+        EntitlementPoolEntity entitlementPoolEntity = new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
             .applyMapping(request, EntitlementPoolEntity.class);
-    entitlementPoolEntity.setVendorLicenseModelId(vlmId);
-    entitlementPoolEntity.setVersion(new Version(versionId));
+        entitlementPoolEntity.setVendorLicenseModelId(vlmId);
+        entitlementPoolEntity.setVersion(new Version(versionId));
+        EntitlementPoolEntity createdEntitlementPool = vendorLicenseManager.createEntitlementPool(entitlementPoolEntity);
+        StringWrapperResponse result = createdEntitlementPool != null ? new StringWrapperResponse(createdEntitlementPool.getId()) : null;
+        return Response.ok(result).build();
+    }
 
-    EntitlementPoolEntity createdEntitlementPool =
-        vendorLicenseManager.createEntitlementPool(entitlementPoolEntity);
-    StringWrapperResponse result =
-        createdEntitlementPool != null ? new StringWrapperResponse(createdEntitlementPool.getId())
-            : null;
-    return Response.ok(result).build();
-  }
-
-  /**
-   * Update entitlement pool response.
-   *
-   * @param request           the request
-   * @param vlmId             the vlm id
-   * @param entitlementPoolId the entitlement pool id
-   * @param user              the user
-   * @return the response
-   */
-  public Response updateEntitlementPool(EntitlementPoolRequestDto request, String vlmId,
-                                        String versionId, String entitlementPoolId, String user) {
-    EntitlementPoolEntity entitlementPoolEntity =
-        new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
+    /**
+     * Update entitlement pool response.
+     *
+     * @param request           the request
+     * @param vlmId             the vlm id
+     * @param entitlementPoolId the entitlement pool id
+     * @param user              the user
+     * @return the response
+     */
+    public Response updateEntitlementPool(EntitlementPoolRequestDto request, String vlmId, String versionId, String entitlementPoolId, String user) {
+        EntitlementPoolEntity entitlementPoolEntity = new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
             .applyMapping(request, EntitlementPoolEntity.class);
-    entitlementPoolEntity.setVendorLicenseModelId(vlmId);
-    entitlementPoolEntity.setVersion(new Version(versionId));
-    entitlementPoolEntity.setId(entitlementPoolId);
+        entitlementPoolEntity.setVendorLicenseModelId(vlmId);
+        entitlementPoolEntity.setVersion(new Version(versionId));
+        entitlementPoolEntity.setId(entitlementPoolId);
+        vendorLicenseManager.updateEntitlementPool(entitlementPoolEntity);
+        return Response.ok().build();
+    }
 
-    vendorLicenseManager.updateEntitlementPool(entitlementPoolEntity);
-    return Response.ok().build();
-  }
+    /**
+     * Gets entitlement pool.
+     *
+     * @param vlmId             the vlm id
+     * @param versionId         the version id
+     * @param entitlementPoolId the entitlement pool id
+     * @param user              the user
+     * @return the entitlement pool
+     */
+    public Response getEntitlementPool(String vlmId, String versionId, String entitlementPoolId, String user) {
+        EntitlementPoolEntity epInput = new EntitlementPoolEntity();
+        epInput.setVendorLicenseModelId(vlmId);
+        epInput.setVersion(new Version(versionId));
+        epInput.setId(entitlementPoolId);
+        EntitlementPoolEntity entitlementPool = vendorLicenseManager.getEntitlementPool(epInput);
+        EntitlementPoolEntityDto entitlementPoolEntityDto = entitlementPool == null ? null
+            : new MapEntitlementPoolEntityToEntitlementPoolEntityDto().applyMapping(entitlementPool, EntitlementPoolEntityDto.class);
+        return Response.ok(entitlementPoolEntityDto).build();
+    }
 
-  /**
-   * Gets entitlement pool.
-   *
-   * @param vlmId             the vlm id
-   * @param versionId           the version id
-   * @param entitlementPoolId the entitlement pool id
-   * @param user              the user
-   * @return the entitlement pool
-   */
-  public Response getEntitlementPool(String vlmId, String versionId, String entitlementPoolId,
-                                     String user) {
-    EntitlementPoolEntity epInput = new EntitlementPoolEntity();
-    epInput.setVendorLicenseModelId(vlmId);
-    epInput.setVersion(new Version(versionId));
-    epInput.setId(entitlementPoolId);
-    EntitlementPoolEntity entitlementPool = vendorLicenseManager.getEntitlementPool(epInput);
-
-    EntitlementPoolEntityDto entitlementPoolEntityDto = entitlementPool == null ? null :
-        new MapEntitlementPoolEntityToEntitlementPoolEntityDto()
-            .applyMapping(entitlementPool, EntitlementPoolEntityDto.class);
-    return Response.ok(entitlementPoolEntityDto).build();
-  }
-
-  /**
-   * Delete entitlement pool response.
-   *
-   * @param vlmId             the vlm id
-   * @param entitlementPoolId the entitlement pool id
-   * @param user              the user
-   * @return the response
-   */
-  public Response deleteEntitlementPool(String vlmId, String versionId, String entitlementPoolId,
-                                        String user) {
-    EntitlementPoolEntity epInput = new EntitlementPoolEntity();
-    epInput.setVendorLicenseModelId(vlmId);
-    epInput.setId(entitlementPoolId);
-    epInput.setVersion(new Version(versionId));
-    vendorLicenseManager.deleteEntitlementPool(epInput);
-    return Response.ok().build();
-  }
+    /**
+     * Delete entitlement pool response.
+     *
+     * @param vlmId             the vlm id
+     * @param entitlementPoolId the entitlement pool id
+     * @param user              the user
+     * @return the response
+     */
+    public Response deleteEntitlementPool(String vlmId, String versionId, String entitlementPoolId, String user) {
+        EntitlementPoolEntity epInput = new EntitlementPoolEntity();
+        epInput.setVendorLicenseModelId(vlmId);
+        epInput.setId(entitlementPoolId);
+        epInput.setVersion(new Version(versionId));
+        vendorLicenseManager.deleteEntitlementPool(epInput);
+        return Response.ok().build();
+    }
 }

@@ -17,27 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
+import com.vdurmont.semver4j.Semver;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
-
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
-import com.vdurmont.semver4j.Semver;
-
-
 public interface ETSIService {
 
     /**
-     * Checks package structure is CSAR with TOSCA-Metadata directory according to SOL004 v2.5.1
-     * and contains mandatory Entries in Tosca.meta
+     * Checks package structure is CSAR with TOSCA-Metadata directory according to SOL004 v2.5.1 and contains mandatory Entries in Tosca.meta
+     *
      * @param handler contains csar artifacts
      * @return true if all condition matched, false otherwise
      * @throws IOException when TOSCA.meta file is invalid
@@ -50,20 +46,19 @@ public interface ETSIService {
      * @param handler The file handler containing the artifacts to move.
      * @return A Map with pairs of from and to path of the moved artifacts.
      */
-    Optional<Map<String, Path>> moveNonManoFileToArtifactFolder(final FileContentHandler handler)
-        throws IOException;
+    Optional<Map<String, Path>> moveNonManoFileToArtifactFolder(final FileContentHandler handler) throws IOException;
 
     /**
      * Updates the main descriptor paths referring the artifacts that were moved.
      *
-     * @param toscaServiceModel The tosca service model containing the main descriptor.
+     * @param toscaServiceModel      The tosca service model containing the main descriptor.
      * @param fromToMovedArtifactMap A Map representing the from and to artifacts path changes.
      */
-    void updateMainDescriptorPaths(final ToscaServiceModel toscaServiceModel,
-                                   final Map<String, Path> fromToMovedArtifactMap);
+    void updateMainDescriptorPaths(final ToscaServiceModel toscaServiceModel, final Map<String, Path> fromToMovedArtifactMap);
 
     /**
      * Retrieves the manifest file from the CSAR
+     *
      * @param handler contains csar artifacts
      * @throws IOException when TOSCA.meta file or manifest file is invalid
      */
@@ -71,6 +66,7 @@ public interface ETSIService {
 
     /**
      * Determines the type of resource that the CSAR represents
+     *
      * @param handler contains csar artifacts
      * @throws IOException when TOSCA.meta file or manifest file is invalid
      */
@@ -78,6 +74,7 @@ public interface ETSIService {
 
     /**
      * Determines the type of resource that the CSAR represents
+     *
      * @param manifest contains manifest content
      * @throws IOException when TOSCA.meta file or manifest file is invalid
      */
@@ -85,9 +82,9 @@ public interface ETSIService {
 
     Path getOriginalManifestPath(final FileContentHandler handler) throws IOException;
 
-
     /**
      * Determines the highest compatible specification version based on ETSI manifest file
+     *
      * @param handler contains csar artifacts
      * @return Semver representing highest compatible specification version
      */
@@ -95,6 +92,7 @@ public interface ETSIService {
 
     /**
      * Verifies if SOL004 3.3.1 manifest file has onap_cnf_helm non mano entry
+     *
      * @return true if manifest files has onap_cnf_helm non mano entry
      */
     boolean hasCnfEnhancements(final FileContentHandler fileContentHandler) throws IOException;

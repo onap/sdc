@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import java.util.Collection;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -27,27 +27,23 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-
 public interface ComponentManager {
 
-  Collection<ComponentEntity> listComponents(String vspId, Version version);
+    Collection<ComponentEntity> listComponents(String vspId, Version version);
 
-  void deleteComponents(String vspId, Version version);
+    void deleteComponents(String vspId, Version version);
 
-  ComponentEntity createComponent(ComponentEntity componentEntity);
+    ComponentEntity createComponent(ComponentEntity componentEntity);
 
-  CompositionEntityValidationData updateComponent(ComponentEntity componentEntity);
+    CompositionEntityValidationData updateComponent(ComponentEntity componentEntity);
 
-  CompositionEntityResponse<ComponentData> getComponent(String vspId, Version version,
-                                                        String componentId);
+    CompositionEntityResponse<ComponentData> getComponent(String vspId, Version version, String componentId);
 
-  void deleteComponent(String vspId, Version version, String componentId);
+    void deleteComponent(String vspId, Version version, String componentId);
 
-  QuestionnaireResponse getQuestionnaire(String vspId, Version version, String componentId);
+    QuestionnaireResponse getQuestionnaire(String vspId, Version version, String componentId);
 
-  void updateQuestionnaire(String vspId, Version version, String componentId,
-                           String questionnaireData);
+    void updateQuestionnaire(String vspId, Version version, String componentId, String questionnaireData);
 
-  void validateComponentExistence(String vspId, Version version, String componentId);
+    void validateComponentExistence(String vspId, Version version, String componentId);
 }

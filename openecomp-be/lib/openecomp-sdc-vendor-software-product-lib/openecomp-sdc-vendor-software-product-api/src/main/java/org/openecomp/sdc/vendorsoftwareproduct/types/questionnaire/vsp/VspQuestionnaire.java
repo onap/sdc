@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp;
-
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,5 +30,4 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general.G
 public class VspQuestionnaire {
 
     private General general;
-
 }

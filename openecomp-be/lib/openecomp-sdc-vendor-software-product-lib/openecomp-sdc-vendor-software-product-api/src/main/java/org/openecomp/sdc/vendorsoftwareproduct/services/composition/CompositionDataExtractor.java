@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.services.composition;
 
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -25,7 +24,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData
 
 public interface CompositionDataExtractor {
 
-  CompositionData extractServiceCompositionData(ToscaServiceModel toscaServiceModel);
+    CompositionData extractServiceCompositionData(ToscaServiceModel toscaServiceModel);
 
-  String getComponentDisplayName(String componentName);
+    String getComponentDisplayName(String componentName);
 }

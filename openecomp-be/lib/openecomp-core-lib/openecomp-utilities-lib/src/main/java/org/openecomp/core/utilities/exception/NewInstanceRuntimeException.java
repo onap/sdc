@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.utilities.exception;
 
 public class NewInstanceRuntimeException extends RuntimeException {

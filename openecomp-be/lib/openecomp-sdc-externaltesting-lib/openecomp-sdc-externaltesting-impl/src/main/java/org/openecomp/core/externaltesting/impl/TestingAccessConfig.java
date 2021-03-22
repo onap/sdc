@@ -16,16 +16,15 @@
 
 package org.openecomp.core.externaltesting.impl;
 
+import java.util.List;
 import lombok.Data;
 import org.openecomp.core.externaltesting.api.ClientConfiguration;
-
-import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 @Data
 public class TestingAccessConfig {
 
-  private ClientConfiguration client;
-  private List<String> endpoints;
+    private ClientConfiguration client;
+    private List<String> endpoints;
 
 }

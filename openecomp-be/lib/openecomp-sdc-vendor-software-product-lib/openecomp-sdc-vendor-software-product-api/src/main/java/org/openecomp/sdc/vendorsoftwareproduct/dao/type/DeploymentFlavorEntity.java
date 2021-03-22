@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Frozen;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,9 +39,9 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 @Setter
 @NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_deployment_flavor")
-public class DeploymentFlavorEntity implements CompositionEntity{
-    private static final String ENTITY_TYPE = "Vendor Software Product Deployment Flavor";
+public class DeploymentFlavorEntity implements CompositionEntity {
 
+    private static final String ENTITY_TYPE = "Vendor Software Product Deployment Flavor";
     @PartitionKey
     @Column(name = "vsp_id")
     private String vspId;
@@ -65,6 +68,7 @@ public class DeploymentFlavorEntity implements CompositionEntity{
         this.version = version;
         this.id = id;
     }
+
     @Override
     public CompositionEntityType getType() {
         return CompositionEntityType.deployment;
@@ -85,7 +89,7 @@ public class DeploymentFlavorEntity implements CompositionEntity{
         return getVspId();
     }
 
-   public DeploymentFlavor getDeploymentFlavorCompositionData() {
+    public DeploymentFlavor getDeploymentFlavorCompositionData() {
         return compositionData == null ? null : JsonUtil.json2Object(compositionData, DeploymentFlavor.class);
     }
 

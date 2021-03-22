@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
+import java.util.Collection;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
@@ -36,126 +38,89 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
-
 @Named
 @Service("licenseKeyGroupLimits")
 @Scope(value = "prototype")
 public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
-  private VendorLicenseManager vendorLicenseManager =
-      VendorLicenseManagerFactory.getInstance().createInterface();
 
-  private static final String PARENT = "LicenseKeyGroup";
+    private static final String PARENT = "LicenseKeyGroup";
+    private VendorLicenseManager vendorLicenseManager = VendorLicenseManagerFactory.getInstance().createInterface();
 
-
-  @Override
-  public Response createLimit(LimitRequestDto request,
-                              String vlmId,
-                              String versionId,
-                              String licenseKeyGroupId,
-                              String user) {
-    Version version = new Version(versionId);
-    vendorLicenseManager.getLicenseKeyGroup(
-        new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
-
-    LimitEntity limitEntity =
-        new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
-    limitEntity.setVendorLicenseModelId(vlmId);
-    limitEntity.setVersion(version);
-    limitEntity.setEpLkgId(licenseKeyGroupId);
-    limitEntity.setParent(PARENT);
-
-    LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
-    MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
-    LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
-    return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
-  }
-
-  @Override
-  public Response listLimits(String vlmId, String versionId, String licenseKeyGroupId,
-                             String user) {
-    Version version = new Version(versionId);
-    vendorLicenseManager
-        .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
-
-    Collection<LimitEntity> limits =
-        vendorLicenseManager.listLimits(vlmId, version, licenseKeyGroupId);
-
-    GenericCollectionWrapper<LimitEntityDto> result = new GenericCollectionWrapper<>();
-    MapLimitEntityToLimitDto outputMapper =
-        new MapLimitEntityToLimitDto();
-    for (LimitEntity limit : limits) {
-      result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
+    @Override
+    public Response createLimit(LimitRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String user) {
+        Version version = new Version(versionId);
+        vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
+        LimitEntity limitEntity = new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
+        limitEntity.setVendorLicenseModelId(vlmId);
+        limitEntity.setVersion(version);
+        limitEntity.setEpLkgId(licenseKeyGroupId);
+        limitEntity.setParent(PARENT);
+        LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
+        MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
+        LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
+        return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
     }
-    return Response.ok(result).build();
-  }
 
-  @Override
-  public Response updateLimit(LimitRequestDto request,
-                              String vlmId,
-                              String versionId,
-                              String licenseKeyGroupId,
-                              String limitId,
-                              String user) {
-    Version version = new Version(versionId);
-    vendorLicenseManager
-        .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
+    @Override
+    public Response listLimits(String vlmId, String versionId, String licenseKeyGroupId, String user) {
+        Version version = new Version(versionId);
+        vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
+        Collection<LimitEntity> limits = vendorLicenseManager.listLimits(vlmId, version, licenseKeyGroupId);
+        GenericCollectionWrapper<LimitEntityDto> result = new GenericCollectionWrapper<>();
+        MapLimitEntityToLimitDto outputMapper = new MapLimitEntityToLimitDto();
+        for (LimitEntity limit : limits) {
+            result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
+        }
+        return Response.ok(result).build();
+    }
 
-    LimitEntity limitEntity =
-        new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
-    limitEntity.setVendorLicenseModelId(vlmId);
-    limitEntity.setVersion(version);
-    limitEntity.setEpLkgId(licenseKeyGroupId);
-    limitEntity.setId(limitId);
-    limitEntity.setParent(PARENT);
+    @Override
+    public Response updateLimit(LimitRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
+        Version version = new Version(versionId);
+        vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
+        LimitEntity limitEntity = new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
+        limitEntity.setVendorLicenseModelId(vlmId);
+        limitEntity.setVersion(version);
+        limitEntity.setEpLkgId(licenseKeyGroupId);
+        limitEntity.setId(limitId);
+        limitEntity.setParent(PARENT);
+        vendorLicenseManager.updateLimit(limitEntity);
+        return Response.ok().build();
+    }
 
-    vendorLicenseManager.updateLimit(limitEntity);
-    return Response.ok().build();
-  }
+    /**
+     * Delete License Key Group.
+     *
+     * @param vlmId             the vlm id
+     * @param licenseKeyGroupId the license Key Group id
+     * @param limitId           the limitId
+     * @param user              the user
+     * @return the response
+     */
+    public Response deleteLimit(String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
+        Version version = new Version(versionId);
+        vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
+        LimitEntity limitInput = new LimitEntity();
+        limitInput.setVendorLicenseModelId(vlmId);
+        limitInput.setVersion(version);
+        limitInput.setEpLkgId(licenseKeyGroupId);
+        limitInput.setId(limitId);
+        limitInput.setParent(PARENT);
+        vendorLicenseManager.deleteLimit(limitInput);
+        return Response.ok().build();
+    }
 
-  /**
-   * Delete License Key Group.
-   *
-   * @param vlmId             the vlm id
-   * @param licenseKeyGroupId the license Key Group id
-   * @param limitId           the limitId
-   * @param user              the user
-   * @return the response
-   */
-  public Response deleteLimit(String vlmId, String versionId, String licenseKeyGroupId,
-                              String limitId, String user) {
-    Version version = new Version(versionId);
-    vendorLicenseManager
-        .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
-
-    LimitEntity limitInput = new LimitEntity();
-    limitInput.setVendorLicenseModelId(vlmId);
-    limitInput.setVersion(version);
-    limitInput.setEpLkgId(licenseKeyGroupId);
-    limitInput.setId(limitId);
-    limitInput.setParent(PARENT);
-
-    vendorLicenseManager.deleteLimit(limitInput);
-    return Response.ok().build();
-  }
-
-  @Override
-  public Response getLimit(String vlmId, String versionId, String licenseKeyGroupId,
-                           String limitId, String user) {
-    Version version = new Version(versionId);
-    vendorLicenseManager
-        .getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
-    LimitEntity limitInput = new LimitEntity();
-    limitInput.setVendorLicenseModelId(vlmId);
-    limitInput.setVersion(version);
-    limitInput.setEpLkgId(licenseKeyGroupId);
-    limitInput.setId(limitId);
-    LimitEntity limit = vendorLicenseManager.getLimit(limitInput);
-
-    LimitEntityDto entitlementPoolEntityDto = limit == null ? null
-        : new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
-    return Response.ok(entitlementPoolEntityDto).build();
-  }
+    @Override
+    public Response getLimit(String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
+        Version version = new Version(versionId);
+        vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
+        LimitEntity limitInput = new LimitEntity();
+        limitInput.setVendorLicenseModelId(vlmId);
+        limitInput.setVersion(version);
+        limitInput.setEpLkgId(licenseKeyGroupId);
+        limitInput.setId(limitId);
+        LimitEntity limit = vendorLicenseManager.getLimit(limitInput);
+        LimitEntityDto entitlementPoolEntityDto = limit == null ? null : new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
+        return Response.ok(entitlementPoolEntityDto).build();
+    }
 }

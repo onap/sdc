@@ -25,9 +25,7 @@ import java.util.stream.Collectors;
 public class InternalFilesFilter {
 
     public List<String> filter(final List<String> sources) {
-        return sources.stream()
-                .filter(this::isInternalFile)
-                .collect(Collectors.toList());
+        return sources.stream().filter(this::isInternalFile).collect(Collectors.toList());
     }
 
     private boolean isInternalFile(final String filePath) {

@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -32,61 +38,47 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityVali
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireValidationResultDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
 
-import java.util.*;
-import java.util.stream.Collectors;
+public class MapValidationResponseToDto extends MappingBase<ValidationResponse, ValidationResponseDto> {
 
-public class MapValidationResponseToDto
-    extends MappingBase<ValidationResponse, ValidationResponseDto> {
-  private static Map<String, List<ErrorMessageDto>> mapUploadDataErrors(
-      Map<String, List<ErrorMessage>> uploadDataErrors) {
-    if (MapUtils.isEmpty(uploadDataErrors)) {
-      return null;
-    }
-    return uploadDataErrors.entrySet().stream().collect(
-        Collectors.toMap(Map.Entry::getKey, entry -> mapErrorMessages(entry.getValue())));
-  }
-
-  private static QuestionnaireValidationResultDto mapQuestionnaireValidationResult(
-      QuestionnaireValidationResult questionnaireValidationResult) {
-    if (Objects.isNull(questionnaireValidationResult)
-        || Objects.isNull(questionnaireValidationResult.getValidationData())) {
-      return null;
-    }
-    QuestionnaireValidationResultDto questionnaireValidationResultDto =
-        new QuestionnaireValidationResultDto();
-    questionnaireValidationResultDto.setValid(questionnaireValidationResult.isValid());
-
-    Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
-    for (CompositionEntityValidationData validationData : questionnaireValidationResult
-        .getValidationData()) {
-      validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping(
-              validationData, CompositionEntityValidationDataDto.class));
+    private static Map<String, List<ErrorMessageDto>> mapUploadDataErrors(Map<String, List<ErrorMessage>> uploadDataErrors) {
+        if (MapUtils.isEmpty(uploadDataErrors)) {
+            return null;
+        }
+        return uploadDataErrors.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> mapErrorMessages(entry.getValue())));
     }
 
-    questionnaireValidationResultDto.setValidationData(validationDataDto);
-    return questionnaireValidationResultDto;
-  }
+    private static QuestionnaireValidationResultDto mapQuestionnaireValidationResult(QuestionnaireValidationResult questionnaireValidationResult) {
+        if (Objects.isNull(questionnaireValidationResult) || Objects.isNull(questionnaireValidationResult.getValidationData())) {
+            return null;
+        }
+        QuestionnaireValidationResultDto questionnaireValidationResultDto = new QuestionnaireValidationResultDto();
+        questionnaireValidationResultDto.setValid(questionnaireValidationResult.isValid());
+        Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
+        for (CompositionEntityValidationData validationData : questionnaireValidationResult.getValidationData()) {
+            validationDataDto
+                .add(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class));
+        }
+        questionnaireValidationResultDto.setValidationData(validationDataDto);
+        return questionnaireValidationResultDto;
+    }
 
+    private static List<ErrorMessageDto> mapErrorMessages(List<ErrorMessage> errorMessages) {
+        return errorMessages == null ? null
+            : errorMessages.stream().map(errorMessage -> new MapErrorMessageToDto().applyMapping(errorMessage, ErrorMessageDto.class))
+                .collect(Collectors.toList());
+    }
 
-  private static List<ErrorMessageDto> mapErrorMessages(List<ErrorMessage> errorMessages) {
-    return errorMessages == null ? null : errorMessages.stream().map(
-        errorMessage -> new MapErrorMessageToDto()
-            .applyMapping(errorMessage, ErrorMessageDto.class)).collect(Collectors.toList());
-  }
+    private static Collection<ErrorCodeDto> mapErrorCodes(Collection<ErrorCode> errorCodes) {
+        return CollectionUtils.isEmpty(errorCodes) ? null
+            : errorCodes.stream().map(errorCode -> new MapErrorCodeToDto().applyMapping(errorCode, ErrorCodeDto.class)).collect(Collectors.toList());
+    }
 
-  private static Collection<ErrorCodeDto> mapErrorCodes(Collection<ErrorCode> errorCodes) {
-    return CollectionUtils.isEmpty(errorCodes) ? null : errorCodes.stream()
-        .map(errorCode -> new MapErrorCodeToDto().applyMapping(errorCode, ErrorCodeDto.class))
-        .collect(Collectors.toList());
-  }
-
-  @Override
-  public void doMapping(ValidationResponse source, ValidationResponseDto target) {
-    target.setValid(source.isValid());
-    target.setVspErrors(mapErrorCodes(source.getVspErrors()));
-    target.setLicensingDataErrors(mapErrorCodes(source.getLicensingDataErrors()));
-    target.setUploadDataErrors(mapUploadDataErrors(source.getUploadDataErrors()));
-    target.setQuestionnaireValidationResult(
-        mapQuestionnaireValidationResult(source.getQuestionnaireValidationResult()));
-  }
+    @Override
+    public void doMapping(ValidationResponse source, ValidationResponseDto target) {
+        target.setValid(source.isValid());
+        target.setVspErrors(mapErrorCodes(source.getVspErrors()));
+        target.setLicensingDataErrors(mapErrorCodes(source.getLicensingDataErrors()));
+        target.setUploadDataErrors(mapUploadDataErrors(source.getUploadDataErrors()));
+        target.setQuestionnaireValidationResult(mapQuestionnaireValidationResult(source.getQuestionnaireValidationResult()));
+    }
 }

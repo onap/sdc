@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import org.onap.config.api.Configuration;
@@ -21,9 +20,8 @@ import org.onap.config.api.ConfigurationManager;
 
 public class ToscaInterfaceType {
 
-    private static Configuration config = ConfigurationManager.lookup();
-
     //TOSCA native types
     public static final String NATIVE_ROOT = " tosca.interfaces.Root";
     public static final String NATIVE_LIFECYCLE_STANDARD = "tosca.interfaces.node.lifecycle.Standard";
+    private static Configuration config = ConfigurationManager.lookup();
 }

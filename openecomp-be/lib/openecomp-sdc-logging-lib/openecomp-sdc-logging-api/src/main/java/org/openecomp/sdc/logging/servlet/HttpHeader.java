@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet;
 
 import java.util.ArrayList;
@@ -24,9 +23,9 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * Handles any of possible header names to read a value for that header. This is useful for backward compatibility, if
- * multiple headers may have the same meaning. For instance, when requests come from multiple service, some using an old
- * header and others using a new header to pass the same information.
+ * Handles any of possible header names to read a value for that header. This is useful for backward compatibility, if multiple headers may have the
+ * same meaning. For instance, when requests come from multiple service, some using an old header and others using a new header to pass the same
+ * information.
  *
  * @author evitaliy
  * @since 25 Mar 2018
@@ -35,7 +34,6 @@ public class HttpHeader {
 
     private static final String NAMES_CANNOT_BE_NULL = "Names cannot be null";
     private static final String AT_LEAST_ONE_NAME_REQUIRED = "At least one name required";
-
     private final List<String> headerNames;
 
     /**
@@ -44,11 +42,9 @@ public class HttpHeader {
      * @param headerNames cannot be null or empty
      */
     public HttpHeader(String... headerNames) {
-
         if (Objects.requireNonNull(headerNames, NAMES_CANNOT_BE_NULL).length < 1) {
             throw new IllegalArgumentException(AT_LEAST_ONE_NAME_REQUIRED);
         }
-
         this.headerNames = Arrays.asList(headerNames);
     }
 
@@ -58,11 +54,9 @@ public class HttpHeader {
      * @param headerNames cannot be null or empty
      */
     public HttpHeader(List<String> headerNames) {
-
         if (Objects.requireNonNull(headerNames, NAMES_CANNOT_BE_NULL).isEmpty()) {
             throw new IllegalArgumentException(AT_LEAST_ONE_NAME_REQUIRED);
         }
-
         this.headerNames = new ArrayList<>(headerNames);
     }
 
@@ -73,29 +67,23 @@ public class HttpHeader {
      * @return value or empty if not found
      */
     public Optional<String> getAny(Function<String, String> reader) {
-
         for (String k : headerNames) {
-
             String value = reader.apply(k);
             if (value != null) {
                 return Optional.of(value);
             }
         }
-
         return Optional.empty();
     }
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
-
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         HttpHeader that = (HttpHeader) o;
         return Objects.equals(headerNames, that.headerNames);
     }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.health.impl;
-
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.exceptions.DriverException;
@@ -34,9 +32,7 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class HealthCheckDaoImpl implements HealthCheckDao {
 
     private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-
-    private static final CheckHealthAccessor accessor =
-            noSqlDb.getMappingManager().createAccessor(CheckHealthAccessor.class);
+    private static final CheckHealthAccessor accessor = noSqlDb.getMappingManager().createAccessor(CheckHealthAccessor.class);
     private static final Logger logger = LoggerFactory.getLogger(HealthCheckDaoImpl.class);
 
     @Override
@@ -63,7 +59,5 @@ public class HealthCheckDaoImpl implements HealthCheckDao {
 
         @Query("SELECT * FROM application_config LIMIT 1")
         ResultSet checkHealth();
-
     }
-
 }

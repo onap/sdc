@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.versioning.dao.impl;
 
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
@@ -26,11 +25,11 @@ import org.openecomp.sdc.versioning.dao.VersionDaoFactory;
 import org.openecomp.sdc.versioning.dao.impl.zusammen.VersionZusammenDaoImpl;
 
 public class VersionDaoFactoryImpl extends VersionDaoFactory {
-  private static VersionDao INSTANCE =
-      new VersionZusammenDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface());
 
-  @Override
-  public VersionDao createInterface() {
-    return INSTANCE;
-  }
+    private static VersionDao INSTANCE = new VersionZusammenDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface());
+
+    @Override
+    public VersionDao createInterface() {
+        return INSTANCE;
+    }
 }

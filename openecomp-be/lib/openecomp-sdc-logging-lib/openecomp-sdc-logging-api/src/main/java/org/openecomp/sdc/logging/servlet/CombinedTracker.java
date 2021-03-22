@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Tracker for all the elements of ONAP logging and tracing at an entry point to an application.
- * The order of invocations is important, and on {@link #preRequest(HttpServletRequest)} it respects the order of
- * trackers passed to the constructor. On {@link #postRequest(RequestProcessingResult)}, the invocation will be in the
+ * Tracker for all the elements of ONAP logging and tracing at an entry point to an application. The order of invocations is important, and on {@link
+ * #preRequest(HttpServletRequest)} it respects the order of trackers passed to the constructor. On {@link #postRequest(RequestProcessingResult)}, the
+ * invocation will be in the
  * <b>reverse</b> order.
  *
  * @author evitaliy
@@ -38,7 +37,6 @@ public class CombinedTracker implements Tracker {
 
     @Override
     public void preRequest(HttpServletRequest request) {
-
         for (Tracker t : trackers) {
             t.preRequest(request);
         }
@@ -46,7 +44,6 @@ public class CombinedTracker implements Tracker {
 
     @Override
     public void postRequest(RequestProcessingResult result) {
-
         for (int i = trackers.length - 1; i > -1; i--) {
             trackers[i].postRequest(result);
         }

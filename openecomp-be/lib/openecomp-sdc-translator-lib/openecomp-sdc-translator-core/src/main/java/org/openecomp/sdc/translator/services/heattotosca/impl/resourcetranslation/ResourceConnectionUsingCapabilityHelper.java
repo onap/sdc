@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_NESTED_RESOURCE_PROPERTY_NOT_DEFINED;
@@ -25,8 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
+import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.onap.sdc.tosca.datatypes.model.NodeType;
+import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.onap.sdc.tosca.datatypes.model.RequirementDefinition;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
@@ -39,43 +42,31 @@ import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFact
 
 public abstract class ResourceConnectionUsingCapabilityHelper extends BaseResourceConnection<CapabilityDefinition> {
 
-    ResourceConnectionUsingCapabilityHelper(ResourceTranslationBase resourceTranslationBase,
-                                            TranslateTo translateTo, FileData nestedFileData,
-                                            NodeTemplate substitutionNodeTemplate,
-                                            NodeType nodeType) {
+    ResourceConnectionUsingCapabilityHelper(ResourceTranslationBase resourceTranslationBase, TranslateTo translateTo, FileData nestedFileData,
+                                            NodeTemplate substitutionNodeTemplate, NodeType nodeType) {
         super(resourceTranslationBase, translateTo, nestedFileData, substitutionNodeTemplate, nodeType);
     }
 
-    abstract Map.Entry<String, RequirementDefinition> createRequirementDefinition(
-            String capabilityKey);
+    abstract Map.Entry<String, RequirementDefinition> createRequirementDefinition(String capabilityKey);
 
     @Override
-    String getMappedNodeTranslatedResourceId(ServiceTemplate nestedServiceTemplate,
-                                             Map.Entry<String,
-                                                     CapabilityDefinition> connectionPointEntry) {
-        List<String> substitutionMapping =
-                nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
-                        .get(connectionPointEntry.getKey());
+    String getMappedNodeTranslatedResourceId(ServiceTemplate nestedServiceTemplate, Map.Entry<String, CapabilityDefinition> connectionPointEntry) {
+        List<String> substitutionMapping = nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
+            .get(connectionPointEntry.getKey());
         return substitutionMapping.get(0);
     }
 
     @Override
-    Map.Entry<String, CapabilityDefinition> getMappedConnectionPointEntry(
-            ServiceTemplate nestedServiceTemplate,
-            Map.Entry<String, CapabilityDefinition> connectionPointEntry) {
-        List<String> substitutionMapping =
-                nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
-                        .get(connectionPointEntry.getKey());
+    Map.Entry<String, CapabilityDefinition> getMappedConnectionPointEntry(ServiceTemplate nestedServiceTemplate,
+                                                                          Map.Entry<String, CapabilityDefinition> connectionPointEntry) {
+        List<String> substitutionMapping = nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
+            .get(connectionPointEntry.getKey());
         String mappedNodeTranslatedId = substitutionMapping.get(0);
         String mappedCapabilityId = substitutionMapping.get(1);
-        NodeTemplate mappedNodeTemplate =
-                nestedServiceTemplate.getTopology_template().getNode_templates()
-                        .get(mappedNodeTranslatedId);
-        NodeType substituteNodeType =
-                translateTo.getContext().getGlobalSubstitutionServiceTemplate().getNode_types()
-                        .get(mappedNodeTemplate.getType());
-        Optional<CapabilityDefinition> capabilityDefinition =
-                DataModelUtil.getCapabilityDefinition(substituteNodeType, mappedCapabilityId);
+        NodeTemplate mappedNodeTemplate = nestedServiceTemplate.getTopology_template().getNode_templates().get(mappedNodeTranslatedId);
+        NodeType substituteNodeType = translateTo.getContext().getGlobalSubstitutionServiceTemplate().getNode_types()
+            .get(mappedNodeTemplate.getType());
+        Optional<CapabilityDefinition> capabilityDefinition = DataModelUtil.getCapabilityDefinition(substituteNodeType, mappedCapabilityId);
         return new Map.Entry<String, CapabilityDefinition>() {
             @Override
             public String getKey() {
@@ -102,74 +93,53 @@ public abstract class ResourceConnectionUsingCapabilityHelper extends BaseResour
         if (capabilities == null) {
             return exposedRequirementsList;
         }
-        capabilities.entrySet()
-                .stream()
-                .filter(entry -> predicates
-                        .stream()
-                        .anyMatch(p -> p.test(entry.getValue())))
-                .forEach(entry -> {
-                    Map<String, CapabilityDefinition> exposedRequirementsMap = new HashMap<>();
-                    exposedRequirementsMap.put(entry.getKey(), entry.getValue());
-                    exposedRequirementsList.add(exposedRequirementsMap);
-                });
+        capabilities.entrySet().stream().filter(entry -> predicates.stream().anyMatch(p -> p.test(entry.getValue()))).forEach(entry -> {
+            Map<String, CapabilityDefinition> exposedRequirementsMap = new HashMap<>();
+            exposedRequirementsMap.put(entry.getKey(), entry.getValue());
+            exposedRequirementsList.add(exposedRequirementsMap);
+        });
         return exposedRequirementsList;
     }
 
-    void addRequirementToConnectResource(Map.Entry<String, CapabilityDefinition> connectionPointEntry,
-                                         List<String> supportedSourceNodeTypes, String paramName) {
+    void addRequirementToConnectResource(Map.Entry<String, CapabilityDefinition> connectionPointEntry, List<String> supportedSourceNodeTypes,
+                                         String paramName) {
         Object paramValue = translateTo.getResource().getProperties().get(paramName);
         if (paramValue == null) {
-            logger.warn(LOG_NESTED_RESOURCE_PROPERTY_NOT_DEFINED, paramName,
-                    translateTo.getResourceId(), connectionPointEntry.getKey(), ToscaConstants.CAPABILITY);
+            logger.warn(LOG_NESTED_RESOURCE_PROPERTY_NOT_DEFINED, paramName, translateTo.getResourceId(), connectionPointEntry.getKey(),
+                ToscaConstants.CAPABILITY);
             return;
         }
-
-        Map.Entry<String, RequirementDefinition> requirementDefinition =
-                createRequirementDefinition(connectionPointEntry.getKey());
-
-        Optional<String> sourceResourceId =
-                getConnectionResourceUsingGetResourceFunc(connectionPointEntry, paramName, paramValue,
-                        supportedSourceNodeTypes);
+        Map.Entry<String, RequirementDefinition> requirementDefinition = createRequirementDefinition(connectionPointEntry.getKey());
+        Optional<String> sourceResourceId = getConnectionResourceUsingGetResourceFunc(connectionPointEntry, paramName, paramValue,
+            supportedSourceNodeTypes);
         if (sourceResourceId.isPresent()) {
             Resource sourceResource = HeatToToscaUtil
-                    .getResource(translateTo.getHeatOrchestrationTemplate(), sourceResourceId.get(),
-                            translateTo.getHeatFileName());
-            Optional<String> translatedSourceNodeId =
-                    ResourceTranslationFactory.getInstance(sourceResource)
-                            .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(),
-                                    translateTo.getHeatOrchestrationTemplate(), sourceResource,
-                                    sourceResourceId.get(), translateTo.getContext());
+                .getResource(translateTo.getHeatOrchestrationTemplate(), sourceResourceId.get(), translateTo.getHeatFileName());
+            Optional<String> translatedSourceNodeId = ResourceTranslationFactory.getInstance(sourceResource)
+                .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(), translateTo.getHeatOrchestrationTemplate(),
+                    sourceResource, sourceResourceId.get(), translateTo.getContext());
             if (translatedSourceNodeId.isPresent()) {
-                NodeTemplate sourceNodeTemplate = DataModelUtil
-                        .getNodeTemplate(translateTo.getServiceTemplate(), translatedSourceNodeId.get());
-                RequirementAssignment requirementAssignment = createRequirementAssignment(
-                        requirementDefinition, translateTo.getTranslatedId(), sourceNodeTemplate);
-                ConsolidationDataUtil.updateNodesConnectedData(translateTo, translateTo.getResourceId(),
-                        translateTo.getResource(), sourceResource, translatedSourceNodeId.get(),
-                        requirementDefinition.getKey(), requirementAssignment);
+                NodeTemplate sourceNodeTemplate = DataModelUtil.getNodeTemplate(translateTo.getServiceTemplate(), translatedSourceNodeId.get());
+                RequirementAssignment requirementAssignment = createRequirementAssignment(requirementDefinition, translateTo.getTranslatedId(),
+                    sourceNodeTemplate);
+                ConsolidationDataUtil.updateNodesConnectedData(translateTo, translateTo.getResourceId(), translateTo.getResource(), sourceResource,
+                    translatedSourceNodeId.get(), requirementDefinition.getKey(), requirementAssignment);
             } else {
-                logger.warn(LOG_UNSUPPORTED_CAPABILITY_CONNECTION, sourceResource.getType(),
-                        connectionPointEntry.getKey(),
-                        connectionPointEntry.getValue().getType());
+                logger.warn(LOG_UNSUPPORTED_CAPABILITY_CONNECTION, sourceResource.getType(), connectionPointEntry.getKey(),
+                    connectionPointEntry.getValue().getType());
             }
         } else {
-            Optional<TranslatedHeatResource> sharedSourceTranslatedHeatResource =
-                    getConnectionTranslatedHeatResourceUsingGetParamFunc(connectionPointEntry, paramName,
-                            supportedSourceNodeTypes);
+            Optional<TranslatedHeatResource> sharedSourceTranslatedHeatResource = getConnectionTranslatedHeatResourceUsingGetParamFunc(
+                connectionPointEntry, paramName, supportedSourceNodeTypes);
             if (sharedSourceTranslatedHeatResource.isPresent()) {
                 NodeTemplate sharedSourceNodeTemplate = DataModelUtil
-                        .getNodeTemplate(translateTo.getServiceTemplate(),
-                                sharedSourceTranslatedHeatResource.get().getTranslatedId());
-                RequirementAssignment requirementAssignment = createRequirementAssignment(
-                        requirementDefinition, translateTo.getTranslatedId(), sharedSourceNodeTemplate);
-
-                ConsolidationDataUtil.updateNodesConnectedData(translateTo, translateTo.getResourceId(),
-                        translateTo.getResource(), sharedSourceTranslatedHeatResource.get().getHeatResource(),
-                        sharedSourceTranslatedHeatResource.get().getTranslatedId(),
-                        requirementDefinition.getKey(),
-                        requirementAssignment);
+                    .getNodeTemplate(translateTo.getServiceTemplate(), sharedSourceTranslatedHeatResource.get().getTranslatedId());
+                RequirementAssignment requirementAssignment = createRequirementAssignment(requirementDefinition, translateTo.getTranslatedId(),
+                    sharedSourceNodeTemplate);
+                ConsolidationDataUtil.updateNodesConnectedData(translateTo, translateTo.getResourceId(), translateTo.getResource(),
+                    sharedSourceTranslatedHeatResource.get().getHeatResource(), sharedSourceTranslatedHeatResource.get().getTranslatedId(),
+                    requirementDefinition.getKey(), requirementAssignment);
             }
         }
     }
-
 }

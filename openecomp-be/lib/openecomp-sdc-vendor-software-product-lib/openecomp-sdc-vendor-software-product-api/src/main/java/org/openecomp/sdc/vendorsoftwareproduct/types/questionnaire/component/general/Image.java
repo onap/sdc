@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general;
 
 import lombok.Getter;
@@ -33,5 +32,4 @@ public class Image {
     private String providedBy;
     private Number bootDiskSizePerVM;
     private Number ephemeralDiskSizePerVM;
-
 }

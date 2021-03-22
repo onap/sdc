@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.services.impl;
 
+import java.util.Set;
 import org.openecomp.sdc.notification.dao.SubscribersDao;
 import org.openecomp.sdc.notification.services.SubscriptionService;
-
-import java.util.Set;
 
 public class SubscriptionServiceImpl implements SubscriptionService {
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.action.dao.types;
 
 import com.datastax.driver.mapping.annotations.Column;
@@ -36,23 +35,21 @@ import org.openecomp.sdc.action.types.OpenEcompComponent;
 @Table(keyspace = "dox", name = "EcompComponent")
 public class OpenEcompComponentEntity {
 
-  @PartitionKey
-  @Column(name = "id")
-  private String id;
+    @PartitionKey
+    @Column(name = "id")
+    private String id;
+    @Column(name = "name")
+    private String name;
 
-  @Column(name = "name")
-  private String name;
-
-
-  /**
-   * To dto OPENECOMP component.
-   *
-   * @return the OPENECOMP component
-   */
-  public OpenEcompComponent toDto() {
-    OpenEcompComponent destination = new OpenEcompComponent();
-    destination.setId(this.getId());
-    destination.setName(this.getName());
-    return destination;
-  }
+    /**
+     * To dto OPENECOMP component.
+     *
+     * @return the OPENECOMP component
+     */
+    public OpenEcompComponent toDto() {
+        OpenEcompComponent destination = new OpenEcompComponent();
+        destination.setId(this.getId());
+        destination.setName(this.getName());
+        return destination;
+    }
 }

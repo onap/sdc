@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.vsp.rest.services;
+
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
+import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -54,10 +57,6 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFile
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
-import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
-
 /**
  * Enables integration API interface with VNF Repository (VNFSDK).
  * <ol>
@@ -80,20 +79,23 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
         try {
             SSLContext sslcontext = SSLContext.getInstance("TLS");
             sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] c, String s) {}
-                public void checkServerTrusted(X509Certificate[] c, String s) {}
-                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-            }}, new java.security.SecureRandom());
+                public void checkClientTrusted(X509Certificate[] c, String s) {
+                }
 
-            return ClientBuilder.newBuilder()
-                    .sslContext(sslcontext)
-                    .hostnameVerifier((a, b) -> true)
-                    .build();
+                public void checkServerTrusted(X509Certificate[] c, String s) {
+                }
+
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+            }}, new java.security.SecureRandom());
+            return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((a, b) -> true).build();
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             LOGGER.error("Failed to initialize SSL unsecure context", e);
         }
         return ClientBuilder.newClient();
     }
+
     private final Configuration config;
 
     public VnfPackageRepositoryImpl(Configuration config) {
@@ -120,35 +122,28 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     public Response importVnfPackage(String vspId, String versionId, String csarId, String user) {
         LOGGER.debug("Import VNF Packages from Repository: {}", csarId);
         final String downloadPackageUri = String.format(config.getDownloadUri(), csarId);
-
         Response remoteResponse = CLIENT.target(downloadPackageUri).request().get();
         if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
             return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
         }
-
         LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
         byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
         return uploadVnfPackage(vspId, versionId, csarId, payload);
     }
 
-    private Response uploadVnfPackage(final String vspId, final String versionId,
-                                      final String csarId, final byte[] payload) {
+    private Response uploadVnfPackage(final String vspId, final String versionId, final String csarId, final byte[] payload) {
         try {
-            final OrchestrationTemplateCandidateManager candidateManager =
-                    OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
+            final OrchestrationTemplateCandidateManager candidateManager = OrchestrationTemplateCandidateManagerFactory.getInstance()
+                .createInterface();
             final String filename = formatFilename(csarId);
             final String fileExtension = getFileExtension(filename);
-            final OnboardPackageInfo onboardPackageInfo =
-                new OnboardPackageInfo(getNetworkPackageName(filename), fileExtension, ByteBuffer.wrap(payload),
-                    OnboardingTypesEnum.getOnboardingTypesEnum(fileExtension));
+            final OnboardPackageInfo onboardPackageInfo = new OnboardPackageInfo(getNetworkPackageName(filename), fileExtension,
+                ByteBuffer.wrap(payload), OnboardingTypesEnum.getOnboardingTypesEnum(fileExtension));
             final VspDetails vspDetails = new VspDetails(vspId, getVersion(vspId, versionId));
             final UploadFileResponse response = candidateManager.upload(vspDetails, onboardPackageInfo);
-            final UploadFileResponseDto uploadFileResponse =
-                new MapUploadFileResponseToUploadFileResponseDto()
-                    .applyMapping(response, UploadFileResponseDto.class);
-
+            final UploadFileResponseDto uploadFileResponse = new MapUploadFileResponseToUploadFileResponseDto()
+                .applyMapping(response, UploadFileResponseDto.class);
             return Response.ok(uploadFileResponse).build();
-
         } catch (final Exception e) {
             ErrorCode error = new GeneralErrorBuilder().build();
             LOGGER.error("Exception while uploading package received from VNF Repository", new CoreException(error, e));
@@ -160,16 +155,13 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     public Response downloadVnfPackage(String vspId, String versionId, String csarId, String user) {
         LOGGER.debug("Download VNF package from repository: csarId={}", csarId);
         final String downloadPackageUri = String.format(config.getDownloadUri(), csarId);
-
         Response remoteResponse = CLIENT.target(downloadPackageUri).request().get();
         if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
             return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
         }
-
         byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
         Response.ResponseBuilder response = Response.ok(payload);
         response.header(CONTENT_DISPOSITION, "attachment; filename=" + formatFilename(csarId));
-
         LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
         return response.build();
     }
@@ -184,15 +176,12 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     }
 
     private static Response handleUnexpectedStatus(String action, String uri, Response response) {
-
         ErrorCode error = new GeneralErrorBuilder().build();
-
         if (LOGGER.isErrorEnabled()) {
             String body = response.hasEntity() ? response.readEntity(String.class) : "";
-            LOGGER.error("Unexpected response status while {}: URI={}, status={}, body={}", action, uri,
-                    response.getStatus(), body, new CoreException(error));
+            LOGGER.error("Unexpected response status while {}: URI={}, status={}, body={}", action, uri, response.getStatus(), body,
+                new CoreException(error));
         }
-
         return generateInternalServerError(error);
     }
 
@@ -206,7 +195,9 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     }
 
     interface Configuration {
+
         String getGetUri();
+
         String getDownloadUri();
     }
 
@@ -225,16 +216,12 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
         private static class LazyFileConfiguration implements Configuration {
 
             private static final String CONFIG_NAMESPACE = "vnfrepo";
-
             private static final String DEFAULT_HOST = "localhost";
             private static final String DEFAULT_PORT = "8702";
-
             private static final String DEFAULT_URI_PREFIX = "/onapapi/vnfsdk-marketplace/v1/PackageResource/csars";
             private static final String DEFAULT_LIST_URI = DEFAULT_URI_PREFIX + "/";
             private static final String DEFAULT_DOWNLOAD_URI = DEFAULT_URI_PREFIX + "/%s/files";
-
             private static final LazyFileConfiguration INSTANCE = new LazyFileConfiguration();
-
             private final String getUri;
             private final String downloadUri;
 
@@ -253,8 +240,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
                     String value = config.getAsString(CONFIG_NAMESPACE, key);
                     return (value == null) ? defaultValue : value;
                 } catch (Exception e) {
-                    LOGGER.error("Failed to read VNF repository configuration key '{}', default value '{}' will be used",
-                            key, defaultValue, e);
+                    LOGGER.error("Failed to read VNF repository configuration key '{}', default value '{}' will be used", key, defaultValue, e);
                     return defaultValue;
                 }
             }

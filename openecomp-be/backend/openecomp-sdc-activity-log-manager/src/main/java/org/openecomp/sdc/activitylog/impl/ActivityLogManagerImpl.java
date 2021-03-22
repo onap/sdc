@@ -13,32 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.activitylog.impl;
 
+import java.util.Collection;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-
 public class ActivityLogManagerImpl implements ActivityLogManager {
-  private ActivityLogDao activityLogDao;
 
-  public ActivityLogManagerImpl(ActivityLogDao activityLogDao) {
-    this.activityLogDao = activityLogDao;
-  }
+    private ActivityLogDao activityLogDao;
 
-  @Override
-  public void logActivity(ActivityLogEntity activityLogEntity) {
-    activityLogEntity.setId(CommonMethods.nextUuId());
-    activityLogDao.create(activityLogEntity);
-  }
+    public ActivityLogManagerImpl(ActivityLogDao activityLogDao) {
+        this.activityLogDao = activityLogDao;
+    }
 
-  @Override
-  public Collection<ActivityLogEntity> listLoggedActivities(String itemId, Version version) {
-    return activityLogDao.list(new ActivityLogEntity(itemId, version));
-  }
+    @Override
+    public void logActivity(ActivityLogEntity activityLogEntity) {
+        activityLogEntity.setId(CommonMethods.nextUuId());
+        activityLogDao.create(activityLogEntity);
+    }
+
+    @Override
+    public Collection<ActivityLogEntity> listLoggedActivities(String itemId, Version version) {
+        return activityLogDao.list(new ActivityLogEntity(itemId, version));
+    }
 }

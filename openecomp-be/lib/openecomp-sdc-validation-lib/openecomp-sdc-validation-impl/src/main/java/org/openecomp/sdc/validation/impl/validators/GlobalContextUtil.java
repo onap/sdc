@@ -17,43 +17,37 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.validation.impl.validators;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 class GlobalContextUtil {
 
-    private GlobalContextUtil() {}
+    private GlobalContextUtil() {
+    }
 
     static Set<String> findPmDictionaryFiles(GlobalValidationContext globalContext) {
         if (isManifestMissing(globalContext)) {
             return Set.of();
         }
-
         Map<String, FileData.Type> filesWithTypes = readAllFilesWithTypes(globalContext);
         return filterPmDictionaryFiles(filesWithTypes);
     }
 
     private static boolean isManifestMissing(GlobalValidationContext globalContext) {
-        return globalContext.getFileContent("MANIFEST.json")
-                .isEmpty();
+        return globalContext.getFileContent("MANIFEST.json").isEmpty();
     }
 
     private static Set<String> filterPmDictionaryFiles(Map<String, FileData.Type> filesWithTypes) {
-        return filesWithTypes.entrySet().stream()
-                .filter(isPmDictionaryType())
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
+        return filesWithTypes.entrySet().stream().filter(isPmDictionaryType()).map(Map.Entry::getKey).collect(Collectors.toSet());
     }
 
     private static Map<String, FileData.Type> readAllFilesWithTypes(GlobalValidationContext globalContext) {
@@ -62,7 +56,6 @@ class GlobalContextUtil {
     }
 
     private static Predicate<Map.Entry<String, FileData.Type>> isPmDictionaryType() {
-        return entry -> entry.getValue()
-                .equals(FileData.Type.PM_DICTIONARY);
+        return entry -> entry.getValue().equals(FileData.Type.PM_DICTIONARY);
     }
 }

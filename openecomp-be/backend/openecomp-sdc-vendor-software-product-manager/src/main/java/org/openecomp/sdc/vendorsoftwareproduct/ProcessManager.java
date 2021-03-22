@@ -17,33 +17,31 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
-
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
-import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface ProcessManager {
-  Collection<ProcessEntity> listProcesses(String vspId, Version version, String componentId);
 
-  void deleteProcesses(String vspId, Version version, String componentId);
+    Collection<ProcessEntity> listProcesses(String vspId, Version version, String componentId);
 
-  ProcessEntity createProcess(ProcessEntity processEntity);
+    void deleteProcesses(String vspId, Version version, String componentId);
 
-  ProcessEntity getProcess(String vspId, Version version, String componentId, String processId);
+    ProcessEntity createProcess(ProcessEntity processEntity);
 
-  void updateProcess(ProcessEntity processEntity);
+    ProcessEntity getProcess(String vspId, Version version, String componentId, String processId);
 
-  void deleteProcess(String vspId, Version version, String componentId, String processId);
+    void updateProcess(ProcessEntity processEntity);
 
-  File getProcessArtifact(String vspId, Version version, String componentId, String processId);
+    void deleteProcess(String vspId, Version version, String componentId, String processId);
 
-  void deleteProcessArtifact(String vspId, Version version, String componentId, String processId);
+    File getProcessArtifact(String vspId, Version version, String componentId, String processId);
 
-  void uploadProcessArtifact(InputStream uploadFile, String fileName, String vspId,
-                             Version version, String componentId, String processId);
+    void deleteProcessArtifact(String vspId, Version version, String componentId, String processId);
+
+    void uploadProcessArtifact(InputStream uploadFile, String fileName, String vspId, Version version, String componentId, String processId);
 }

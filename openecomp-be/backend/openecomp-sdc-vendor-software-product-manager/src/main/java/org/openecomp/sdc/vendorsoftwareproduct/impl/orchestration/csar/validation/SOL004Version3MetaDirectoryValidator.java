@@ -36,8 +36,8 @@ import org.openecomp.sdc.tosca.csar.ToscaMetaEntry;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 
 /**
- * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure
- * as defined in ETSI GS NFV-SOL 004 v3.3.1.
+ * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure as defined in ETSI GS NFV-SOL
+ * 004 v3.3.1.
  */
 class SOL004Version3MetaDirectoryValidator extends SOL004MetaDirectoryValidator {
 
@@ -56,8 +56,9 @@ class SOL004Version3MetaDirectoryValidator extends SOL004MetaDirectoryValidator 
         if (!ToscaMetaEntry.OTHER_DEFINITIONS.getName().equals(entry.getKey())) {
             reportError(ErrorLevel.ERROR, Messages.METADATA_UNSUPPORTED_ENTRY.formatMessage(entry.getKey()));
             LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), entry.getKey());
-        } else
+        } else {
             validateDefinitionFile(entry.getValue());
+        }
     }
 
     @Override

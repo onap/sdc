@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,138 +17,134 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Frozen;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import java.nio.ByteBuffer;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-import java.nio.ByteBuffer;
-
 @Table(keyspace = "dox", name = "vsp_component_artifact")
 public class ComponentMonitoringUploadEntity implements VersionableEntity {
-  public static final String ENTITY_TYPE = "Vendor Software Product Component Artifact";
-  @PartitionKey
-  @Column(name = "vsp_id")
-  private String vspId;
-  @PartitionKey(value = 1)
-  @Frozen
-  private Version version;
-  @ClusteringColumn
-  @Column(name = "component_id")
-  private String componentId;
-  @ClusteringColumn(value = 1)
-  @Column(name = "artifact_type")
-  private MonitoringUploadType type;
-  @ClusteringColumn(value = 2)
-  @Column(name = "artifact_id")
-  private String id;
-  @Column(name = "name")
-  private String artifactName;
-  private ByteBuffer artifact;
 
-  /**
-   * Every entity class must have a default constructor according to
-   * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-   * Definition of mapped classes</a>.
-   */
-  public ComponentMonitoringUploadEntity() {
-    // Don't delete! Default constructor is required by DataStax driver
-  }
+    public static final String ENTITY_TYPE = "Vendor Software Product Component Artifact";
+    @PartitionKey
+    @Column(name = "vsp_id")
+    private String vspId;
+    @PartitionKey(value = 1)
+    @Frozen
+    private Version version;
+    @ClusteringColumn
+    @Column(name = "component_id")
+    private String componentId;
+    @ClusteringColumn(value = 1)
+    @Column(name = "artifact_type")
+    private MonitoringUploadType type;
+    @ClusteringColumn(value = 2)
+    @Column(name = "artifact_id")
+    private String id;
+    @Column(name = "name")
+    private String artifactName;
+    private ByteBuffer artifact;
 
-  /**
-   * Instantiates a new Component artifact entity.
-   *
-   * @param vspId       the vsp id
-   * @param version     the version
-   * @param componentId the component id
-   * @param id          the id
-   */
-  public ComponentMonitoringUploadEntity(String vspId, Version version, String componentId,
-                                         String id) {
-    this.vspId = vspId;
-    this.version = version;
-    this.componentId = componentId;
-    this.id = id;
-  }
+    /**
+     * Every entity class must have a default constructor according to
+     * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
+     * Definition of mapped classes</a>.
+     */
+    public ComponentMonitoringUploadEntity() {
+        // Don't delete! Default constructor is required by DataStax driver
+    }
 
-  public String getVspId() {
-    return vspId;
-  }
+    /**
+     * Instantiates a new Component artifact entity.
+     *
+     * @param vspId       the vsp id
+     * @param version     the version
+     * @param componentId the component id
+     * @param id          the id
+     */
+    public ComponentMonitoringUploadEntity(String vspId, Version version, String componentId, String id) {
+        this.vspId = vspId;
+        this.version = version;
+        this.componentId = componentId;
+        this.id = id;
+    }
 
-  public void setVspId(String vspId) {
-    this.vspId = vspId;
-  }
+    public String getVspId() {
+        return vspId;
+    }
 
-  public String getComponentId() {
-    return componentId;
-  }
+    public void setVspId(String vspId) {
+        this.vspId = vspId;
+    }
 
-  public void setComponentId(String componentId) {
-    this.componentId = componentId;
-  }
+    public String getComponentId() {
+        return componentId;
+    }
 
-  @Override
-  public String getEntityType() {
-    return ENTITY_TYPE;
-  }
+    public void setComponentId(String componentId) {
+        this.componentId = componentId;
+    }
 
-  @Override
-  public String getFirstClassCitizenId() {
-    return getVspId();
-  }
+    @Override
+    public String getEntityType() {
+        return ENTITY_TYPE;
+    }
 
-  public String getId() {
-    return id;
-  }
+    @Override
+    public String getFirstClassCitizenId() {
+        return getVspId();
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public Version getVersion() {
-    return version;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setVersion(Version version) {
-    this.version = version;
-  }
+    public Version getVersion() {
+        return version;
+    }
 
-  public String getArtifactName() {
-    return artifactName;
-  }
+    public void setVersion(Version version) {
+        this.version = version;
+    }
 
-  public void setArtifactName(String artifactName) {
-    this.artifactName = artifactName;
-  }
+    public String getArtifactName() {
+        return artifactName;
+    }
 
-  public ByteBuffer getArtifact() {
-    return artifact;
-  }
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
 
-  public void setArtifact(ByteBuffer artifact) {
-    this.artifact = artifact;
-  }
+    public ByteBuffer getArtifact() {
+        return artifact;
+    }
 
-  public MonitoringUploadType getType() {
-    return type;
-  }
+    public void setArtifact(ByteBuffer artifact) {
+        this.artifact = artifact;
+    }
 
-  public void setType(MonitoringUploadType type) {
-    this.type = type;
-  }
+    public MonitoringUploadType getType() {
+        return type;
+    }
 
-  @Override
-  public String toString() {
-    return "ComponentMonitoringUploadEntity{" +
-        "vspId='" + vspId + '\'' +
-        ", version=" + version +
-        ", componentId='" + componentId + '\'' +
-        ", type=" + type +
-        ", id='" + id + '\'' +
-        ", artifactName='" + artifactName + '\'' +
-        '}';
-  }
+    public void setType(MonitoringUploadType type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "ComponentMonitoringUploadEntity{" + "vspId='" + vspId + '\'' + ", version=" + version + ", componentId='" + componentId + '\''
+            + ", type=" + type + ", id='" + id + '\'' + ", artifactName='" + artifactName + '\'' + '}';
+    }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,22 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.securityutil;
 
 import java.util.Set;
 
-
-public class AuthenticationCookie  {
+public class AuthenticationCookie {
 
     private String userID;
     private Set<String> roles;
     private long maxSessionTime;
     private long currentSessionTime;
 
-    public AuthenticationCookie(){ }
+    public AuthenticationCookie() {
+    }
 
-    public AuthenticationCookie(AuthenticationCookie authenticationCookie){
+    public AuthenticationCookie(AuthenticationCookie authenticationCookie) {
         this.userID = authenticationCookie.userID;
         this.roles = authenticationCookie.roles;
         this.maxSessionTime = authenticationCookie.maxSessionTime;
@@ -41,10 +40,11 @@ public class AuthenticationCookie  {
 
     /**
      * Create new cookie with max_session_time and current_session_time started with same value
+     *
      * @param userId
      */
     public AuthenticationCookie(String userId) {
-        this.userID =userId;
+        this.userID = userId;
         long currentTimeMilliSec = System.currentTimeMillis();
         this.maxSessionTime = currentTimeMilliSec;
         this.currentSessionTime = currentTimeMilliSec;
@@ -74,7 +74,6 @@ public class AuthenticationCookie  {
         this.maxSessionTime = maxSessionTime;
     }
 
-
     public long getCurrentSessionTime() {
         return currentSessionTime;
     }
@@ -85,14 +84,22 @@ public class AuthenticationCookie  {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AuthenticationCookie)) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AuthenticationCookie)) {
+            return false;
+        }
         AuthenticationCookie that = (AuthenticationCookie) o;
-
-        if (getMaxSessionTime() != that.getMaxSessionTime()) return false;
-        if (getCurrentSessionTime() != that.getCurrentSessionTime()) return false;
-        if (getUserID() != null ? !getUserID().equals(that.getUserID()) : that.getUserID() != null) return false;
+        if (getMaxSessionTime() != that.getMaxSessionTime()) {
+            return false;
+        }
+        if (getCurrentSessionTime() != that.getCurrentSessionTime()) {
+            return false;
+        }
+        if (getUserID() != null ? !getUserID().equals(that.getUserID()) : that.getUserID() != null) {
+            return false;
+        }
         return getRoles() != null ? getRoles().containsAll(that.getRoles()) : that.getRoles() == null;
     }
 
@@ -107,11 +114,7 @@ public class AuthenticationCookie  {
 
     @Override
     public String toString() {
-        return "AuthenticationCookie{" +
-                "userID='" + userID + '\'' +
-                ", roles=" + roles +
-                ", maxSessionTime=" + maxSessionTime +
-                ", currentSessionTime=" + currentSessionTime +
-                '}';
+        return "AuthenticationCookie{" + "userID='" + userID + '\'' + ", roles=" + roles + ", maxSessionTime=" + maxSessionTime
+            + ", currentSessionTime=" + currentSessionTime + '}';
     }
 }

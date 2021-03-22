@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.applicationconfiguration.types;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ public class ApplicationConfigDto {
 
     private String key;
     private String value;
-
 }

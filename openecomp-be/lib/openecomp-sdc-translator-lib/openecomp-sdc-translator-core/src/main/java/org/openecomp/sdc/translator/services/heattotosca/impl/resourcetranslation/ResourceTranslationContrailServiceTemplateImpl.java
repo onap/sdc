@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -30,18 +33,12 @@ import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatory
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.openecomp.sdc.translator.services.heattotosca.helper.ContrailTranslationHelper;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTranslationBase {
 
     private static final String IMAGE_NAME = "image_name";
 
     static String getContrailSubstitutedNodeTypeId(String serviceTemplateTranslatedId) {
-        return ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + ToscaConstants.HEAT_NODE_TYPE_SUFFIX
-                + serviceTemplateTranslatedId;
+        return ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + ToscaConstants.HEAT_NODE_TYPE_SUFFIX + serviceTemplateTranslatedId;
     }
 
     @Override
@@ -60,45 +57,39 @@ public class ResourceTranslationContrailServiceTemplateImpl extends ResourceTran
         return true;
     }
 
-    private void addComputeNodeType(TranslateTo translateTo,
-                                    ServiceTemplate globalSubstitutionServiceTemplate,
-                                    TranslationContext context) {
+    private void addComputeNodeType(TranslateTo translateTo, ServiceTemplate globalSubstitutionServiceTemplate, TranslationContext context) {
         NodeType computeNodeType = new NodeType();
         computeNodeType.setDerived_from(ToscaNodeType.CONTRAIL_COMPUTE);
-        String computeNodeTypeId = new ContrailTranslationHelper().getComputeNodeTypeId(translateTo.getResource(),
-                translateTo.getResourceId(), translateTo.getTranslatedId(), context);
+        String computeNodeTypeId = new ContrailTranslationHelper()
+            .getComputeNodeTypeId(translateTo.getResource(), translateTo.getResourceId(), translateTo.getTranslatedId(), context);
         DataModelUtil.addNodeType(globalSubstitutionServiceTemplate, computeNodeTypeId, computeNodeType);
     }
 
-    private void addSubstitutedNodeType(TranslateTo translateTo,
-                                        ServiceTemplate globalSubstitutionServiceTemplate) {
+    private void addSubstitutedNodeType(TranslateTo translateTo, ServiceTemplate globalSubstitutionServiceTemplate) {
         NodeType substitutedNodeType = new NodeType();
         substitutedNodeType.setDerived_from(ToscaNodeType.CONTRAIL_ABSTRACT_SUBSTITUTE);
-        DataModelUtil.addNodeType(globalSubstitutionServiceTemplate,
-                getContrailSubstitutedNodeTypeId(translateTo.getTranslatedId()), substitutedNodeType);
+        DataModelUtil
+            .addNodeType(globalSubstitutionServiceTemplate, getContrailSubstitutedNodeTypeId(translateTo.getTranslatedId()), substitutedNodeType);
     }
 
     @Override
-    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(
-            TranslateTo translateTo) {
+    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(TranslateTo translateTo) {
         return Optional.empty();
     }
 
     private ServiceTemplate getGlobalSubstitutionTypesServiceTemplate(TranslateTo translateTo) {
         ServiceTemplate globalSubstitutionServiceTemplate = translateTo.getContext().getTranslatedServiceTemplates()
-                .get(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
+            .get(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
         if (globalSubstitutionServiceTemplate == null) {
             globalSubstitutionServiceTemplate = new ServiceTemplate();
             Map<String, String> templateMetadata = new HashMap<>();
-            templateMetadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, Constants
-                    .GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
+            templateMetadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
             globalSubstitutionServiceTemplate.setMetadata(templateMetadata);
             globalSubstitutionServiceTemplate.setImports(GlobalTypesGenerator.getGlobalTypesImportList());
             globalSubstitutionServiceTemplate.setTosca_definitions_version(ToscaConstants.TOSCA_DEFINITIONS_VERSION);
-            translateTo.getContext().getTranslatedServiceTemplates().put(Constants
-                            .GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME, globalSubstitutionServiceTemplate);
+            translateTo.getContext().getTranslatedServiceTemplates()
+                .put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME, globalSubstitutionServiceTemplate);
         }
         return globalSubstitutionServiceTemplate;
     }
-
 }

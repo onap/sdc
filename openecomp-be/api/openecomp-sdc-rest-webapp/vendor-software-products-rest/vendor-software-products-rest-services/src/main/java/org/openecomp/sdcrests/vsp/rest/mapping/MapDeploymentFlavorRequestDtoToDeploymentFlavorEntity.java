@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
@@ -25,16 +24,15 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavo
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorRequestDto;
 
-public class MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity
-    extends MappingBase<DeploymentFlavorRequestDto, DeploymentFlavorEntity> {
+public class MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity extends MappingBase<DeploymentFlavorRequestDto, DeploymentFlavorEntity> {
 
-  @Override
-  public void doMapping(DeploymentFlavorRequestDto source, DeploymentFlavorEntity target) {
-    DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
-    deploymentFlavor.setModel(source.getModel());
-    deploymentFlavor.setDescription(source.getDescription());
-    deploymentFlavor.setFeatureGroupId(source.getFeatureGroupId());
-    deploymentFlavor.setComponentComputeAssociations(source.getComponentComputeAssociations());
-    target.setDeploymentFlavorCompositionData(deploymentFlavor);
-  }
+    @Override
+    public void doMapping(DeploymentFlavorRequestDto source, DeploymentFlavorEntity target) {
+        DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
+        deploymentFlavor.setModel(source.getModel());
+        deploymentFlavor.setDescription(source.getDescription());
+        deploymentFlavor.setFeatureGroupId(source.getFeatureGroupId());
+        deploymentFlavor.setComponentComputeAssociations(source.getComponentComputeAssociations());
+        target.setDeploymentFlavorCompositionData(deploymentFlavor);
+    }
 }

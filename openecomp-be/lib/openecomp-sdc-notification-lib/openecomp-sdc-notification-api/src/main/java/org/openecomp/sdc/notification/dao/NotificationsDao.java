@@ -17,17 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.dao;
-
-import org.openecomp.core.dao.BaseDao;
-import org.openecomp.sdc.notification.dao.types.NotificationEntity;
-import org.openecomp.sdc.notification.dtos.NotificationsStatus;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
+import org.openecomp.core.dao.BaseDao;
+import org.openecomp.sdc.notification.dao.types.NotificationEntity;
+import org.openecomp.sdc.notification.dtos.NotificationsStatus;
 
 public interface NotificationsDao extends BaseDao<NotificationEntity> {
 
@@ -43,7 +40,7 @@ public interface NotificationsDao extends BaseDao<NotificationEntity> {
 
     NotificationsStatus getNotificationsStatus(String ownerId, UUID lastSeenNotification, int numOfRecordsToReturn, UUID prevLastNotification);
 
-	void markNotificationAsRead(String ownerId, Collection<UUID> eventIds);
+    void markNotificationAsRead(String ownerId, Collection<UUID> eventIds);
 
     void createBatch(List<NotificationEntity> notificationEntities);
 }

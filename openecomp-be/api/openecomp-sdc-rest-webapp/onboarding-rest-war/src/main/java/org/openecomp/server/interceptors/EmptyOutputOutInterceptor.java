@@ -15,14 +15,12 @@
  */
 package org.openecomp.server.interceptors;
 
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.apache.cxf.interceptor.AbstractOutDatabindingInterceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.phase.Phase;
-
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-
 
 /**
  * The type Empty output out interceptor.
@@ -30,33 +28,31 @@ import javax.ws.rs.core.Response;
 @Named
 public class EmptyOutputOutInterceptor extends AbstractOutDatabindingInterceptor {
 
-  public EmptyOutputOutInterceptor() {
-    // To be executed in post logical phase before marshal phase
-    super(Phase.POST_LOGICAL);
-  }
-
-  /**
-   * Intercepts a message.
-   * Interceptors should NOT invoke handleMessage or handleFault
-   * on the next interceptor - the interceptor chain will
-   * take care of this.
-   *
-   * @param message input message.
-   */
-  @Override
-  public void handleMessage(Message message) {
-    //get the message
-    MessageContentsList objs = MessageContentsList.getContentsList(message);
-    if (objs.get(0) instanceof Response) {
-      //check if response is present but entity inside it is null the set a default entity
-      int status = ((Response) objs.get(0)).getStatus();
-      Object entity = ((Response) objs.get(0)).getEntity();
-      // in case of staus 200 and entity is null send InternalEmptyObject in output.
-      if (entity == null && status == 200) {
-        DefaultOutput defaultOutput = new DefaultOutput(status, new InternalEmptyObject());
-        defaultOutput.addMetadata(((Response) objs.get(0)).getMetadata());
-        objs.set(0, defaultOutput);
-      }
+    public EmptyOutputOutInterceptor() {
+        // To be executed in post logical phase before marshal phase
+        super(Phase.POST_LOGICAL);
     }
-  }
+
+    /**
+     * Intercepts a message. Interceptors should NOT invoke handleMessage or handleFault on the next interceptor - the interceptor chain will take
+     * care of this.
+     *
+     * @param message input message.
+     */
+    @Override
+    public void handleMessage(Message message) {
+        //get the message
+        MessageContentsList objs = MessageContentsList.getContentsList(message);
+        if (objs.get(0) instanceof Response) {
+            //check if response is present but entity inside it is null the set a default entity
+            int status = ((Response) objs.get(0)).getStatus();
+            Object entity = ((Response) objs.get(0)).getEntity();
+            // in case of staus 200 and entity is null send InternalEmptyObject in output.
+            if (entity == null && status == 200) {
+                DefaultOutput defaultOutput = new DefaultOutput(status, new InternalEmptyObject());
+                defaultOutput.addMetadata(((Response) objs.get(0)).getMetadata());
+                objs.set(0, defaultOutput);
+            }
+        }
+    }
 }

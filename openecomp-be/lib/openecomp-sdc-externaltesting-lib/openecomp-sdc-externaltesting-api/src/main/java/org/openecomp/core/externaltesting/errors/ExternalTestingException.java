@@ -21,31 +21,31 @@ import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class ExternalTestingException extends RuntimeException {
 
-  private static final long serialVersionUID = -4357810130868566088L;
+    private static final long serialVersionUID = -4357810130868566088L;
 
-  private final String messageCode;
-  private final int httpStatus;
-  private final String detail;
+    private final String messageCode;
+    private final int httpStatus;
+    private final String detail;
 
-  public ExternalTestingException(String messageCode, int httpStatus, String detail) {
-    super(messageCode);
-    this.messageCode = messageCode;
-    this.httpStatus = httpStatus;
-    this.detail = detail;
-  }
+    public ExternalTestingException(String messageCode, int httpStatus, String detail) {
+        super(messageCode);
+        this.messageCode = messageCode;
+        this.httpStatus = httpStatus;
+        this.detail = detail;
+    }
 
-  public ExternalTestingException(String messageCode, int httpStatus, String detail, Throwable parent) {
-    super(messageCode, parent);
-    this.messageCode = messageCode;
-    this.httpStatus = httpStatus;
-    this.detail = detail;
-  }
+    public ExternalTestingException(String messageCode, int httpStatus, String detail, Throwable parent) {
+        super(messageCode, parent);
+        this.messageCode = messageCode;
+        this.httpStatus = httpStatus;
+        this.detail = detail;
+    }
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
-  }
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

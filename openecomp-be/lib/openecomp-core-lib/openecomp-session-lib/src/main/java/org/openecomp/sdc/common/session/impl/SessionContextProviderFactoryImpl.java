@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.session.impl;
 
 import org.openecomp.sdc.common.session.SessionContextProvider;

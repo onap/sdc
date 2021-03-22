@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.context;
 
 import java.util.UUID;
 
 /**
- * Holds a unique ID of the logging entity. Is useful to distinguish between different nodes of the same application. If
- * it can be assumed, that the node can be re-started, then the unique ID must be retained on the disk.
+ * Holds a unique ID of the logging entity. Is useful to distinguish between different nodes of the same application. If it can be assumed, that the
+ * node can be re-started, then the unique ID must be retained on the disk.
  *
  * @author evitaliy
  * @since 04 Mar 2018
@@ -32,7 +31,9 @@ public class InstanceId {
 
     static {
         // for some reason Java Preferences API
+
         // https://docs.oracle.com/javase/8/docs/technotes/guides/preferences/overview.html
+
         // didn't work in a Docker container, so for now just generate an ID every time
         INSTANCE_ID = UUID.randomUUID().toString();
     }

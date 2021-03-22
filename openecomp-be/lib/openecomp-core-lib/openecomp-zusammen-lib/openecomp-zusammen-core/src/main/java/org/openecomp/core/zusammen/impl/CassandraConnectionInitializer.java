@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.zusammen.impl;
 
 import java.util.function.Supplier;
@@ -24,16 +23,14 @@ public class CassandraConnectionInitializer {
 
     private static final String CASSANDRA_PREFIX = "cassandra.";
     private static final String DATA_CENTER_PROPERTY_NAME = CASSANDRA_PREFIX + "datacenter";
-    private static final String CONSISTENCY_LEVEL_PROPERTY_NAME =
-            CASSANDRA_PREFIX + "consistency.level";
+    private static final String CONSISTENCY_LEVEL_PROPERTY_NAME = CASSANDRA_PREFIX + "consistency.level";
     private static final String CASSANDRA_RECONNECT_TIMEOUT = CASSANDRA_PREFIX + "reconnection.delay";
     private static final String NODES_PROPERTY_NAME = CASSANDRA_PREFIX + "nodes";
     private static final String CASSANDRA_PORT_PROPERTY_NAME = CASSANDRA_PREFIX + "port";
     private static final String AUTHENTICATE_PROPERTY_NAME = CASSANDRA_PREFIX + "authenticate";
     private static final String SSL_PROPERTY_NAME = CASSANDRA_PREFIX + "ssl";
     private static final String TRUSTSTORE_PROPERTY_NAME = CASSANDRA_PREFIX + "truststore";
-    private static final String TRUSTSTORE_PASSWORD_PROPERTY_NAME =
-            CASSANDRA_PREFIX + "truststore.password";
+    private static final String TRUSTSTORE_PASSWORD_PROPERTY_NAME = CASSANDRA_PREFIX + "truststore.password";
     private static final String USER_PROPERTY_NAME = CASSANDRA_PREFIX + "user";
     private static final String PASSWORD_PROPERTY_NAME = CASSANDRA_PREFIX + "password";
     private static final String KEYSPACE_PROPERTY_NAME = CASSANDRA_PREFIX + "keyspace";
@@ -50,8 +47,7 @@ public class CassandraConnectionInitializer {
     private static class DeferredInitializer {
 
         static {
-            setSystemProperty(NODES_PROPERTY_NAME, () ->
-                                                           StringUtils.join(CassandraUtils.getAddresses(), ','));
+            setSystemProperty(NODES_PROPERTY_NAME, () -> StringUtils.join(CassandraUtils.getAddresses(), ','));
             setSystemProperty(CASSANDRA_PORT_PROPERTY_NAME, () -> Integer.toString(CassandraUtils.getCassandraPort()));
             setBooleanSystemProperty(AUTHENTICATE_PROPERTY_NAME, CassandraUtils::isAuthenticate);
             setBooleanSystemProperty(SSL_PROPERTY_NAME, CassandraUtils::isSsl);
@@ -61,12 +57,12 @@ public class CassandraConnectionInitializer {
             setSystemProperty(PASSWORD_PROPERTY_NAME, CassandraUtils::getPassword);
             setSystemProperty(KEYSPACE_PROPERTY_NAME, () -> ZUSAMMEN);
             setNullableSystemProperty(DATA_CENTER_PROPERTY_NAME, CassandraUtils::getLocalDataCenter);
-            setNullableSystemProperty(CONSISTENCY_LEVEL_PROPERTY_NAME,
-                    CassandraUtils::getConsistencyLevel);
+            setNullableSystemProperty(CONSISTENCY_LEVEL_PROPERTY_NAME, CassandraUtils::getConsistencyLevel);
             setSystemProperty(CASSANDRA_RECONNECT_TIMEOUT, () -> Long.toString(CassandraUtils.getReconnectTimeout()));
         }
 
-        private DeferredInitializer() { }
+        private DeferredInitializer() {
+        }
 
         @SuppressWarnings("EmptyMethod")
         static void init() {
@@ -74,7 +70,6 @@ public class CassandraConnectionInitializer {
         }
 
         private static void setSystemProperty(String name, Supplier<String> valueSupplier) {
-
             if (System.getProperty(name) == null) {
                 System.setProperty(name, valueSupplier.get());
             }
@@ -85,7 +80,6 @@ public class CassandraConnectionInitializer {
         }
 
         private static void setNullableSystemProperty(String name, Supplier<String> valueSupplier) {
-
             if ((System.getProperty(name) == null) && (valueSupplier.get() != null)) {
                 System.setProperty(name, valueSupplier.get());
             }

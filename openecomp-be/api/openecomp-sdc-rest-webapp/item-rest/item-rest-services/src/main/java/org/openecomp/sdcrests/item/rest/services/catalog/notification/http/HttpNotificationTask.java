@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.item.rest.services.catalog.notification.http;
 
 import static org.openecomp.sdcrests.item.rest.services.catalog.notification.AsyncNotifier.NextAction.DONE;
@@ -42,8 +41,8 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdcrests.item.rest.services.catalog.notification.AsyncNotifier;
 
 /**
- * HTTP client for notifying the Catalog of an action on items. The items are referenced by their IDs. The client can
- * run multiple times, in which case only failed IDs will be re-attempted.
+ * HTTP client for notifying the Catalog of an action on items. The items are referenced by their IDs. The client can run multiple times, in which
+ * case only failed IDs will be re-attempted.
  *
  * @author evitaliy
  * @since 21 Nov 2018
@@ -52,10 +51,8 @@ import org.openecomp.sdcrests.item.rest.services.catalog.notification.AsyncNotif
 class HttpNotificationTask implements Callable<AsyncNotifier.NextAction> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpNotificationTask.class);
-
     private static final String APPLICATION_JSON = ContentType.APPLICATION_JSON.getMimeType();
     private static final String USER_ID_HEADER_PARAM = "USER_ID";
-
     private final String endpoint;
     private final String userId;
     private volatile Collection<String> itemIds;
@@ -68,59 +65,41 @@ class HttpNotificationTask implements Callable<AsyncNotifier.NextAction> {
 
     @Override
     public synchronized AsyncNotifier.NextAction call() {
-
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-
             HttpPost request = createPostRequest(endpoint, itemIds, userId);
-
             try (CloseableHttpResponse response = client.execute(request)) {
-
                 StatusLine status = response.getStatusLine();
-
-                LOGGER.debug("Catalog notification on VSP IDs: {}, endpoint: {}, response: {}",
-                        itemIds, endpoint, status);
-
+                LOGGER.debug("Catalog notification on VSP IDs: {}, endpoint: {}, response: {}", itemIds, endpoint, status);
                 itemIds = getFailedIds(itemIds, response.getEntity());
-
-                if ((status.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                            && (itemIds != null) && !itemIds.isEmpty()) {
-
+                if ((status.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) && (itemIds != null) && !itemIds.isEmpty()) {
                     LOGGER.debug("Catalog notification on VSP IDs {} failed. Endpoint: {}. Retry", itemIds, endpoint);
                     return RETRY;
                 }
-
                 return DONE;
             }
-
         } catch (Exception e) {
             LOGGER.error("Catalog notification on VSP IDs {} failed. Endpoint: {}", itemIds, endpoint, e);
             return DONE;
         }
     }
 
-    private HttpPost createPostRequest(String postUrl, Collection<String> itemIds, String userId)
-            throws UnsupportedEncodingException {
-
+    private HttpPost createPostRequest(String postUrl, Collection<String> itemIds, String userId) throws UnsupportedEncodingException {
         HttpPost request = new HttpPost(postUrl);
-
         request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
         request.addHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
         request.addHeader(USER_ID_HEADER_PARAM, userId);
-
         HttpEntity entity = new StringEntity(JsonUtil.object2Json(itemIds));
         request.setEntity(entity);
         return request;
     }
 
     private Collection<String> getFailedIds(Collection<String> itemIds, HttpEntity responseBody) {
-
         try {
             NotificationResponse response = JsonUtil.json2Object(responseBody.getContent(), NotificationResponse.class);
             return response != null ? response.failedIds : null;
         } catch (Exception e) {
             LOGGER.error("Error getting failed IDs from response", e);
         }
-
         return itemIds;
     }
 

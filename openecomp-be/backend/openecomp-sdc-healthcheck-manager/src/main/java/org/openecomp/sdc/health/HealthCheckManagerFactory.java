@@ -22,8 +22,8 @@ package org.openecomp.sdc.health;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
-
 public abstract class HealthCheckManagerFactory extends AbstractComponentFactory<HealthCheckManager> {
+
     public static HealthCheckManagerFactory getInstance() {
         return AbstractFactory.getInstance(HealthCheckManagerFactory.class);
     }

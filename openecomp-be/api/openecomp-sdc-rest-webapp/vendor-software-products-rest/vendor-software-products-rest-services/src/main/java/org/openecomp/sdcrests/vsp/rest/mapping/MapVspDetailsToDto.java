@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,31 +28,29 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 
 public class MapVspDetailsToDto extends MappingBase<VspDetails, VspDetailsDto> {
 
-  @Override
-  public void doMapping(VspDetails source, VspDetailsDto target) {
-    target.setId(source.getId());
-    target.setVersion(source.getVersion() == null ? null : source.getVersion().getId());
-    target.setName(source.getName());
-    target.setDescription(source.getDescription());
-    target.setIcon(source.getIcon());
-    target.setCategory(source.getCategory());
-    target.setSubCategory(source.getSubCategory());
-    target.setVendorId(source.getVendorId());
-    target.setVendorName(source.getVendorName());
-    target.setLicensingVersion(
-        source.getVlmVersion() == null ? null : source.getVlmVersion().getId());
-    if (StringUtils.isNotBlank(source.getLicenseType())) {
-      target.setLicenseType(LicenseType.valueOf(source.getLicenseType()));
-    } else if (StringUtils.isNotBlank(target.getLicensingVersion())){
-      target.setLicenseType(LicenseType.INTERNAL);
+    @Override
+    public void doMapping(VspDetails source, VspDetailsDto target) {
+        target.setId(source.getId());
+        target.setVersion(source.getVersion() == null ? null : source.getVersion().getId());
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+        target.setIcon(source.getIcon());
+        target.setCategory(source.getCategory());
+        target.setSubCategory(source.getSubCategory());
+        target.setVendorId(source.getVendorId());
+        target.setVendorName(source.getVendorName());
+        target.setLicensingVersion(source.getVlmVersion() == null ? null : source.getVlmVersion().getId());
+        if (StringUtils.isNotBlank(source.getLicenseType())) {
+            target.setLicenseType(LicenseType.valueOf(source.getLicenseType()));
+        } else if (StringUtils.isNotBlank(target.getLicensingVersion())) {
+            target.setLicenseType(LicenseType.INTERNAL);
+        }
+        if (source.getLicenseAgreement() != null || source.getFeatureGroups() != null) {
+            LicensingData licensingData = new LicensingData();
+            licensingData.setLicenseAgreement(source.getLicenseAgreement());
+            licensingData.setFeatureGroups(source.getFeatureGroups());
+            target.setLicensingData(licensingData);
+        }
+        target.setOnboardingMethod(source.getOnboardingMethod());
     }
-    if (source.getLicenseAgreement() != null || source.getFeatureGroups() != null) {
-      LicensingData licensingData = new LicensingData();
-      licensingData.setLicenseAgreement(source.getLicenseAgreement());
-      licensingData.setFeatureGroups(source.getFeatureGroups());
-      target.setLicensingData(licensingData);
-    }
-
-    target.setOnboardingMethod(source.getOnboardingMethod());
-  }
 }

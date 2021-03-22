@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -25,19 +24,16 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class InvalidDateErrorBuilder {
 
-  private static final String DATE_RANGE_INVALID = "Vendor license model with id %s has invalid " +
-      "date range.";
+    private static final String DATE_RANGE_INVALID = "Vendor license model with id %s has invalid " + "date range.";
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+    public InvalidDateErrorBuilder(String vendorLicenseModelId) {
+        builder.withId(VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(String.format(DATE_RANGE_INVALID, vendorLicenseModelId));
+    }
 
-  public InvalidDateErrorBuilder(String vendorLicenseModelId){
-    builder.withId(VendorLicenseErrorCodes.DATE_RANGE_INVALID);
-    builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(DATE_RANGE_INVALID, vendorLicenseModelId));
-  }
-
-  public ErrorCode build() {
-    return builder.build();
-  }
-
+    public ErrorCode build() {
+        return builder.build();
+    }
 }

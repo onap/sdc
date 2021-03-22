@@ -17,13 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.workers;
 
+import java.util.UUID;
 import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 
-import java.util.UUID;
-
 public interface NewNotificationsReader {
-	NotificationsStatusDto getNewNotifications(String ownerId, UUID eventId, int limit);
+
+    NotificationsStatusDto getNewNotifications(String ownerId, UUID eventId, int limit);
 }

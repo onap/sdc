@@ -17,18 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.factories;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 import org.openecomp.sdc.notification.dao.SubscribersDao;
 
-
 public abstract class SubscribersDaoFactory extends AbstractComponentFactory<SubscribersDao> {
 
     public static SubscribersDaoFactory getInstance() {
         return AbstractFactory.getInstance(SubscribersDaoFactory.class);
     }
-
 }

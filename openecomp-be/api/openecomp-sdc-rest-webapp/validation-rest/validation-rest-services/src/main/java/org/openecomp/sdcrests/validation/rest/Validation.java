@@ -13,33 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.validation.rest;
 
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.springframework.validation.annotation.Validated;
-
-import javax.ws.rs.*;
+import java.io.InputStream;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.InputStream;
-
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.springframework.validation.annotation.Validated;
 
 @Path("/v1.0/validation")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Validation")})
 @Validated
-
 public interface Validation {
 
-
-  @POST
-  @Path("{type}/validate")
-  @Consumes(MediaType.MULTIPART_FORM_DATA)
-  Response validateFile(@PathParam("type") String type,
-                        @Multipart("validate") InputStream fileToValidate);
+    @POST
+    @Path("{type}/validate")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    Response validateFile(@PathParam("type") String type, @Multipart("validate") InputStream fileToValidate);
 }

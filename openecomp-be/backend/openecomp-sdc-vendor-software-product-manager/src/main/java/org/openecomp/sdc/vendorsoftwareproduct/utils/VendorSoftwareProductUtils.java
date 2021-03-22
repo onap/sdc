@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.utils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
@@ -30,96 +35,84 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 
-import java.io.File;
-import java.util.*;
-
 public class VendorSoftwareProductUtils {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductUtils.class);
 
-  private VendorSoftwareProductUtils(){
-
-  }
-
-  /**
-   * Add file names to upload file response.
-   *
-   * @param fileContentMap     the file content map
-   * @param uploadFileResponse the upload file response
-   */
-  public static void addFileNamesToUploadFileResponse(FileContentHandler fileContentMap,
-                                                      OrchestrationTemplateActionResponse uploadFileResponse) {
-    uploadFileResponse.setFileNames(new ArrayList<>());
-    for (String filename : fileContentMap.getFileList()) {
-      if (!new File(filename).isDirectory()) {
-        uploadFileResponse.addNewFileToList(filename);
-      }
-    }
-    uploadFileResponse.removeFileFromList(SdcCommon.MANIFEST_NAME);
-  }
-  /**
-   * Validate content zip data.
-   *
-   * @param contentMap the content map
-   * @param errors     the errors
-   */
-  public static void validateContentZipData(FileContentHandler contentMap,
-                                            Map<String, List<ErrorMessage>> errors) {
-    if (contentMap.getFileList().isEmpty()) {
-      ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.UPLOAD_FILE, errors)
-          .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
-    }
-  }
-
-
-  /**
-   * Maps all artifacts by type.
-   *
-   * @param artifacts the artifacts
-   * @return the map
-   */
-  public static Map<MonitoringUploadType, String> mapArtifactsByType(
-      Collection<ComponentMonitoringUploadEntity> artifacts) {
-    Map<MonitoringUploadType, String> artifactTypeToFilename
-            = new EnumMap<>(MonitoringUploadType.class);
-
-    for (ComponentMonitoringUploadEntity entity : artifacts) {
-      artifactTypeToFilename.put(entity.getType(), entity.getArtifactName());
+    private VendorSoftwareProductUtils() {
     }
 
-    return artifactTypeToFilename;
-  }
-
-
-  /**
-   * Sets errors into logger.
-   *  @param errors            the errors
-   */
-  public static void setErrorsIntoLogger(Map<String, List<ErrorMessage>> errors) {
-    if (MapUtils.isEmpty(errors)) {
-      return;
+    /**
+     * Add file names to upload file response.
+     *
+     * @param fileContentMap     the file content map
+     * @param uploadFileResponse the upload file response
+     */
+    public static void addFileNamesToUploadFileResponse(FileContentHandler fileContentMap, OrchestrationTemplateActionResponse uploadFileResponse) {
+        uploadFileResponse.setFileNames(new ArrayList<>());
+        for (String filename : fileContentMap.getFileList()) {
+            if (!new File(filename).isDirectory()) {
+                uploadFileResponse.addNewFileToList(filename);
+            }
+        }
+        uploadFileResponse.removeFileFromList(SdcCommon.MANIFEST_NAME);
     }
 
-    for (Map.Entry<String, List<ErrorMessage>> listEntry : errors.entrySet()) {
-      List<ErrorMessage> errorList = listEntry.getValue();
-      for (ErrorMessage message : errorList) {
-        LOGGER.error(message.getMessage());
-      }
-    }
-  }
-
-  /**
-   * Sets errors into logger.
-   *  @param errors            the errors
-   */
-  public static void setErrorsIntoLogger(Collection<ErrorCode> errors) {
-
-    if (CollectionUtils.isEmpty(errors)) {
-      return;
+    /**
+     * Validate content zip data.
+     *
+     * @param contentMap the content map
+     * @param errors     the errors
+     */
+    public static void validateContentZipData(FileContentHandler contentMap, Map<String, List<ErrorMessage>> errors) {
+        if (contentMap.getFileList().isEmpty()) {
+            ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.UPLOAD_FILE, errors)
+                .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
+        }
     }
 
-    for (ErrorCode error : errors) {
-      LOGGER.error(error.message());
+    /**
+     * Maps all artifacts by type.
+     *
+     * @param artifacts the artifacts
+     * @return the map
+     */
+    public static Map<MonitoringUploadType, String> mapArtifactsByType(Collection<ComponentMonitoringUploadEntity> artifacts) {
+        Map<MonitoringUploadType, String> artifactTypeToFilename = new EnumMap<>(MonitoringUploadType.class);
+        for (ComponentMonitoringUploadEntity entity : artifacts) {
+            artifactTypeToFilename.put(entity.getType(), entity.getArtifactName());
+        }
+        return artifactTypeToFilename;
     }
-  }
+
+    /**
+     * Sets errors into logger.
+     *
+     * @param errors the errors
+     */
+    public static void setErrorsIntoLogger(Map<String, List<ErrorMessage>> errors) {
+        if (MapUtils.isEmpty(errors)) {
+            return;
+        }
+        for (Map.Entry<String, List<ErrorMessage>> listEntry : errors.entrySet()) {
+            List<ErrorMessage> errorList = listEntry.getValue();
+            for (ErrorMessage message : errorList) {
+                LOGGER.error(message.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Sets errors into logger.
+     *
+     * @param errors the errors
+     */
+    public static void setErrorsIntoLogger(Collection<ErrorCode> errors) {
+        if (CollectionUtils.isEmpty(errors)) {
+            return;
+        }
+        for (ErrorCode error : errors) {
+            LOGGER.error(error.message());
+        }
+    }
 }

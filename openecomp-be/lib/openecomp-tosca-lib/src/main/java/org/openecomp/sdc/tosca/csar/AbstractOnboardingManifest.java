@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import com.google.common.collect.ImmutableList;
@@ -106,7 +105,6 @@ abstract class AbstractOnboardingManifest implements Manifest {
             errors.add(Messages.MANIFEST_EMPTY.getErrorMessage());
             return;
         }
-
         processMetadata();
         processBody();
     }
@@ -133,8 +131,7 @@ abstract class AbstractOnboardingManifest implements Manifest {
             throw new IOException("Manifest Input Stream cannot be null.");
         }
         final ImmutableList.Builder<String> builder = ImmutableList.builder();
-        try (final BufferedReader bufferedReader = new BufferedReader(
-            new InputStreamReader(manifestAsStream, StandardCharsets.UTF_8.newDecoder()))) {
+        try (final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(manifestAsStream, StandardCharsets.UTF_8.newDecoder()))) {
             bufferedReader.lines().forEach(builder::add);
         }
         return builder.build();
@@ -147,8 +144,7 @@ abstract class AbstractOnboardingManifest implements Manifest {
      * @return {@code true} if the line is a 'metadata' entry, {@code false} otherwise.
      */
     protected boolean isMetadata(final String line) {
-        return line.trim()
-            .equals(ManifestTokenType.METADATA.getToken() + ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR.getToken());
+        return line.trim().equals(ManifestTokenType.METADATA.getToken() + ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR.getToken());
     }
 
     /**
@@ -187,7 +183,7 @@ abstract class AbstractOnboardingManifest implements Manifest {
      * Reports a manifest invalid line error.
      *
      * @param lineNumber the line number
-     * @param line the line
+     * @param line       the line
      */
     protected void reportInvalidLine(final int lineNumber, final String line) {
         errors.add(Messages.MANIFEST_INVALID_LINE.formatMessage(lineNumber, line));
@@ -197,7 +193,7 @@ abstract class AbstractOnboardingManifest implements Manifest {
      * Reports a manifest error occurred in the current line.
      *
      * @param message The error message
-     * @param params The message params
+     * @param params  The message params
      */
     protected void reportError(final Messages message, final Object... params) {
         reportError(currentLineNumber, getCurrentLine().orElse(""), message, params);
@@ -207,12 +203,11 @@ abstract class AbstractOnboardingManifest implements Manifest {
      * Reports a manifest error occurred in the specified line.
      *
      * @param lineNumber The line number
-     * @param line The line
-     * @param message The error message
-     * @param params The message params
+     * @param line       The line
+     * @param message    The error message
+     * @param params     The message params
      */
-    protected void reportError(final int lineNumber, final String line, final Messages message,
-                               final Object... params) {
+    protected void reportError(final int lineNumber, final String line, final Messages message, final Object... params) {
         errors.add(Messages.MANIFEST_ERROR_WITH_LINE.formatMessage(message.formatMessage(params), lineNumber, line));
     }
 
@@ -240,12 +235,10 @@ abstract class AbstractOnboardingManifest implements Manifest {
             }
             currentLine = null;
         }
-
         if (getCurrentLine().isPresent()) {
             currentLineNumber++;
             currentLine = null;
         }
-
         return getCurrentLine();
     }
 
@@ -259,8 +252,7 @@ abstract class AbstractOnboardingManifest implements Manifest {
     }
 
     /**
-     * Reads the current line entry name. The entry name and value must be separated by {@link
-     * ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
+     * Reads the current line entry name. The entry name and value must be separated by {@link ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
      *
      * @return the entry value
      */
@@ -269,7 +261,6 @@ abstract class AbstractOnboardingManifest implements Manifest {
         if (line.isPresent()) {
             return readEntryName(line.get());
         }
-
         return Optional.empty();
     }
 
@@ -290,13 +281,11 @@ abstract class AbstractOnboardingManifest implements Manifest {
         if (StringUtils.isEmpty(attribute)) {
             return Optional.empty();
         }
-
         return Optional.of(attribute);
     }
 
     /**
-     * Reads the current line entry value. The entry name and value must be separated by {@link
-     * ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
+     * Reads the current line entry value. The entry name and value must be separated by {@link ManifestTokenType#ATTRIBUTE_VALUE_SEPARATOR}.
      *
      * @return the entry value
      */
@@ -305,7 +294,6 @@ abstract class AbstractOnboardingManifest implements Manifest {
         if (line.isPresent()) {
             return readEntryValue(line.get());
         }
-
         return Optional.empty();
     }
 
@@ -326,13 +314,11 @@ abstract class AbstractOnboardingManifest implements Manifest {
         if (StringUtils.isEmpty(value)) {
             return Optional.empty();
         }
-
         return Optional.of(value);
     }
 
     /**
-     * Adds a entry to the metadata map. Only accepts new entries. If the entry is duplicated a manifest error is
-     * reported.
+     * Adds a entry to the metadata map. Only accepts new entries. If the entry is duplicated a manifest error is reported.
      *
      * @param entry the metadata entry
      * @param value the entry value
@@ -343,7 +329,6 @@ abstract class AbstractOnboardingManifest implements Manifest {
             reportError(Messages.MANIFEST_METADATA_DUPLICATED_ENTRY, entry);
             return false;
         }
-
         metadata.put(entry, value);
         return true;
     }
@@ -388,7 +373,6 @@ abstract class AbstractOnboardingManifest implements Manifest {
         if (MapUtils.isEmpty(sourceAndChecksumMap)) {
             return Optional.empty();
         }
-
         return Optional.of(ImmutableMap.copyOf(sourceAndChecksumMap));
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,27 +17,26 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.versioning.dao.types;
 
 public interface VersionableEntity {
 
-  String getEntityType();
+    String getEntityType();
 
-  String getFirstClassCitizenId();
+    String getFirstClassCitizenId();
 
-  String getId();
+    String getId();
 
-  void setId(String id);
+    void setId(String id);
 
-  Version getVersion();
+    Version getVersion();
 
-  void setVersion(Version version);
+    void setVersion(Version version);
 
-  default String getVersionUuId() {
-    return "";
-  }
+    default String getVersionUuId() {
+        return "";
+    }
 
-  default void setVersionUuId(String uuId) {
-  }
+    default void setVersionUuId(String uuId) {
+    }
 }

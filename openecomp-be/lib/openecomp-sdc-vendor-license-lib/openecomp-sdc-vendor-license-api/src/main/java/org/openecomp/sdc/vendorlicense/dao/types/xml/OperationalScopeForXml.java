@@ -17,22 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.dao.types.xml;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-
 import java.util.Set;
 
 public class OperationalScopeForXml {
-  Set<String> value;
 
-  @JacksonXmlElementWrapper(localName = "value", useWrapping = false)
-  public Set<String> getValue() {
-    return value;
-  }
+    Set<String> value;
 
-  public void setValue(Set<String> value) {
-    this.value = value;
-  }
+    @JacksonXmlElementWrapper(localName = "value", useWrapping = false)
+    public Set<String> getValue() {
+        return value;
+    }
+
+    public void setValue(Set<String> value) {
+        this.value = value;
+    }
 }

@@ -17,10 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.notifications.types;
 
-public enum NotificationResponseStatus {
-  Success,
-  Failure
-}
+public enum NotificationResponseStatus {Success, Failure}

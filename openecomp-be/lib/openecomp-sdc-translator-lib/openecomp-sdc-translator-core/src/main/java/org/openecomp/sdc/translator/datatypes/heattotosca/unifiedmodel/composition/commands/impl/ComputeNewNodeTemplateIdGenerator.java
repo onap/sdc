@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl;
 
+import java.util.Optional;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.UnifiedSubstitutionNodeTemplateIdGenerator;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to.UnifiedCompositionTo;
 import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil;
 
-import java.util.Optional;
-
 public class ComputeNewNodeTemplateIdGenerator implements UnifiedSubstitutionNodeTemplateIdGenerator {
 
-  @Override
-  public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId) {
-    return Optional.ofNullable(UnifiedCompositionUtil.getNewComputeNodeTemplateId(
-        unifiedCompositionTo.getServiceTemplate(), originalNodeTemplateId));
-  }
+    @Override
+    public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId) {
+        return Optional
+            .ofNullable(UnifiedCompositionUtil.getNewComputeNodeTemplateId(unifiedCompositionTo.getServiceTemplate(), originalNodeTemplateId));
+    }
 }

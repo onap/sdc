@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
-
-import org.openecomp.sdc.heat.datatypes.model.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
 
 public class PortConsolidationData {
 
@@ -39,34 +37,19 @@ public class PortConsolidationData {
         return filePortConsolidationData.get(serviceTemplateFileName);
     }
 
-    public void setFilePortConsolidationData(String serviceTemplateFileName, FilePortConsolidationData
-            filePortConsolidationData) {
+    public void setFilePortConsolidationData(String serviceTemplateFileName, FilePortConsolidationData filePortConsolidationData) {
         this.filePortConsolidationData.put(serviceTemplateFileName, filePortConsolidationData);
     }
 
     /**
-    * Create port template consolidation data base on given parameters - if it doesn't exist yet.
-    *
-    * @return port template consolidation data
-    */
-    PortTemplateConsolidationData addPortTemplateConsolidationData(String serviceTemplateFileName,
-            String portNodeTemplateId, String portResourceId, String portResourceType, String portType) {
+     * Create port template consolidation data base on given parameters - if it doesn't exist yet.
+     *
+     * @return port template consolidation data
+     */
+    PortTemplateConsolidationData addPortTemplateConsolidationData(String serviceTemplateFileName, String portNodeTemplateId, String portResourceId,
+                                                                   String portResourceType, String portType) {
         FilePortConsolidationData consolidationData = addFilePortConsolidationData(serviceTemplateFileName);
-        return consolidationData
-                   .addPortTemplateConsolidationData(portNodeTemplateId, portResourceId, portResourceType, portType);
-    }
-
-    /**
-    * Create subInterface template consolidation data base on given parameters - if it doesn't exist yet.
-    *
-    * @return port template consolidation data by given keys
-    */
-    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(
-            String serviceTemplateFileName, Resource resource, String subInterfaceNodeTemplateId,
-            String parentPortNodeTemplateId) {
-        FilePortConsolidationData consolidationData = addFilePortConsolidationData(serviceTemplateFileName);
-        return consolidationData.addSubInterfaceTemplateConsolidationData(
-            resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+        return consolidationData.addPortTemplateConsolidationData(portNodeTemplateId, portResourceId, portResourceType, portType);
     }
 
     /**
@@ -74,14 +57,25 @@ public class PortConsolidationData {
      *
      * @return port template consolidation data by given keys
      */
-    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(
-                String serviceTemplateFileName, Resource resource,
-                String subInterfaceNodeTemplateId, String parentPortNodeTemplateId,
-                String parentPortResourceId, String parentPortResourceType) {
+    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(String serviceTemplateFileName, Resource resource,
+                                                                                   String subInterfaceNodeTemplateId,
+                                                                                   String parentPortNodeTemplateId) {
         FilePortConsolidationData consolidationData = addFilePortConsolidationData(serviceTemplateFileName);
-        return consolidationData.addSubInterfaceTemplateConsolidationData(
-                resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId,
-                parentPortResourceId, parentPortResourceType);
+        return consolidationData.addSubInterfaceTemplateConsolidationData(resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+    }
+
+    /**
+     * Create subInterface template consolidation data base on given parameters - if it doesn't exist yet.
+     *
+     * @return port template consolidation data by given keys
+     */
+    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(String serviceTemplateFileName, Resource resource,
+                                                                                   String subInterfaceNodeTemplateId, String parentPortNodeTemplateId,
+                                                                                   String parentPortResourceId, String parentPortResourceType) {
+        FilePortConsolidationData consolidationData = addFilePortConsolidationData(serviceTemplateFileName);
+        return consolidationData
+            .addSubInterfaceTemplateConsolidationData(resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId, parentPortResourceId,
+                parentPortResourceType);
     }
 
     private FilePortConsolidationData addFilePortConsolidationData(String serviceTemplateFileName) {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.util.Map;
@@ -25,5 +24,6 @@ import java.util.Map;
  * @since 23 Mar 2018
  */
 interface ContextProvider {
+
     Map<ContextField, String> values();
 }

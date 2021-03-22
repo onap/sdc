@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.globaltypes;
 
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
@@ -26,17 +28,10 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.utils.ResourceWalker;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 public class GlobalTypesServiceTemplates {
 
     private static final String ONAP_FILEPATH_REGEX = ".*" + Constants.GLOBAL_TYPES + "(/onap/|\\\\onap\\\\).*";
     private static final Map<OnboardingTypesEnum, Map<String, ServiceTemplate>> onboardingGlobalTypesServiceTemplates;
-
-    private GlobalTypesServiceTemplates() {
-    }
 
     static {
         Map<String, String> globalTypes;
@@ -45,35 +40,31 @@ public class GlobalTypesServiceTemplates {
         } catch (CoreException coreException) {
             throw coreException;
         } catch (Exception exception) {
-            throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-                                            .withMessage(Constants.FAILED_TO_GENERATE_GLOBAL_TYPES)
-                                            .withId(Constants.GLOBAL_TYPES_READ_ERROR)
-                                            .withCategory(ErrorCategory.APPLICATION).build(), exception);
+            throw new CoreException(
+                (new ErrorCode.ErrorCodeBuilder()).withMessage(Constants.FAILED_TO_GENERATE_GLOBAL_TYPES).withId(Constants.GLOBAL_TYPES_READ_ERROR)
+                    .withCategory(ErrorCategory.APPLICATION).build(), exception);
         }
         onboardingGlobalTypesServiceTemplates = init(globalTypes);
     }
 
+    private GlobalTypesServiceTemplates() {
+    }
+
     public static Map<String, ServiceTemplate> getGlobalTypesServiceTemplates(OnboardingTypesEnum onboardingType) {
         if (onboardingType == null) {
-            throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-                                            .withMessage(Constants.FAILED_TO_GENERATE_GLOBAL_TYPES)
-                                            .withId(Constants.INVALID_ONBOARDING_TYPE)
-                                            .withCategory(ErrorCategory.APPLICATION).build());
+            throw new CoreException(
+                (new ErrorCode.ErrorCodeBuilder()).withMessage(Constants.FAILED_TO_GENERATE_GLOBAL_TYPES).withId(Constants.INVALID_ONBOARDING_TYPE)
+                    .withCategory(ErrorCategory.APPLICATION).build());
         }
         return onboardingGlobalTypesServiceTemplates.get(onboardingType);
     }
 
     private static Map<OnboardingTypesEnum, Map<String, ServiceTemplate>> init(Map<String, String> globalTypes) {
-        Map<OnboardingTypesEnum, Map<String, ServiceTemplate>> onboardingGlobalTypesServiceTemplates =
-                new EnumMap<>(OnboardingTypesEnum.class);
-        Map<String, ServiceTemplate> zipOnboardingGlobalTypes =
-                getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.ZIP);
-        Map<String, ServiceTemplate> csarOnboardingGlobalTypes =
-                getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.CSAR);
-        Map<String, ServiceTemplate> manualOnboardingGlobalTypes =
-                getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.MANUAL);
-        Map<String, ServiceTemplate> defaultOnboardingGlobalTypes =
-                getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.NONE);
+        Map<OnboardingTypesEnum, Map<String, ServiceTemplate>> onboardingGlobalTypesServiceTemplates = new EnumMap<>(OnboardingTypesEnum.class);
+        Map<String, ServiceTemplate> zipOnboardingGlobalTypes = getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.ZIP);
+        Map<String, ServiceTemplate> csarOnboardingGlobalTypes = getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.CSAR);
+        Map<String, ServiceTemplate> manualOnboardingGlobalTypes = getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.MANUAL);
+        Map<String, ServiceTemplate> defaultOnboardingGlobalTypes = getOnboardingGlobalTypes(globalTypes, OnboardingTypesEnum.NONE);
         onboardingGlobalTypesServiceTemplates.put(OnboardingTypesEnum.ZIP, zipOnboardingGlobalTypes);
         onboardingGlobalTypesServiceTemplates.put(OnboardingTypesEnum.CSAR, csarOnboardingGlobalTypes);
         onboardingGlobalTypesServiceTemplates.put(OnboardingTypesEnum.MANUAL, manualOnboardingGlobalTypes);
@@ -81,8 +72,7 @@ public class GlobalTypesServiceTemplates {
         return onboardingGlobalTypesServiceTemplates;
     }
 
-    private static Map<String, ServiceTemplate> getOnboardingGlobalTypes(Map<String, String> globalTypes,
-                                                                                OnboardingTypesEnum onboardingType) {
+    private static Map<String, ServiceTemplate> getOnboardingGlobalTypes(Map<String, String> globalTypes, OnboardingTypesEnum onboardingType) {
         Map<String, ServiceTemplate> globalTypesServiceTemplates = new HashMap<>();
         ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
         for (Map.Entry<String, String> globalTypeContent : globalTypes.entrySet()) {
@@ -91,13 +81,12 @@ public class GlobalTypesServiceTemplates {
                 continue;
             }
             ToscaUtil.addServiceTemplateToMapWithKeyFileName(globalTypesServiceTemplates,
-                    toscaExtensionYamlUtil.yamlToObject(globalTypeContent.getValue(), ServiceTemplate.class));
+                toscaExtensionYamlUtil.yamlToObject(globalTypeContent.getValue(), ServiceTemplate.class));
         }
         return globalTypesServiceTemplates;
     }
 
-    private static boolean isTypeValidCandidateForCsarPacking(String globalTypeResourceKey,
-                                                                     OnboardingTypesEnum onboardingType) {
+    private static boolean isTypeValidCandidateForCsarPacking(String globalTypeResourceKey, OnboardingTypesEnum onboardingType) {
         if (globalTypeResourceKey.contains(Constants.OPENECOMP_INVENTORY)) {
             // this global types folders should not be processed to the CSAR
             return false;
@@ -105,5 +94,4 @@ public class GlobalTypesServiceTemplates {
         //Global types specific to csar onboarding should not be packed for other onboarding types
         return !globalTypeResourceKey.matches(ONAP_FILEPATH_REGEX) || onboardingType == OnboardingTypesEnum.CSAR;
     }
-
 }

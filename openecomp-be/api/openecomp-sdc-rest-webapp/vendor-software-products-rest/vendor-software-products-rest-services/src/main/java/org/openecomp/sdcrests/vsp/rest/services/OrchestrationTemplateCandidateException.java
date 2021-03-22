@@ -19,9 +19,9 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
-public class OrchestrationTemplateCandidateException extends Exception{
+public class OrchestrationTemplateCandidateException extends Exception {
 
-    public OrchestrationTemplateCandidateException(String message, Throwable t){
+    public OrchestrationTemplateCandidateException(String message, Throwable t) {
         super(message, t);
     }
 }

@@ -13,38 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.datatypes.model;
 
 public enum ElementType {
-  itemVersion,
+    itemVersion,
 
-  VendorLicenseModel,
-  LicenseAgreements, LicenseAgreement,
-  FeatureGroups, FeatureGroup,
-  LicenseKeyGroups, LicenseKeyGroup,
-  EntitlementPools, EntitlementPool,
-  Limits, Limit,
+    VendorLicenseModel,
+    LicenseAgreements, LicenseAgreement,
+    FeatureGroups, FeatureGroup,
+    LicenseKeyGroups, LicenseKeyGroup,
+    EntitlementPools, EntitlementPool,
+    Limits, Limit,
 
-  VendorSoftwareProduct,
-  VSPQuestionnaire,
+    VendorSoftwareProduct,
+    VSPQuestionnaire,
 
-  VspModel, NetworkPackage,
-  OrchestrationTemplateCandidate, OrchestrationTemplateCandidateContent,
-  OrchestrationTemplateCandidateValidationData, ORIGINAL_ONBOARDED_PACKAGE,
-  OrchestrationTemplateStructure, OrchestrationTemplate,
-  OrchestrationTemplateValidationData,
-  // todo - remove OrchestrationTemplateContent
-  OrchestrationTemplateContent,
-  Networks, Network,
-  Components, Component, ComponentQuestionnaire, ComponentDependencies, ComponentDependency,
-  Nics, Nic, NicQuestionnaire,
-  Mibs, SNMP_POLL, SNMP_TRAP, VES_EVENTS,
-  Processes, Process,
-  DeploymentFlavors, DeploymentFlavor,
-  Computes, Compute, ComputeQuestionnaire,
-  Images, Image, ImageQuestionnaire,
-  ServiceModel, EnrichedServiceModel, ServiceTemplate, Templates, Artifact, Artifacts,
+    VspModel, NetworkPackage,
+    OrchestrationTemplateCandidate,
+    OrchestrationTemplateCandidateContent,
+    OrchestrationTemplateCandidateValidationData,
+    ORIGINAL_ONBOARDED_PACKAGE,
+    OrchestrationTemplateStructure, OrchestrationTemplate,
+    OrchestrationTemplateValidationData,
+    // todo - remove OrchestrationTemplateContent
+    OrchestrationTemplateContent,
+    Networks, Network,
+    Components, Component, ComponentQuestionnaire, ComponentDependencies, ComponentDependency,
+    Nics, Nic, NicQuestionnaire,
+    Mibs, SNMP_POLL, SNMP_TRAP, VES_EVENTS,
+    Processes, Process,
+    DeploymentFlavors, DeploymentFlavor,
+    Computes, Compute, ComputeQuestionnaire,
+    Images, Image, ImageQuestionnaire,
+    ServiceModel, EnrichedServiceModel, ServiceTemplate, Templates, Artifact, Artifacts,
 
-  test
+    test
 }

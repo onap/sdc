@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.datatypes.extend;
 
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.sdc.tosca.services.ConfigConstants;
 
-
 public class ToscaAnnotationType {
 
-  private static Configuration config = ConfigurationManager.lookup();
-  public static final String ANNOTATION_TYPE_PREFIX =
-          config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_ANNOTATION_TYPE);
-
-  public static final String SOURCE =
-          ANNOTATION_TYPE_PREFIX +  "Source";
-
+    private static Configuration config = ConfigurationManager.lookup();
+    public static final String ANNOTATION_TYPE_PREFIX = config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_ANNOTATION_TYPE);
+    public static final String SOURCE = ANNOTATION_TYPE_PREFIX + "Source";
 }
-

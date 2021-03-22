@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.Collections;
@@ -50,9 +49,7 @@ public class PnfdNodeTemplateBlockParser extends AbstractPnfdBlockParser {
         if (MapUtils.isEmpty(nodeTemplateMap)) {
             return Collections.emptySet();
         }
-
-        return nodeTemplateMap.entrySet().stream()
-            .filter(mapEntry -> PnfdQueryExecutor.find(conversionQuery, mapEntry.getValue()))
+        return nodeTemplateMap.entrySet().stream().filter(mapEntry -> PnfdQueryExecutor.find(conversionQuery, mapEntry.getValue()))
             .map(stringObjectEntry -> {
                 final Map<String, Object> map = new HashMap<>();
                 map.put(stringObjectEntry.getKey(), stringObjectEntry.getValue());
@@ -62,8 +59,8 @@ public class PnfdNodeTemplateBlockParser extends AbstractPnfdBlockParser {
 
     @Override
     protected Optional<Map<String, Object>> buildParsedBlock(final Map<String, Object> attributeQuery,
-        final Map<String, Object> fromNodeTemplateAttributeMap,
-        final ConversionDefinition conversionDefinition) {
+                                                             final Map<String, Object> fromNodeTemplateAttributeMap,
+                                                             final ConversionDefinition conversionDefinition) {
         //cannot query for more than one attribute
         if (attributeQuery.keySet().size() > 1) {
             return Optional.empty();
@@ -74,9 +71,7 @@ public class PnfdNodeTemplateBlockParser extends AbstractPnfdBlockParser {
         if (queryValue == null) {
             PnfdConversionStrategy pnfdConversionStrategy = conversionDefinition.getPnfdConversionStrategy();
             if (isGetInputFunction(attributeValueToConvert)) {
-                inputNameToConvertMap.put(extractObjectValue(attributeValueToConvert)
-                    , conversionDefinition.getToGetInput()
-                );
+                inputNameToConvertMap.put(extractObjectValue(attributeValueToConvert), conversionDefinition.getToGetInput());
                 pnfdConversionStrategy = new CopyConversionStrategy();
             }
             final Map<String, Object> parsedNodeTemplate = new HashMap<>();
@@ -84,18 +79,15 @@ public class PnfdNodeTemplateBlockParser extends AbstractPnfdBlockParser {
             if (convertedAttribute.isPresent()) {
                 parsedNodeTemplate.put(conversionDefinition.getToAttributeName(), convertedAttribute.get());
             }
-
             return parsedNodeTemplate.isEmpty() ? Optional.empty() : Optional.of(parsedNodeTemplate);
         } else {
             if (!(queryValue instanceof Map) || !(attributeValueToConvert instanceof Map)) {
                 return Optional.empty();
             }
             final Map<String, Object> parsedNodeTemplate = new HashMap<>();
-            final Optional<Map<String, Object>> builtNodeTemplate = buildParsedBlock(
-                (Map<String, Object>) queryValue,
+            final Optional<Map<String, Object>> builtNodeTemplate = buildParsedBlock((Map<String, Object>) queryValue,
                 (Map<String, Object>) attributeValueToConvert, conversionDefinition);
             builtNodeTemplate.ifPresent(builtNodeTemplate1 -> parsedNodeTemplate.put(attribute, builtNodeTemplate1));
-
             return parsedNodeTemplate.isEmpty() ? Optional.empty() : Optional.of(parsedNodeTemplate);
         }
     }

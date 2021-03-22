@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.api;
 
 import java.util.Iterator;
@@ -35,6 +34,7 @@ import org.openecomp.sdc.logging.spi.LoggingServiceProvider;
  */
 
 // No advanced logging can be used here because we don't know
+
 // which underlying implementation will be used
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "squid:S106", "squid:S1166"})
 class ServiceBinder {
@@ -46,31 +46,23 @@ class ServiceBinder {
     }
 
     private static LoggingServiceProvider lookupProvider() {
-
         ServiceLoader<LoggingServiceProvider> loader = ServiceLoader.load(LoggingServiceProvider.class);
         Iterator<LoggingServiceProvider> iterator = loader.iterator();
-
         if (!iterator.hasNext()) {
-            System.err.printf("[ERROR] No provider configured for logging services %s. "
-                    + "Default implementation will be used.\n", LoggingServiceProvider.class.getName());
+            System.err.printf("[ERROR] No provider configured for logging services %s. " + "Default implementation will be used.\n",
+                LoggingServiceProvider.class.getName());
             return null;
         }
-
         try {
-
             LoggingServiceProvider provider = iterator.next();
             if (!iterator.hasNext()) {
                 return provider;
             }
-
             Logger logger = provider.getLogger(ServiceBinder.class);
             if (logger.isWarnEnabled()) {
-                logger.warn("More than one provider for logging services {} found",
-                        LoggingServiceProvider.class.getName());
+                logger.warn("More than one provider for logging services {} found", LoggingServiceProvider.class.getName());
             }
-
             return provider;
-
         } catch (Exception e) {
             // don't fail if the provider cannot be instantiated
             e.printStackTrace(System.err);
@@ -86,4 +78,3 @@ class ServiceBinder {
         return Optional.ofNullable(PROVIDER);
     }
 }
-

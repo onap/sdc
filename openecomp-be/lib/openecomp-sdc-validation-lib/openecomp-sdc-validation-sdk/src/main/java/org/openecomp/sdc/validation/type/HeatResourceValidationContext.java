@@ -15,13 +15,12 @@
  */
 package org.openecomp.sdc.validation.type;
 
-import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
-import org.openecomp.sdc.validation.ValidationContext;
-
 import java.util.List;
 import java.util.Map;
-import lombok.Getter;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
+import org.openecomp.sdc.validation.ValidationContext;
 
 /**
  * Created by TALIO on 2/23/2017.
@@ -30,21 +29,19 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class HeatResourceValidationContext implements ValidationContext {
 
-  private HeatOrchestrationTemplate heatOrchestrationTemplate;
-  // key - resource type, value - map with key = resource id and
-  // value = map with key = pointing / pointed resource type and
-  // value = pointing / pointed resource id
-  private Map<String, Map<String, Map<String, List<String>>>> fileLevelResourceDependencies;
-  private String envFileName;
+    private HeatOrchestrationTemplate heatOrchestrationTemplate;
+    // key - resource type, value - map with key = resource id and
 
+    // value = map with key = pointing / pointed resource type and
 
-  public HeatResourceValidationContext(
-      HeatOrchestrationTemplate heatOrchestrationTemplate,
-      Map<String, Map<String, Map<String, List<String>>>> fileLevelResourceDependencies,
-      String envFileName) {
+    // value = pointing / pointed resource id
+    private Map<String, Map<String, Map<String, List<String>>>> fileLevelResourceDependencies;
+    private String envFileName;
 
-    this.heatOrchestrationTemplate = heatOrchestrationTemplate;
-    this.fileLevelResourceDependencies = fileLevelResourceDependencies;
-    this.envFileName = envFileName;
-  }
+    public HeatResourceValidationContext(HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                         Map<String, Map<String, Map<String, List<String>>>> fileLevelResourceDependencies, String envFileName) {
+        this.heatOrchestrationTemplate = heatOrchestrationTemplate;
+        this.fileLevelResourceDependencies = fileLevelResourceDependencies;
+        this.envFileName = envFileName;
+    }
 }

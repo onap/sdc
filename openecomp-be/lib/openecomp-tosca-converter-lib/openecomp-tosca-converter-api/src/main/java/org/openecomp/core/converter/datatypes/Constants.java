@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.converter.datatypes;
 
 public final class Constants {
+
     public static final String MAIN_ST_NAME = "MainServiceTemplate.yaml";
     public static final String GLOBAL_ST_NAME = "GlobalSubstitutionTypesServiceTemplate.yaml";
     public static final String DEFINITIONS_DIR = "Definitions/";
@@ -32,13 +32,11 @@ public final class Constants {
     public static final String CAPABILITIES = "capabilities";
     public static final String REQUIREMENTS = "requirements";
     public static final String POLICIES = "policies";
-
     public static final String OPENECOMP_HEAT_INDEX = "openecomp_heat_index";
     public static final String ONAP_INDEX = "onap_index";
     public static final String GLOBAL_SUBSTITUTION = "GlobalSubstitutionTypes";
 
     // prevent utility class instantiation
-    private Constants () {
+    private Constants() {
     }
-
 }

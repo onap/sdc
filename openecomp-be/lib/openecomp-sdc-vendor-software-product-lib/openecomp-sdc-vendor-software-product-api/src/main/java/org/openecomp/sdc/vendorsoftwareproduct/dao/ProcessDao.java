@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
 import org.openecomp.core.dao.BaseDao;
@@ -30,13 +29,14 @@ import org.openecomp.sdc.versioning.dao.types.Version;
  * @since March 23, 2017
  */
 public interface ProcessDao extends VersionableDao, BaseDao<ProcessEntity> {
-  void deleteAll(ProcessEntity entity);
 
-  void deleteVspAll(String vspId, Version version);
+    void deleteAll(ProcessEntity entity);
 
-  ProcessEntity getArtifact(ProcessEntity entity);
+    void deleteVspAll(String vspId, Version version);
 
-  void uploadArtifact(ProcessEntity entity);
+    ProcessEntity getArtifact(ProcessEntity entity);
 
-  void deleteArtifact(ProcessEntity entity);
+    void uploadArtifact(ProcessEntity entity);
+
+    void deleteArtifact(ProcessEntity entity);
 }

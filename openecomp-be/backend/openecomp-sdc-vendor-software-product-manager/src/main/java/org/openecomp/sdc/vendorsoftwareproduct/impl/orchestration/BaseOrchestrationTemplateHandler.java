@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
 import java.io.ByteArrayInputStream;
@@ -35,73 +34,60 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
 public abstract class BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
-  protected static final Logger logger = LoggerFactory.getLogger(BaseOrchestrationTemplateHandler.class);
 
-  @Override
-  public UploadFileResponse upload(final VspDetails vspDetails,
-                                   final OnboardPackageInfo onboardPackageInfo,
-                                   final CandidateService candidateService) {
-    final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
-    final UploadFileResponse uploadFileResponse = new UploadFileResponse();
-    uploadFileResponse.setOnboardingType(getHandlerType());
-    if (isFileToUploadEmpty(onboardPackage, uploadFileResponse, candidateService)) {
-      return uploadFileResponse;
+    protected static final Logger logger = LoggerFactory.getLogger(BaseOrchestrationTemplateHandler.class);
+
+    @Override
+    public UploadFileResponse upload(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo,
+                                     final CandidateService candidateService) {
+        final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
+        final UploadFileResponse uploadFileResponse = new UploadFileResponse();
+        uploadFileResponse.setOnboardingType(getHandlerType());
+        if (isFileToUploadEmpty(onboardPackage, uploadFileResponse, candidateService)) {
+            return uploadFileResponse;
+        }
+        final byte[] fileContentByteArray = onboardPackage.getFileContent().array();
+        if (isInvalidRawZipData(onboardPackage.getFileExtension(), uploadFileResponse, fileContentByteArray, candidateService)) {
+            return uploadFileResponse;
+        }
+        final UploadFileResponse validateResponse = validate(onboardPackageInfo);
+        if (!MapUtils.isEmpty(validateResponse.getErrors())) {
+            uploadFileResponse.addStructureErrors(validateResponse.getErrors());
+            return uploadFileResponse;
+        }
+        final UploadFileResponse responseFromUpdate = updateCandidateData(vspDetails, onboardPackageInfo, candidateService);
+        if (!MapUtils.isEmpty(responseFromUpdate.getErrors())) {
+            uploadFileResponse.addStructureErrors(responseFromUpdate.getErrors());
+        }
+        return uploadFileResponse;
     }
 
-    final byte[] fileContentByteArray = onboardPackage.getFileContent().array();
-    if (isInvalidRawZipData(onboardPackage.getFileExtension(),
-        uploadFileResponse, fileContentByteArray, candidateService)) {
-      return uploadFileResponse;
+    protected abstract UploadFileResponse updateCandidateData(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo,
+                                                              final CandidateService candidateService);
+
+    private boolean isFileToUploadEmpty(final OnboardPackage onboardPackage, final UploadFileResponse uploadFileResponse,
+                                        final CandidateService candidateService) {
+        final ByteArrayInputStream fileToUpload = new ByteArrayInputStream(onboardPackage.getFileContent().array());
+        Optional<ErrorMessage> errorMessage = candidateService.validateNonEmptyFileToUpload(fileToUpload, onboardPackage.getFileExtension());
+        if (errorMessage.isPresent()) {
+            uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage.get());
+            return true;
+        }
+        return false;
     }
 
-    final UploadFileResponse validateResponse = validate(onboardPackageInfo);
-
-    if (!MapUtils.isEmpty(validateResponse.getErrors())) {
-      uploadFileResponse.addStructureErrors(validateResponse.getErrors());
-      return uploadFileResponse;
+    protected boolean isInvalidRawZipData(String fileSuffix, UploadFileResponse uploadFileResponse, byte[] uploadedFileData,
+                                          CandidateService candidateService) {
+        Optional<ErrorMessage> errorMessage;
+        errorMessage = candidateService.validateRawZipData(fileSuffix, uploadedFileData);
+        if (errorMessage.isPresent()) {
+            uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage.get());
+            return true;
+        }
+        return false;
     }
 
-    final UploadFileResponse responseFromUpdate = updateCandidateData(vspDetails, onboardPackageInfo,
-        candidateService);
-    if (!MapUtils.isEmpty(responseFromUpdate.getErrors())) {
-      uploadFileResponse.addStructureErrors(responseFromUpdate.getErrors());
-    }
+    public abstract UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo);
 
-    return uploadFileResponse;
-  }
-
-  protected abstract UploadFileResponse updateCandidateData(final VspDetails vspDetails,
-                                                 final OnboardPackageInfo onboardPackageInfo,
-                                                 final CandidateService candidateService);
-
-  private boolean isFileToUploadEmpty(final OnboardPackage onboardPackage,
-                                      final UploadFileResponse uploadFileResponse,
-                                      final CandidateService candidateService) {
-    final ByteArrayInputStream fileToUpload = new ByteArrayInputStream(
-        onboardPackage.getFileContent().array());
-    Optional<ErrorMessage> errorMessage =
-        candidateService.validateNonEmptyFileToUpload(fileToUpload, onboardPackage.getFileExtension());
-    if (errorMessage.isPresent()) {
-      uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage.get());
-      return true;
-    }
-    return false;
-  }
-
-  protected boolean isInvalidRawZipData(String fileSuffix,
-                                        UploadFileResponse uploadFileResponse,
-                                        byte[] uploadedFileData,
-                                        CandidateService candidateService) {
-    Optional<ErrorMessage> errorMessage;
-    errorMessage = candidateService.validateRawZipData(fileSuffix, uploadedFileData);
-    if (errorMessage.isPresent()) {
-      uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage.get());
-      return true;
-    }
-    return false;
-  }
-
-  public abstract UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo);
-
-  protected abstract OnboardingTypesEnum getHandlerType();
+    protected abstract OnboardingTypesEnum getHandlerType();
 }

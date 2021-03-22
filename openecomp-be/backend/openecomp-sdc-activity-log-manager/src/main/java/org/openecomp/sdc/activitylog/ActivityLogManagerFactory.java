@@ -18,8 +18,8 @@ package org.openecomp.sdc.activitylog;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
-
 public abstract class ActivityLogManagerFactory extends AbstractComponentFactory<ActivityLogManager> {
+
     public static ActivityLogManagerFactory getInstance() {
         return AbstractFactory.getInstance(ActivityLogManagerFactory.class);
     }

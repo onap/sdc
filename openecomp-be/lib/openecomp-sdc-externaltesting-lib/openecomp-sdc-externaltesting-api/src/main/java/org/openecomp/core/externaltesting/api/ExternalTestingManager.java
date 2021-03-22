@@ -23,8 +23,7 @@ import java.util.Map;
 public interface ExternalTestingManager {
 
     /**
-     * Return the configuration of this feature that we want to
-     * expose to the client.  Treated as a JSON blob for flexibility.
+     * Return the configuration of this feature that we want to expose to the client.  Treated as a JSON blob for flexibility.
      */
     ClientConfiguration getConfig();
 
@@ -34,8 +33,7 @@ public interface ExternalTestingManager {
     ClientConfiguration setConfig(ClientConfiguration config);
 
     /**
-     * Build a tree of all test cases for the client including all
-     * defined endpoints, scenarios, and test suites.
+     * Build a tree of all test cases for the client including all defined endpoints, scenarios, and test suites.
      *
      * @return test case tree.
      */
@@ -48,8 +46,7 @@ public interface ExternalTestingManager {
 
 
     /**
-     * For functional testing purposes, allow the endpoint configuration
-     * to be provisioned to the BE.
+     * For functional testing purposes, allow the endpoint configuration to be provisioned to the BE.
      */
     List<RemoteTestingEndpointDefinition> setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
 
@@ -84,8 +81,7 @@ public interface ExternalTestingManager {
     VtpTestCase getTestCase(String endpoint, String scenario, String testSuite, String testCaseName);
 
     /**
-     * Execute a collection of tests where the manager must distribute
-     * the tests to the appropriate endpoint and correlate the responses.
+     * Execute a collection of tests where the manager must distribute the tests to the appropriate endpoint and correlate the responses.
      *
      * @param requests     collection of request items.
      * @param requestId    optional request ID provided from client.
@@ -96,7 +92,7 @@ public interface ExternalTestingManager {
      */
 
     List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String vspId, String vspVersionId,
-            String requestId, Map<String, byte[]> fileMap);
+                                           String requestId, Map<String, byte[]> fileMap);
 
 
     /**

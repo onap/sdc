@@ -17,10 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.notifications.rest.mapping;
 
 import com.datastax.driver.core.utils.UUIDs;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.notification.dao.types.NotificationEntity;
@@ -28,30 +31,23 @@ import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.notifications.types.NotificationEntityDto;
 import org.openecomp.sdcrests.notifications.types.NotificationsStatusDto;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 public class MapNotificationsToDto extends MappingBase<List<NotificationEntity>, NotificationsStatusDto> {
-    private static final DateFormat formatter =
-            DateFormat.getDateTimeInstance(DateFormat.LONG,
-                    DateFormat.SHORT);
+
+    private static final DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
+
     @Override
     public void doMapping(List<NotificationEntity> source, NotificationsStatusDto target) {
         List<NotificationEntityDto> entityDtos = new ArrayList<>();
-        if(CollectionUtils.isNotEmpty(source)) {
-            source.forEach(notification -> entityDtos.add(new NotificationEntityDto(notification.isRead(),
-                    notification.getEventId(), notification.getEventType(), JsonUtil.json2Object(notification.getEventAttributes(), Map.class),
-                    extractDate(notification))));
+        if (CollectionUtils.isNotEmpty(source)) {
+            source.forEach(notification -> entityDtos.add(
+                new NotificationEntityDto(notification.isRead(), notification.getEventId(), notification.getEventType(),
+                    JsonUtil.json2Object(notification.getEventAttributes(), Map.class), extractDate(notification))));
             target.setNotifications(entityDtos);
             target.setLastScanned(source.get(0).getEventId());
         }
     }
 
     private String extractDate(NotificationEntity notification) {
-        return formatter.format(UUIDs.unixTimestamp
-                (notification
-                        .getEventId()));
+        return formatter.format(UUIDs.unixTimestamp(notification.getEventId()));
     }
 }

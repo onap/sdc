@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
+import java.util.Optional;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Optional;
-
 public interface OrchestrationTemplateDao extends VersionableDao {
 
-  OrchestrationTemplateEntity getInfo(String vspId, Version version);
+    OrchestrationTemplateEntity getInfo(String vspId, Version version);
 
-  OrchestrationTemplateEntity get(String vspId, Version version);
+    OrchestrationTemplateEntity get(String vspId, Version version);
 
-  void update(String vspId, Version version, OrchestrationTemplateEntity uploadData);
+    void update(String vspId, Version version, OrchestrationTemplateEntity uploadData);
 
-  Optional<String> getOrchestrationTemplateStructure(String vspId, Version version);
+    Optional<String> getOrchestrationTemplateStructure(String vspId, Version version);
 }
-

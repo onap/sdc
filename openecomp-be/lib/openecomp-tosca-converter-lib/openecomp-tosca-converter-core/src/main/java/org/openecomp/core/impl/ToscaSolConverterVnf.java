@@ -19,7 +19,6 @@
  *  * ============LICENSE_END=========================================================
  *
  */
-
 package org.openecomp.core.impl;
 
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -31,5 +30,4 @@ public class ToscaSolConverterVnf extends AbstractToscaSolConverter {
     public void convertTopologyTemplate(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         new VnfTopologyTemplateConverter().convertTopologyTemplate(serviceTemplate, readerService);
     }
-
 }

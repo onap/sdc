@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import lombok.AllArgsConstructor;
@@ -32,8 +31,7 @@ public class ConversionDefinition {
     private PnfdConversionStrategy pnfdConversionStrategy;
     private String toGetInput;
 
-    public ConversionDefinition(ConversionQuery conversionQuery, String toAttributeName,
-                                PnfdConversionStrategy pnfdConversionStrategy) {
+    public ConversionDefinition(ConversionQuery conversionQuery, String toAttributeName, PnfdConversionStrategy pnfdConversionStrategy) {
         this.conversionQuery = conversionQuery;
         this.toAttributeName = toAttributeName;
         this.pnfdConversionStrategy = pnfdConversionStrategy;

@@ -19,7 +19,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.structure;
 
 import java.util.ArrayList;
@@ -38,11 +37,9 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
 
     private String fileName;
     private FileData.Type type;
-
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private Boolean isBase;
-
     private HeatStructureTree env;
     private List<ErrorMessage> errors;
     private Set<HeatStructureTree> heat;
@@ -63,14 +60,6 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         this.fileName = fileName;
     }
 
-    public Boolean getBase() {
-        return isBase;
-    }
-
-    public void setBase(Boolean isBase) {
-        this.isBase = isBase;
-    }
-
     /**
      * Gets heat structure tree by name.
      *
@@ -78,15 +67,21 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
      * @param filename the filename
      * @return the heat structure tree by name
      */
-    public static HeatStructureTree getHeatStructureTreeByName(Set<HeatStructureTree> filesSet,
-        String filename) {
+    public static HeatStructureTree getHeatStructureTreeByName(Set<HeatStructureTree> filesSet, String filename) {
         for (HeatStructureTree heatStructureTree : filesSet) {
             if (heatStructureTree.getFileName().equals(filename)) {
                 return heatStructureTree;
             }
         }
-
         return null;
+    }
+
+    public Boolean getBase() {
+        return isBase;
+    }
+
+    public void setBase(Boolean isBase) {
+        this.isBase = isBase;
     }
 
     /**
@@ -152,7 +147,6 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         if (this.heat == null) {
             this.heat = new TreeSet<>();
         }
-
         this.heat.add(heat);
     }
 
@@ -165,7 +159,6 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         if (this.other == null) {
             this.other = new TreeSet<>();
         }
-
         this.other.add(other);
     }
 
@@ -173,7 +166,6 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         if (this.helm == null) {
             this.helm = new TreeSet<>();
         }
-
         this.helm.add(helm);
     }
 
@@ -200,10 +192,8 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
      * @param type             the type
      */
     public void removeFromVolumeOrNetwork(String fileNameToRemove, FileData.Type type) {
-        Set<HeatStructureTree> volumeOrNetworkSet =
-            type.equals(FileData.Type.HEAT_VOL) ? this.volume : this.network;
+        Set<HeatStructureTree> volumeOrNetworkSet = type.equals(FileData.Type.HEAT_VOL) ? this.volume : this.network;
         HeatStructureTree toRemove = getHeatStructureTreeByName(volumeOrNetworkSet, fileNameToRemove);
-
         volumeOrNetworkSet.remove(toRemove);
     }
 
@@ -217,7 +207,6 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         result1 = 31 * result1 + (artifacts != null ? artifacts.hashCode() : 0);
         result1 = 31 * result1 + (nested != null ? nested.hashCode() : 0);
         result1 = 31 * result1 + (errors != null ? errors.hashCode() : 0);
-
         return result1;
     }
 
@@ -229,11 +218,8 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         if (other == null || getClass() != other.getClass()) {
             return false;
         }
-
         HeatStructureTree heatStructureTree = (HeatStructureTree) other;
-
-        if (fileName != null ? !fileName.equals(heatStructureTree.fileName)
-            : heatStructureTree.fileName != null) {
+        if (fileName != null ? !fileName.equals(heatStructureTree.fileName) : heatStructureTree.fileName != null) {
             return false;
         }
         if (env != null ? !env.equals(heatStructureTree.env) : heatStructureTree.env != null) {
@@ -242,23 +228,18 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
         if (heat != null ? !heat.equals(heatStructureTree.heat) : heatStructureTree.heat != null) {
             return false;
         }
-        if (volume != null ? !volume.equals(heatStructureTree.volume)
-            : heatStructureTree.volume != null) {
+        if (volume != null ? !volume.equals(heatStructureTree.volume) : heatStructureTree.volume != null) {
             return false;
         }
-        if (network != null ? !network.equals(heatStructureTree.network)
-            : heatStructureTree.network != null) {
+        if (network != null ? !network.equals(heatStructureTree.network) : heatStructureTree.network != null) {
             return false;
         }
-        if (artifacts != null ? !artifacts.equals(heatStructureTree.artifacts)
-            : heatStructureTree.artifacts != null) {
+        if (artifacts != null ? !artifacts.equals(heatStructureTree.artifacts) : heatStructureTree.artifacts != null) {
             return false;
         }
-        if (nested != null ? !nested.equals(heatStructureTree.nested)
-            : heatStructureTree.nested != null) {
+        if (nested != null ? !nested.equals(heatStructureTree.nested) : heatStructureTree.nested != null) {
             return false;
         }
-
         return errors != null ? errors.equals(heatStructureTree.errors) : heatStructureTree.errors == null;
     }
 

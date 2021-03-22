@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -25,7 +24,7 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
  * @since 26 Mar 2018
  */
 public enum MetricsField implements MDCField {
-
+    // @formatter:off
     BEGIN_TIMESTAMP(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP),
     END_TIMESTAMP("EndTimestamp"),
     ELAPSED_TIME("ElapsedTime"),
@@ -35,6 +34,7 @@ public enum MetricsField implements MDCField {
     CLIENT_IP_ADDRESS(ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS),
     TARGET_VIRTUAL_ENTITY("TargetVirtualEntity"),
     TARGET_ENTITY(ONAPLogConstants.MDCs.TARGET_ENTITY);
+    // @formatter:on
 
     private final String key;
 
@@ -45,5 +45,4 @@ public enum MetricsField implements MDCField {
     public String asKey() {
         return key;
     }
-
 }

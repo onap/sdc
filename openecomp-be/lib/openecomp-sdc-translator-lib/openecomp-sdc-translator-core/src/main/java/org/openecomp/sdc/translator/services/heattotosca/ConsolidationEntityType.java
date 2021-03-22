@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isComputeResource;
+import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isPortResource;
+import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isVolumeResource;
 
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.*;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
 /**
  * The enum Entity type.
@@ -32,11 +32,22 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDat
 public enum ConsolidationEntityType {
     COMPUTE, PORT, VOLUME, NESTED,
     //Simple nested VFC (nested file with one compute) or a complex VFC (nested ST with more than
+
     //one compute)
     VFC_NESTED, SUB_INTERFACE, OTHER;
-
+    private static final Set<ConsolidationEntityType> consolidationEntityTypes = initConsolidationEntities();
     private ConsolidationEntityType sourceEntityType;
     private ConsolidationEntityType targetEntityType;
+
+    private static Set<ConsolidationEntityType> initConsolidationEntities() {
+        return Collections.unmodifiableSet(EnumSet.allOf(ConsolidationEntityType.class).stream().filter(
+            consolidationEntityType -> consolidationEntityType != ConsolidationEntityType.OTHER
+                && consolidationEntityType != ConsolidationEntityType.VOLUME).collect(Collectors.toSet()));
+    }
+
+    public static Set<ConsolidationEntityType> getSupportedConsolidationEntities() {
+        return consolidationEntityTypes;
+    }
 
     public ConsolidationEntityType getSourceEntityType() {
         return sourceEntityType;
@@ -45,7 +56,6 @@ public enum ConsolidationEntityType {
     public ConsolidationEntityType getTargetEntityType() {
         return targetEntityType;
     }
-
 
     /**
      * Sets entity type.
@@ -56,18 +66,6 @@ public enum ConsolidationEntityType {
     public void setEntityType(Resource sourceResource, Resource targetResource, TranslationContext context) {
         targetEntityType = getEntityType(targetResource, context);
         sourceEntityType = getEntityType(sourceResource, context);
-    }
-
-    private static final Set<ConsolidationEntityType> consolidationEntityTypes = initConsolidationEntities();
-
-    private static Set<ConsolidationEntityType> initConsolidationEntities() {
-        return Collections.unmodifiableSet(EnumSet.allOf(ConsolidationEntityType.class).stream().filter(
-                consolidationEntityType -> consolidationEntityType != ConsolidationEntityType.OTHER
-                && consolidationEntityType != ConsolidationEntityType.VOLUME).collect(Collectors.toSet()));
-    }
-
-    public static Set<ConsolidationEntityType> getSupportedConsolidationEntities() {
-        return consolidationEntityTypes;
     }
 
     private ConsolidationEntityType getEntityType(Resource resource, TranslationContext context) {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
 import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -44,16 +42,14 @@ import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslatio
 public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
 
     private static List<Object> translateGetAttributeFunctionExpression(FunctionTranslator functionTranslator) {
-
         List<Object> attributeParamList = (List) functionTranslator.getFunctionValue();
         List<Object> toscaAttributeParamList = new ArrayList<>();
-
         Optional<String> targetResourceTranslatedId = Optional.empty();
         String targetResourceId = null;
         if (attributeParamList.get(0) instanceof String) {
             targetResourceId = (String) attributeParamList.get(0);
             targetResourceTranslatedId = handleResourceName(targetResourceId, functionTranslator.getHeatFileName(),
-                    functionTranslator.getHeatOrchestrationTemplate(), functionTranslator.getContext());
+                functionTranslator.getHeatOrchestrationTemplate(), functionTranslator.getContext());
         }
         if (!targetResourceTranslatedId.isPresent()) {
             //unsupported resource
@@ -65,98 +61,80 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         if (!toscaAttList.isPresent()) {
             //Unsupported attribute
             toscaAttributeParamList.clear();
-            toscaAttributeParamList.add(functionTranslator.getUnsupportedAttributePrefix()
-                    + attributeParamList.get(0) + "." + attributeParamList.get(1));
+            toscaAttributeParamList
+                .add(functionTranslator.getUnsupportedAttributePrefix() + attributeParamList.get(0) + "." + attributeParamList.get(1));
             return toscaAttributeParamList;
         }
         toscaAttributeParamList.addAll(toscaAttList.get());
-        handleGetAttrConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId.get(),
-                toscaAttList.get());
-
-        String resourceType = HeatToToscaUtil.getResourceType((String) attributeParamList.get(0), functionTranslator
-                .getHeatOrchestrationTemplate(), functionTranslator.getHeatFileName());
-        Optional<List<Object>> toscaIndexOrKey = handleAttributeIndexOrKey(functionTranslator, resourceType,
-                attributeParamList);
+        handleGetAttrConsolidationData(functionTranslator, targetResourceId, targetResourceTranslatedId.get(), toscaAttList.get());
+        String resourceType = HeatToToscaUtil.getResourceType((String) attributeParamList.get(0), functionTranslator.getHeatOrchestrationTemplate(),
+            functionTranslator.getHeatFileName());
+        Optional<List<Object>> toscaIndexOrKey = handleAttributeIndexOrKey(functionTranslator, resourceType, attributeParamList);
         toscaIndexOrKey.ifPresent(toscaAttributeParamList::addAll);
         return toscaAttributeParamList;
     }
 
-    private static void handleGetAttrConsolidationData(FunctionTranslator functionTranslator,
-                                                       String targetResourceId,
-                                                       String targetResourceTranslatedId,
-                                                       List<Object> toscaAttList) {
+    private static void handleGetAttrConsolidationData(FunctionTranslator functionTranslator, String targetResourceId,
+                                                       String targetResourceTranslatedId, List<Object> toscaAttList) {
         Optional<String> resourceTranslatedId;
         String resourceId = functionTranslator.getResourceId();
         String resourceTranslatedIdValue = null;
         if (resourceId != null) {
             resourceTranslatedId = handleResourceName(resourceId, functionTranslator.getHeatFileName(),
-                    functionTranslator.getHeatOrchestrationTemplate(), functionTranslator.getContext());
+                functionTranslator.getHeatOrchestrationTemplate(), functionTranslator.getContext());
             if (resourceTranslatedId.isPresent()) {
                 resourceTranslatedIdValue = resourceTranslatedId.get();
-                handleGetAttrOutConsolidationData(functionTranslator, targetResourceTranslatedId,
-                        resourceTranslatedIdValue, toscaAttList);
+                handleGetAttrOutConsolidationData(functionTranslator, targetResourceTranslatedId, resourceTranslatedIdValue, toscaAttList);
             }
         }
-        handleGetAttrInConsolidationData(functionTranslator, resourceTranslatedIdValue,
-                targetResourceId, targetResourceTranslatedId, toscaAttList);
+        handleGetAttrInConsolidationData(functionTranslator, resourceTranslatedIdValue, targetResourceId, targetResourceTranslatedId, toscaAttList);
     }
 
-    private static void handleGetAttrOutConsolidationData(FunctionTranslator functionTranslator,
-                                                          String targetTranslatedResourceId,
-                                                          String resourceTranslatedId,
-                                                          List<Object> toscaAttList) {
+    private static void handleGetAttrOutConsolidationData(FunctionTranslator functionTranslator, String targetTranslatedResourceId,
+                                                          String resourceTranslatedId, List<Object> toscaAttList) {
         if (functionTranslator.getServiceTemplate() == null) {
             return;
         }
-
         String attName = (String) toscaAttList.get(0);
-        ConsolidationDataUtil.updateNodeGetAttributeOut(functionTranslator, targetTranslatedResourceId,
-                resourceTranslatedId, attName);
-
+        ConsolidationDataUtil.updateNodeGetAttributeOut(functionTranslator, targetTranslatedResourceId, resourceTranslatedId, attName);
     }
 
-    private static void handleGetAttrInConsolidationData(FunctionTranslator functionTranslator,
-                                                         String resourceTranslatedId,
-                                                         String targetResourceId,
-                                                         String targetResourceTranslatedId,
-                                                         List<Object> toscaAttList) {
+    private static void handleGetAttrInConsolidationData(FunctionTranslator functionTranslator, String resourceTranslatedId, String targetResourceId,
+                                                         String targetResourceTranslatedId, List<Object> toscaAttList) {
         if (functionTranslator.getServiceTemplate() == null) {
             return;
         }
         String attName = (String) toscaAttList.get(0);
         if (Objects.nonNull(resourceTranslatedId)) {
-            ConsolidationDataUtil.updateNodeGetAttributeIn(functionTranslator, resourceTranslatedId,
-                    targetResourceId, targetResourceTranslatedId, attName);
+            ConsolidationDataUtil
+                .updateNodeGetAttributeIn(functionTranslator, resourceTranslatedId, targetResourceId, targetResourceTranslatedId, attName);
         } else {
-            ConsolidationDataUtil.updateOutputParamGetAttrIn(functionTranslator, targetResourceId,
-                    targetResourceTranslatedId, functionTranslator.getPropertyName(), attName);
+            ConsolidationDataUtil
+                .updateOutputParamGetAttrIn(functionTranslator, targetResourceId, targetResourceTranslatedId, functionTranslator.getPropertyName(),
+                    attName);
         }
     }
 
-    private static Optional<List<Object>> handleAttributeIndexOrKey(FunctionTranslator functionTranslator,
-                                                                    String resourceType,
+    private static Optional<List<Object>> handleAttributeIndexOrKey(FunctionTranslator functionTranslator, String resourceType,
                                                                     List<Object> attributeParamList) {
-
         List<Object> attributeIndexOrKey = new ArrayList<>();
         if (attributeParamList.size() < 3) {
             return Optional.empty();
         }
-
         for (int i = 2; i < attributeParamList.size(); i++) {
             if (isInteger(attributeParamList.get(i))) {
                 attributeIndexOrKey.add(attributeParamList.get(i));
             } else if (attributeParamList.get(i) instanceof Map) {
                 attributeIndexOrKey.add(getToscaAttributeValue(functionTranslator, attributeParamList.get(i)));
             } else {
-                Object toscaAttributeName = resourceType == null ? null : functionTranslator.getContext()
-                        .getElementMapping(resourceType, Constants.ATTR, getAttributeFullPath(attributeParamList, i));
+                Object toscaAttributeName = resourceType == null ? null
+                    : functionTranslator.getContext().getElementMapping(resourceType, Constants.ATTR, getAttributeFullPath(attributeParamList, i));
                 if (toscaAttributeName == null) {
                     toscaAttributeName = attributeParamList.get(i);
                 }
                 attributeIndexOrKey.add(toscaAttributeName);
             }
         }
-
         return Optional.of(attributeIndexOrKey);
     }
 
@@ -183,18 +161,15 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         return StringUtils.isNumeric(String.valueOf(inputNumber));
     }
 
-    private static Optional<String> handleResourceName(String resourceId, String heatFileName,
-                                                       HeatOrchestrationTemplate heatOrchestrationTemplate,
+    private static Optional<String> handleResourceName(String resourceId, String heatFileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                        TranslationContext context) {
-        return ResourceTranslationBase
-                .getResourceTranslatedId(heatFileName, heatOrchestrationTemplate, resourceId, context);
+        return ResourceTranslationBase.getResourceTranslatedId(heatFileName, heatOrchestrationTemplate, resourceId, context);
     }
 
-    private static Optional<List<Object>> handleAttributeName(List<Object> attributeParamList,
-                                                              FunctionTranslator functionTranslator) {
+    private static Optional<List<Object>> handleAttributeName(List<Object> attributeParamList, FunctionTranslator functionTranslator) {
         String resourceId = (String) attributeParamList.get(0);
-        Resource resource = HeatToToscaUtil.getResource(functionTranslator.getHeatOrchestrationTemplate(),
-                resourceId, functionTranslator.getHeatFileName());
+        Resource resource = HeatToToscaUtil
+            .getResource(functionTranslator.getHeatOrchestrationTemplate(), resourceId, functionTranslator.getHeatFileName());
         if (attributeParamList.size() == 1) {
             return getResourceTranslatedAttributesList(resource, functionTranslator.getContext());
         }
@@ -204,8 +179,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         if (HeatToToscaUtil.isNestedResource(resource)) {
             return getNestedResourceTranslatedAttribute((String) attributeParamList.get(1));
         } else {
-            return getResourceTranslatedAttribute(resource, (String) attributeParamList.get(1), functionTranslator
-                    .getContext());
+            return getResourceTranslatedAttribute(resource, (String) attributeParamList.get(1), functionTranslator.getContext());
         }
     }
 
@@ -227,8 +201,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         return Optional.of(translatedAttributesList);
     }
 
-    private static Optional<List<Object>> getResourceTranslatedAttributesList(Resource resource,
-                                                                              TranslationContext context) {
+    private static Optional<List<Object>> getResourceTranslatedAttributesList(Resource resource, TranslationContext context) {
         List<Object> translatedAttributes = new ArrayList<>();
         if (HeatToToscaUtil.isNestedResource(resource)) {
             Optional<String> nestedFile = HeatToToscaUtil.getNestedFile(resource);
@@ -236,13 +209,11 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
                 return Optional.empty();
             }
             HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
-                    .yamlToObject(context.getFiles().getFileContentAsStream(nestedFile.get()), HeatOrchestrationTemplate.class);
+                .yamlToObject(context.getFiles().getFileContentAsStream(nestedFile.get()), HeatOrchestrationTemplate.class);
             translatedAttributes.addAll(nestedHeatOrchestrationTemplate.getOutputs().keySet());
             return Optional.of(translatedAttributes);
-
         } else {
-            Map<String, String> resourceMappingAttributes =
-                    context.getElementMapping(resource.getType(), Constants.ATTR);
+            Map<String, String> resourceMappingAttributes = context.getElementMapping(resource.getType(), Constants.ATTR);
             if (resourceMappingAttributes == null) {
                 return Optional.empty();
             }
@@ -252,9 +223,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         }
     }
 
-    private static Optional<List<Object>> getResourceTranslatedAttribute(Resource resource,
-                                                                         String attributeName,
-                                                                         TranslationContext context) {
+    private static Optional<List<Object>> getResourceTranslatedAttribute(Resource resource, String attributeName, TranslationContext context) {
         List<Object> translatedAttributesList = new ArrayList<>();
         String translatedAttribute = context.getElementMapping(resource.getType(), Constants.ATTR, attributeName);
         if (translatedAttribute != null) {
@@ -265,13 +234,10 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         }
     }
 
-    private static Object getToscaAttributeValue(FunctionTranslator functionTranslator,
-                                                 Object attributeVal) {
+    private static Object getToscaAttributeValue(FunctionTranslator functionTranslator, Object attributeVal) {
         if (attributeVal instanceof Map && !((Map) attributeVal).isEmpty()) {
-            Map.Entry<String, Object> functionMapEntry =
-                    (Map.Entry<String, Object>) ((Map) attributeVal).entrySet().iterator().next();
-            Optional<FunctionTranslation> functionTranslationInstance =
-                    FunctionTranslationFactory.getInstance(functionMapEntry.getKey());
+            Map.Entry<String, Object> functionMapEntry = (Map.Entry<String, Object>) ((Map) attributeVal).entrySet().iterator().next();
+            Optional<FunctionTranslation> functionTranslationInstance = FunctionTranslationFactory.getInstance(functionMapEntry.getKey());
             if (functionTranslationInstance.isPresent()) {
                 functionTranslator.setFunctionValue(functionMapEntry.getValue());
                 return functionTranslationInstance.get().translateFunction(functionTranslator);
@@ -295,8 +261,8 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
     public Object translateFunction(FunctionTranslator functionTranslator) {
         Object returnValue;
         List<Object> attributeFunctionExpression = translateGetAttributeFunctionExpression(functionTranslator);
-        if (functionTranslator.isResourceSupported(attributeFunctionExpression.get(0).toString())
-                && functionTranslator.isAttributeSupported(attributeFunctionExpression.get(0).toString())) {
+        if (functionTranslator.isResourceSupported(attributeFunctionExpression.get(0).toString()) && functionTranslator
+            .isAttributeSupported(attributeFunctionExpression.get(0).toString())) {
             Map<String, Object> getAttrValue = new HashMap<>();
             getAttrValue.put(ToscaFunctions.GET_ATTRIBUTE.getFunctionName(), attributeFunctionExpression);
             returnValue = getAttrValue;

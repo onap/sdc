@@ -4,16 +4,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.logback;
 
 import ch.qos.logback.classic.Level;
@@ -23,8 +22,7 @@ import org.openecomp.sdc.logging.slf4j.Markers;
 import org.slf4j.Marker;
 
 /**
- * Can be used with {@link ch.qos.logback.classic.sift.SiftingAppender} to route events of different types to
- * separate log files. For example,
+ * Can be used with {@link ch.qos.logback.classic.sift.SiftingAppender} to route events of different types to separate log files. For example,
  *
  * <pre>
  *     &lt;configuration&gt;
@@ -60,30 +58,25 @@ import org.slf4j.Marker;
 public class EventTypeDiscriminator extends AbstractDiscriminator<ILoggingEvent> {
 
     private static final String KEY = "eventType";
-
     private static final String AUDIT = "Audit";
     private static final String METRICS = "Metrics";
     private static final String ERROR = "Error";
     private static final String DEBUG = "Debug";
     private static final String DEFAULT = DEBUG;
-
     private static final int MIN_ERROR_LEVEL = Level.WARN_INT;
     private static final int MAX_ERROR_LEVEL = Level.ERROR_INT;
     private static final int DEFAULT_LEVEL = Level.DEBUG_INT;
 
     @Override
     public String getDiscriminatingValue(ILoggingEvent event) {
-
         Level level = event.getLevel();
         final int levelInt = level == null ? DEFAULT_LEVEL : level.toInt();
         if ((levelInt > MIN_ERROR_LEVEL - 1) && (levelInt < MAX_ERROR_LEVEL + 1)) {
             return ERROR;
         }
-
         if (levelInt == Level.DEBUG_INT) {
             return DEBUG;
         }
-
         /*
          * After DEBUG, ERROR, and WARNING have been filtered out,
          * only TRACE and INFO are left. TRACE is less than DEBUG
@@ -91,22 +84,17 @@ public class EventTypeDiscriminator extends AbstractDiscriminator<ILoggingEvent>
          * custom routing like AUDIT and METRICS
          */
         if (levelInt == Level.INFO_INT) {
-
             final Marker marker = event.getMarker();
             if (marker != null) {
-
-                if (marker.contains(Markers.ENTRY) ||  marker.contains(Markers.EXIT)){
+                if (marker.contains(Markers.ENTRY) || marker.contains(Markers.EXIT)) {
                     return AUDIT;
                 }
-
                 if (marker.contains(Markers.METRICS)) {
                     return METRICS;
                 }
             }
-
             return ERROR;
         }
-
         return DEFAULT;
     }
 

@@ -15,27 +15,31 @@
  */
 package org.openecomp.sdcrests.item.rest;
 
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 @Path("/v1.0/items")
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,23 +61,16 @@ public interface Items {
                   @QueryParam("permission") String permissionFilter,
                   @Parameter(description = "Filter by onboarding method", schema = @Schema(type = "string", allowableValues = {"NetworkPackage", "manual"}))
                   @QueryParam("onboardingMethod") String onboardingMethodFilter,
-                  @NotNull(message = USER_MISSING_ERROR_MSG)
-                  @HeaderParam(USER_ID_HEADER_PARAM) String user);
+                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
     @GET
     @Path("/{itemId}")
     @Operation(description = "Get details of a item")
-    Response getItem(@PathParam("itemId") String itemId,
-                     @NotNull(message = USER_MISSING_ERROR_MSG)
-                     @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    Response getItem(@PathParam("itemId") String itemId, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
     @PUT
     @Path("/{itemId}/actions")
     @Operation(description = "Acts on item version")
-    Response actOn(ItemActionRequestDto request,
-                   @PathParam("itemId") String itemId,
-                   @NotNull(message = USER_MISSING_ERROR_MSG)
-                   @HeaderParam(USER_ID_HEADER_PARAM) String user);
-
-
+    Response actOn(ItemActionRequestDto request, @PathParam("itemId") String itemId,
+                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 }

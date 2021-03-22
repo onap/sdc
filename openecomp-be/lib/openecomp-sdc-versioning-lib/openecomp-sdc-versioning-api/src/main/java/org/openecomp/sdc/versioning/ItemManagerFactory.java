@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.versioning;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
@@ -25,7 +24,7 @@ import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class ItemManagerFactory extends AbstractComponentFactory<ItemManager> {
 
-  public static ItemManagerFactory getInstance() {
-    return AbstractFactory.getInstance(ItemManagerFactory.class);
-  }
+    public static ItemManagerFactory getInstance() {
+        return AbstractFactory.getInstance(ItemManagerFactory.class);
+    }
 }

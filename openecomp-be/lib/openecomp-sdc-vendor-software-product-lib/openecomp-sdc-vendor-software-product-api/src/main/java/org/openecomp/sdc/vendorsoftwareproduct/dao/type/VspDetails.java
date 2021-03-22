@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import java.util.List;
@@ -33,7 +32,6 @@ import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 public class VspDetails implements VersionableEntity {
 
     public static final String ENTITY_TYPE = "Vendor Software Product";
-
     private String id;
     private Version version;
     private String name;
@@ -66,8 +64,8 @@ public class VspDetails implements VersionableEntity {
 
     @Override
     public String toString() {
-        return String.format(
-            "Vsp id = '%s', Version = %s', Name = %s', Category = %s', Description = %s', Vendor = %s'",
-            this.id, this.version, this.name, this.category, this.description, this.vendorName);
+        return String
+            .format("Vsp id = '%s', Version = %s', Name = %s', Category = %s', Description = %s', Vendor = %s'", this.id, this.version, this.name,
+                this.category, this.description, this.vendorName);
     }
 }

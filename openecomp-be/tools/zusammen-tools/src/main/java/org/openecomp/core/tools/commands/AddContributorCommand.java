@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.tools.commands;
 
 import java.io.IOException;
@@ -51,24 +50,46 @@ public class AddContributorCommand extends Command {
     private static final String COMMAND_ADD_CONTRIBUTOR_FAILED = "Command AddContributor execution failed.";
 
     AddContributorCommand() {
-        options.addOption(Option.builder(ITEMS_PATH_OPTION).hasArg().argName("file")
-                                .desc("file containing list of item ids, mandatory").build());
-        options.addOption(Option.builder(UUSERS_PATH_OPTION).hasArg().argName("file")
-                                .desc("file containing list of users, mandatory").build());
+        options.addOption(Option.builder(ITEMS_PATH_OPTION).hasArg().argName("file").desc("file containing list of item ids, mandatory").build());
+        options.addOption(Option.builder(UUSERS_PATH_OPTION).hasArg().argName("file").desc("file containing list of users, mandatory").build());
+    }
+
+    private static List<String> getItemList(String itemListPath) throws IOException {
+        List<String> itemList;
+        if (itemListPath != null) {
+            itemList = load(itemListPath).collect(Collectors.toList());
+        } else {
+            itemList = new ItemHandler().getItemList();
+        }
+        return itemList;
+    }
+
+    private static void executeAllTasks(ExecutorService executor, Collection<? extends Callable<String>> tasks) throws InterruptedException {
+        List<Future<String>> futureTasks;
+        futureTasks = executor.invokeAll(tasks);
+        boolean isThreadOpen = true;
+        while (isThreadOpen) {
+            isThreadOpen = futureTasks.stream().anyMatch(future -> !future.isDone());
+        }
+    }
+
+    private static ItemAddContributorsTask createTask(String itemId, List<String> users) {
+        return new ItemAddContributorsTask(new PermissionHandler(), new NotificationHandler(), itemId, users);
+    }
+
+    private static Stream<String> load(String filePath) throws IOException {
+        return Files.lines(Paths.get(filePath));
     }
 
     @Override
     public boolean execute(String[] args) {
         CommandLine cmd = parseArgs(args);
-
         if (!cmd.hasOption(ITEMS_PATH_OPTION) || !cmd.hasOption(UUSERS_PATH_OPTION)) {
             LOGGER.error("Arguments p and u are mandatory");
             return false;
         }
-
         String itemListPath = cmd.getOptionValue(ITEMS_PATH_OPTION);
         String userListPath = cmd.getOptionValue(UUSERS_PATH_OPTION);
-
         List<String> itemList;
         try {
             itemList = getItemList(itemListPath);
@@ -81,12 +102,8 @@ public class AddContributorCommand extends Command {
         } catch (IOException e) {
             throw new CommandExecutionRuntimeException(ERROR_TRYING_TO_READ_FILE + "from:" + userListPath, e);
         }
-
-        List<ItemAddContributorsTask> tasks =
-                itemList.stream().map(itemid -> createTask(itemid, userList)).collect(Collectors.toList());
-
+        List<ItemAddContributorsTask> tasks = itemList.stream().map(itemid -> createTask(itemid, userList)).collect(Collectors.toList());
         ExecutorService executor = null;
-
         try {
             executor = Executors.newFixedThreadPool(DEFAULT_THREAD_NUMBER);
             executeAllTasks(executor, tasks);
@@ -105,38 +122,4 @@ public class AddContributorCommand extends Command {
     public CommandName getCommandName() {
         return CommandName.ADD_CONTRIBUTOR;
     }
-
-    private static List<String> getItemList(String itemListPath) throws IOException {
-        List<String> itemList;
-        if (itemListPath != null) {
-            itemList = load(itemListPath).collect(Collectors.toList());
-        } else {
-            itemList = new ItemHandler().getItemList();
-        }
-
-        return itemList;
-    }
-
-    private static void executeAllTasks(ExecutorService executor, Collection<? extends Callable<String>> tasks)
-            throws InterruptedException {
-        List<Future<String>> futureTasks;
-        futureTasks = executor.invokeAll(tasks);
-        boolean isThreadOpen = true;
-        while (isThreadOpen) {
-            isThreadOpen = futureTasks.stream().anyMatch(future -> !future.isDone());
-
-        }
-    }
-
-
-    private static ItemAddContributorsTask createTask(String itemId, List<String> users) {
-        return new ItemAddContributorsTask(new PermissionHandler(), new NotificationHandler(), itemId, users);
-    }
-
-    private static Stream<String> load(String filePath) throws IOException {
-        return Files.lines(Paths.get(filePath));
-
-    }
-
-
 }

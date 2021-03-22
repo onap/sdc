@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.conflict.rest.services;
 
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.conflicts.types.Conflict;
 import org.openecomp.conflicts.types.ConflictResolution;
 import org.openecomp.conflicts.types.ItemVersionConflict;
@@ -36,47 +37,34 @@ import org.openecomp.sdcrests.conflict.types.ItemVersionConflictDto;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-
 @Named
 @Service("conflicts")
 @Scope(value = "prototype")
 public class ConflictsImpl implements Conflicts {
 
-  @Override
-  public Response getConflict(String itemId, String versionId, String user) {
+    @Override
+    public Response getConflict(String itemId, String versionId, String user) {
+        ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
+        ItemVersionConflict itemVersionConflict = conflictsManager.getConflict(itemId, new Version(versionId));
+        ItemVersionConflictDto result = (new MapItemVersionConflictToDto()).applyMapping(itemVersionConflict, ItemVersionConflictDto.class);
+        return Response.ok(result).build();
+    }
 
-    ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
-    ItemVersionConflict itemVersionConflict = conflictsManager.getConflict
-        (itemId, new Version(versionId));
-    ItemVersionConflictDto result = (new MapItemVersionConflictToDto()).applyMapping
-        (itemVersionConflict, ItemVersionConflictDto.class);
-    return Response.ok(result).build();
-  }
+    @Override
+    public Response getConflict(String itemId, String versionId, String conflictId, String user) {
+        ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
+        Conflict conflict = conflictsManager.getConflict(itemId, new Version(versionId), conflictId);
+        ConflictDto result = new MapConflictToDto().applyMapping(conflict, ConflictDto.class);
+        return Response.ok(result).build();
+    }
 
-  @Override
-  public Response getConflict(String itemId, String versionId, String conflictId, String user) {
-    ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
-    Conflict conflict = conflictsManager.getConflict(itemId, new Version(versionId), conflictId);
-
-    ConflictDto result = new MapConflictToDto().applyMapping(conflict, ConflictDto.class);
-
-    return Response.ok(result).build();
-
-  }
-
-  @Override
-  public Response resolveConflict(ConflictResolutionDto conflictResolution, String itemId,
-                                  String versionId, String conflictId, String user) {
-    ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
-
-    Version version = new Version(versionId);
-    conflictsManager.resolveConflict(itemId, version, conflictId,
-        new MapDtoToConflictResolution()
-            .applyMapping(conflictResolution, ConflictResolution.class));
-    conflictsManager.finalizeMerge(itemId, version);
-
-    return Response.ok().build();
-  }
+    @Override
+    public Response resolveConflict(ConflictResolutionDto conflictResolution, String itemId, String versionId, String conflictId, String user) {
+        ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
+        Version version = new Version(versionId);
+        conflictsManager.resolveConflict(itemId, version, conflictId,
+            new MapDtoToConflictResolution().applyMapping(conflictResolution, ConflictResolution.class));
+        conflictsManager.finalizeMerge(itemId, version);
+        return Response.ok().build();
+    }
 }

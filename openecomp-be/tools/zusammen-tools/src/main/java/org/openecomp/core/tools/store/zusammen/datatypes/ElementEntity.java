@@ -1,25 +1,23 @@
 /*
-* Copyright © 2016-2018 European Support Limited
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
+ * Copyright © 2016-2018 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-
 import java.nio.ByteBuffer;
 import java.util.Set;
 
@@ -40,49 +38,35 @@ import java.util.Set;
  * PRIMARY KEY ((space, item_id, version_id, element_id))
  * )
  */
-@Table(
-        keyspace = "zusammen_dox",
-        name = "element"
-)
+@Table(keyspace = "zusammen_dox", name = "element")
 public class ElementEntity {
-    @Column( name = "space" )
+
+    @Column(name = "space")
     @PartitionKey(0)
     private String space;
-
-    @Column(   name = "item_id" )
+    @Column(name = "item_id")
     @PartitionKey(1)
     private String itemId;
-
-    @Column(  name = "version_id" )
+    @Column(name = "version_id")
     @PartitionKey(2)
     private String versionId;
-
     @Column(name = "element_id")
     @PartitionKey(3)
     private String elementId;
-
     @Column(name = "data")
     private ByteBuffer data;
-
     @Column(name = "info")
     private String info;
-
     @Column(name = "namespace")
     private String namespace;
-
     @Column(name = "parent_id")
     private String parentId;
-
     @Column(name = "relations")
     private String relations;
-
     @Column(name = "searchable_data")
     private ByteBuffer searchableData;
-
     @Column(name = "sub_element_ids")
     private Set<String> subElementIds;
-
-
     @Column(name = "visualization")
     private ByteBuffer visualization;
 

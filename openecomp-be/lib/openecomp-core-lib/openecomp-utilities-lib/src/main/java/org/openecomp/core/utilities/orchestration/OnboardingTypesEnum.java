@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.utilities.orchestration;
 
 import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
+
 public enum OnboardingTypesEnum {
     CSAR("csar"), ZIP("zip"), MANUAL("manual"), NONE("none"), SIGNED_CSAR("signed-csar");
     private final String type;
@@ -26,19 +26,16 @@ public enum OnboardingTypesEnum {
         this.type = type;
     }
 
-    @Override
-    public String toString() {
-        return type;
-    }
-
     public static OnboardingTypesEnum getOnboardingTypesEnum(final String type) {
         if (StringUtils.isEmpty(type)) {
             return null;
         }
-
-        return Arrays.stream(OnboardingTypesEnum.values())
-            .filter(onboardingTypesEnum -> onboardingTypesEnum.toString().equalsIgnoreCase(type))
+        return Arrays.stream(OnboardingTypesEnum.values()).filter(onboardingTypesEnum -> onboardingTypesEnum.toString().equalsIgnoreCase(type))
             .findAny().orElse(null);
     }
 
+    @Override
+    public String toString() {
+        return type;
+    }
 }

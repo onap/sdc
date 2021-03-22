@@ -17,23 +17,22 @@
 package org.openecomp.core.externaltesting.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class VtpTestExecutionRequest {
 
-  private String scenario;
-  private String testSuiteName;
-  private String testCaseName;
+    private String scenario;
+    private String testSuiteName;
+    private String testCaseName;
 
-  @JsonInclude(value = JsonInclude.Include.NON_NULL)
-  private String profile;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private String profile;
 
-  @JsonInclude(value = JsonInclude.Include.NON_NULL)
-  private Map<String,String> parameters;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Map<String, String> parameters;
 
-  @JsonInclude(value = JsonInclude.Include.NON_NULL)
-  private String endpoint;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private String endpoint;
 }

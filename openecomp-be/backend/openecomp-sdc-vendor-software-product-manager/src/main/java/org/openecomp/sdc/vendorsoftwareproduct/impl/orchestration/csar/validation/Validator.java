@@ -17,22 +17,19 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 /**
  * Validates the contents of the CSAR package uploaded in SDC.
  */
-
 public interface Validator {
 
     /**
-     *
      * @param contentHandler contains file and its data
      * @return errors Map of errors that occur
      */

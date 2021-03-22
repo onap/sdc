@@ -17,49 +17,43 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.errors;
 
-
+import javax.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.ws.rs.core.Response;
-
 /**
- * This class represents an error object to be returned in failed REST instead of just returning one
- * of HTTP fail statuses.
+ * This class represents an error object to be returned in failed REST instead of just returning one of HTTP fail statuses.
  */
 @Getter
 @Setter
 @NoArgsConstructor
 public class ErrorCodeAndMessage {
 
-  /**
-   * the HTTP status code.
-   */
-  private Response.Status status;
+    /**
+     * the HTTP status code.
+     */
+    private Response.Status status;
+    /**
+     * Error code no. if available.
+     */
+    private String errorCode;
+    /**
+     * the error message to be displayed.
+     */
+    private String message;
 
-  /**
-   * Error code no. if available.
-   */
-  private String errorCode;
-
-  /**
-   * the error message to be displayed.
-   */
-  private String message;
-
-  /**
-   * Instantiates a new Error code and message.
-   *
-   * @param status    the status
-   * @param errorCode the error code
-   */
-  public ErrorCodeAndMessage(Response.Status status, ErrorCode errorCode) {
-    this.status = status;
-    this.message = errorCode.message();
-    this.errorCode = errorCode.id();
-  }
+    /**
+     * Instantiates a new Error code and message.
+     *
+     * @param status    the status
+     * @param errorCode the error code
+     */
+    public ErrorCodeAndMessage(Response.Status status, ErrorCode errorCode) {
+        this.status = status;
+        this.message = errorCode.message();
+        this.errorCode = errorCode.id();
+    }
 }

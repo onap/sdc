@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet.jaxrs;
 
 import static javax.ws.rs.core.Response.Status.Family.REDIRECTION;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.*;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.ERROR;
 import static org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter.LOGGING_TRACKER_KEY;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -26,7 +26,6 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
 import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -35,8 +34,7 @@ import org.openecomp.sdc.logging.servlet.Tracker;
 
 /**
  * <p>Takes care of logging when an HTTP request leaves the application. This includes writing to audit and clearing
- * logging context. This filter <b>only works properly in tandem</b> with {@link LoggingRequestFilter} or a similar
- * implementation.</p>
+ * logging context. This filter <b>only works properly in tandem</b> with {@link LoggingRequestFilter} or a similar implementation.</p>
  * <p>Sample configuration for a Spring environment:</p>
  * <pre>
  *     &lt;jaxrs:providers&gt;
@@ -57,14 +55,11 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-
         Tracker tracker = (Tracker) requestContext.getProperty(LOGGING_TRACKER_KEY);
-
         if (tracker == null) {
             LOGGER.debug("No logging tracker received");
             return;
         }
-
         tracker.postRequest(new ContainerResponseResult(responseContext.getStatusInfo()));
     }
 
@@ -93,4 +88,3 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
         }
     }
 }
-

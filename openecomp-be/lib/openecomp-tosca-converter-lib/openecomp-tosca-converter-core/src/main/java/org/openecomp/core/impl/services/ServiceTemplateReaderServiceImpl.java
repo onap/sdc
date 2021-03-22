@@ -17,15 +17,14 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.impl.services;
 
-import static org.openecomp.core.converter.datatypes.Constants.POLICIES;
 import static org.openecomp.core.converter.datatypes.Constants.INPUTS;
 import static org.openecomp.core.converter.datatypes.Constants.METADATA;
 import static org.openecomp.core.converter.datatypes.Constants.NODE_TEMPLATES;
 import static org.openecomp.core.converter.datatypes.Constants.NODE_TYPES;
 import static org.openecomp.core.converter.datatypes.Constants.OUTPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.POLICIES;
 import static org.openecomp.core.converter.datatypes.Constants.SUBSTITUTION_MAPPINGS;
 import static org.openecomp.core.converter.datatypes.Constants.TOPOLOGY_TEMPLATE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DATA_TYPES;
@@ -63,8 +62,7 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
     @Override
     public List<Object> getPolicies() {
         List<Object> policiesList = new ArrayList<>();
-        if (Objects.nonNull(this.getTopologyTemplate()) && Objects.nonNull(
-                ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES))) {
+        if (Objects.nonNull(this.getTopologyTemplate()) && Objects.nonNull(((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES))) {
             policiesList = (List<Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES);
         }
         return policiesList;
@@ -112,8 +110,7 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
     @Override
     public Map<String, Object> getSubstitutionMappings() {
         return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate())
-                .get(SUBSTITUTION_MAPPINGS);
+            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(SUBSTITUTION_MAPPINGS);
     }
 
     @Override

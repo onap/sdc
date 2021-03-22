@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-
 import java.util.Date;
 
 /**
@@ -52,35 +50,26 @@ import java.util.Date;
  * AND read_repair_chance = 0.0
  * AND speculative_retry = '99.0PERCENTILE';
  */
-@Table(
-        keyspace = "zusammen_dox",
-        name = "version"
-)
+@Table(keyspace = "zusammen_dox", name = "version")
 public class VersionEntity {
+
     @Column(name = "space")
     @PartitionKey(0)
     private String space;
-
     @Column(name = "item_id")
     @PartitionKey(1)
     private String itemId;
-
     @Column(name = "version_id")
     @PartitionKey(2)
     private String versionId;
-
     @Column(name = "base_version_id")
     private String baseVersionId;
-
     @Column(name = "creation_time")
     private Date creationTime;
-
     @Column(name = "info")
     private String info;
-
     @Column(name = "modification_time")
     private Date modificationTime;
-
     @Column(name = "relations")
     private String relations;
 

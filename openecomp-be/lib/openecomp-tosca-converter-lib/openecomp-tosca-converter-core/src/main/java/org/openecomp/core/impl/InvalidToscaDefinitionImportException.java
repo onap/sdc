@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.impl;
 
 import java.util.List;
@@ -33,15 +32,15 @@ public class InvalidToscaDefinitionImportException extends RuntimeException {
 
     /**
      * Builds the exception message based on the provided validation error list.
-     * @param validationErrorList   The error list
+     *
+     * @param validationErrorList The error list
      */
     public InvalidToscaDefinitionImportException(final List<ErrorMessage> validationErrorList) {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("The provided package is invalid as it contains descriptors import errors:\n");
         if (CollectionUtils.isNotEmpty(validationErrorList)) {
             final StringJoiner joiner = new StringJoiner(";\n");
-            validationErrorList.forEach(
-                errorMessage -> joiner.add(String.format("%s: %s", errorMessage.getLevel(), errorMessage.getMessage())));
+            validationErrorList.forEach(errorMessage -> joiner.add(String.format("%s: %s", errorMessage.getLevel(), errorMessage.getMessage())));
             message = stringBuilder.append(joiner.toString()).toString();
         } else {
             message = stringBuilder.toString();

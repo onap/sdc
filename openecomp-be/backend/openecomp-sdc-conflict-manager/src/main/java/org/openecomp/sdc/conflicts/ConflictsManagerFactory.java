@@ -22,8 +22,8 @@ package org.openecomp.sdc.conflicts;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
-
 public abstract class ConflictsManagerFactory extends AbstractComponentFactory<ConflictsManager> {
+
     public static ConflictsManagerFactory getInstance() {
         return AbstractFactory.getInstance(ConflictsManagerFactory.class);
     }

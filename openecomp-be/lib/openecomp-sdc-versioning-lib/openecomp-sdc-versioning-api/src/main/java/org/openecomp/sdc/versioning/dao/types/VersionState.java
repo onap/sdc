@@ -25,6 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VersionState {
-  private SynchronizationState synchronizationState;
-  private boolean dirty;
+
+    private SynchronizationState synchronizationState;
+    private boolean dirty;
 }

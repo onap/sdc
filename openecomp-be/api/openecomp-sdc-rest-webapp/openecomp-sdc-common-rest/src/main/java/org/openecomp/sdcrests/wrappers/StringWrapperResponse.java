@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.wrappers;
 
 public class StringWrapperResponse {
-  private String value;
 
-  public StringWrapperResponse() {
-    // defualt ctor is used by reflection, for instance JSON mapping
-    super(); 
-  }
+    private String value;
 
-  public StringWrapperResponse(String value) {
-    super();
-    this.value = value;
-  }
+    public StringWrapperResponse() {
+        // defualt ctor is used by reflection, for instance JSON mapping
+        super();
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public StringWrapperResponse(String value) {
+        super();
+        this.value = value;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public String getValue() {
+        return value;
+    }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

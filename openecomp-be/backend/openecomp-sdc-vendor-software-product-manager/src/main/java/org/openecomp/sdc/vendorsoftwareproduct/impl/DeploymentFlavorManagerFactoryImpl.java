@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
-
 
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
@@ -27,16 +25,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoF
 
 public class DeploymentFlavorManagerFactoryImpl extends DeploymentFlavorManagerFactory {
 
-  private static final DeploymentFlavorManager INSTANCE = new DeploymentFlavorManagerImpl(
-      VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(),
-      DeploymentFlavorDaoFactory.getInstance().createInterface(),
-      CompositionEntityDataManagerFactory.getInstance().createInterface(),
-      ComputeDaoFactory.getInstance().createInterface(),
-      ComponentDaoFactory.getInstance().createInterface()
-  );
+    private static final DeploymentFlavorManager INSTANCE = new DeploymentFlavorManagerImpl(
+        VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(), DeploymentFlavorDaoFactory.getInstance().createInterface(),
+        CompositionEntityDataManagerFactory.getInstance().createInterface(), ComputeDaoFactory.getInstance().createInterface(),
+        ComponentDaoFactory.getInstance().createInterface());
 
-  @Override
-  public DeploymentFlavorManager createInterface() {
-    return INSTANCE;
-  }
+    @Override
+    public DeploymentFlavorManager createInterface() {
+        return INSTANCE;
+    }
 }

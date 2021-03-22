@@ -19,9 +19,20 @@
  *  * ============LICENSE_END=========================================================
  *
  */
-
 package org.openecomp.core.impl;
 
+import static org.openecomp.core.converter.datatypes.Constants.CAPABILITIES;
+import static org.openecomp.core.converter.datatypes.Constants.INPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.NODE_FILTER;
+import static org.openecomp.core.converter.datatypes.Constants.NODE_TYPE;
+import static org.openecomp.core.converter.datatypes.Constants.OUTPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.REQUIREMENTS;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
 import org.onap.sdc.tosca.datatypes.model.CapabilityAssignment;
@@ -38,19 +49,6 @@ import org.openecomp.core.converter.datatypes.Constants;
 import org.openecomp.core.converter.errors.SubstitutionMappingsConverterErrorBuilder;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import static org.openecomp.core.converter.datatypes.Constants.CAPABILITIES;
-import static org.openecomp.core.converter.datatypes.Constants.INPUTS;
-import static org.openecomp.core.converter.datatypes.Constants.NODE_FILTER;
-import static org.openecomp.core.converter.datatypes.Constants.NODE_TYPE;
-import static org.openecomp.core.converter.datatypes.Constants.OUTPUTS;
-import static org.openecomp.core.converter.datatypes.Constants.REQUIREMENTS;
 
 public class VnfTopologyTemplateConverter {
 
@@ -72,28 +70,23 @@ public class VnfTopologyTemplateConverter {
         addInputsOrOutputsToServiceTemplate(serviceTemplate, outputs, Constants.OUTPUTS);
     }
 
-    private void addInputsOrOutputsToServiceTemplate(ServiceTemplate serviceTemplate, Map<String, Object> mapToConvert,
-            String inputsOrOutputs) {
+    private void addInputsOrOutputsToServiceTemplate(ServiceTemplate serviceTemplate, Map<String, Object> mapToConvert, String inputsOrOutputs) {
         if (MapUtils.isEmpty(mapToConvert)) {
             return;
         }
-
         for (Map.Entry<String, Object> entry : mapToConvert.entrySet()) {
-            Optional<ParameterDefinition> parameterDefinition = ToscaConverterUtil.createObjectFromClass(entry.getKey(),
-                    entry.getValue(), ParameterDefinition.class);
-
+            Optional<ParameterDefinition> parameterDefinition = ToscaConverterUtil
+                .createObjectFromClass(entry.getKey(), entry.getValue(), ParameterDefinition.class);
             parameterDefinition.ifPresent(parameterDefinitionValue -> {
-                Optional<Object> defaultValue =
-                        ToscaConverterUtil.getDefaultValue(entry.getValue(), parameterDefinition.get());
+                Optional<Object> defaultValue = ToscaConverterUtil.getDefaultValue(entry.getValue(), parameterDefinition.get());
                 defaultValue.ifPresent(parameterDefinitionValue::set_default);
-                addToServiceTemplateAccordingToSection(serviceTemplate, inputsOrOutputs, entry.getKey(),
-                        parameterDefinition.get());
+                addToServiceTemplateAccordingToSection(serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition.get());
             });
         }
     }
 
-    private void addToServiceTemplateAccordingToSection(ServiceTemplate serviceTemplate, String inputsOrOutputs,
-            String parameterId, ParameterDefinition parameterDefinition) {
+    private void addToServiceTemplateAccordingToSection(ServiceTemplate serviceTemplate, String inputsOrOutputs, String parameterId,
+                                                        ParameterDefinition parameterDefinition) {
         if (inputsOrOutputs.equals(INPUTS)) {
             DataModelUtil.addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
         } else if (inputsOrOutputs.equals(OUTPUTS)) {
@@ -106,7 +99,6 @@ public class VnfTopologyTemplateConverter {
         if (MapUtils.isEmpty(nodeTemplates)) {
             return;
         }
-
         for (Map.Entry<String, Object> nodeTemplateEntry : nodeTemplates.entrySet()) {
             NodeTemplate nodeTemplate = convertNodeTemplate(nodeTemplateEntry.getValue());
             DataModelUtil.addNodeTemplate(serviceTemplate, nodeTemplateEntry.getKey(), nodeTemplate);
@@ -115,7 +107,6 @@ public class VnfTopologyTemplateConverter {
 
     private NodeTemplate convertNodeTemplate(Object candidateNodeTemplate) {
         NodeTemplate nodeTemplate = new NodeTemplate();
-
         Map<String, Object> nodeTemplateAsMap = (Map<String, Object>) candidateNodeTemplate;
         nodeTemplate.setArtifacts((Map<String, ArtifactDefinition>) nodeTemplateAsMap.get("artifacts"));
         nodeTemplate.setAttributes((Map<String, Object>) nodeTemplateAsMap.get("attributes"));
@@ -128,7 +119,6 @@ public class VnfTopologyTemplateConverter {
         nodeTemplate.setRequirements((List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
         nodeTemplate.setType((String) nodeTemplateAsMap.get("type"));
         nodeTemplate.setCapabilities(convertCapabilities((Map<String, Object>) nodeTemplateAsMap.get("capabilities")));
-
         return nodeTemplate;
     }
 
@@ -136,23 +126,17 @@ public class VnfTopologyTemplateConverter {
         if (MapUtils.isEmpty(capabilities)) {
             return null;
         }
-
         Map<String, CapabilityAssignment> convertedCapabilities = new HashMap<>();
         for (Map.Entry<String, Object> capabilityAssignmentEntry : capabilities.entrySet()) {
-            Optional<CapabilityAssignment> capabilityAssignment = ToscaConverterUtil.createObjectFromClass(
-                    capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(),
-                    CapabilityAssignment.class);
-
-            capabilityAssignment.ifPresent(capabilityAssignmentValue -> convertedCapabilities
-                                                                                .put(capabilityAssignmentEntry.getKey(),
-                                                                                        capabilityAssignmentValue));
-
+            Optional<CapabilityAssignment> capabilityAssignment = ToscaConverterUtil
+                .createObjectFromClass(capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(), CapabilityAssignment.class);
+            capabilityAssignment
+                .ifPresent(capabilityAssignmentValue -> convertedCapabilities.put(capabilityAssignmentEntry.getKey(), capabilityAssignmentValue));
         }
         return convertedCapabilities;
     }
 
-    private void convertSubstitutionMappings(ServiceTemplate serviceTemplate,
-            ServiceTemplateReaderService readerService) {
+    private void convertSubstitutionMappings(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         Map<String, Object> substitutionMappings = readerService.getSubstitutionMappings();
         if (MapUtils.isEmpty(substitutionMappings)) {
             return;
@@ -163,53 +147,41 @@ public class VnfTopologyTemplateConverter {
 
     private SubstitutionMapping convertSubstitutionMappings(Map<String, Object> substitutionMappings) {
         SubstitutionMapping substitutionMapping = new SubstitutionMapping();
-
         substitutionMapping.setNode_type((String) substitutionMappings.get(NODE_TYPE));
-        substitutionMapping.setCapabilities(
-                convertSubstitutionMappingsSections(CAPABILITIES, substitutionMappings.get(CAPABILITIES)));
-        substitutionMapping.setRequirements(
-                convertSubstitutionMappingsSections(REQUIREMENTS, substitutionMappings.get(REQUIREMENTS)));
+        substitutionMapping.setCapabilities(convertSubstitutionMappingsSections(CAPABILITIES, substitutionMappings.get(CAPABILITIES)));
+        substitutionMapping.setRequirements(convertSubstitutionMappingsSections(REQUIREMENTS, substitutionMappings.get(REQUIREMENTS)));
         substitutionMapping.setSubstitution_filter((NodeFilter) substitutionMappings.get(NODE_FILTER));
-
         return substitutionMapping;
     }
 
     private Map<String, List<String>> convertSubstitutionMappingsSections(String sectionName, Object sectionToConvert) {
-
         if (Objects.isNull(sectionToConvert)) {
             return null;
         }
-
         if (!(sectionToConvert instanceof Map)) {
-            throw new CoreException(new SubstitutionMappingsConverterErrorBuilder(sectionName,
-                    sectionToConvert.getClass().getSimpleName()).build());
+            throw new CoreException(new SubstitutionMappingsConverterErrorBuilder(sectionName, sectionToConvert.getClass().getSimpleName()).build());
         }
-
         return convertSection(sectionToConvert);
     }
 
     private Map<String, List<String>> convertSection(Object sectionToConvert) {
-
         Map<String, Object> sectionAsMap = (Map<String, Object>) sectionToConvert;
         Map<String, List<String>> convertedSection = new HashMap<>();
-
         if (MapUtils.isEmpty(sectionAsMap)) {
             return null;
         }
-
         for (Map.Entry<String, Object> entry : sectionAsMap.entrySet()) {
             if (entry.getValue() instanceof List) {
                 convertedSection.put(entry.getKey(), (List<String>) entry.getValue());
             }
         }
-
         return convertedSection;
     }
 
     private void convertPolicies(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         List<Object> policiesList = readerService.getPolicies();
-        policiesList.forEach(policiesListItem -> ((Map<String, Object>) policiesListItem).forEach((key, value) ->
-            DataModelUtil.addPolicyDefinition(serviceTemplate, key, convertPolicy(value))));
+        policiesList.forEach(policiesListItem -> ((Map<String, Object>) policiesListItem)
+            .forEach((key, value) -> DataModelUtil.addPolicyDefinition(serviceTemplate, key, convertPolicy(value))));
     }
 
     private PolicyDefinition convertPolicy(Object policyCandidate) {
@@ -221,7 +193,6 @@ public class VnfTopologyTemplateConverter {
         policyDefinition.setProperties((Map<String, Object>) policy.get("properties"));
         policyDefinition.setTargets((List<String>) policy.get("targets"));
         policyDefinition.setTriggers((Map<String, Trigger>) policy.get("triggers"));
-
         return policyDefinition;
     }
 }

@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.healing.interfaces;
 
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface Healer {
 
-  boolean isHealingNeeded(String itemId, Version version);
+    boolean isHealingNeeded(String itemId, Version version);
 
-  void heal(String itemId, Version version) throws Exception;
+    void heal(String itemId, Version version) throws Exception;
 }

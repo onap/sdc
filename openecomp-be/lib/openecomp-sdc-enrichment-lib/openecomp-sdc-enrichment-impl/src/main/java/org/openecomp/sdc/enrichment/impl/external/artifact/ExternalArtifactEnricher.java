@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -27,41 +31,30 @@ import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class ExternalArtifactEnricher extends Enricher {
-  private static final String EXTERNAL_ARTIFACT_ENRICH_CONF_FILE = "ExternalArtifactConfiguration"
-      + ".json";
-  private static Collection<String> implementingClasses =
-      getExternalArtifactEnrichedImplClassesList();
 
-  private static Collection<String> getExternalArtifactEnrichedImplClassesList() {
-    @SuppressWarnings("unchecked")
-    Map<String, String> confFileAsMap = FileUtils.readViaInputStream(EXTERNAL_ARTIFACT_ENRICH_CONF_FILE,
-        stream -> JsonUtil.json2Object(stream, Map.class));
+    private static final String EXTERNAL_ARTIFACT_ENRICH_CONF_FILE = "ExternalArtifactConfiguration" + ".json";
+    private static Collection<String> implementingClasses = getExternalArtifactEnrichedImplClassesList();
 
-    return confFileAsMap.values();
-  }
+    private static Collection<String> getExternalArtifactEnrichedImplClassesList() {
+        @SuppressWarnings("unchecked") Map<String, String> confFileAsMap = FileUtils
+            .readViaInputStream(EXTERNAL_ARTIFACT_ENRICH_CONF_FILE, stream -> JsonUtil.json2Object(stream, Map.class));
+        return confFileAsMap.values();
+    }
 
-  @Override
-  public Map<String, List<ErrorMessage>> enrich() throws Exception{
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
+    @Override
+    public Map<String, List<ErrorMessage>> enrich() throws Exception {
+        Map<String, List<ErrorMessage>> errors = new HashMap<>();
+        for (String implementingClassName : implementingClasses) {
+            ExternalArtifactEnricherInterface externalArtifactEnricherInstance = getExternalArtifactEnricherInstance(implementingClassName);
+            errors.putAll(externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model));
+        }
+        return errors;
+    }
 
-            for (String implementingClassName : implementingClasses) {
-                ExternalArtifactEnricherInterface externalArtifactEnricherInstance = getExternalArtifactEnricherInstance(implementingClassName);
-                errors.putAll(externalArtifactEnricherInstance.enrich(this.data, (ToscaServiceModel) this.model));
-            }
-    return errors;
-  }
-
-  private ExternalArtifactEnricherInterface getExternalArtifactEnricherInstance(
-      String implementingClassName) throws Exception {
-    Class<?> clazz = Class.forName(implementingClassName);
-    Constructor<?> constructor = clazz.getConstructor();
-    return (ExternalArtifactEnricherInterface) constructor.newInstance();
-  }
+    private ExternalArtifactEnricherInterface getExternalArtifactEnricherInstance(String implementingClassName) throws Exception {
+        Class<?> clazz = Class.forName(implementingClassName);
+        Constructor<?> constructor = clazz.getConstructor();
+        return (ExternalArtifactEnricherInterface) constructor.newInstance();
+    }
 }

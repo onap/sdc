@@ -17,10 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.services.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.datastax.driver.core.utils.UUIDs;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.destinationprovider.DestinationProvider;
@@ -28,13 +33,6 @@ import org.openecomp.sdc.notification.dao.NotificationsDao;
 import org.openecomp.sdc.notification.dao.types.NotificationEntity;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.services.PropagationService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
 
 public class PropagationServiceImpl implements PropagationService {
 
@@ -44,7 +42,6 @@ public class PropagationServiceImpl implements PropagationService {
         this.notificationsDao = notificationsDao;
     }
 
-
     @Override
     public void notify(Event event, DestinationProvider destinationProvider) {
         requireNonNull(event.getEventType());
@@ -53,23 +50,18 @@ public class PropagationServiceImpl implements PropagationService {
         if (CollectionUtils.isEmpty(subscribers)) {
             return;
         }
-        List<NotificationEntity> notificationEntities = subscribers.stream().map(
-            subscriber -> {
-                UUID eventId = UUIDs.timeBased();
-                return createNotificationEntity(event.getEventType(), subscriber,
-                    event.getOriginatorId(), event.getAttributes(), eventId);
-            }).collect(Collectors.toList());
-        if(CollectionUtils.isNotEmpty(notificationEntities)) {
+        List<NotificationEntity> notificationEntities = subscribers.stream().map(subscriber -> {
+            UUID eventId = UUIDs.timeBased();
+            return createNotificationEntity(event.getEventType(), subscriber, event.getOriginatorId(), event.getAttributes(), eventId);
+        }).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(notificationEntities)) {
             notificationsDao.createBatch(notificationEntities);
         }
     }
 
-    private NotificationEntity createNotificationEntity(String eventType, String subscriber,
-                                                        String originatorId,
-                                                        Map<String, Object> attributes,
+    private NotificationEntity createNotificationEntity(String eventType, String subscriber, String originatorId, Map<String, Object> attributes,
                                                         UUID eventId) {
-        NotificationEntity notificationEntity =
-            new NotificationEntity(subscriber, eventId, eventType, originatorId);
+        NotificationEntity notificationEntity = new NotificationEntity(subscriber, eventId, eventType, originatorId);
         if (attributes != null && !attributes.isEmpty()) {
             notificationEntity.setEventAttributes(JsonUtil.object2Json(attributes));
         }

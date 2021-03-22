@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes;
 
 import java.util.HashMap;
@@ -33,12 +32,7 @@ import org.onap.sdc.tosca.datatypes.model.ScalarUnitValidator;
 @AllArgsConstructor
 @Getter
 public enum DefinedHeatParameterTypes {
-    NUMBER("number"),
-    STRING("string"),
-    COMMA_DELIMITED_LIST("comma_delimited_list"),
-    JSON("json"),
-    BOOLEAN("boolean");
-
+    NUMBER("number"), STRING("string"), COMMA_DELIMITED_LIST("comma_delimited_list"), JSON("json"), BOOLEAN("boolean");
     private static ScalarUnitValidator scalarUnitValidator = ScalarUnitValidator.getInstance();
     private static Map<String, DefinedHeatParameterTypes> stringToDefinedType;
 
@@ -64,49 +58,39 @@ public enum DefinedHeatParameterTypes {
      */
     public static boolean isValueIsFromGivenType(final Object value, final String parameterType) {
         final DefinedHeatParameterTypes definedType = findByHeatResource(parameterType);
-
         if (Objects.nonNull(definedType)) {
             switch (definedType) {
                 case NUMBER:
-                    if (scalarUnitValidator.isValueScalarUnit(value, ToscaScalarUnitSize.class) ||
-                        scalarUnitValidator.isValueScalarUnit(value, ToscaScalarUnitTime.class) ||
-                        scalarUnitValidator.isValueScalarUnit(value, ToscaScalarUnitFrequency.class)) {
+                    if (scalarUnitValidator.isValueScalarUnit(value, ToscaScalarUnitSize.class) || scalarUnitValidator
+                        .isValueScalarUnit(value, ToscaScalarUnitTime.class) || scalarUnitValidator
+                        .isValueScalarUnit(value, ToscaScalarUnitFrequency.class)) {
                         return isValueString(value);
                     }
                     return NumberUtils.isNumber(String.valueOf(value));
-
                 case BOOLEAN:
                     return HeatBoolean.isValueBoolean(value);
-
                 case COMMA_DELIMITED_LIST:
                     return isValueCommaDelimitedList(value);
-
                 case JSON:
                     return isValueJson(value);
-
                 case STRING:
                     return isValueString(value);
                 default:
             }
         }
-
         return false;
     }
 
     public static boolean isNovaServerEnvValueIsFromRightType(final Object value) {
-        return isValueIsFromGivenType(value, COMMA_DELIMITED_LIST.getType())
-                || isValueIsFromGivenType(value, STRING.getType());
+        return isValueIsFromGivenType(value, COMMA_DELIMITED_LIST.getType()) || isValueIsFromGivenType(value, STRING.getType());
     }
 
     private static boolean isValueCommaDelimitedList(final Object value) {
-        return value instanceof List
-                || String.valueOf(value).contains(",")
-                || isValueIsFromGivenType(value, DefinedHeatParameterTypes.STRING.type);
+        return value instanceof List || String.valueOf(value).contains(",") || isValueIsFromGivenType(value, DefinedHeatParameterTypes.STRING.type);
     }
 
     private static boolean isValueString(final Object value) {
-        return value instanceof String
-                || ClassUtils.isPrimitiveOrWrapper(value.getClass());
+        return value instanceof String || ClassUtils.isPrimitiveOrWrapper(value.getClass());
     }
 
     private static boolean isValueJson(final Object value) {
@@ -116,5 +100,4 @@ public enum DefinedHeatParameterTypes {
     public static boolean isEmptyValueInEnv(final Object value) {
         return Objects.isNull(value);
     }
-
 }

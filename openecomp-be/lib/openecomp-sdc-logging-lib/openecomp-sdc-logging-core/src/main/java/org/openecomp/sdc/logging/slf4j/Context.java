@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.util.Map;
 
 /**
- * Does not store a state other than initial context values. Objects of this class may be reused by multiple threads,
- * therefore they must be stateless to prevent inadvertent exchange of context values between threads.
+ * Does not store a state other than initial context values. Objects of this class may be reused by multiple threads, therefore they must be stateless
+ * to prevent inadvertent exchange of context values between threads.
  *
  * @author evitaliy
  * @since 08 Jan 2018
@@ -34,8 +33,8 @@ final class Context {
     }
 
     /**
-     * Pushes the initial context onto current thread, and returns the existing context. The result cannot be stored as
-     * local state (see the class comments), and must be kept in a local variable to work properly.
+     * Pushes the initial context onto current thread, and returns the existing context. The result cannot be stored as local state (see the class
+     * comments), and must be kept in a local variable to work properly.
      *
      * @return previous context values
      */

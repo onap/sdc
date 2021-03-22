@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import java.io.InputStream;
@@ -29,44 +28,51 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 public interface Manifest {
 
     /**
-     * This Method will parse manifest, extracting fields mandatory/non-mandatory,
-     * if error occurred it's recorded and will be used for deciding if manifest is valid
+     * This Method will parse manifest, extracting fields mandatory/non-mandatory, if error occurred it's recorded and will be used for deciding if
+     * manifest is valid
+     *
      * @param is manifest file input stream
      */
     void parse(InputStream is);
 
     /**
      * Returns if manifest is valid
+     *
      * @return true/false
      */
     boolean isValid();
 
     /**
      * Metadata section of manifest
+     *
      * @return
      */
     Map<String, String> getMetadata();
 
     /**
      * Source section of manifest
+     *
      * @return
      */
     List<String> getSources();
 
     /**
      * Validation errors of manifest
+     *
      * @return
      */
     List<String> getErrors();
 
     /**
      * non mano section of manifest sol004 #4.3.7
+     *
      * @return
      */
     Map<String, List<String>> getNonManoSources();
 
     /**
      * Gets the type based on the metadata of manifest file (VF/PNF)
+     *
      * @return enum for type values
      */
     Optional<ResourceTypeEnum> getType();
@@ -75,15 +81,15 @@ public interface Manifest {
 
     /**
      * Gets the CMS manifest signature if present in manifest
-     * @return
-     *  the CMS manifest signature.
+     *
+     * @return the CMS manifest signature.
      */
     Optional<String> getCmsSignature();
 
     /**
      * Gets the Map of source path and it correspondent checksum.
-     * @return
-     *  The source and checksum map.
+     *
+     * @return The source and checksum map.
      */
     Optional<Map<String, AlgorithmDigest>> getSourceAndChecksumMap();
 }

@@ -19,20 +19,20 @@
  *  * ============LICENSE_END=========================================================
  *
  */
-
 package org.openecomp.core.impl;
 
-import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
 import static org.openecomp.core.converter.datatypes.Constants.DEFINITIONS_DIR;
 import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
 import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_SUBSTITUTION;
 import static org.openecomp.core.converter.datatypes.Constants.MAIN_ST_NAME;
+import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
 import static org.openecomp.core.converter.datatypes.Constants.OPENECOMP_HEAT_INDEX;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX_IMPORT_FILE;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.ONAP_INDEX_IMPORT_FILE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,10 +66,10 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.error.YAMLException;
 
 public abstract class AbstractToscaConverter implements ToscaConverter {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractToscaConverter.class);
 
-    public abstract void convertTopologyTemplate(@NotNull ServiceTemplate serviceTemplate,
-                                                 ServiceTemplateReaderService readerService);
+    public abstract void convertTopologyTemplate(@NotNull ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService);
 
     protected void handleMetadataFile(Map<String, byte[]> csarFiles) {
         byte[] bytes = csarFiles.remove(TOSCA_META_PATH_FILE_NAME);
@@ -78,8 +78,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         }
     }
 
-    protected void handleDefinitionTemplate(String key, Map<String, byte[]> csarFiles,
-                                            GlobalSubstitutionServiceTemplate gsst) {
+    protected void handleDefinitionTemplate(String key, Map<String, byte[]> csarFiles, GlobalSubstitutionServiceTemplate gsst) {
         try {
             ServiceTemplateReaderService readerService = new ServiceTemplateReaderServiceImpl(csarFiles.get(key));
             Object nodeTypes = readerService.getNodeTypes();
@@ -89,9 +88,9 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
             }
             gsst.appendDataTypes((Map) readerService.getDataTypes());
         } catch (YAMLException ye) {
-            throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                    .withMessage("Invalid YAML content in file " + key)
-                    .withCategory(ErrorCategory.APPLICATION).build(), ye);
+            throw new CoreException(
+                new ErrorCode.ErrorCodeBuilder().withMessage("Invalid YAML content in file " + key).withCategory(ErrorCategory.APPLICATION).build(),
+                ye);
         }
     }
 
@@ -100,52 +99,39 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         if (artifactIndex < 0) {
             return fileName;
         }
-
-        int artifactDirectoryIndex =
-                artifactIndex + CsarFileTypes.Artifacts.name().length() + 1;
+        int artifactDirectoryIndex = artifactIndex + CsarFileTypes.Artifacts.name().length() + 1;
         return fileName.substring(artifactDirectoryIndex);
     }
 
-    protected void updateToscaServiceModel(ToscaServiceModel toscaServiceModel,
-                                           Map<String, ServiceTemplate> serviceTemplates,
+    protected void updateToscaServiceModel(ToscaServiceModel toscaServiceModel, Map<String, ServiceTemplate> serviceTemplates,
                                            FileContentHandler externalFilesHandler,
-                                           GlobalSubstitutionServiceTemplate globalSubstitutionServiceTemplate,
-                                           Map<String, byte[]> csarFiles, String entryDefinitionServiceTemplateName) {
-        Collection<ServiceTemplate> globalServiceTemplates =
-                GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.CSAR).values();
+                                           GlobalSubstitutionServiceTemplate globalSubstitutionServiceTemplate, Map<String, byte[]> csarFiles,
+                                           String entryDefinitionServiceTemplateName) {
+        Collection<ServiceTemplate> globalServiceTemplates = GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.CSAR).values();
         addGlobalServiceTemplates(globalServiceTemplates, serviceTemplates);
         toscaServiceModel.setServiceTemplates(serviceTemplates);
         toscaServiceModel.setEntryDefinitionServiceTemplate(entryDefinitionServiceTemplateName);
-        externalFilesHandler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME,
-                csarFiles.get(TOSCA_META_ORIG_PATH_FILE_NAME));
+        externalFilesHandler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME, csarFiles.get(TOSCA_META_ORIG_PATH_FILE_NAME));
         toscaServiceModel.setArtifactFiles(externalFilesHandler);
-
         if (MapUtils.isNotEmpty(globalSubstitutionServiceTemplate.getNode_types())) {
-            serviceTemplates
-                    .put(GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME, globalSubstitutionServiceTemplate);
+            serviceTemplates.put(GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME, globalSubstitutionServiceTemplate);
         }
     }
 
-    private void addGlobalServiceTemplates(Collection<ServiceTemplate> globalServiceTemplates,
-                                           Map<String, ServiceTemplate> serviceTemplates) {
+    private void addGlobalServiceTemplates(Collection<ServiceTemplate> globalServiceTemplates, Map<String, ServiceTemplate> serviceTemplates) {
         for (ServiceTemplate serviceTemplate : globalServiceTemplates) {
             serviceTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplate), serviceTemplate);
         }
     }
 
-    protected void handleServiceTemplate(String serviceTemplateName,
-                                         String fileName, Map<String, byte[]> csarFiles,
+    protected void handleServiceTemplate(String serviceTemplateName, String fileName, Map<String, byte[]> csarFiles,
                                          Map<String, ServiceTemplate> serviceTemplates) {
         final byte[] inputServiceTemplate = getServiceTemplateFromCsar(fileName, csarFiles);
         Optional<ServiceTemplate> serviceTemplate = convertServiceTemplate(fileName, inputServiceTemplate);
-        serviceTemplate.ifPresent(
-                serviceTemplateValue -> addServiceTemplate(serviceTemplateName, serviceTemplateValue,
-                        serviceTemplates));
+        serviceTemplate.ifPresent(serviceTemplateValue -> addServiceTemplate(serviceTemplateName, serviceTemplateValue, serviceTemplates));
     }
 
-    private void addServiceTemplate(String serviceTemplateName,
-                                    ServiceTemplate serviceTemplate,
-                                    Map<String, ServiceTemplate> serviceTemplates) {
+    private void addServiceTemplate(String serviceTemplateName, ServiceTemplate serviceTemplate, Map<String, ServiceTemplate> serviceTemplates) {
         serviceTemplates.put(serviceTemplateName, serviceTemplate);
     }
 
@@ -153,12 +139,10 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         return csarFiles.get(fileName);
     }
 
-    private Optional<ServiceTemplate> convertServiceTemplate(String serviceTemplateName,
-                                                             byte[] fileContent) {
+    private Optional<ServiceTemplate> convertServiceTemplate(String serviceTemplateName, byte[] fileContent) {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         try {
-            ServiceTemplateReaderService readerService =
-                    new ServiceTemplateReaderServiceImpl(fileContent);
+            ServiceTemplateReaderService readerService = new ServiceTemplateReaderServiceImpl(fileContent);
             convertMetadata(serviceTemplateName, serviceTemplate, readerService);
             convertToscaVersion(serviceTemplate, readerService);
             convertImports(serviceTemplate);
@@ -166,17 +150,13 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
             convertDataTypes(serviceTemplate, readerService);
             convertTopologyTemplate(serviceTemplate, readerService);
         } catch (YAMLException ye) {
-            throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                    .withMessage("Invalid YAML content in file" + serviceTemplateName)
-                    .withCategory(ErrorCategory.APPLICATION).build(), ye);
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage("Invalid YAML content in file" + serviceTemplateName)
+                .withCategory(ErrorCategory.APPLICATION).build(), ye);
         }
-
-
         return Optional.of(serviceTemplate);
     }
 
-    private void convertToscaVersion(ServiceTemplate serviceTemplate,
-                                     ServiceTemplateReaderService readerService) {
+    private void convertToscaVersion(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         Object toscaVersion = readerService.getToscaVersion();
         serviceTemplate.setTosca_definitions_version((String) toscaVersion);
     }
@@ -194,26 +174,20 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         Import anImport = new Import();
         anImport.setFile(fileName);
         importMap.put(key, anImport);
-
         return importMap;
     }
 
-    private void convertMetadata(String serviceTemplateName,
-                                 ServiceTemplate serviceTemplate,
-                                 ServiceTemplateReaderService readerService) {
+    private void convertMetadata(String serviceTemplateName, ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         Map<String, Object> metadataToConvert = (Map<String, Object>) readerService.getMetadata();
         Map<String, String> finalMetadata = new HashMap<>();
-
         if (MapUtils.isNotEmpty(metadataToConvert)) {
             for (Map.Entry<String, Object> metadataEntry : metadataToConvert.entrySet()) {
-                if (Objects.isNull(metadataEntry.getValue()) ||
-                        !(metadataEntry.getValue() instanceof String)) {
+                if (Objects.isNull(metadataEntry.getValue()) || !(metadataEntry.getValue() instanceof String)) {
                     continue;
                 }
                 finalMetadata.put(metadataEntry.getKey(), (String) metadataEntry.getValue());
             }
         }
-
         finalMetadata.put("template_name", getTemplateNameFromStName(serviceTemplateName));
         serviceTemplate.setMetadata(finalMetadata);
     }
@@ -223,27 +197,18 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         if (MapUtils.isEmpty(nodeTypes)) {
             return;
         }
-
         for (Map.Entry<String, Object> nodeTypeEntry : nodeTypes.entrySet()) {
-            Optional<NodeType> nodeType = ToscaConverterUtil
-                    .createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
-                            NodeType.class);
-
-            nodeType.ifPresent(nodeTypeValue -> DataModelUtil
-                    .addNodeType(serviceTemplate, nodeTypeEntry.getKey(), nodeTypeValue));
+            Optional<NodeType> nodeType = ToscaConverterUtil.createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(), NodeType.class);
+            nodeType.ifPresent(nodeTypeValue -> DataModelUtil.addNodeType(serviceTemplate, nodeTypeEntry.getKey(), nodeTypeValue));
         }
     }
 
-    protected void convertDataTypes(final ServiceTemplate serviceTemplate,
-                                    final ServiceTemplateReaderService readerService) {
+    protected void convertDataTypes(final ServiceTemplate serviceTemplate, final ServiceTemplateReaderService readerService) {
         try {
             final Map<String, Object> dataTypes = readerService.getDataTypes();
             for (final Map.Entry<String, Object> entry : dataTypes.entrySet()) {
-                final Optional<DataType> dataType =
-                        ToscaConverterUtil.createObjectFromClass(entry.getKey(), entry.getValue(), DataType.class);
-
-                dataType.ifPresent(
-                        nodeTypeValue -> DataModelUtil.addDataType(serviceTemplate, entry.getKey(), nodeTypeValue));
+                final Optional<DataType> dataType = ToscaConverterUtil.createObjectFromClass(entry.getKey(), entry.getValue(), DataType.class);
+                dataType.ifPresent(nodeTypeValue -> DataModelUtil.addDataType(serviceTemplate, entry.getKey(), nodeTypeValue));
             }
         } catch (final Exception ex) {
             LOGGER.error("Unable to process data types: ", ex);

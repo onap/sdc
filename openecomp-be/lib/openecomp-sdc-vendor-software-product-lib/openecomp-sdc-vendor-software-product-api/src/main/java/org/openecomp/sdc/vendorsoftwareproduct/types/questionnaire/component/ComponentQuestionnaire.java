@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component;
-
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,5 +38,4 @@ public class ComponentQuestionnaire {
     private HighAvailabilityAndLoadBalancing highAvailabilityAndLoadBalancing;
     private Network network;
     private Storage storage;
-
 }

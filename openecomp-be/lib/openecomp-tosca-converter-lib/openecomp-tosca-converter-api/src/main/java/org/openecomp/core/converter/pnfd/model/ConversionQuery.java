@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import java.util.Map;
@@ -25,8 +24,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
- * Stores a YAML query. The query is a YAML Object that should have the same structure or part of the original YAML that
- * is desired to find in a TOSCA Yaml block.
+ * Stores a YAML query. The query is a YAML Object that should have the same structure or part of the original YAML that is desired to find in a TOSCA
+ * Yaml block.
  */
 @Getter
 @EqualsAndHashCode

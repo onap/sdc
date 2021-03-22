@@ -17,12 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.structure;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,11 +34,9 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 public class Artifact implements Comparable<Artifact> {
 
     private String fileName;
-
     @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Exclude
     private FileData.Type type;
-
     @EqualsAndHashCode.Exclude
     private List<ErrorMessage> errors;
 
@@ -58,7 +54,6 @@ public class Artifact implements Comparable<Artifact> {
         if (this.errors == null || this.errors.isEmpty()) {
             this.errors = new ArrayList<>();
         }
-
         this.errors.add(error);
     }
 

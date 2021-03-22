@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.vsp.rest.mapping;
-
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorDto;
 
-public class MapDeploymentFlavorEntityToDeploymentFlavorDto  extends
-    MappingBase<DeploymentFlavorEntity, DeploymentFlavorDto> {
-  @Override
-  public void doMapping(DeploymentFlavorEntity source, DeploymentFlavorDto target) {
-    target.setId(source.getId());
+public class MapDeploymentFlavorEntityToDeploymentFlavorDto extends MappingBase<DeploymentFlavorEntity, DeploymentFlavorDto> {
 
-  }
+    @Override
+    public void doMapping(DeploymentFlavorEntity source, DeploymentFlavorDto target) {
+        target.setId(source.getId());
+    }
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.versioning;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
@@ -25,7 +24,7 @@ import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class VersionCalculatorFactory extends AbstractComponentFactory<VersionCalculator> {
 
-  public static VersionCalculatorFactory getInstance() {
-    return AbstractFactory.getInstance(VersionCalculatorFactory.class);
-  }
+    public static VersionCalculatorFactory getInstance() {
+        return AbstractFactory.getInstance(VersionCalculatorFactory.class);
+    }
 }

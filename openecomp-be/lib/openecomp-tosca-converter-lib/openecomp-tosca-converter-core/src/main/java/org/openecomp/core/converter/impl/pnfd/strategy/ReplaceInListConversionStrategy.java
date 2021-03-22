@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.strategy;
 
 import java.util.HashMap;
@@ -26,9 +25,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.openecomp.core.converter.pnfd.strategy.AbstractPnfdConversionStrategy;
 import org.openecomp.core.converter.pnfd.model.ConversionStrategyType;
 import org.openecomp.core.converter.pnfd.model.PnfTransformationToken;
+import org.openecomp.core.converter.pnfd.strategy.AbstractPnfdConversionStrategy;
 
 public class ReplaceInListConversionStrategy extends AbstractPnfdConversionStrategy<List<Object>, List<Object>> {
 
@@ -37,11 +36,8 @@ public class ReplaceInListConversionStrategy extends AbstractPnfdConversionStrat
     public ReplaceInListConversionStrategy(final List<Map<String, Object>> descriptorList) {
         super(ConversionStrategyType.REPLACE_IN_LIST, new HashMap<>());
         replaceInListConversionStrategyMap = new LinkedHashMap<>();
-        descriptorList
-            .forEach(stringObjectMap -> replaceInListConversionStrategyMap.put(stringObjectMap.get(
-                PnfTransformationToken.FROM.getName())
-                , stringObjectMap.get(PnfTransformationToken.TO.getName()))
-            );
+        descriptorList.forEach(stringObjectMap -> replaceInListConversionStrategyMap
+            .put(stringObjectMap.get(PnfTransformationToken.FROM.getName()), stringObjectMap.get(PnfTransformationToken.TO.getName())));
     }
 
     @Override
@@ -49,12 +45,8 @@ public class ReplaceInListConversionStrategy extends AbstractPnfdConversionStrat
         if (originalValue == null || originalValue.isEmpty()) {
             return Optional.empty();
         }
-
-        final List<Object> convertedList = originalValue.stream()
-            .map(replaceInListConversionStrategyMap::get)
-            .filter(Objects::nonNull)
+        final List<Object> convertedList = originalValue.stream().map(replaceInListConversionStrategyMap::get).filter(Objects::nonNull)
             .collect(Collectors.toList());
-
         return convertedList.isEmpty() ? Optional.empty() : Optional.of(convertedList);
     }
 }

@@ -17,7 +17,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding;
 
 import static org.openecomp.sdc.common.errors.Messages.COULD_NOT_READ_MANIFEST_FILE;
@@ -69,13 +68,12 @@ public class OnboardingPackageProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingPackageProcessor.class);
     private static final String CSAR_EXTENSION = "csar";
     private static final String ZIP_EXTENSION = "zip";
-
     private final String packageFileName;
     private final byte[] packageFileContent;
-    private FileContentHandler packageContent;
     private final Set<ErrorMessage> errorMessages = new HashSet<>();
     private final OnboardPackageInfo onboardPackageInfo;
     private final CnfPackageValidator cnfPackageValidator;
+    private FileContentHandler packageContent;
 
     public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent) {
         this.packageFileName = packageFileName;
@@ -106,7 +104,6 @@ public class OnboardingPackageProcessor {
         if (hasNoErrors()) {
             final String packageName = FilenameUtils.getBaseName(packageFileName);
             final String packageExtension = FilenameUtils.getExtension(packageFileName);
-
             if (hasSignedPackageStructure()) {
                 packageInfo = processSignedPackage(packageName, packageExtension);
             } else {
@@ -122,8 +119,7 @@ public class OnboardingPackageProcessor {
 
     private void validateFile() {
         if (!hasValidExtension()) {
-            String message = PACKAGE_INVALID_EXTENSION
-                .formatMessage(packageFileName, String.join(", ", CSAR_EXTENSION, ZIP_EXTENSION));
+            String message = PACKAGE_INVALID_EXTENSION.formatMessage(packageFileName, String.join(", ", CSAR_EXTENSION, ZIP_EXTENSION));
             reportError(ErrorLevel.ERROR, message);
         } else {
             try {
@@ -141,8 +137,8 @@ public class OnboardingPackageProcessor {
     }
 
     private OnboardPackageInfo processCsarPackage(String packageName, String packageExtension) {
-        OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
-            ByteBuffer.wrap(packageFileContent), new OnboardingPackageContentHandler(packageContent));
+        OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
+            new OnboardingPackageContentHandler(packageContent));
         return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.CSAR);
     }
 
@@ -151,15 +147,14 @@ public class OnboardingPackageProcessor {
         if (manifest != null) {
             List<String> errors = validateZipPackage(manifest);
             if (errors.isEmpty()) {
-                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
-                    ByteBuffer.wrap(packageFileContent), packageContent);
+                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
+                    packageContent);
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
             } else {
                 errors.forEach(message -> reportError(ErrorLevel.ERROR, message));
             }
         } else {
-            reportError(ErrorLevel.ERROR,
-                COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));
+            reportError(ErrorLevel.ERROR, COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));
         }
         return null;
     }
@@ -184,7 +179,6 @@ public class OnboardingPackageProcessor {
         ManifestContent manifest = null;
         try (InputStream zipFileManifest = packageContent.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
             manifest = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
-
         } catch (Exception e) {
             final String message = COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName);
             LOGGER.error(message, e);
@@ -198,8 +192,7 @@ public class OnboardingPackageProcessor {
         try {
             boolean heatBase = false;
             for (FileData fileData : manifestContent.getData()) {
-                if (Objects.nonNull(fileData.getType()) &&
-                    fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
+                if (Objects.nonNull(fileData.getType()) && fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
                     heatBase = true;
                     fileData.setBase(false);
                     FileData dummyHeat = new FileData();
@@ -217,8 +210,7 @@ public class OnboardingPackageProcessor {
                     String filePath = new File("").getAbsolutePath() + "/resources";
                     File envFilePath = new File(filePath + "/base_template.env");
                     File baseFilePath = new File(filePath + "/base_template.yaml");
-                    try (InputStream envStream = new FileInputStream(envFilePath);
-                        InputStream baseStream = new FileInputStream(baseFilePath)) {
+                    try (InputStream envStream = new FileInputStream(envFilePath); InputStream baseStream = new FileInputStream(baseFilePath)) {
                         packageContent.addFile("base_template_dummy_ignore.env", envStream);
                         packageContent.addFile("base_template_dummy_ignore.yaml", baseStream);
                     } catch (Exception e) {
@@ -252,27 +244,23 @@ public class OnboardingPackageProcessor {
         }
         final String signatureFilePath = findSignatureFilePath().orElse(null);
         final String certificateFilePath = findCertificateFilePath().orElse(null);
-        final OnboardSignedPackage onboardSignedPackage =
-            new OnboardSignedPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
-                packageContent, signatureFilePath, internalPackagePath, certificateFilePath);
-
+        final OnboardSignedPackage onboardSignedPackage = new OnboardSignedPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
+            packageContent, signatureFilePath, internalPackagePath, certificateFilePath);
         final String internalPackageName = FilenameUtils.getName(internalPackagePath);
         final String internalPackageBaseName = FilenameUtils.getBaseName(internalPackagePath);
         final String internalPackageExtension = FilenameUtils.getExtension(internalPackagePath);
         final byte[] internalPackageContent = packageContent.getFileContent(internalPackagePath);
         final OnboardPackage onboardPackage;
         try {
-            final OnboardingPackageContentHandler fileContentHandler =
-                new OnboardingPackageContentHandler(CommonUtil.getZipContent(internalPackageContent));
-            onboardPackage = new OnboardPackage(internalPackageBaseName, internalPackageExtension,
-                internalPackageContent, fileContentHandler);
+            final OnboardingPackageContentHandler fileContentHandler = new OnboardingPackageContentHandler(
+                CommonUtil.getZipContent(internalPackageContent));
+            onboardPackage = new OnboardPackage(internalPackageBaseName, internalPackageExtension, internalPackageContent, fileContentHandler);
         } catch (final ZipException e) {
             final String message = PACKAGE_PROCESS_INTERNAL_PACKAGE_ERROR.formatMessage(internalPackageName);
             LOGGER.error(message, e);
             reportError(ErrorLevel.ERROR, message);
             return null;
         }
-
         return new OnboardPackageInfo(onboardSignedPackage, onboardPackage, OnboardingTypesEnum.SIGNED_CSAR);
     }
 
@@ -281,13 +269,10 @@ public class OnboardingPackageProcessor {
     }
 
     private Optional<String> findInternalPackagePath() {
-        return packageContent.getFileList().stream()
-            .filter(filePath -> {
-                    final String extension = FilenameUtils.getExtension(filePath);
-                    return CSAR_EXTENSION.equalsIgnoreCase(extension) || ZIP_EXTENSION.equalsIgnoreCase(extension);
-                }
-            )
-            .findFirst();
+        return packageContent.getFileList().stream().filter(filePath -> {
+            final String extension = FilenameUtils.getExtension(filePath);
+            return CSAR_EXTENSION.equalsIgnoreCase(extension) || ZIP_EXTENSION.equalsIgnoreCase(extension);
+        }).findFirst();
     }
 
     private boolean isPackageEmpty() {
@@ -295,60 +280,43 @@ public class OnboardingPackageProcessor {
     }
 
     private boolean hasSignedPackageStructure() {
-        if (MapUtils.isEmpty(packageContent.getFiles()) || !CollectionUtils.isEmpty(
-            packageContent.getFolderList())) {
+        if (MapUtils.isEmpty(packageContent.getFiles()) || !CollectionUtils.isEmpty(packageContent.getFolderList())) {
             return false;
         }
         final int numberOfFiles = packageContent.getFileList().size();
         if (numberOfFiles == 2) {
-            return hasOneInternalPackageFile(packageContent) &&
-                hasOneSignatureFile(packageContent);
+            return hasOneInternalPackageFile(packageContent) && hasOneSignatureFile(packageContent);
         }
-
         if (numberOfFiles == 3) {
-            return hasOneInternalPackageFile(packageContent) &&
-                hasOneSignatureFile(packageContent) &&
-                hasOneCertificateFile(packageContent);
+            return hasOneInternalPackageFile(packageContent) && hasOneSignatureFile(packageContent) && hasOneCertificateFile(packageContent);
         }
-
         return false;
     }
 
     private boolean hasOneInternalPackageFile(final FileContentHandler fileContentHandler) {
-        return fileContentHandler.getFileList().parallelStream()
-            .map(FilenameUtils::getExtension)
-            .map(String::toLowerCase)
+        return fileContentHandler.getFileList().parallelStream().map(FilenameUtils::getExtension).map(String::toLowerCase)
             .filter(file -> file.endsWith(CSAR_EXTENSION)).count() == 1;
     }
 
     private boolean hasOneSignatureFile(final FileContentHandler fileContentHandler) {
-        return fileContentHandler.getFileList().parallelStream()
-            .map(FilenameUtils::getExtension)
-            .map(String::toLowerCase)
+        return fileContentHandler.getFileList().parallelStream().map(FilenameUtils::getExtension).map(String::toLowerCase)
             .filter(ALLOWED_SIGNATURE_EXTENSIONS::contains).count() == 1;
     }
 
     private boolean hasOneCertificateFile(final FileContentHandler fileContentHandler) {
-        return fileContentHandler.getFileList().parallelStream()
-            .map(FilenameUtils::getExtension)
-            .map(String::toLowerCase)
+        return fileContentHandler.getFileList().parallelStream().map(FilenameUtils::getExtension).map(String::toLowerCase)
             .filter(ALLOWED_CERTIFICATE_EXTENSIONS::contains).count() == 1;
     }
 
     private Optional<String> findSignatureFilePath() {
         final Map<String, byte[]> files = packageContent.getFiles();
-        return files.keySet().stream()
-            .filter(
-                fileName -> ALLOWED_SIGNATURE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
+        return files.keySet().stream().filter(fileName -> ALLOWED_SIGNATURE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
             .findFirst();
     }
 
     private Optional<String> findCertificateFilePath() {
         final Map<String, byte[]> files = packageContent.getFiles();
-        return files.keySet().stream()
-            .filter(
-                fileName -> ALLOWED_CERTIFICATE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
+        return files.keySet().stream().filter(fileName -> ALLOWED_CERTIFICATE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
             .findFirst();
     }
-
 }

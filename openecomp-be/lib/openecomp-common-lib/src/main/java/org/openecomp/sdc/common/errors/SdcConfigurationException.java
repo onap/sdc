@@ -17,15 +17,15 @@ package org.openecomp.sdc.common.errors;
 
 public class SdcConfigurationException extends RuntimeException {
 
-  public SdcConfigurationException(String message) {
-    super(message);
-  }
+    public SdcConfigurationException(String message) {
+        super(message);
+    }
 
-  public SdcConfigurationException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public SdcConfigurationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public SdcConfigurationException(Throwable cause) {
-    super(cause);
-  }
+    public SdcConfigurationException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.togglz.rest.services;
+
+import java.util.Arrays;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.togglz.rest.TogglzFeatures;
 import org.openecomp.sdcrests.togglz.rest.mapping.MapToggleableFeatureToDto;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
-import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.togglz.core.Feature;
 import org.togglz.core.context.FeatureContext;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.util.NamedFeature;
-
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
 
 @Named
 @Service("TogglzFeature")
@@ -49,7 +48,7 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
         new MapToggleableFeatureToDto().doMapping(Arrays.asList(ToggleableFeature.values()), featureSetDto);
         featureSetDto.getFeatures().forEach(featureDto -> {
             Feature feature = new NamedFeature(featureDto.getName());
-            FeatureState featureState = new FeatureState(feature,active);
+            FeatureState featureState = new FeatureState(feature, active);
             FeatureContext.getFeatureManager().setFeatureState(featureState);
         });
         return Response.ok().build();
@@ -58,7 +57,7 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
     @Override
     public Response setFeatureState(String featureName, boolean active) {
         Feature feature = new NamedFeature(featureName);
-        FeatureState featureState = new FeatureState(feature,active);
+        FeatureState featureState = new FeatureState(feature, active);
         FeatureContext.getFeatureManager().setFeatureState(featureState);
         return Response.ok().build();
     }
@@ -66,10 +65,7 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
     @Override
     public Response getFeatureState(String featureName) {
         boolean active = ToggleableFeature.valueOf(featureName).isActive();
-        FeatureDto featureDto = new FeatureDto(featureName,active);
-
+        FeatureDto featureDto = new FeatureDto(featureName, active);
         return Response.ok(featureDto).build();
     }
-
 }
-

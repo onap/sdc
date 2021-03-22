@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd;
 
 /**
@@ -26,5 +25,4 @@ package org.openecomp.core.converter.pnfd;
 public interface PnfdTransformationEngine {
 
     void transform();
-
 }

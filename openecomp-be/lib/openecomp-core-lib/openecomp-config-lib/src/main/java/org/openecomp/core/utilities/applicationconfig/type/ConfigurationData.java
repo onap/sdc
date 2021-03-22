@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.utilities.applicationconfig.type;
 
 import lombok.AllArgsConstructor;
@@ -29,6 +28,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ConfigurationData {
 
-  private String value;
-  private long timeStamp;
+    private String value;
+    private long timeStamp;
 }

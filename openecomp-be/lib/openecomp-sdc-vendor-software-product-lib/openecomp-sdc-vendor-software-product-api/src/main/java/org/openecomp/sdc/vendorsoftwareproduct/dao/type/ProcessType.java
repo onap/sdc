@@ -17,11 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-public enum ProcessType {
-    Lifecycle_Operations,
-    Other
-}
+public enum ProcessType {Lifecycle_Operations, Other}

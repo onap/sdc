@@ -17,27 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.server.listeners;
-
-
-import org.springframework.web.context.ContextLoaderListener;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import org.springframework.web.context.ContextLoaderListener;
 
 public class OnboardingAppStartupListener implements ServletContextListener {
 
-  ContextLoaderListener springListener;
+    ContextLoaderListener springListener;
 
-  @Override
-  public void contextInitialized(ServletContextEvent servletContextEvent) {
-    springListener = new ContextLoaderListener();
-    springListener.initWebApplicationContext(servletContextEvent.getServletContext());
-  }
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        springListener = new ContextLoaderListener();
+        springListener.initWebApplicationContext(servletContextEvent.getServletContext());
+    }
 
-  @Override
-  public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    springListener.closeWebApplicationContext(servletContextEvent.getServletContext());
-  }
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        springListener.closeWebApplicationContext(servletContextEvent.getServletContext());
+    }
 }

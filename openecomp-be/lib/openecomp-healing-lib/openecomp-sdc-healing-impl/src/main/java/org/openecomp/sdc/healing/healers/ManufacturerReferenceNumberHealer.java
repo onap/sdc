@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.healing.healers;
 
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
@@ -26,90 +28,71 @@ import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
-
 public class ManufacturerReferenceNumberHealer implements Healer {
 
-  private static final String MANUFACTURER_REFERENCE_NUMBER = "MRN";
-  private final VendorLicenseFacade vendorLicenseFacade;
-  private final FeatureGroupDao featureGroupDao;
+    private static final String MANUFACTURER_REFERENCE_NUMBER = "MRN";
+    private final VendorLicenseFacade vendorLicenseFacade;
+    private final FeatureGroupDao featureGroupDao;
 
-  public ManufacturerReferenceNumberHealer() {
-    this(VendorLicenseFacadeFactory.getInstance().createInterface(), FeatureGroupDaoFactory
-        .getInstance().createInterface());
-  }
-
-  public ManufacturerReferenceNumberHealer(VendorLicenseFacade vendorLicenseFacade,
-                                           FeatureGroupDao featureGroupDao) {
-    this.vendorLicenseFacade = vendorLicenseFacade;
-    this.featureGroupDao = featureGroupDao;
-  }
-
-  @Override
-  public boolean isHealingNeeded(String itemId, Version version) {
-    return Objects.isNull(vendorLicenseFacade.listEntitlementPools
-        (itemId, version).iterator().next().getManufacturerReferenceNumber()) ? true :
-        false;
-  }
-
-  @Override
-  public void heal(String itemId, Version version) throws Exception {
-
-    healEntitlementPools(itemId, version);
-    healLicenseKeyGroups(itemId, version);
-    healFeatureGroups(itemId, version);
-  }
-
-  private void healEntitlementPools(String itemId, Version version) {
-    Collection<EntitlementPoolEntity> entitlementPoolEntities = vendorLicenseFacade
-        .listEntitlementPools(itemId, version);
-
-    for (EntitlementPoolEntity entitlementPoolEntity : entitlementPoolEntities) {
-      Set<String> referencingFeatureGroup = entitlementPoolEntity.getReferencingFeatureGroups();
-
-      if (referencingFeatureGroup.size() == 1) {
-        entitlementPoolEntity.setManufacturerReferenceNumber(getMRN(itemId, version,
-            referencingFeatureGroup));
-      } else {
-        entitlementPoolEntity.setManufacturerReferenceNumber(MANUFACTURER_REFERENCE_NUMBER);
-      }
-      vendorLicenseFacade.updateEntitlementPool(entitlementPoolEntity);
+    public ManufacturerReferenceNumberHealer() {
+        this(VendorLicenseFacadeFactory.getInstance().createInterface(), FeatureGroupDaoFactory.getInstance().createInterface());
     }
-  }
 
-  private void healLicenseKeyGroups(String itemId, Version version) {
-    Collection<LicenseKeyGroupEntity> licenseKeyGroupEntities = vendorLicenseFacade
-        .listLicenseKeyGroups(itemId, version);
-
-    for (LicenseKeyGroupEntity licenseKeyGroupEntity : licenseKeyGroupEntities) {
-      Set<String> referencingFeatureGroup = licenseKeyGroupEntity.getReferencingFeatureGroups();
-      if (referencingFeatureGroup.size() == 1) {
-        licenseKeyGroupEntity.setManufacturerReferenceNumber(getMRN(itemId, version,
-            referencingFeatureGroup));
-      } else {
-        licenseKeyGroupEntity.setManufacturerReferenceNumber(MANUFACTURER_REFERENCE_NUMBER);
-      }
-      vendorLicenseFacade.updateLicenseKeyGroup(licenseKeyGroupEntity);
+    public ManufacturerReferenceNumberHealer(VendorLicenseFacade vendorLicenseFacade, FeatureGroupDao featureGroupDao) {
+        this.vendorLicenseFacade = vendorLicenseFacade;
+        this.featureGroupDao = featureGroupDao;
     }
-  }
 
-  private String getMRN(String itemId, Version
-      version, Set<String> referencingFeatureGroup) {
-    FeatureGroupEntity featureGroupEntity = vendorLicenseFacade.getFeatureGroup(new
-        FeatureGroupEntity(itemId, version, referencingFeatureGroup.iterator().next()));
-    return featureGroupEntity.getManufacturerReferenceNumber();
-  }
-
-  private void healFeatureGroups(String itemId, Version version) {
-
-    Collection<FeatureGroupEntity> featureGroupEntities = vendorLicenseFacade.listFeatureGroups
-        (itemId, version);
-
-    for (FeatureGroupEntity featureGroupEntity : featureGroupEntities) {
-      featureGroupEntity.setManufacturerReferenceNumber(null);
-      featureGroupDao.update(featureGroupEntity);
+    @Override
+    public boolean isHealingNeeded(String itemId, Version version) {
+        return Objects.isNull(vendorLicenseFacade.listEntitlementPools(itemId, version).iterator().next().getManufacturerReferenceNumber()) ? true
+            : false;
     }
-  }
+
+    @Override
+    public void heal(String itemId, Version version) throws Exception {
+        healEntitlementPools(itemId, version);
+        healLicenseKeyGroups(itemId, version);
+        healFeatureGroups(itemId, version);
+    }
+
+    private void healEntitlementPools(String itemId, Version version) {
+        Collection<EntitlementPoolEntity> entitlementPoolEntities = vendorLicenseFacade.listEntitlementPools(itemId, version);
+        for (EntitlementPoolEntity entitlementPoolEntity : entitlementPoolEntities) {
+            Set<String> referencingFeatureGroup = entitlementPoolEntity.getReferencingFeatureGroups();
+            if (referencingFeatureGroup.size() == 1) {
+                entitlementPoolEntity.setManufacturerReferenceNumber(getMRN(itemId, version, referencingFeatureGroup));
+            } else {
+                entitlementPoolEntity.setManufacturerReferenceNumber(MANUFACTURER_REFERENCE_NUMBER);
+            }
+            vendorLicenseFacade.updateEntitlementPool(entitlementPoolEntity);
+        }
+    }
+
+    private void healLicenseKeyGroups(String itemId, Version version) {
+        Collection<LicenseKeyGroupEntity> licenseKeyGroupEntities = vendorLicenseFacade.listLicenseKeyGroups(itemId, version);
+        for (LicenseKeyGroupEntity licenseKeyGroupEntity : licenseKeyGroupEntities) {
+            Set<String> referencingFeatureGroup = licenseKeyGroupEntity.getReferencingFeatureGroups();
+            if (referencingFeatureGroup.size() == 1) {
+                licenseKeyGroupEntity.setManufacturerReferenceNumber(getMRN(itemId, version, referencingFeatureGroup));
+            } else {
+                licenseKeyGroupEntity.setManufacturerReferenceNumber(MANUFACTURER_REFERENCE_NUMBER);
+            }
+            vendorLicenseFacade.updateLicenseKeyGroup(licenseKeyGroupEntity);
+        }
+    }
+
+    private String getMRN(String itemId, Version version, Set<String> referencingFeatureGroup) {
+        FeatureGroupEntity featureGroupEntity = vendorLicenseFacade
+            .getFeatureGroup(new FeatureGroupEntity(itemId, version, referencingFeatureGroup.iterator().next()));
+        return featureGroupEntity.getManufacturerReferenceNumber();
+    }
+
+    private void healFeatureGroups(String itemId, Version version) {
+        Collection<FeatureGroupEntity> featureGroupEntities = vendorLicenseFacade.listFeatureGroups(itemId, version);
+        for (FeatureGroupEntity featureGroupEntity : featureGroupEntities) {
+            featureGroupEntity.setManufacturerReferenceNumber(null);
+            featureGroupDao.update(featureGroupEntity);
+        }
+    }
 }

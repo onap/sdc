@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.core.dao.UniqueValueDaoFactory;
@@ -38,30 +37,27 @@ import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory;
 
 public class VspManagerFactoryImpl extends VspManagerFactory {
-  private static final VendorSoftwareProductManager INSTANCE = new VendorSoftwareProductManagerImpl.Builder()
-                                                                       .vspMerge(VspMergeDaoFactory.getInstance().createInterface())
-                                                                       .orchestrationTemplate(OrchestrationTemplateDaoFactory.getInstance().createInterface())
-                                                                       .orchestrationTemplateCandidateManager(OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface())
-                                                                       .vspInfo(VendorSoftwareProductInfoDaoFactory.getInstance().createInterface())
-                                                                       .vendorLicenseFacade(VendorLicenseFacadeFactory.getInstance().createInterface())
-                                                                       .serviceModel(ServiceModelDaoFactory.getInstance().createInterface())
-                                                                       .enrichedServiceModel(EnrichedServiceModelDaoFactory.getInstance().createInterface())
-                                                                       .licenseArtifactsService(VendorLicenseArtifactServiceFactory.getInstance().createInterface())
-                                                                       .informationArtifactGenerator(InformationArtifactGeneratorFactory.getInstance().createInterface())
-                                                                       .packageInfo(PackageInfoDaoFactory.getInstance().createInterface())
-                                                                       .deploymentFlavor(DeploymentFlavorDaoFactory.getInstance().createInterface())
-                                                                       .component(ComponentDaoFactory.getInstance().createInterface())
-                                                                       .componentDependencyModel(ComponentDependencyModelDaoFactory.getInstance().createInterface())
-                                                                       .nic(NicDaoFactory.getInstance().createInterface())
-                                                                       .compute(ComputeDaoFactory.getInstance().createInterface())
-                                                                       .image(ImageDaoFactory.getInstance().createInterface())
-                                                                       .manualVspToscaManager(new ManualVspToscaManagerImpl())
-                                                                       .uniqueValue(UniqueValueDaoFactory.getInstance().createInterface())
-                                                                       .candidateService(CandidateServiceFactory.getInstance().createInterface())
-                                                                       .build();
 
-  @Override
-  public VendorSoftwareProductManager createInterface() {
-    return INSTANCE;
-  }
+    private static final VendorSoftwareProductManager INSTANCE = new VendorSoftwareProductManagerImpl.Builder()
+        .vspMerge(VspMergeDaoFactory.getInstance().createInterface())
+        .orchestrationTemplate(OrchestrationTemplateDaoFactory.getInstance().createInterface())
+        .orchestrationTemplateCandidateManager(OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface())
+        .vspInfo(VendorSoftwareProductInfoDaoFactory.getInstance().createInterface())
+        .vendorLicenseFacade(VendorLicenseFacadeFactory.getInstance().createInterface())
+        .serviceModel(ServiceModelDaoFactory.getInstance().createInterface())
+        .enrichedServiceModel(EnrichedServiceModelDaoFactory.getInstance().createInterface())
+        .licenseArtifactsService(VendorLicenseArtifactServiceFactory.getInstance().createInterface())
+        .informationArtifactGenerator(InformationArtifactGeneratorFactory.getInstance().createInterface())
+        .packageInfo(PackageInfoDaoFactory.getInstance().createInterface())
+        .deploymentFlavor(DeploymentFlavorDaoFactory.getInstance().createInterface()).component(ComponentDaoFactory.getInstance().createInterface())
+        .componentDependencyModel(ComponentDependencyModelDaoFactory.getInstance().createInterface())
+        .nic(NicDaoFactory.getInstance().createInterface()).compute(ComputeDaoFactory.getInstance().createInterface())
+        .image(ImageDaoFactory.getInstance().createInterface()).manualVspToscaManager(new ManualVspToscaManagerImpl())
+        .uniqueValue(UniqueValueDaoFactory.getInstance().createInterface()).candidateService(CandidateServiceFactory.getInstance().createInterface())
+        .build();
+
+    @Override
+    public VendorSoftwareProductManager createInterface() {
+        return INSTANCE;
+    }
 }

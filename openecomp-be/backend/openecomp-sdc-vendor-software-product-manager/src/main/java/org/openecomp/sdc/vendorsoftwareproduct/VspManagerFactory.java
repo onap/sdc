@@ -17,15 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 
-public abstract class VspManagerFactory
-    extends AbstractComponentFactory<VendorSoftwareProductManager> {
+public abstract class VspManagerFactory extends AbstractComponentFactory<VendorSoftwareProductManager> {
 
-  public static VspManagerFactory getInstance() {
-    return getInstance(VspManagerFactory.class);
-  }
+    public static VspManagerFactory getInstance() {
+        return getInstance(VspManagerFactory.class);
+    }
 }

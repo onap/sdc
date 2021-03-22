@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.spi;
 
 /**
  * <p>From the application code (consumer) perspective, logger creation (factory) and logging context are independent
- * services. From the service provider perspective, however, these services are related and must be implemented together
- * using the same underlying mechanism. Therefore, the service provider-facing interface combines the two services
- * &mdash; to eliminate the chance that their implementations don't work well together.</p>
+ * services. From the service provider perspective, however, these services are related and must be implemented together using the same underlying
+ * mechanism. Therefore, the service provider-facing interface combines the two services &mdash; to eliminate the chance that their implementations
+ * don't work well together.</p>
  *
  * @author EVITALIY
  * @since 07 Jan 18
  */
 public interface LoggingServiceProvider extends LoggerCreationService, LoggingContextService {
     // single provider must implement two separate consumer services
-}
+} 

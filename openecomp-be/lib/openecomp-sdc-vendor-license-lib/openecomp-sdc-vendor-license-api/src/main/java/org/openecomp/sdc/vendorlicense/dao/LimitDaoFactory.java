@@ -23,7 +23,8 @@ import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class LimitDaoFactory extends AbstractComponentFactory<LimitDao> {
-  public static LimitDaoFactory getInstance() {
-    return AbstractFactory.getInstance(LimitDaoFactory.class);
-  }
+
+    public static LimitDaoFactory getInstance() {
+        return AbstractFactory.getInstance(LimitDaoFactory.class);
+    }
 }

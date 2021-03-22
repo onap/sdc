@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.util.HashMap;
@@ -49,13 +48,11 @@ public class CandidateDataEntityTo {
      * @param tree             the tree
      * @param contentMap       the content map
      */
-    public CandidateDataEntityTo(String vspId, Version version, byte[] uploadedFileData,
-                                 HeatStructureTree tree, FileContentHandler contentMap) {
+    public CandidateDataEntityTo(String vspId, Version version, byte[] uploadedFileData, HeatStructureTree tree, FileContentHandler contentMap) {
         this.vspId = vspId;
         this.version = version;
         this.uploadedFileData = uploadedFileData;
         this.tree = tree;
         this.contentMap = contentMap;
     }
-
 }

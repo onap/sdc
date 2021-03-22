@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.tools.commands;
 
 import org.apache.commons.cli.CommandLine;
@@ -34,8 +33,7 @@ public abstract class Command {
     protected final Options options = new Options();
 
     protected Command() {
-        options.addOption(
-                Option.builder(COMMAND_OPTION).hasArg().argName("command").desc(getCommandName().name()).build());
+        options.addOption(Option.builder(COMMAND_OPTION).hasArg().argName("command").desc(getCommandName().name()).build());
     }
 
     protected CommandLine parseArgs(String[] args) {
@@ -54,7 +52,7 @@ public abstract class Command {
         formater.printHelp("zusammenMainTool", options);
     }
 
-    public void register(){
+    public void register() {
         CommandsHolder.addCommand(this);
     }
 

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import java.util.Set;
@@ -28,5 +27,4 @@ import lombok.Getter;
 public class TransformationDescription {
 
     private final Set<Transformation> transformationSet;
-
 }

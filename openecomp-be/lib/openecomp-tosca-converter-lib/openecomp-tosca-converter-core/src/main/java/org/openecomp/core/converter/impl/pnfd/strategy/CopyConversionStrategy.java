@@ -16,13 +16,12 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.strategy;
 
 import java.util.HashMap;
 import java.util.Optional;
-import org.openecomp.core.converter.pnfd.strategy.AbstractPnfdConversionStrategy;
 import org.openecomp.core.converter.pnfd.model.ConversionStrategyType;
+import org.openecomp.core.converter.pnfd.strategy.AbstractPnfdConversionStrategy;
 
 public class CopyConversionStrategy extends AbstractPnfdConversionStrategy<Object, Object> {
 

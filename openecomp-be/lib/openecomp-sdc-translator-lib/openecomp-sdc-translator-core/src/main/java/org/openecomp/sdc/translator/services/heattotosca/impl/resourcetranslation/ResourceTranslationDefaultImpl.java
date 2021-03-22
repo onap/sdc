@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import java.util.Optional;
 import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
-
-import java.util.Optional;
 
 public class ResourceTranslationDefaultImpl extends ResourceTranslationBase {
 
     @Override
     public void translate(TranslateTo translateTo) {
         //no translation is needed, this default is used for unsupported resources
-        logger.warn("Heat resource: '{}' with type: '{}' is not supported, will be ignored in TOSCA translation",
-                translateTo.getResourceId(), translateTo.getResource().getType());
+        logger.warn("Heat resource: '{}' with type: '{}' is not supported, will be ignored in TOSCA translation", translateTo.getResourceId(),
+            translateTo.getResource().getType());
     }
 
     @Override
@@ -36,9 +34,7 @@ public class ResourceTranslationDefaultImpl extends ResourceTranslationBase {
     }
 
     @Override
-    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(
-            TranslateTo translateTo) {
+    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(TranslateTo translateTo) {
         return Optional.empty();
     }
-
 }

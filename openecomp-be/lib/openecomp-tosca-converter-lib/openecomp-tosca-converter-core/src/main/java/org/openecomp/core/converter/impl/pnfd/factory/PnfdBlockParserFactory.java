@@ -16,13 +16,12 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.factory;
 
 import java.util.Optional;
+import org.openecomp.core.converter.impl.pnfd.parser.PnfdCustomNodeTypeBlockParser;
 import org.openecomp.core.converter.impl.pnfd.parser.PnfdInputBlockParser;
 import org.openecomp.core.converter.impl.pnfd.parser.PnfdNodeTemplateBlockParser;
-import org.openecomp.core.converter.impl.pnfd.parser.PnfdCustomNodeTypeBlockParser;
 import org.openecomp.core.converter.impl.pnfd.parser.PnfdNodeTypeBlockParser;
 import org.openecomp.core.converter.pnfd.model.Transformation;
 import org.openecomp.core.converter.pnfd.parser.PnfdBlockParser;
@@ -31,6 +30,7 @@ import org.openecomp.core.converter.pnfd.parser.PnfdBlockParser;
  * Factory for {@link PnfdBlockParser}.
  */
 public class PnfdBlockParserFactory {
+
     private static PnfdBlockParserFactory instance;
 
     private PnfdBlockParserFactory() {
@@ -40,7 +40,6 @@ public class PnfdBlockParserFactory {
         if (instance == null) {
             instance = new PnfdBlockParserFactory();
         }
-
         return instance;
     }
 
@@ -59,5 +58,4 @@ public class PnfdBlockParserFactory {
                 return Optional.empty();
         }
     }
-
 }

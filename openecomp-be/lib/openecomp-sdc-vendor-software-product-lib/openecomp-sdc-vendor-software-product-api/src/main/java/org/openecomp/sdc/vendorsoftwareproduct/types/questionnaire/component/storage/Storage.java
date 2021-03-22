@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.storage;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ public class Storage {
     private Backup backup;
     private LogBackup logBackup;
     private SnapshotBackup snapshotBackup;
-
 }

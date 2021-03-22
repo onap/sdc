@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public enum HeatResourcesTypes {
+    // @formatter:off
     NOVA_SERVER_RESOURCE_TYPE("OS::Nova::Server"),
     NOVA_SERVER_GROUP_RESOURCE_TYPE("OS::Nova::ServerGroup"),
     NEUTRON_PORT_RESOURCE_TYPE("OS::Neutron::Port"),
@@ -48,13 +48,13 @@ public enum HeatResourcesTypes {
     CONTRAIL_SERVICE_INSTANCE("OS::Contrail::ServiceInstance"),
     CONTRAIL_V2_NETWORK_RULE_RESOURCE_TYPE("OS::ContrailV2::NetworkPolicy"),
     RESOURCE_GROUP_RESOURCE_TYPE("OS::Heat::ResourceGroup");
+    // @formatter:on
 
     private static Map<String, HeatResourcesTypes> stringToHeatResourceTypeMap;
     private String heatResource;
 
     static {
         stringToHeatResourceTypeMap = new HashMap<>();
-
         for (HeatResourcesTypes type : HeatResourcesTypes.values()) {
             stringToHeatResourceTypeMap.put(type.heatResource, type);
         }
@@ -81,10 +81,10 @@ public enum HeatResourcesTypes {
     public static boolean isResourceExpectedToBeExposed(String resourceType) {
         //todo - check
         return (resourceType.equals(NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())
-                || resourceType.equals(CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource())
-                || resourceType.equals(NEUTRON_NET_RESOURCE_TYPE.getHeatResource())
-                || resourceType.equals(CINDER_VOLUME_RESOURCE_TYPE.getHeatResource())
-                || resourceType.equals(NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource())
+            || resourceType.equals(CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource())
+            || resourceType.equals(NEUTRON_NET_RESOURCE_TYPE.getHeatResource())
+            || resourceType.equals(CINDER_VOLUME_RESOURCE_TYPE.getHeatResource())
+            || resourceType.equals(NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource())
         );
     }
 
@@ -94,14 +94,11 @@ public enum HeatResourcesTypes {
      * @param types the types
      * @return the list for resource type
      */
-    public static Map<HeatResourcesTypes, List<String>> getListForResourceType(
-            HeatResourcesTypes... types) {
+    public static Map<HeatResourcesTypes, List<String>> getListForResourceType(HeatResourcesTypes... types) {
         Map<HeatResourcesTypes, List<String>> result = new HashMap<>();
-
         for (HeatResourcesTypes type : types) {
             result.put(type, new ArrayList<>());
         }
-
         return result;
     }
 

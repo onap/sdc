@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd;
 
 import java.io.FileNotFoundException;
@@ -45,20 +44,19 @@ public class PnfdTransformationDescriptorReader {
 
     /**
      * Parse the transformation description to {@link TransformationDescription} class.
-     * @return
-     *  The {@link TransformationDescription} instance.
+     *
+     * @return The {@link TransformationDescription} instance.
      */
     public TransformationDescription parse(final InputStream transformationDescriptionInputStream) {
         final List<Object> transformationList = readDescriptionYaml(transformationDescriptionInputStream);
         final Set<Transformation> transformationSet = parseTransformationList(transformationList);
-
         return new TransformationDescription(transformationSet);
     }
 
     /**
      * Reads the description file that has the required YAML format.
-     * @return
-     *  The yaml parsed to Object
+     *
+     * @return The yaml parsed to Object
      */
     private List<Object> readDescriptionYaml(final InputStream transformationDescriptionPath) {
         try (final InputStream fileInputStream = transformationDescriptionPath) {
@@ -73,19 +71,15 @@ public class PnfdTransformationDescriptorReader {
 
     /**
      * Parse the transformation list represented in a YAML object to {@link Transformation}.
-     * @param transformationYamlList    the YAML object read from the transformation description file
-     * @return
-     *  The set of transformations represented as {@link Transformation} class
+     *
+     * @param transformationYamlList the YAML object read from the transformation description file
+     * @return The set of transformations represented as {@link Transformation} class
      */
     private Set<Transformation> parseTransformationList(final List<Object> transformationYamlList) {
         if (CollectionUtils.isEmpty(transformationYamlList)) {
             return Collections.emptySet();
         }
-
-        return transformationYamlList.stream()
-            .map(conversionMap -> TransformationYamlParser.parse((Map<String, Object>) conversionMap).orElse(null))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+        return transformationYamlList.stream().map(conversionMap -> TransformationYamlParser.parse((Map<String, Object>) conversionMap).orElse(null))
+            .filter(Objects::nonNull).collect(Collectors.toSet());
     }
-
 }

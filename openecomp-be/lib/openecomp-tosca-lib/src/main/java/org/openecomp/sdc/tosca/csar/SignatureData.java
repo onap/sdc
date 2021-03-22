@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import lombok.AllArgsConstructor;
@@ -29,6 +28,7 @@ import org.springframework.lang.Nullable;
 @Getter
 @AllArgsConstructor
 public class SignatureData {
+
     private final String signatureFile;
     @Nullable
     private final String certificateFile;

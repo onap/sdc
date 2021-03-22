@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.conflicts;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.conflicts.dao.ConflictsDaoFactory;
 import org.openecomp.conflicts.impl.VspMergeHandler;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -25,32 +27,27 @@ import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
 import org.openecomp.sdc.versioning.types.Item;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 public class ItemMergeHandlerFactoryImpl extends ItemMergeHandlerFactory {
-  // TODO: 11/1/2017 read this map from configuration, move Vsp merge handler to vsp lib, rearrange lib deps
-  private static final Map<ItemType, ItemMergeHandler> MERGE_HANDLER_BY_ITEM_TYPE =
-      new HashMap<>();
 
-  static {
-    MERGE_HANDLER_BY_ITEM_TYPE.put(ItemType.vsp,
-        new VspMergeHandler(ConflictsDaoFactory.getInstance().createInterface(),
-            VspMergeDaoFactory.getInstance().createInterface()));
-  }
+    // TODO: 11/1/2017 read this map from configuration, move Vsp merge handler to vsp lib, rearrange lib deps
+    private static final Map<ItemType, ItemMergeHandler> MERGE_HANDLER_BY_ITEM_TYPE = new HashMap<>();
 
-  @Override
-  public Optional<ItemMergeHandler> createInterface(String itemId) {
-    Item item = AsdcItemManagerFactory.getInstance().createInterface().get(itemId);
-    if (item == null) {
-      throw new CoreException(new EntityNotExistErrorBuilder("", itemId).build());
+    static {
+        MERGE_HANDLER_BY_ITEM_TYPE.put(ItemType.vsp,
+            new VspMergeHandler(ConflictsDaoFactory.getInstance().createInterface(), VspMergeDaoFactory.getInstance().createInterface()));
     }
-    return Optional.ofNullable(MERGE_HANDLER_BY_ITEM_TYPE.get(ItemType.valueOf(item.getType())));
-  }
 
-  @Override
-  public ItemMergeHandler createInterface() {
-    return null; // call the one with the item id arg
-  }
+    @Override
+    public Optional<ItemMergeHandler> createInterface(String itemId) {
+        Item item = AsdcItemManagerFactory.getInstance().createInterface().get(itemId);
+        if (item == null) {
+            throw new CoreException(new EntityNotExistErrorBuilder("", itemId).build());
+        }
+        return Optional.ofNullable(MERGE_HANDLER_BY_ITEM_TYPE.get(ItemType.valueOf(item.getType())));
+    }
+
+    @Override
+    public ItemMergeHandler createInterface() {
+        return null; // call the one with the item id arg
+    }
 }

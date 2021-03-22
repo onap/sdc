@@ -55,5 +55,4 @@ public class SyncEvent implements Event {
     public String getEntityId() {
         return entityId;
     }
-
 }
