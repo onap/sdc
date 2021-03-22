@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -31,7 +31,6 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -41,8 +40,7 @@ import java.util.List;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationsTest {
 
@@ -52,10 +50,7 @@ public class UserValidationsTest {
 	@Mock
 	UserBusinessLogic userAdmin;
 	
-	@Mock
-    ComponentsUtils componentsUtils;
-	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		//TestUtilsSdc.setFinalStatic(UserValidations.class, "log", LoggerFactory.getLogger(UserValidations.class));
 		MockitoAnnotations.initMocks(this);
@@ -67,33 +62,44 @@ public class UserValidationsTest {
 		String userId = "mock";
 		User usr = new User();
 		usr.setUserId(userId);
-		usr.setStatus(UserStatusEnum.ACTIVE);
+		usr.setStatus(UserStatusEnum.INACTIVE);
 		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenReturn(usr);
+
+		assertThrows(ByActionStatusComponentException.class, () -> {
+			testSubject.validateUserExists(userId);
+		});
+		Mockito.verify(userAdmin, Mockito.times(1)).getUser(Mockito.anyString());
+
 		// default test
+		usr.setStatus(UserStatusEnum.ACTIVE);
 		User result = testSubject.validateUserExists(userId);
-		assertThat(result).isNotNull().isEqualTo(usr);
+		assertNotNull(result);
+		assertEquals(usr, result);
 	}
-	
+
 	@Test
 	public void testValidateNonExistingUser2() {
 		String userId = "mock";
 		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
 
-		Throwable thrown = catchThrowable(() -> testSubject.validateUserExists(userId) );
-		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.USER_NOT_FOUND);
-
+		assertThrows(ComponentException.class, () -> {
+			testSubject.validateUserExists(userId);
+		});
+		Mockito.verify(userAdmin, Mockito.times(1)).getUser(Mockito.anyString());
 	}
 
 	@Test
 	public void testValidateUserRole() {
 		User user = new User();
 		List<Role> roles = new LinkedList<>();
-		roles.add(Role.DESIGNER);
 		user.setRole(Role.DESIGNER.name());
 
-		// test 1
-		Throwable thrown = catchThrowable(() -> testSubject.validateUserRole(user, roles));
-		assertThat(thrown).isNull();
+		assertThrows(ByActionStatusComponentException.class, () -> {
+			testSubject.validateUserRole(user, roles);
+		});
+
+		roles.add(Role.DESIGNER);
+		assertDoesNotThrow(() -> testSubject.validateUserRole(user, roles));
 	}
 
 	@Test
@@ -103,12 +109,14 @@ public class UserValidationsTest {
 		User usr = new User();
 		usr.setUserId(userId);
 		usr.setStatus(UserStatusEnum.ACTIVE);
-		
+
+		Mockito.when(userAdmin.hasActiveUser(Mockito.anyString())).thenReturn(false);
+		assertEquals(ActionStatus.RESTRICTED_OPERATION, testSubject.validateUserExistsActionStatus(userId));
+		Mockito.verify(userAdmin, Mockito.times(1)).hasActiveUser(Mockito.anyString());
+
 		Mockito.when(userAdmin.hasActiveUser(Mockito.anyString())).thenReturn(true);
-		
-		// default test
-		result = testSubject.validateUserExistsActionStatus(userId);
-		assertThat(result).isEqualTo(ActionStatus.OK);
+		assertEquals(ActionStatus.OK, testSubject.validateUserExistsActionStatus(userId));
+		Mockito.verify(userAdmin, Mockito.times(2)).hasActiveUser(Mockito.anyString());
 	}
 
 	@Test
@@ -117,20 +125,27 @@ public class UserValidationsTest {
 		Mockito.when(userAdmin.hasActiveUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException((ActionStatus.USER_NOT_FOUND)));
 		
 		// default test
-		Throwable thrown = catchThrowable(() -> testSubject.validateUserExistsActionStatus(userId));
-		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.USER_NOT_FOUND);
+		assertThrows(ComponentException.class, () -> {
+			testSubject.validateUserExistsActionStatus(userId);
+		});
+		Mockito.verify(userAdmin, Mockito.times(1)).hasActiveUser(Mockito.anyString());
 	}
 	
 	@Test
 	public void testValidateUserNotEmpty() {
 		User user = new User();
-		user.setUserId("userId");
+		user.setUserId("");
 		String ecompErrorContext = "mock";
 		User result;
 
 		// default test
+		assertThrows(ByActionStatusComponentException.class, () -> {
+			testSubject.validateUserNotEmpty(user, ecompErrorContext);
+		});
+
+		user.setUserId("userId");
 		result = testSubject.validateUserNotEmpty(user, ecompErrorContext);
-		assertThat(result).isEqualTo(user);
+		assertEquals(user, result);
 	}
 
 	@Test
@@ -140,7 +155,9 @@ public class UserValidationsTest {
 		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
 		
 		// default test
-		Throwable thrown = catchThrowable(() -> testSubject.validateUserExists(userId) );
-		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.USER_NOT_FOUND);
+		assertThrows(ComponentException.class, () -> {
+			testSubject.validateUserExists(userId);
+		});
+		Mockito.verify(userAdmin, Mockito.times(1)).getUser(Mockito.anyString());
 	}
 }

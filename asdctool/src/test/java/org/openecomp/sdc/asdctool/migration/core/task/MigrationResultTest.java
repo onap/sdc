@@ -20,9 +20,11 @@
 
 package org.openecomp.sdc.asdctool.migration.core.task;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult.MigrationStatus;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MigrationResultTest {
 
@@ -32,27 +34,13 @@ public class MigrationResultTest {
 
 	
 	@Test
-	public void testGetMsg() {
-		MigrationResult testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getMsg();
+	public void testMsg() {
+		MigrationResult testSubject  = createTestSubject();
+		assertNull(testSubject.getMsg());
+		testSubject.setMsg("msg");
+		assertEquals("msg", testSubject.getMsg());
 	}
 
-	
-	@Test
-	public void testSetMsg() {
-		MigrationResult testSubject;
-		String msg = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setMsg(msg);
-	}
-
-	
 	@Test
 	public void testGetMigrationStatus() {
 		MigrationResult testSubject;
@@ -63,7 +51,6 @@ public class MigrationResultTest {
 		result = testSubject.getMigrationStatus();
 	}
 
-	
 	@Test
 	public void testSetMigrationStatus() {
 		MigrationResult testSubject;
@@ -72,5 +59,19 @@ public class MigrationResultTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setMigrationStatus(migrationStatus);
+	}
+
+	@Test
+	public void testSuccess() {
+		MigrationResult testSubject = createTestSubject();
+		assertEquals(MigrationResult.MigrationStatus.COMPLETED, testSubject.success().getMigrationStatus());
+	}
+
+	@Test
+	public void testError() {
+		MigrationResult testSubject = createTestSubject();
+		MigrationResult result = testSubject.error("testErr");
+		assertEquals(MigrationStatus.FAILED, result.getMigrationStatus());
+		assertEquals("testErr", result.getMsg());
 	}
 }

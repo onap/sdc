@@ -15,6 +15,9 @@
  */
 package org.openecomp.sdc.logging.servlet;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +33,8 @@ import java.util.function.Function;
  * @author evitaliy
  * @since 25 Mar 2018
  */
+@EqualsAndHashCode
+@ToString
 public class HttpHeader {
 
     private static final String NAMES_CANNOT_BE_NULL = "Names cannot be null";
@@ -74,27 +79,5 @@ public class HttpHeader {
             }
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        HttpHeader that = (HttpHeader) o;
-        return Objects.equals(headerNames, that.headerNames);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(headerNames);
-    }
-
-    @Override
-    public String toString() {
-        return "HttpHeader{headerNames=" + headerNames + '}';
     }
 }

@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.be.auditing.impl.distribution;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
@@ -31,7 +32,7 @@ public class AuditDistribStatusEventFactoryTest {
 	private AuditDistributionStatusEventFactory createTestSubject() {
 		Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData build = newBuilder.build();
-		return new AuditDistributionStatusEventFactory(build,new DistributionData("",""), "", "", "");
+		return new AuditDistributionStatusEventFactory(build,new DistributionData("",""), "", "", "", "");
 	}
 
 	@Test

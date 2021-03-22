@@ -20,38 +20,37 @@
 
 package org.openecomp.sdc.be.auditing.impl.distribution;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 
-public class AuditDistribDownloadEventFactoryTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-	private AuditDistributionDeployEventFactory createTestSubject() {
-		Builder newBuilder = CommonAuditData.newBuilder();
-		CommonAuditData build = newBuilder.build();
-		return new AuditDistributionDeployEventFactory(build,new ResourceCommonInfo(),"",new User(),"1.0");
-	}
+public class AuditDistribDownloadEventFactoryTest {
 
 	@Test
 	public void testGetLogMessage() throws Exception {
-		AuditDistributionDeployEventFactory testSubject;
-		String result;
+		Builder newBuilder = CommonAuditData.newBuilder();
+		CommonAuditData build = newBuilder.build();
+		AuditDistributionDeployEventFactory testSubject = new AuditDistributionDeployEventFactory(build,new ResourceCommonInfo(),"",new User(),"1.0");
+		String expected = "ACTION = \"DResult\" RESOURCE_NAME = \"\" RESOURCE_TYPE = \"\" SERVICE_INSTANCE_ID = \"\" CURR_VERSION = \"1.0\" MODIFIER = \"\" DID = \"\" STATUS = \"\" DESC = \"\"";
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLogMessage();
+		assertEquals(expected, testSubject.getLogMessage());
 	}
 
 	@Test
 	public void testGetDbEvent() throws Exception {
-		AuditDistributionDeployEventFactory testSubject;
-		AuditingGenericEvent result;
+		Builder newBuilder = CommonAuditData.newBuilder();
+		CommonAuditData build = newBuilder.build();
+		AuditDistributionDeployEventFactory testSubject = new AuditDistributionDeployEventFactory(build,new ResourceCommonInfo(),"","user","1.0", "");
+		DistributionDeployEvent result = (DistributionDeployEvent)testSubject.getDbEvent();
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDbEvent();
+		assertEquals("DResult", result.getAction());
+		assertEquals("1.0", result.getCurrVersion());
+		assertEquals("", result.getDid());
+		assertEquals("user", result.getModifier());
 	}
 }
