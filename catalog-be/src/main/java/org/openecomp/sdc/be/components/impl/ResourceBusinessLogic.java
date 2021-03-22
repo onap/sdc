@@ -1488,7 +1488,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 "An error has occurred during resource and resource instance creation", e);
             rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw new ByResponseFormatComponentException(e.getResponseFormat());
-        } catch (final Exception e) {
+        } catch (final ComponentException e) {
+			log.error(EcompLoggerErrorCode.SCHEMA_ERROR, ResourceBusinessLogic.class.getName(),
+				"An error has occurred during resource and resource instance creation", e);
+			rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+			throw new ByResponseFormatComponentException(e.getResponseFormat());
+		} catch (final Exception e) {
             log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceBusinessLogic.class.getName(),
                 "An error has occurred during resource and resource instance creation", e);
             rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
