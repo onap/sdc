@@ -20,37 +20,37 @@
 
 package org.openecomp.sdc.be.auditing.impl.distribution;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.auditing.impl.AuditGetUebClusterEventFactory;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuditGetUebClusterEventFactoryTest {
 
 	private AuditGetUebClusterEventFactory createTestSubject() {
 		Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData build = newBuilder.build();
-		return new AuditGetUebClusterEventFactory(build, "");
+		return new AuditGetUebClusterEventFactory(build, "", "");
 	}
 
 	@Test
 	public void testGetLogMessage() throws Exception {
-		AuditGetUebClusterEventFactory testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLogMessage();
+		AuditGetUebClusterEventFactory testSubject = createTestSubject();
+		String expected1 = "ACTION = \"GetUebCluster\" CONSUMER_ID = \"\" STATUS_TIME =";
+		String expected2 = "STATUS = \"\" STATUS_DESC = \"\"";
+		String actual = testSubject.getLogMessage();
+		assertTrue(actual.contains(expected1));
+		assertTrue(actual.contains(expected2));
 	}
 
 	@Test
 	public void testGetDbEvent() throws Exception {
-		AuditGetUebClusterEventFactory testSubject;
-		AuditingGenericEvent result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDbEvent();
+		AuditGetUebClusterEventFactory testSubject = createTestSubject();
+		AuditingGenericEvent result = testSubject.getDbEvent();
+		assertEquals("GetUebCluster", result.getAction());
 	}
 }

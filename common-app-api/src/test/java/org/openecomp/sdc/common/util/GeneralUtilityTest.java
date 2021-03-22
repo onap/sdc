@@ -23,17 +23,22 @@ package org.openecomp.sdc.common.util;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 public class GeneralUtilityTest {
 
@@ -56,14 +61,12 @@ public class GeneralUtilityTest {
 
 	@Test
 	public void validateIsBase64EncodedReturnsProperResponseFromByteArray() {
-
 		final String testString = "testDataToEncode";
 		final byte[] testBytes = testString.getBytes();
 		final byte[] testEncodedBytes = Base64.getEncoder().encode(testBytes);
 
-		boolean result = GeneralUtility.isBase64Encoded(testEncodedBytes);
-
-		assertTrue(result);
+		assertTrue(GeneralUtility.isBase64Encoded(testEncodedBytes));
+		assertTrue(GeneralUtility.isBase64Encoded(testString));
 	}
 
 	@Test
@@ -191,7 +194,7 @@ public class GeneralUtilityTest {
 		final String encodedString =
 				org.apache.commons.codec.digest.DigestUtils.md5Hex(testStringToEncode.getBytes());
 
-		assertArrayEquals(encodedString.getBytes(), Base64.getDecoder().decode(result));
+		assertEquals(encodedString, new String(Base64.getDecoder().decode(result)));
 	}
 
 	@Test
@@ -204,7 +207,7 @@ public class GeneralUtilityTest {
 		final String encodedString =
 				org.apache.commons.codec.digest.DigestUtils.md5Hex(testStringToEncode.getBytes());
 
-		assertArrayEquals(encodedString.getBytes(), Base64.getDecoder().decode(result));
+		assertEquals(encodedString, new String(Base64.getDecoder().decode(result)));
 	}
 
 	@Test
@@ -243,8 +246,25 @@ public class GeneralUtilityTest {
 		final String empty = " \ttest  ";
 
 		boolean result = GeneralUtility.isEmptyString(empty);
-
+		assertTrue(GeneralUtility.isEmptyString(null));
 		assertFalse(result);
 	}
 
+	@Test
+	public void getCategorizedComponentsTest() {
+
+		List<ICategorizedElement> components = new LinkedList<>();
+		ICategorizedElement componentService = Mockito.mock(ICategorizedElement.class);
+		when(componentService.getComponentTypeAsString()).thenReturn("SERVICE");
+
+		ICategorizedElement componentResource = Mockito.mock(ICategorizedElement.class);
+		when(componentResource.getComponentTypeAsString()).thenReturn("RESOURCE");
+
+		components.add(componentService);
+		components.add(componentResource);
+		Map<String, Map<String, List<ICategorizedElement>>> result = GeneralUtility.getCategorizedComponents(components);
+		verify(componentService, Mockito.times(1)).getComponentTypeAsString();
+		verify(componentResource, Mockito.times(2)).getComponentTypeAsString();
+		assertEquals(2, result.size());
+	}
 }

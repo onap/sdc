@@ -21,10 +21,11 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MapListCapabilityDataDefinitionTest {
 
@@ -43,24 +44,12 @@ public class MapListCapabilityDataDefinitionTest {
 	}
 	
 	@Test
-	public void testGetMapToscaDataDefinition() throws Exception {
-		MapListCapabilityDataDefinition testSubject;
-		Map<String, ListCapabilityDataDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getMapToscaDataDefinition();
-	}
-
-	
-	@Test
 	public void testAdd() throws Exception {
-		MapListCapabilityDataDefinition testSubject;
-		String key = "";
-		CapabilityDataDefinition value = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.add(key, value);
+		MapListCapabilityDataDefinition testSubject = createTestSubject();
+		testSubject.add("", null);
+		testSubject.add("key2", null);
+		testSubject.add("key2", new CapabilityDataDefinition());
+		assertEquals(2, testSubject.getMapToscaDataDefinition().size());
+		assertEquals(2, testSubject.getMapToscaDataDefinition().get("key2").getListToscaDataDefinition().size());
 	}
 }
