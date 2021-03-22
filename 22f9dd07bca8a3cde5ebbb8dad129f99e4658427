@@ -284,6 +284,30 @@
     },
     {
       "key": {
+        "uuid": "49e60a0a_9b8da800",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/resources/data/TagDataTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T12:10:24Z",
+      "side": 1,
+      "message": "looks like this is correct case to replace with Lombok (uncovered code), but do not remove already existed TCs, \nexecuted locally with\n@Getter\n@Setter\n@EqualsAndHashCode\n@ToString\nproduced 100% coverage",
+      "parentUuid": "58868775_c6b50e33",
+      "range": {
+        "startLine": 99,
+        "startChar": 2,
+        "endLine": 112,
+        "endChar": 2
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4e6644e4_67dfa156",
         "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/datatypes/model/HeatResourcesTypesTest.java",
         "patchSetId": 4
