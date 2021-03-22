@@ -21,9 +21,11 @@
 package org.openecomp.sdc.common.http.config;
 
 import fj.data.Either;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.security.SecurityUtil;
 
+@EqualsAndHashCode
 public class ClientCertificate {
     private String keyStore;
     private String keyStorePassword;
@@ -67,39 +69,6 @@ public class ClientCertificate {
 
     public String getKeyStorePassword() {
         return keyStorePassword;
-    }
-    
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((keyStore == null) ? 0 : keyStore.hashCode());
-        result = prime * result + ((keyStorePassword == null) ? 0 : keyStorePassword.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ClientCertificate other = (ClientCertificate) obj;
-        if (keyStore == null) {
-            if (other.keyStore != null)
-                return false;
-        }
-        else if (!keyStore.equals(other.keyStore))
-            return false;
-        if (keyStorePassword == null) {
-            if (other.keyStorePassword != null)
-                return false;
-        }
-        else if (!keyStorePassword.equals(other.keyStorePassword))
-            return false;
-        return true;
     }
 
     @Override
