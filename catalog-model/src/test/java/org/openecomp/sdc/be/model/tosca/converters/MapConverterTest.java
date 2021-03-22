@@ -22,17 +22,15 @@ package org.openecomp.sdc.be.model.tosca.converters;
 
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MapConverterTest {
 
-	private MapConverter createTestSubject() {
-		return new MapConverter();
-	}
-
-	
 	@Test
 	public void testGetInstance() throws Exception {
 		MapConverter result;
@@ -41,23 +39,21 @@ public class MapConverterTest {
 		result = MapConverter.getInstance();
 	}
 
-	
 	@Test
 	public void testConvert() throws Exception {
-		MapConverter testSubject;
-		String value = "";
-		String innerType = "";
+		MapConverter testSubject = new MapConverter();
 		Map<String, DataTypeDefinition> dataTypes = null;
-		String result;
+		assertTrue(testSubject.convert("", null, dataTypes).isEmpty());
+		assertTrue(testSubject.convert("", "string", dataTypes).isEmpty());
+		assertNull(testSubject.convert("{\"key\":}", "integer", dataTypes));
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.convert(value, innerType, dataTypes);
+		assertEquals("{\"key\":\"value\"}", testSubject.convert("{\"key\":\"value\"}", "list", dataTypes));
+		assertEquals("{\"key\":\"value\"}", testSubject.convert("{\"key\":\"value\"}", "string", dataTypes));
+		assertEquals("{\"key\":2}", testSubject.convert("{\"key\":2}", "integer", dataTypes));
+		assertEquals("{\"key\":null}", testSubject.convert("{\"key\":null}", "integer", dataTypes));
+		assertEquals("{\"key\":0.2}", testSubject.convert("{\"key\":0.2}", "float", dataTypes));
+		assertEquals("{\"key\":null}", testSubject.convert("{\"key\":null}", "float", dataTypes));
+		assertEquals("{\"key\":true}", testSubject.convert("{\"key\":true}", "boolean", dataTypes));
+		assertEquals("{\"key\":null}", testSubject.convert("{\"key\":null}", "boolean", dataTypes));
 	}
-
-	
-
-
-	
-
 }

@@ -20,10 +20,16 @@
 
 package org.openecomp.sdc.common.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.common.api.FilterDecisionEnum;
+import org.openecomp.sdc.common.datastructure.UserContext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import java.util.HashSet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ThreadLocalsHolderTest {
 
@@ -75,5 +81,46 @@ public class ThreadLocalsHolderTest {
         assertNull(ThreadLocalsHolder.getRequestStartTime());
         assertNull(ThreadLocalsHolder.getUuid());
         assertEquals(ThreadLocalsHolder.isMdcProcessed(), false);
+    }
+
+    @Test
+    public void validateUserContext() {
+        UserContext userContext = new UserContext("userId", new HashSet<>(), "firstName", "lastName");
+
+        ThreadLocalsHolder.setUserContext(userContext);
+        assertEquals("userId", ThreadLocalsHolder.getUserContext().getUserId());
+        assertEquals("firstName", ThreadLocalsHolder.getUserContext().getFirstName());
+        assertEquals("lastName", ThreadLocalsHolder.getUserContext().getLastName());
+        assertEquals(0, ThreadLocalsHolder.getUserContext().getUserRoles().size());
+    }
+
+    @Test
+    public void validateApiType() {
+        FilterDecisionEnum filterDecision = FilterDecisionEnum.INTERNAL;
+
+        ThreadLocalsHolder.setApiType(filterDecision);
+        assertEquals(filterDecision, ThreadLocalsHolder.getApiType());
+    }
+
+    @Test
+    public void isInternalRequestTest() {
+        FilterDecisionEnum filterDecision = FilterDecisionEnum.INTERNAL;
+        ThreadLocalsHolder.setApiType(filterDecision);
+        assertTrue(ThreadLocalsHolder.isInternalRequest());
+
+        filterDecision = FilterDecisionEnum.EXTERNAL;
+        ThreadLocalsHolder.setApiType(filterDecision);
+        assertFalse(ThreadLocalsHolder.isInternalRequest());
+    }
+
+    @Test
+    public void isExternalRequestTest() {
+        FilterDecisionEnum filterDecision = FilterDecisionEnum.INTERNAL;
+        ThreadLocalsHolder.setApiType(filterDecision);
+        assertFalse(ThreadLocalsHolder.isExternalRequest());
+
+        filterDecision = FilterDecisionEnum.EXTERNAL;
+        ThreadLocalsHolder.setApiType(filterDecision);
+        assertTrue(ThreadLocalsHolder.isExternalRequest());
     }
 }
