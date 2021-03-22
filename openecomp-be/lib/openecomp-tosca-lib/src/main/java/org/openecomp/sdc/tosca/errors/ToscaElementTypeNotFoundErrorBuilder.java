@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -23,28 +22,28 @@ import org.openecomp.sdc.common.errors.ErrorCode;
  * The type Tosca data type not found error builder.
  */
 public class ToscaElementTypeNotFoundErrorBuilder {
-  private static final String ENTRY_NOT_FOUND_MSG =
-      "Entity Type '%s' or one of its derivedFrom type hierarchy, "
-          + "is not defined in tosca service model";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  /**
-   * Instantiates a new Tosca data type not found error builder.
-   *
-   * @param elementType element type
-   */
-  public ToscaElementTypeNotFoundErrorBuilder(String elementType) {
-    builder.withId(ToscaErrorCodes.TOSCA_ENTRY_NOT_FOUND);
-    builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(ENTRY_NOT_FOUND_MSG, elementType));
-  }
+    private static final String ENTRY_NOT_FOUND_MSG =
+        "Entity Type '%s' or one of its derivedFrom type hierarchy, " + "is not defined in tosca service model";
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
+    /**
+     * Instantiates a new Tosca data type not found error builder.
+     *
+     * @param elementType element type
+     */
+    public ToscaElementTypeNotFoundErrorBuilder(String elementType) {
+        builder.withId(ToscaErrorCodes.TOSCA_ENTRY_NOT_FOUND);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(String.format(ENTRY_NOT_FOUND_MSG, elementType));
+    }
+
+    /**
+     * Build error code.
+     *
+     * @return the error code
+     */
+    public ErrorCode build() {
+        return builder.build();
+    }
 }

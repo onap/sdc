@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.itempermissions.types;
 
 /**
@@ -25,23 +24,22 @@ package org.openecomp.sdcrests.itempermissions.types;
  */
 public class ItemPermissionsDto {
 
-  private String userId;
-  private String permission;
+    private String userId;
+    private String permission;
 
-  public String getUserId() {
-    return userId;
-  }
+    public String getUserId() {
+        return userId;
+    }
 
-  public void setUserId(String id) {
-    this.userId = id;
-  }
+    public void setUserId(String id) {
+        this.userId = id;
+    }
 
-  public String getPermission() {
-    return permission;
-  }
+    public String getPermission() {
+        return permission;
+    }
 
-  public void setPermission(String permission) {
-    this.permission = permission;
-  }
-
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 }

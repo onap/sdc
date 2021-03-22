@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
@@ -24,47 +23,39 @@ import org.openecomp.sdc.versioning.dao.ItemDao;
 import org.openecomp.sdc.versioning.types.Item;
 
 public class AsdcItemManagerImpl extends ItemManagerImpl implements AsdcItemManager {
-  private static final String CREATE_ITEM = "Create_Item";
 
-  private PermissionsServices permissionsServices;
-  private SubscriptionService subscriptionService;
+    private static final String CREATE_ITEM = "Create_Item";
+    private PermissionsServices permissionsServices;
+    private SubscriptionService subscriptionService;
 
-  public AsdcItemManagerImpl(ItemDao itemDao, PermissionsServices permissionsServices,
-                             SubscriptionService subscriptionService) {
-    super(itemDao);
-
-    this.permissionsServices = permissionsServices;
-    this.subscriptionService = subscriptionService;
-  }
-
-  @Override
-  public Item create(Item item) {
-    Item createdItem = super.create(item);
-
-    String userId = SessionContextProviderFactory.getInstance()
-        .createInterface().get().getUser().getUserId();
-    String itemId = createdItem.getId();
-    permissionsServices.execute(itemId, userId, CREATE_ITEM);
-    subscriptionService.subscribe(userId, itemId);
-
-    return createdItem;
-  }
-
-
-  @Override
-  public void updateOwner(String itemId, String owner) {
-    Item item = get(itemId);
-    if (item == null) {
-      return;
+    public AsdcItemManagerImpl(ItemDao itemDao, PermissionsServices permissionsServices, SubscriptionService subscriptionService) {
+        super(itemDao);
+        this.permissionsServices = permissionsServices;
+        this.subscriptionService = subscriptionService;
     }
-    item.setOwner(owner);
-    super.update(item);
-  }
 
-  @Override
-  public void delete(Item item) {
-    super.delete(item);
-  }
+    @Override
+    public Item create(Item item) {
+        Item createdItem = super.create(item);
+        String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
+        String itemId = createdItem.getId();
+        permissionsServices.execute(itemId, userId, CREATE_ITEM);
+        subscriptionService.subscribe(userId, itemId);
+        return createdItem;
+    }
 
+    @Override
+    public void updateOwner(String itemId, String owner) {
+        Item item = get(itemId);
+        if (item == null) {
+            return;
+        }
+        item.setOwner(owner);
+        super.update(item);
+    }
 
+    @Override
+    public void delete(Item item) {
+        super.delete(item);
+    }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.tools.importinfo;
-
 
 import static org.openecomp.core.tools.commands.CommandName.IMPORT;
 
@@ -53,7 +51,6 @@ public class ImportDataCommand extends Command {
     @Override
     public boolean execute(String[] args) {
         CommandLine cmd = parseArgs(args);
-
         if (!cmd.hasOption(FILE_OPTION) || cmd.getOptionValue(FILE_OPTION) == null) {
             LOGGER.error("Argument f is mandatory");
             return false;

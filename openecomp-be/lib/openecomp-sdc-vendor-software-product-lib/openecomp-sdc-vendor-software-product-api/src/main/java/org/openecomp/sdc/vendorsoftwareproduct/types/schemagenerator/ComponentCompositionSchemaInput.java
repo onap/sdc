@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ public class ComponentCompositionSchemaInput implements SchemaTemplateInput {
 
     private boolean manual;
     private ComponentData component;
-
 }

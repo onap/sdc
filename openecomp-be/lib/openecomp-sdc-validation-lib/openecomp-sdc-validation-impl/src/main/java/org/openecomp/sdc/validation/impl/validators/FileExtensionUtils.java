@@ -23,16 +23,10 @@ import java.util.Set;
 
 class FileExtensionUtils {
 
-    private static final Set<String> VALID_YAML_EXTENSIONS = Set.of(
-        ".yaml",
-        ".yml",
-        ".env"
-    );
+    private static final Set<String> VALID_YAML_EXTENSIONS = Set.of(".yaml", ".yml", ".env");
 
     static boolean isYaml(String fileName) {
         String fileNameLower = fileName.toLowerCase();
-        return FileExtensionUtils.VALID_YAML_EXTENSIONS.stream()
-            .anyMatch(fileNameLower::endsWith);
+        return FileExtensionUtils.VALID_YAML_EXTENSIONS.stream().anyMatch(fileNameLower::endsWith);
     }
-
 }

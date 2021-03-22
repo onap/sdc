@@ -17,11 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import java.util.Map;
-
 import lombok.Data;
 
 @Data
@@ -36,13 +34,7 @@ public class Resource {
 
     @Override
     public String toString() {
-        return "Resource{"
-                + "type='" + type + '\''
-                + ", properties=" + properties
-                + ", metadata=" + metadata
-                + ", depends_on=" + depends_on
-                + ", update_policy='" + update_policy + '\''
-                + ", deletion_policy='" + deletion_policy + '\''
-                + '}';
+        return "Resource{" + "type='" + type + '\'' + ", properties=" + properties + ", metadata=" + metadata + ", depends_on=" + depends_on
+            + ", update_policy='" + update_policy + '\'' + ", deletion_policy='" + deletion_policy + '\'' + '}';
     }
 }

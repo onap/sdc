@@ -19,7 +19,4 @@
  */
 package org.openecomp.sdc.versioning.types;
 
-public enum ItemStatus {
-    ACTIVE,
-    ARCHIVED
-}
+public enum ItemStatus {ACTIVE, ARCHIVED}

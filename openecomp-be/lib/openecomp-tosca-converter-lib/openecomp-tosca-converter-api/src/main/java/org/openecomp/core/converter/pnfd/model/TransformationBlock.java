@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import java.util.Optional;
@@ -29,19 +28,21 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum TransformationBlock {
+    // @formatter:off
     INPUT("input"),
     GET_INPUT_FUNCTION("getInputFunction"),
     NODE_TEMPLATE("nodeTemplate"),
     CUSTOM_NODE_TYPE("customNodeType"),
     NODE_TYPE("nodeType");
+    // @formatter:of
 
     private final String name;
 
     /**
      * Parse a String to the related {@link TransformationBlock}.
-     * @param name  the {@link TransformationBlock} name
-     * @return
-     *  The {@link TransformationBlock} representing the given name.
+     *
+     * @param name the {@link TransformationBlock} name
+     * @return The {@link TransformationBlock} representing the given name.
      */
     public static Optional<TransformationBlock> parse(final String name) {
         for (final TransformationBlock transformationBlock : values()) {
@@ -49,7 +50,6 @@ public enum TransformationBlock {
                 return Optional.of(transformationBlock);
             }
         }
-
         return Optional.empty();
     }
 }

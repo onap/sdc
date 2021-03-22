@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
@@ -25,11 +24,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.MonitoringUploadDaoFactory;
 
 public class MonitoringUploadsManagerFactoryImpl extends MonitoringUploadsManagerFactory {
-  private static final MonitoringUploadsManager INSTANCE =
-      new MonitoringUploadsManagerImpl(MonitoringUploadDaoFactory.getInstance().createInterface());
 
-  @Override
-  public MonitoringUploadsManager createInterface() {
-    return INSTANCE;
-  }
+    private static final MonitoringUploadsManager INSTANCE = new MonitoringUploadsManagerImpl(
+        MonitoringUploadDaoFactory.getInstance().createInterface());
+
+    @Override
+    public MonitoringUploadsManager createInterface() {
+        return INSTANCE;
+    }
 }

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import java.util.List;
@@ -38,7 +37,6 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class Transformation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Transformation.class);
-
     private String name;
     private String description;
     private TransformationBlock block;
@@ -69,12 +67,10 @@ public class Transformation {
         final Transformation that = (Transformation) o;
         //if there is no query, compares by block and name.
         if (conversionQuery == null && that.conversionQuery == null) {
-            return block == that.block &&
-                Objects.equals(name, that.name);
+            return block == that.block && Objects.equals(name, that.name);
         }
         //transformations with the same block and query will override themselves.
-        return block == that.block &&
-            Objects.equals(conversionQuery, that.conversionQuery);
+        return block == that.block && Objects.equals(conversionQuery, that.conversionQuery);
     }
 
     @Override
@@ -86,10 +82,8 @@ public class Transformation {
         if (CollectionUtils.isEmpty(propertySet)) {
             return Optional.empty();
         }
-
         final Optional<TransformationProperty> transformationProperty = propertySet.stream()
-            .filter(transformationProperty1 -> transformationProperty1.getType() == type)
-            .findFirst();
+            .filter(transformationProperty1 -> transformationProperty1.getType() == type).findFirst();
         if (transformationProperty.isPresent()) {
             try {
                 T value = clazz.cast(transformationProperty.get().getValue());
@@ -99,7 +93,6 @@ public class Transformation {
                 return Optional.empty();
             }
         }
-
         return Optional.empty();
     }
 }

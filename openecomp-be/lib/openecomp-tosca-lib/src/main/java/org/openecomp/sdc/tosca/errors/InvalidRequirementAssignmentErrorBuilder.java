@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -25,24 +24,22 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class InvalidRequirementAssignmentErrorBuilder {
 
-  private static final String INVALID_REQ_ASSIGNMENT_ERR_ID = "INVALID_REQ_ASSIGNMENT_ERR_ID";
-  private static final String INVALID_REQ_ASSIGNMENT_ERR_MSG =
-      "Invalid Requirement Assignment, Node value is NULL, Requirement ID '%s'.";
+    private static final String INVALID_REQ_ASSIGNMENT_ERR_ID = "INVALID_REQ_ASSIGNMENT_ERR_ID";
+    private static final String INVALID_REQ_ASSIGNMENT_ERR_MSG = "Invalid Requirement Assignment, Node value is NULL, Requirement ID '%s'.";
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+    /**
+     * Invalid Requirement Assignment Error Builder.
+     *
+     * @param requirementId.
+     */
+    public InvalidRequirementAssignmentErrorBuilder(String requirementId) {
+        builder.withId(INVALID_REQ_ASSIGNMENT_ERR_ID);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(String.format(INVALID_REQ_ASSIGNMENT_ERR_MSG, requirementId));
+    }
 
-  /**
-   * Invalid Requirement Assignment Error Builder.
-   * @param requirementId.
-   */
-  public InvalidRequirementAssignmentErrorBuilder(String requirementId) {
-    builder.withId(INVALID_REQ_ASSIGNMENT_ERR_ID);
-    builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(INVALID_REQ_ASSIGNMENT_ERR_MSG, requirementId));
-  }
-
-  public ErrorCode build() {
-    return builder.build();
-  }
-
+    public ErrorCode build() {
+        return builder.build();
+    }
 }

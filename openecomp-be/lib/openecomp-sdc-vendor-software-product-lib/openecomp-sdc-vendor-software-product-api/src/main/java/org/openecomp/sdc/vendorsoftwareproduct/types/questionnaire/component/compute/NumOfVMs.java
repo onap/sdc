@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute;
 
 import lombok.Getter;
@@ -33,6 +32,4 @@ public class NumOfVMs {
     private int maximum;
     private String CpuOverSubscriptionRatio;
     private String MemoryRAM;
-
-
 }

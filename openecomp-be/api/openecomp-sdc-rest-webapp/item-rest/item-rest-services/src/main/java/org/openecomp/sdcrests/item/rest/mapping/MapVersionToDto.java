@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.item.rest.mapping;
 
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -25,16 +24,17 @@ import org.openecomp.sdcrests.item.types.VersionDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
 public class MapVersionToDto extends MappingBase<Version, VersionDto> {
-  @Override
-  public void doMapping(Version source, VersionDto target) {
-    target.setId(source.getId());
-    target.setName(source.getName());
-    target.setDescription(source.getDescription());
-    target.setBaseId(source.getBaseId());
-    target.setStatus(source.getStatus());
-    target.setState(source.getState());
-    target.setCreationTime(source.getCreationTime());
-    target.setModificationTime(source.getModificationTime());
-    target.setAdditionalInfo(source.getAdditionalInfo());
-  }
+
+    @Override
+    public void doMapping(Version source, VersionDto target) {
+        target.setId(source.getId());
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+        target.setBaseId(source.getBaseId());
+        target.setStatus(source.getStatus());
+        target.setState(source.getState());
+        target.setCreationTime(source.getCreationTime());
+        target.setModificationTime(source.getModificationTime());
+        target.setAdditionalInfo(source.getAdditionalInfo());
+    }
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import org.onap.config.api.Configuration;
@@ -25,11 +24,6 @@ import org.onap.config.api.ConfigurationManager;
 import org.openecomp.sdc.tosca.services.ConfigConstants;
 
 public class ToscaCapabilityType {
-
-    private static Configuration config = ConfigurationManager.lookup();
-
-    private static final String CAPABILITY_PREFIX =
-            config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_CAPABILITY_TYPE);
 
     //TOSCA native types
     public static final String NATIVE_ROOT = "tosca.capabilities.Root";
@@ -43,12 +37,12 @@ public class ToscaCapabilityType {
     public static final String NATIVE_ATTACHMENT = "tosca.capabilities.Attachment";
     public static final String NATIVE_NETWORK_LINKABLE = "tosca.capabilities.network.Linkable";
     public static final String NATIVE_NFV_METRIC = "tosca.capabilities.nfv.Metric";
-
+    private static Configuration config = ConfigurationManager.lookup();
+    private static final String CAPABILITY_PREFIX = config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_CAPABILITY_TYPE);
     //Additional types
     public static final String METRIC = CAPABILITY_PREFIX + "Metric";
     public static final String METRIC_CEILOMETER = CAPABILITY_PREFIX + "metric.Ceilometer";
     public static final String METRIC_SNMP_TRAP = CAPABILITY_PREFIX + "metric.SnmpTrap";
     public static final String METRIC_SNMP_POLLING = CAPABILITY_PREFIX + "metric.SnmpPolling";
     public static final String FABRIC_CONFIGURATION = CAPABILITY_PREFIX + "FabricConfiguration";
-
 }

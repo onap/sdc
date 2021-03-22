@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import java.util.Map;
+import java.util.Optional;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 
-import java.util.Map;
-import java.util.Optional;
-
 public class FunctionTranslationFactory {
+
     private static final Map<String, ImplementationConfiguration> functionTranslationImplMap;
 
     static {
         Configuration config = ConfigurationManager.lookup();
-        functionTranslationImplMap = config.populateMap(ConfigConstants.TRANSLATOR_NAMESPACE,
-                ConfigConstants.FUNCTION_TRANSLATION_IMPL_KEY, ImplementationConfiguration.class);
-        functionTranslationImplMap.putAll(config.populateMap(ConfigConstants.MANDATORY_TRANSLATOR_NAMESPACE,
-                ConfigConstants.FUNCTION_TRANSLATION_IMPL_KEY, ImplementationConfiguration.class));
-
+        functionTranslationImplMap = config
+            .populateMap(ConfigConstants.TRANSLATOR_NAMESPACE, ConfigConstants.FUNCTION_TRANSLATION_IMPL_KEY, ImplementationConfiguration.class);
+        functionTranslationImplMap.putAll(config
+            .populateMap(ConfigConstants.MANDATORY_TRANSLATOR_NAMESPACE, ConfigConstants.FUNCTION_TRANSLATION_IMPL_KEY,
+                ImplementationConfiguration.class));
     }
 
     /**
@@ -44,10 +43,8 @@ public class FunctionTranslationFactory {
      */
     public static Optional<FunctionTranslation> getInstance(String heatFunctionKey) {
         if (isSupportedFunction(heatFunctionKey)) {
-            String functionTranslationImplClassName =
-                    functionTranslationImplMap.get(heatFunctionKey).getImplementationClass();
-            return Optional.of(CommonMethods
-                    .newInstance(functionTranslationImplClassName, FunctionTranslation.class));
+            String functionTranslationImplClassName = functionTranslationImplMap.get(heatFunctionKey).getImplementationClass();
+            return Optional.of(CommonMethods.newInstance(functionTranslationImplClassName, FunctionTranslation.class));
         }
         return Optional.empty();
     }
@@ -55,6 +52,4 @@ public class FunctionTranslationFactory {
     private static boolean isSupportedFunction(String heatFunctionKey) {
         return functionTranslationImplMap.containsKey(heatFunctionKey);
     }
-
 }
-

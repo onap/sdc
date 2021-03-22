@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.helper;
 
 import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE;
@@ -29,7 +28,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
@@ -45,126 +43,112 @@ import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 
 public class VolumeTranslationHelper {
-  private final Logger logger;
-  public VolumeTranslationHelper(Logger logger) {
-    this.logger = logger;
-  }
 
-  /**
-   * Gets file data containing volume.
-   *
-   * @param filesToSearch the files to search
-   * @param resourceId    the resource id
-   * @param translateTo   the translate to
-   * @param types         the types
-   * @return the file data containing volume
-   */
-  public Optional<ResourceFileDataAndIDs> getFileDataContainingVolume(List<FileData> filesToSearch,
-                                                                      String resourceId,
-                                                                      TranslateTo translateTo,
-                                                                      FileData.Type... types) {
-    if (CollectionUtils.isEmpty(filesToSearch)) {
-      return Optional.empty();
+    private final Logger logger;
+
+    public VolumeTranslationHelper(Logger logger) {
+        this.logger = logger;
     }
 
-    List<FileData> fileDatas = Objects.isNull(types) ? filesToSearch : HeatToToscaUtil
-        .getFilteredListOfFileDataByTypes(filesToSearch, types);
-    Optional<ResourceFileDataAndIDs> fileDataAndIDs =
-        getResourceFileDataAndIDsForVolumeConnection(resourceId, translateTo, fileDatas);
-    if (fileDataAndIDs.isPresent()) {
-      return fileDataAndIDs;
-    }
-    return Optional.empty();
-  }
-
-  private Optional<ResourceFileDataAndIDs> getResourceFileDataAndIDsForVolumeConnection(
-      String resourceId, TranslateTo translateTo, List<FileData> fileDatas) {
-    for (FileData data : fileDatas) {
-      HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
-          .yamlToObject(translateTo.getContext().getFiles().getFileContentAsStream(data.getFile()),
-              HeatOrchestrationTemplate.class);
-      Map<String, Output> outputs = heatOrchestrationTemplate.getOutputs();
-      if (Objects.isNull(outputs)) {
-        continue;
-      }
-      Output output = outputs.get(resourceId);
-      if (Objects.nonNull(output)) {
-        Optional<AttachedResourceId> attachedOutputId = HeatToToscaUtil
-            .extractAttachedResourceId(data.getFile(), heatOrchestrationTemplate,
-                translateTo.getContext(), output.getValue());
-        if (attachedOutputId.isPresent()) {
-          AttachedResourceId attachedResourceId = attachedOutputId.get();
-          if (!isOutputIsGetResource(resourceId, data, attachedResourceId)) {
-            continue;
-          }
-          String translatedId = (String) attachedResourceId.getTranslatedId();
-          if (isOutputOfTypeCinderVolume(translateTo, data, heatOrchestrationTemplate,
-              translatedId)) {
-            ResourceFileDataAndIDs fileDataAndIDs =
-                new ResourceFileDataAndIDs((String) attachedResourceId.getEntityId(),
-                    translatedId,
-                    data);
-            return Optional.of(fileDataAndIDs);
-          } else {
-            logger.warn(
-                "output: '" + resourceId + "' in file '" + data.getFile() + "' is not of type '"
-                    + CINDER_VOLUME_RESOURCE_TYPE.getHeatResource() + "'");
-          }
+    /**
+     * Gets file data containing volume.
+     *
+     * @param filesToSearch the files to search
+     * @param resourceId    the resource id
+     * @param translateTo   the translate to
+     * @param types         the types
+     * @return the file data containing volume
+     */
+    public Optional<ResourceFileDataAndIDs> getFileDataContainingVolume(List<FileData> filesToSearch, String resourceId, TranslateTo translateTo,
+                                                                        FileData.Type... types) {
+        if (CollectionUtils.isEmpty(filesToSearch)) {
+            return Optional.empty();
         }
-      } else {
-        logger.warn("output: '" + resourceId + "' in file '" + data.getFile() + "' is not found");
-      }
+        List<FileData> fileDatas = Objects.isNull(types) ? filesToSearch : HeatToToscaUtil.getFilteredListOfFileDataByTypes(filesToSearch, types);
+        Optional<ResourceFileDataAndIDs> fileDataAndIDs = getResourceFileDataAndIDsForVolumeConnection(resourceId, translateTo, fileDatas);
+        if (fileDataAndIDs.isPresent()) {
+            return fileDataAndIDs;
+        }
+        return Optional.empty();
     }
-    return Optional.empty();
-  }
 
-  private boolean isOutputOfTypeCinderVolume(TranslateTo translateTo, FileData data,
-                                             HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                             String translatedId) {
-    return getResourceByTranslatedResourceId(data.getFile(), heatOrchestrationTemplate,
-        translatedId, translateTo, CINDER_VOLUME_RESOURCE_TYPE.getHeatResource()).isPresent();
-  }
-
-  private Optional<List<Map.Entry<String, Resource>>> getResourceByTranslatedResourceId(
-      String fileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
-      String translatedResourceId, TranslateTo translateTo, String heatResourceType) {
-    List<Map.Entry<String, Resource>> list = heatOrchestrationTemplate.getResources().entrySet()
-        .stream()
-        .filter(
-            entry -> getPredicatesForTranslatedIdToResourceId(fileName, heatOrchestrationTemplate,
-                translatedResourceId, translateTo.getContext(), heatResourceType)
-                .stream()
-                    .allMatch(p -> p.test(entry)))
-        .collect(Collectors.toList());
-    if (CollectionUtils.isEmpty(list)) {
-      return Optional.empty();
-    } else {
-      return Optional.of(list);
+    private Optional<ResourceFileDataAndIDs> getResourceFileDataAndIDsForVolumeConnection(String resourceId, TranslateTo translateTo,
+                                                                                          List<FileData> fileDatas) {
+        for (FileData data : fileDatas) {
+            HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
+                .yamlToObject(translateTo.getContext().getFiles().getFileContentAsStream(data.getFile()), HeatOrchestrationTemplate.class);
+            Map<String, Output> outputs = heatOrchestrationTemplate.getOutputs();
+            if (Objects.isNull(outputs)) {
+                continue;
+            }
+            Output output = outputs.get(resourceId);
+            if (Objects.nonNull(output)) {
+                Optional<AttachedResourceId> attachedOutputId = HeatToToscaUtil
+                    .extractAttachedResourceId(data.getFile(), heatOrchestrationTemplate, translateTo.getContext(), output.getValue());
+                if (attachedOutputId.isPresent()) {
+                    AttachedResourceId attachedResourceId = attachedOutputId.get();
+                    if (!isOutputIsGetResource(resourceId, data, attachedResourceId)) {
+                        continue;
+                    }
+                    String translatedId = (String) attachedResourceId.getTranslatedId();
+                    if (isOutputOfTypeCinderVolume(translateTo, data, heatOrchestrationTemplate, translatedId)) {
+                        ResourceFileDataAndIDs fileDataAndIDs = new ResourceFileDataAndIDs((String) attachedResourceId.getEntityId(), translatedId,
+                            data);
+                        return Optional.of(fileDataAndIDs);
+                    } else {
+                        logger.warn("output: '" + resourceId + "' in file '" + data.getFile() + "' is not of type '" + CINDER_VOLUME_RESOURCE_TYPE
+                            .getHeatResource() + "'");
+                    }
+                }
+            } else {
+                logger.warn("output: '" + resourceId + "' in file '" + data.getFile() + "' is not found");
+            }
+        }
+        return Optional.empty();
     }
-  }
 
-  private List<Predicate<Map.Entry<String, Resource>>> getPredicatesForTranslatedIdToResourceId(
-      String fileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
-      String translatedResourceId, TranslationContext context, String heatResourceType) {
-    List<Predicate<Map.Entry<String, Resource>>> list = new ArrayList<>();
-    list.add(entry -> entry.getValue().getType().equals(heatResourceType));
-    list.add(entry -> {
-      Optional<String> resourceTranslatedId = ResourceTranslationBase
-          .getResourceTranslatedId(fileName, heatOrchestrationTemplate, entry.getKey(), context);
-      return resourceTranslatedId.isPresent()
-          && resourceTranslatedId.get().equals(translatedResourceId);
-    });
-    return list;
-  }
-
-  private boolean isOutputIsGetResource(String resourceId, FileData data,
-                                        AttachedResourceId attachedResourceId) {
-    if (attachedResourceId.isGetResource()) {
-      return true;
-    } else {
-      logger.warn("output: '" + resourceId + "' in file '" + data.getFile()
-          + "' is not defined as get_resource and therefore not supported as shared resource.");
-      return false;
+    private boolean isOutputOfTypeCinderVolume(TranslateTo translateTo, FileData data, HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                               String translatedId) {
+        return getResourceByTranslatedResourceId(data.getFile(), heatOrchestrationTemplate, translatedId, translateTo,
+            CINDER_VOLUME_RESOURCE_TYPE.getHeatResource()).isPresent();
     }
-  }
+
+    private Optional<List<Map.Entry<String, Resource>>> getResourceByTranslatedResourceId(String fileName,
+                                                                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                                                          String translatedResourceId, TranslateTo translateTo,
+                                                                                          String heatResourceType) {
+        List<Map.Entry<String, Resource>> list = heatOrchestrationTemplate.getResources().entrySet().stream().filter(
+            entry -> getPredicatesForTranslatedIdToResourceId(fileName, heatOrchestrationTemplate, translatedResourceId, translateTo.getContext(),
+                heatResourceType).stream().allMatch(p -> p.test(entry))).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(list)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(list);
+        }
+    }
+
+    private List<Predicate<Map.Entry<String, Resource>>> getPredicatesForTranslatedIdToResourceId(String fileName,
+                                                                                                  HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                                                                  String translatedResourceId,
+                                                                                                  TranslationContext context,
+                                                                                                  String heatResourceType) {
+        List<Predicate<Map.Entry<String, Resource>>> list = new ArrayList<>();
+        list.add(entry -> entry.getValue().getType().equals(heatResourceType));
+        list.add(entry -> {
+            Optional<String> resourceTranslatedId = ResourceTranslationBase
+                .getResourceTranslatedId(fileName, heatOrchestrationTemplate, entry.getKey(), context);
+            return resourceTranslatedId.isPresent() && resourceTranslatedId.get().equals(translatedResourceId);
+        });
+        return list;
+    }
+
+    private boolean isOutputIsGetResource(String resourceId, FileData data, AttachedResourceId attachedResourceId) {
+        if (attachedResourceId.isGetResource()) {
+            return true;
+        } else {
+            logger.warn("output: '" + resourceId + "' in file '" + data.getFile()
+                + "' is not defined as get_resource and therefore not supported as shared resource.");
+            return false;
+        }
+    }
 }

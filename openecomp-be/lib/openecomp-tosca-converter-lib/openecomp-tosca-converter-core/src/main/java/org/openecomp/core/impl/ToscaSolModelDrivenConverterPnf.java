@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.impl;
 
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -29,22 +28,19 @@ public class ToscaSolModelDrivenConverterPnf extends AbstractToscaSolConverter {
 
     /**
      * Calls the model driven engine to parse the onboarding PNF descriptor
+     *
      * @param serviceTemplate
      * @param readerService
      */
     @Override
-    public void convertTopologyTemplate(final ServiceTemplate serviceTemplate,
-                                        final ServiceTemplateReaderService readerService) {
-        final PnfdTransformationEngine pnfdTransformationEngine =
-            new PnfdNodeTemplateTransformationEngine(readerService, serviceTemplate);
+    public void convertTopologyTemplate(final ServiceTemplate serviceTemplate, final ServiceTemplateReaderService readerService) {
+        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTemplateTransformationEngine(readerService, serviceTemplate);
         pnfdTransformationEngine.transform();
     }
 
     @Override
-    protected void convertNodeTypes(final ServiceTemplate serviceTemplate,
-                                    final ServiceTemplateReaderService readerService) {
-        final PnfdTransformationEngine pnfdTransformationEngine =
-            new PnfdNodeTypeTransformationEngine(readerService, serviceTemplate);
+    protected void convertNodeTypes(final ServiceTemplate serviceTemplate, final ServiceTemplateReaderService readerService) {
+        final PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTypeTransformationEngine(readerService, serviceTemplate);
         pnfdTransformationEngine.transform();
     }
 }

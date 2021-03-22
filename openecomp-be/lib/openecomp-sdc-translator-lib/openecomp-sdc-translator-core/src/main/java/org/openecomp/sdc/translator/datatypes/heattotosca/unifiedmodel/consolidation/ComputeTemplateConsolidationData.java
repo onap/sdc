@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 
 public class ComputeTemplateConsolidationData extends EntityConsolidationData {
     // key - volume node template id
+
     // value - List of requirement id and the requirement assignment on the
+
     // compute node which connect to this volume
     private Multimap<String, RequirementAssignmentData> volumes;
-
     // key - port type (port id excluding index),
+
     // value - List of connected port node template ids, with this port type
     private Map<String, List<String>> ports;
 
@@ -67,8 +66,7 @@ public class ComputeTemplateConsolidationData extends EntityConsolidationData {
         if (this.volumes == null) {
             this.volumes = ArrayListMultimap.create();
         }
-        this.volumes.put(requirementAssignment.getNode(), new RequirementAssignmentData(requirementId,
-                requirementAssignment));
+        this.volumes.put(requirementAssignment.getNode(), new RequirementAssignmentData(requirementId, requirementAssignment));
     }
 
     /**
@@ -92,8 +90,7 @@ public class ComputeTemplateConsolidationData extends EntityConsolidationData {
      */
     public boolean isNumberOfPortFromEachTypeLegal() {
         Map<String, List<String>> currPortsMap = getPorts();
-        return MapUtils.isEmpty(currPortsMap) || currPortsMap.values().stream()
-                                                             .allMatch(portList -> portList.size() == 1);
+        return MapUtils.isEmpty(currPortsMap) || currPortsMap.values().stream().allMatch(portList -> portList.size() == 1);
     }
 
     public Set<String> getPortsIds() {

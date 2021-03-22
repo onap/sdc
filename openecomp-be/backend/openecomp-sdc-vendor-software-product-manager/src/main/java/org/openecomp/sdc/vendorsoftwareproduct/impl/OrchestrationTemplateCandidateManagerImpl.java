@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import java.io.IOException;
@@ -47,108 +46,83 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-public class OrchestrationTemplateCandidateManagerImpl
-    implements OrchestrationTemplateCandidateManager {
+public class OrchestrationTemplateCandidateManagerImpl implements OrchestrationTemplateCandidateManager {
 
-  private final VendorSoftwareProductInfoDao vspInfoDao;
-  private final CandidateService candidateService;
+    private final VendorSoftwareProductInfoDao vspInfoDao;
+    private final CandidateService candidateService;
 
-  public OrchestrationTemplateCandidateManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
-                                                   CandidateService candidateService
-  ) {
-    this.vspInfoDao = vspInfoDao;
-    this.candidateService = candidateService;
-  }
+    public OrchestrationTemplateCandidateManagerImpl(VendorSoftwareProductInfoDao vspInfoDao, CandidateService candidateService) {
+        this.vspInfoDao = vspInfoDao;
+        this.candidateService = candidateService;
+    }
 
-  @Override
-  public UploadFileResponse upload(final VspDetails vspDetails,
-                                   final OnboardPackageInfo onboardPackageInfo) {
-    final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
-    final OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
-        OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(onboardPackageInfo.getPackageType());
+    @Override
+    public UploadFileResponse upload(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo) {
+        final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
+        final OrchestrationTemplateFileHandler orchestrationTemplateFileHandler = OrchestrationUploadFactory
+            .createOrchestrationTemplateFileHandler(onboardPackageInfo.getPackageType());
+        final UploadFileResponse uploadFileResponse = orchestrationTemplateFileHandler.upload(vspDetails, onboardPackageInfo, candidateService);
+        uploadFileResponse.setNetworkPackageName(onboardPackage.getFilename());
+        return uploadFileResponse;
+    }
 
-    final UploadFileResponse uploadFileResponse =
-        orchestrationTemplateFileHandler.upload(vspDetails, onboardPackageInfo, candidateService);
-    uploadFileResponse.setNetworkPackageName(onboardPackage.getFilename());
-    return uploadFileResponse;
-  }
+    @Override
+    public OrchestrationTemplateActionResponse process(String vspId, Version version) {
+        OrchestrationTemplateCandidateData candidate = candidateService.getOrchestrationTemplateCandidate(vspId, version)
+            .orElseThrow(() -> new CoreException(new OrchestrationTemplateNotFoundErrorBuilder(vspId).build()));
+        return OrchestrationProcessFactory.getInstance(candidate.getFileSuffix())
+            .map(processor -> processor.process(getVspDetails(vspId, version), candidate)).orElse(new OrchestrationTemplateActionResponse());
+    }
 
-  @Override
-  public OrchestrationTemplateActionResponse process(String vspId, Version version) {
-    OrchestrationTemplateCandidateData candidate =
-        candidateService.getOrchestrationTemplateCandidate(vspId, version)
-            .orElseThrow(() -> new CoreException(
-                new OrchestrationTemplateNotFoundErrorBuilder(vspId).build()));
+    @Override
+    public Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version) {
+        return candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
+    }
 
-    return OrchestrationProcessFactory.getInstance(candidate.getFileSuffix())
-        .map(processor -> processor.process(getVspDetails(vspId, version), candidate))
-        .orElse(new OrchestrationTemplateActionResponse());
-  }
-
-  @Override
-  public Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version) {
-    return candidateService.getOrchestrationTemplateCandidateFileDataStructure(vspId, version);
-  }
-
-  @Override
-  public ValidationResponse updateFilesDataStructure(String vspId, Version version,
-                                                     FilesDataStructure fileDataStructure) {
-    ValidationResponse response = new ValidationResponse();
-    Optional<List<ErrorMessage>> validateErrors =
-        candidateService.validateFileDataStructure(fileDataStructure);
-    if (validateErrors.isPresent()) {
-      List<ErrorMessage> errorMessages = validateErrors.get();
-      if (CollectionUtils.isNotEmpty(errorMessages)) {
-        Map<String, List<ErrorMessage>> errorsMap = Collections.singletonMap(SdcCommon.UPLOAD_FILE, errorMessages);
-        response.setUploadDataErrors(errorsMap);
+    @Override
+    public ValidationResponse updateFilesDataStructure(String vspId, Version version, FilesDataStructure fileDataStructure) {
+        ValidationResponse response = new ValidationResponse();
+        Optional<List<ErrorMessage>> validateErrors = candidateService.validateFileDataStructure(fileDataStructure);
+        if (validateErrors.isPresent()) {
+            List<ErrorMessage> errorMessages = validateErrors.get();
+            if (CollectionUtils.isNotEmpty(errorMessages)) {
+                Map<String, List<ErrorMessage>> errorsMap = Collections.singletonMap(SdcCommon.UPLOAD_FILE, errorMessages);
+                response.setUploadDataErrors(errorsMap);
+                return response;
+            }
+        }
+        candidateService.updateOrchestrationTemplateCandidateFileDataStructure(vspId, version, fileDataStructure);
         return response;
-      }
-    }
-    candidateService
-        .updateOrchestrationTemplateCandidateFileDataStructure(vspId, version, fileDataStructure);
-    return response;
-  }
-
-  @Override
-
-  public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException {
-    VspDetails vspDetails = getVspDetails(vspId, version);
-
-    Optional<OrchestrationTemplateCandidateData> candidateDataEntity =
-        candidateService.getOrchestrationTemplateCandidate(vspId, version);
-
-    if (!candidateDataEntity.isPresent()) {
-      return Optional.empty();
     }
 
-    if (CommonUtil.isFileOriginFromZip(candidateDataEntity.get().getFileSuffix())) {
-      FilesDataStructure structure = JsonUtil
-          .json2Object(candidateDataEntity.get().getFilesDataStructure(), FilesDataStructure.class);
-      String manifest = candidateService.createManifest(vspDetails, structure);
-      OnboardingTypesEnum type =
-          OnboardingTypesEnum.getOnboardingTypesEnum(candidateDataEntity.get().getFileSuffix());
-      return Optional.of(
-          new ImmutablePair<>(OnboardingTypesEnum.ZIP.toString(), candidateService
-              .replaceManifestInZip(candidateDataEntity.get().getContentData(),
-                  manifest, type)));
+    @Override
+    public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException {
+        VspDetails vspDetails = getVspDetails(vspId, version);
+        Optional<OrchestrationTemplateCandidateData> candidateDataEntity = candidateService.getOrchestrationTemplateCandidate(vspId, version);
+        if (!candidateDataEntity.isPresent()) {
+            return Optional.empty();
+        }
+        if (CommonUtil.isFileOriginFromZip(candidateDataEntity.get().getFileSuffix())) {
+            FilesDataStructure structure = JsonUtil.json2Object(candidateDataEntity.get().getFilesDataStructure(), FilesDataStructure.class);
+            String manifest = candidateService.createManifest(vspDetails, structure);
+            OnboardingTypesEnum type = OnboardingTypesEnum.getOnboardingTypesEnum(candidateDataEntity.get().getFileSuffix());
+            return Optional.of(new ImmutablePair<>(OnboardingTypesEnum.ZIP.toString(),
+                candidateService.replaceManifestInZip(candidateDataEntity.get().getContentData(), manifest, type)));
+        }
+        return Optional.of(new ImmutablePair<>(candidateDataEntity.get().getFileSuffix(), candidateDataEntity.get().getContentData().array()));
     }
 
-    return Optional.of(
-        new ImmutablePair<>(candidateDataEntity.get().getFileSuffix(), candidateDataEntity.get()
-            .getContentData().array()));
-  }
+    @Override
+    public Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version) {
+        return candidateService.getOrchestrationTemplateCandidateInfo(vspId, version);
+    }
 
-  @Override
-  public Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version) {
-    return candidateService.getOrchestrationTemplateCandidateInfo(vspId, version);
-  }
+    @Override
+    public void abort(String vspId, Version version) {
+        candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
+    }
 
-  @Override
-  public void abort(String vspId, Version version) {
-    candidateService.deleteOrchestrationTemplateCandidate(vspId, version);
-  }
-
-  private VspDetails getVspDetails(String vspId, Version version) {
-    return vspInfoDao.get(new VspDetails(vspId, version));
-  }
+    private VspDetails getVspDetails(String vspId, Version version) {
+        return vspInfoDao.get(new VspDetails(vspId, version));
+    }
 }

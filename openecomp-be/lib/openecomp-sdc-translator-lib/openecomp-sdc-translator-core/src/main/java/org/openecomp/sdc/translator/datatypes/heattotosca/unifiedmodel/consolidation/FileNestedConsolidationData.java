@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.Collection;
@@ -38,23 +37,20 @@ public class FileNestedConsolidationData {
         return nestedTemplateConsolidationData.values();
     }
 
-    public NestedTemplateConsolidationData getNestedTemplateConsolidationData(
-            String nestedNodeTemplateId) {
+    public NestedTemplateConsolidationData getNestedTemplateConsolidationData(String nestedNodeTemplateId) {
         return nestedTemplateConsolidationData.get(nestedNodeTemplateId);
     }
 
-    public void setNestedTemplateConsolidationData(
-            String nestedNodeTemplateId,
-            NestedTemplateConsolidationData nestedTemplateConsolidationData) {
+    public void setNestedTemplateConsolidationData(String nestedNodeTemplateId, NestedTemplateConsolidationData nestedTemplateConsolidationData) {
         this.nestedTemplateConsolidationData.put(nestedNodeTemplateId, nestedTemplateConsolidationData);
     }
 
     /**
-    * create nested template consolidation data if it doesn't exist yet.
-    *
-    * @param nestedNodeTemplateId nested node template id
-    * @return nested template consolidation data by given key
-    */
+     * create nested template consolidation data if it doesn't exist yet.
+     *
+     * @param nestedNodeTemplateId nested node template id
+     * @return nested template consolidation data by given key
+     */
     NestedTemplateConsolidationData addNestedTemplateConsolidationData(String nestedNodeTemplateId) {
         NestedTemplateConsolidationData consolidationData = getNestedTemplateConsolidationData(nestedNodeTemplateId);
         if (consolidationData == null) {

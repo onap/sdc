@@ -13,41 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca;
 
 public class ConfigConstants {
-  //namespaces
-  public static final String MANDATORY_TRANSLATOR_NAMESPACE = "mandatoryHeatToToscaTranslator";
-  public static final String MANDATORY_UNIFIED_MODEL_NAMESPACE = "mandatoryUnifiedModel";
-  public static final String UNIFIED_MODEL_NAMESPACE = "unifiedModel";
-  public static final String TRANSLATOR_NAMESPACE = "heatToToscaTranslator";
-  public static final String MAPPING_NAMESPACE = "heatToToscaMapping";
 
-  //keys
-  public static final String RESOURCE_TRANSLATION_IMPL_KEY = "resourceTranslationImpl";
-  public static final String NESTED_RESOURCE_TRANSLATION_IMPL_KEY = "NestedResource";
-  public static final String DEFAULT_RESOURCE_TRANSLATION_IMPL_KEY = "DefaultResource";
-  public static final String FUNCTION_TRANSLATION_IMPL_KEY = "functionTranslationImpl";
-  public static final String NAMING_CONVENTION_EXTRACTOR_IMPL_KEY = "namingConventionExtractImpl";
-  public static final String UNIFIED_COMPOSITION_IMPL_KEY = "unifiedCompositionImpl";
-  public static final String CONTRAIL_COMPUTE_NODE_TYPE_IMPL_KEY = "ContrailComputeNodeTypeName";
-  public static final String RESOURCE_MAPPING_KEY = "resourceMapping";
-  public static final String SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY =
-      "supportedConsolidationComputeResources";
-  public static final String SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY =
-      "supportedConsolidationPortResources";
-  public static final String ENRICH_PORT_RESOURCE_PROP =
-      "enrichPortResourceProperties";
-  public static final String UNIFIED_MODEL_IMPL_KEY = "unifiedModelImpl";
-  public static final String VFC_INSTANCE_GROUP_KEY = "vfcInstanceGroup";
-  public static final String FULL_EXPOSED_PROPERTIES_KEY =
-      "unifiedModelImpl.vfcInstanceGroup.properties.exposedProperties";
+    //namespaces
+    public static final String MANDATORY_TRANSLATOR_NAMESPACE = "mandatoryHeatToToscaTranslator";
+    public static final String MANDATORY_UNIFIED_MODEL_NAMESPACE = "mandatoryUnifiedModel";
+    public static final String UNIFIED_MODEL_NAMESPACE = "unifiedModel";
+    public static final String TRANSLATOR_NAMESPACE = "heatToToscaTranslator";
+    public static final String MAPPING_NAMESPACE = "heatToToscaMapping";
+    //keys
+    public static final String RESOURCE_TRANSLATION_IMPL_KEY = "resourceTranslationImpl";
+    public static final String NESTED_RESOURCE_TRANSLATION_IMPL_KEY = "NestedResource";
+    public static final String DEFAULT_RESOURCE_TRANSLATION_IMPL_KEY = "DefaultResource";
+    public static final String FUNCTION_TRANSLATION_IMPL_KEY = "functionTranslationImpl";
+    public static final String NAMING_CONVENTION_EXTRACTOR_IMPL_KEY = "namingConventionExtractImpl";
+    public static final String UNIFIED_COMPOSITION_IMPL_KEY = "unifiedCompositionImpl";
+    public static final String CONTRAIL_COMPUTE_NODE_TYPE_IMPL_KEY = "ContrailComputeNodeTypeName";
+    public static final String RESOURCE_MAPPING_KEY = "resourceMapping";
+    public static final String SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY = "supportedConsolidationComputeResources";
+    public static final String SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY = "supportedConsolidationPortResources";
+    public static final String ENRICH_PORT_RESOURCE_PROP = "enrichPortResourceProperties";
+    public static final String UNIFIED_MODEL_IMPL_KEY = "unifiedModelImpl";
+    public static final String VFC_INSTANCE_GROUP_KEY = "vfcInstanceGroup";
+    public static final String FULL_EXPOSED_PROPERTIES_KEY = "unifiedModelImpl.vfcInstanceGroup.properties.exposedProperties";
+    //others
+    public static final String TRANS_MAPPING_DELIMITER_CHAR = "#";
 
-
-  //others
-  public static final String TRANS_MAPPING_DELIMITER_CHAR = "#";
-
-  private ConfigConstants() {
-  }
+    private ConfigConstants() {
+    }
 }

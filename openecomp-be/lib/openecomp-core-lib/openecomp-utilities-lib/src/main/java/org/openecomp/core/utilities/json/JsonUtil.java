@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.utilities.json;
 
 import com.google.gson.Gson;
@@ -21,7 +20,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.everit.json.schema.EnumSchema;
 import org.everit.json.schema.Schema;
@@ -46,7 +43,6 @@ import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeseriali
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-
 /**
  * The type Json util.
  */
@@ -58,8 +54,7 @@ public class JsonUtil {
 
     static {
         gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(RequirementDefinition.class, new
-                RequirementDefinitionDeserializer());
+        gsonBuilder.registerTypeAdapter(RequirementDefinition.class, new RequirementDefinitionDeserializer());
         gson = gsonBuilder.create();
     }
 
@@ -74,7 +69,6 @@ public class JsonUtil {
      */
     public static String object2Json(Object obj) {
         return sbObject2Json(obj).toString();
-
     }
 
     /**
@@ -125,13 +119,13 @@ public class JsonUtil {
         return type;
     }
 
-
     /**
      * Is valid json boolean.
      *
      * @param json the json
      * @return the boolean
      */
+
     //todo check https://github.com/stleary/JSON-java as replacement for this code
     public static boolean isValidJson(String json) {
         try {
@@ -152,30 +146,25 @@ public class JsonUtil {
     public static List<String> validate(String json, String jsonSchema) {
         List<ValidationException> validationErrors = validateUsingEverit(json, jsonSchema);
         return validationErrors == null ? null
-                : validationErrors.stream().map(JsonUtil::mapValidationExceptionToMessage)
-                        .collect(Collectors.toList());
+            : validationErrors.stream().map(JsonUtil::mapValidationExceptionToMessage).collect(Collectors.toList());
     }
 
     private static String mapValidationExceptionToMessage(ValidationException exception) {
         Object schema = exception.getViolatedSchema();
-
         if (schema instanceof EnumSchema) {
             return mapEnumViolationToMessage(exception);
         } else if (schema instanceof StringSchema) {
             return mapStringViolationToMessage(exception);
         }
-
         return exception.getMessage();
     }
 
     private static String mapEnumViolationToMessage(ValidationException exception) {
         Set<Object> possibleValues = ((EnumSchema) exception.getViolatedSchema()).getPossibleValues();
-        return exception.getMessage().replaceFirst("enum value", possibleValues.size() == 1
-                ? String.format("value. %s is the only possible value for this field",
-                possibleValues.iterator().next())
-                : String.format("value. Possible values: %s", CommonMethods
-                        .collectionToCommaSeparatedString(
-                                possibleValues.stream().map(Object::toString).collect(Collectors.toList()))));
+        return exception.getMessage().replaceFirst("enum value",
+            possibleValues.size() == 1 ? String.format("value. %s is the only possible value for this field", possibleValues.iterator().next())
+                : String.format("value. Possible values: %s",
+                    CommonMethods.collectionToCommaSeparatedString(possibleValues.stream().map(Object::toString).collect(Collectors.toList()))));
     }
 
     private static String mapStringViolationToMessage(ValidationException validationException) {
@@ -188,25 +177,21 @@ public class JsonUtil {
     }
 
     private static List<ValidationException> validateUsingEverit(String json, String jsonSchema) {
-        LOGGER.debug(
-                String.format("validateUsingEverit start, json=%s, jsonSchema=%s", json, jsonSchema));
+        LOGGER.debug(String.format("validateUsingEverit start, json=%s, jsonSchema=%s", json, jsonSchema));
         if (json == null || jsonSchema == null) {
             throw new IllegalArgumentException("Input strings json and jsonSchema can not be null");
         }
-
         Schema schemaObj = SchemaLoader.load(new JSONObject(jsonSchema));
         try {
             schemaObj.validate(new JSONObject(json));
         } catch (ValidationException ve) {
-            return CollectionUtils.isEmpty(ve.getCausingExceptions()) ? Collections.singletonList(ve)
-                    : ve.getCausingExceptions();
+            return CollectionUtils.isEmpty(ve.getCausingExceptions()) ? Collections.singletonList(ve) : ve.getCausingExceptions();
         }
         return null;
     }
 
     private enum ValidationType {
         PATTERN("pattern");
-
         private String keyword;
 
         ValidationType(String keyword) {

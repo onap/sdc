@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
 import lombok.EqualsAndHashCode;
@@ -39,5 +38,4 @@ public class ComputeData implements CompositionDataEntity {
     public ComputeData(String name) {
         this.name = name;
     }
-
 }

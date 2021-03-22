@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.action.dao.impl;
 
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
@@ -51,7 +50,6 @@ import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -60,7 +58,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
@@ -90,37 +87,22 @@ import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 import org.slf4j.MDC;
 
 public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements ActionDao {
+
     private static final String FOR_VERSIONS = " for versions ";
     private static final String VERSION = "version";
     private static final String ACTION = "Action";
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance()
-            .createInterface();
-    private static Mapper<ActionEntity> mapper = noSqlDb.getMappingManager()
-            .mapper(ActionEntity.class);
-    private static ActionAccessor accessor = noSqlDb.getMappingManager()
-            .createAccessor(ActionAccessor.class);
-    private static VersionInfoDao versionInfoDao = VersionInfoDaoFactory.getInstance()
-            .createInterface();
-    private static VersionInfoDeletedDao versionInfoDeletedDao = VersionInfoDeletedDaoFactory.getInstance()
-            .createInterface();
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass()
-            .getName());
+    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
+    private static Mapper<ActionEntity> mapper = noSqlDb.getMappingManager().mapper(ActionEntity.class);
+    private static ActionAccessor accessor = noSqlDb.getMappingManager().createAccessor(ActionAccessor.class);
+    private static VersionInfoDao versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
+    private static VersionInfoDeletedDao versionInfoDeletedDao = VersionInfoDeletedDaoFactory.getInstance().createInterface();
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
     @Override
     public void registerVersioning(String versionableEntityType) {
-        ActionVersioningManagerFactory.getInstance()
-                .createInterface()
-                .register(versionableEntityType, new VersionableEntityMetadata(mapper.getTableMetadata()
-                        .getName(),
-                        mapper.getTableMetadata()
-                                .getPartitionKey()
-                                .get(0)
-                                .getName(),
-                        mapper.getTableMetadata()
-                                .getPartitionKey()
-                                .get(1)
-                                .getName()));
+        ActionVersioningManagerFactory.getInstance().createInterface().register(versionableEntityType,
+            new VersionableEntityMetadata(mapper.getTableMetadata().getName(), mapper.getTableMetadata().getPartitionKey().get(0).getName(),
+                mapper.getTableMetadata().getPartitionKey().get(1).getName()));
     }
 
     @Override
@@ -159,24 +141,18 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
             log.debug("entering deleteAction with actionInvariantUuId = " + actionInvariantUuId);
             ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
             VersionInfoDeletedEntity activeVersionEntity = versionInfoDeletedDao
-                    .get(new VersionInfoDeletedEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
+                .get(new VersionInfoDeletedEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
             ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
-
             Version activeVersion = activeVersionEntity.getActiveVersion();
-            Statement getNameFromInvUuId = QueryBuilder.select()
-                    .column("name")
-                    .from("dox", ACTION)
-                    .where(eq("actioninvariantuuid", actionInvariantUuId))
-                    .and(in(VERSION, activeVersion));
+            Statement getNameFromInvUuId = QueryBuilder.select().column("name").from("dox", ACTION)
+                .where(eq("actioninvariantuuid", actionInvariantUuId)).and(in(VERSION, activeVersion));
             ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_NAME_BY_ACTIONINVID, TARGET_ENTITY_DB);
             ResultSet results = getSession().execute(getNameFromInvUuId);
             ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
-
             if (!results.isExhausted()) {
-                String name = results.one()
-                        .getString("name");
+                String name = results.one().getString("name");
                 List<Version> versions = getVersionsByName(name);
                 updateActionStatusForDelete(actionInvariantUuId, versions);
             }
@@ -194,60 +170,56 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
         log.debug(" entering getFilteredActions By filterType = " + filterType + " With value = " + filterId);
         try {
             switch (filterType) {
-            case FILTER_TYPE_VENDOR:
-                ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_VENDOR, TARGET_ENTITY_DB);
-                result = accessor.getActionsByVendor(filterId);
-                ActionUtil.actionLogPostProcessor(COMPLETE);
-                log.metrics("");
-                break;
-            case FILTER_TYPE_CATEGORY:
-                ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_CATEGORY, TARGET_ENTITY_DB);
-                result = accessor.getActionsByCategory(filterId);
-                ActionUtil.actionLogPostProcessor(COMPLETE);
-                log.metrics("");
-                break;
-            case FILTER_TYPE_MODEL:
-                ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_MODEL, TARGET_ENTITY_DB);
-                result = accessor.getActionsByModel(filterId);
-                ActionUtil.actionLogPostProcessor(COMPLETE);
-                log.metrics("");
-                break;
-            case FILTER_TYPE_OPEN_ECOMP_COMPONENT:
-                ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_COMPONENT, TARGET_ENTITY_DB);
-                result = accessor.getActionsByOpenEcompComponent(filterId);
-                ActionUtil.actionLogPostProcessor(COMPLETE);
-                log.metrics("");
-                break;
-            case FILTER_TYPE_NONE:
-                ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ALL_ACTIONS, TARGET_ENTITY_DB);
-                result = accessor.getAllActions();
-                ActionUtil.actionLogPostProcessor(COMPLETE);
-                log.metrics("");
-                break;
-            case FILTER_TYPE_NAME:
-                ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONINVID_BY_NAME, TARGET_ENTITY_DB);
-                result = accessor.getInvIdByName(filterId);
-                ActionUtil.actionLogPostProcessor(COMPLETE);
-                log.metrics("");
-                List<ActionEntity> actionEntities = result.all();
-                if (actionEntities != null && !actionEntities.isEmpty()) {
-                    String actionInvariantUuId = actionEntities.get(0)
-                            .getActionInvariantUuId();
-                    if (actionInvariantUuId != null) {
-                        return getActionsByActionInvariantUuId(actionInvariantUuId);
-                    } else {
-                        return actions;
+                case FILTER_TYPE_VENDOR:
+                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_VENDOR, TARGET_ENTITY_DB);
+                    result = accessor.getActionsByVendor(filterId);
+                    ActionUtil.actionLogPostProcessor(COMPLETE);
+                    log.metrics("");
+                    break;
+                case FILTER_TYPE_CATEGORY:
+                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_CATEGORY, TARGET_ENTITY_DB);
+                    result = accessor.getActionsByCategory(filterId);
+                    ActionUtil.actionLogPostProcessor(COMPLETE);
+                    log.metrics("");
+                    break;
+                case FILTER_TYPE_MODEL:
+                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_MODEL, TARGET_ENTITY_DB);
+                    result = accessor.getActionsByModel(filterId);
+                    ActionUtil.actionLogPostProcessor(COMPLETE);
+                    log.metrics("");
+                    break;
+                case FILTER_TYPE_OPEN_ECOMP_COMPONENT:
+                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_COMPONENT, TARGET_ENTITY_DB);
+                    result = accessor.getActionsByOpenEcompComponent(filterId);
+                    ActionUtil.actionLogPostProcessor(COMPLETE);
+                    log.metrics("");
+                    break;
+                case FILTER_TYPE_NONE:
+                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ALL_ACTIONS, TARGET_ENTITY_DB);
+                    result = accessor.getAllActions();
+                    ActionUtil.actionLogPostProcessor(COMPLETE);
+                    log.metrics("");
+                    break;
+                case FILTER_TYPE_NAME:
+                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONINVID_BY_NAME, TARGET_ENTITY_DB);
+                    result = accessor.getInvIdByName(filterId);
+                    ActionUtil.actionLogPostProcessor(COMPLETE);
+                    log.metrics("");
+                    List<ActionEntity> actionEntities = result.all();
+                    if (actionEntities != null && !actionEntities.isEmpty()) {
+                        String actionInvariantUuId = actionEntities.get(0).getActionInvariantUuId();
+                        if (actionInvariantUuId != null) {
+                            return getActionsByActionInvariantUuId(actionInvariantUuId);
+                        } else {
+                            return actions;
+                        }
                     }
-                }
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
             }
             if (result != null) {
-                actions.addAll(result.all()
-                        .stream()
-                        .map(ActionEntity::toDto)
-                        .collect(Collectors.toList()));
+                actions.addAll(result.all().stream().map(ActionEntity::toDto).collect(Collectors.toList()));
             }
             log.debug(" exit getFilteredActions By filterType = " + filterType + " With value = " + filterId);
         } catch (NoHostAvailableException noHostAvailableException) {
@@ -291,10 +263,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
             ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
             if (result != null) {
-                openEcompComponents.addAll(result.all()
-                        .stream()
-                        .map(OpenEcompComponentEntity::toDto)
-                        .collect(Collectors.toList()));
+                openEcompComponents.addAll(result.all().stream().map(OpenEcompComponentEntity::toDto).collect(Collectors.toList()));
             }
         } catch (NoHostAvailableException noHostAvailableException) {
             logGenericException(noHostAvailableException);
@@ -313,11 +282,11 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
             VersionPredicate filter = new VersionPredicate();
             ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
             VersionInfoEntity versionInfoEntity = versionInfoDao
-                    .get(new VersionInfoEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
+                .get(new VersionInfoEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
             if (versionInfoEntity == null) {
                 // Check for action in the Delete version info table
-                VersionInfoDeletedEntity versionInfoDeletedEntity = versionInfoDeletedDao.get(
-                        new VersionInfoDeletedEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
+                VersionInfoDeletedEntity versionInfoDeletedEntity = versionInfoDeletedDao
+                    .get(new VersionInfoDeletedEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
                 if (versionInfoDeletedEntity != null) {
                     viewableVersions = versionInfoDeletedEntity.getViewableVersions();
                     // Remove intermediate minor versions from viewable versions
@@ -337,30 +306,21 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
                 }
                 // Add candidate version if available
                 if (versionInfoEntity.getCandidate() != null) {
-                    viewableVersions.add(versionInfoEntity.getCandidate()
-                            .getVersion());
+                    viewableVersions.add(versionInfoEntity.getCandidate().getVersion());
                 }
             }
-
             MDC.put(TARGET_ENTITY, TARGET_ENTITY_DB);
             ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
-
-            log.debug("Found " + viewableVersions + " viewable version for action with actionInvariantUuId "
-                    + actionInvariantUuId);
-
+            log.debug("Found " + viewableVersions + " viewable version for action with actionInvariantUuId " + actionInvariantUuId);
             // Fetch action data for the viewable versions
             if (!viewableVersions.isEmpty()) {
                 ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_ACTIONINVID, TARGET_ENTITY_DB);
-                Result<ActionEntity> result = accessor.getActionsByInvId(actionInvariantUuId,
-                        new ArrayList<>(viewableVersions));
+                Result<ActionEntity> result = accessor.getActionsByInvId(actionInvariantUuId, new ArrayList<>(viewableVersions));
                 ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
                 log.metrics("");
                 if (result != null) {
-                    actions.addAll(result.all()
-                            .stream()
-                            .map(ActionEntity::toDto)
-                            .collect(Collectors.toList()));
+                    actions.addAll(result.all().stream().map(ActionEntity::toDto).collect(Collectors.toList()));
                 }
             }
         } catch (NoHostAvailableException noHostAvailableException) {
@@ -376,22 +336,17 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
         log.debug(" entering getLockedAction with actionInvariantUuId= " + actionInvariantUuId);
         ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
         Action action = null;
-        VersionInfoEntity versionInfoEntity = versionInfoDao
-                .get(new VersionInfoEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
+        VersionInfoEntity versionInfoEntity = versionInfoDao.get(new VersionInfoEntity(ActionConstants.ACTION_VERSIONABLE_TYPE, actionInvariantUuId));
         ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
         log.metrics("");
         if (versionInfoEntity != null) {
             if (versionInfoEntity.getCandidate() != null) {
-                String actionUser = versionInfoEntity.getCandidate()
-                        .getUser();
+                String actionUser = versionInfoEntity.getCandidate().getUser();
                 if (actionUser != null && actionUser.equals(user)) {
                     Set<Version> versions = new HashSet<>();
-                    versions.add(versionInfoEntity.getCandidate()
-                            .getVersion());
-                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_ACTIONINVID,
-                            TARGET_ENTITY_DB);
-                    Result<ActionEntity> result = accessor.getActionsByInvId(actionInvariantUuId,
-                            new ArrayList<>(versions));
+                    versions.add(versionInfoEntity.getCandidate().getVersion());
+                    ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_ACTIONINVID, TARGET_ENTITY_DB);
+                    Result<ActionEntity> result = accessor.getActionsByInvId(actionInvariantUuId, new ArrayList<>(versions));
                     ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
                     log.metrics("");
                     if (result != null) {
@@ -400,7 +355,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
                     }
                 } else {
                     throw new ActionException(ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE,
-                            String.format(ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER, actionUser));
+                        String.format(ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER, actionUser));
                 }
             } else {
                 throw new ActionException(ACTION_NOT_LOCKED_CODE, ACTION_NOT_LOCKED_MSG);
@@ -412,8 +367,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
     }
 
     private void logGenericException(Exception exception) {
-        ActionUtil.actionLogPostProcessor(ERROR, ACTION_QUERY_FAILURE_CODE,
-                ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG, false);
+        ActionUtil.actionLogPostProcessor(ERROR, ACTION_QUERY_FAILURE_CODE, ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG, false);
         log.metrics("");
         ActionUtil.actionErrorLogProcessor(CategoryLogLevel.FATAL, ACTION_QUERY_FAILURE_CODE, ACTION_QUERY_FAILURE_MSG);
         log.error(exception.getMessage());
@@ -426,47 +380,38 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
 
     @Override
     protected Object[] getKeys(ActionEntity entity) {
-        return new Object[] { entity.getActionInvariantUuId(), entity.getVersion() };
+        return new Object[]{entity.getActionInvariantUuId(), entity.getVersion()};
     }
 
     @Override
     public Collection<ActionEntity> list(ActionEntity entity) {
-        return accessor.getAllActions()
-                .all();
+        return accessor.getAllActions().all();
     }
 
     private void updateActionStatusForDelete(String actionInvariantUuId, List<Version> versions) {
-        log.debug("entering updateActionStatusForDelete with actionInvariantUuId = " + actionInvariantUuId
-                + FOR_VERSIONS + versions);
+        log.debug("entering updateActionStatusForDelete with actionInvariantUuId = " + actionInvariantUuId + FOR_VERSIONS + versions);
         ActionUtil.actionLogPreProcessor(ActionSubOperation.UPDATE_ACTION_STATUS, TARGET_ENTITY_DB);
         // Update the status column of action table
-        Statement updateStatusStatement = QueryBuilder.update("dox", ACTION)
-                .with(set("status", ActionStatus.Deleted.name()))
-                .where(eq("actioninvariantuuid", actionInvariantUuId))
-                .and(in(VERSION, versions));
+        Statement updateStatusStatement = QueryBuilder.update("dox", ACTION).with(set("status", ActionStatus.Deleted.name()))
+            .where(eq("actioninvariantuuid", actionInvariantUuId)).and(in(VERSION, versions));
         getSession().execute(updateStatusStatement);
         ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
         log.metrics("");
         // Update the status in the data field of action table
         updateStatusInActionData(actionInvariantUuId, versions, ActionStatus.Deleted);
-        log.debug("exit updateActionStatusForDelete with actionInvariantUuId = " + actionInvariantUuId + FOR_VERSIONS
-                + versions);
+        log.debug("exit updateActionStatusForDelete with actionInvariantUuId = " + actionInvariantUuId + FOR_VERSIONS + versions);
     }
 
     /**
      * Update status for a list of versions for a given action.
      *
-     * @param actionInvariantUuId
-     *            Invariant UUID of the action.
-     * @param versions
-     *            List of {@link Version} for which the status has to be
-     *            updated.
-     * @param status
-     *            The status value.
+     * @param actionInvariantUuId Invariant UUID of the action.
+     * @param versions            List of {@link Version} for which the status has to be updated.
+     * @param status              The status value.
      */
     private void updateStatusInActionData(String actionInvariantUuId, List<Version> versions, ActionStatus status) {
-        log.debug("entering updateStatusInActionData for actionInvariantUuId = " + actionInvariantUuId
-                + " and status = " + status + FOR_VERSIONS + versions);
+        log.debug("entering updateStatusInActionData for actionInvariantUuId = " + actionInvariantUuId + " and status = " + status + FOR_VERSIONS
+            + versions);
         for (Version v : versions) {
             ActionEntity entity = this.get(new ActionEntity(actionInvariantUuId, v));
             String currentData = entity.getData();
@@ -480,24 +425,18 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
     }
 
     /**
-     * Get list of all major and minor version values for a given action by
-     * action name.
+     * Get list of all major and minor version values for a given action by action name.
      *
-     * @param name
-     *            Name of the action.
+     * @param name Name of the action.
      * @return List of {@link Version} objects for the action.
      */
     private List<Version> getVersionsByName(String name) {
         log.debug("entering getVersionsByName for Action Name = " + name);
         ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
-        Statement statement = QueryBuilder.select()
-                .column(VERSION)
-                .from("dox", ACTION)
-                .where(eq("name", name));
+        Statement statement = QueryBuilder.select().column(VERSION).from("dox", ACTION).where(eq("name", name));
         ResultSet results = getSession().execute(statement);
         ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
         log.metrics("");
-
         List<Version> versionList = new ArrayList<>();
         for (Row row : results) {
             Version version = row.get(VERSION, Version.class);
@@ -536,10 +475,10 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
 
         @Query("SELECT * FROM Action where actionUUID = ?")
         Result<ActionEntity> actionInvariantUuId(String actionUuId);
-
     }
 
     class VersionPredicate {
+
         Version activeVersion;
         Version finalVersion;
 
@@ -548,7 +487,6 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
             int activeMinorVersion = activeVersion.getMinor();
             int currentMinorVersion = version.getMinor();
             int currentMajorVersion = version.getMajor();
-
             if (finalVersion != null) {
                 if (finalVersion.getMajor() == activeMajorVersion && currentMajorVersion == finalVersion.getMajor()) {
                     if (currentMinorVersion < activeMinorVersion && currentMinorVersion != 0) {
@@ -562,9 +500,7 @@ public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements Act
                     return true;
                 }
             }
-
             return false;
         }
-
     }
 }

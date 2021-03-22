@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.network;
 
 import lombok.Getter;
@@ -31,5 +30,4 @@ public class NetworkCapacity {
 
     private String protocolWithHighestTrafficProfileAcrossAllNICs;
     private int networkTransactionsPerSecond;
-
 }

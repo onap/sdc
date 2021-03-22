@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
@@ -23,11 +22,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 
 public class ElementToVSPQuestionnaireConvertor extends ElementConvertor {
 
-  @Override
-  public VspQuestionnaireEntity convert(Element element) {
-    VspQuestionnaireEntity entity = new VspQuestionnaireEntity();
-    entity.setQuestionnaireData(
-        element == null ? "{}" : new String(FileUtils.toByteArray(element.getData())));
-    return entity;
-  }
+    @Override
+    public VspQuestionnaireEntity convert(Element element) {
+        VspQuestionnaireEntity entity = new VspQuestionnaireEntity();
+        entity.setQuestionnaireData(element == null ? "{}" : new String(FileUtils.toByteArray(element.getData())));
+        return entity;
+    }
 }

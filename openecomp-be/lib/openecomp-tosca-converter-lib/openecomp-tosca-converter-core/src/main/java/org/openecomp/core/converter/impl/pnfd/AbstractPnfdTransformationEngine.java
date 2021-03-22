@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd;
 
 import java.io.IOException;
@@ -38,23 +37,19 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public abstract class AbstractPnfdTransformationEngine implements PnfdTransformationEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPnfdTransformationEngine.class);
-
     protected final ServiceTemplate templateTo;
     protected final ServiceTemplateReaderService templateFrom;
-    private final PnfdTransformationDescriptorReader pnfdTransformationDescriptorReader =
-        new PnfdTransformationDescriptorReader();
+    private final PnfdTransformationDescriptorReader pnfdTransformationDescriptorReader = new PnfdTransformationDescriptorReader();
+    private final String descriptorResourcePath;
     protected TransformationDescription transformationDescription;
     protected Map<TransformationBlock, List<Transformation>> transformationGroupByBlockMap;
-    private final String descriptorResourcePath;
 
-    public AbstractPnfdTransformationEngine(final ServiceTemplateReaderService templateFrom,
-                                            final ServiceTemplate templateTo) {
+    public AbstractPnfdTransformationEngine(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo) {
         this(templateFrom, templateTo, "pnfdTransformationTemplate/model-driven-conversion.yaml");
     }
 
     //used for tests purposes
-    AbstractPnfdTransformationEngine(final ServiceTemplateReaderService templateFrom,
-                                     final ServiceTemplate templateTo,
+    AbstractPnfdTransformationEngine(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo,
                                      final String descriptorResourcePath) {
         this.templateFrom = templateFrom;
         this.templateTo = templateTo;
@@ -66,7 +61,7 @@ public abstract class AbstractPnfdTransformationEngine implements PnfdTransforma
      */
     protected void readDefinition() {
         try (final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(descriptorResourcePath)) {
-            if (resourceAsStream  == null) {
+            if (resourceAsStream == null) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not find resource '{}'", descriptorResourcePath);
                 }
@@ -82,5 +77,4 @@ public abstract class AbstractPnfdTransformationEngine implements PnfdTransforma
      * Executes all transformations specified in the descriptor.
      */
     protected abstract void executeTransformations();
-
 }

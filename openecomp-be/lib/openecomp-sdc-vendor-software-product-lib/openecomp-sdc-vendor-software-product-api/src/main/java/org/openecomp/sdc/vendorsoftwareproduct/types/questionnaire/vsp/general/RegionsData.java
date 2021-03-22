@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general;
 
 import java.util.ArrayList;
@@ -33,5 +32,4 @@ public class RegionsData {
 
     private boolean multiRegion;
     private List<String> regions = new ArrayList<>();
-
 }

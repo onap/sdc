@@ -26,11 +26,10 @@ import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.LimitZusammenDaoImpl;
 
 public class LimitDaoFactoryImpl extends LimitDaoFactory {
 
-  private static final LimitDao INSTANCE = new LimitZusammenDaoImpl(
-      ZusammenAdaptorFactory.getInstance().createInterface());
+    private static final LimitDao INSTANCE = new LimitZusammenDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface());
 
-  @Override
-  public LimitDao createInterface() {
-    return INSTANCE;
-  }
+    @Override
+    public LimitDao createInterface() {
+        return INSTANCE;
+    }
 }

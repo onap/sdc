@@ -12,8 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-
+ */
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -23,28 +22,23 @@ import org.openecomp.sdc.vendorlicense.errors.JsonErrorBuilder;
 
 public abstract class XmlArtifact {
 
-  XmlMapper xmlMapper = new XmlMapper();
+    XmlMapper xmlMapper = new XmlMapper();
 
-  abstract void initMapper();
+    abstract void initMapper();
 
-  /**
-   * To xml string.
-   *
-   * @return the string
-   */
-  public String toXml() {
-    initMapper();
-    String xml;
-
-    try {
-      xml = xmlMapper.writeValueAsString(this);
-    } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
-      throw new CoreException(new JsonErrorBuilder("Failed to write xml value as string ")
-              .build(), exception);
+    /**
+     * To xml string.
+     *
+     * @return the string
+     */
+    public String toXml() {
+        initMapper();
+        String xml;
+        try {
+            xml = xmlMapper.writeValueAsString(this);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
+            throw new CoreException(new JsonErrorBuilder("Failed to write xml value as string ").build(), exception);
+        }
+        return xml.replaceAll(VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE, "");
     }
-
-    return xml.replaceAll(VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE, "");
-  }
-
-
 }

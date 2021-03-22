@@ -19,9 +19,7 @@
  *  * Modifications copyright (c) 2020 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
-
 
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_CNF_HELM;
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
@@ -44,6 +42,7 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSIO
 import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_FILE_VERSION_1_0;
 import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -57,8 +56,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.impl.ToscaDefinitionImportHandler;
@@ -89,22 +86,21 @@ import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure
- * as defined in ETSI GS NFV-SOL 004 v2.6.1.
+ * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure as defined in ETSI GS NFV-SOL
+ * 004 v2.6.1.
  */
 class SOL004MetaDirectoryValidator implements Validator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOL004MetaDirectoryValidator.class);
-
     private static final String MANIFEST_SOURCE = "Source";
     private static final String MANIFEST_NON_MANO_SOURCE = "Non-MANO Source";
+    protected final ValidatorUtils validatorUtils = new ValidatorUtils();
     private final List<ErrorMessage> errorsByFile = new CopyOnWriteArrayList<>();
     private final SecurityManager securityManager;
+    private final InternalFilesFilter internalFilesFilter = new InternalFilesFilter();
     private OnboardingPackageContentHandler contentHandler;
     private Set<String> folderList;
     private ToscaMetadata toscaMetadata;
-    private final InternalFilesFilter internalFilesFilter = new InternalFilesFilter();
-    protected final ValidatorUtils validatorUtils = new ValidatorUtils();
 
     public SOL004MetaDirectoryValidator() {
         securityManager = SecurityManager.getInstance();
@@ -121,7 +117,6 @@ class SOL004MetaDirectoryValidator implements Validator {
         this.folderList = contentHandler.getFolderList();
         parseToscaMetadata();
         verifyMetadataFile();
-
         if (packageHasCertificate()) {
             verifySignedFiles();
         }
@@ -143,9 +138,7 @@ class SOL004MetaDirectoryValidator implements Validator {
      */
     private void parseToscaMetadata() {
         try {
-            toscaMetadata =
-                    OnboardingToscaMetadata
-                            .parseToscaMetadataFile(contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
+            toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
         } catch (final IOException e) {
             reportError(ErrorLevel.ERROR, Messages.METADATA_PARSER_INTERNAL.getErrorMessage());
             LOGGER.error(Messages.METADATA_PARSER_INTERNAL.getErrorMessage(), e.getMessage(), e);
@@ -175,12 +168,11 @@ class SOL004MetaDirectoryValidator implements Validator {
             final byte[] fileSignatureBytes = contentHandler.getFileContent(fileSignaturePath);
             try {
                 if (!securityManager.verifySignedData(fileSignatureBytes, packageCert, fileBytes)) {
-                    reportError(ErrorLevel.ERROR,
-                            Messages.ARTIFACT_INVALID_SIGNATURE.formatMessage(fileSignaturePath, filePath));
+                    reportError(ErrorLevel.ERROR, Messages.ARTIFACT_INVALID_SIGNATURE.formatMessage(fileSignaturePath, filePath));
                 }
             } catch (final SecurityManagerException e) {
                 final String errorMessage = Messages.ARTIFACT_SIGNATURE_VALIDATION_ERROR
-                        .formatMessage(fileSignaturePath, filePath, packageCertificatePath, e.getMessage());
+                    .formatMessage(fileSignaturePath, filePath, packageCertificatePath, e.getMessage());
                 reportError(ErrorLevel.ERROR, errorMessage);
                 LOGGER.error(errorMessage, e);
             }
@@ -196,8 +188,7 @@ class SOL004MetaDirectoryValidator implements Validator {
             reportError(ErrorLevel.ERROR, Messages.MANIFEST_INVALID_EXT.getErrorMessage());
         }
         if (!mainDefinitionFileName.equals(manifestFileName)) {
-            reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_INVALID_NAME.getErrorMessage(),
-                    manifestFileName, mainDefinitionFileName));
+            reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_INVALID_NAME.getErrorMessage(), manifestFileName, mainDefinitionFileName));
         }
     }
 
@@ -211,15 +202,13 @@ class SOL004MetaDirectoryValidator implements Validator {
 
     private boolean hasETSIMetadata() {
         final Map<String, String> entries = toscaMetadata.getMetaEntries();
-        return hasEntry(entries, TOSCA_META_FILE_VERSION_ENTRY.getName())
-                && hasEntry(entries, CSAR_VERSION_ENTRY.getName())
-                && hasEntry(entries, CREATED_BY_ENTRY.getName());
+        return hasEntry(entries, TOSCA_META_FILE_VERSION_ENTRY.getName()) && hasEntry(entries, CSAR_VERSION_ENTRY.getName()) && hasEntry(entries,
+            CREATED_BY_ENTRY.getName());
     }
 
     private boolean hasEntry(final Map<String, String> entries, final String mandatoryEntry) {
         if (!entries.containsKey(mandatoryEntry)) {
-            reportError(ErrorLevel.ERROR,
-                    String.format(Messages.METADATA_MISSING_ENTRY.getErrorMessage(), mandatoryEntry));
+            reportError(ErrorLevel.ERROR, String.format(Messages.METADATA_MISSING_ENTRY.getErrorMessage(), mandatoryEntry));
             return false;
         }
         return true;
@@ -237,7 +226,6 @@ class SOL004MetaDirectoryValidator implements Validator {
             return;
         }
         final String value = entry.getValue();
-
         switch (toscaMetaEntry) {
             case TOSCA_META_FILE_VERSION_ENTRY:
             case CSAR_VERSION_ENTRY:
@@ -277,18 +265,14 @@ class SOL004MetaDirectoryValidator implements Validator {
                 validateOtherEntries(value);
             } else {
                 final String key = (String) entry.getKey();
-                reportError(ErrorLevel.ERROR,
-                        String.format(Messages.MANIFEST_INVALID_PNF_METADATA.getErrorMessage(), key));
+                reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_INVALID_PNF_METADATA.getErrorMessage(), key));
             }
-
         }
     }
 
     private void verifyMetadataEntryVersions(final String key, final String version) {
-        if (!(isValidTOSCAVersion(key, version) || isValidCSARVersion(key, version)
-                || CREATED_BY_ENTRY.getName().equals(key))) {
-            errorsByFile.add(new ErrorMessage(ErrorLevel.ERROR,
-                    String.format(Messages.METADATA_INVALID_VERSION.getErrorMessage(), key, version)));
+        if (!(isValidTOSCAVersion(key, version) || isValidCSARVersion(key, version) || CREATED_BY_ENTRY.getName().equals(key))) {
+            errorsByFile.add(new ErrorMessage(ErrorLevel.ERROR, String.format(Messages.METADATA_INVALID_VERSION.getErrorMessage(), key, version)));
             LOGGER.error("{}: key {} - value {} ", Messages.METADATA_INVALID_VERSION.getErrorMessage(), key, version);
         }
     }
@@ -298,16 +282,13 @@ class SOL004MetaDirectoryValidator implements Validator {
     }
 
     private boolean isValidCSARVersion(final String value, final String version) {
-        return CSAR_VERSION_ENTRY.getName().equals(value) && (CSAR_VERSION_1_1.equals(version)
-                || CSAR_VERSION_1_0.equals(version));
+        return CSAR_VERSION_ENTRY.getName().equals(value) && (CSAR_VERSION_1_1.equals(version) || CSAR_VERSION_1_0.equals(version));
     }
 
     protected void validateDefinitionFile(final String filePath) {
         final Set<String> existingFiles = contentHandler.getFileList();
-
         if (verifyFileExists(existingFiles, filePath)) {
-            final ToscaDefinitionImportHandler toscaDefinitionImportHandler =
-                    new ToscaDefinitionImportHandler(contentHandler.getFiles(), filePath);
+            final ToscaDefinitionImportHandler toscaDefinitionImportHandler = new ToscaDefinitionImportHandler(contentHandler.getFiles(), filePath);
             final List<ErrorMessage> validationErrorList = toscaDefinitionImportHandler.getErrors();
             if (CollectionUtils.isNotEmpty(validationErrorList)) {
                 errorsByFile.addAll(validationErrorList);
@@ -345,31 +326,23 @@ class SOL004MetaDirectoryValidator implements Validator {
 
     private void verifyManifestMetadata(final Map<String, String> metadata) {
         if (!validMetaLimit(metadata)) {
-            reportError(ErrorLevel.ERROR,
-                    String.format(Messages.MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT.getErrorMessage(),
-                            MANIFEST_METADATA_LIMIT));
+            reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_METADATA_DOES_NOT_MATCH_LIMIT.getErrorMessage(), MANIFEST_METADATA_LIMIT));
         }
         handleMetadataEntries(metadata);
     }
 
     protected boolean isPnfMetadata(final Map<String, String> metadata) {
         final String firstMetadataDefinition = metadata.keySet().iterator().next();
-        final String expectedMetadataType =
-                firstMetadataDefinition.contains(TOSCA_TYPE_PNF) ? TOSCA_TYPE_PNF : TOSCA_TYPE_VNF;
-        if (metadata.keySet().stream()
-                .anyMatch((final String metadataEntry) -> !metadataEntry.contains(expectedMetadataType))) {
+        final String expectedMetadataType = firstMetadataDefinition.contains(TOSCA_TYPE_PNF) ? TOSCA_TYPE_PNF : TOSCA_TYPE_VNF;
+        if (metadata.keySet().stream().anyMatch((final String metadataEntry) -> !metadataEntry.contains(expectedMetadataType))) {
             throw new InvalidManifestMetadataException(Messages.MANIFEST_METADATA_INVALID_ENTRY.getErrorMessage());
         }
-
         return TOSCA_TYPE_PNF.equals(expectedMetadataType);
     }
 
     private void handleMetadataEntries(final Map<String, String> metadata) {
-        getManifestMetadata(metadata).stream()
-                .filter(requiredEntry -> !metadata.containsKey(requiredEntry))
-                .forEach(requiredEntry ->
-                        reportError(ErrorLevel.ERROR,
-                            String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredEntry)));
+        getManifestMetadata(metadata).stream().filter(requiredEntry -> !metadata.containsKey(requiredEntry)).forEach(
+            requiredEntry -> reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredEntry)));
     }
 
     /**
@@ -381,9 +354,7 @@ class SOL004MetaDirectoryValidator implements Validator {
         final Set<String> packageFiles = contentHandler.getFileList();
         final List<String> sources = internalFilesFilter.filter(onboardingManifest.getSources());
         verifyFilesExist(packageFiles, sources, MANIFEST_SOURCE);
-
         final Map<String, List<String>> nonManoArtifacts = onboardingManifest.getNonManoSources();
-
         final List<String> nonManoValidFilePaths = new ArrayList<>();
         nonManoArtifacts.forEach((nonManoType, files) -> {
             final List<String> internalNonManoFileList = internalFilesFilter.filter(files);
@@ -397,9 +368,7 @@ class SOL004MetaDirectoryValidator implements Validator {
                 validateOnapCnfHelmNonManoEntry(files);
             }
         });
-
         verifyFilesExist(packageFiles, nonManoValidFilePaths, MANIFEST_NON_MANO_SOURCE);
-
         final Set<String> allReferredFiles = new HashSet<>();
         allReferredFiles.addAll(sources);
         allReferredFiles.addAll(nonManoValidFilePaths);
@@ -412,32 +381,25 @@ class SOL004MetaDirectoryValidator implements Validator {
             return;
         }
         if (files.size() != 1) {
-            final String formattedFileList = files.stream()
-                    .map(filePath -> String.format("'%s'", filePath))
-                    .collect(Collectors.joining(", "));
-            reportError(ErrorLevel.ERROR,
-                    Messages.UNIQUE_SW_INFORMATION_NON_MANO_ERROR.formatMessage(formattedFileList));
+            final String formattedFileList = files.stream().map(filePath -> String.format("'%s'", filePath)).collect(Collectors.joining(", "));
+            reportError(ErrorLevel.ERROR, Messages.UNIQUE_SW_INFORMATION_NON_MANO_ERROR.formatMessage(formattedFileList));
             return;
         }
         final String swInformationFilePath = files.get(0);
         final byte[] swInformationYaml = contentHandler.getFileContent(swInformationFilePath);
-        final Optional<PnfSoftwareInformation> parsedYaml = SoftwareInformationArtifactYamlParser
-                .parse(swInformationYaml);
+        final Optional<PnfSoftwareInformation> parsedYaml = SoftwareInformationArtifactYamlParser.parse(swInformationYaml);
         if (!parsedYaml.isPresent()) {
-            reportError(ErrorLevel.ERROR,
-                    Messages.INVALID_SW_INFORMATION_NON_MANO_ERROR.formatMessage(swInformationFilePath));
+            reportError(ErrorLevel.ERROR, Messages.INVALID_SW_INFORMATION_NON_MANO_ERROR.formatMessage(swInformationFilePath));
         } else {
             final PnfSoftwareInformation pnfSoftwareInformation = parsedYaml.get();
             if (!pnfSoftwareInformation.isValid()) {
-                reportError(ErrorLevel.ERROR,
-                        Messages.INCORRECT_SW_INFORMATION_NON_MANO_ERROR.formatMessage(swInformationFilePath));
+                reportError(ErrorLevel.ERROR, Messages.INCORRECT_SW_INFORMATION_NON_MANO_ERROR.formatMessage(swInformationFilePath));
             }
         }
     }
 
     /**
-     * Validates if a YAML file has the correct extension, is not empty and the content is a valid YAML. Reports each
-     * error found.
+     * Validates if a YAML file has the correct extension, is not empty and the content is a valid YAML. Reports each error found.
      *
      * @param filePath the file path inside the package
      */
@@ -450,7 +412,6 @@ class SOL004MetaDirectoryValidator implements Validator {
             reportError(ErrorLevel.ERROR, Messages.INVALID_YAML_EXTENSION.formatMessage(filePath));
             return;
         }
-
         try (final InputStream fileContent = contentHandler.getFileContentAsStream(filePath)) {
             if (fileContent == null) {
                 reportError(ErrorLevel.ERROR, Messages.EMPTY_YAML_FILE_1.formatMessage(filePath));
@@ -477,8 +438,7 @@ class SOL004MetaDirectoryValidator implements Validator {
     private void verifyFilesBeingReferred(final Set<String> referredFileSet, final Set<String> packageFileSet) {
         packageFileSet.forEach(filePath -> {
             if (!isManifestFile(filePath) && !referredFileSet.contains(filePath)) {
-                reportError(ErrorLevel.ERROR,
-                        String.format(Messages.MISSING_MANIFEST_REFERENCE.getErrorMessage(), filePath));
+                reportError(ErrorLevel.ERROR, String.format(Messages.MISSING_MANIFEST_REFERENCE.getErrorMessage(), filePath));
             }
         });
     }
@@ -489,16 +449,14 @@ class SOL004MetaDirectoryValidator implements Validator {
 
     private void validateOtherEntries(final String folderPath) {
         if (!verifyFoldersExist(folderList, folderPath)) {
-            reportError(ErrorLevel.ERROR, String.format(Messages.METADATA_MISSING_OPTIONAL_FOLDERS.getErrorMessage(),
-                    folderPath));
+            reportError(ErrorLevel.ERROR, String.format(Messages.METADATA_MISSING_OPTIONAL_FOLDERS.getErrorMessage(), folderPath));
         }
     }
 
     private void validateCertificate(final String file) {
         final Set<String> packageFiles = contentHandler.getFileList();
         if (!verifyFileExist(packageFiles, file)) {
-            reportError(ErrorLevel.ERROR,
-                    String.format(Messages.MISSING_METADATA_FILES.getErrorMessage(), file, file));
+            reportError(ErrorLevel.ERROR, String.format(Messages.MISSING_METADATA_FILES.getErrorMessage(), file, file));
         }
     }
 
@@ -509,8 +467,7 @@ class SOL004MetaDirectoryValidator implements Validator {
     private void verifyFilesExist(final Set<String> existingFiles, final List<String> sources, final String type) {
         sources.forEach(file -> {
             if (!existingFiles.contains(file)) {
-                reportError(ErrorLevel.ERROR,
-                        String.format(Messages.MISSING_MANIFEST_SOURCE.getErrorMessage(), type, file));
+                reportError(ErrorLevel.ERROR, String.format(Messages.MISSING_MANIFEST_SOURCE.getErrorMessage(), type, file));
             }
         });
     }
@@ -552,10 +509,8 @@ class SOL004MetaDirectoryValidator implements Validator {
     }
 
     private void validatePmDictionaryContentsAgainstSchema() {
-        final Stream<byte[]> pmDictionaryFiles = new FileExtractor(getEtsiEntryManifestPath(), contentHandler)
-            .findFiles(ONAP_PM_DICTIONARY);
-        new PMDictionaryValidator()
-            .validate(pmDictionaryFiles, (String message) -> reportError(ErrorLevel.ERROR, message));
+        final Stream<byte[]> pmDictionaryFiles = new FileExtractor(getEtsiEntryManifestPath(), contentHandler).findFiles(ONAP_PM_DICTIONARY);
+        new PMDictionaryValidator().validate(pmDictionaryFiles, (String message) -> reportError(ErrorLevel.ERROR, message));
     }
 
     private String getEtsiEntryManifestPath() {
@@ -564,6 +519,7 @@ class SOL004MetaDirectoryValidator implements Validator {
 
     /**
      * Validates if onap_cnf_helm non_mano type points to a file
+     *
      * @param files
      */
     private void validateOnapCnfHelmNonManoEntry(final List<String> files) {
@@ -572,11 +528,8 @@ class SOL004MetaDirectoryValidator implements Validator {
             return;
         }
         if (files.size() != 1) {
-            final String formattedFileList = files.stream()
-                .map(filePath -> String.format("'%s'", filePath))
-                .collect(Collectors.joining(", "));
-            reportError(ErrorLevel.ERROR,
-                Messages.UNIQUE_ONAP_CNF_HELM_NON_MANO_ERROR.formatMessage(formattedFileList));
+            final String formattedFileList = files.stream().map(filePath -> String.format("'%s'", filePath)).collect(Collectors.joining(", "));
+            reportError(ErrorLevel.ERROR, Messages.UNIQUE_ONAP_CNF_HELM_NON_MANO_ERROR.formatMessage(formattedFileList));
         }
     }
 }

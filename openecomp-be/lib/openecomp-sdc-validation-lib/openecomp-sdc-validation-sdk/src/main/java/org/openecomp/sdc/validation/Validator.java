@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation;
 
+import java.util.Map;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 
-import java.util.Map;
-
-
 public interface Validator {
-  void validate(GlobalValidationContext globalContext);
 
-  default void init(Map<String, Object> properties){ }
+    void validate(GlobalValidationContext globalContext);
+
+    default void init(Map<String, Object> properties) {
+    }
 }

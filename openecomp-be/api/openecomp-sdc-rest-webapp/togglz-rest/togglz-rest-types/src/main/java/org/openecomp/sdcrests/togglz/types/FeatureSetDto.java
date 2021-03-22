@@ -18,7 +18,7 @@ package org.openecomp.sdcrests.togglz.types;
 import java.util.Set;
 
 public class FeatureSetDto {
-    
+
     private Set<FeatureDto> features;
 
     public Set<FeatureDto> getFeatures() {

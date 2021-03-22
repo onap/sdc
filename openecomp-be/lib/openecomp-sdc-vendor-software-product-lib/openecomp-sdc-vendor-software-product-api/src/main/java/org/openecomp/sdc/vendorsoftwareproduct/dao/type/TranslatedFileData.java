@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import lombok.Getter;
@@ -37,5 +36,4 @@ public class TranslatedFileData {
     private String vendorRelease;
     private String packageChecksum;
     private String packageType;
-
 }

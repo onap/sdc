@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
-public abstract class ActionVersioningManagerFactory extends
-    AbstractComponentFactory<ActionVersioningManager> {
+public abstract class ActionVersioningManagerFactory extends AbstractComponentFactory<ActionVersioningManager> {
 
-  public static ActionVersioningManagerFactory getInstance() {
-    return AbstractFactory.getInstance(ActionVersioningManagerFactory.class);
-  }
+    public static ActionVersioningManagerFactory getInstance() {
+        return AbstractFactory.getInstance(ActionVersioningManagerFactory.class);
+    }
 }

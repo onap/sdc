@@ -13,54 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.activitylog.dao.type;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(keyspace = "dox", name = "activity_log")
 public class ActivityLogEntity {
-  @PartitionKey
-  @Column(name = "item_id")
-  private String itemId;
-  @ClusteringColumn(value = 1)
-  @Column(name = "version_id")
-  private String versionId;
-  @ClusteringColumn
-  @Column(name = "activity_id")
-  private String id;
-  private ActivityType type;
-  private String user;
-  private Date timestamp;
-  private boolean success;
-  private String message;
-  private String comment;
 
-  public ActivityLogEntity(String itemId, Version version) {
-    this.itemId = itemId;
-    this.versionId = version == null ? null : version.getId();
-  }
+    @PartitionKey
+    @Column(name = "item_id")
+    private String itemId;
+    @ClusteringColumn(value = 1)
+    @Column(name = "version_id")
+    private String versionId;
+    @ClusteringColumn
+    @Column(name = "activity_id")
+    private String id;
+    private ActivityType type;
+    private String user;
+    private Date timestamp;
+    private boolean success;
+    private String message;
+    private String comment;
 
-  public ActivityLogEntity(String itemId, Version version, ActivityType type, String user,
-                           boolean success, String message, String comment) {
-    this(itemId, version);
-    this.type = type;
-    this.user = user;
-    this.success = success;
-    this.message = message;
-    this.comment = comment;
-    this.timestamp = new Date();
-  }
+    public ActivityLogEntity(String itemId, Version version) {
+        this.itemId = itemId;
+        this.versionId = version == null ? null : version.getId();
+    }
+
+    public ActivityLogEntity(String itemId, Version version, ActivityType type, String user, boolean success, String message, String comment) {
+        this(itemId, version);
+        this.type = type;
+        this.user = user;
+        this.success = success;
+        this.message = message;
+        this.comment = comment;
+        this.timestamp = new Date();
+    }
 }

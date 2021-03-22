@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.services;
-
-import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.AnalyzedZipHeatFiles;
 
 import java.io.IOException;
 import java.util.Map;
+import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.AnalyzedZipHeatFiles;
 
 /**
  * @author Avrahamg
@@ -31,17 +29,17 @@ import java.util.Map;
  */
 public interface HeatFileAnalyzer {
 
-  static boolean isEnvFile(String fileName) {
-    return fileName.endsWith(".env");
-  }
+    static boolean isEnvFile(String fileName) {
+        return fileName.endsWith(".env");
+    }
 
-  static boolean isYamlFile(String fileName) {
-    return fileName.endsWith(".yml") || fileName.endsWith(".yaml");
-  }
+    static boolean isYamlFile(String fileName) {
+        return fileName.endsWith(".yml") || fileName.endsWith(".yaml");
+    }
 
-  static boolean isYamlOrEnvFile(String fileName) {
-    return isYamlFile(fileName) || isEnvFile(fileName);
-  }
+    static boolean isYamlOrEnvFile(String fileName) {
+        return isYamlFile(fileName) || isEnvFile(fileName);
+    }
 
-  AnalyzedZipHeatFiles analyzeFilesNotEligibleForModulesFromFileAnalyzer(Map<String, byte[]> files) throws IOException;
+    AnalyzedZipHeatFiles analyzeFilesNotEligibleForModulesFromFileAnalyzer(Map<String, byte[]> files) throws IOException;
 }

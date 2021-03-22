@@ -16,19 +16,17 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.openecomp.core.converter.pnfd.model.ConversionStrategyType;
-import org.openecomp.core.converter.pnfd.model.PnfTransformationToken;
 import org.openecomp.core.converter.impl.pnfd.strategy.CopyConversionStrategy;
-import org.openecomp.core.converter.pnfd.strategy.PnfdConversionStrategy;
 import org.openecomp.core.converter.impl.pnfd.strategy.ReplaceConversionStrategy;
 import org.openecomp.core.converter.impl.pnfd.strategy.ReplaceInListConversionStrategy;
-
+import org.openecomp.core.converter.pnfd.model.ConversionStrategyType;
+import org.openecomp.core.converter.pnfd.model.PnfTransformationToken;
+import org.openecomp.core.converter.pnfd.strategy.PnfdConversionStrategy;
 
 /**
  * Handles YAML from/to {@link PnfdConversionStrategy} conversions.
@@ -36,24 +34,20 @@ import org.openecomp.core.converter.impl.pnfd.strategy.ReplaceInListConversionSt
 public class PnfdConversionStrategyYamlParser {
 
     private PnfdConversionStrategyYamlParser() {
-
     }
 
     /**
      * Parses the given YAML object to a {@link PnfdConversionStrategy} instance.
-     * @param strategyYaml      the YAML object representing a conversion strategy
-     * @return
-     *  A new instance of {@link PnfdConversionStrategy}.
+     *
+     * @param strategyYaml the YAML object representing a conversion strategy
+     * @return A new instance of {@link PnfdConversionStrategy}.
      */
     public static Optional<PnfdConversionStrategy> parse(final Map<String, Object> strategyYaml) {
-        final Optional<ConversionStrategyType> optionalStrategy = ConversionStrategyType.parse(
-            (String) strategyYaml.get(PnfTransformationToken.STRATEGY.getName())
-        );
-
+        final Optional<ConversionStrategyType> optionalStrategy = ConversionStrategyType
+            .parse((String) strategyYaml.get(PnfTransformationToken.STRATEGY.getName()));
         if (!optionalStrategy.isPresent()) {
             return Optional.empty();
         }
-
         final ConversionStrategyType strategyType = optionalStrategy.get();
         if (strategyType == ConversionStrategyType.COPY) {
             return Optional.of(new CopyConversionStrategy());
@@ -64,11 +58,9 @@ public class PnfdConversionStrategyYamlParser {
             return Optional.of(new ReplaceConversionStrategy(from, to));
         }
         if (strategyType == ConversionStrategyType.REPLACE_IN_LIST) {
-            return Optional.of(new ReplaceInListConversionStrategy(
-                (List<Map<String, Object>>) strategyYaml.get(PnfTransformationToken.LIST.getName()))
-            );
+            return Optional
+                .of(new ReplaceInListConversionStrategy((List<Map<String, Object>>) strategyYaml.get(PnfTransformationToken.LIST.getName())));
         }
         return Optional.empty();
     }
-
 }

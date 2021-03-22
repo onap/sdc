@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import java.util.Map;
@@ -26,7 +25,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-
 public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase {
 
     private static final String VOLUME_SIZE_PROPERTY_NAME = "size";
@@ -36,22 +34,17 @@ public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase
         final NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setType(ToscaNodeType.CINDER_VOLUME);
         nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
-                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
-                        translateTo.getResourceId(), translateTo.getResource().getProperties(),
-                        nodeTemplate.getProperties(), translateTo.getHeatFileName(),
-                        translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
-                        nodeTemplate, translateTo.getContext()));
+            .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(), translateTo.getResourceId(),
+                translateTo.getResource().getProperties(), nodeTemplate.getProperties(), translateTo.getHeatFileName(),
+                translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(), nodeTemplate, translateTo.getContext()));
         handleSizeProperty(nodeTemplate.getProperties());
-        final String toscaReadOnlyPropName =
-                HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.READ_ONLY_PROPERTY_NAME);
+        final String toscaReadOnlyPropName = HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.READ_ONLY_PROPERTY_NAME);
         final Object readOnlyPropVal = nodeTemplate.getProperties().get(toscaReadOnlyPropName);
         if (readOnlyPropVal != null && !(readOnlyPropVal instanceof Map)) {
             nodeTemplate.getProperties().put(toscaReadOnlyPropName, HeatBoolean.eval(readOnlyPropVal));
         }
-        DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
-                nodeTemplate);
+        DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), nodeTemplate);
     }
-
 
     private void handleSizeProperty(final Map<String, Object> nodeTemplateProperties) {
         final Object size = nodeTemplateProperties.get(VOLUME_SIZE_PROPERTY_NAME);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import java.io.IOException;
@@ -30,18 +29,17 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface OrchestrationTemplateCandidateManager {
 
-  OrchestrationTemplateActionResponse process(String vspId, Version version);
+    OrchestrationTemplateActionResponse process(String vspId, Version version);
 
-  Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version);
+    Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version);
 
-  ValidationResponse updateFilesDataStructure(String vspId, Version version,
-                                              FilesDataStructure fileDataStructure);
+    ValidationResponse updateFilesDataStructure(String vspId, Version version, FilesDataStructure fileDataStructure);
 
-  Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
+    Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
 
-  Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version);
+    Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version);
 
-  void abort(String vspId, Version version);
+    void abort(String vspId, Version version);
 
-  UploadFileResponse upload(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo);
+    UploadFileResponse upload(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo);
 }

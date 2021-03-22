@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.applicationconfiguration.types;
 
 import lombok.AllArgsConstructor;
@@ -33,6 +32,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConfigurationDataDto {
-  private String value;
-  private long timeStamp;
+
+    private String value;
+    private long timeStamp;
 }

@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning;
 
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionCreationMethod;
@@ -23,54 +24,45 @@ import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 
-import java.util.List;
-import java.util.Map;
-
 public interface ActionVersioningManager {
 
-  void register(String entityType, VersionableEntityMetadata entityMetadata);
+    void register(String entityType, VersionableEntityMetadata entityMetadata);
 
-  Version create(String entityType, String entityId, String user);
+    Version create(String entityType, String entityId, String user);
 
-  void delete(String entityType, String entityId, String user);
+    void delete(String entityType, String entityId, String user);
 
-  void undoDelete(String entityType, String entityId, String user);
+    void undoDelete(String entityType, String entityId, String user);
 
-  Version checkout(String entityType, String entityId, String user);
+    Version checkout(String entityType, String entityId, String user);
 
-  Version undoCheckout(String entityType, String entityId, String user);
+    Version undoCheckout(String entityType, String entityId, String user);
 
-  Version checkin(String entityType, String entityId, String user, String checkinDescription);
+    Version checkin(String entityType, String entityId, String user, String checkinDescription);
 
-  Version submit(String entityType, String entityId, String user, String submitDescription);
+    Version submit(String entityType, String entityId, String user, String submitDescription);
 
-  VersionInfo getEntityVersionInfo(String entityType, String entityId, String user,
-      VersionableEntityAction action);
+    VersionInfo getEntityVersionInfo(String entityType, String entityId, String user, VersionableEntityAction action);
 
-  Map<String, VersionInfo> listEntitiesVersionInfo(String entityType, String user,
-      VersionableEntityAction action);
+    Map<String, VersionInfo> listEntitiesVersionInfo(String entityType, String user, VersionableEntityAction action);
 
-  Map<String, VersionInfo> listDeletedEntitiesVersionInfo(String entityType, String user,
-      VersionableEntityAction action);
+    Map<String, VersionInfo> listDeletedEntitiesVersionInfo(String entityType, String user, VersionableEntityAction action);
 
+    List<Version> list(String itemId); // TODO: 5/24/2017 filter (by status for example)
 
-  List<Version> list(String itemId); // TODO: 5/24/2017 filter (by status for example)
+    Version get(String itemId, Version version);
 
-  Version get(String itemId, Version version);
+    Version create(String itemId, Version version, VersionCreationMethod creationMethod);
 
-  Version create(String itemId, Version version,
-      VersionCreationMethod creationMethod);
+    void submit(String itemId, Version version, String submitDescription);
 
-  void submit(String itemId, Version version, String submitDescription);
+    void publish(String itemId, Version version, String message);
 
-  void publish(String itemId, Version version, String message);
+    void sync(String itemId, Version version);
 
-  void sync(String itemId, Version version);
+    void forceSync(String itemId, Version version);
 
-  void forceSync(String itemId, Version version);
+    void revert(String itemId, Version version, String revisionId);
 
-  void revert(String itemId, Version version, String revisionId);
-
-  List<Revision> listRevisions(String itemId, Version version);
-
+    List<Revision> listRevisions(String itemId, Version version);
 }

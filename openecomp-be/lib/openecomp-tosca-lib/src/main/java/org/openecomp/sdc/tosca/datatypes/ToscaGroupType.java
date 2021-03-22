@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import org.onap.config.api.Configuration;
@@ -26,14 +25,10 @@ import org.openecomp.sdc.tosca.services.ConfigConstants;
 
 public class ToscaGroupType {
 
-    private static Configuration config = ConfigurationManager.lookup();
-
-    private static final String GROUP_TYPE_PREFIX =
-            config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_GROUP_TYPE);
-
     //TOSCA native types
     public static final String NATIVE_ROOT = "tosca.groups.Root";
-
+    private static Configuration config = ConfigurationManager.lookup();
+    private static final String GROUP_TYPE_PREFIX = config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_GROUP_TYPE);
     //Additional types
     public static final String HEAT_STACK = GROUP_TYPE_PREFIX + "heat.HeatStack";
 }

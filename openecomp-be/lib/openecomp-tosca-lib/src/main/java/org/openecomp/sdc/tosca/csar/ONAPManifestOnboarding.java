@@ -17,7 +17,6 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 import com.google.common.collect.ImmutableList;
@@ -43,7 +42,6 @@ public class ONAPManifestOnboarding extends AbstractOnboardingManifest {
             return;
         }
         currentLine = readNextNonEmptyLine();
-
         while (currentLine.isPresent() && continueToProcess) {
             final String line = currentLine.get();
             final String entry = readEntryName(line).orElse(null);
@@ -54,7 +52,6 @@ public class ONAPManifestOnboarding extends AbstractOnboardingManifest {
             if (value == null) {
                 reportInvalidLine();
             }
-
             final ManifestTokenType tokenType = ManifestTokenType.parse(entry).orElse(null);
             if (tokenType == ManifestTokenType.SOURCE) {
                 sources.add(value);
@@ -70,5 +67,4 @@ public class ONAPManifestOnboarding extends AbstractOnboardingManifest {
     protected void processBody() {
         //no implementation
     }
-
 }

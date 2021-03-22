@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
 import java.util.ArrayList;
@@ -57,5 +56,4 @@ public class CompositionEntityValidationData {
         }
         subEntitiesValidationData.add(subEntityValidationData);
     }
-
 }

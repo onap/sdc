@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.openecomp.core.enrichment.types.ArtifactCategory;
 import org.openecomp.core.enrichment.types.InformationArtifactFolderNames;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
@@ -39,70 +45,46 @@ import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGenera
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.*;
-
 /**
  * Created by Talio on 11/24/2016
  */
 public class VspInformationArtifactEnricher implements ExternalArtifactEnricherInterface {
-  private static InformationArtifactGenerator informationArtifactGenerator =
-      InformationArtifactGeneratorFactory.getInstance().createInterface();
-  private EnrichedServiceModelDao enrichedServiceModelDao =
-      EnrichedServiceModelDaoFactory.getInstance().createInterface();
-  private VendorSoftwareProductInfoDao vspInfoDao = VendorSoftwareProductInfoDaoFactory
-      .getInstance().createInterface();
 
-  public VspInformationArtifactEnricher() {
-  }
+    private static InformationArtifactGenerator informationArtifactGenerator = InformationArtifactGeneratorFactory.getInstance().createInterface();
+    private EnrichedServiceModelDao enrichedServiceModelDao = EnrichedServiceModelDaoFactory.getInstance().createInterface();
+    private VendorSoftwareProductInfoDao vspInfoDao = VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
 
-  public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo,
-                                                ToscaServiceModel serviceModel)
-      throws IOException {
-
-    String vspId = enrichmentInfo.getKey();
-    Version version = enrichmentInfo.getVersion();
-    return enrichInformationArtifact(vspId, version);
-  }
-
-  private Map<String, List<ErrorMessage>> enrichInformationArtifact(String vspId, Version version)
-      throws IOException {
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    ByteBuffer infoArtifactByteBuffer = ByteBuffer.wrap(informationArtifactGenerator.generate(
-        vspId, version).getBytes());
-
-    if (Objects.isNull(infoArtifactByteBuffer)) {
-      List<ErrorMessage> errorList = new ArrayList<>();
-      errorList.add(new ErrorMessage(ErrorLevel.ERROR, String.format(
-          "Cannot enrich information artifact for vendor software product with id %s and version %s",
-          vspId, version.toString())));
-      return errors;
+    public VspInformationArtifactEnricher() {
     }
 
-    enrichInformationArtifact(vspId, version, infoArtifactByteBuffer);
-    return errors;
-  }
+    public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo, ToscaServiceModel serviceModel) throws IOException {
+        String vspId = enrichmentInfo.getKey();
+        Version version = enrichmentInfo.getVersion();
+        return enrichInformationArtifact(vspId, version);
+    }
 
-  private void enrichInformationArtifact(String vspId, Version version,
-                                         ByteBuffer infoArtifactByteBuffer) {
-    ServiceArtifact infoArtifactServiceArtifact = new ServiceArtifact();
+    private Map<String, List<ErrorMessage>> enrichInformationArtifact(String vspId, Version version) throws IOException {
+        Map<String, List<ErrorMessage>> errors = new HashMap<>();
+        ByteBuffer infoArtifactByteBuffer = ByteBuffer.wrap(informationArtifactGenerator.generate(vspId, version).getBytes());
+        if (Objects.isNull(infoArtifactByteBuffer)) {
+            List<ErrorMessage> errorList = new ArrayList<>();
+            errorList.add(new ErrorMessage(ErrorLevel.ERROR, String
+                .format("Cannot enrich information artifact for vendor software product with id %s and version %s", vspId, version.toString())));
+            return errors;
+        }
+        enrichInformationArtifact(vspId, version, infoArtifactByteBuffer);
+        return errors;
+    }
 
-    String vspName = vspInfoDao.get(new VspDetails(vspId, version)).getName();
-
-    infoArtifactServiceArtifact.setVspId(vspId);
-    infoArtifactServiceArtifact.setVersion(version);
-    infoArtifactServiceArtifact
-        .setName(ArtifactCategory.INFORMATIONAL.getDisplayName() + File.separator
-            + InformationArtifactFolderNames.Guide + File.separator + String.format(
-            VendorSoftwareProductConstants
-                .INFORMATION_ARTIFACT_NAME,
-            vspName));
-    infoArtifactServiceArtifact.setContentData(infoArtifactByteBuffer.array());
-
-    enrichedServiceModelDao.storeExternalArtifact(infoArtifactServiceArtifact);
-
-  }
-
+    private void enrichInformationArtifact(String vspId, Version version, ByteBuffer infoArtifactByteBuffer) {
+        ServiceArtifact infoArtifactServiceArtifact = new ServiceArtifact();
+        String vspName = vspInfoDao.get(new VspDetails(vspId, version)).getName();
+        infoArtifactServiceArtifact.setVspId(vspId);
+        infoArtifactServiceArtifact.setVersion(version);
+        infoArtifactServiceArtifact.setName(
+            ArtifactCategory.INFORMATIONAL.getDisplayName() + File.separator + InformationArtifactFolderNames.Guide + File.separator + String
+                .format(VendorSoftwareProductConstants.INFORMATION_ARTIFACT_NAME, vspName));
+        infoArtifactServiceArtifact.setContentData(infoArtifactByteBuffer.array());
+        enrichedServiceModelDao.storeExternalArtifact(infoArtifactServiceArtifact);
+    }
 }

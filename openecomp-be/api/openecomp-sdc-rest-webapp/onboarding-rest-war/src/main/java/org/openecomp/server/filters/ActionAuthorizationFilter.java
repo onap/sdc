@@ -13,43 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.server.filters;
 
-import javax.servlet.*;
+import java.io.IOException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class ActionAuthorizationFilter implements Filter {
 
-
-  @Override
-  public void destroy() {
-    //destroy() is not implemented for ActionAuthorizationFilter
-
-  }
-
-  @Override
-  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                       FilterChain filterChain)
-      throws IOException, ServletException {
-
-    HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-    if (httpRequest.isUserInRole(httpRequest.getMethod().toUpperCase())) {
-      filterChain.doFilter(servletRequest, servletResponse);
-    } else {
-      setResponseStatus((HttpServletResponse) servletResponse, HttpServletResponse.SC_FORBIDDEN);
+    @Override
+    public void destroy() {
+        //destroy() is not implemented for ActionAuthorizationFilter
     }
-  }
 
-  private void setResponseStatus(HttpServletResponse response, int status) {
-    response.setStatus(status);
-  }
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+        throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+        if (httpRequest.isUserInRole(httpRequest.getMethod().toUpperCase())) {
+            filterChain.doFilter(servletRequest, servletResponse);
+        } else {
+            setResponseStatus((HttpServletResponse) servletResponse, HttpServletResponse.SC_FORBIDDEN);
+        }
+    }
 
-  @Override
-  public void init(FilterConfig arg0) throws ServletException {
-    //init() is not implemented for ActionAuthorizationFilter
-  }
+    private void setResponseStatus(HttpServletResponse response, int status) {
+        response.setStatus(status);
+    }
 
+    @Override
+    public void init(FilterConfig arg0) throws ServletException {
+        //init() is not implemented for ActionAuthorizationFilter
+    }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,67 +17,63 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.apache.commons.collections.CollectionUtils;
 
 public class PropertyRegexMatcher {
-  private String propertyName;
-  private List<Pattern> regexPatterns;
-  private String stringToSearchForPropertyValue;
 
-  /**
-   * Constractor for creating PropertyRegexMatcher.
-   * @param propertyName property name
-   * @param regexPatterns regex pattern
-   * @param stringToSearchForPropertyValue string for search in the property value manipulation
-   */
-  public PropertyRegexMatcher(String propertyName,
-                              List<String> regexPatterns,
-                              String stringToSearchForPropertyValue) {
-    this.propertyName = propertyName;
-    setRegex(regexPatterns);
-    this.stringToSearchForPropertyValue = stringToSearchForPropertyValue;
-  }
+    private String propertyName;
+    private List<Pattern> regexPatterns;
+    private String stringToSearchForPropertyValue;
 
-  public String getPropertyName() {
-    return propertyName;
-  }
-
-  public void setPropertyName(String propertyName) {
-    this.propertyName = propertyName;
-  }
-
-  /**
-   * Sets regex.
-   *
-   * @param regexPatterns the regex patterns
-   */
-  public void setRegex(List<String> regexPatterns) {
-    if (CollectionUtils.isEmpty(this.regexPatterns)) {
-      this.regexPatterns = new ArrayList<>();
+    /**
+     * Constractor for creating PropertyRegexMatcher.
+     *
+     * @param propertyName                   property name
+     * @param regexPatterns                  regex pattern
+     * @param stringToSearchForPropertyValue string for search in the property value manipulation
+     */
+    public PropertyRegexMatcher(String propertyName, List<String> regexPatterns, String stringToSearchForPropertyValue) {
+        this.propertyName = propertyName;
+        setRegex(regexPatterns);
+        this.stringToSearchForPropertyValue = stringToSearchForPropertyValue;
     }
 
-    for (String regexPattern : regexPatterns) {
-      this.regexPatterns.add(Pattern.compile(regexPattern));
+    public String getPropertyName() {
+        return propertyName;
     }
-  }
 
-  public List<Pattern> getRegexPatterns() {
-    return regexPatterns;
-  }
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
 
-  public String getStringToSearchForPropertyValue() {
-    return stringToSearchForPropertyValue;
-  }
+    /**
+     * Sets regex.
+     *
+     * @param regexPatterns the regex patterns
+     */
+    public void setRegex(List<String> regexPatterns) {
+        if (CollectionUtils.isEmpty(this.regexPatterns)) {
+            this.regexPatterns = new ArrayList<>();
+        }
+        for (String regexPattern : regexPatterns) {
+            this.regexPatterns.add(Pattern.compile(regexPattern));
+        }
+    }
 
-  public void setStringToSearchForPropertyValue(String stringToSearchForPropertyValue) {
-    this.stringToSearchForPropertyValue = stringToSearchForPropertyValue;
-  }
+    public List<Pattern> getRegexPatterns() {
+        return regexPatterns;
+    }
 
+    public String getStringToSearchForPropertyValue() {
+        return stringToSearchForPropertyValue;
+    }
+
+    public void setStringToSearchForPropertyValue(String stringToSearchForPropertyValue) {
+        this.stringToSearchForPropertyValue = stringToSearchForPropertyValue;
+    }
 }

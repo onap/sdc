@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
@@ -22,12 +21,11 @@ import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.LicenseAgreementDaoZusammenImpl;
 
 public class LicenseAgreementDaoFactoryImpl extends LicenseAgreementDaoFactory {
-  
-  private static final LicenseAgreementDao INSTANCE = new LicenseAgreementDaoZusammenImpl(
-      ZusammenAdaptorFactory.getInstance().createInterface());
 
-  @Override
-  public LicenseAgreementDao createInterface() {
-    return INSTANCE;
-  }
+    private static final LicenseAgreementDao INSTANCE = new LicenseAgreementDaoZusammenImpl(ZusammenAdaptorFactory.getInstance().createInterface());
+
+    @Override
+    public LicenseAgreementDao createInterface() {
+        return INSTANCE;
+    }
 }

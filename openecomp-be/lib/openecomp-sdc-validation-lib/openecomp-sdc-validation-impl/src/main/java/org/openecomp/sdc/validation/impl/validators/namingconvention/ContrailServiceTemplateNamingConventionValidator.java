@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
 import static java.util.Objects.nonNull;
@@ -24,7 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -39,168 +37,124 @@ import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
-
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {
-  private static final ErrorMessageCode ERROR_CODE_NST1 = new ErrorMessageCode("NST1");
-  private static final ErrorMessageCode ERROR_CODE_NST2 = new ErrorMessageCode("NST2");
-  private static final ErrorMessageCode ERROR_CODE_NST3 = new ErrorMessageCode("NST3");
 
-  @Override
-  public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
-                       GlobalValidationContext globalContext, ValidationContext validationContext) {
-    validateServiceTemplateImageAndFlavor(fileName, resourceEntry, globalContext);
-  }
+    private static final ErrorMessageCode ERROR_CODE_NST1 = new ErrorMessageCode("NST1");
+    private static final ErrorMessageCode ERROR_CODE_NST2 = new ErrorMessageCode("NST2");
+    private static final ErrorMessageCode ERROR_CODE_NST3 = new ErrorMessageCode("NST3");
 
-  private void validateServiceTemplateImageAndFlavor(String fileName,
-                                                     Map.Entry<String, Resource> entry,
-                                                     GlobalValidationContext globalContext) {
-    if (MapUtils.isEmpty(entry.getValue().getProperties())) {
-      return;
+    @Override
+    public void validate(String fileName, Map.Entry<String, Resource> resourceEntry, GlobalValidationContext globalContext,
+                         ValidationContext validationContext) {
+        validateServiceTemplateImageAndFlavor(fileName, resourceEntry, globalContext);
     }
 
-    Pair<String, String> imagePair = new ImmutablePair<>("image_name", ".*_image_name");
-    Pair<String, String> flavorPair = new ImmutablePair<>("flavor", ".*_flavor_name");
-    List<Pair<String, String>> imageFlavorPairs = Arrays.asList(imagePair, flavorPair);
-
-    Map<String, Object> propertiesMap = entry.getValue().getProperties();
-
-    boolean errorExistValidatingImageOrFlavor = false;
-    for (Pair<String, String> imageOrFlavor : imageFlavorPairs) {
-      boolean errorExistWhenValidatingImageOrFlavorNames =
-              isErrorExistWhenValidatingImageOrFlavorNames(fileName, imageOrFlavor, entry,
-                      propertiesMap, globalContext);
-      errorExistValidatingImageOrFlavor =
-              errorExistValidatingImageOrFlavor || errorExistWhenValidatingImageOrFlavorNames;
-    }
-
-    if (!errorExistValidatingImageOrFlavor) {
-      validateServiceTemplatePropertiesValuesVmtypesAreIdentical(fileName, entry, globalContext,
-              propertiesMap);
-    }
-  }
-
-  private void validateServiceTemplatePropertiesValuesVmtypesAreIdentical(String fileName,
-                                                                          Map.Entry<String, Resource> entry,
-                                                                          GlobalValidationContext globalContext,
-                                                                          Map<String, Object> propertiesMap) {
-    Pair<String, String> vmTypeImagePair = new ImmutablePair<>("image_name", "\\_image\\_name");
-    Pair<String, String> vmTypeFlavorPair = new ImmutablePair<>("flavor", "\\_flavor\\_name");
-    validatePropertiesValuesVmtypesAreIdentical(Arrays.asList(vmTypeImagePair, vmTypeFlavorPair),
-            fileName, entry, propertiesMap, globalContext);
-  }
-
-  private void validatePropertiesValuesVmtypesAreIdentical(List<Pair> propertiesToMatch,
-                                                           String fileName,
-                                                           Map.Entry<String, Resource> resourceEntry,
-                                                           Map<String, Object> propertiesMap,
-                                                           GlobalValidationContext globalContext) {
-    if (CollectionUtils.isEmpty(propertiesToMatch)) {
-      return;
-    }
-
-    String previousPropertyValueValue = null;
-    for (Pair propertyToMatch : propertiesToMatch) {
-      Optional<String> propertyVmType =
-              extractVmTypeFromProperty(fileName, resourceEntry, propertiesMap, globalContext,
-                      propertyToMatch);
-      if (propertyVmType.isPresent()) {
-        String currentPropVmType = propertyVmType.get();
-        previousPropertyValueValue =
-                handleFirstIteration(previousPropertyValueValue, currentPropVmType);
-        if (addWarningIfCurrentVmTypeIsDifferentFromPrevious(fileName, resourceEntry, globalContext,
-                previousPropertyValueValue, currentPropVmType)) {
-          return;
+    private void validateServiceTemplateImageAndFlavor(String fileName, Map.Entry<String, Resource> entry, GlobalValidationContext globalContext) {
+        if (MapUtils.isEmpty(entry.getValue().getProperties())) {
+            return;
         }
-      }
-    }
-  }
-
-  private boolean addWarningIfCurrentVmTypeIsDifferentFromPrevious(String fileName,
-                                                                   Map.Entry<String, Resource> resourceEntry,
-                                                                   GlobalValidationContext globalContext,
-                                                                   String previousPropertyValueValue,
-                                                                   String currentPropVmType) {
-    if (!Objects.equals(previousPropertyValueValue, currentPropVmType)) {
-      globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                      .getErrorWithParameters(
-                              ERROR_CODE_NST1, Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
-                                      .getErrorMessage(),
-                              resourceEntry.getKey()));
-      return true;
-    }
-
-    return false;
-  }
-
-  private boolean isErrorExistWhenValidatingImageOrFlavorNames(String fileName,
-                                                               Pair<String, String> propertyNameAndRegex,
-                                                               Map.Entry<String, Resource> resourceEntry,
-                                                               Map<String, Object> propertiesMap,
-                                                               GlobalValidationContext globalContext) {
-    String propertyName = propertyNameAndRegex.getKey();
-    Object nameValue = propertiesMap.get(propertyName);
-    String[] regexList = new String[]{propertyNameAndRegex.getValue()};
-    if (nonNull(nameValue)) {
-      if (nameValue instanceof Map) {
-        globalContext.setMessageCode(ERROR_CODE_NST3);
-        if (ValidationUtil.validateMapPropertyValue(fileName, resourceEntry, globalContext,
-                propertyName,
-                nameValue, regexList)) {
-          return true;
+        Pair<String, String> imagePair = new ImmutablePair<>("image_name", ".*_image_name");
+        Pair<String, String> flavorPair = new ImmutablePair<>("flavor", ".*_flavor_name");
+        List<Pair<String, String>> imageFlavorPairs = Arrays.asList(imagePair, flavorPair);
+        Map<String, Object> propertiesMap = entry.getValue().getProperties();
+        boolean errorExistValidatingImageOrFlavor = false;
+        for (Pair<String, String> imageOrFlavor : imageFlavorPairs) {
+            boolean errorExistWhenValidatingImageOrFlavorNames = isErrorExistWhenValidatingImageOrFlavorNames(fileName, imageOrFlavor, entry,
+                propertiesMap, globalContext);
+            errorExistValidatingImageOrFlavor = errorExistValidatingImageOrFlavor || errorExistWhenValidatingImageOrFlavorNames;
         }
-      } else {
-        globalContext.addMessage(
-                fileName,
-                ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                        .getErrorWithParameters(
-                                ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                                propertyName,
-                                resourceEntry.getKey()));
-        return true;
-      }
-
-      return false;
-    }
-    return false;
-  }
-
-
-  private Optional<String> extractVmTypeFromProperty(String fileName,
-                                                     Map.Entry<String, Resource> resourceEntry,
-                                                     Map<String, Object> propertiesMap,
-                                                     GlobalValidationContext globalContext,
-                                                     Pair propertyKeyRegex) {
-    String propertyName = (String) propertyKeyRegex.getKey();
-    Object propertyVal = propertiesMap.get(propertyName);
-    if (nonNull(propertyVal)) {
-      if (propertyVal instanceof Map) {
-        String propertyValFromGetParam = ValidationUtil.getWantedNameFromPropertyValueGetParam
-                (propertyVal);
-        if (nonNull(propertyValFromGetParam)) {
-          Pattern pattern = Pattern.compile("" + propertyKeyRegex.getValue());
-          return Optional.ofNullable(pattern.split(propertyValFromGetParam)[0]);
+        if (!errorExistValidatingImageOrFlavor) {
+            validateServiceTemplatePropertiesValuesVmtypesAreIdentical(fileName, entry, globalContext, propertiesMap);
         }
-      } else {
-        globalContext.addMessage(
-                fileName,
-                ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                        .getErrorWithParameters(
-                                ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(),
-                                propertyName,
-                                resourceEntry.getKey()));
+    }
+
+    private void validateServiceTemplatePropertiesValuesVmtypesAreIdentical(String fileName, Map.Entry<String, Resource> entry,
+                                                                            GlobalValidationContext globalContext,
+                                                                            Map<String, Object> propertiesMap) {
+        Pair<String, String> vmTypeImagePair = new ImmutablePair<>("image_name", "\\_image\\_name");
+        Pair<String, String> vmTypeFlavorPair = new ImmutablePair<>("flavor", "\\_flavor\\_name");
+        validatePropertiesValuesVmtypesAreIdentical(Arrays.asList(vmTypeImagePair, vmTypeFlavorPair), fileName, entry, propertiesMap, globalContext);
+    }
+
+    private void validatePropertiesValuesVmtypesAreIdentical(List<Pair> propertiesToMatch, String fileName, Map.Entry<String, Resource> resourceEntry,
+                                                             Map<String, Object> propertiesMap, GlobalValidationContext globalContext) {
+        if (CollectionUtils.isEmpty(propertiesToMatch)) {
+            return;
+        }
+        String previousPropertyValueValue = null;
+        for (Pair propertyToMatch : propertiesToMatch) {
+            Optional<String> propertyVmType = extractVmTypeFromProperty(fileName, resourceEntry, propertiesMap, globalContext, propertyToMatch);
+            if (propertyVmType.isPresent()) {
+                String currentPropVmType = propertyVmType.get();
+                previousPropertyValueValue = handleFirstIteration(previousPropertyValueValue, currentPropVmType);
+                if (addWarningIfCurrentVmTypeIsDifferentFromPrevious(fileName, resourceEntry, globalContext, previousPropertyValueValue,
+                    currentPropVmType)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean addWarningIfCurrentVmTypeIsDifferentFromPrevious(String fileName, Map.Entry<String, Resource> resourceEntry,
+                                                                     GlobalValidationContext globalContext, String previousPropertyValueValue,
+                                                                     String currentPropVmType) {
+        if (!Objects.equals(previousPropertyValueValue, currentPropVmType)) {
+            globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                .getErrorWithParameters(ERROR_CODE_NST1, Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION.getErrorMessage(),
+                    resourceEntry.getKey()));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isErrorExistWhenValidatingImageOrFlavorNames(String fileName, Pair<String, String> propertyNameAndRegex,
+                                                                 Map.Entry<String, Resource> resourceEntry, Map<String, Object> propertiesMap,
+                                                                 GlobalValidationContext globalContext) {
+        String propertyName = propertyNameAndRegex.getKey();
+        Object nameValue = propertiesMap.get(propertyName);
+        String[] regexList = new String[]{propertyNameAndRegex.getValue()};
+        if (nonNull(nameValue)) {
+            if (nameValue instanceof Map) {
+                globalContext.setMessageCode(ERROR_CODE_NST3);
+                if (ValidationUtil.validateMapPropertyValue(fileName, resourceEntry, globalContext, propertyName, nameValue, regexList)) {
+                    return true;
+                }
+            } else {
+                globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                    .getErrorWithParameters(ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName, resourceEntry.getKey()));
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private Optional<String> extractVmTypeFromProperty(String fileName, Map.Entry<String, Resource> resourceEntry, Map<String, Object> propertiesMap,
+                                                       GlobalValidationContext globalContext, Pair propertyKeyRegex) {
+        String propertyName = (String) propertyKeyRegex.getKey();
+        Object propertyVal = propertiesMap.get(propertyName);
+        if (nonNull(propertyVal)) {
+            if (propertyVal instanceof Map) {
+                String propertyValFromGetParam = ValidationUtil.getWantedNameFromPropertyValueGetParam(propertyVal);
+                if (nonNull(propertyValFromGetParam)) {
+                    Pattern pattern = Pattern.compile("" + propertyKeyRegex.getValue());
+                    return Optional.ofNullable(pattern.split(propertyValFromGetParam)[0]);
+                }
+            } else {
+                globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                    .getErrorWithParameters(ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName, resourceEntry.getKey()));
+                return Optional.empty();
+            }
+        }
         return Optional.empty();
-      }
-    }
-    return Optional.empty();
-  }
-
-  private String handleFirstIteration(String previousPropertyValueValue, String currentPropVmType) {
-    String previousPropertyValue;
-    if (Objects.isNull(previousPropertyValueValue)) {
-      previousPropertyValue = currentPropVmType;
-      return previousPropertyValue;
     }
 
-   return previousPropertyValueValue;
-  }
+    private String handleFirstIteration(String previousPropertyValueValue, String currentPropVmType) {
+        String previousPropertyValue;
+        if (Objects.isNull(previousPropertyValueValue)) {
+            previousPropertyValue = currentPropVmType;
+            return previousPropertyValue;
+        }
+        return previousPropertyValueValue;
+    }
 }

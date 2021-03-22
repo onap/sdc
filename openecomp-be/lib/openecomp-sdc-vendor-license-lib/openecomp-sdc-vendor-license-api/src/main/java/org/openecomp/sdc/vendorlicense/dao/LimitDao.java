@@ -25,5 +25,5 @@ import org.openecomp.sdc.versioning.dao.VersionableDao;
 
 public interface LimitDao extends VersionableDao, BaseDao<LimitEntity> {
 
-  boolean isLimitPresent(LimitEntity limitEntity);
+    boolean isLimitPresent(LimitEntity limitEntity);
 }

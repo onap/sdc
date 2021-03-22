@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic;
 
 import lombok.Getter;
@@ -33,5 +32,4 @@ public class NicQuestionnaire {
     private IpConfiguration ipConfiguration;
     private Network network;
     private Sizing sizing;
-
 }

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.activitylog.dao;
 
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 
 public interface ActivityLogDao extends BaseDao<ActivityLogEntity> {
+
 }

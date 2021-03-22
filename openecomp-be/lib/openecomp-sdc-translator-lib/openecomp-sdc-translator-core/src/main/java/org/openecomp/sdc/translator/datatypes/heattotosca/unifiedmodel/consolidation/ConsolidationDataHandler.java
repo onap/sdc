@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
@@ -31,8 +30,7 @@ public interface ConsolidationDataHandler {
      * @param requirementId         the requirement id of requirement assignment
      * @param requirementAssignment the requirement assignment data connected to target node
      */
-    void addNodesConnectedOut(TranslateTo translateTo, String nodeTemplateId,
-                                     String requirementId, RequirementAssignment requirementAssignment);
+    void addNodesConnectedOut(TranslateTo translateTo, String nodeTemplateId, String requirementId, RequirementAssignment requirementAssignment);
 
     /**
      * Add source node connected in to target node consolidation entity.
@@ -43,22 +41,18 @@ public interface ConsolidationDataHandler {
      * @param requirementId         the requirement id of source node
      * @param requirementAssignment the requirement assignment data of source node
      */
-    void addNodesConnectedIn(TranslateTo translateTo,  String sourceNodeTemplateId,
-                                    String targetNodeTemplateId,
-                                    String targetResourceId, String requirementId,
-                                    RequirementAssignment requirementAssignment);
+    void addNodesConnectedIn(TranslateTo translateTo, String sourceNodeTemplateId, String targetNodeTemplateId, String targetResourceId,
+                             String requirementId, RequirementAssignment requirementAssignment);
 
-    void removeParamNameFromAttrFuncList(ServiceTemplate serviceTemplate,
-                                                HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                String paramName, String contrailSharedResourceId,
-                                                String sharedTranslatedResourceId);
+    void removeParamNameFromAttrFuncList(ServiceTemplate serviceTemplate, HeatOrchestrationTemplate heatOrchestrationTemplate, String paramName,
+                                         String contrailSharedResourceId, String sharedTranslatedResourceId);
 
-    void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId,
-            String resourceTranslatedId, String propertyName, String attributeName);
+    void addNodesGetAttrOut(FunctionTranslator functionTranslator, String nodeTemplateId, String resourceTranslatedId, String propertyName,
+                            String attributeName);
 
-    void addNodesGetAttrIn(FunctionTranslator functionTranslator,String nodeTemplateId,
-            String targetResourceId, String targetResourceTranslatedId,  String propertyName, String attributeName);
+    void addNodesGetAttrIn(FunctionTranslator functionTranslator, String nodeTemplateId, String targetResourceId, String targetResourceTranslatedId,
+                           String propertyName, String attributeName);
 
-    void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId,
-            String targetResourceTranslatedId, String propertyName, String attributeName);
+    void addOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId, String targetResourceTranslatedId,
+                                 String propertyName, String attributeName);
 }

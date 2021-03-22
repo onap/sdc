@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.common;
 
 public class RestConstants {
-  // value Should be equal to com.tlv.sdc.common.api.Constants#USER_ID_HEADER
-  public static final String USER_ID_HEADER_PARAM = "USER_ID";
-  public static final String LAST_DELIVERED_QUERY_PARAM = "LAST_DELIVERED_EVENT_ID";
-  public static final String USER_MISSING_ERROR_MSG =
-      "Field does not conform to predefined criteria : user : may not be null";
 
-  public static final String INVALID_JSON_ERROR_MESSAGE =
-      "Field does not conform to predefined criteria : body :must be in JSON format";
+    // value Should be equal to com.tlv.sdc.common.api.Constants#USER_ID_HEADER
+    public static final String USER_ID_HEADER_PARAM = "USER_ID";
+    public static final String LAST_DELIVERED_QUERY_PARAM = "LAST_DELIVERED_EVENT_ID";
+    public static final String USER_MISSING_ERROR_MSG = "Field does not conform to predefined criteria : user : may not be null";
+    public static final String INVALID_JSON_ERROR_MESSAGE = "Field does not conform to predefined criteria : body :must be in JSON format";
 
-  private RestConstants() {
-
-  }
+    private RestConstants() {
+    }
 }

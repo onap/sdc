@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet;
 
 import java.util.Objects;
@@ -34,13 +33,12 @@ public class ContextTracker implements Tracker {
 
     private final HttpHeader partnerNameHeaders;
     private final HttpHeader requestIdHeaders;
-
     private final Supplier<Void> loggingContextClear;
     private final Consumer<ContextData> loggingContextPut;
 
     /**
-     * Constructs tracker to handle required logging context in Servlet-based applications. Refer to ONAP logging
-     * guidelines for fields required to be put on logging context.
+     * Constructs tracker to handle required logging context in Servlet-based applications. Refer to ONAP logging guidelines for fields required to be
+     * put on logging context.
      *
      * @param partnerNameHeaders HTTP headers to check for a partner name, cannot be null
      * @param requestIdHeaders   HTTP headers to check for a request ID, cannot be null
@@ -56,36 +54,30 @@ public class ContextTracker implements Tracker {
     }
 
     /**
-     * Package level constructor used for tests. Clean and Put are passed as functions
-     * in order to avoid static mock and service loader config - LoggingServiceProvider in LoggingContext
+     * Package level constructor used for tests. Clean and Put are passed as functions in order to avoid static mock and service loader config -
+     * LoggingServiceProvider in LoggingContext
      *
      * @param partnerNameHeaders
      * @param requestIdHeaders
      * @param loggingContextClear
      * @param loggingContextPut
      */
-    ContextTracker(HttpHeader partnerNameHeaders,
-        HttpHeader requestIdHeaders,
-        Supplier<Void> loggingContextClear,
-        Consumer<ContextData> loggingContextPut) {
+    ContextTracker(HttpHeader partnerNameHeaders, HttpHeader requestIdHeaders, Supplier<Void> loggingContextClear,
+                   Consumer<ContextData> loggingContextPut) {
         this.partnerNameHeaders = Objects.requireNonNull(partnerNameHeaders);
         this.requestIdHeaders = Objects.requireNonNull(requestIdHeaders);
         this.loggingContextPut = loggingContextPut;
-        this.loggingContextClear =loggingContextClear;
+        this.loggingContextClear = loggingContextClear;
     }
 
     @Override
     public void preRequest(HttpServletRequest request) {
-
         loggingContextClear.get();
-
         String serviceName = ServiceNameFormatter.format(request);
         String requestId = requestIdHeaders.getAny(request::getHeader).orElse(UUID.randomUUID().toString());
-        ContextData.ContextDataBuilder contextBuilder =
-                ContextData.builder().serviceName(serviceName).requestId(requestId);
+        ContextData.ContextDataBuilder contextBuilder = ContextData.builder().serviceName(serviceName).requestId(requestId);
         String partnerName = partnerNameHeaders.getAny(request::getHeader).orElse("UNKNOWN");
         contextBuilder.partnerName(partnerName);
-
         loggingContextPut.accept(contextBuilder.build());
     }
 

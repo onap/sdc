@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
 import lombok.AllArgsConstructor;
@@ -33,5 +32,4 @@ public class ImageData implements CompositionDataEntity {
 
     private String fileName;
     private String description;
-
 }

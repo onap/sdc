@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding;
 
 import java.util.HashMap;
@@ -37,17 +36,12 @@ public class OnboardingPackageContentHandler extends FileContentHandler {
     public Map<String, String> getFileAndSignaturePathMap(final Set<String> signatureExtensionSet) {
         final Map<String, byte[]> files = getFiles();
         final Map<String, String> signedFilePairMap = new HashMap<>();
-        files.keySet().stream()
-            .filter(filePath -> !signatureExtensionSet.contains(FilenameUtils.getExtension(filePath)))
-            .forEach(filePath -> {
-                final String filePathWithoutExtension = FilenameUtils.removeExtension(filePath);
-                signatureExtensionSet.stream()
-                    .map(extension -> String.format("%s.%s", filePathWithoutExtension, extension))
-                    .filter(files::containsKey)
-                    .forEach(file -> signedFilePairMap.put(filePath, file));
-                signedFilePairMap.putIfAbsent(filePath, null);
-            });
+        files.keySet().stream().filter(filePath -> !signatureExtensionSet.contains(FilenameUtils.getExtension(filePath))).forEach(filePath -> {
+            final String filePathWithoutExtension = FilenameUtils.removeExtension(filePath);
+            signatureExtensionSet.stream().map(extension -> String.format("%s.%s", filePathWithoutExtension, extension)).filter(files::containsKey)
+                .forEach(file -> signedFilePairMap.put(filePath, file));
+            signedFilePairMap.putIfAbsent(filePath, null);
+        });
         return signedFilePairMap;
     }
-
 }

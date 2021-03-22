@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat;
 
 import java.util.Collection;
@@ -62,5 +61,4 @@ public class AnalyzedZipHeatFiles {
     public Collection<String> getFilesNotEligbleForModules() {
         return CollectionUtils.union(this.getNestedFiles(), this.getOtherNonModuleFiles());
     }
-
 }

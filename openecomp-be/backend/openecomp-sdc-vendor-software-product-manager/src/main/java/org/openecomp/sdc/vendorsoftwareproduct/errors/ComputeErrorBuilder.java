@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -23,11 +22,10 @@ import org.openecomp.sdc.common.errors.ErrorCode;
  * The Compute error builder.
  */
 public class ComputeErrorBuilder {
-    private static final String COMPUTE_NAME_FORMAT_MSG = "Field does not conform to predefined criteria"
-            + ": name : must match %s";
 
-    private ComputeErrorBuilder(){
+    private static final String COMPUTE_NAME_FORMAT_MSG = "Field does not conform to predefined criteria" + ": name : must match %s";
 
+    private ComputeErrorBuilder() {
     }
 
     /**

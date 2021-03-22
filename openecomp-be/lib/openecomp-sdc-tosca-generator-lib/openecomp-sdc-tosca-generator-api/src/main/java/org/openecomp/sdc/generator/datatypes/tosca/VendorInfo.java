@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.generator.datatypes.tosca;
 
 import lombok.EqualsAndHashCode;
@@ -37,5 +36,4 @@ public class VendorInfo {
 
     private String manufacturer_reference_number;
     private String vendor_model;
-
 }

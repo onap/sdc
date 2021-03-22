@@ -17,15 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 
-public abstract class OrchestrationTemplateCandidateManagerFactory
-    extends AbstractComponentFactory<OrchestrationTemplateCandidateManager> {
+public abstract class OrchestrationTemplateCandidateManagerFactory extends AbstractComponentFactory<OrchestrationTemplateCandidateManager> {
 
-  public static OrchestrationTemplateCandidateManagerFactory getInstance() {
-    return getInstance(OrchestrationTemplateCandidateManagerFactory.class);
-  }
+    public static OrchestrationTemplateCandidateManagerFactory getInstance() {
+        return getInstance(OrchestrationTemplateCandidateManagerFactory.class);
+    }
 }

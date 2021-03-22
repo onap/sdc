@@ -17,9 +17,9 @@
 /**
  * <p>Client-visible API for logging, implemented according to
  * <a href="https://wiki.onap.org/download/attachments/1015849/ONAP%20application%20logging%20guidelines.pdf?api=v2">
- * ONAP application logging guidelines</a>. The actual implementation is delegated to a service provider bound through
- * the <a href="https://docs.oracle.com/javase/tutorial/ext/basics/spi.html">Java SPI</a> mechanism. The provider must
- * implement {@link org.openecomp.sdc.logging.spi.LoggingServiceProvider}.</p>
+ * ONAP application logging guidelines</a>. The actual implementation is delegated to a service provider bound through the <a
+ * href="https://docs.oracle.com/javase/tutorial/ext/basics/spi.html">Java SPI</a> mechanism. The provider must implement {@link
+ * org.openecomp.sdc.logging.spi.LoggingServiceProvider}.</p>
  * <p>The logging API collects the following types of data:</p>
  * <ol>
  *     <li>Context that must be propagated throughout the application, and available at any point for debug and error
@@ -35,4 +35,4 @@
  * @author evitaliy
  * @since 26 Mar 2018
  */
-package org.openecomp.sdc.logging.api;
+package org.openecomp.sdc.logging.api; 

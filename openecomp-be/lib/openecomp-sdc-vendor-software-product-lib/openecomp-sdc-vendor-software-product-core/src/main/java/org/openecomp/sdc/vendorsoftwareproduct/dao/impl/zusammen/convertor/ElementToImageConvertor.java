@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
@@ -28,33 +27,26 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.types.ElementPropertyName;
 
-public class ElementToImageConvertor extends ElementConvertor <ImageEntity>{
+public class ElementToImageConvertor extends ElementConvertor<ImageEntity> {
 
-  @Override
-  public ImageEntity convert( Element element) {
-    ImageEntity imageEntity = new ImageEntity();
+    @Override
+    public ImageEntity convert(Element element) {
+        ImageEntity imageEntity = new ImageEntity();
+        imageEntity.setId(element.getElementId().getValue());
+        imageEntity.setCompositionData(new String(FileUtils.toByteArray(element.getData())));
+        mapInfoToImageEntity(imageEntity, element.getInfo());
+        return imageEntity;
+    }
 
-    imageEntity.setId(element.getElementId().getValue());
-    imageEntity.setCompositionData(new String(FileUtils.toByteArray(element.getData())));
-    mapInfoToImageEntity(imageEntity,element.getInfo());
-    return imageEntity;
-  }
+    @Override
+    public ImageEntity convert(ElementInfo elementInfo) {
+        ImageEntity imageEntity = new ImageEntity();
+        imageEntity.setId(elementInfo.getId().getValue());
+        mapInfoToImageEntity(imageEntity, elementInfo.getInfo());
+        return imageEntity;
+    }
 
-  @Override
-  public ImageEntity convert( ElementInfo elementInfo) {
-    ImageEntity imageEntity = new ImageEntity();
-
-    imageEntity.setId(elementInfo.getId().getValue());
-    mapInfoToImageEntity(imageEntity,elementInfo.getInfo());
-    return imageEntity;
-  }
-
-
-  public void mapInfoToImageEntity(ImageEntity imageEntity,Info info){
-
-
-    imageEntity.setCompositionData(
-        info.getProperty(ElementPropertyName.compositionData.name()));
-  }
-
+    public void mapInfoToImageEntity(ImageEntity imageEntity, Info info) {
+        imageEntity.setCompositionData(info.getProperty(ElementPropertyName.compositionData.name()));
+    }
 }

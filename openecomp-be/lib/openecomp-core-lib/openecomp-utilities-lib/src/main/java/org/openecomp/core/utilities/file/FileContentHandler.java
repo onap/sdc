@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.utilities.file;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +53,6 @@ public class FileContentHandler {
         if (content == null || content.length == 0) {
             return null;
         }
-
         return new ByteArrayInputStream(content);
     }
 
@@ -101,7 +99,7 @@ public class FileContentHandler {
      * Adds a file.
      *
      * @param filePath the file path
-     * @param content the file content
+     * @param content  the file content
      */
     public void addFile(final String filePath, final byte[] content) {
         files.put(filePath, content == null ? new byte[0] : content);
@@ -110,7 +108,7 @@ public class FileContentHandler {
     /**
      * Adds a file.
      *
-     * @param filePath the file path
+     * @param filePath        the file path
      * @param fileInputStream the file input stream
      */
     public void addFile(final String filePath, final InputStream fileInputStream) {
@@ -123,8 +121,7 @@ public class FileContentHandler {
      * @return a file path:content map
      */
     public Map<String, byte[]> getFiles() {
-        return files.entrySet().stream().filter(entry -> entry.getValue() != null)
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return files.entrySet().stream().filter(entry -> entry.getValue() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public void setFiles(final Map<String, byte[]> files) {
@@ -190,5 +187,4 @@ public class FileContentHandler {
     public boolean containsFile(final String filePath) {
         return files.containsKey(filePath);
     }
-
 }

@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
-
-import java.util.Optional;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 public interface ToscaMetadata {
 

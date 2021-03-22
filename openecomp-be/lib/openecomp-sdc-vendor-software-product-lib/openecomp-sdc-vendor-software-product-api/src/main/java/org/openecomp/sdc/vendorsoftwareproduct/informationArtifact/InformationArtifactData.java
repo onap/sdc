@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.informationArtifact;
 
 import java.util.List;
@@ -40,5 +39,4 @@ public class InformationArtifactData {
     private VspQuestionnaire vspQuestionnaire;
     private List<ComponentQuestionnaire> componentQuestionnaires;
     private List<NicQuestionnaire> nicQuestionnaires;
-
 }

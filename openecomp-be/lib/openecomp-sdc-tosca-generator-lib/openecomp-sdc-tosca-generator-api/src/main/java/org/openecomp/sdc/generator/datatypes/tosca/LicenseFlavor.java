@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.generator.datatypes.tosca;
 
 import lombok.EqualsAndHashCode;
@@ -36,5 +35,4 @@ import lombok.ToString;
 public class LicenseFlavor {
 
     private String feature_group_uuid;
-
 }

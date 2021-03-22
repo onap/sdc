@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
 import lombok.Getter;
@@ -31,5 +30,4 @@ public class ComponentComputeAssociation {
 
     private String componentId;
     private String computeFlavorId;
-
 }

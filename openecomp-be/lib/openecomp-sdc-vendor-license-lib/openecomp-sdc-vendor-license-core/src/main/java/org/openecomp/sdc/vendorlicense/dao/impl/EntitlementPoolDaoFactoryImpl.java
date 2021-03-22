@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
@@ -21,13 +20,12 @@ import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.EntitlementPoolZusammenDaoImpl;
 
-
 public class EntitlementPoolDaoFactoryImpl extends EntitlementPoolDaoFactory {
-    private static EntitlementPoolDao instance = new EntitlementPoolZusammenDaoImpl(
-        ZusammenAdaptorFactory.getInstance().createInterface());
 
-  @Override
-  public EntitlementPoolDao createInterface() {
-    return instance;
-  }
+    private static EntitlementPoolDao instance = new EntitlementPoolZusammenDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface());
+
+    @Override
+    public EntitlementPoolDao createInterface() {
+        return instance;
+    }
 }

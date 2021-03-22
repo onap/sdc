@@ -17,8 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.dao.impl;
+
+import static org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory.getSession;
 
 import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.ResultSet;
@@ -28,6 +29,13 @@ import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
@@ -35,23 +43,14 @@ import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.notification.dao.NotificationsDao;
 import org.openecomp.sdc.notification.dao.types.NotificationEntity;
 import org.openecomp.sdc.notification.dtos.NotificationsStatus;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory.getSession;
-
 //import org.openecomp.sdc.notification.dao.types.LastSeenNotificationEntity;
-//import java.util.Optional;
 
-public class NotificationsDaoCassandraImpl extends CassandraBaseDao<NotificationEntity>
-    implements NotificationsDao {
+//import java.util.Optional;
+public class NotificationsDaoCassandraImpl extends CassandraBaseDao<NotificationEntity> implements NotificationsDao {
 
     private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final Mapper<NotificationEntity> mapper =
-        noSqlDb.getMappingManager().mapper(NotificationEntity.class);
-    private static final NotificationsAccessor accessor =
-        noSqlDb.getMappingManager().createAccessor(NotificationsAccessor.class);
+    private static final Mapper<NotificationEntity> mapper = noSqlDb.getMappingManager().mapper(NotificationEntity.class);
+    private static final NotificationsAccessor accessor = noSqlDb.getMappingManager().createAccessor(NotificationsAccessor.class);
 
     @Override
     protected Mapper<NotificationEntity> getMapper() {
@@ -75,8 +74,7 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
 
     @Override
     public List<NotificationEntity> getNewNotificationsByOwnerId(String ownerId, UUID eventId) {
-        return getNewNotificationsByOwnerId(ownerId, eventId,
-            DEFAULT_LIMIT_OF_RESULTS_FOR_OWNER_NOTIFICATIONS);
+        return getNewNotificationsByOwnerId(ownerId, eventId, DEFAULT_LIMIT_OF_RESULTS_FOR_OWNER_NOTIFICATIONS);
     }
 
     @Override
@@ -94,16 +92,17 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
 
     @Override
     public NotificationsStatus getNotificationsStatus(String ownerId, UUID lastScannedEventId, int numOfRecordsToReturn) {
-	NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
-	List<NotificationEntity> entities = accessor.getNotifications(ownerId, numOfRecordsToReturn).all();
+        NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
+        List<NotificationEntity> entities = accessor.getNotifications(ownerId, numOfRecordsToReturn).all();
         if (CollectionUtils.isNotEmpty(entities)) {
             long lastSeen = UUIDs.unixTimestamp(lastScannedEventId);
             populateNewNotifications(notificationsStatus, entities, lastSeen);
             UUID firstScannedEventId = entities.get(0).getEventId();
-		notificationsStatus.setLastScanned(firstScannedEventId);
-		notificationsStatus.setNumOfNotSeenNotifications(accessor.getNewNotificationsCount(ownerId, lastScannedEventId, firstScannedEventId).one().getLong(0));
+            notificationsStatus.setLastScanned(firstScannedEventId);
+            notificationsStatus
+                .setNumOfNotSeenNotifications(accessor.getNewNotificationsCount(ownerId, lastScannedEventId, firstScannedEventId).one().getLong(0));
         }
-	return notificationsStatus;
+        return notificationsStatus;
     }
 
     private void populateNewNotifications(NotificationsStatusImpl notificationsStatus, List<NotificationEntity> entities, long lastSeen) {
@@ -117,66 +116,64 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
     }
 
     @Override
-    public NotificationsStatus getNotificationsStatus(String ownerId, UUID lastSeenNotification, int numOfRecordsToReturn, UUID prevLastScannedEventId) {
-	NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
-	List<NotificationEntity> entities = accessor.getPrevNotifications(ownerId, prevLastScannedEventId, numOfRecordsToReturn).all();
+    public NotificationsStatus getNotificationsStatus(String ownerId, UUID lastSeenNotification, int numOfRecordsToReturn,
+                                                      UUID prevLastScannedEventId) {
+        NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
+        List<NotificationEntity> entities = accessor.getPrevNotifications(ownerId, prevLastScannedEventId, numOfRecordsToReturn).all();
         if (CollectionUtils.isNotEmpty(entities)) {
-		long lastSeen = UUIDs.unixTimestamp(lastSeenNotification);
+            long lastSeen = UUIDs.unixTimestamp(lastSeenNotification);
             populateNewNotifications(notificationsStatus, entities, lastSeen);
         }
-	return notificationsStatus;
-    }
-
-/*
-    @Override
-    public NotificationsStatus getNotificationsStatus(String ownerId,
-                                                      LastSeenNotificationEntity lastSeenNotification,
-                                                      int numOfRecordsToReturn) {
-
-        List<NotificationEntity> notificationEntities =
-            fetchNewNotifications(lastSeenNotification, numOfRecordsToReturn);
-        NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
-        if (CollectionUtils.isEmpty(notificationEntities)) {
-            return notificationsStatus;
-        }
-
-        notificationEntities.forEach(notification -> {
-            if (isNewNotification(lastSeenNotification, notification)) {
-                notificationsStatus.addNewNotificationUUID(notification.getEventId());
-            }
-            notificationsStatus.addNotification(notification);
-        });
-
-        Optional<NotificationEntity> latestNotification = notificationEntities.stream().findFirst();
-        latestNotification.ifPresent(e -> notificationsStatus.setLastScanned(e.getEventId()));
         return notificationsStatus;
     }
 
-    private List<NotificationEntity> fetchNewNotifications(
-        LastSeenNotificationEntity lastSeenNotification, int numOfRecordsToReturn) {
-        String ownerId = lastSeenNotification.getOwnerId();
-        UUID lastEventId = lastSeenNotification.getLastEventId();
-        List<NotificationEntity> newNotificationsByOwnerId =
-            getNewNotificationsByOwnerId(ownerId, lastEventId);
-        newNotificationsByOwnerId = fetchMoreIfNeeded(ownerId, newNotificationsByOwnerId,
-            numOfRecordsToReturn, lastEventId);
-        return newNotificationsByOwnerId;
-    }
+    /*
+        @Override
+        public NotificationsStatus getNotificationsStatus(String ownerId,
+                                                          LastSeenNotificationEntity lastSeenNotification,
+                                                          int numOfRecordsToReturn) {
 
-    private boolean isNewNotification(LastSeenNotificationEntity lastSeenNotification,
-                                      NotificationEntity notification) {
-        return Objects.isNull(lastSeenNotification.getLastEventId()) ||
-            UUIDs.unixTimestamp(notification.getEventId()) >
-                UUIDs.unixTimestamp(lastSeenNotification.getLastEventId());
-    }
-*/
+            List<NotificationEntity> notificationEntities =
+                fetchNewNotifications(lastSeenNotification, numOfRecordsToReturn);
+            NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
+            if (CollectionUtils.isEmpty(notificationEntities)) {
+                return notificationsStatus;
+            }
 
+            notificationEntities.forEach(notification -> {
+                if (isNewNotification(lastSeenNotification, notification)) {
+                    notificationsStatus.addNewNotificationUUID(notification.getEventId());
+                }
+                notificationsStatus.addNotification(notification);
+            });
+
+            Optional<NotificationEntity> latestNotification = notificationEntities.stream().findFirst();
+            latestNotification.ifPresent(e -> notificationsStatus.setLastScanned(e.getEventId()));
+            return notificationsStatus;
+        }
+
+        private List<NotificationEntity> fetchNewNotifications(
+            LastSeenNotificationEntity lastSeenNotification, int numOfRecordsToReturn) {
+            String ownerId = lastSeenNotification.getOwnerId();
+            UUID lastEventId = lastSeenNotification.getLastEventId();
+            List<NotificationEntity> newNotificationsByOwnerId =
+                getNewNotificationsByOwnerId(ownerId, lastEventId);
+            newNotificationsByOwnerId = fetchMoreIfNeeded(ownerId, newNotificationsByOwnerId,
+                numOfRecordsToReturn, lastEventId);
+            return newNotificationsByOwnerId;
+        }
+
+        private boolean isNewNotification(LastSeenNotificationEntity lastSeenNotification,
+                                          NotificationEntity notification) {
+            return Objects.isNull(lastSeenNotification.getLastEventId()) ||
+                UUIDs.unixTimestamp(notification.getEventId()) >
+                    UUIDs.unixTimestamp(lastSeenNotification.getLastEventId());
+        }
+    */
     @Override
     public void createBatch(List<NotificationEntity> notificationEntities) {
         BatchStatement batch = new BatchStatement();
-        List<Statement> statements = notificationEntities.stream()
-            .map(mapper::saveQuery)
-            .collect(Collectors.toList());
+        List<Statement> statements = notificationEntities.stream().map(mapper::saveQuery).collect(Collectors.toList());
         batch.addAll(statements);
         getSession().execute(batch);
     }
@@ -253,7 +250,6 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
             this.numOfNotSeenNotifications = numOfNotSeenNotifications;
         }
     }
-
 /*
     private List<NotificationEntity> fetchMoreIfNeeded(String ownerId,
                                                        List<NotificationEntity> notificationEntities,
@@ -278,5 +274,4 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
         return notificationEntities;
     }
 */
-
 }

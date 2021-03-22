@@ -20,19 +20,19 @@ import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDaoFactory;
 
 public class ActivityLogManagerFactoryImpl extends ActivityLogManagerFactory {
-  private final ActivityLogManager INSTANCE;
 
+    private final ActivityLogManager INSTANCE;
 
-  public ActivityLogManagerFactoryImpl() {
-    this.INSTANCE = new ActivityLogManagerImpl(ActivityLogDaoFactory.getInstance().createInterface());
-  }
+    public ActivityLogManagerFactoryImpl() {
+        this.INSTANCE = new ActivityLogManagerImpl(ActivityLogDaoFactory.getInstance().createInterface());
+    }
 
-  ActivityLogManagerFactoryImpl(ActivityLogManager activityLogManager) {
-    this.INSTANCE = activityLogManager;
-  }
+    ActivityLogManagerFactoryImpl(ActivityLogManager activityLogManager) {
+        this.INSTANCE = activityLogManager;
+    }
 
-  @Override
-  public ActivityLogManager createInterface() {
-    return INSTANCE;
-  }
+    @Override
+    public ActivityLogManager createInterface() {
+        return INSTANCE;
+    }
 }

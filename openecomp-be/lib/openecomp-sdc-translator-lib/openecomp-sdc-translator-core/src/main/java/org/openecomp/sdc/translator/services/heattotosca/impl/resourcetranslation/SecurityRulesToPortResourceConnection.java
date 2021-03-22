@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_SECURITY_RULE_PORT_CAPABILITY_CONNECTION;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
@@ -42,13 +40,11 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
-
 class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapabilityHelper {
-    SecurityRulesToPortResourceConnection(ResourceTranslationNestedImpl resourceTranslationNested,
-                                          TranslateTo translateTo, FileData nestedFileData,
+
+    SecurityRulesToPortResourceConnection(ResourceTranslationNestedImpl resourceTranslationNested, TranslateTo translateTo, FileData nestedFileData,
                                           NodeTemplate substitutionNodeTemplate, NodeType nodeType) {
-        super(resourceTranslationNested, translateTo, nestedFileData, substitutionNodeTemplate,
-                nodeType);
+        super(resourceTranslationNested, translateTo, nestedFileData, substitutionNodeTemplate, nodeType);
     }
 
     @Override
@@ -64,31 +60,22 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
     }
 
     @Override
-    protected Optional<List<String>> getConnectorPropertyParamName(String heatResourceId,
-                                                                   Resource heatResource,
-                                                                   HeatOrchestrationTemplate
-                                                                           nestedHeatOrchestrationTemplate,
+    protected Optional<List<String>> getConnectorPropertyParamName(String heatResourceId, Resource heatResource,
+                                                                   HeatOrchestrationTemplate nestedHeatOrchestrationTemplate,
                                                                    String nestedHeatFileName) {
-
-
-        Object securityGroups =
-                heatResource.getProperties().get(Constants.SECURITY_GROUPS_PROPERTY_NAME);
+        Object securityGroups = heatResource.getProperties().get(Constants.SECURITY_GROUPS_PROPERTY_NAME);
         List<String> paramsList = new ArrayList<>();
         if (securityGroups instanceof List) {
             ((List) securityGroups).forEach(group -> {
                 Optional<AttachedResourceId> attachedResourceId = HeatToToscaUtil
-                        .extractAttachedResourceId(nestedFileData.getFile(), nestedHeatOrchestrationTemplate,
-                                translateTo.getContext(), group);
-                if (attachedResourceId.isPresent()
-                        && attachedResourceId.get().isGetParam()
-                        && attachedResourceId.get().getEntityId() instanceof String) {
+                    .extractAttachedResourceId(nestedFileData.getFile(), nestedHeatOrchestrationTemplate, translateTo.getContext(), group);
+                if (attachedResourceId.isPresent() && attachedResourceId.get().isGetParam() && attachedResourceId.get()
+                    .getEntityId() instanceof String) {
                     paramsList.add((String) attachedResourceId.get().getEntityId());
                 }
             });
-
             return Optional.of(paramsList);
         }
-
         return Optional.empty();
     }
 
@@ -98,45 +85,30 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
     }
 
     @Override
-    void addRequirementToConnectResources(
-            Map.Entry<String, CapabilityDefinition> connectionPointEntry, List<String> paramNames) {
-
-
+    void addRequirementToConnectResources(Map.Entry<String, CapabilityDefinition> connectionPointEntry, List<String> paramNames) {
         if (paramNames == null || paramNames.isEmpty()) {
             return;
         }
         List<String> supportedSecurityRulesTypes = Collections
-                .singletonList(HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource());
-
+            .singletonList(HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource());
         for (String paramName : paramNames) {
             addRequirementToConnectResource(connectionPointEntry, supportedSecurityRulesTypes, paramName);
         }
-
     }
 
     @Override
-    boolean validateResourceTypeSupportedForReqCreation(String nestedResourceId,
-                                                        String nestedPropertyName,
-                                                        String connectionPointId,
-                                                        Resource connectedResource,
-                                                        List<String> supportedTypes) {
-
-
+    boolean validateResourceTypeSupportedForReqCreation(String nestedResourceId, String nestedPropertyName, String connectionPointId,
+                                                        Resource connectedResource, List<String> supportedTypes) {
         if (resourceTranslationBase.isUnsupportedResourceType(connectedResource, supportedTypes)) {
-            logger.warn(LOG_UNSUPPORTED_SECURITY_RULE_PORT_CAPABILITY_CONNECTION,
-                    nestedResourceId, nestedPropertyName, connectedResource.getType(),
-                    connectionPointId, supportedTypes.toString());
-
+            logger.warn(LOG_UNSUPPORTED_SECURITY_RULE_PORT_CAPABILITY_CONNECTION, nestedResourceId, nestedPropertyName, connectedResource.getType(),
+                connectionPointId, supportedTypes.toString());
             return false;
         }
-
         return true;
     }
 
     @Override
     Map.Entry<String, RequirementDefinition> createRequirementDefinition(String capabilityKey) {
-
-
         RequirementDefinition definition = new RequirementDefinition();
         definition.setCapability(capabilityKey);
         definition.setRelationship(ToscaRelationshipType.ATTACHES_TO);
@@ -157,6 +129,4 @@ class SecurityRulesToPortResourceConnection extends ResourceConnectionUsingCapab
             }
         };
     }
-
-
 }

@@ -17,11 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.manifest;
 
 import java.util.List;
-
 import lombok.Data;
 
 @Data

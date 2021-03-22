@@ -17,36 +17,35 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.item.types;
 
 public class VersionActionRequestDto {
-  private VersionAction action;
-  private CommitRequestDto commitRequest;
 
-  private RevisionRequestDto revisionRequest;
+    private VersionAction action;
+    private CommitRequestDto commitRequest;
+    private RevisionRequestDto revisionRequest;
 
-  public VersionAction getAction() {
-    return action;
-  }
+    public VersionAction getAction() {
+        return action;
+    }
 
-  public void setAction(VersionAction action) {
-    this.action = action;
-  }
+    public void setAction(VersionAction action) {
+        this.action = action;
+    }
 
-  public CommitRequestDto getCommitRequest() {
-    return commitRequest;
-  }
+    public CommitRequestDto getCommitRequest() {
+        return commitRequest;
+    }
 
-  public void setCommitRequest(CommitRequestDto commitRequest) {
-    this.commitRequest = commitRequest;
-  }
+    public void setCommitRequest(CommitRequestDto commitRequest) {
+        this.commitRequest = commitRequest;
+    }
 
-  public RevisionRequestDto getRevisionRequest() {
-    return revisionRequest;
-  }
+    public RevisionRequestDto getRevisionRequest() {
+        return revisionRequest;
+    }
 
-  public void setRevisionRequest(RevisionRequestDto revisionRequest) {
-    this.revisionRequest = revisionRequest;
-  }
+    public void setRevisionRequest(RevisionRequestDto revisionRequest) {
+        this.revisionRequest = revisionRequest;
+    }
 }

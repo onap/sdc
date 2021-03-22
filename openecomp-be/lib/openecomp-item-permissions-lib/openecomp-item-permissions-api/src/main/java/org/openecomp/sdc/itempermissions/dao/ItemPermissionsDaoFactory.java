@@ -27,8 +27,7 @@ import org.openecomp.core.factory.api.AbstractFactory;
  */
 public abstract class ItemPermissionsDaoFactory extends AbstractComponentFactory<ItemPermissionsDao> {
 
-  public static ItemPermissionsDaoFactory getInstance() {
-    return AbstractFactory.getInstance(ItemPermissionsDaoFactory.class);
-  }
-
+    public static ItemPermissionsDaoFactory getInstance() {
+        return AbstractFactory.getInstance(ItemPermissionsDaoFactory.class);
+    }
 }

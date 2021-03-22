@@ -16,13 +16,11 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.Map;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-import org.onap.sdc.tosca.datatypes.model.Status;
 
 /**
  * Handles YAML from/to {@link ParameterDefinition} conversions
@@ -34,9 +32,9 @@ public class ParameterDefinitionYamlParser {
 
     /**
      * Parses the given a YAML object to a {@link ParameterDefinition} instance.
-     * @param parameterDefinitionYaml    the YAML object representing a TOSCA Parameter Definition
-     * @return
-     *  A new instance of {@link ParameterDefinition}.
+     *
+     * @param parameterDefinitionYaml the YAML object representing a TOSCA Parameter Definition
+     * @return A new instance of {@link ParameterDefinition}.
      */
     public static ParameterDefinition parse(final Map<String, Object> parameterDefinitionYaml) {
         final ParameterDefinition parameterDefinition = new ParameterDefinition();
@@ -51,7 +49,6 @@ public class ParameterDefinitionYamlParser {
         parameterDefinition.setRequired((Boolean) parameterDefinitionYaml.get("required"));
         parameterDefinition.setType((String) parameterDefinitionYaml.get("type"));
         parameterDefinition.setStatus((String) parameterDefinitionYaml.get("status"));
-
         return parameterDefinition;
     }
 }

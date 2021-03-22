@@ -16,15 +16,15 @@
 
 package org.openecomp.core.externaltesting.factory;
 
+import org.openecomp.core.externaltesting.api.ExternalTestingManager;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
-import org.openecomp.core.externaltesting.api.ExternalTestingManager;
 
 
 @SuppressWarnings("unused")
 public abstract class ExternalTestingManagerFactory extends AbstractComponentFactory<ExternalTestingManager> {
 
-  public static ExternalTestingManagerFactory getInstance() {
-    return AbstractFactory.getInstance(ExternalTestingManagerFactory.class);
-  }
+    public static ExternalTestingManagerFactory getInstance() {
+        return AbstractFactory.getInstance(ExternalTestingManagerFactory.class);
+    }
 }

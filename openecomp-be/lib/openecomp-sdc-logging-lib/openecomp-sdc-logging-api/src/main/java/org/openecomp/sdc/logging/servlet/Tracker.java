@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +33,9 @@ public interface Tracker {
     void preRequest(HttpServletRequest request);
 
     /**
-     * Will be executed after a request has been processed.  Results may be treated differently depending on a container
-     * and application. For instance, JAX-RS applications may take into account exception mappers before generating a
-     * response; some applications may Swagger annotations to map a response status to a human-friendly message, etc.
+     * Will be executed after a request has been processed.  Results may be treated differently depending on a container and application. For
+     * instance, JAX-RS applications may take into account exception mappers before generating a response; some applications may Swagger annotations
+     * to map a response status to a human-friendly message, etc.
      *
      * @param result application- and container-specific request results
      */

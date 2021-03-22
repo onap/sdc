@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,38 +17,37 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.types;
 
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 
 public class VersionedVendorLicenseModel {
-  private VendorLicenseModelEntity vendorLicenseModel;
-  private VersionInfo versionInfo;
 
-  public VersionedVendorLicenseModel() {
-  }
+    private VendorLicenseModelEntity vendorLicenseModel;
+    private VersionInfo versionInfo;
 
-  public VersionedVendorLicenseModel(VendorLicenseModelEntity vendorLicenseModel,
-                                     VersionInfo versionInfo) {
-    this.vendorLicenseModel = vendorLicenseModel;
-    this.versionInfo = versionInfo;
-  }
+    public VersionedVendorLicenseModel() {
+    }
 
-  public VendorLicenseModelEntity getVendorLicenseModel() {
-    return vendorLicenseModel;
-  }
+    public VersionedVendorLicenseModel(VendorLicenseModelEntity vendorLicenseModel, VersionInfo versionInfo) {
+        this.vendorLicenseModel = vendorLicenseModel;
+        this.versionInfo = versionInfo;
+    }
 
-  public void setVendorLicenseModel(VendorLicenseModelEntity vendorLicenseModel) {
-    this.vendorLicenseModel = vendorLicenseModel;
-  }
+    public VendorLicenseModelEntity getVendorLicenseModel() {
+        return vendorLicenseModel;
+    }
 
-  public VersionInfo getVersionInfo() {
-    return versionInfo;
-  }
+    public void setVendorLicenseModel(VendorLicenseModelEntity vendorLicenseModel) {
+        this.vendorLicenseModel = vendorLicenseModel;
+    }
 
-  public void setVersionInfo(VersionInfo versionInfo) {
-    this.versionInfo = versionInfo;
-  }
+    public VersionInfo getVersionInfo() {
+        return versionInfo;
+    }
+
+    public void setVersionInfo(VersionInfo versionInfo) {
+        this.versionInfo = versionInfo;
+    }
 }

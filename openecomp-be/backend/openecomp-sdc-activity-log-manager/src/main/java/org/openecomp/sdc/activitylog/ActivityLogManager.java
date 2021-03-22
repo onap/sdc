@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.activitylog;
 
+import java.util.Collection;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-
 public interface ActivityLogManager {
 
-  void logActivity(ActivityLogEntity activityLogEntity);
+    void logActivity(ActivityLogEntity activityLogEntity);
 
-  Collection<ActivityLogEntity> listLoggedActivities(String itemId, Version versionId);
+    Collection<ActivityLogEntity> listLoggedActivities(String itemId, Version versionId);
 }

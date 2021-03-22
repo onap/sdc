@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.generator.datatypes.tosca;
 
 import lombok.EqualsAndHashCode;
@@ -39,5 +38,4 @@ public class MultiFlavorVfcImage {
     private String file_hash;
     private String file_hash_type;
     private String software_version;
-
 }

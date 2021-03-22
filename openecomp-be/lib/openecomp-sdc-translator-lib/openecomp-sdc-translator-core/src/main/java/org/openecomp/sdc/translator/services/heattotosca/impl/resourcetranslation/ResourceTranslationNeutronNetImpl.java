@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
@@ -24,7 +23,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-
 public class ResourceTranslationNeutronNetImpl extends ResourceTranslationBase {
 
     @Override
@@ -32,22 +30,13 @@ public class ResourceTranslationNeutronNetImpl extends ResourceTranslationBase {
         NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setType(ToscaNodeType.NEUTRON_NET);
         nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
-                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
-                        translateTo.getResourceId(), translateTo.getResource().getProperties(),
-                        nodeTemplate.getProperties(), translateTo.getHeatFileName(),
-                        translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
-                        nodeTemplate, translateTo.getContext()));
-
-        HeatToToscaUtil.mapBoolean(nodeTemplate, HeatToToscaUtil
-                .getToscaPropertyName(translateTo, HeatConstants.PORT_SECURITY_ENABLED_PROPERTY_NAME));
-        HeatToToscaUtil.mapBoolean(nodeTemplate, HeatToToscaUtil
-                .getToscaPropertyName(translateTo, HeatConstants.SHARED_PROPERTY_NAME));
-        HeatToToscaUtil.mapBoolean(nodeTemplate, HeatToToscaUtil
-                .getToscaPropertyName(translateTo, HeatConstants.ADMIN_STATE_UP_PROPERTY_NAME));
-
-        DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
-                nodeTemplate);
+            .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(), translateTo.getResourceId(),
+                translateTo.getResource().getProperties(), nodeTemplate.getProperties(), translateTo.getHeatFileName(),
+                translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(), nodeTemplate, translateTo.getContext()));
+        HeatToToscaUtil
+            .mapBoolean(nodeTemplate, HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.PORT_SECURITY_ENABLED_PROPERTY_NAME));
+        HeatToToscaUtil.mapBoolean(nodeTemplate, HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.SHARED_PROPERTY_NAME));
+        HeatToToscaUtil.mapBoolean(nodeTemplate, HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.ADMIN_STATE_UP_PROPERTY_NAME));
+        DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), nodeTemplate);
     }
-
-
 }

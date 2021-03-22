@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
-
 
 import java.util.List;
 import lombok.Getter;
@@ -35,5 +33,4 @@ public class DeploymentFlavor implements CompositionDataEntity {
     private String description;
     private String featureGroupId;
     private List<ComponentComputeAssociation> componentComputeAssociations;
-
 }

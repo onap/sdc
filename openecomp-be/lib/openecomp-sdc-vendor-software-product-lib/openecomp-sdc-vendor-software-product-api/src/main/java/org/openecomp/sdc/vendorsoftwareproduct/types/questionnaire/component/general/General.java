@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general;
 
 import lombok.Getter;
@@ -25,12 +24,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class General {
 
+    protected Recovery recovery;
     private Hypervisor hypervisor;
     private Image image;
-    protected Recovery recovery;
     private String dnsConfiguration;
     private String vmCloneUsage;
     private String nfcNamingCode;
     private String nfcFunction;
-
 }

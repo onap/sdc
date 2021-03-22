@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.enrichment.types;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import lombok.Getter;
 import lombok.Setter;
-
 
 public class MonitoringArtifactInfo {
 
@@ -33,5 +31,4 @@ public class MonitoringArtifactInfo {
     public InputStream getContent() {
         return new ByteArrayInputStream(this.content);
     }
-
 }

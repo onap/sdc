@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import java.util.Collection;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -27,24 +27,19 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-
 public interface NicManager {
 
-  Collection<NicEntity> listNics(String vspId, Version version, String componentId);
+    Collection<NicEntity> listNics(String vspId, Version version, String componentId);
 
-  NicEntity createNic(NicEntity nic);
+    NicEntity createNic(NicEntity nic);
 
-  CompositionEntityValidationData updateNic(NicEntity nicEntity);
+    CompositionEntityValidationData updateNic(NicEntity nicEntity);
 
-  CompositionEntityResponse<Nic> getNic(String vspId, Version version, String componentId,
-                                        String nicId);
+    CompositionEntityResponse<Nic> getNic(String vspId, Version version, String componentId, String nicId);
 
-  void deleteNic(String vspId, Version version, String componentId, String nicId);
+    void deleteNic(String vspId, Version version, String componentId, String nicId);
 
-  QuestionnaireResponse getNicQuestionnaire(String vspId, Version version, String componentId,
-                                            String nicId);
+    QuestionnaireResponse getNicQuestionnaire(String vspId, Version version, String componentId, String nicId);
 
-  void updateNicQuestionnaire(String vspId, Version version, String componentId, String nicId,
-                              String questionnaireData);
+    void updateNicQuestionnaire(String vspId, Version version, String componentId, String nicId, String questionnaireData);
 }

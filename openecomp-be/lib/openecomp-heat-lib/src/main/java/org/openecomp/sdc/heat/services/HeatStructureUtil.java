@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.services;
 
 import java.util.HashSet;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
@@ -51,62 +49,49 @@ public class HeatStructureUtil {
      * @param globalContext the global context
      * @return the referenced values by function name
      */
-    public static Set<String> getReferencedValuesByFunctionName(String filename, String functionName,
-                                                                Object propertyValue,
+    public static Set<String> getReferencedValuesByFunctionName(String filename, String functionName, Object propertyValue,
                                                                 GlobalValidationContext globalContext) {
         Set<String> valuesNames = new HashSet<>();
         if (propertyValue instanceof Map) {
             Map<String, Object> currPropertyMap = (Map<String, Object>) propertyValue;
             if (currPropertyMap.containsKey(functionName)) {
                 Object getFunctionValue = currPropertyMap.get(functionName);
-                if (!(getFunctionValue instanceof String) && functionName.equals(
-                        ResourceReferenceFunctions.GET_RESOURCE.getFunction())) {
+                if (!(getFunctionValue instanceof String) && functionName.equals(ResourceReferenceFunctions.GET_RESOURCE.getFunction())) {
                     globalContext.addMessage(filename, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                            .getErrorWithParameters(globalContext.getMessageCode(),
-                                    Messages.INVALID_GET_RESOURCE_SYNTAX.getErrorMessage(),
-                                    getFunctionValue == null ? "null" : getFunctionValue.toString()));
+                        .getErrorWithParameters(globalContext.getMessageCode(), Messages.INVALID_GET_RESOURCE_SYNTAX.getErrorMessage(),
+                            getFunctionValue == null ? "null" : getFunctionValue.toString()));
                     return valuesNames;
                 }
                 if (getFunctionValue instanceof String) {
-
                     if (functionName.equals(ResourceReferenceFunctions.GET_FILE.getFunction())) {
                         getFunctionValue = ((String) getFunctionValue).replace("file:///", "");
                     }
-
                     valuesNames.add((String) getFunctionValue);
                 } else if (getFunctionValue instanceof List) {
                     if (CollectionUtils.isNotEmpty((List) getFunctionValue)) {
                         if (((List) getFunctionValue).get(0) instanceof String) {
                             valuesNames.add(((String) ((List) getFunctionValue).get(0)).replace("file:///", ""));
                         } else {
-                            valuesNames.addAll(getReferencedValuesByFunctionName(filename, functionName,
-                                    ((List) getFunctionValue).get(0), globalContext));
+                            valuesNames
+                                .addAll(getReferencedValuesByFunctionName(filename, functionName, ((List) getFunctionValue).get(0), globalContext));
                         }
-
                     }
                 } else {
-                    valuesNames.addAll(
-                            getReferencedValuesByFunctionName(filename, functionName, getFunctionValue,
-                                    globalContext));
+                    valuesNames.addAll(getReferencedValuesByFunctionName(filename, functionName, getFunctionValue, globalContext));
                 }
             } else {
                 for (Map.Entry<String, Object> nestedPropertyMap : currPropertyMap.entrySet()) {
-                    valuesNames.addAll(getReferencedValuesByFunctionName(filename, functionName,
-                            nestedPropertyMap.getValue(), globalContext));
+                    valuesNames.addAll(getReferencedValuesByFunctionName(filename, functionName, nestedPropertyMap.getValue(), globalContext));
                 }
             }
         } else if (propertyValue instanceof List) {
             List propertyValueArray = (List) propertyValue;
             for (Object propValue : propertyValueArray) {
-                valuesNames.addAll(
-                        getReferencedValuesByFunctionName(filename, functionName, propValue,
-                                globalContext));
+                valuesNames.addAll(getReferencedValuesByFunctionName(filename, functionName, propValue, globalContext));
             }
         }
-
         return valuesNames;
     }
-
 
     /**
      * Is nested resource.
@@ -120,5 +105,4 @@ public class HeatStructureUtil {
         }
         return resourceType.endsWith(".yaml") || resourceType.endsWith(".yml");
     }
-
 }

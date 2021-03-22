@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,52 +17,50 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vendorlicense.types;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import javax.validation.constraints.Size;
 import java.util.Set;
+import javax.validation.constraints.Size;
 
 @Schema(description = "FeatureGroupEntity")
 public class FeatureGroupEntityDto extends FeatureGroupDescriptorDto {
-  private String id;
-  private Set<String> licenseKeyGroupsIds;
-  @Size(min = 1)
-  private Set<String> entitlementPoolsIds;
-  private Set<String> referencingLicenseAgreements;
 
-  public String getId() {
-    return id;
-  }
+    private String id;
+    private Set<String> licenseKeyGroupsIds;
+    @Size(min = 1)
+    private Set<String> entitlementPoolsIds;
+    private Set<String> referencingLicenseAgreements;
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public Set<String> getLicenseKeyGroupsIds() {
-    return licenseKeyGroupsIds;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setLicenseKeyGroupsIds(Set<String> licenseKeyGroupsIds) {
-    this.licenseKeyGroupsIds = licenseKeyGroupsIds;
-  }
+    public Set<String> getLicenseKeyGroupsIds() {
+        return licenseKeyGroupsIds;
+    }
 
-  public Set<String> getEntitlementPoolsIds() {
-    return entitlementPoolsIds;
-  }
+    public void setLicenseKeyGroupsIds(Set<String> licenseKeyGroupsIds) {
+        this.licenseKeyGroupsIds = licenseKeyGroupsIds;
+    }
 
-  public void setEntitlementPoolsIds(Set<String> entitlementPoolsIds) {
-    this.entitlementPoolsIds = entitlementPoolsIds;
-  }
+    public Set<String> getEntitlementPoolsIds() {
+        return entitlementPoolsIds;
+    }
 
-  public Set<String> getReferencingLicenseAgreements() {
-    return referencingLicenseAgreements;
-  }
+    public void setEntitlementPoolsIds(Set<String> entitlementPoolsIds) {
+        this.entitlementPoolsIds = entitlementPoolsIds;
+    }
 
-  public void setReferencingLicenseAgreements(Set<String> referencingLicenseAgreements) {
-    this.referencingLicenseAgreements = referencingLicenseAgreements;
-  }
+    public Set<String> getReferencingLicenseAgreements() {
+        return referencingLicenseAgreements;
+    }
+
+    public void setReferencingLicenseAgreements(Set<String> referencingLicenseAgreements) {
+        this.referencingLicenseAgreements = referencingLicenseAgreements;
+    }
 }

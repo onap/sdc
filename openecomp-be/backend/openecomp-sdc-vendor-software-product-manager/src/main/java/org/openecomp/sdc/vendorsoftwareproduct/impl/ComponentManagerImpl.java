@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.COMPUTE_TYPE_PREFIX;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -42,220 +47,174 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.COMPUTE_TYPE_PREFIX;
-
 public class ComponentManagerImpl implements ComponentManager {
-  private final ComponentDao componentDao;
-  private final CompositionEntityDataManager compositionEntityDataManager;
-  private final NicManager nicManager;
-  private final VendorSoftwareProductInfoDao vspInfoDao;
 
-  public ComponentManagerImpl(ComponentDao componentDao,
-                              CompositionEntityDataManager compositionEntityDataManager,
-                              NicManager nicManager,
-                              VendorSoftwareProductInfoDao vspInfoDao) {
-    this.componentDao = componentDao;
-    this.compositionEntityDataManager = compositionEntityDataManager;
-    this.nicManager = nicManager;
-    this.vspInfoDao = vspInfoDao;
-  }
+    private final ComponentDao componentDao;
+    private final CompositionEntityDataManager compositionEntityDataManager;
+    private final NicManager nicManager;
+    private final VendorSoftwareProductInfoDao vspInfoDao;
 
-  @Override
-  public Collection<ComponentEntity> listComponents(String vspId, Version version) {
-    return componentDao.list(new ComponentEntity(vspId, version, null));
-  }
-
-  @Override
-  public void deleteComponents(String vspId, Version version) {
-    if (!vspInfoDao.isManual(vspId, version)) {
-      throw new CoreException(
-          new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
-    }
-  }
-
-  @Override
-  public ComponentEntity createComponent(ComponentEntity component) {
-    final String vfcAddNotAllowedInHeatOnboardingMsg =
-        "VFCs cannot be added for VSPs onboarded with HEAT.";
-
-    ComponentEntity createdComponent;
-    if (!vspInfoDao.isManual(component.getVspId(), component.getVersion())) {
-      throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder()
-              .withId(VendorSoftwareProductErrorCodes.VFC_ADD_NOT_ALLOWED_IN_HEAT_ONBOARDING)
-              .withMessage(vfcAddNotAllowedInHeatOnboardingMsg).build());
-    } else {
-      validateComponentManual(component);
-      updateComponentName(component);
-      createdComponent = compositionEntityDataManager.createComponent(component, true);
-    }
-    return createdComponent;
-  }
-
-  private void updateComponentName(ComponentEntity component) {
-    ComponentData data = component.getComponentCompositionData();
-    data.setName(COMPUTE_TYPE_PREFIX + data.getDisplayName());
-    component.setComponentCompositionData(data);
-  }
-
-  private void validateComponentManual(ComponentEntity component) {
-    final String vspVfcCountExceedMsg = "Creation of only one VFC per "
-        + "VSP allowed.";
-
-    final String vspVfcDuplicateNameMsg = "VFC with specified name "
-        + "already present in given VSP.";
-
-    Collection<ComponentEntity> vspComponentList =
-        listComponents(component.getVspId(), component.getVersion());
-    if (!vspComponentList.isEmpty()) {
-      //1707 release only supports 1 VFC in VSP (manual creation)
-      throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder()
-              .withId(VendorSoftwareProductErrorCodes.VSP_VFC_COUNT_EXCEED)
-              .withMessage(vspVfcCountExceedMsg).build());
-    }
-    if (!isVfcNameUnique(vspComponentList,
-        component.getComponentCompositionData().getDisplayName())) {
-      throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder()
-              .withId(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME)
-              .withMessage(vspVfcDuplicateNameMsg).build());
-    }
-  }
-
-  private boolean isVfcNameUnique(Collection<ComponentEntity> component, String displayName) {
-    for (ComponentEntity comp : component) {
-      if (comp.getComponentCompositionData().getDisplayName().equalsIgnoreCase(displayName)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @Override
-  public CompositionEntityValidationData updateComponent(ComponentEntity component) {
-    ComponentEntity retrieved =
-        getValidatedComponent(component.getVspId(), component.getVersion(), component.getId());
-
-    boolean isManual = vspInfoDao.isManual(component.getVspId(), component.getVersion());
-    if (isManual) {
-      validateComponentUpdateManual(retrieved);
+    public ComponentManagerImpl(ComponentDao componentDao, CompositionEntityDataManager compositionEntityDataManager, NicManager nicManager,
+                                VendorSoftwareProductInfoDao vspInfoDao) {
+        this.componentDao = componentDao;
+        this.compositionEntityDataManager = compositionEntityDataManager;
+        this.nicManager = nicManager;
+        this.vspInfoDao = vspInfoDao;
     }
 
-    ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
-    schemaInput.setManual(isManual);
-    schemaInput.setComponent(retrieved.getComponentCompositionData());
-
-    CompositionEntityValidationData validationData = compositionEntityDataManager
-        .validateEntity(component, SchemaTemplateContext.composition, schemaInput);
-    if (CollectionUtils.isEmpty(validationData.getErrors())) {
-      if (isManual) {
-        updateComponentName(component);
-      }
-      componentDao.update(component);
+    @Override
+    public Collection<ComponentEntity> listComponents(String vspId, Version version) {
+        return componentDao.list(new ComponentEntity(vspId, version, null));
     }
-    return validationData;
-  }
 
-  private void validateComponentUpdateManual(ComponentEntity component) {
-    Collection<ComponentEntity> vspComponentList =
-        listComponents(component.getVspId(), component.getVersion());
-    //VFC name should be unique within VSP
-    //Removing VFC with same ID from list to avoid self compare
-    for (ComponentEntity ce : vspComponentList) {
-      if (ce.getId().equals(component.getId())) {
-        vspComponentList.remove(ce);
-        break;
-      }
+    @Override
+    public void deleteComponents(String vspId, Version version) {
+        if (!vspInfoDao.isManual(vspId, version)) {
+            throw new CoreException(new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
+        }
     }
-    if (!isVfcNameUnique(vspComponentList, component.getComponentCompositionData()
-        .getDisplayName())) {
-      throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder()
-              .withId(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME)
-              .withMessage("VFC with specified name already present in given VSP.").build());
 
+    @Override
+    public ComponentEntity createComponent(ComponentEntity component) {
+        final String vfcAddNotAllowedInHeatOnboardingMsg = "VFCs cannot be added for VSPs onboarded with HEAT.";
+        ComponentEntity createdComponent;
+        if (!vspInfoDao.isManual(component.getVspId(), component.getVersion())) {
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.VFC_ADD_NOT_ALLOWED_IN_HEAT_ONBOARDING)
+                .withMessage(vfcAddNotAllowedInHeatOnboardingMsg).build());
+        } else {
+            validateComponentManual(component);
+            updateComponentName(component);
+            createdComponent = compositionEntityDataManager.createComponent(component, true);
+        }
+        return createdComponent;
     }
-  }
 
-  @Override
-  public CompositionEntityResponse<ComponentData> getComponent(String vspId, Version version,
-                                                               String componentId) {
-    ComponentEntity componentEntity = getValidatedComponent(vspId, version, componentId);
-    ComponentData component = componentEntity.getComponentCompositionData();
-
-    ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
-    schemaInput.setManual(vspInfoDao.isManual(vspId, version));
-    schemaInput.setComponent(component);
-
-    CompositionEntityResponse<ComponentData> response = new CompositionEntityResponse<>();
-    response.setId(componentId);
-    response.setData(component);
-    response.setSchema(getComponentCompositionSchema(schemaInput));
-    return response;
-  }
-
-  @Override
-  public void deleteComponent(String vspId, Version version, String componentId) {
-    if (!vspInfoDao.isManual(vspId, version)) {
-      throw new CoreException(
-          new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
+    private void updateComponentName(ComponentEntity component) {
+        ComponentData data = component.getComponentCompositionData();
+        data.setName(COMPUTE_TYPE_PREFIX + data.getDisplayName());
+        component.setComponentCompositionData(data);
     }
-  }
 
-  @Override
-  public QuestionnaireResponse getQuestionnaire(String vspId, Version version,
-                                                String componentId) {
-    QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
-    ComponentEntity component = componentDao.getQuestionnaireData(vspId, version, componentId);
-    VersioningUtil
-        .validateEntityExistence(component, new ComponentEntity(vspId, version, componentId),
-            VspDetails.ENTITY_TYPE);
+    private void validateComponentManual(ComponentEntity component) {
+        final String vspVfcCountExceedMsg = "Creation of only one VFC per " + "VSP allowed.";
+        final String vspVfcDuplicateNameMsg = "VFC with specified name " + "already present in given VSP.";
+        Collection<ComponentEntity> vspComponentList = listComponents(component.getVspId(), component.getVersion());
+        if (!vspComponentList.isEmpty()) {
+            //1707 release only supports 1 VFC in VSP (manual creation)
+            throw new CoreException(
+                new ErrorCode.ErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.VSP_VFC_COUNT_EXCEED).withMessage(vspVfcCountExceedMsg)
+                    .build());
+        }
+        if (!isVfcNameUnique(vspComponentList, component.getComponentCompositionData().getDisplayName())) {
+            throw new CoreException(
+                new ErrorCode.ErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME).withMessage(vspVfcDuplicateNameMsg)
+                    .build());
+        }
+    }
 
-    questionnaireResponse.setData(component.getQuestionnaireData());
-    List<String> nicNames = nicManager.listNics(vspId, version, componentId).stream()
-        .map(nic -> nic.getNicCompositionData().getName()).collect(Collectors.toList());
-    questionnaireResponse.setSchema(getComponentQuestionnaireSchema(
-        new ComponentQuestionnaireSchemaInput(nicNames, questionnaireResponse.getData() == null
-            ? null : JsonUtil.json2Object(questionnaireResponse.getData(), Map.class),
-                                                     null, false)));
-    return questionnaireResponse;
-  }
+    private boolean isVfcNameUnique(Collection<ComponentEntity> component, String displayName) {
+        for (ComponentEntity comp : component) {
+            if (comp.getComponentCompositionData().getDisplayName().equalsIgnoreCase(displayName)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-  @Override
-  public void updateQuestionnaire(String vspId, Version version, String componentId,
-                                  String questionnaireData) {
-    validateComponentExistence(vspId, version, componentId);
+    @Override
+    public CompositionEntityValidationData updateComponent(ComponentEntity component) {
+        ComponentEntity retrieved = getValidatedComponent(component.getVspId(), component.getVersion(), component.getId());
+        boolean isManual = vspInfoDao.isManual(component.getVspId(), component.getVersion());
+        if (isManual) {
+            validateComponentUpdateManual(retrieved);
+        }
+        ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
+        schemaInput.setManual(isManual);
+        schemaInput.setComponent(retrieved.getComponentCompositionData());
+        CompositionEntityValidationData validationData = compositionEntityDataManager
+            .validateEntity(component, SchemaTemplateContext.composition, schemaInput);
+        if (CollectionUtils.isEmpty(validationData.getErrors())) {
+            if (isManual) {
+                updateComponentName(component);
+            }
+            componentDao.update(component);
+        }
+        return validationData;
+    }
 
-    componentDao.updateQuestionnaireData(vspId, version, componentId, questionnaireData);
-  }
+    private void validateComponentUpdateManual(ComponentEntity component) {
+        Collection<ComponentEntity> vspComponentList = listComponents(component.getVspId(), component.getVersion());
+        //VFC name should be unique within VSP
 
-  @Override
-  public void validateComponentExistence(String vspId, Version version, String componentId) {
-    getValidatedComponent(vspId, version, componentId);
-  }
+        //Removing VFC with same ID from list to avoid self compare
+        for (ComponentEntity ce : vspComponentList) {
+            if (ce.getId().equals(component.getId())) {
+                vspComponentList.remove(ce);
+                break;
+            }
+        }
+        if (!isVfcNameUnique(vspComponentList, component.getComponentCompositionData().getDisplayName())) {
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME)
+                .withMessage("VFC with specified name already present in given VSP.").build());
+        }
+    }
 
-  private ComponentEntity getValidatedComponent(String vspId, Version version, String componentId) {
-    ComponentEntity retrieved = componentDao.get(new ComponentEntity(vspId, version, componentId));
-    VersioningUtil
-        .validateEntityExistence(retrieved, new ComponentEntity(vspId, version, componentId),
-            VspDetails.ENTITY_TYPE);
-    return retrieved;
-  }
+    @Override
+    public CompositionEntityResponse<ComponentData> getComponent(String vspId, Version version, String componentId) {
+        ComponentEntity componentEntity = getValidatedComponent(vspId, version, componentId);
+        ComponentData component = componentEntity.getComponentCompositionData();
+        ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
+        schemaInput.setManual(vspInfoDao.isManual(vspId, version));
+        schemaInput.setComponent(component);
+        CompositionEntityResponse<ComponentData> response = new CompositionEntityResponse<>();
+        response.setId(componentId);
+        response.setData(component);
+        response.setSchema(getComponentCompositionSchema(schemaInput));
+        return response;
+    }
 
-  protected String getComponentCompositionSchema(ComponentCompositionSchemaInput schemaInput) {
-    return SchemaGenerator
-        .generate(SchemaTemplateContext.composition, CompositionEntityType.component, schemaInput);
-  }
+    @Override
+    public void deleteComponent(String vspId, Version version, String componentId) {
+        if (!vspInfoDao.isManual(vspId, version)) {
+            throw new CoreException(new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
+        }
+    }
 
-  protected String getComponentQuestionnaireSchema(SchemaTemplateInput schemaInput) {
-    return SchemaGenerator
-        .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.component,
-            schemaInput);
-  }
+    @Override
+    public QuestionnaireResponse getQuestionnaire(String vspId, Version version, String componentId) {
+        QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
+        ComponentEntity component = componentDao.getQuestionnaireData(vspId, version, componentId);
+        VersioningUtil.validateEntityExistence(component, new ComponentEntity(vspId, version, componentId), VspDetails.ENTITY_TYPE);
+        questionnaireResponse.setData(component.getQuestionnaireData());
+        List<String> nicNames = nicManager.listNics(vspId, version, componentId).stream().map(nic -> nic.getNicCompositionData().getName())
+            .collect(Collectors.toList());
+        questionnaireResponse.setSchema(getComponentQuestionnaireSchema(new ComponentQuestionnaireSchemaInput(nicNames,
+            questionnaireResponse.getData() == null ? null : JsonUtil.json2Object(questionnaireResponse.getData(), Map.class), null, false)));
+        return questionnaireResponse;
+    }
+
+    @Override
+    public void updateQuestionnaire(String vspId, Version version, String componentId, String questionnaireData) {
+        validateComponentExistence(vspId, version, componentId);
+        componentDao.updateQuestionnaireData(vspId, version, componentId, questionnaireData);
+    }
+
+    @Override
+    public void validateComponentExistence(String vspId, Version version, String componentId) {
+        getValidatedComponent(vspId, version, componentId);
+    }
+
+    private ComponentEntity getValidatedComponent(String vspId, Version version, String componentId) {
+        ComponentEntity retrieved = componentDao.get(new ComponentEntity(vspId, version, componentId));
+        VersioningUtil.validateEntityExistence(retrieved, new ComponentEntity(vspId, version, componentId), VspDetails.ENTITY_TYPE);
+        return retrieved;
+    }
+
+    protected String getComponentCompositionSchema(ComponentCompositionSchemaInput schemaInput) {
+        return SchemaGenerator.generate(SchemaTemplateContext.composition, CompositionEntityType.component, schemaInput);
+    }
+
+    protected String getComponentQuestionnaireSchema(SchemaTemplateInput schemaInput) {
+        return SchemaGenerator.generate(SchemaTemplateContext.questionnaire, CompositionEntityType.component, schemaInput);
+    }
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.model.types;
 
 import java.io.ByteArrayInputStream;
@@ -48,5 +47,4 @@ public class ServiceElement {
         }
         return new ByteArrayInputStream(contentData);
     }
-
 }

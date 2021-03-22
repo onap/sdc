@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning.dao.types;
 
 public enum VersionStatus {
-  Draft,
-  Locked, /* todo remove!!*/
-  Certified,
-  Deprecated,
-  Deleted
+    Draft,
+    Locked, /* todo remove!!*/
+    Certified,
+    Deprecated,
+    Deleted
 }
+

@@ -33,21 +33,17 @@ import lombok.Setter;
 @Table(keyspace = "dox", name = "healing")
 public class HealingEntity {
 
-  @Column(name = "space")
-  @PartitionKey(0)
-  private String space;
-
-  @Column(name = "item_id")
-  @PartitionKey(1)
-  private String itemId;
-
-  @Column(name = "version_id")
-  @PartitionKey(2)
-  private String versionId;
-
-  @Column(name = "healing_needed")
-  private boolean healingFlag;
-
-  @Column(name = "old_version")
-  private String oldVersion;
+    @Column(name = "space")
+    @PartitionKey(0)
+    private String space;
+    @Column(name = "item_id")
+    @PartitionKey(1)
+    private String itemId;
+    @Column(name = "version_id")
+    @PartitionKey(2)
+    private String versionId;
+    @Column(name = "healing_needed")
+    private boolean healingFlag;
+    @Column(name = "old_version")
+    private String oldVersion;
 }

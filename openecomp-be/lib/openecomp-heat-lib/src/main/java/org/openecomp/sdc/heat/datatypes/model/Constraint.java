@@ -17,12 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +36,6 @@ public class Constraint {
     private String pattern;
 
     public void setRange(Integer[] inRange) {
-        this.range = new Integer[] {inRange[0], inRange[1]};
+        this.range = new Integer[]{inRange[0], inRange[1]};
     }
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
@@ -23,13 +22,12 @@ import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.dao.ItemDaoFactory;
 
 public class AsdcItemManagerFactoryImpl extends AsdcItemManagerFactory {
-  private static final AsdcItemManager INSTANCE =
-      new AsdcItemManagerImpl(ItemDaoFactory.getInstance().createInterface(),
-          PermissionsServicesFactory.getInstance().createInterface(),
-          SubscriptionServiceFactory.getInstance().createInterface());
 
-  @Override
-  public AsdcItemManager createInterface() {
-    return INSTANCE;
-  }
+    private static final AsdcItemManager INSTANCE = new AsdcItemManagerImpl(ItemDaoFactory.getInstance().createInterface(),
+        PermissionsServicesFactory.getInstance().createInterface(), SubscriptionServiceFactory.getInstance().createInterface());
+
+    @Override
+    public AsdcItemManager createInterface() {
+        return INSTANCE;
+    }
 }

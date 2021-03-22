@@ -16,14 +16,9 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes;
 
 /**
  * This enum is responsible for defining properties that have scalar values measured in units per second.
  */
-public enum ToscaScalarUnitFrequency {
-
-    HZ, KHZ, MHZ, GHZ
-
-}
+public enum ToscaScalarUnitFrequency {HZ, KHZ, MHZ, GHZ}

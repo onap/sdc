@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.ToscaArtifactType;
@@ -25,14 +28,9 @@ import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class FunctionTranslationGetFileImpl implements FunctionTranslation {
-    private static ArtifactDefinition createArtifactDefinition(Object function,
-                                                               ToscaFileOutputService toscaFileOutputService) {
+
+    private static ArtifactDefinition createArtifactDefinition(Object function, ToscaFileOutputService toscaFileOutputService) {
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setType(ToscaArtifactType.NATIVE_DEPLOYMENT);
         artifactDefinition.setFile("../" + toscaFileOutputService.getArtifactsFolderName() + "/" + function);
@@ -41,7 +39,6 @@ public class FunctionTranslationGetFileImpl implements FunctionTranslation {
 
     @Override
     public Object translateFunction(FunctionTranslator functionTranslator) {
-
         String file = ((String) functionTranslator.getFunctionValue()).replace("file:///", "");
         final String artifactId = file.split("\\.")[0];
         Map<String, Object> returnValue = new HashMap<>();
@@ -49,7 +46,6 @@ public class FunctionTranslationGetFileImpl implements FunctionTranslation {
         artifactParameters.add(ToscaConstants.MODELABLE_ENTITY_NAME_SELF);
         returnValue.put(ToscaFunctions.GET_ARTIFACT.getFunctionName(), artifactParameters);
         artifactParameters.add(artifactId);
-
         ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
         if (functionTranslator.getToscaTemplate() instanceof NodeTemplate) {
             NodeTemplate nodeTemplate = (NodeTemplate) functionTranslator.getToscaTemplate();
@@ -61,5 +57,4 @@ public class FunctionTranslationGetFileImpl implements FunctionTranslation {
         }
         return returnValue;
     }
-
 }

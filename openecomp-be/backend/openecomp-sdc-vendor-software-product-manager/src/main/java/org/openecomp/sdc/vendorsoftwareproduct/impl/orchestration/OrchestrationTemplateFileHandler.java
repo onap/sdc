@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -24,7 +23,5 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 @FunctionalInterface
 public interface OrchestrationTemplateFileHandler {
 
-    UploadFileResponse upload(final VspDetails vspDetails,
-                              final OnboardPackageInfo onboardPackageInfo,
-                              final CandidateService candidateService);
+    UploadFileResponse upload(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo, final CandidateService candidateService);
 }

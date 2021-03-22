@@ -17,24 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.workers.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.InputStreamReader;
+import java.util.UUID;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.config.ConfigurationManager;
 import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 import org.openecomp.sdc.notification.workers.NewNotificationsReader;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import java.io.InputStreamReader;
-import java.util.UUID;
 
 public class NewNotificationsReaderRestImpl implements NewNotificationsReader {
 
@@ -47,11 +45,9 @@ public class NewNotificationsReaderRestImpl implements NewNotificationsReader {
     private static final int DEFAULT_BE_PORT = 8080;
     private static final String URL = "http://%s:%d/onboarding-api/v1.0/notifications/worker?";
     private static final ObjectMapper mapper = new ObjectMapper();
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(NewNotificationsReaderRestImpl.class);
     private static String beHost;
     private static int bePort;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewNotificationsReaderRestImpl.class);
 
     public NewNotificationsReaderRestImpl() {
         ConfigurationManager cm = ConfigurationManager.getInstance();
@@ -62,17 +58,14 @@ public class NewNotificationsReaderRestImpl implements NewNotificationsReader {
     public NotificationsStatusDto getNewNotifications(String ownerId, UUID eventId, int limit) {
         HttpClient client = HttpClientBuilder.create().build();
         String url = String.format(URL, beHost, bePort);
-
         url = url + LIMIT_QUERY_PARAM + "=" + limit;
         if (eventId != null) {
             url = url + "&" + LAST_DELIVERED_QUERY_PARAM + "=" + eventId;
         }
-
         HttpGet request = new HttpGet(url);
         request.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         request.addHeader(USER_ID_HEADER_PARAM, ownerId);
-
         try {
             HttpResponse response = client.execute(request);
             return mapper.readValue(new InputStreamReader(response.getEntity().getContent()), NotificationsStatusDto.class);

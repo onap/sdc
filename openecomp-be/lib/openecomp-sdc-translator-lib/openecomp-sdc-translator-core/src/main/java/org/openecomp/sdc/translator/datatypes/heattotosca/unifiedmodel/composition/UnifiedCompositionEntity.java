@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition;
 
 public enum UnifiedCompositionEntity {
-  COMPUTE("Compute"),
-  PORT("Port"),
-  NESTED("Nested"),
-  SUB_INTERFACE("SubInterface"),
-  OTHER("Other");
+    COMPUTE("Compute"), PORT("Port"), NESTED("Nested"), SUB_INTERFACE("SubInterface"), OTHER("Other");
+    private String displayName;
 
-  private String displayName;
+    UnifiedCompositionEntity(String displayName) {
+        this.displayName = displayName;
+    }
 
-  UnifiedCompositionEntity(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
+    public String getDisplayName() {
+        return displayName;
+    }
 }

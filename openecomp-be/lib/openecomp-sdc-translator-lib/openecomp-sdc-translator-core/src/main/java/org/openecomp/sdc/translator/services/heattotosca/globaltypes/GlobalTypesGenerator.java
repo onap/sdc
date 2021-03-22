@@ -13,66 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.globaltypes;
-
-import org.onap.sdc.tosca.datatypes.model.Import;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
 public class GlobalTypesGenerator {
 
-  private GlobalTypesGenerator() {
-  }
+    private GlobalTypesGenerator() {
+    }
 
-  /**
-   * Gets global types service template.
-   *
-   * @return the global types service template
-   */
-  public static Map<String, ServiceTemplate> getGlobalTypesServiceTemplate(OnboardingTypesEnum
-                                                                               onboardingType) {
-    return GlobalTypesServiceTemplates.getGlobalTypesServiceTemplates(onboardingType);
-  }
+    /**
+     * Gets global types service template.
+     *
+     * @return the global types service template
+     */
+    public static Map<String, ServiceTemplate> getGlobalTypesServiceTemplate(OnboardingTypesEnum onboardingType) {
+        return GlobalTypesServiceTemplates.getGlobalTypesServiceTemplates(onboardingType);
+    }
 
-  /**
-   * Gets global types import list.
-   *
-   * @return the global types import list
-   */
-  public static List<Map<String, Import>> getGlobalTypesImportList() {
-    List<Map<String, Import>> globalImports = new ArrayList<>();
-    Map<String, Import> globalImportMap = new HashMap<>();
-    Map<String, ServiceTemplate> globalTypesServiceTemplate =
-        GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.ZIP);
-    globalImportMap.put("openecomp_heat_index",
-        HeatToToscaUtil.createServiceTemplateImport(globalTypesServiceTemplate.get
-            ("openecomp-heat/_index.yml")));
-    globalImports.add(globalImportMap);
-    return globalImports;
-  }
+    /**
+     * Gets global types import list.
+     *
+     * @return the global types import list
+     */
+    public static List<Map<String, Import>> getGlobalTypesImportList() {
+        List<Map<String, Import>> globalImports = new ArrayList<>();
+        Map<String, Import> globalImportMap = new HashMap<>();
+        Map<String, ServiceTemplate> globalTypesServiceTemplate = GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.ZIP);
+        globalImportMap
+            .put("openecomp_heat_index", HeatToToscaUtil.createServiceTemplateImport(globalTypesServiceTemplate.get("openecomp-heat/_index.yml")));
+        globalImports.add(globalImportMap);
+        return globalImports;
+    }
 
-  /**
-   * Gets global types import list for Manual Vsp onboarding.
-   *
-   * @return the global types import list
-   */
-  public static List<Map<String, Import>> getManualVspGlobalTypesImportList() {
-    List<Map<String, Import>> globalImports = new ArrayList<>();
-    Map<String, Import> globalImportMap = new HashMap<>();
-    Map<String, ServiceTemplate> globalTypesServiceTemplate =
-        GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.MANUAL);
-    globalImportMap.put("openecomp_index",
-        HeatToToscaUtil.createServiceTemplateImport(globalTypesServiceTemplate.get
-            ("openecomp/_index.yml")));
-    globalImports.add(globalImportMap);
-    return globalImports;
-  }
+    /**
+     * Gets global types import list for Manual Vsp onboarding.
+     *
+     * @return the global types import list
+     */
+    public static List<Map<String, Import>> getManualVspGlobalTypesImportList() {
+        List<Map<String, Import>> globalImports = new ArrayList<>();
+        Map<String, Import> globalImportMap = new HashMap<>();
+        Map<String, ServiceTemplate> globalTypesServiceTemplate = GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.MANUAL);
+        globalImportMap.put("openecomp_index", HeatToToscaUtil.createServiceTemplateImport(globalTypesServiceTemplate.get("openecomp/_index.yml")));
+        globalImports.add(globalImportMap);
+        return globalImports;
+    }
 }

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.Map;
@@ -36,29 +35,25 @@ public class ConversionDefinitionYamlParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConversionDefinitionYamlParser.class);
 
     private ConversionDefinitionYamlParser() {
-
     }
 
     /**
      * Parses the given a YAML object to a {@link ConversionDefinition} instance.
-     * @param conversionYaml    the YAML object representing a conversion definition
-     * @return
-     *  A new instance of {@link ConversionDefinition}.
+     *
+     * @param conversionYaml the YAML object representing a conversion definition
+     * @return A new instance of {@link ConversionDefinition}.
      */
     public static Optional<ConversionDefinition> parse(final Map<String, Object> conversionYaml) {
-        final ConversionQuery conversionQuery = ConversionQueryYamlParser
-            .parse(conversionYaml.get(PnfTransformationToken.QUERY.getName())).orElse(null);
+        final ConversionQuery conversionQuery = ConversionQueryYamlParser.parse(conversionYaml.get(PnfTransformationToken.QUERY.getName()))
+            .orElse(null);
         if (conversionQuery == null) {
             LOGGER.warn("Invalid '{}' for '{}'", PnfTransformationToken.QUERY.getName(), conversionYaml.toString());
             return Optional.empty();
         }
         final String toName = (String) conversionYaml.get(PnfTransformationToken.TO_NAME.getName());
         final PnfdConversionStrategy toValue = PnfdConversionStrategyYamlParser
-            .parse((Map<String, Object>) conversionYaml.get(PnfTransformationToken.TO_VALUE.getName()))
-            .orElse(null);
+            .parse((Map<String, Object>) conversionYaml.get(PnfTransformationToken.TO_VALUE.getName())).orElse(null);
         final String toGetInput = (String) conversionYaml.get(PnfTransformationToken.TO_GET_INPUT.getName());
-
         return Optional.of(new ConversionDefinition(conversionQuery, toName, toValue, toGetInput));
     }
-
 }

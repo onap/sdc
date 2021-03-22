@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManagerFactory;
@@ -28,15 +27,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 
 public class NicManagerFactoryImpl extends NicManagerFactory {
-  private static final NicManager INSTANCE =
-      new NicManagerImpl(
-          NicDaoFactory.getInstance().createInterface(),
-          CompositionEntityDataManagerFactory.getInstance().createInterface(),
-          NetworkManagerFactory.getInstance().createInterface(),
-          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
 
-  @Override
-  public NicManager createInterface() {
-    return INSTANCE;
-  }
+    private static final NicManager INSTANCE = new NicManagerImpl(NicDaoFactory.getInstance().createInterface(),
+        CompositionEntityDataManagerFactory.getInstance().createInterface(), NetworkManagerFactory.getInstance().createInterface(),
+        VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
+
+    @Override
+    public NicManager createInterface() {
+        return INSTANCE;
+    }
 }

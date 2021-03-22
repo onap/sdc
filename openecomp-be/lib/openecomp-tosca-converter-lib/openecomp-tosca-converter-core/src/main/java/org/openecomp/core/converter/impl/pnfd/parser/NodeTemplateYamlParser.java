@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.List;
@@ -33,9 +32,9 @@ public class NodeTemplateYamlParser {
 
     /**
      * Parses the given a YAML object to a {@link NodeTemplate} instance.
-     * @param nodeTemplateYaml    the YAML object representing a TOSCA Node Template
-     * @return
-     *  A new instance of {@link NodeTemplate}.
+     *
+     * @param nodeTemplateYaml the YAML object representing a TOSCA Node Template
+     * @return A new instance of {@link NodeTemplate}.
      */
     public static NodeTemplate parse(final Map<String, Object> nodeTemplateYaml) {
         final NodeTemplate nodeTemplate = new NodeTemplate();
@@ -47,9 +46,6 @@ public class NodeTemplateYamlParser {
         nodeTemplate.setDirectives((List<String>) nodeTemplateYaml.get("directives"));
         nodeTemplate.setMetadata((Map<String, String>) nodeTemplateYaml.get("metadata"));
         nodeTemplate.setInterfaces((Map<String, Object>) nodeTemplateYaml.get("interfaces"));
-
         return nodeTemplate;
     }
-
-
 }

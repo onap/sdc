@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.translator.datatypes;
 
+import java.util.List;
+import java.util.Map;
 import lombok.Data;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
-import java.util.List;
-import java.util.Map;
-
-
 @Data
 public class TranslatorOutput {
-  private Map<String, List<ErrorMessage>> errorMessages;
-  private ToscaServiceModel toscaServiceModel;
-  private ToscaServiceModel nonUnifiedToscaServiceModel;
 
+    private Map<String, List<ErrorMessage>> errorMessages;
+    private ToscaServiceModel toscaServiceModel;
+    private ToscaServiceModel nonUnifiedToscaServiceModel;
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ public class GuestOS {
     private String name;
     private String tools;
     private Number bitSize;
-
 }

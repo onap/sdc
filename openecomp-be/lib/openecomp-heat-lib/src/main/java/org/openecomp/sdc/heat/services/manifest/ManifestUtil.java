@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.services.manifest;
 
 import java.util.HashMap;
@@ -25,13 +24,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 
 public class ManifestUtil {
-
 
     /**
      * Gets file and its env.
@@ -45,7 +42,6 @@ public class ManifestUtil {
         return fileEnvMap;
     }
 
-
     /**
      * Scan file env map.
      *
@@ -53,13 +49,10 @@ public class ManifestUtil {
      * @param fileDataList the file data list
      * @param fileEnvMap   the file env map
      */
-    private static void scanFileEnvMap(FileData fileData, List<FileData> fileDataList,
-                                      Map<String, FileData> fileEnvMap) {
-
+    private static void scanFileEnvMap(FileData fileData, List<FileData> fileDataList, Map<String, FileData> fileEnvMap) {
         if (CollectionUtils.isEmpty(fileDataList)) {
             return;
         }
-
         for (FileData childFileData : fileDataList) {
             FileData.Type childType = childFileData.getType();
             if (fileData != null) {
@@ -70,7 +63,6 @@ public class ManifestUtil {
             scanFileEnvMap(childFileData, childFileData.getData(), fileEnvMap);
         }
     }
-
 
     /**
      * Gets file type map.
@@ -84,15 +76,13 @@ public class ManifestUtil {
         return fileTypeMap;
     }
 
-    private static FileData.Type scanFileTypeMap(FileData fileData, List<FileData> data,
-                                                 Map<String, FileData.Type> fileTypeMap) {
+    private static FileData.Type scanFileTypeMap(FileData fileData, List<FileData> data, Map<String, FileData.Type> fileTypeMap) {
         if (fileData != null) {
             fileTypeMap.put(fileData.getFile(), fileData.getType());
         }
         if (data == null) {
             return null;
         }
-
         for (FileData chileFileData : data) {
             FileData.Type type = scanFileTypeMap(chileFileData, chileFileData.getData(), fileTypeMap);
             if (type != null) {
@@ -101,7 +91,6 @@ public class ManifestUtil {
         }
         return null;
     }
-
 
     /**
      * Gets artifacts.
@@ -112,7 +101,6 @@ public class ManifestUtil {
     public static Set<String> getArtifacts(ManifestContent manifestContent) {
         Set<String> artifacts = new HashSet<>();
         scanArtifacts(null, manifestContent.getData(), artifacts);
-
         return artifacts;
     }
 
@@ -122,22 +110,18 @@ public class ManifestUtil {
                 artifacts.add(fileData.getFile());
             }
         }
-
         if (data == null) {
             return;
         }
-
         for (FileData chileFileData : data) {
             scanArtifacts(chileFileData, chileFileData.getData(), artifacts);
         }
     }
 
     private static boolean isArtifact(FileData fileData) {
-        return FileData.Type.valueOf(fileData.getType().name()) != null
-                && !fileData.getType().equals(FileData.Type.HEAT)
-                && !fileData.getType().equals(FileData.Type.HEAT_ENV)
-                && !fileData.getType().equals(FileData.Type.HEAT_NET)
-                && !fileData.getType().equals(FileData.Type.HEAT_VOL);
+        return FileData.Type.valueOf(fileData.getType().name()) != null && !fileData.getType().equals(FileData.Type.HEAT) && !fileData.getType()
+            .equals(FileData.Type.HEAT_ENV) && !fileData.getType().equals(FileData.Type.HEAT_NET) && !fileData.getType()
+            .equals(FileData.Type.HEAT_VOL);
     }
 
     /**
@@ -158,11 +142,9 @@ public class ManifestUtil {
                 baseFiles.add(fileData.getFile());
             }
         }
-
         if (data == null) {
             return;
         }
-
         for (FileData chileFileData : data) {
             scanBase(chileFileData, chileFileData.getData(), baseFiles);
         }

@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.generator.datatypes.tosca;
 
 import lombok.EqualsAndHashCode;
@@ -38,5 +37,4 @@ public class ComputeFlavor {
     private int num_cpus;
     private String disk_size;
     private String mem_size;
-
 }

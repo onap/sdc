@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import java.util.Optional;
@@ -55,7 +54,6 @@ public class CsarSecurityValidator {
         if (certificateFilePath.isPresent()) {
             certificateBytes = fileContentHandler.getFileContent(certificateFilePath.get());
         }
-
         return securityManager.verifySignedData(signatureBytes, certificateBytes, archiveBytes);
     }
 }

@@ -17,7 +17,6 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
@@ -51,7 +50,6 @@ import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 class ONAPCsarValidator implements Validator {
 
     private static Logger logger = LoggerFactory.getLogger(ONAPCsarValidator.class);
-
     private List<ErrorMessage> uploadFileErrors = new ArrayList<>();
 
     @Override
@@ -61,30 +59,26 @@ class ONAPCsarValidator implements Validator {
         validateMetadata(contentHandler);
         validateNoExtraFiles(contentHandler);
         validateFolders(contentHandler.getFolderList());
-
-        if(uploadFileErrors == null || uploadFileErrors.isEmpty()){
+        if (uploadFileErrors == null || uploadFileErrors.isEmpty()) {
             return errors;
         }
         errors.put(SdcCommon.UPLOAD_FILE, uploadFileErrors);
         return errors;
     }
 
-    private void validateMetadata(FileContentHandler contentMap){
+    private void validateMetadata(FileContentHandler contentMap) {
         if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
             try (InputStream metaFileContent = contentMap.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME)) {
-
                 ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metaFileContent);
                 String entryDefinitionsPath = onboardingToscaMetadata.getMetaEntries().get(ENTRY_DEFINITIONS.getName());
                 if (entryDefinitionsPath != null) {
                     validateFileExist(contentMap, entryDefinitionsPath);
                 } else {
-                    uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR,
-                            Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage()));
+                    uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage()));
                 }
             } catch (IOException exception) {
                 logger.error(exception.getMessage(), exception);
-                uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR,
-                        Messages.FAILED_TO_VALIDATE_METADATA.getErrorMessage()));
+                uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_VALIDATE_METADATA.getErrorMessage()));
             }
         } else {
             validateFileExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME);
@@ -95,40 +89,32 @@ class ONAPCsarValidator implements Validator {
         if (!validateFileExist(contentMap, MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
             return;
         }
-
         try (final InputStream fileContent = contentMap.getFileContentAsStream(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
             final Manifest onboardingManifest = new ONAPManifestOnboarding();
             onboardingManifest.parse(fileContent);
             if (!onboardingManifest.isValid()) {
-                onboardingManifest.getErrors()
-                    .forEach(error -> uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, error)));
+                onboardingManifest.getErrors().forEach(error -> uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, error)));
             }
         } catch (final IOException ex) {
-            final String errorMessage =
-                Messages.MANIFEST_UNEXPECTED_ERROR.formatMessage(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, ex.getMessage());
+            final String errorMessage = Messages.MANIFEST_UNEXPECTED_ERROR.formatMessage(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, ex.getMessage());
             uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, errorMessage));
             logger.error(errorMessage, ex);
         }
     }
 
     private void validateNoExtraFiles(FileContentHandler contentMap) {
-        List<String> unwantedFiles = contentMap.getFileList().stream()
-                .filter(this::filterFiles).collect(Collectors.toList());
+        List<String> unwantedFiles = contentMap.getFileList().stream().filter(this::filterFiles).collect(Collectors.toList());
         if (!unwantedFiles.isEmpty()) {
-            unwantedFiles.stream().filter(this::filterFiles).forEach(unwantedFile ->
-                    uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR,
-                            getErrorWithParameters(Messages.CSAR_FILES_NOT_ALLOWED.getErrorMessage(), unwantedFile))));
+            unwantedFiles.stream().filter(this::filterFiles).forEach(unwantedFile -> uploadFileErrors
+                .add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(Messages.CSAR_FILES_NOT_ALLOWED.getErrorMessage(), unwantedFile))));
         }
     }
 
     private void validateFolders(Set<String> folderList) {
-        List<String> filterResult =
-                folderList.stream().filter(this::filterFolders).collect(Collectors.toList());
+        List<String> filterResult = folderList.stream().filter(this::filterFolders).collect(Collectors.toList());
         if (!filterResult.isEmpty()) {
-            folderList.stream().filter(this::filterFolders).forEach(unwantedFolder ->
-                    uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR,
-                            getErrorWithParameters(Messages.CSAR_DIRECTORIES_NOT_ALLOWED.getErrorMessage(),
-                                    unwantedFolder))));
+            folderList.stream().filter(this::filterFolders).forEach(unwantedFolder -> uploadFileErrors.add(
+                new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(Messages.CSAR_DIRECTORIES_NOT_ALLOWED.getErrorMessage(), unwantedFolder))));
         }
     }
 
@@ -146,11 +132,10 @@ class ONAPCsarValidator implements Validator {
     }
 
     private boolean validateFileExist(FileContentHandler contentMap, String fileName) {
-
         boolean containsFile = contentMap.containsFile(fileName);
         if (!containsFile) {
-            uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR,
-                    getErrorWithParameters(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage(), fileName)));
+            uploadFileErrors
+                .add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage(), fileName)));
         }
         return containsFile;
     }

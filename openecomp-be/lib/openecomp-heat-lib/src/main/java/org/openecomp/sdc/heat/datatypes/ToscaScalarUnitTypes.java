@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes;
 
 import lombok.AllArgsConstructor;
@@ -28,10 +27,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ToscaScalarUnitTypes {
-
-    SCALAR_UNIT_SIZE("scalar-unit.size"),
-    SCALAR_UNIT_TIME("scalar-unit.time"),
-    SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
-
+    SCALAR_UNIT_SIZE("scalar-unit.size"), SCALAR_UNIT_TIME("scalar-unit.time"), SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
     private String type;
 }

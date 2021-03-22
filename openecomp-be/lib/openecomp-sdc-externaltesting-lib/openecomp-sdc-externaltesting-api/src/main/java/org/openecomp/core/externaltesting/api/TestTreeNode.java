@@ -17,34 +17,31 @@
 package org.openecomp.core.externaltesting.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Tree structure of tests.   VTP does not provide an organized
- * tree of tests.  Here we define a tree node with tests and
- * child nodes to represent our tree.
+ * Tree structure of tests.   VTP does not provide an organized tree of tests.  Here we define a tree node with tests and child nodes to represent our
+ * tree.
  */
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Data()
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 public class TestTreeNode extends VtpNameDescriptionPair {
 
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private List<VtpTestCase> tests;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<VtpTestCase> tests;
 
-  @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private List<TestTreeNode> children;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<TestTreeNode> children;
 
-  public TestTreeNode() {
-    super();
-  }
+    public TestTreeNode() {
+        super();
+    }
 
-  public TestTreeNode(String name, String description) {
-    super(name, description);
-  }
+    public TestTreeNode(String name, String description) {
+        super(name, description);
+    }
 }

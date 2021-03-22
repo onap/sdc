@@ -15,23 +15,21 @@
  */
 package org.openecomp.sdc.itempermissions.dao;
 
-import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
 /**
  * Created by ayalaben on 6/18/2017.
  */
 public interface ItemPermissionsDao {
 
-  Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
+    Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
 
-  void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
-                             Set<String> removedUsersIds);
+    void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds);
 
-  Optional<String> getUserItemPermission(String itemId, String userId);
+    Optional<String> getUserItemPermission(String itemId, String userId);
 
-  void deleteItemPermissions(String itemId);
+    void deleteItemPermissions(String itemId);
 }

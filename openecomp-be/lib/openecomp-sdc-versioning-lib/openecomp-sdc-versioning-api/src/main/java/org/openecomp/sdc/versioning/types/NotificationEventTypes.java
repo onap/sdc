@@ -29,11 +29,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum NotificationEventTypes {
-    SUBMIT("submit"),
-    DELETE("delete"),
-    ARCHIVE("archive"),
-    RESTORE("restore"),
-    COMMIT("commit");
-
+    SUBMIT("submit"), DELETE("delete"), ARCHIVE("archive"), RESTORE("restore"), COMMIT("commit");
     private final String eventName;
 }

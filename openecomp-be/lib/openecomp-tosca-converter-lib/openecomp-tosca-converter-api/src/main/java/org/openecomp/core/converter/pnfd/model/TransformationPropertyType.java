@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 import java.util.Arrays;
@@ -31,12 +30,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TransformationPropertyType {
     NODE_NAME_PREFIX("nodeNamePrefix");
-
     private final String type;
 
     public static Optional<TransformationPropertyType> parse(final String type) {
-        return Arrays.stream(values())
-            .filter(transformationPropertyType -> transformationPropertyType.getType().equals(type))
-            .findFirst();
+        return Arrays.stream(values()).filter(transformationPropertyType -> transformationPropertyType.getType().equals(type)).findFirst();
     }
 }

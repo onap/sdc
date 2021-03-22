@@ -19,18 +19,18 @@
  */
 package org.openecomp.sdc.versioning.dao;
 
+import java.util.Collection;
 import org.openecomp.sdc.versioning.types.Item;
 
-import java.util.Collection;
-
 public interface ItemDao {
-  Collection<Item> list();
 
-  Item get(Item item);
+    Collection<Item> list();
 
-  Item create(Item item);
+    Item get(Item item);
 
-  void delete(Item item);
+    Item create(Item item);
 
-  void update(Item item);
+    void delete(Item item);
+
+    void update(Item item);
 }

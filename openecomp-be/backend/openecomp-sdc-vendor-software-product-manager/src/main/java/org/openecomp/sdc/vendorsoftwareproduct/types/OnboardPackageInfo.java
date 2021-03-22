@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.nio.ByteBuffer;
@@ -35,20 +34,17 @@ public class OnboardPackageInfo {
         this(onboardPackage, onboardPackage, packageType);
     }
 
-    public OnboardPackageInfo(final OnboardPackage originalOnboardPackage,
-                              final OnboardPackage onboardPackage, final OnboardingTypesEnum packageType) {
+    public OnboardPackageInfo(final OnboardPackage originalOnboardPackage, final OnboardPackage onboardPackage,
+                              final OnboardingTypesEnum packageType) {
         this.packageType = packageType;
         this.originalOnboardPackage = originalOnboardPackage;
         this.onboardPackage = onboardPackage;
     }
 
-    public OnboardPackageInfo(final String filename,
-                              final String fileExtension,
-                              final ByteBuffer fileContent,
-                              final OnboardingTypesEnum packageType) throws OnboardPackageException {
+    public OnboardPackageInfo(final String filename, final String fileExtension, final ByteBuffer fileContent, final OnboardingTypesEnum packageType)
+        throws OnboardPackageException {
         this.packageType = packageType;
         originalOnboardPackage = new OnboardPackage(filename, fileExtension, fileContent);
         this.onboardPackage = originalOnboardPackage;
     }
-
 }

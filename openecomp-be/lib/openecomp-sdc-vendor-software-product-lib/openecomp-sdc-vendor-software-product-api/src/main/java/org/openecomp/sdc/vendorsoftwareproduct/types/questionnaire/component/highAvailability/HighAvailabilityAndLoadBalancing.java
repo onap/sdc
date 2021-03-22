@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.highAvailability;
 
 import lombok.Getter;
@@ -37,5 +36,4 @@ public class HighAvailabilityAndLoadBalancing {
     private String loadDistributionMechanism;
     private String isComponentMandatory;
     private String highAvailabilityMode;
-
 }

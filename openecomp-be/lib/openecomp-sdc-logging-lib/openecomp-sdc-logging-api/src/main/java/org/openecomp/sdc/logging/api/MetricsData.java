@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.api;
 
-import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import lombok.Getter;
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 
 /**
- * Builder to populate <i>metrics</i> data. This includes only data known to an application, and not otherwise available
- * to the logging framework.
+ * Builder to populate <i>metrics</i> data. This includes only data known to an application, and not otherwise available to the logging framework.
  *
  * @author evitaliy
  * @since 26 Mar 2018
@@ -30,7 +28,6 @@ import lombok.Getter;
 public class MetricsData {
 
     // don't inherit from AuditData because it has a very different meaning
-
     private final long startTime;
     private final long endTime;
     private final ResponseStatus statusCode;
@@ -51,15 +48,14 @@ public class MetricsData {
         this.targetVirtualEntity = builder.targetVirtualEntity;
     }
 
-    @Override
-    public String toString() {
-        return "AuditData{startTime=" + startTime + ", endTime=" + endTime + ", statusCode=" + statusCode
-                + ", responseCode=" + responseCode + ", responseDescription=" + responseDescription
-                + ", clientIpAddress=" + clientIpAddress + '}';
-    }
-
     public static MetricsDataBuilder builder() {
         return new MetricsDataBuilder();
+    }
+
+    @Override
+    public String toString() {
+        return "AuditData{startTime=" + startTime + ", endTime=" + endTime + ", statusCode=" + statusCode + ", responseCode=" + responseCode
+            + ", responseDescription=" + responseDescription + ", clientIpAddress=" + clientIpAddress + '}';
     }
 
     /**
@@ -101,8 +97,8 @@ public class MetricsData {
         }
 
         /**
-         * Indicate whether an invocation was successful. It is up the the application to decide if a particular result
-         * must be treated as a success or a failure.
+         * Indicate whether an invocation was successful. It is up the the application to decide if a particular result must be treated as a success
+         * or a failure.
          *
          * @param statusCode invocation status success/failure
          * @return this builder for fluent API
@@ -124,8 +120,8 @@ public class MetricsData {
         }
 
         /**
-         * Response description that explains {@link #responseCode(String)} in a human-friendly way. For a Web API, it
-         * is likely to be a standard HTTP response phrase.
+         * Response description that explains {@link #responseCode(String)} in a human-friendly way. For a Web API, it is likely to be a standard HTTP
+         * response phrase.
          *
          * @param responseDescription human-friendly response description
          * @return this builder for fluent API

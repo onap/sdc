@@ -26,5 +26,6 @@ import java.util.List;
  * @since July 09, 2017
  */
 public interface DestinationProvider {
+
     List<String> getSubscribers();
 }

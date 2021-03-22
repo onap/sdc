@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.utilities;
 
 import java.lang.reflect.Array;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,10 +36,7 @@ import org.openecomp.core.utilities.exception.NewInstanceRuntimeException;
  */
 public class CommonMethods {
 
-    private static final char[] CHARS = new char[] {
-            '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-    };
+    private static final char[] CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     /**
      * Private default constructor to prevent instantiation of the class objects.
@@ -56,11 +51,9 @@ public class CommonMethods {
      */
     public static String nextUuId() {
         UUID uuid = UUID.randomUUID();
-
         StringBuilder buff = new StringBuilder(32);
         long2string(uuid.getMostSignificantBits(), buff);
         long2string(uuid.getLeastSignificantBits(), buff);
-
         return buff.toString();
     }
 
@@ -71,32 +64,27 @@ public class CommonMethods {
             value <<= 4;
             boolean isNegative = nextByte < 0;
             nextByte = nextByte >>> 60;
-
             if (isNegative) {
                 nextByte |= 0x08;
             }
-
             buff.append(CHARS[(int) nextByte]);
         }
     }
 
     /**
-     * Concatenates two Java arrays. The method allocates a new array and copies
-     * all elements to it or returns one of input arrays if another one is
+     * Concatenates two Java arrays. The method allocates a new array and copies all elements to it or returns one of input arrays if another one is
      * empty.
      *
      * @param <T>   the type parameter
-     * @param left  Elements of this array will be copied to positions from 0 to <tt>left.length -
-     *              1</tt> in the target array.
+     * @param left  Elements of this array will be copied to positions from 0 to <tt>left.length - 1</tt> in the target array.
      * @param right Elements of this array will be copied to positions from <tt>left.length</tt> to
      *              <tt>left.length + right.length</tt>
-     * @return A newly allocate Java array that accommodates elements of source (left/right) arrays
-     * or one of source arrays if another is empty, <tt>null</tt> - otherwise.
+     * @return A newly allocate Java array that accommodates elements of source (left/right) arrays or one of source arrays if another is empty,
+     * <tt>null</tt> - otherwise.
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] concat(T[] left, T[] right) {
         T[] res;
-
         if (ArrayUtils.isEmpty(left)) {
             res = right;
         } else if (ArrayUtils.isEmpty(right)) {
@@ -106,7 +94,6 @@ public class CommonMethods {
             System.arraycopy(left, 0, res, 0, left.length);
             System.arraycopy(right, 0, res, left.length, right.length);
         }
-
         return res;
     } // concat
 
@@ -130,25 +117,18 @@ public class CommonMethods {
      */
     @SuppressWarnings("unchecked")
     public static <T> T newInstance(String classname, Class<T> cls) {
-
         if (StringUtils.isEmpty(classname)) {
             throw new IllegalArgumentException();
         }
-
         if (cls == null) {
             throw new IllegalArgumentException();
         }
-
         try {
             Class<?> temp = Class.forName(classname);
-
             if (!cls.isAssignableFrom(temp)) {
-                throw new ClassCastException(
-                        String.format("Failed to cast from '%s' to '%s'", classname, cls.getName()));
+                throw new ClassCastException(String.format("Failed to cast from '%s' to '%s'", classname, cls.getName()));
             }
-
             Class<? extends T> impl = (Class<? extends T>) temp;
-
             return newInstance(impl);
         } catch (ClassNotFoundException exception) {
             throw new IllegalArgumentException(exception);
@@ -166,8 +146,7 @@ public class CommonMethods {
         try {
             return cls.getDeclaredConstructor().newInstance();
         } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
-            throw new NewInstanceRuntimeException(String.format("Could not create instance for '%s'", cls.getName())
-                , ex);
+            throw new NewInstanceRuntimeException(String.format("Could not create instance for '%s'", cls.getName()), ex);
         }
     }
 
@@ -236,10 +215,8 @@ public class CommonMethods {
      * @param numberOfDuplications the number of duplications
      * @return the string
      */
-    public static String duplicateStringWithDelimiter(String arg, char separator,
-                                                      int numberOfDuplications) {
+    public static String duplicateStringWithDelimiter(String arg, char separator, int numberOfDuplications) {
         StringBuilder sb = new StringBuilder();
-
         for (int i = 0; i < numberOfDuplications; i++) {
             if (i > 0) {
                 sb.append(separator);
@@ -254,12 +231,10 @@ public class CommonMethods {
      *
      * @param <T>     the class of the objects in the set
      * @param element the single element to be contained in the returned Set
-     * @return an immutable set containing only the specified object. The returned set is
-     * serializable.
+     * @return an immutable set containing only the specified object. The returned set is serializable.
      */
     public static <T> Set<T> toSingleElementSet(T element) {
         return Collections.singleton(element);
-
     }
 
     /**
@@ -271,13 +246,11 @@ public class CommonMethods {
      * @param source the source
      * @return the list
      */
-    public static <T, S> List<Map<T, S>> mergeListsOfMap(List<Map<T, S>> target,
-                                                         List<Map<T, S>> source) {
+    public static <T, S> List<Map<T, S>> mergeListsOfMap(List<Map<T, S>> target, List<Map<T, S>> source) {
         List<Map<T, S>> retList = new ArrayList<>();
         if (Objects.nonNull(target)) {
             retList.addAll(target);
         }
-
         if (Objects.nonNull(source)) {
             for (Map<T, S> sourceMap : source) {
                 for (Map.Entry<T, S> entry : sourceMap.entrySet()) {
@@ -298,14 +271,12 @@ public class CommonMethods {
      */
     public static <T> List<T> mergeLists(List<T> target, List<T> source) {
         List<T> retList = new ArrayList<>();
-
         if (Objects.nonNull(source)) {
             retList.addAll(source);
         }
         if (Objects.nonNull(target)) {
             retList.addAll(target);
         }
-
         return retList;
     }
 
@@ -326,14 +297,12 @@ public class CommonMethods {
                 found = true;
             }
         }
-
         if (!found) {
             Map<T, S> newMap = new HashMap<>();
             newMap.put(key, value);
             target.add(newMap);
         }
     }
-
 
     /**
      * Merge maps map.
@@ -342,8 +311,7 @@ public class CommonMethods {
      * @param <S>       the type parameter
      * @param firstMap  the firstMap
      * @param secondMap the secondMap
-     * @return the map
-     * Second Map is overridden data from the first map
+     * @return the map Second Map is overridden data from the first map
      */
     public static <T, S> Map<T, S> mergeMaps(Map<T, S> firstMap, Map<T, S> secondMap) {
         Map<T, S> retMap = new HashMap<>();
@@ -355,6 +323,4 @@ public class CommonMethods {
         }
         return retMap;
     }
-
 }
-

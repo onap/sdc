@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.externaltesting.api;
 
 import lombok.Data;
 
 @Data
 public class ClientConfiguration {
-  /**
-   * Enable/disable state for the feature.  Client can use this
-   * to show/hide menu items.
-   */
-  private boolean enabled;
 
+    /**
+     * Enable/disable state for the feature.  Client can use this to show/hide menu items.
+     */
+    private boolean enabled;
 }

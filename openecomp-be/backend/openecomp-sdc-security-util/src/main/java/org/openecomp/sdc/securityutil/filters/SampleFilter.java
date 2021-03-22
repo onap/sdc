@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,29 +17,39 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.securityutil.filters;
 
-
-import org.openecomp.sdc.securityutil.ISessionValidationFilterConfiguration;
-
-import javax.servlet.http.Cookie;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.servlet.http.Cookie;
+import org.openecomp.sdc.securityutil.ISessionValidationFilterConfiguration;
 
 public class SampleFilter extends SessionValidationFilter {
+
+    @Override
+    public ISessionValidationFilterConfiguration getFilterConfiguration() {
+        return Configuration.getInstance();
+    }
+
+    @Override
+    protected Cookie addRoleToCookie(Cookie updatedCookie) {
+        return updatedCookie;
+    }
+
+    @Override
+    protected boolean isRoleValid(Cookie cookie) {
+        return true;
+    }
 
     private static class Configuration implements ISessionValidationFilterConfiguration {
 
         private static Configuration instance;
-
         private String securityKey;
         private long maxSessionTimeOut;
         private long sessionIdleTimeOut;
         private String redirectURL;
         private List<String> excludedUrls;
-
         private String cookieName;
         private String cookieDomain;
         private String cookiePath;
@@ -48,40 +58,19 @@ public class SampleFilter extends SessionValidationFilter {
         private Configuration() {
             //security key should be exactly 16 characters long clear text and then encoded to base64
             this.securityKey = "AGLDdG4D04BKm2IxIWEr8o==";
-            this.maxSessionTimeOut = 24L*60L*60L*1000L;
-            this.sessionIdleTimeOut = 60L*60L*1000L;
+            this.maxSessionTimeOut = 24L * 60L * 60L * 1000L;
+            this.sessionIdleTimeOut = 60L * 60L * 1000L;
             this.redirectURL = "https://www.e-access.att.com/ecomp_portal_ist/ecompportal/process_csp";
-            this.excludedUrls = new ArrayList<>(Arrays.asList("/config","/configmgr","/rest","/kibanaProxy","/healthcheck","/upload.*"));
-
+            this.excludedUrls = new ArrayList<>(Arrays.asList("/config", "/configmgr", "/rest", "/kibanaProxy", "/healthcheck", "/upload.*"));
             this.cookieName = "kuku";
             this.cookieDomain = "";
             this.cookiePath = "/";
             this.isCookieHttpOnly = true;
         }
 
-        public void setSecurityKey(String securityKey) {
-            this.securityKey = securityKey;
-        }
-
-        public void setMaxSessionTimeOut(long maxSessionTimeOut) {
-            this.maxSessionTimeOut = maxSessionTimeOut;
-        }
-
-        public void setCookieName(String cookieName) {
-            this.cookieName = cookieName;
-        }
-
-        public void setRedirectURL(String redirectURL) {
-            this.redirectURL = redirectURL;
-        }
-
-        public void setExcludedUrls(List<String> excludedUrls) {
-            this.excludedUrls = excludedUrls;
-        }
-
-        public  static Configuration getInstance(){
-            if (instance == null ){
-                instance =  new Configuration();
+        public static Configuration getInstance() {
+            if (instance == null) {
+                instance = new Configuration();
             }
             return instance;
         }
@@ -91,9 +80,17 @@ public class SampleFilter extends SessionValidationFilter {
             return securityKey;
         }
 
+        public void setSecurityKey(String securityKey) {
+            this.securityKey = securityKey;
+        }
+
         @Override
         public long getMaxSessionTimeOut() {
             return maxSessionTimeOut;
+        }
+
+        public void setMaxSessionTimeOut(long maxSessionTimeOut) {
+            this.maxSessionTimeOut = maxSessionTimeOut;
         }
 
         @Override
@@ -104,6 +101,10 @@ public class SampleFilter extends SessionValidationFilter {
         @Override
         public String getCookieName() {
             return cookieName;
+        }
+
+        public void setCookieName(String cookieName) {
+            this.cookieName = cookieName;
         }
 
         @Override
@@ -126,27 +127,17 @@ public class SampleFilter extends SessionValidationFilter {
             return redirectURL;
         }
 
+        public void setRedirectURL(String redirectURL) {
+            this.redirectURL = redirectURL;
+        }
+
         @Override
         public List<String> getExcludedUrls() {
             return excludedUrls;
         }
-    }
 
-    @Override
-    public ISessionValidationFilterConfiguration getFilterConfiguration() {
-        return Configuration.getInstance();
+        public void setExcludedUrls(List<String> excludedUrls) {
+            this.excludedUrls = excludedUrls;
+        }
     }
-
-    @Override
-    protected Cookie addRoleToCookie(Cookie updatedCookie) {
-        return updatedCookie;
-    }
-
-    @Override
-    protected boolean isRoleValid(Cookie cookie) {
-        return true;
-    }
-
 }
-
-

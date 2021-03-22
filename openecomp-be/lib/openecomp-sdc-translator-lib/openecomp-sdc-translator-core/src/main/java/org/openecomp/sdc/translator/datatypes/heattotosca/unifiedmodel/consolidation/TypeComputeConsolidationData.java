@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
-
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
 
 public class TypeComputeConsolidationData {
 
@@ -42,27 +40,24 @@ public class TypeComputeConsolidationData {
     }
 
     /**
-    * Gets compute template consolidation data.
-    *
-    * @param computeNodeTemplateId the compute node template id
-    * @return the compute template consolidation data
-    */
-    public ComputeTemplateConsolidationData getComputeTemplateConsolidationData(
-            String computeNodeTemplateId) {
+     * Gets compute template consolidation data.
+     *
+     * @param computeNodeTemplateId the compute node template id
+     * @return the compute template consolidation data
+     */
+    public ComputeTemplateConsolidationData getComputeTemplateConsolidationData(String computeNodeTemplateId) {
         return computeTemplateConsolidationData.get(computeNodeTemplateId);
     }
 
-    public void setComputeTemplateConsolidationData(String computeNodeTemplateId,
-                                                  ComputeTemplateConsolidationData
-                                                      computeTemplateConsolidationData) {
+    public void setComputeTemplateConsolidationData(String computeNodeTemplateId, ComputeTemplateConsolidationData computeTemplateConsolidationData) {
         this.computeTemplateConsolidationData.put(computeNodeTemplateId, computeTemplateConsolidationData);
     }
 
     /**
-    * create new compute template consolidation data if it doesn't exist yet.
-    *
-    * @return compute template consolidation data entity by given keys
-    */
+     * create new compute template consolidation data if it doesn't exist yet.
+     *
+     * @return compute template consolidation data entity by given keys
+     */
     ComputeTemplateConsolidationData addComputeTemplateConsolidationData(String computeNodeTemplateId) {
         ComputeTemplateConsolidationData consolidationData = getComputeTemplateConsolidationData(computeNodeTemplateId);
         if (consolidationData == null) {
@@ -74,20 +69,15 @@ public class TypeComputeConsolidationData {
     }
 
     /**
-     * Gets all ports per port type, which are connected to the computes consolidation data entities
-     * computeTemplateConsolidationDataCollection.
+     * Gets all ports per port type, which are connected to the computes consolidation data entities computeTemplateConsolidationDataCollection.
      *
      * @return Map containing key as port type and value as ports id
      */
     public Map<String, List<String>> collectAllPortsOfEachTypeFromComputes() {
         Map<String, List<String>> portTypeToIds = new HashMap<>();
-        Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataCollection =
-                getAllComputeTemplateConsolidationData();
-
+        Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataCollection = getAllComputeTemplateConsolidationData();
         computeTemplateConsolidationDataCollection
-                .forEach(computeTemplateConsolidationData1 ->
-                                 computeTemplateConsolidationData1.collectAllPortsOfEachTypeFromCompute(portTypeToIds));
-
+            .forEach(computeTemplateConsolidationData1 -> computeTemplateConsolidationData1.collectAllPortsOfEachTypeFromCompute(portTypeToIds));
         return portTypeToIds;
     }
 
@@ -98,13 +88,10 @@ public class TypeComputeConsolidationData {
      * @return true if get attr out are legal else false
      */
     public boolean isGetAttrOutFromEntityLegal(Map<String, List<String>> portTypeToIds) {
-
         Collection<ComputeTemplateConsolidationData> entities = getAllComputeTemplateConsolidationData();
-
         if (CollectionUtils.isEmpty(entities)) {
             return true;
         }
-
         EntityConsolidationData firstEntity = entities.iterator().next();
         return firstEntity.isGetAttrOutFromEntityLegal(entities, portTypeToIds);
     }
@@ -118,23 +105,16 @@ public class TypeComputeConsolidationData {
     }
 
     public boolean isNumberOfPortFromEachTypeLegal() {
-        return getAllComputeTemplateConsolidationData().stream().allMatch(
-                ComputeTemplateConsolidationData::isNumberOfPortFromEachTypeLegal);
+        return getAllComputeTemplateConsolidationData().stream().allMatch(ComputeTemplateConsolidationData::isNumberOfPortFromEachTypeLegal);
     }
 
     public boolean isPortTypesEqualsBetweenComputeNodes() {
         Set<String> startingPortTypes = getAllComputeTemplateConsolidationData().iterator().next().getPortsIds();
-
-        return getAllComputeTemplateConsolidationData()
-                       .stream().allMatch(compute -> compute.getPortsIds().equals(startingPortTypes));
+        return getAllComputeTemplateConsolidationData().stream().allMatch(compute -> compute.getPortsIds().equals(startingPortTypes));
     }
 
     public boolean isNumberOfPortsEqualsBetweenComputeNodes() {
-        int startingNumberOfPorts =
-                getAllComputeTemplateConsolidationData().iterator().next().getNumberOfPorts();
-
-        return getAllComputeTemplateConsolidationData()
-                .stream().allMatch(compute -> compute.getNumberOfPorts() == startingNumberOfPorts);
-
+        int startingNumberOfPorts = getAllComputeTemplateConsolidationData().iterator().next().getNumberOfPorts();
+        return getAllComputeTemplateConsolidationData().stream().allMatch(compute -> compute.getNumberOfPorts() == startingNumberOfPorts);
     }
 }

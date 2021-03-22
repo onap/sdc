@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.securityutil;
 
 import java.security.SecureRandom;
@@ -31,18 +30,17 @@ import org.slf4j.LoggerFactory;
 
 public class CipherUtil {
 
-    private static Logger log = LoggerFactory.getLogger(CipherUtil.class.getName());
+    public static final int GCM_TAG_LENGTH = 16;
+    public static final int GCM_IV_LENGTH = 12;
     private static final String ALGORITHM = "AES";
     private static final String ALGORITHM_DETAILS = ALGORITHM + "/GCM/NoPadding";
     private static final String CIPHER_PROVIDER = "SunJCE";
-
-    public static final int GCM_TAG_LENGTH = 16;
-    public static final int GCM_IV_LENGTH = 12;
-
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     private static final String ALGORITHM_NAME = "SHA1PRNG";
+    private static Logger log = LoggerFactory.getLogger(CipherUtil.class.getName());
 
-    private CipherUtil() {}
+    private CipherUtil() {
+    }
 
     /**
      * Encrypt the text using the secret key in key.properties file
@@ -59,11 +57,9 @@ public class CipherUtil {
             cipher = Cipher.getInstance(ALGORITHM_DETAILS, CIPHER_PROVIDER);
             SecureRandom secureRandom = SecureRandom.getInstance(ALGORITHM_NAME);
             secureRandom.nextBytes(iv);
-            GCMParameterSpec spec =
-                new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, iv);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, iv);
             cipher.init(Cipher.ENCRYPT_MODE, getSecretKeySpec(base64key), spec);
             finalByte = cipher.doFinal(value.getBytes());
-
         } catch (Exception ex) {
             log.error("encrypt failed", ex);
             throw new CipherUtilException(ex);
@@ -74,12 +70,10 @@ public class CipherUtil {
     /**
      * Decrypts the text using the secret key in key.properties file.
      *
-     * @param message The encrypted string that must be decrypted using the ONAP Portal Encryption
-     *                Key
+     * @param message The encrypted string that must be decrypted using the ONAP Portal Encryption Key
      * @return The String decrypted
      * @throws CipherUtilException if any decryption step fails
      */
-
     public static String decryptPKC(String message, String base64key) throws CipherUtilException {
         byte[] encryptedMessage = Base64.decodeBase64(message);
         Cipher cipher;
@@ -87,12 +81,10 @@ public class CipherUtil {
         try {
             cipher = Cipher.getInstance(ALGORITHM_DETAILS, CIPHER_PROVIDER);
             byte[] initVector = Arrays.copyOfRange(encryptedMessage, 0, GCM_IV_LENGTH);
-            GCMParameterSpec spec =
-                new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
             byte[] realData = subarray(encryptedMessage, GCM_IV_LENGTH, encryptedMessage.length);
             cipher.init(Cipher.DECRYPT_MODE, getSecretKeySpec(base64key), spec);
             decrypted = cipher.doFinal(realData);
-
         } catch (Exception ex) {
             log.error("decrypt failed", ex);
             throw new CipherUtilException(ex);
@@ -129,11 +121,9 @@ public class CipherUtil {
             if (startIndexInclusive < 0) {
                 startIndexInclusive = 0;
             }
-
             if (endIndexExclusive > array.length) {
                 endIndexExclusive = array.length;
             }
-
             int newSize = endIndexExclusive - startIndexInclusive;
             if (newSize <= 0) {
                 return EMPTY_BYTE_ARRAY;

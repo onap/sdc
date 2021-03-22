@@ -15,29 +15,27 @@
  */
 package org.openecomp.sdc.itempermissions;
 
-import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
 /**
  * Created by ayalaben on 6/22/2017
  */
 public interface PermissionsServices {
 
-  Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
+    Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
 
-  Set<String> listUserPermittedItems(String userId, String permission);
+    Set<String> listUserPermittedItems(String userId, String permission);
 
-  void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds,
-                             Set<String> removedUsersIds);
+    void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds);
 
-  boolean isAllowed(String itemId, String userId, String action);
+    boolean isAllowed(String itemId, String userId, String action);
 
-  void execute(String itemId, String userId, String action);
+    void execute(String itemId, String userId, String action);
 
-  Optional<String> getUserItemPermission(String itemId, String userId);
+    Optional<String> getUserItemPermission(String itemId, String userId);
 
-  void deleteItemPermissions(String itemId);
+    void deleteItemPermissions(String itemId);
 }

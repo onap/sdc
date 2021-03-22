@@ -18,7 +18,7 @@ package org.openecomp.sdcrests.togglz.types;
 import java.util.Objects;
 
 public class FeatureDto {
-    
+
     private final String name;
     private final boolean active;
 
@@ -37,8 +37,12 @@ public class FeatureDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FeatureDto)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FeatureDto)) {
+            return false;
+        }
         FeatureDto that = (FeatureDto) o;
         return Objects.equals(getName(), that.getName());
     }

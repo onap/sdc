@@ -37,12 +37,12 @@ import org.openecomp.sdc.versioning.VersioningManagerFactory;
 
 @Getter
 class ManagersProvider {
+
     private PermissionsManager permissionsManager = PermissionsManagerFactory.getInstance().createInterface();
     private AsdcItemManager asdcItemManager = AsdcItemManagerFactory.getInstance().createInterface();
     private VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
     private ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
     private ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
-    private NotificationPropagationManager notificationPropagationManager = NotificationPropagationManagerFactory
-        .getInstance().createInterface();
+    private NotificationPropagationManager notificationPropagationManager = NotificationPropagationManagerFactory.getInstance().createInterface();
     private ItemManager itemManager = ItemManagerFactory.getInstance().createInterface();
 }

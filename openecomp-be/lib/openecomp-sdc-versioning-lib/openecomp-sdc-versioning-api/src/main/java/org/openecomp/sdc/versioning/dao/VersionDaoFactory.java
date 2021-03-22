@@ -17,14 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.versioning.dao;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class VersionDaoFactory extends AbstractComponentFactory<VersionDao> {
-  public static VersionDaoFactory getInstance() {
-    return AbstractFactory.getInstance(VersionDaoFactory.class);
-  }
+
+    public static VersionDaoFactory getInstance() {
+        return AbstractFactory.getInstance(VersionDaoFactory.class);
+    }
 }

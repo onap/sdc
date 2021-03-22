@@ -16,14 +16,14 @@
 package org.openecomp.sdcrests.item.types;
 
 public class ItemActionRequestDto {
-  private ItemAction action;
 
-  public ItemAction getAction() {
-    return action;
-  }
+    private ItemAction action;
 
-  public void setAction(ItemAction action) {
-    this.action = action;
-  }
+    public ItemAction getAction() {
+        return action;
+    }
 
+    public void setAction(ItemAction action) {
+        this.action = action;
+    }
 }

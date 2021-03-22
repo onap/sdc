@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,91 +17,80 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.action;
-
 
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 
 public class ActionConstants {
 
-  //
-  public static final long MAX_ACTION_ARTIFACT_SIZE = 20 * 1024 * 1024L; //20 MB
-  //REST layer constants
-  public static final String X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM = "X-OPEN-ECOMP-InstanceID";
-  public static final String X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM = "X-OPEN-ECOMP-RequestID";
-  public static final String WWW_AUTHENTICATE_HEADER_PARAM = "WWW-Authenticate";
+    public static final long MAX_ACTION_ARTIFACT_SIZE = 20 * 1024 * 1024L; //20 MB
 
-  public static final String ACTION_REQUEST_PARAM_NAME = "name";
-  public static final String ACTION_REQUEST_PARAM_END_POINT_URI = "endpointUri";
-  public static final String SUPPORTED_MODELS_VERSION_ID = "versionId";
-  public static final String SUPPORTED_COMPONENTS_ID = "Id";
-  public static final String ACTION_REQUEST_PARAM_SUPPORTED_MODELS = SUPPORTED_MODELS_VERSION_ID
-       + " in supportedModels";
-  public static final String ACTION_REQUEST_PARAM_SUPPORTED_COMPONENTS =
-      SUPPORTED_COMPONENTS_ID + " in supportedComponents";
+    //REST layer constants
+    public static final String X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM = "X-OPEN-ECOMP-InstanceID";
+    public static final String X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM = "X-OPEN-ECOMP-RequestID";
+    public static final String WWW_AUTHENTICATE_HEADER_PARAM = "WWW-Authenticate";
+    public static final String ACTION_REQUEST_PARAM_NAME = "name";
+    public static final String ACTION_REQUEST_PARAM_END_POINT_URI = "endpointUri";
+    public static final String SUPPORTED_MODELS_VERSION_ID = "versionId";
+    public static final String SUPPORTED_COMPONENTS_ID = "Id";
+    public static final String ACTION_REQUEST_PARAM_SUPPORTED_MODELS = SUPPORTED_MODELS_VERSION_ID + " in supportedModels";
+    public static final String ACTION_REQUEST_PARAM_SUPPORTED_COMPONENTS = SUPPORTED_COMPONENTS_ID + " in supportedComponents";
+    public static final String REQUEST_EMPTY_BODY = "{}";
+    public static final String REQUEST_TYPE_CREATE_ACTION = "REQUEST_CREATE_ACTION";
+    public static final String REQUEST_TYPE_UPDATE_ACTION = "REQUEST_UPDATE_ACTION";
+    public static final String REQUEST_TYPE_VERSION_ACTION = "REQUEST_VERSION_ACTION";
+    //DAO layer constants
+    public static final String ACTION_VERSIONABLE_TYPE = "Action";
+    //Manager constants
+    public static final String UNIQUE_ID = "actionUuId";
+    public static final String VERSION = "version";
+    public static final String INVARIANTUUID = "actionInvariantUuId";
+    public static final String STATUS = "status";
+    public static final String ARTIFACTS = "artifacts";
+    public static final String TIMESTAMP = "timeStamp";
+    public static final String UPDATED_BY = "updatedBy";
+    public static final String ARTIFACT_NAME = "artifactName";
+    public static final String ARTIFACT_FILE = "Artifact to be uploaded";
+    // Status
+    public static final String UNDO_CHECKOUT_RESPONSE_TEXT = "Changes to the Action object successfully reverted back.";
+    //GET Request Filter Types
+    public static final String FILTER_TYPE_VENDOR = "VENDOR";
+    public static final String FILTER_TYPE_CATEGORY = "CATEGORY";
+    public static final String FILTER_TYPE_NAME = "NAME";
+    public static final String FILTER_TYPE_MODEL = "MODEL";
+    public static final String FILTER_TYPE_OPEN_ECOMP_COMPONENT = "OPEN_ECOMP_COMPONENT";
+    public static final String FILTER_TYPE_NONE = "NONE";
+    public static final String ARTIFACT_METADATA_ATTR_UUID = "ARTIFACT_UUID";
+    public static final String ARTIFACT_METADATA_ATTR_NAME = "ARTIFACT_NAME";
+    public static final String REQUEST_ID = ONAPLogConstants.MDCs.REQUEST_ID;
+    public static final String SERVICE_INSTANCE_ID = "serviceInstanceID";
+    public static final String PARTNER_NAME = ONAPLogConstants.MDCs.PARTNER_NAME;
+    public static final String SERVICE_NAME = ONAPLogConstants.MDCs.SERVICE_NAME;
+    public static final String INSTANCE_UUID = ONAPLogConstants.MDCs.INSTANCE_UUID;
+    public static final String REMOTE_HOST = "RemoteHost";
+    public static final String CLIENT_IP = ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS;
+    public static final String CATEGORY_LOG_LEVEL = "level";
+    public static final String STATUS_CODE = ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE;
+    public static final String RESPONSE_CODE = ONAPLogConstants.MDCs.RESPONSE_CODE;
+    public static final String RESPONSE_DESCRIPTION = ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION;
+    public static final String ELAPSED_TIME = "ElapsedTime";
+    public static final String BEGIN_TIMESTAMP = ONAPLogConstants.MDCs.ENTRY_TIMESTAMP;
+    public static final String TARGET_SERVICE_NAME = ONAPLogConstants.MDCs.TARGET_SERVICE_NAME;
+    public static final String TARGET_ENTITY = ONAPLogConstants.MDCs.TARGET_ENTITY;
+    public static final String TARGET_ENTITY_API = "API";
+    public static final String TARGET_ENTITY_DB = "DB";
+    public static final String END_TIMESTAMP = "EndTimestamp";
+    public static final String ERROR_CATEGORY = "ErrorCategory";
+    public static final String ERROR_CODE = "ErrorCode";
+    public static final String ERROR_DESCRIPTION = "ErrorDescription";
+    public static final String MDC_ASDC_INSTANCE_UUID = "ASDC";
+    public static final String SERVICE_METRIC_BEGIN_TIMESTAMP = "SERVICE-METRIC-BEGIN-TIMESTAMP";
+    public static final String LOCAL_ADDR = "localAddr"; //map ServerIPAddress from loggingfilter
 
-  public static final String REQUEST_EMPTY_BODY = "{}";
-  public static final String REQUEST_TYPE_CREATE_ACTION = "REQUEST_CREATE_ACTION";
-  public static final String REQUEST_TYPE_UPDATE_ACTION = "REQUEST_UPDATE_ACTION";
-  public static final String REQUEST_TYPE_VERSION_ACTION = "REQUEST_VERSION_ACTION";
+    public static final String BE_FQDN = "beFqdn"; //map ServerFQDN from logging filter
 
-  //DAO layer constants
-  public static final String ACTION_VERSIONABLE_TYPE = "Action";
+    public final class UniqueValues {
 
-  //Manager constants
-  public static final String UNIQUE_ID = "actionUuId";
-  public static final String VERSION = "version";
-  public static final String INVARIANTUUID = "actionInvariantUuId";
-  public static final String STATUS = "status";
-  public static final String ARTIFACTS = "artifacts";
-  public static final String TIMESTAMP = "timeStamp";
-  public static final String UPDATED_BY = "updatedBy";
-  public static final String ARTIFACT_NAME = "artifactName";
-  public static final String ARTIFACT_FILE = "Artifact to be uploaded";
-
-  // Status
-  public static final String UNDO_CHECKOUT_RESPONSE_TEXT =
-      "Changes to the Action object successfully reverted back.";
-
-  //GET Request Filter Types
-  public static final String FILTER_TYPE_VENDOR = "VENDOR";
-  public static final String FILTER_TYPE_CATEGORY = "CATEGORY";
-  public static final String FILTER_TYPE_NAME = "NAME";
-  public static final String FILTER_TYPE_MODEL = "MODEL";
-  public static final String FILTER_TYPE_OPEN_ECOMP_COMPONENT = "OPEN_ECOMP_COMPONENT";
-  public static final String FILTER_TYPE_NONE = "NONE";
-
-  public static final String ARTIFACT_METADATA_ATTR_UUID = "ARTIFACT_UUID";
-  public static final String ARTIFACT_METADATA_ATTR_NAME = "ARTIFACT_NAME";
-
-  public static final String REQUEST_ID = ONAPLogConstants.MDCs.REQUEST_ID;
-  public static final String SERVICE_INSTANCE_ID = "serviceInstanceID";
-  public static final String PARTNER_NAME = ONAPLogConstants.MDCs.PARTNER_NAME;
-  public static final String SERVICE_NAME = ONAPLogConstants.MDCs.SERVICE_NAME;
-  public static final String INSTANCE_UUID = ONAPLogConstants.MDCs.INSTANCE_UUID;
-  public static final String REMOTE_HOST = "RemoteHost";
-  public static final String CLIENT_IP = ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS;
-  public static final String CATEGORY_LOG_LEVEL = "level";
-  public static final String STATUS_CODE = ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE;
-  public static final String RESPONSE_CODE = ONAPLogConstants.MDCs.RESPONSE_CODE;
-  public static final String RESPONSE_DESCRIPTION = ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION;
-  public static final String ELAPSED_TIME = "ElapsedTime";
-  public static final String BEGIN_TIMESTAMP = ONAPLogConstants.MDCs.ENTRY_TIMESTAMP;
-  public static final String TARGET_SERVICE_NAME = ONAPLogConstants.MDCs.TARGET_SERVICE_NAME;
-  public static final String TARGET_ENTITY = ONAPLogConstants.MDCs.TARGET_ENTITY;
-  public static final String TARGET_ENTITY_API = "API";
-  public static final String TARGET_ENTITY_DB = "DB";
-  public static final String END_TIMESTAMP = "EndTimestamp";
-  public static final String ERROR_CATEGORY = "ErrorCategory";
-  public static final String ERROR_CODE = "ErrorCode";
-  public static final String ERROR_DESCRIPTION = "ErrorDescription";
-  public static final String MDC_ASDC_INSTANCE_UUID = "ASDC";
-  public static final String SERVICE_METRIC_BEGIN_TIMESTAMP = "SERVICE-METRIC-BEGIN-TIMESTAMP";
-  public static final String LOCAL_ADDR = "localAddr"; //map ServerIPAddress from loggingfilter
-  public static final String BE_FQDN = "beFqdn"; //map ServerFQDN from logging filter
-
-  public final class UniqueValues {
-    public static final String ACTION_NAME = "Action name";
-  }
+        public static final String ACTION_NAME = "Action name";
+    }
 }

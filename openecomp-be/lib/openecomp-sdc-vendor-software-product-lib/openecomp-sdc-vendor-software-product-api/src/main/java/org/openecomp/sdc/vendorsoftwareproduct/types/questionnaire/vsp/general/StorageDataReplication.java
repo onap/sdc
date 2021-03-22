@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general;
 
 import lombok.Getter;
@@ -34,5 +33,4 @@ public class StorageDataReplication {
     private Number storageReplicationFrequency;
     private String storageReplicationSource;
     private String storageReplicationDestination;
-
 }

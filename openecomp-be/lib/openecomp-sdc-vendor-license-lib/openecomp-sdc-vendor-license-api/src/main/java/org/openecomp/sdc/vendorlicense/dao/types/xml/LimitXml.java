@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.dao.types.xml;
 
 import lombok.Getter;
@@ -26,27 +25,27 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LimitXml {
-  String description;
-  String metric;
-  String values;
-  String unit;
-  String time;
-  String aggregationFunction;
 
-  public EntitlementTimeForXml getTimeForArtifact() {
-    EntitlementTimeForXml timeForXml = new EntitlementTimeForXml();
-    if (time != null) {
-      timeForXml.setValue(time);
+    String description;
+    String metric;
+    String values;
+    String unit;
+    String time;
+    String aggregationFunction;
+
+    public EntitlementTimeForXml getTimeForArtifact() {
+        EntitlementTimeForXml timeForXml = new EntitlementTimeForXml();
+        if (time != null) {
+            timeForXml.setValue(time);
+        }
+        return timeForXml;
     }
 
-    return timeForXml;
-  }
-
-  public AggregationFunctionForXml getAggregationFunctionForArtifact() {
-    AggregationFunctionForXml aggregationFunctionForXml = new AggregationFunctionForXml();
-    if (aggregationFunction != null) {
-      aggregationFunctionForXml.setValue(aggregationFunction);
+    public AggregationFunctionForXml getAggregationFunctionForArtifact() {
+        AggregationFunctionForXml aggregationFunctionForXml = new AggregationFunctionForXml();
+        if (aggregationFunction != null) {
+            aggregationFunctionForXml.setValue(aggregationFunction);
+        }
+        return aggregationFunctionForXml;
     }
-    return aggregationFunctionForXml;
-  }
 }

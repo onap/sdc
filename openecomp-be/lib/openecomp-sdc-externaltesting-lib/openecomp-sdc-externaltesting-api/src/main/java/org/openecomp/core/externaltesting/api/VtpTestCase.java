@@ -16,27 +16,25 @@
 
 package org.openecomp.core.externaltesting.api;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 
 @Data
 public class VtpTestCase {
 
-  private String scenario;
-  private String testCaseName;
-  private String testSuiteName;
-  private String description;
-  private String author;
-  private List<VtpTestCaseInput> inputs;
-  private List<VtpTestCaseOutput> outputs;
+    private String scenario;
+    private String testCaseName;
+    private String testSuiteName;
+    private String description;
+    private String author;
+    private List<VtpTestCaseInput> inputs;
+    private List<VtpTestCaseOutput> outputs;
 
-  /**
-   * Extends VTP test case content with location where test case is defined.
-   * This value is populated by the SDC-BE for consumption by the front end.
-   * This allows the front end to tell the back end where to run the test.
-   */
-  private String endpoint;
+    /**
+     * Extends VTP test case content with location where test case is defined. This value is populated by the SDC-BE for consumption by the front end.
+     * This allows the front end to tell the back end where to run the test.
+     */
+    private String endpoint;
 
 }

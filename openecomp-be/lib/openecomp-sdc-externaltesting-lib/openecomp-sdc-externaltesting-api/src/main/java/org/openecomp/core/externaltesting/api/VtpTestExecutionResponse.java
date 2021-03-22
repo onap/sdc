@@ -17,37 +17,37 @@
 package org.openecomp.core.externaltesting.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class VtpTestExecutionResponse {
-  private String scenario;
-  private String testCaseName;
-  private String testSuiteName;
-  private String executionId;
-  private Map<String,String> parameters;
-  private Object results;
-  private String status;
-  private String startTime; // don't bother to convert various ISO8601 formats.
-  private String endTime;   // don't bother to convert various ISO8601 formats.
 
-  /**
-   * In the event on an error, code provided.
-   */
-  @JsonInclude(value= JsonInclude.Include.NON_NULL)
-  private String code;
+    private String scenario;
+    private String testCaseName;
+    private String testSuiteName;
+    private String executionId;
+    private Map<String, String> parameters;
+    private Object results;
+    private String status;
+    private String startTime; // don't bother to convert various ISO8601 formats.
+    private String endTime;   // don't bother to convert various ISO8601 formats.
 
-  /**
-   * Error message
-   */
-  @JsonInclude(value= JsonInclude.Include.NON_NULL)
-  private String message;
+    /**
+     * In the event on an error, code provided.
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private String code;
 
-  /**
-   * In the event of an unexpected status.
-   */
-  @JsonInclude(value= JsonInclude.Include.NON_NULL)
-  private Integer httpStatus;
+    /**
+     * Error message
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private String message;
+
+    /**
+     * In the event of an unexpected status.
+     */
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Integer httpStatus;
 }

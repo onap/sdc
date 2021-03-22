@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd;
 
 import java.util.Set;
@@ -33,8 +32,7 @@ import org.openecomp.core.converter.pnfd.model.TransformationBlock;
  */
 public class PnfdNodeTypeTransformationEngine extends AbstractPnfdTransformationEngine {
 
-    public PnfdNodeTypeTransformationEngine(final ServiceTemplateReaderService templateFrom,
-                                            final ServiceTemplate templateTo) {
+    public PnfdNodeTypeTransformationEngine(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo) {
         super(templateFrom, templateTo);
     }
 
@@ -57,16 +55,12 @@ public class PnfdNodeTypeTransformationEngine extends AbstractPnfdTransformation
             return;
         }
         final Set<Transformation> validNodeTypeTransformationSet = transformationSet.stream()
-            .filter(transformation -> transformation.getBlock() == TransformationBlock.NODE_TYPE)
-            .filter(Transformation::isValid)
+            .filter(transformation -> transformation.getBlock() == TransformationBlock.NODE_TYPE).filter(Transformation::isValid)
             .collect(Collectors.toSet());
-
         if (CollectionUtils.isEmpty(validNodeTypeTransformationSet)) {
             return;
         }
-        validNodeTypeTransformationSet.forEach(transformation ->
-            PnfdBlockParserFactory.getInstance().get(transformation).ifPresent(pnfdBlockParser ->
-                pnfdBlockParser.parse(templateFrom, templateTo)));
+        validNodeTypeTransformationSet.forEach(transformation -> PnfdBlockParserFactory.getInstance().get(transformation)
+            .ifPresent(pnfdBlockParser -> pnfdBlockParser.parse(templateFrom, templateTo)));
     }
-
 }

@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.heat.datatypes;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -28,17 +26,11 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 
 public class HeatBoolean {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HeatBoolean.class.getName());
     private static Set<Object> heatFalse;
     private static Set<Object> heatTrue;
-    private static final Logger LOG = LoggerFactory.getLogger(HeatBoolean.class.getName());
-
-    private HeatBoolean() {
-        //Utility classes, which are a collection of static members, are not meant to be instantiated
-    }
 
     static {
-
-
         heatFalse = new HashSet<>();
         heatFalse.add("f");
         heatFalse.add(false);
@@ -47,7 +39,6 @@ public class HeatBoolean {
         heatFalse.add("n");
         heatFalse.add("no");
         heatFalse.add(0);
-
         heatTrue = new HashSet<>();
         heatTrue.add("t");
         heatTrue.add(true);
@@ -56,7 +47,10 @@ public class HeatBoolean {
         heatTrue.add("y");
         heatTrue.add("yes");
         heatTrue.add(1);
+    }
 
+    private HeatBoolean() {
+        //Utility classes, which are a collection of static members, are not meant to be instantiated
     }
 
     /**
@@ -66,7 +60,6 @@ public class HeatBoolean {
      * @return the boolean
      */
     public static Boolean eval(Object value) {
-
         if (value instanceof String) {
             value = ((String) value).toLowerCase();
         }
@@ -75,11 +68,9 @@ public class HeatBoolean {
         } else if (heatTrue.contains(value)) {
             return true;
         } else {
-            throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withId(ErrorCodes.INVALID_BOOLEAN)
-                    .withCategory(ErrorCategory.APPLICATION)
-                    .withMessage("Invalid boolean value [" + value + "].").build());
+            throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withId(ErrorCodes.INVALID_BOOLEAN).withCategory(ErrorCategory.APPLICATION)
+                .withMessage("Invalid boolean value [" + value + "].").build());
         }
-
     }
 
     /**

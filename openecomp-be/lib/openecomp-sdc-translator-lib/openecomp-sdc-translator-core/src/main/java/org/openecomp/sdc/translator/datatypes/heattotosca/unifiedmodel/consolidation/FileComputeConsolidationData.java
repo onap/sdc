@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.Collection;
@@ -42,20 +41,16 @@ public class FileComputeConsolidationData {
         return typeComputeConsolidationData.get(computeType);
     }
 
-    public void setTypeComputeConsolidationData(String computeType, TypeComputeConsolidationData
-            typeComputeConsolidationData) {
+    public void setTypeComputeConsolidationData(String computeType, TypeComputeConsolidationData typeComputeConsolidationData) {
         this.typeComputeConsolidationData.put(computeType, typeComputeConsolidationData);
     }
 
-
     /**
-    * add compute template consolidation data according to given key if it doesn't exist yet.
-    *
-    * @return compute template consolidation data by given keys
-    */
-    ComputeTemplateConsolidationData addComputeTemplateConsolidationData(
-                      String computeType, String computeNodeTemplateId) {
-
+     * add compute template consolidation data according to given key if it doesn't exist yet.
+     *
+     * @return compute template consolidation data by given keys
+     */
+    ComputeTemplateConsolidationData addComputeTemplateConsolidationData(String computeType, String computeNodeTemplateId) {
         TypeComputeConsolidationData consolidationData = addTypeComputeConsolidationData(computeType);
         return consolidationData.addComputeTemplateConsolidationData(computeNodeTemplateId);
     }
@@ -75,10 +70,8 @@ public class FileComputeConsolidationData {
      * @return the boolean
      */
     public boolean isNumberOfComputeTypesLegal() {
-        Collection<TypeComputeConsolidationData> typeComputeConsolidationDataCollection =
-                getAllTypeComputeConsolidationData();
-        return typeComputeConsolidationDataCollection.size() == 1
-                       && typeComputeConsolidationDataCollection.iterator().next()
-                                                                .isNumberOfComputeConsolidationDataPerTypeLegal();
+        Collection<TypeComputeConsolidationData> typeComputeConsolidationDataCollection = getAllTypeComputeConsolidationData();
+        return typeComputeConsolidationDataCollection.size() == 1 && typeComputeConsolidationDataCollection.iterator().next()
+            .isNumberOfComputeConsolidationDataPerTypeLegal();
     }
 }

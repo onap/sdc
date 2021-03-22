@@ -17,26 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.dao.types.xml;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-
 import java.util.Set;
 
 public class LimitForXml {
 
-  Set<LimitXml> limits;
+    Set<LimitXml> limits;
 
-  @JacksonXmlProperty(isAttribute = false, localName = "limit")
-  @JacksonXmlElementWrapper(localName = "limits", useWrapping = false)
-  public Set<LimitXml> getLimits() {
-    return limits;
-  }
+    @JacksonXmlProperty(isAttribute = false, localName = "limit")
+    @JacksonXmlElementWrapper(localName = "limits", useWrapping = false)
+    public Set<LimitXml> getLimits() {
+        return limits;
+    }
 
-  public void setLimits(
-      Set<LimitXml> limits) {
-    this.limits = limits;
-  }
+    public void setLimits(Set<LimitXml> limits) {
+        this.limits = limits;
+    }
 }

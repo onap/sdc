@@ -17,69 +17,67 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.item.types;
-
 
 import java.util.Date;
 
 public class ActivityLogDto {
 
-  private String id;
-  private Date timestamp;
-  private String type;
-  private String comment;
-  private String user;
-  private ActivityStatus status;
+    private String id;
+    private Date timestamp;
+    private String type;
+    private String comment;
+    private String user;
+    private ActivityStatus status;
 
-  public ActivityLogDto() {
-  }
+    public ActivityLogDto() {
+    }
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public Date getTimestamp() {
-    return timestamp;
-  }
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
-  public void setTimestamp(Date timestamp) {
-    this.timestamp = timestamp;
-  }
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
-  public String getType() {
-    return type;
-  }
+    public String getType() {
+        return type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  public String getComment() {
-    return comment;
-  }
+    public String getComment() {
+        return comment;
+    }
 
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-  public String getUser() {
-    return user;
-  }
+    public String getUser() {
+        return user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public ActivityStatus getStatus() {
-    return status;
-  }
+    public ActivityStatus getStatus() {
+        return status;
+    }
 
-  public void setStatus(ActivityStatus status) {
-    this.status = status;
-  }
+    public void setStatus(ActivityStatus status) {
+        this.status = status;
+    }
 }

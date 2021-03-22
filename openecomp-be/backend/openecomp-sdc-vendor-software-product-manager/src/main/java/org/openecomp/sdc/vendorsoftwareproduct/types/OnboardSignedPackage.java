@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.nio.ByteBuffer;
@@ -27,13 +26,14 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 
 @Getter
 public class OnboardSignedPackage extends OnboardPackage {
+
     private String signatureFilePath;
     private String internalPackageFilePath;
     private String certificateFilePath;
 
     public OnboardSignedPackage(final String filename, final String fileExtension, final ByteBuffer fileContent,
-                                final FileContentHandler fileContentHandler, final String signatureFilePath,
-                                final String internalPackageFilePath, final String certificateFilePath) {
+                                final FileContentHandler fileContentHandler, final String signatureFilePath, final String internalPackageFilePath,
+                                final String certificateFilePath) {
         super(filename, fileExtension, fileContent, fileContentHandler);
         this.signatureFilePath = signatureFilePath;
         this.internalPackageFilePath = internalPackageFilePath;

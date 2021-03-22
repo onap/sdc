@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.util.Map;
@@ -28,7 +27,6 @@ import java.util.concurrent.Callable;
 class MDCCallableWrapper<V> implements Callable<V> {
 
     private final Context context = new Context();
-
     private final Callable<V> task;
 
     MDCCallableWrapper(Callable<V> task) {
@@ -37,9 +35,7 @@ class MDCCallableWrapper<V> implements Callable<V> {
 
     @Override
     public V call() throws Exception {
-
         Map<ContextField, String> oldContext = context.replace();
-
         try {
             return task.call();
         } finally {

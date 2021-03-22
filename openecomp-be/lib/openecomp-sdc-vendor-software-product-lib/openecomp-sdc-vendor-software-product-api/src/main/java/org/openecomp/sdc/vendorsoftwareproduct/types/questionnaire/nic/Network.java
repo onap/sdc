@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ import lombok.ToString;
 public class Network {
 
     private String networkDescription;
-
 }

@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 
 public abstract class ProcessManagerFactory extends AbstractComponentFactory<ProcessManager> {
 
-  public static ProcessManagerFactory getInstance() {
-    return getInstance(ProcessManagerFactory.class);
-  }
+    public static ProcessManagerFactory getInstance() {
+        return getInstance(ProcessManagerFactory.class);
+    }
 }

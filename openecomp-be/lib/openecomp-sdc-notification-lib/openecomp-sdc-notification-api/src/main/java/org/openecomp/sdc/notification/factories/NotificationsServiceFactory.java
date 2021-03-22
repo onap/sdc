@@ -17,18 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.factories;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 import org.openecomp.sdc.notification.services.NotificationsService;
 
-
 public abstract class NotificationsServiceFactory extends AbstractComponentFactory<NotificationsService> {
 
-  public static NotificationsServiceFactory getInstance() {
-    return AbstractFactory.getInstance(NotificationsServiceFactory.class);
-  }
-
+    public static NotificationsServiceFactory getInstance() {
+        return AbstractFactory.getInstance(NotificationsServiceFactory.class);
+    }
 }

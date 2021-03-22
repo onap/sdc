@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2018 AT&T Intellectual Property.
 
-  * Modifications Copyright (c) 2018 Verizon Property.
-  * Modifications Copyright (c) 2019 Nordix Foundation.
+ * Modifications Copyright (c) 2018 Verizon Property.
+ * Modifications Copyright (c) 2019 Nordix Foundation.
 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  * limitations under the License.
 
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
@@ -43,42 +42,35 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
-public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
-    implements OrchestrationTemplateFileHandler {
+public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
 
     @Override
     public UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo) {
         final UploadFileResponse uploadFileResponse = new UploadFileResponse();
         if (onboardPackageInfo.getPackageType() == OnboardingTypesEnum.SIGNED_CSAR) {
-            final OnboardSignedPackage originalOnboardPackage =
-                (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
+            final OnboardSignedPackage originalOnboardPackage = (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
             validatePackageSecurity(originalOnboardPackage).ifPresent(packageSignatureResponse -> {
                 if (packageSignatureResponse.hasErrors()) {
                     uploadFileResponse.addStructureErrors(packageSignatureResponse.getErrors());
                 }
             });
-
             if (uploadFileResponse.hasErrors()) {
                 return uploadFileResponse;
             }
         }
         final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
         final FileContentHandler fileContentHandler = onboardPackage.getFileContentHandler();
-
         try {
             final Validator validator = ValidatorFactory.getValidator(fileContentHandler);
             uploadFileResponse.addStructureErrors(validator.validateContent(fileContentHandler));
         } catch (IOException exception) {
             logger.error(exception.getMessage(), exception);
-            uploadFileResponse.addStructureError(
-                SdcCommon.UPLOAD_FILE,
-                new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_CSAR_FILE.getErrorMessage()));
+            uploadFileResponse
+                .addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_CSAR_FILE.getErrorMessage()));
         } catch (CoreException coreException) {
             logger.error(coreException.getMessage(), coreException);
-            uploadFileResponse.addStructureError(
-                SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
+            uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
         }
-
         return uploadFileResponse;
     }
 
@@ -87,8 +79,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         try {
             final CsarSecurityValidator csarSecurityValidator = new CsarSecurityValidator();
             if (!csarSecurityValidator.verifyPackageSignature(originalOnboardPackage)) {
-                final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
-                    Messages.FAILED_TO_VERIFY_SIGNATURE.getErrorMessage());
+                final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_VERIFY_SIGNATURE.getErrorMessage());
                 logger.error(errorMessage.getMessage());
                 uploadFileResponseDto.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage);
                 return Optional.of(uploadFileResponseDto);
@@ -103,31 +94,24 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     }
 
     @Override
-    protected UploadFileResponse updateCandidateData(final VspDetails vspDetails,
-                                                     final OnboardPackageInfo onboardPackageInfo,
+    protected UploadFileResponse updateCandidateData(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo,
                                                      final CandidateService candidateService) {
         final UploadFileResponse uploadFileResponse = new UploadFileResponse();
         final OnboardPackage csarPackage = onboardPackageInfo.getOnboardPackage();
         final OnboardPackage originalOnboardPackage = onboardPackageInfo.getOriginalOnboardPackage();
         try {
             candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(),
-                new OrchestrationTemplateCandidateData(csarPackage.getFileContent(),
-                    "", csarPackage.getFileExtension(),
-                    csarPackage.getFilename(), originalOnboardPackage.getFilename(),
-                    originalOnboardPackage.getFileExtension(),
-                    originalOnboardPackage.getFileContent()));
+                new OrchestrationTemplateCandidateData(csarPackage.getFileContent(), "", csarPackage.getFileExtension(), csarPackage.getFilename(),
+                    originalOnboardPackage.getFilename(), originalOnboardPackage.getFileExtension(), originalOnboardPackage.getFileContent()));
         } catch (final Exception exception) {
-            logger.error(getErrorWithParameters(Messages.FILE_LOAD_CONTENT_ERROR.getErrorMessage(),
-                getHandlerType().toString()), exception);
-            uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE,
-                new ErrorMessage(ErrorLevel.ERROR, exception.getMessage()));
+            logger.error(getErrorWithParameters(Messages.FILE_LOAD_CONTENT_ERROR.getErrorMessage(), getHandlerType().toString()), exception);
+            uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, exception.getMessage()));
         }
         return uploadFileResponse;
     }
 
-  @Override
-  protected OnboardingTypesEnum getHandlerType() {
-    return OnboardingTypesEnum.CSAR;
-  }
-
+    @Override
+    protected OnboardingTypesEnum getHandlerType() {
+        return OnboardingTypesEnum.CSAR;
+    }
 }

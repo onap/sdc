@@ -13,32 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
+import java.util.Optional;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Optional;
-
 public interface OrchestrationTemplateCandidateDao extends VersionableDao {
 
-  Optional<OrchestrationTemplateCandidateData> get(String vspId, Version version);
+    Optional<OrchestrationTemplateCandidateData> get(String vspId, Version version);
 
-  Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version);
+    Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version);
 
-  void delete(String vspId, Version version);
+    void delete(String vspId, Version version);
 
-  void update(String vspId, Version version, OrchestrationTemplateCandidateData candidateData);
+    void update(String vspId, Version version, OrchestrationTemplateCandidateData candidateData);
 
-  void updateStructure(String vspId, Version version, FilesDataStructure fileDataStructure);
+    void updateStructure(String vspId, Version version, FilesDataStructure fileDataStructure);
 
-  Optional<String> getStructure(String vspId, Version version);
+    Optional<String> getStructure(String vspId, Version version);
 
-  void updateValidationData(String vspId, Version version, ValidationStructureList
-      validationData);
+    void updateValidationData(String vspId, Version version, ValidationStructureList validationData);
 }
-

@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_INSTANCE_UUID;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil.getResource;
+
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
@@ -42,13 +47,6 @@ import org.openecomp.sdc.translator.services.heattotosca.errors.MissingMandatory
 import org.openecomp.sdc.translator.services.heattotosca.helper.VolumeTranslationHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_INSTANCE_UUID;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil.getResource;
-
 public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTranslationBase {
 
     protected static Logger logger = LoggerFactory.getLogger(ResourceTranslationCinderVolumeAttachmentImpl.class);
@@ -59,19 +57,15 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
         relationTemplate.setType(ToscaRelationshipType.CINDER_VOLUME_ATTACHES_TO);
         String heatFileName = translateTo.getHeatFileName();
         relationTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
-                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
-                        translateTo.getResourceId(), translateTo.getResource().getProperties(),
-                        relationTemplate.getProperties(), heatFileName,
-                        translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
-                        relationTemplate, translateTo.getContext()));
-
+            .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(), translateTo.getResourceId(),
+                translateTo.getResource().getProperties(), relationTemplate.getProperties(), heatFileName, translateTo.getHeatOrchestrationTemplate(),
+                translateTo.getResource().getType(), relationTemplate, translateTo.getContext()));
         String volumeIdPropertyName = HeatConstants.VOL_ID_PROPERTY_NAME;
         AttachedResourceId attachedVolumeId = getAttachedResourceId(translateTo, volumeIdPropertyName);
         String instanceUuid = HeatConstants.INSTANCE_UUID_PROPERTY_NAME;
         AttachedResourceId attachedNovaServerId = getAttachedResourceId(translateTo, instanceUuid);
         if (attachedNovaServerId.isGetResource()) {
-            handleNovaGetResource(translateTo, relationTemplate, attachedVolumeId,
-                    (String) attachedNovaServerId.getEntityId());
+            handleNovaGetResource(translateTo, relationTemplate, attachedVolumeId, (String) attachedNovaServerId.getEntityId());
         } else {
             logger.warn(LOG_INVALID_INSTANCE_UUID, translateTo.getResourceId(), translateTo.getResource().getType());
         }
@@ -87,16 +81,15 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
     }
 
     private AttachedResourceId getAttachedResourceId(TranslateTo translateTo, String propertyName) {
-        Optional<AttachedResourceId> attachedResourceId = HeatToToscaUtil.extractAttachedResourceId(translateTo,
-                propertyName);
+        Optional<AttachedResourceId> attachedResourceId = HeatToToscaUtil.extractAttachedResourceId(translateTo, propertyName);
         if (!attachedResourceId.isPresent()) {
             throw new CoreException(new MissingMandatoryPropertyErrorBuilder(propertyName).build());
         }
         return attachedResourceId.get();
     }
 
-    private void handleNovaGetResource(TranslateTo translateTo, RelationshipTemplate relationTemplate,
-                                       AttachedResourceId volResourceId, String novaResourceId) {
+    private void handleNovaGetResource(TranslateTo translateTo, RelationshipTemplate relationTemplate, AttachedResourceId volResourceId,
+                                       String novaResourceId) {
         RequirementAssignment requirement = new RequirementAssignment();
         String toscaCapabilityAttachment = ToscaCapabilityType.NATIVE_ATTACHMENT;
         requirement.setCapability(toscaCapabilityAttachment);
@@ -108,93 +101,72 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
         translateNovaServerResource(translateTo, novaResourceId, requirement);
     }
 
-    private void translateNovaServerResource(TranslateTo translateTo, String novaResourceId,
-                                             RequirementAssignment requirement) {
-        Resource novaServerResource =
-                getResource(translateTo.getHeatOrchestrationTemplate(), novaResourceId, translateTo.getHeatFileName());
-        if (!StringUtils.equals(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-                novaServerResource.getType())) {
-            logger.warn(LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG, translateTo.getResourceId(),
-                    novaServerResource.getType(), HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
+    private void translateNovaServerResource(TranslateTo translateTo, String novaResourceId, RequirementAssignment requirement) {
+        Resource novaServerResource = getResource(translateTo.getHeatOrchestrationTemplate(), novaResourceId, translateTo.getHeatFileName());
+        if (!StringUtils.equals(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(), novaServerResource.getType())) {
+            logger.warn(LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG, translateTo.getResourceId(), novaServerResource.getType(),
+                HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
             return;
         }
         Optional<String> translatedNovaServerId = ResourceTranslationFactory.getInstance(novaServerResource)
-                .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(),
-                        translateTo.getHeatOrchestrationTemplate(), novaServerResource, novaResourceId,
-                        translateTo.getContext());
-
+            .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(), translateTo.getHeatOrchestrationTemplate(),
+                novaServerResource, novaResourceId, translateTo.getContext());
         if (translatedNovaServerId.isPresent() && StringUtils.isNotEmpty(requirement.getNode())) {
-            NodeTemplate novaServerNodeTemplate = DataModelUtil
-                    .getNodeTemplate(translateTo.getServiceTemplate(), translatedNovaServerId.get());
-            DataModelUtil.addRequirementAssignment(novaServerNodeTemplate, ToscaConstants
-                    .LOCAL_STORAGE_REQUIREMENT_ID, requirement);
+            NodeTemplate novaServerNodeTemplate = DataModelUtil.getNodeTemplate(translateTo.getServiceTemplate(), translatedNovaServerId.get());
+            DataModelUtil.addRequirementAssignment(novaServerNodeTemplate, ToscaConstants.LOCAL_STORAGE_REQUIREMENT_ID, requirement);
             //Add volume information to consolidation data
-            ConsolidationDataUtil.updateComputeConsolidationDataVolumes(translateTo,
-                    novaServerNodeTemplate.getType(), translatedNovaServerId.get(), ToscaConstants
-                            .LOCAL_STORAGE_REQUIREMENT_ID, requirement);
+            ConsolidationDataUtil.updateComputeConsolidationDataVolumes(translateTo, novaServerNodeTemplate.getType(), translatedNovaServerId.get(),
+                ToscaConstants.LOCAL_STORAGE_REQUIREMENT_ID, requirement);
         }
     }
 
-    private void createVolumeNovaRelationshipForVolGetParam(TranslateTo translateTo,
-                                                               RelationshipTemplate relationTemplate,
-                                                               AttachedResourceId volResourceId,
-                                                               RequirementAssignment requirement) {
+    private void createVolumeNovaRelationshipForVolGetParam(TranslateTo translateTo, RelationshipTemplate relationTemplate,
+                                                            AttachedResourceId volResourceId, RequirementAssignment requirement) {
         String volumeResourceIdParamName = (String) volResourceId.getEntityId();
-        if (translateTo.getContext().getHeatSharedResourcesByParam().containsKey(volumeResourceIdParamName)
-                && !isHeatFileNested(translateTo, translateTo.getHeatFileName())) {
+        if (translateTo.getContext().getHeatSharedResourcesByParam().containsKey(volumeResourceIdParamName) && !isHeatFileNested(translateTo,
+            translateTo.getHeatFileName())) {
             handleSharedVolume(translateTo, relationTemplate, requirement, volumeResourceIdParamName);
         } else {
             handleUnsharedVolume(translateTo, relationTemplate, requirement, volumeResourceIdParamName);
         }
     }
 
-    private void handleSharedVolume(TranslateTo translateTo, RelationshipTemplate relationTemplate,
-                                       RequirementAssignment requirement, String volumeResourceIdParamName) {
-        Resource volServerResource = translateTo.getContext().getHeatSharedResourcesByParam()
-                .get(volumeResourceIdParamName).getHeatResource();
-        if (!StringUtils.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource(),
-                volServerResource.getType())) {
-            logger.warn(LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG, translateTo.getResourceId(),
-                    volServerResource.getType(),
-                    HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
+    private void handleSharedVolume(TranslateTo translateTo, RelationshipTemplate relationTemplate, RequirementAssignment requirement,
+                                    String volumeResourceIdParamName) {
+        Resource volServerResource = translateTo.getContext().getHeatSharedResourcesByParam().get(volumeResourceIdParamName).getHeatResource();
+        if (!StringUtils.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource(), volServerResource.getType())) {
+            logger.warn(LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG, translateTo.getResourceId(), volServerResource.getType(),
+                HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
             return;
         }
-        requirement.setNode(translateTo.getContext().getHeatSharedResourcesByParam().get(volumeResourceIdParamName)
-                        .getTranslatedId());
+        requirement.setNode(translateTo.getContext().getHeatSharedResourcesByParam().get(volumeResourceIdParamName).getTranslatedId());
         requirement.setRelationship(translateTo.getTranslatedId());
-        DataModelUtil.addRelationshipTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
-                        relationTemplate);
+        DataModelUtil.addRelationshipTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), relationTemplate);
     }
 
-    private void createVolumeNovaRelationshipForVolGetResource(TranslateTo translateTo,
-                                                                  RelationshipTemplate relationTemplate,
-                                                                  AttachedResourceId volResourceId,
-                                                                  RequirementAssignment requirement) {
-        Resource volServerResource = getResource(translateTo.getHeatOrchestrationTemplate(),
-                (String) volResourceId.getTranslatedId(), translateTo.getHeatFileName());
-        if (!StringUtils.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource(),
-                volServerResource.getType())) {
+    private void createVolumeNovaRelationshipForVolGetResource(TranslateTo translateTo, RelationshipTemplate relationTemplate,
+                                                               AttachedResourceId volResourceId, RequirementAssignment requirement) {
+        Resource volServerResource = getResource(translateTo.getHeatOrchestrationTemplate(), (String) volResourceId.getTranslatedId(),
+            translateTo.getHeatFileName());
+        if (!StringUtils.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource(), volServerResource.getType())) {
             logger.warn(LOG_UNSUPPORTED_VOLUME_ATTACHMENT_MSG, translateTo.getResourceId(), volServerResource.getType(),
-                    HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
+                HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource());
             return;
         }
         requirement.setNode((String) volResourceId.getTranslatedId());
         requirement.setRelationship(translateTo.getTranslatedId());
-        DataModelUtil.addRelationshipTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
-                relationTemplate);
+        DataModelUtil.addRelationshipTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), relationTemplate);
     }
 
-    private void handleUnsharedVolume(TranslateTo translateTo, RelationshipTemplate relationTemplate,
-                                      RequirementAssignment requirement, String volumeResourceId) {
+    private void handleUnsharedVolume(TranslateTo translateTo, RelationshipTemplate relationTemplate, RequirementAssignment requirement,
+                                      String volumeResourceId) {
         List<FileData> allFilesData = translateTo.getContext().getManifest().getContent().getData();
         Optional<FileData> fileData = HeatToToscaUtil.getFileData(translateTo.getHeatFileName(), allFilesData);
         if (fileData.isPresent()) {
-            Optional<ResourceFileDataAndIDs> fileDataContainingResource =
-                    new VolumeTranslationHelper(logger)
-                            .getFileDataContainingVolume(fileData.get().getData(), volumeResourceId, translateTo,
-                                    FileData.Type.HEAT_VOL);
-            fileDataContainingResource.ifPresent(resourceFileDataAndIDs -> addRelationshipToServiceTemplate(
-                    translateTo, relationTemplate, requirement, resourceFileDataAndIDs));
+            Optional<ResourceFileDataAndIDs> fileDataContainingResource = new VolumeTranslationHelper(logger)
+                .getFileDataContainingVolume(fileData.get().getData(), volumeResourceId, translateTo, FileData.Type.HEAT_VOL);
+            fileDataContainingResource.ifPresent(
+                resourceFileDataAndIDs -> addRelationshipToServiceTemplate(translateTo, relationTemplate, requirement, resourceFileDataAndIDs));
         }
     }
 
@@ -202,17 +174,13 @@ public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTrans
         return translateTo.getContext().getNestedHeatsFiles().contains(heatFileName);
     }
 
-    private void addRelationshipToServiceTemplate(TranslateTo translateTo,
-                                                  RelationshipTemplate relationTemplate,
-                                                  RequirementAssignment requirement,
+    private void addRelationshipToServiceTemplate(TranslateTo translateTo, RelationshipTemplate relationTemplate, RequirementAssignment requirement,
                                                   ResourceFileDataAndIDs resourceFileDataAndIDs) {
         String translatedId = resourceFileDataAndIDs.getTranslatedResourceId();
-        String toscaVolIdPropName =
-                HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.VOL_ID_PROPERTY_NAME);
+        String toscaVolIdPropName = HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.VOL_ID_PROPERTY_NAME);
         relationTemplate.getProperties().put(toscaVolIdPropName, translatedId);
         requirement.setNode(translatedId);
         requirement.setRelationship(translateTo.getTranslatedId());
-        DataModelUtil.addRelationshipTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
-                relationTemplate);
+        DataModelUtil.addRelationshipTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), relationTemplate);
     }
 }

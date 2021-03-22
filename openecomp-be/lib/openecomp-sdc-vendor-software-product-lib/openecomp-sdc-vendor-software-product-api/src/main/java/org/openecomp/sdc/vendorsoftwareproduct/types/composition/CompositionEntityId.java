@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
 import lombok.EqualsAndHashCode;
@@ -36,9 +35,6 @@ public class CompositionEntityId {
 
     @Override
     public String toString() {
-        return parentId == null
-            ? id
-            : parentId + "/" + id;
+        return parentId == null ? id : parentId + "/" + id;
     }
-
 }

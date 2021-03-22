@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.notification.dao.types;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-
 import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @AllArgsConstructor
@@ -34,11 +30,9 @@ import lombok.ToString;
 public class LastSeenNotificationEntity {
 
     public static final String ENTITY_TYPE = "Event Notification";
-
     @PartitionKey
     @Column(name = "owner_id")
     private String ownerId;
-
     @Column(name = "event_id")
     private UUID lastEventId;
 }

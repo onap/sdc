@@ -17,24 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.notifications.types;
 
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import static org.openecomp.sdcrests.notifications.types.NotificationResponseStatus.Failure;
+import static org.openecomp.sdcrests.notifications.types.NotificationResponseStatus.Success;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.openecomp.sdcrests.notifications.types.NotificationResponseStatus.Failure;
-import static org.openecomp.sdcrests.notifications.types.NotificationResponseStatus.Success;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 /**
  * Created by TALIO on 4/27/2016.
  */
 public class UpdateNotificationResponseStatus {
+
     private Map<String, List<ErrorMessage>> errors = new HashMap<>();
     private NotificationResponseStatus status = Success;
 
@@ -55,8 +54,7 @@ public class UpdateNotificationResponseStatus {
     }
 
     public void addStructureError(String notificationId, ErrorMessage errorMessage) {
-        List<ErrorMessage> errorList =
-            errors.computeIfAbsent(notificationId, k -> new ArrayList<>());
+        List<ErrorMessage> errorList = errors.computeIfAbsent(notificationId, k -> new ArrayList<>());
         errorList.add(errorMessage);
         if (ErrorLevel.ERROR.equals(errorMessage.getLevel())) {
             status = Failure;

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.api;
 
 import java.util.Objects;
@@ -22,22 +21,19 @@ import org.openecomp.sdc.logging.spi.LoggerCreationService;
 /**
  * <a>Factory to hide a concrete, framework-specific implementation of logger creation.</a>
  * <p>The service used by this factory must implement {@link LoggerCreationService}. If no
- * implementation has been configured or could be instantiated, a <b>no-op logger</b> will be
- * used, and <b>no events</b> will be logged. This is done to prevent recursion if attempts are
- * being made to log exceptions that resulted from logger initialization. </p>
+ * implementation has been configured or could be instantiated, a <b>no-op logger</b> will be used, and <b>no events</b> will be logged. This is done
+ * to prevent recursion if attempts are being made to log exceptions that resulted from logger initialization. </p>
  *
  * @author evitaliy
- * @since 13/09/2016.
- *
  * @see ServiceBinder
  * @see LoggerCreationService
+ * @since 13/09/2016.
  */
 public class LoggerFactory {
-
     // use the no-op service to prevent recursion in case of an attempt to log an exception as a
+
     // result of a logger initialization error
-    private static final LoggerCreationService SERVICE = ServiceBinder.getCreationServiceBinding().orElseGet(
-            NoOpLoggerCreationService::new);
+    private static final LoggerCreationService SERVICE = ServiceBinder.getCreationServiceBinding().orElseGet(NoOpLoggerCreationService::new);
 
     private LoggerFactory() {
         // prevent instantiation
@@ -52,6 +48,18 @@ public class LoggerFactory {
     }
 
     private static class NoOpLoggerCreationService implements LoggerCreationService {
+
+        @Override
+        public Logger getLogger(String className) {
+            Objects.requireNonNull(className, "Name cannot be null");
+            return NoOpLogger.INSTANCE;
+        }
+
+        @Override
+        public Logger getLogger(Class<?> clazz) {
+            Objects.requireNonNull(clazz, "Class cannot be null");
+            return NoOpLogger.INSTANCE;
+        }
 
         private static class NoOpLogger implements Logger {
 
@@ -212,18 +220,5 @@ public class LoggerFactory {
                 // no-op
             }
         }
-
-        @Override
-        public Logger getLogger(String className) {
-            Objects.requireNonNull(className, "Name cannot be null");
-            return NoOpLogger.INSTANCE;
-        }
-
-        @Override
-        public Logger getLogger(Class<?> clazz) {
-            Objects.requireNonNull(clazz, "Class cannot be null");
-            return NoOpLogger.INSTANCE;
-        }
     }
 }
-

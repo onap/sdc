@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,23 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.errors;
 
 public class CoreException extends RuntimeException {
 
-  private final ErrorCode errorCode;
+    private final ErrorCode errorCode;
 
-  public CoreException(ErrorCode errorCode) {
-    this(errorCode, null);
-  }
+    public CoreException(ErrorCode errorCode) {
+        this(errorCode, null);
+    }
 
-  public CoreException(ErrorCode errorCode, Throwable cause) {
-    super(errorCode.toString(), cause);
-    this.errorCode = errorCode;
-  }
+    public CoreException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode.toString(), cause);
+        this.errorCode = errorCode;
+    }
 
-  public ErrorCode code() {
-    return errorCode;
-  }
+    public ErrorCode code() {
+        return errorCode;
+    }
 }

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import com.google.common.collect.ImmutableMap;
@@ -48,11 +47,10 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
     }
 
     /**
-     * Parses a PNFD block based on the {@link Transformation} provided during the {@link PnfdBlockParser}
-     * instantiation.
+     * Parses a PNFD block based on the {@link Transformation} provided during the {@link PnfdBlockParser} instantiation.
      *
      * @param templateFrom the original PNFD template
-     * @param templateTo the resulting PNFD template
+     * @param templateTo   the resulting PNFD template
      */
     public void parse(final ServiceTemplateReaderService templateFrom, final ServiceTemplate templateTo) {
         this.templateFrom = templateFrom;
@@ -64,8 +62,7 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
     }
 
     /**
-     * Applies all specified conversions in {@link Transformation#getConversionDefinitionList()} for the given
-     * blockYamlObject.
+     * Applies all specified conversions in {@link Transformation#getConversionDefinitionList()} for the given blockYamlObject.
      *
      * @param blockYamlObject the block content as a YAML object
      */
@@ -76,37 +73,31 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
         final List<ConversionDefinition> conversionDefinitionList = transformation.getConversionDefinitionList();
         final Map<String, Object> parsedBlockYamlObject = new HashMap<>();
         final String blockName = blockYamlObject.keySet().iterator().next();
-        conversionDefinitionList.stream()
-            .filter(conversionDefinition -> conversionDefinition.getConversionQuery().isValidAttributeQuery())
+        conversionDefinitionList.stream().filter(conversionDefinition -> conversionDefinition.getConversionQuery().isValidAttributeQuery())
             .forEach(conversionDefinition -> {
-                final Map<String, Object> query =
-                    (Map<String, Object>) conversionDefinition.getConversionQuery().getQuery();
+                final Map<String, Object> query = (Map<String, Object>) conversionDefinition.getConversionQuery().getQuery();
                 final Map<String, Object> blockAttributeMap = (Map<String, Object>) blockYamlObject.get(blockName);
-                final Optional<Map<String, Object>> parsedBlockAttributeMap = buildParsedBlock(query, blockAttributeMap
-                    , conversionDefinition);
-                parsedBlockAttributeMap.ifPresent(convertedNodeTemplateAttributeMap1 ->
-                    mergeYamlObjects(parsedBlockYamlObject, convertedNodeTemplateAttributeMap1)
-                );
+                final Optional<Map<String, Object>> parsedBlockAttributeMap = buildParsedBlock(query, blockAttributeMap, conversionDefinition);
+                parsedBlockAttributeMap
+                    .ifPresent(convertedNodeTemplateAttributeMap1 -> mergeYamlObjects(parsedBlockYamlObject, convertedNodeTemplateAttributeMap1));
             });
-
         write(blockName, parsedBlockYamlObject);
     }
 
     /**
      * Writes the block in the resulting {@link ServiceTemplate} {@link #templateTo}.
      *
-     * @param blockName the name of the block
+     * @param blockName             the name of the block
      * @param parsedBlockYamlObject the block content as a YAML object
      */
     protected abstract void write(final String blockName, final Map<String, Object> parsedBlockYamlObject);
 
     /**
-     * Uses the provided attribute query to find a attribute in the original YAML object and apply the provided
-     * conversion.
+     * Uses the provided attribute query to find a attribute in the original YAML object and apply the provided conversion.
      *
-     * @param attributeQuery the attribute query
+     * @param attributeQuery               the attribute query
      * @param fromNodeTemplateAttributeMap the original YAML object
-     * @param conversionDefinition the conversion
+     * @param conversionDefinition         the conversion
      * @return the rebuilt original YAML object with the converted attribute
      */
     protected abstract Optional<Map<String, Object>> buildParsedBlock(final Map<String, Object> attributeQuery,
@@ -116,28 +107,22 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
     /**
      * Merges two YAML objects.
      *
-     * @param originalMap original YAML object
+     * @param originalMap   original YAML object
      * @param toBeMergedMap YAML object to be merged
      * @return the new YAML object representing the merge result.
      */
-    protected Map<String, Object> mergeYamlObjects(final Map<String, Object> originalMap,
-        final Map<String, Object> toBeMergedMap) {
-        toBeMergedMap.forEach(
-            (key, value) -> originalMap.merge(key, value,
-                (toBeMergedValue, originalValue) -> {
-                    if (originalValue instanceof Map) {
-                        return mergeYamlObjects((Map) originalValue, (Map) toBeMergedValue);
-                    }
-                    return originalValue;
-                })
-        );
-
+    protected Map<String, Object> mergeYamlObjects(final Map<String, Object> originalMap, final Map<String, Object> toBeMergedMap) {
+        toBeMergedMap.forEach((key, value) -> originalMap.merge(key, value, (toBeMergedValue, originalValue) -> {
+            if (originalValue instanceof Map) {
+                return mergeYamlObjects((Map) originalValue, (Map) toBeMergedValue);
+            }
+            return originalValue;
+        }));
         return originalMap;
     }
 
     /**
-     * Executes the provided {@link #transformation getConversionQuery} YAML query to find the blocks to be parsed in
-     * {@link #templateFrom}.
+     * Executes the provided {@link #transformation getConversionQuery} YAML query to find the blocks to be parsed in {@link #templateFrom}.
      *
      * @return The YAML blocks found
      */
@@ -154,12 +139,12 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
             final Map<String, Object> yamlMap = (Map<String, Object>) yamlObject;
             return yamlMap.containsKey(PnfTransformationToken.GET_INPUT.getName());
         }
-
         return false;
     }
 
     /**
      * Extracts the value from an YAML Object.
+     *
      * @param yamlObject
      * @return The Object value from the yamlObject parameter.
      */
@@ -168,7 +153,6 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
             final Map<String, Object> yamlMap = (Map<String, Object>) yamlObject;
             return (String) yamlMap.values().stream().findFirst().orElse(null);
         }
-
         return null;
     }
 
@@ -183,18 +167,15 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
     /**
      * Finds all the derived node types from the provided node types.
      *
-     * @param rootNodeTypeMap a map with the root node types to find the derived ones
+     * @param rootNodeTypeMap    a map with the root node types to find the derived ones
      * @param derivedNodeTypeMap a map that will be filled with the derived node types
      */
-    private void findAllDerivedNodeType(final Map<String, Object> rootNodeTypeMap,
-                                          final Map<String, Object> derivedNodeTypeMap) {
-        templateFrom.getNodeTypes().entrySet().stream()
-            .filter(nodeEntry -> rootNodeTypeMap.containsKey(extractObjectValue(nodeEntry.getValue())))
+    private void findAllDerivedNodeType(final Map<String, Object> rootNodeTypeMap, final Map<String, Object> derivedNodeTypeMap) {
+        templateFrom.getNodeTypes().entrySet().stream().filter(nodeEntry -> rootNodeTypeMap.containsKey(extractObjectValue(nodeEntry.getValue())))
             .forEach(nodeEntry -> {
                 if (!derivedNodeTypeMap.containsKey(nodeEntry.getKey())) {
                     derivedNodeTypeMap.put(nodeEntry.getKey(), nodeEntry.getValue());
-                    final ImmutableMap<String, Object> newRootNodeTypeMap = ImmutableMap
-                        .of(nodeEntry.getKey(), nodeEntry.getValue());
+                    final ImmutableMap<String, Object> newRootNodeTypeMap = ImmutableMap.of(nodeEntry.getKey(), nodeEntry.getValue());
                     findAllDerivedNodeType(newRootNodeTypeMap, derivedNodeTypeMap);
                 }
             });
@@ -202,6 +183,7 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
 
     /**
      * Fetches all Custom NodeTypes based on the query result.
+     *
      * @return a map with all custom Node Types that matches with the query result.
      */
     protected Map<String, Object> fetchCustomNodeType() {
@@ -211,16 +193,13 @@ public abstract class AbstractPnfdBlockParser implements PnfdBlockParser {
         }
         final ConversionQuery conversionQuery = transformation.getConversionQuery();
         final Map<String, Object> customNodeTypesMap = new HashMap<>();
-        nodeTypesMap.entrySet().stream()
-            .filter(nodeEntry -> PnfdQueryExecutor.find(conversionQuery, nodeEntry.getValue()))
-            .forEach(customNode -> {
-                attributeValueToBeConverted = extractObjectValue(customNode.getValue());
-                customNodeTypesMap.put(customNode.getKey(), customNode.getValue());
-            });
+        nodeTypesMap.entrySet().stream().filter(nodeEntry -> PnfdQueryExecutor.find(conversionQuery, nodeEntry.getValue())).forEach(customNode -> {
+            attributeValueToBeConverted = extractObjectValue(customNode.getValue());
+            customNodeTypesMap.put(customNode.getKey(), customNode.getValue());
+        });
         final Map<String, Object> childNodeTypeMap = new HashMap<>();
         findAllDerivedNodeType(customNodeTypesMap, childNodeTypeMap);
         customNodeTypesMap.putAll(childNodeTypeMap);
         return customNodeTypesMap;
     }
-
 }

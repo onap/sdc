@@ -17,26 +17,27 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 public final class VendorSoftwareProductConstants {
-  public static final String VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE = "VendorSoftwareProduct";
-  public static final String VSP_PACKAGE_ZIP = "VSPPackage.zip";
-  public static final String CSAR = "CSAR";
-  public static final String INFORMATION_ARTIFACT_NAME = "VSP_%s_Information.txt";
-  public static final String NAME_PATTERN = "^[a-zA-Z0-9_]*$";
 
-  public final class UniqueValues {
-    public static final String VENDOR_SOFTWARE_PRODUCT_NAME = "Vendor Software Product name";
-    public static final String PROCESS_NAME = "Process name";
-    public static final String NETWORK_NAME = "Network name";
-    public static final String COMPONENT_NAME = "ComponentData name";
-    public static final String NIC_NAME = "NIC name";
-    public static final String COMPUTE_NAME = "Compute name";
-    public static final String ORCHESTRATION_CANDIDATE_NAME = "Orchestration Candidate name";
-    //public static final String COMPONENT_ARTIFACT_NAME = "ComponentArtifact name";
-    public static final String DEPLOYMENT_FLAVOR_NAME = "Deployment Flavor name";
-    public static final String IMAGE_NAME = "Image name";
-  }
+    public static final String VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE = "VendorSoftwareProduct";
+    public static final String VSP_PACKAGE_ZIP = "VSPPackage.zip";
+    public static final String CSAR = "CSAR";
+    public static final String INFORMATION_ARTIFACT_NAME = "VSP_%s_Information.txt";
+    public static final String NAME_PATTERN = "^[a-zA-Z0-9_]*$";
+
+    public final class UniqueValues {
+
+        public static final String VENDOR_SOFTWARE_PRODUCT_NAME = "Vendor Software Product name";
+        public static final String PROCESS_NAME = "Process name";
+        public static final String NETWORK_NAME = "Network name";
+        public static final String COMPONENT_NAME = "ComponentData name";
+        public static final String NIC_NAME = "NIC name";
+        public static final String COMPUTE_NAME = "Compute name";
+        public static final String ORCHESTRATION_CANDIDATE_NAME = "Orchestration Candidate name";
+        //public static final String COMPONENT_ARTIFACT_NAME = "ComponentArtifact name";
+        public static final String DEPLOYMENT_FLAVOR_NAME = "Deployment Flavor name";
+        public static final String IMAGE_NAME = "Image name";
+    }
 }

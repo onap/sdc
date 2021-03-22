@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_NETWORK_POLICY_REFS_RESOURCE;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_PROPERTY_FORMAT_GET_ATTR_FQ_NAME;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_PROPERTY_FORMAT_GET_RESOURCE;
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.LOG_INVALID_PROPERTY_VALUE_FORMAT;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
@@ -33,11 +44,6 @@ import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-import java.util.*;
-
-import static org.openecomp.sdc.tosca.services.DataModelUtil.createAttachmentRequirementAssignment;
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogConstants.*;
-
 public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTranslationBase {
 
     private static final String FQ_NAME = "fq_name";
@@ -48,13 +54,10 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
         NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setType(ToscaNodeType.CONTRAILV2_VIRTUAL_NETWORK);
         nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
-                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
-                        translateTo.getResourceId(), translateTo.getResource().getProperties(),
-                        nodeTemplate.getProperties(), translateTo.getHeatFileName(),
-                        translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
-                        nodeTemplate, translateTo.getContext()));
-        DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(),
-                nodeTemplate);
+            .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(), translateTo.getResourceId(),
+                translateTo.getResource().getProperties(), nodeTemplate.getProperties(), translateTo.getHeatFileName(),
+                translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(), nodeTemplate, translateTo.getContext()));
+        DataModelUtil.addNodeTemplate(translateTo.getServiceTemplate(), translateTo.getTranslatedId(), nodeTemplate);
         linkToPolicyNodeTemplate(translateTo);
     }
 
@@ -64,10 +67,10 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
             return;
         }
         for (AttachedResourceId attachedResourceId : networkPolicyIdList) {
-            NodeTemplate policyNodeTemplate = DataModelUtil.getNodeTemplate(translateTo.getServiceTemplate(),
-                            (String) attachedResourceId.getTranslatedId());
+            NodeTemplate policyNodeTemplate = DataModelUtil
+                .getNodeTemplate(translateTo.getServiceTemplate(), (String) attachedResourceId.getTranslatedId());
             DataModelUtil.addRequirementAssignment(policyNodeTemplate, ToscaConstants.NETWORK_REQUIREMENT_ID,
-                    createAttachmentRequirementAssignment(translateTo.getTranslatedId()));
+                createAttachmentRequirementAssignment(translateTo.getTranslatedId()));
         }
     }
 
@@ -79,8 +82,7 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
         return Collections.emptyList();
     }
 
-    private List<AttachedResourceId> extractNetworkPolicyId(Object propertyValue,
-                                                            TranslateTo translateTo) {
+    private List<AttachedResourceId> extractNetworkPolicyId(Object propertyValue, TranslateTo translateTo) {
         List<AttachedResourceId> attachedResourceIdList = new ArrayList<>();
         if (propertyValue instanceof List) {
             for (Object value : (List) propertyValue) {
@@ -101,20 +103,16 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
         if (policyResourceId == null) {
             return null;
         }
-
-        Resource policyResource = HeatToToscaUtil.getResource(translateTo.getHeatOrchestrationTemplate(),
-                policyResourceId, translateTo.getHeatFileName());
-        if (!policyResource.getType().equals(HeatResourcesTypes.CONTRAIL_V2_NETWORK_RULE_RESOURCE_TYPE
-                .getHeatResource())) {
+        Resource policyResource = HeatToToscaUtil
+            .getResource(translateTo.getHeatOrchestrationTemplate(), policyResourceId, translateTo.getHeatFileName());
+        if (!policyResource.getType().equals(HeatResourcesTypes.CONTRAIL_V2_NETWORK_RULE_RESOURCE_TYPE.getHeatResource())) {
             return null;
         }
         translatedPolicyResourceId = ResourceTranslationFactory.getInstance(policyResource)
-                .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(),
-                        translateTo.getHeatOrchestrationTemplate(), policyResource, policyResourceId,
-                        translateTo.getContext());
+            .translateResource(translateTo.getHeatFileName(), translateTo.getServiceTemplate(), translateTo.getHeatOrchestrationTemplate(),
+                policyResource, policyResourceId, translateTo.getContext());
         if (!translatedPolicyResourceId.isPresent()) {
-            logger.warn(LOG_INVALID_NETWORK_POLICY_REFS_RESOURCE,
-                    translateTo.getResourceId(), translateTo.getResource().getType());
+            logger.warn(LOG_INVALID_NETWORK_POLICY_REFS_RESOURCE, translateTo.getResourceId(), translateTo.getResource().getType());
             return null;
         }
         return new AttachedResourceId(translatedPolicyResourceId.get(), policyResourceId, ReferenceType.GET_ATTR);
@@ -129,8 +127,7 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
                 return resourceId;
             }
         }
-        logger.warn(LOG_INVALID_PROPERTY_VALUE_FORMAT, translateTo.getResourceId(),
-                translateTo.getResource().getType());
+        logger.warn(LOG_INVALID_PROPERTY_VALUE_FORMAT, translateTo.getResourceId(), translateTo.getResource().getType());
         return null;
     }
 
@@ -155,8 +152,7 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
             if (value.get(0) instanceof String) {
                 return true;
             } else {
-                logger.warn(LOG_INVALID_PROPERTY_FORMAT_GET_ATTR_FQ_NAME, translateTo.getResourceId(),
-                        translateTo.getResource().getType());
+                logger.warn(LOG_INVALID_PROPERTY_FORMAT_GET_ATTR_FQ_NAME, translateTo.getResourceId(), translateTo.getResource().getType());
             }
         }
         return false;
@@ -189,8 +185,7 @@ public class ResourceTranslationContrailV2VirtualNetworkImpl extends ResourceTra
         if (value instanceof String) {
             return (String) value;
         } else {
-            logger.warn(LOG_INVALID_PROPERTY_FORMAT_GET_RESOURCE, translateTo.getResourceId(),
-                    translateTo.getResource().getType());
+            logger.warn(LOG_INVALID_PROPERTY_FORMAT_GET_RESOURCE, translateTo.getResourceId(), translateTo.getResource().getType());
         }
         return null;
     }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,12 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdcrests.validation.rest.services;
 
-
+import java.io.IOException;
+import java.io.InputStream;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.validation.UploadValidationManager;
 import org.openecomp.sdc.validation.types.ValidationFileResponse;
 import org.openecomp.sdcrests.validation.rest.Validation;
@@ -32,37 +34,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-
 @Named
 @Service("validation")
 @Scope(value = "prototype")
 public class ValidationImpl implements Validation {
 
-  private final UploadValidationManager uploadValidationManager;
+    private final UploadValidationManager uploadValidationManager;
 
-  @Autowired
-  public ValidationImpl(UploadValidationManager uploadValidationManager) {
-    this.uploadValidationManager = uploadValidationManager;
-  }
-
-  @Override
-  public Response validateFile(String type, InputStream fileToValidate) {
-    ValidationFileResponse validationFileResponse;
-    try {
-      validationFileResponse = uploadValidationManager.validateFile(type, fileToValidate);
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
+    @Autowired
+    public ValidationImpl(UploadValidationManager uploadValidationManager) {
+        this.uploadValidationManager = uploadValidationManager;
     }
 
-    ValidationFileResponseDto validationFileResponseDto =
-        new MapValidationFileResponseToValidationFileResponseDto()
+    @Override
+    public Response validateFile(String type, InputStream fileToValidate) {
+        ValidationFileResponse validationFileResponse;
+        try {
+            validationFileResponse = uploadValidationManager.validateFile(type, fileToValidate);
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        ValidationFileResponseDto validationFileResponseDto = new MapValidationFileResponseToValidationFileResponseDto()
             .applyMapping(validationFileResponse, ValidationFileResponseDto.class);
-    return Response.ok(validationFileResponseDto).build();
-  }
-
-
+        return Response.ok(validationFileResponseDto).build();
+    }
 }

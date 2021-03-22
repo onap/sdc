@@ -17,31 +17,28 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
-
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.HEAT_PACKAGE_FILE_CREATION;
 
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
 
 /**
  * Created by Talio on 11/24/2016.
  */
 public class InformationArtifactCreationErrorBuilder {
-  private static final String INFO_ARTIFACT_FILE_CREATION_ERROR_MSG =
-      "Error while trying to information artifact file for vendor software product with Id %s.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  public InformationArtifactCreationErrorBuilder(String vendorSoftwareProductId) {
-    builder.withId(HEAT_PACKAGE_FILE_CREATION);
-    builder.withCategory(ErrorCategory.SYSTEM);
-    builder
-        .withMessage(String.format(INFO_ARTIFACT_FILE_CREATION_ERROR_MSG, vendorSoftwareProductId));
-  }
+    private static final String INFO_ARTIFACT_FILE_CREATION_ERROR_MSG = "Error while trying to information artifact file for vendor software product with Id %s.";
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  public ErrorCode build() {
-    return builder.build();
-  }
+    public InformationArtifactCreationErrorBuilder(String vendorSoftwareProductId) {
+        builder.withId(HEAT_PACKAGE_FILE_CREATION);
+        builder.withCategory(ErrorCategory.SYSTEM);
+        builder.withMessage(String.format(INFO_ARTIFACT_FILE_CREATION_ERROR_MSG, vendorSoftwareProductId));
+    }
+
+    public ErrorCode build() {
+        return builder.build();
+    }
 }

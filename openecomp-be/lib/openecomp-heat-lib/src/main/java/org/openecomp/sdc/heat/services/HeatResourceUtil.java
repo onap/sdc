@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.heat.services;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
@@ -30,36 +28,26 @@ public class HeatResourceUtil {
     private static final String UNDERSCORE = "_";
     private static final String WORDS_REGEX = "(\\w+)";
     private static final String PORT_RESOURCE_ID_REGEX_SUFFIX = "(_\\d+)*";
-    private static final String PORT_RESOURCE_ID_REGEX_PREFIX =
-            WORDS_REGEX + PORT_RESOURCE_ID_REGEX_SUFFIX;
-    private static final String PORT_INT_RESOURCE_ID_REGEX_PREFIX = PORT_RESOURCE_ID_REGEX_PREFIX
-            + UNDERSCORE + "int_" + WORDS_REGEX + UNDERSCORE;
+    private static final String PORT_RESOURCE_ID_REGEX_PREFIX = WORDS_REGEX + PORT_RESOURCE_ID_REGEX_SUFFIX;
+    private static final String PORT_INT_RESOURCE_ID_REGEX_PREFIX = PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "int_" + WORDS_REGEX + UNDERSCORE;
     private static final String SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX =
-            PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "subint_" + WORDS_REGEX + UNDERSCORE;
+        PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + "subint_" + WORDS_REGEX + UNDERSCORE;
 
-    public static Optional<String> evaluateNetworkRoleFromResourceId(String resourceId,
-                                                                     String resourceType) {
+    public static Optional<String> evaluateNetworkRoleFromResourceId(String resourceId, String resourceType) {
         Optional<PortType> portType = getPortType(resourceType);
         if (portType.isPresent()) {
-            String portResourceIdRegex =
-                    PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + WORDS_REGEX + UNDERSCORE
-                            + portType.get().getPortTypeName() + PORT_RESOURCE_ID_REGEX_SUFFIX;
-            String portIntResourceIdRegex =
-                    PORT_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName()
-                            + PORT_RESOURCE_ID_REGEX_SUFFIX;
-
+            String portResourceIdRegex = PORT_RESOURCE_ID_REGEX_PREFIX + UNDERSCORE + WORDS_REGEX + UNDERSCORE + portType.get().getPortTypeName()
+                + PORT_RESOURCE_ID_REGEX_SUFFIX;
+            String portIntResourceIdRegex = PORT_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName() + PORT_RESOURCE_ID_REGEX_SUFFIX;
             String portNetworkRole = getNetworkRole(resourceId, portResourceIdRegex);
             String portIntNetworkRole = getNetworkRole(resourceId, portIntResourceIdRegex);
-
-            return Optional.ofNullable(Objects.nonNull(portNetworkRole)
-                    ? portNetworkRole : portIntNetworkRole);
+            return Optional.ofNullable(Objects.nonNull(portNetworkRole) ? portNetworkRole : portIntNetworkRole);
         }
         return Optional.empty();
     }
 
     private static Optional<PortType> getPortType(String resourceType) {
-        if (HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource()
-                .equals(resourceType)) {
+        if (HeatResourcesTypes.CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE.getHeatResource().equals(resourceType)) {
             return Optional.of(PortType.VMI);
         } else if (HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource().equals(resourceType)) {
             return Optional.of(PortType.PORT);
@@ -74,26 +62,14 @@ public class HeatResourceUtil {
      * @param resourceType the resource type
      * @return the optional
      */
-    public static Optional<String> extractNetworkRoleFromSubInterfaceId(String resourceId,
-                                                                        String resourceType) {
+    public static Optional<String> extractNetworkRoleFromSubInterfaceId(String resourceId, String resourceType) {
         Optional<PortType> portType = getPortType(resourceType);
         if (portType.isPresent()) {
             String subInterfaceResourceIdRegex =
-                    SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName()
-                            + PORT_RESOURCE_ID_REGEX_SUFFIX;
-
+                SUB_INTERFACE_INT_RESOURCE_ID_REGEX_PREFIX + portType.get().getPortTypeName() + PORT_RESOURCE_ID_REGEX_SUFFIX;
             return Optional.ofNullable(getNetworkRole(resourceId, subInterfaceResourceIdRegex));
         }
         return Optional.empty();
-    }
-
-    @AllArgsConstructor
-    @Getter
-    private enum PortType {
-        PORT("port"),
-        VMI("vmi");
-
-        private String portTypeName;
     }
 
     private static String getNetworkRole(String portResourceId, String portIdRegex) {
@@ -109,4 +85,10 @@ public class HeatResourceUtil {
         return null;
     }
 
+    @AllArgsConstructor
+    @Getter
+    private enum PortType {
+        PORT("port"), VMI("vmi");
+        private String portTypeName;
+    }
 }

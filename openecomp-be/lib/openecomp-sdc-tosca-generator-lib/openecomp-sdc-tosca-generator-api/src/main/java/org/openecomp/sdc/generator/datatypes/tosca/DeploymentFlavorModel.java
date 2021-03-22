@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.generator.datatypes.tosca;
 
 import lombok.EqualsAndHashCode;
@@ -39,6 +38,4 @@ public class DeploymentFlavorModel {
     private VendorInfo vendor_info;
     private ComputeFlavor compute_flavor;
     private LicenseFlavor license_flavor;
-
 }
-

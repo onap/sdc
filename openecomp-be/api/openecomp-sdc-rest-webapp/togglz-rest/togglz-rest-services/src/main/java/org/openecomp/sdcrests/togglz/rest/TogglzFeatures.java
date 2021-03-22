@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.togglz.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
 import org.springframework.validation.annotation.Validated;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 
 @Path("/v1.0/togglz")
 @Produces(MediaType.APPLICATION_JSON)
@@ -40,24 +41,22 @@ import javax.ws.rs.core.Response;
 @Validated
 public interface TogglzFeatures {
 
-  @GET
-  @Operation(description = "Get TOGGLZ Features", responses = @ApiResponse(content = @Content(array = @ArraySchema( schema = @Schema(implementation = FeatureSetDto.class)))))
-  Response getFeatures();
+    @GET
+    @Operation(description = "Get TOGGLZ Features", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = FeatureSetDto.class)))))
+    Response getFeatures();
 
+    @PUT
+    @Path("/state/{state}")
+    @Operation(description = "Update feature toggle state for all features")
+    Response setAllFeatures(@PathParam("state") boolean state);
 
-  @PUT
-  @Path("/state/{state}")
-  @Operation(description = "Update feature toggle state for all features")
-  Response setAllFeatures(@PathParam("state") boolean state);
+    @PUT
+    @Path("/{featureName}/state/{state}")
+    @Operation(description = "Update feature toggle state")
+    Response setFeatureState(@PathParam("featureName") String featureName, @PathParam("state") boolean state);
 
-
-  @PUT
-  @Path("/{featureName}/state/{state}")
-  @Operation(description = "Update feature toggle state")
-  Response setFeatureState(@PathParam("featureName") String featureName, @PathParam("state") boolean state);
-
-  @GET
-  @Path("/{featureName}/state")
-  @Operation(description = "Get feature toggle state", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = FeatureDto.class))))
-  Response getFeatureState(@PathParam("featureName") String featureName);
+    @GET
+    @Path("/{featureName}/state")
+    @Operation(description = "Get feature toggle state", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = FeatureDto.class))))
+    Response getFeatureState(@PathParam("featureName") String featureName);
 }

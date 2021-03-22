@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.versioning.errors;
 
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
@@ -28,17 +27,14 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
  */
 public class RevisionIdNotFoundErrorBuilder extends BaseErrorBuilder {
 
-   static final String REVISION_ID_NOT_FOUND_MSG =
-      "Mandatory field revision id missing";
+    static final String REVISION_ID_NOT_FOUND_MSG = "Mandatory field revision id missing";
 
-  /**
-   * Instantiates a new Versionable sub entity not found error builder.
-   */
-  public RevisionIdNotFoundErrorBuilder() {
-    getErrorCodeBuilder().withId(VersioningErrorCodes.MANDATORY_FIELD_REVISION_ID_MISSING);
-    getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
-    getErrorCodeBuilder().withMessage(REVISION_ID_NOT_FOUND_MSG);
-  }
-
-
+    /**
+     * Instantiates a new Versionable sub entity not found error builder.
+     */
+    public RevisionIdNotFoundErrorBuilder() {
+        getErrorCodeBuilder().withId(VersioningErrorCodes.MANDATORY_FIELD_REVISION_ID_MISSING);
+        getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
+        getErrorCodeBuilder().withMessage(REVISION_ID_NOT_FOUND_MSG);
+    }
 }

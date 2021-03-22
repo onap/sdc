@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -32,7 +30,6 @@ import lombok.Getter;
 public enum PolicyTypes {
     AFFINITY("affinity"),
     ANTI_AFFINITY("anti-affinity");
-
     private static Map<String, PolicyTypes> stringToPolicyTypesMap;
 
     static {

@@ -18,9 +18,8 @@ package org.openecomp.core.externaltesting.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * Error body to return to client per IETF RFC 7807.
@@ -31,20 +30,20 @@ import java.io.Serializable;
 @Data
 public class TestErrorBody implements Serializable {
 
-  private static final long serialVersionUID = 3504501412736665763L;
+    private static final long serialVersionUID = 3504501412736665763L;
 
-  private String code;
-  private Integer httpStatus;
-  private String message;
+    private String code;
+    private Integer httpStatus;
+    private String message;
 
-  TestErrorBody() {
+    TestErrorBody() {
 
-  }
+    }
 
-  public TestErrorBody(String code, Integer httpStatus, String message) {
-    this();
-    this.code = code;
-    this.httpStatus = httpStatus;
-    this.message = message;
-  }
+    public TestErrorBody(String code, Integer httpStatus, String message) {
+        this();
+        this.code = code;
+        this.httpStatus = httpStatus;
+        this.message = message;
+    }
 }

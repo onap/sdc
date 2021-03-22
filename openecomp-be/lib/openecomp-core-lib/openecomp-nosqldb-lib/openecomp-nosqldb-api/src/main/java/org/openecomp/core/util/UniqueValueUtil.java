@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.util;
 
 import java.util.Optional;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.dao.types.UniqueValueEntity;
@@ -31,11 +29,22 @@ public class UniqueValueUtil {
     private static final String UNIQUE_VALUE_VIOLATION = "UNIQUE_VALUE_VIOLATION";
     private static final String UNIQUE_VALUE_VIOLATION_MSG = "%s with the value '%s' already exists.";
     private static final char FORMATTED_UNIQUE_VALUE_SEPARATOR = '_';
-
     private final UniqueValueDao uniqueValueDao;
 
     public UniqueValueUtil(UniqueValueDao uniqueValueDao) {
         this.uniqueValueDao = uniqueValueDao;
+    }
+
+    private static Optional<String> formatValue(String[] uniqueCombination) {
+        if (uniqueCombination == null || uniqueCombination.length == 0 || getValueWithoutContext(uniqueCombination) == null) {
+            return Optional.empty();
+        }
+        uniqueCombination[uniqueCombination.length - 1] = getValueWithoutContext(uniqueCombination).toLowerCase();
+        return Optional.of(CommonMethods.arrayToSeparatedString(uniqueCombination, FORMATTED_UNIQUE_VALUE_SEPARATOR));
+    }
+
+    private static String getValueWithoutContext(String... uniqueCombination) {
+        return uniqueCombination[uniqueCombination.length - 1];
     }
 
     /**
@@ -49,7 +58,6 @@ public class UniqueValueUtil {
         if (ArrayUtils.isNotEmpty(uniqueCombination)) {
             originalEntityName = uniqueCombination[uniqueCombination.length - 1];
         }
-
         Optional<String> formattedValue = formatValue(uniqueCombination);
         if (formattedValue.isPresent()) {
             validateUniqueValue(type, formattedValue.get(), originalEntityName);
@@ -64,9 +72,7 @@ public class UniqueValueUtil {
      * @param uniqueCombination the unique combination
      */
     public void deleteUniqueValue(String type, String... uniqueCombination) {
-        formatValue(uniqueCombination).ifPresent(
-                formattedValue -> uniqueValueDao.delete(new UniqueValueEntity(type, formattedValue)));
-
+        formatValue(uniqueCombination).ifPresent(formattedValue -> uniqueValueDao.delete(new UniqueValueEntity(type, formattedValue)));
     }
 
     /**
@@ -77,11 +83,10 @@ public class UniqueValueUtil {
      * @param newValue      the new value
      * @param uniqueContext the unique context
      */
-    public void updateUniqueValue(String type, String oldValue, String newValue,
-                                  String... uniqueContext) {
+    public void updateUniqueValue(String type, String oldValue, String newValue, String... uniqueContext) {
         if (newValue == null || !newValue.equalsIgnoreCase(oldValue)) {
-            createUniqueValue(type, CommonMethods.concat(uniqueContext, new String[] {newValue}));
-            deleteUniqueValue(type, CommonMethods.concat(uniqueContext, new String[] {oldValue}));
+            createUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{newValue}));
+            deleteUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{oldValue}));
         }
     }
 
@@ -96,7 +101,6 @@ public class UniqueValueUtil {
         if (ArrayUtils.isNotEmpty(uniqueCombination)) {
             originalEntityName = uniqueCombination[uniqueCombination.length - 1];
         }
-
         Optional<String> formattedValue = formatValue(uniqueCombination);
         if (formattedValue.isPresent()) {
             validateUniqueValue(type, formattedValue.get(), originalEntityName);
@@ -105,12 +109,8 @@ public class UniqueValueUtil {
 
     private void validateUniqueValue(String type, String formattedValue, String originalEntityName) {
         if (isUniqueValueOccupied(type, formattedValue)) {
-            throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                    .withCategory(ErrorCategory.APPLICATION)
-                    .withId(UNIQUE_VALUE_VIOLATION)
-                    .withMessage(String
-                            .format(UNIQUE_VALUE_VIOLATION_MSG, type, originalEntityName))
-                    .build());
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(UNIQUE_VALUE_VIOLATION)
+                .withMessage(String.format(UNIQUE_VALUE_VIOLATION_MSG, type, originalEntityName)).build());
         }
     }
 
@@ -120,28 +120,10 @@ public class UniqueValueUtil {
      * @return true if the unique value is occupied, false otherwise
      */
     public boolean isUniqueValueOccupied(String type, String... uniqueCombination) {
-        return formatValue(uniqueCombination)
-                .map(formattedValue -> isUniqueValueOccupied(type, formattedValue))
-                .orElse(false);
+        return formatValue(uniqueCombination).map(formattedValue -> isUniqueValueOccupied(type, formattedValue)).orElse(false);
     }
 
     private boolean isUniqueValueOccupied(String type, String formattedValue) {
         return uniqueValueDao.get(new UniqueValueEntity(type, formattedValue)) != null;
-    }
-
-    private static Optional<String> formatValue(String[] uniqueCombination) {
-        if (uniqueCombination == null || uniqueCombination.length == 0
-                || getValueWithoutContext(uniqueCombination) == null) {
-            return Optional.empty();
-        }
-
-        uniqueCombination[uniqueCombination.length - 1] =
-                getValueWithoutContext(uniqueCombination).toLowerCase();
-        return Optional.of(CommonMethods
-                .arrayToSeparatedString(uniqueCombination, FORMATTED_UNIQUE_VALUE_SEPARATOR));
-    }
-
-    private static String getValueWithoutContext(String... uniqueCombination) {
-        return uniqueCombination[uniqueCombination.length - 1];
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.tools.commands;
 
 import static org.openecomp.core.tools.commands.CommandName.CLEAN_USER_DATA;
@@ -41,11 +40,16 @@ public class CleanUserDataCommand extends Command {
     private static final String USER_OPTION = "u";
 
     CleanUserDataCommand() {
+        options.addOption(Option.builder(ITEM_ID_OPTION).hasArg().argName("item_id").desc("id of the item to clean, mandatory").build());
         options.addOption(
-                Option.builder(ITEM_ID_OPTION).hasArg().argName("item_id").desc("id of the item to clean, mandatory")
-                      .build());
-        options.addOption(Option.builder(USER_OPTION).hasArg().argName("user")
-                                .desc("the user of which the item data will be cleaned for, mandatory").build());
+            Option.builder(USER_OPTION).hasArg().argName("user").desc("the user of which the item data will be cleaned for, mandatory").build());
+    }
+
+    private static SessionContext createSessionContext(String user) {
+        SessionContext sessionContext = new SessionContext();
+        sessionContext.setUser(new UserInfo(user));
+        sessionContext.setTenant("dox");
+        return sessionContext;
     }
 
     @Override
@@ -57,19 +61,15 @@ public class CleanUserDataCommand extends Command {
         }
         String itemId = cmd.getOptionValue(ITEM_ID_OPTION);
         String user = cmd.getOptionValue(USER_OPTION);
-
         SessionContext context = createSessionContext(user);
         ZusammenConnector zusammenConnector = ZusammenConnectorFactory.getInstance().createInterface();
-
         Id itemIdObj = new Id(itemId);
         Collection<ItemVersion> versions = zusammenConnector.listPublicVersions(context, itemIdObj);
         for (ItemVersion version : versions) {
             try {
                 zusammenConnector.cleanVersion(context, itemIdObj, version.getId());
             } catch (Exception e) {
-                LOGGER.error(
-                        String.format("Error occurred while cleaning item %s version %s from user %s space", itemId,
-                                version.getId(), user), e);
+                LOGGER.error(String.format("Error occurred while cleaning item %s version %s from user %s space", itemId, version.getId(), user), e);
             }
         }
         return true;
@@ -78,12 +78,5 @@ public class CleanUserDataCommand extends Command {
     @Override
     public CommandName getCommandName() {
         return CLEAN_USER_DATA;
-    }
-
-    private static SessionContext createSessionContext(String user) {
-        SessionContext sessionContext = new SessionContext();
-        sessionContext.setUser(new UserInfo(user));
-        sessionContext.setTenant("dox");
-        return sessionContext;
     }
 }

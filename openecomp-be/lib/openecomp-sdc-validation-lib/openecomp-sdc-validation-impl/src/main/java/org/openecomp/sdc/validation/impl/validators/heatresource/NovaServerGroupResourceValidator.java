@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -30,100 +32,69 @@ import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 import org.openecomp.sdc.validation.type.ValidatorConstants;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 public class NovaServerGroupResourceValidator implements ResourceValidator {
-  private static final ErrorMessageCode ERROR_CODE_HNG1 = new ErrorMessageCode("HNG1");
-  private static final ErrorMessageCode ERROR_CODE_HNG2 = new ErrorMessageCode("HNG2");
-  private static final ErrorMessageCode ERROR_CODE_HNG3 = new ErrorMessageCode("HNG3");
 
-  @Override
-  public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
-                       GlobalValidationContext globalContext, ValidationContext validationContext) {
-    validateNovaServerGroupPolicy(fileName, resourceEntry, globalContext);
-    validateServerGroupIsUsed(fileName, resourceEntry, globalContext,
-            (HeatResourceValidationContext) validationContext);
-  }
+    private static final ErrorMessageCode ERROR_CODE_HNG1 = new ErrorMessageCode("HNG1");
+    private static final ErrorMessageCode ERROR_CODE_HNG2 = new ErrorMessageCode("HNG2");
+    private static final ErrorMessageCode ERROR_CODE_HNG3 = new ErrorMessageCode("HNG3");
 
-  @SuppressWarnings("unchecked")
-  private static void validateNovaServerGroupPolicy(String fileName,
-                                                    Map.Entry<String, Resource> resourceEntry,
-                                                    GlobalValidationContext globalContext) {
-    Resource resource = resourceEntry.getValue();
-    Object policies =
-            resource.getProperties() == null ? null : resource.getProperties().get("policies");
-
-    if (Objects.nonNull(policies) && policies instanceof List) {
-      List<Object> policiesList = (List<Object>) policies;
-      if (policiesList.size() == 1) {
-        Object policy = policiesList.get(0);
-        if (!isGivenPolicyValid(policy)) {
-          globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                          .getErrorWithParameters(
-                                  ERROR_CODE_HNG1, Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
-                                  resourceEntry.getKey()));
+    @SuppressWarnings("unchecked")
+    private static void validateNovaServerGroupPolicy(String fileName, Map.Entry<String, Resource> resourceEntry,
+                                                      GlobalValidationContext globalContext) {
+        Resource resource = resourceEntry.getValue();
+        Object policies = resource.getProperties() == null ? null : resource.getProperties().get("policies");
+        if (Objects.nonNull(policies) && policies instanceof List) {
+            List<Object> policiesList = (List<Object>) policies;
+            if (policiesList.size() == 1) {
+                Object policy = policiesList.get(0);
+                if (!isGivenPolicyValid(policy)) {
+                    globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                        .getErrorWithParameters(ERROR_CODE_HNG1, Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(), resourceEntry.getKey()));
+                }
+            } else {
+                globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                    .getErrorWithParameters(ERROR_CODE_HNG1, Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(), resourceEntry.getKey()));
+            }
         }
-      } else {
-        globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                        .getErrorWithParameters(ERROR_CODE_HNG1,
-                                Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
-                                resourceEntry.getKey()));
-      }
-    }
-  }
-
-  private static boolean isGivenPolicyValid(Object policy) {
-    if (policy instanceof Map) {
-      return true;
-    }
-    if (policy instanceof String) {
-      return PolicyTypes.isGivenPolicyValid((String) policy);
-    }
-    return false;
-  }
-
-  public void validateServerGroupIsUsed(String fileName,
-                                        Map.Entry<String, Resource> resourceEntry,
-                                        GlobalValidationContext globalContext,
-                                        HeatResourceValidationContext validationContext) {
-
-    Map<String, Map<String, List<String>>> pointedServerGroups =
-            validationContext.getFileLevelResourceDependencies().get(HeatResourcesTypes
-                    .NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource());
-
-    if (MapUtils.isEmpty(pointedServerGroups)) {
-      globalContext
-              .addMessage(
-                      fileName,
-                      ErrorLevel.WARNING,
-                      ErrorMessagesFormatBuilder
-                              .getErrorWithParameters(
-                                      ERROR_CODE_HNG2, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                                      ValidatorConstants.Server_Group, resourceEntry.getKey()));
-      return;
     }
 
-    handleServerGroupReferences(fileName, resourceEntry, pointedServerGroups, globalContext);
-  }
-
-  private void handleServerGroupReferences(String fileName, Map.Entry<String, Resource>
-          resourceEntry, Map<String, Map<String, List<String>>> pointedServerGroups,
-                                           GlobalValidationContext globalContext) {
-    Map<String, List<String>> resourcesPointingToCurrServerGroup =
-            pointedServerGroups.get(resourceEntry.getKey());
-
-    if (MapUtils.isEmpty(resourcesPointingToCurrServerGroup)) {
-      globalContext
-              .addMessage(
-                      fileName,
-                      ErrorLevel.WARNING,
-                      ErrorMessagesFormatBuilder
-                              .getErrorWithParameters(
-                                      ERROR_CODE_HNG3, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                                      ValidatorConstants.Server_Group, resourceEntry.getKey()));
+    private static boolean isGivenPolicyValid(Object policy) {
+        if (policy instanceof Map) {
+            return true;
+        }
+        if (policy instanceof String) {
+            return PolicyTypes.isGivenPolicyValid((String) policy);
+        }
+        return false;
     }
 
-  }
+    @Override
+    public void validate(String fileName, Map.Entry<String, Resource> resourceEntry, GlobalValidationContext globalContext,
+                         ValidationContext validationContext) {
+        validateNovaServerGroupPolicy(fileName, resourceEntry, globalContext);
+        validateServerGroupIsUsed(fileName, resourceEntry, globalContext, (HeatResourceValidationContext) validationContext);
+    }
+
+    public void validateServerGroupIsUsed(String fileName, Map.Entry<String, Resource> resourceEntry, GlobalValidationContext globalContext,
+                                          HeatResourceValidationContext validationContext) {
+        Map<String, Map<String, List<String>>> pointedServerGroups = validationContext.getFileLevelResourceDependencies()
+            .get(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource());
+        if (MapUtils.isEmpty(pointedServerGroups)) {
+            globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                .getErrorWithParameters(ERROR_CODE_HNG2, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(), ValidatorConstants.Server_Group,
+                    resourceEntry.getKey()));
+            return;
+        }
+        handleServerGroupReferences(fileName, resourceEntry, pointedServerGroups, globalContext);
+    }
+
+    private void handleServerGroupReferences(String fileName, Map.Entry<String, Resource> resourceEntry,
+                                             Map<String, Map<String, List<String>>> pointedServerGroups, GlobalValidationContext globalContext) {
+        Map<String, List<String>> resourcesPointingToCurrServerGroup = pointedServerGroups.get(resourceEntry.getKey());
+        if (MapUtils.isEmpty(resourcesPointingToCurrServerGroup)) {
+            globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                .getErrorWithParameters(ERROR_CODE_HNG3, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(), ValidatorConstants.Server_Group,
+                    resourceEntry.getKey()));
+        }
+    }
 }

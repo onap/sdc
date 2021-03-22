@@ -21,48 +21,44 @@ import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
+import java.util.Collection;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 
-import java.util.Collection;
+public class ActivityLogDaoCassandraImpl extends CassandraBaseDao<ActivityLogEntity> implements ActivityLogDao {
 
-public class ActivityLogDaoCassandraImpl extends CassandraBaseDao<ActivityLogEntity>
-    implements ActivityLogDao {
+    private static final Mapper<ActivityLogEntity> mapper;
+    private static final ActivityLogAccessor accessor;
 
-  private static final Mapper<ActivityLogEntity> mapper;
-  private static final ActivityLogAccessor accessor;
+    static {
+        MappingManager mappingManager = NoSqlDbFactory.getInstance().createInterface().getMappingManager();
+        mappingManager.getSession().getCluster().getConfiguration().getCodecRegistry().register(new EnumNameCodec<>(ActivityType.class));
+        mapper = mappingManager.mapper(ActivityLogEntity.class);
+        accessor = mappingManager.createAccessor(ActivityLogAccessor.class);
+    }
 
-  static {
-    MappingManager mappingManager = NoSqlDbFactory.getInstance().createInterface().getMappingManager();
-    mappingManager.getSession().getCluster().getConfiguration().getCodecRegistry()
-                  .register(new EnumNameCodec<>(ActivityType.class));
+    @Override
+    protected Mapper<ActivityLogEntity> getMapper() {
+        return mapper;
+    }
 
-    mapper = mappingManager.mapper(ActivityLogEntity.class);
-    accessor = mappingManager.createAccessor(ActivityLogAccessor.class);
-  }
+    @Override
+    protected Object[] getKeys(ActivityLogEntity entity) {
+        return new Object[]{entity.getItemId(), entity.getVersionId(), entity.getId()};
+    }
 
-  @Override
-  protected Mapper<ActivityLogEntity> getMapper() {
-    return mapper;
-  }
+    @Override
+    public Collection<ActivityLogEntity> list(ActivityLogEntity entity) {
+        return accessor.listByItemVersion(entity.getItemId(), entity.getVersionId()).all();
+    }
 
-  @Override
-  protected Object[] getKeys(ActivityLogEntity entity) {
-    return new Object[]{entity.getItemId(), entity.getVersionId(), entity.getId()};
-  }
+    @Accessor
+    interface ActivityLogAccessor {
 
-  @Override
-  public Collection<ActivityLogEntity> list(ActivityLogEntity entity) {
-    return accessor.listByItemVersion(entity.getItemId(), entity.getVersionId()).all();
-  }
-
-  @Accessor
-  interface ActivityLogAccessor {
-
-    @Query("select * from activity_log where item_id=? and version_id=?")
-    Result<ActivityLogEntity> listByItemVersion(String itemId, String versionId);
-  }
+        @Query("select * from activity_log where item_id=? and version_id=?")
+        Result<ActivityLogEntity> listByItemVersion(String itemId, String versionId);
+    }
 }

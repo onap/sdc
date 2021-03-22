@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.validation.types;
 
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
@@ -26,16 +25,18 @@ import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
  * Created by TALIO on 4/27/2016.
  */
 public class ValidationFileResponseDto {
-  //private List<String> fileNames;
-  //private Map<String, List<ErrorMessage>> errors;
-  //private ValidationFileStatus status;
-  private ValidationStructureList validationData;
+    //private List<String> fileNames;
 
-  public ValidationStructureList getValidationData() {
-    return validationData;
-  }
+    //private Map<String, List<ErrorMessage>> errors;
 
-  public void setValidationData(ValidationStructureList validationData) {
-    this.validationData = validationData;
-  }
+    //private ValidationFileStatus status;
+    private ValidationStructureList validationData;
+
+    public ValidationStructureList getValidationData() {
+        return validationData;
+    }
+
+    public void setValidationData(ValidationStructureList validationData) {
+        this.validationData = validationData;
+    }
 }

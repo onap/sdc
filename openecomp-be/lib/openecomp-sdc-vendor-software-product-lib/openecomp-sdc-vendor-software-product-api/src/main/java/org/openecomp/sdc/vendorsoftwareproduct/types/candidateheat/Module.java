@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat;
 
 import lombok.Getter;
@@ -37,5 +36,4 @@ public class Module {
     private String vol;
     private String volEnv;
     private FileData.Type type;
-
 }

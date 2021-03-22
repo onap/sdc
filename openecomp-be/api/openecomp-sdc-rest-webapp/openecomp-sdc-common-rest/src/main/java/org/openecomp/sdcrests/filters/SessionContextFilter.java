@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,11 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.filters;
-
-import org.openecomp.sdc.common.session.SessionContextProvider;
-import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -31,37 +27,34 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import org.openecomp.sdc.common.session.SessionContextProvider;
+import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 
 public abstract class SessionContextFilter implements Filter {
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
 
-  }
-
-  @Override
-  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                       FilterChain filterChain) throws IOException, ServletException {
-    SessionContextProvider contextProvider =
-        SessionContextProviderFactory.getInstance().createInterface();
-
-    try {
-      if (servletRequest instanceof HttpServletRequest) {
-
-        contextProvider.create(getUser(servletRequest),getTenant(servletRequest));
-      }
-
-      filterChain.doFilter(servletRequest, servletResponse);
-    } finally {
-      contextProvider.close();
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
     }
-  }
 
-  @Override
-  public void destroy() {
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+        throws IOException, ServletException {
+        SessionContextProvider contextProvider = SessionContextProviderFactory.getInstance().createInterface();
+        try {
+            if (servletRequest instanceof HttpServletRequest) {
+                contextProvider.create(getUser(servletRequest), getTenant(servletRequest));
+            }
+            filterChain.doFilter(servletRequest, servletResponse);
+        } finally {
+            contextProvider.close();
+        }
+    }
 
-  }
+    @Override
+    public void destroy() {
+    }
 
-  public abstract String getUser(ServletRequest servletRequest);
+    public abstract String getUser(ServletRequest servletRequest);
 
-  public abstract String getTenant(ServletRequest servletRequest);
+    public abstract String getTenant(ServletRequest servletRequest);
 }

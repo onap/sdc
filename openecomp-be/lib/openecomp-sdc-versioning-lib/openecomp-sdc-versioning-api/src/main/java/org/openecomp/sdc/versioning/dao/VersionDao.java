@@ -25,25 +25,26 @@ import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface VersionDao {
-  List<Version> list(String itemId);
 
-  void create(String itemId, Version version);
+    List<Version> list(String itemId);
 
-  void update(String itemId, Version version);
+    void create(String itemId, Version version);
 
-  Optional<Version> get(String itemId, Version version);
+    void update(String itemId, Version version);
 
-  void delete(String itemId, Version version);
+    Optional<Version> get(String itemId, Version version);
 
-  void publish(String itemId, Version version, String message);
+    void delete(String itemId, Version version);
 
-  void sync(String itemId, Version version);
+    void publish(String itemId, Version version, String message);
 
-  void forceSync(String itemId, Version version);
+    void sync(String itemId, Version version);
 
-  void clean(String itemId, Version version);
+    void forceSync(String itemId, Version version);
 
-  void revert(String itemId, Version version, String revisionId);
+    void clean(String itemId, Version version);
 
-  List<Revision> listRevisions(String itemId, Version version);
+    void revert(String itemId, Version version, String revisionId);
+
+    List<Revision> listRevisions(String itemId, Version version);
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging;
 
 /**
@@ -28,7 +27,6 @@ public class LoggingConstants {
      * Default HTTP header for propagation of a request ID for distributed tracing.
      */
     public static final String DEFAULT_REQUEST_ID_HEADER = "X-ECOMP-RequestID";
-
     /**
      * Default HTTP header for exchanging a partner name between components.
      */

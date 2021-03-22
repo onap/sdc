@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.conflict.rest.mapping;
-
 
 import org.openecomp.conflicts.types.ItemVersionConflict;
 import org.openecomp.sdcrests.conflict.types.ConflictDto;
@@ -27,16 +25,13 @@ import org.openecomp.sdcrests.conflict.types.ConflictInfoDto;
 import org.openecomp.sdcrests.conflict.types.ItemVersionConflictDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
-public class MapItemVersionConflictToDto
-    extends MappingBase<ItemVersionConflict, ItemVersionConflictDto> {
+public class MapItemVersionConflictToDto extends MappingBase<ItemVersionConflict, ItemVersionConflictDto> {
 
-  @Override
-  public void doMapping(ItemVersionConflict source, ItemVersionConflictDto target) {
-    target
-        .setConflict(new MapConflictToDto().applyMapping(source.getVersionConflict(), ConflictDto.class));
-
-    MapConflictInfoToDto conflictInfoMapper = new MapConflictInfoToDto();
-    source.getElementConflicts().forEach(conflictInfo -> target
-        .addConflictInfo(conflictInfoMapper.applyMapping(conflictInfo, ConflictInfoDto.class)));
-  }
+    @Override
+    public void doMapping(ItemVersionConflict source, ItemVersionConflictDto target) {
+        target.setConflict(new MapConflictToDto().applyMapping(source.getVersionConflict(), ConflictDto.class));
+        MapConflictInfoToDto conflictInfoMapper = new MapConflictInfoToDto();
+        source.getElementConflicts()
+            .forEach(conflictInfo -> target.addConflictInfo(conflictInfoMapper.applyMapping(conflictInfo, ConflictInfoDto.class)));
+    }
 }

@@ -17,14 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.dao;
 
+import java.util.Set;
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.notification.dao.types.SubscribersEntity;
-
-import java.util.Set;
-
 
 public interface SubscribersDao extends BaseDao<SubscribersEntity> {
 
@@ -33,5 +30,4 @@ public interface SubscribersDao extends BaseDao<SubscribersEntity> {
     void unsubscribe(String ownerId, String entityId);
 
     Set<String> getSubscribers(String entityId);
-
 }

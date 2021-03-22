@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import com.google.common.collect.ImmutableMap;
@@ -42,8 +41,8 @@ public class PnfdInputBlockParser extends AbstractPnfdBlockParser {
     }
 
     @Override
-    protected Optional<Map<String, Object>> buildParsedBlock(final Map<String, Object> attributeQuery,
-        final Map<String, Object> originalAttributeMap, final ConversionDefinition conversionDefinition) {
+    protected Optional<Map<String, Object>> buildParsedBlock(final Map<String, Object> attributeQuery, final Map<String, Object> originalAttributeMap,
+                                                             final ConversionDefinition conversionDefinition) {
         //cannot query for more than one attribute
         if (attributeQuery.keySet().size() > 1) {
             return Optional.empty();
@@ -59,7 +58,6 @@ public class PnfdInputBlockParser extends AbstractPnfdBlockParser {
                 (Map<String, Object>) originalAttributeMap.get(attribute), conversionDefinition);
             builtInput.ifPresent(builtInput1 -> parsedInput.put(attribute, builtInput1));
         }
-
         return parsedInput.isEmpty() ? Optional.empty() : Optional.of(parsedInput);
     }
 
@@ -78,16 +76,12 @@ public class PnfdInputBlockParser extends AbstractPnfdBlockParser {
         if (MapUtils.isEmpty(inputsMap)) {
             return Collections.emptySet();
         }
-
         return inputsMap.entrySet().stream()
-            .filter(inputMapEntry -> PnfdQueryExecutor
-                .find(conversionQuery, ImmutableMap.of(inputMapEntry.getKey(), inputMapEntry.getValue()))
-            )
+            .filter(inputMapEntry -> PnfdQueryExecutor.find(conversionQuery, ImmutableMap.of(inputMapEntry.getKey(), inputMapEntry.getValue())))
             .map(inputMapEntry -> {
                 final Map<String, Object> map = new HashMap<>();
                 map.put(inputMapEntry.getKey(), inputMapEntry.getValue());
                 return map;
             }).collect(Collectors.toSet());
     }
-
 }

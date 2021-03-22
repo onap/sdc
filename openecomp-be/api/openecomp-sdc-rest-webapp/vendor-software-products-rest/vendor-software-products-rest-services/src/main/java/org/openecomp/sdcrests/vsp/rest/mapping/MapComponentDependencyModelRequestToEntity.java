@@ -12,10 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-
+ */
 package org.openecomp.sdcrests.vsp.rest.mapping;
-
 
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -25,21 +23,18 @@ import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDependencyModel;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRelationType;
 
-public class MapComponentDependencyModelRequestToEntity extends
-    MappingBase<ComponentDependencyModel, ComponentDependencyModelEntity> {
+public class MapComponentDependencyModelRequestToEntity extends MappingBase<ComponentDependencyModel, ComponentDependencyModelEntity> {
 
-  @Override
-  public void doMapping(ComponentDependencyModel source,
-                        ComponentDependencyModelEntity target) {
-    target.setSourceComponentId(source.getSourceId());
-    target.setTargetComponentId(source.getTargetId());
-    try {
-      ComponentRelationType.valueOf(source.getRelationType());
-      target.setRelation(source.getRelationType());
-    } catch (IllegalArgumentException exception) {
-      ErrorCode errorCode =
-          ComponentDependencyModelErrorBuilder.getInvalidRelationTypeErrorBuilder();
-      throw new CoreException(errorCode, exception);
+    @Override
+    public void doMapping(ComponentDependencyModel source, ComponentDependencyModelEntity target) {
+        target.setSourceComponentId(source.getSourceId());
+        target.setTargetComponentId(source.getTargetId());
+        try {
+            ComponentRelationType.valueOf(source.getRelationType());
+            target.setRelation(source.getRelationType());
+        } catch (IllegalArgumentException exception) {
+            ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getInvalidRelationTypeErrorBuilder();
+            throw new CoreException(errorCode, exception);
+        }
     }
-  }
 }

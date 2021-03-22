@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor;
 
+import static org.openecomp.sdc.tosca.services.ToscaConstants.HEAT_NODE_TYPE_SUFFIX;
+
+import java.util.List;
+import java.util.Optional;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
@@ -23,24 +26,14 @@ import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractorUtil;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNovaServerImpl;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.openecomp.sdc.tosca.services.ToscaConstants.HEAT_NODE_TYPE_SUFFIX;
-
 public class NameExtractorNovaServerImpl implements NameExtractor {
 
     @Override
     public String extractNodeTypeName(Resource resource, String resourceId, String translatedId) {
         ResourceTranslationNovaServerImpl novaServerTranslator = new ResourceTranslationNovaServerImpl();
-        List<PropertyRegexMatcher> propertyRegexMatchers =
-                novaServerTranslator.getPropertyRegexMatchersForNovaNodeType();
-
+        List<PropertyRegexMatcher> propertyRegexMatchers = novaServerTranslator.getPropertyRegexMatchersForNovaNodeType();
         Optional<String> extractedNodeTypeName = NameExtractorUtil
-                .extractNodeTypeNameByPropertiesPriority(resource.getProperties(), propertyRegexMatchers);
-
-        return ToscaNodeType.VFC_NODE_TYPE_PREFIX + HEAT_NODE_TYPE_SUFFIX
-                + (extractedNodeTypeName.orElseGet(() -> translatedId.replace(".", "_")));
+            .extractNodeTypeNameByPropertiesPriority(resource.getProperties(), propertyRegexMatchers);
+        return ToscaNodeType.VFC_NODE_TYPE_PREFIX + HEAT_NODE_TYPE_SUFFIX + (extractedNodeTypeName.orElseGet(() -> translatedId.replace(".", "_")));
     }
-
 }

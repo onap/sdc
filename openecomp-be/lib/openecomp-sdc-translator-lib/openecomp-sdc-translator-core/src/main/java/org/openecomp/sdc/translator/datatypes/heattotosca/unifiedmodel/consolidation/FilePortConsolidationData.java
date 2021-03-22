@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import java.util.Collection;
@@ -45,56 +44,44 @@ public class FilePortConsolidationData {
         return portTemplateConsolidationData.get(portNodeTemplateId);
     }
 
-    public void setPortTemplateConsolidationData(String portNodeTemplateId,
-                                               PortTemplateConsolidationData
-                                                   portTemplateConsolidationData) {
+    public void setPortTemplateConsolidationData(String portNodeTemplateId, PortTemplateConsolidationData portTemplateConsolidationData) {
         this.portTemplateConsolidationData.put(portNodeTemplateId, portTemplateConsolidationData);
     }
 
     /**
-    * If entity doesn't exist yet - create subInterface template consolidation data entity
-    * base on given parameters.
-    *
-    * @return subInterface template consolidation data entity
-    */
-    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(
-            Resource resource, String subInterfaceNodeTemplateId, String parentPortNodeTemplateId) {
-        PortTemplateConsolidationData consolidationData =
-                addPortTemplateConsolidationData(parentPortNodeTemplateId);
-        return consolidationData.addSubInterfaceTemplateConsolidationData(resource,
-                             subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+     * If entity doesn't exist yet - create subInterface template consolidation data entity base on given parameters.
+     *
+     * @return subInterface template consolidation data entity
+     */
+    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(Resource resource, String subInterfaceNodeTemplateId,
+                                                                                   String parentPortNodeTemplateId) {
+        PortTemplateConsolidationData consolidationData = addPortTemplateConsolidationData(parentPortNodeTemplateId);
+        return consolidationData.addSubInterfaceTemplateConsolidationData(resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId);
     }
 
     /**
-    * If entity doesn't exist yet - create subInterface template consolidation data entity
-    * base on given parameters.
-    *
-    * @return subInterface template consolidation data entity
-    */
-    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(
-            Resource resource, String subInterfaceNodeTemplateId, String parentPortNodeTemplateId,
-            String parentPortResourceId, String parentPortResourceType) {
-
-        PortTemplateConsolidationData consolidationData =
-                addPortTemplateConsolidationData(parentPortNodeTemplateId, parentPortResourceId,
-                parentPortResourceType, null);
-
-        return consolidationData.addSubInterfaceTemplateConsolidationData(resource,
-                subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+     * If entity doesn't exist yet - create subInterface template consolidation data entity base on given parameters.
+     *
+     * @return subInterface template consolidation data entity
+     */
+    SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(Resource resource, String subInterfaceNodeTemplateId,
+                                                                                   String parentPortNodeTemplateId, String parentPortResourceId,
+                                                                                   String parentPortResourceType) {
+        PortTemplateConsolidationData consolidationData = addPortTemplateConsolidationData(parentPortNodeTemplateId, parentPortResourceId,
+            parentPortResourceType, null);
+        return consolidationData.addSubInterfaceTemplateConsolidationData(resource, subInterfaceNodeTemplateId, parentPortNodeTemplateId);
     }
 
     /**
-    * If entity doesn't exist yet - create port template consolidation data and
-    * update it's network role according to given resource parameters.
-    *
-    * @return port template consolidation data entity by given keys
-    */
-    PortTemplateConsolidationData addPortTemplateConsolidationData(
-            String portNodeTemplateId, String portResourceId, String portResourceType, String portType) {
+     * If entity doesn't exist yet - create port template consolidation data and update it's network role according to given resource parameters.
+     *
+     * @return port template consolidation data entity by given keys
+     */
+    PortTemplateConsolidationData addPortTemplateConsolidationData(String portNodeTemplateId, String portResourceId, String portResourceType,
+                                                                   String portType) {
         PortTemplateConsolidationData consolidationData = getPortTemplateConsolidationData(portNodeTemplateId);
         if (consolidationData == null) {
-            consolidationData = createPortTemplateConsolidationData(portNodeTemplateId,
-              portResourceId, portResourceType, portType);
+            consolidationData = createPortTemplateConsolidationData(portNodeTemplateId, portResourceId, portResourceType, portType);
             setPortTemplateConsolidationData(portNodeTemplateId, consolidationData);
         }
         if (consolidationData.getPortType() == null) {
@@ -117,14 +104,13 @@ public class FilePortConsolidationData {
         }
         return consolidationData;
     }
-    
-    private PortTemplateConsolidationData createPortTemplateConsolidationData(String portNodeTemplateId,
-            String portResourceId, String portResourceType, String portType) {
+
+    private PortTemplateConsolidationData createPortTemplateConsolidationData(String portNodeTemplateId, String portResourceId,
+                                                                              String portResourceType, String portType) {
         PortTemplateConsolidationData consolidationData = new PortTemplateConsolidationData();
         consolidationData.setNodeTemplateId(portNodeTemplateId);
         consolidationData.setPortType(portType);
-        Optional<String> portNetworkRole = HeatResourceUtil.evaluateNetworkRoleFromResourceId(portResourceId,
-                portResourceType);
+        Optional<String> portNetworkRole = HeatResourceUtil.evaluateNetworkRoleFromResourceId(portResourceId, portResourceType);
         portNetworkRole.ifPresent(consolidationData::setNetworkRole);
         return consolidationData;
     }

@@ -13,33 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning;
-
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.types.Item;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdc.versioning.types.Item;
 
 public interface ItemManager {
 
-  Collection<Item> list(Predicate<Item> predicate);
+    Collection<Item> list(Predicate<Item> predicate);
 
-  Item get(String itemId);
+    Item get(String itemId);
 
-  Item create(Item item);
+    Item create(Item item);
 
-  void updateVersionStatus(String itemId, VersionStatus addedVersionStatus,
-      VersionStatus removedVersionStatus);
+    void updateVersionStatus(String itemId, VersionStatus addedVersionStatus, VersionStatus removedVersionStatus);
 
-  void archive(Item item);
+    void archive(Item item);
 
-  void restore(Item item);
+    void restore(Item item);
 
-  void delete(Item item);
+    void delete(Item item);
 
-  void updateName(String itemId, String name);
+    void updateName(String itemId, String name);
 
-  void update(Item item);
+    void update(Item item);
 }

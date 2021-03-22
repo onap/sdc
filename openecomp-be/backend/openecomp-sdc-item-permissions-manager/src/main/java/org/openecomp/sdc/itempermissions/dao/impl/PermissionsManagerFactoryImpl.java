@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.itempermissions.dao.impl;
 
 import org.openecomp.sdc.itempermissions.PermissionsManager;
@@ -28,11 +27,9 @@ import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
  */
 public class PermissionsManagerFactoryImpl extends PermissionsManagerFactory {
 
-    private static final PermissionsManager INSTANCE =
-        new PermissionsManagerImpl(PermissionsServicesFactory.getInstance().createInterface(),
-            AsdcItemManagerFactory.getInstance().createInterface(),
-            NotificationPropagationManagerFactory.getInstance().createInterface(),
-            SubscriptionServiceFactory.getInstance().createInterface());
+    private static final PermissionsManager INSTANCE = new PermissionsManagerImpl(PermissionsServicesFactory.getInstance().createInterface(),
+        AsdcItemManagerFactory.getInstance().createInterface(), NotificationPropagationManagerFactory.getInstance().createInterface(),
+        SubscriptionServiceFactory.getInstance().createInterface());
 
     @Override
     public PermissionsManager createInterface() {

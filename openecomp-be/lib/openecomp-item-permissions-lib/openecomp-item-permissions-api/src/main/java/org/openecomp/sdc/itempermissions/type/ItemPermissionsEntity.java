@@ -30,21 +30,18 @@ import lombok.Setter;
 /**
  * Created by ayalaben on 6/18/2017.
  */
-
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(keyspace = "dox", name = "item_permissions")
 public class ItemPermissionsEntity {
 
-  @PartitionKey
-  @Column(name = "item_id")
-  private String itemId;
-
-  @ClusteringColumn
-  @Column(name = "user_id")
-  private String userId;
-
-  @Column(name = "permission")
-  private String permission;
+    @PartitionKey
+    @Column(name = "item_id")
+    private String itemId;
+    @ClusteringColumn
+    @Column(name = "user_id")
+    private String userId;
+    @Column(name = "permission")
+    private String permission;
 }

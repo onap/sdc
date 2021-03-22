@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca;
+
+import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
@@ -38,12 +38,10 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationDataHandler;
 import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
 
-import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR;
-
-    /**
-     * Utility class for consolidation data collection helper methods.
-    */
-    public class ConsolidationDataUtil {
+/**
+ * Utility class for consolidation data collection helper methods.
+ */
+public class ConsolidationDataUtil {
 
     private static final String UNDERSCORE = "_";
     private static final String DIGIT_REGEX = "\\d+";
@@ -52,11 +50,10 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
         // prevent instantiation of utility class
     }
 
-    public static boolean isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(
-            String nestedNodeTemplateId, String nestedHeatFileName, TranslationContext context) {
-        return context.isServiceTemplateWithoutNodeTemplatesSection(
-                FileUtils.getFileWithoutExtention(nestedHeatFileName))
-                       || context.isNodeTemplateIdPointsToStWithoutNodeTemplates(nestedNodeTemplateId);
+    public static boolean isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(String nestedNodeTemplateId, String nestedHeatFileName,
+                                                                                    TranslationContext context) {
+        return context.isServiceTemplateWithoutNodeTemplatesSection(FileUtils.getFileWithoutExtention(nestedHeatFileName)) || context
+            .isNodeTemplateIdPointsToStWithoutNodeTemplates(nestedNodeTemplateId);
     }
 
     /**
@@ -67,15 +64,10 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      * @param computeNodeTemplateId Node template id of the compute node
      * @param requirementAssignment RequirementAssignment object
      */
-    public static void updateComputeConsolidationDataVolumes(TranslateTo translateTo,
-                                                                    String computeType,
-                                                                    String computeNodeTemplateId,
-                                                                    String requirementId,
-                                                                    RequirementAssignment requirementAssignment) {
-        ComputeConsolidationDataHandler handler =
-                translateTo.getContext().getComputeConsolidationDataHandler();
-        handler.addVolumeToConsolidationData(
-                translateTo, computeType, computeNodeTemplateId, requirementId, requirementAssignment);
+    public static void updateComputeConsolidationDataVolumes(TranslateTo translateTo, String computeType, String computeNodeTemplateId,
+                                                             String requirementId, RequirementAssignment requirementAssignment) {
+        ComputeConsolidationDataHandler handler = translateTo.getContext().getComputeConsolidationDataHandler();
+        handler.addVolumeToConsolidationData(translateTo, computeType, computeNodeTemplateId, requirementId, requirementAssignment);
     }
 
     /**
@@ -86,22 +78,17 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      * @param portResourceId     the port resource id
      * @param portNodeTemplateId the port node template id
      */
-    public static void updatePortInConsolidationData(TranslateTo translateTo,
-                                                            String computeNodeType,
-                                                            String portResourceId,
-                                                            String portResourceType,
-                                                            String portNodeTemplateId) {
+    public static void updatePortInConsolidationData(TranslateTo translateTo, String computeNodeType, String portResourceId, String portResourceType,
+                                                     String portNodeTemplateId) {
         TranslationContext translationContext = translateTo.getContext();
         String computeNodeTemplateId = translateTo.getTranslatedId();
         String portType = getPortType(portNodeTemplateId, DataModelUtil.getNamespaceSuffix(computeNodeType));
-
-        translationContext.getComputeConsolidationDataHandler().addPortToConsolidationData(
-                translateTo, computeNodeType, computeNodeTemplateId, portType, portNodeTemplateId);
-
+        translationContext.getComputeConsolidationDataHandler()
+            .addPortToConsolidationData(translateTo, computeNodeType, computeNodeTemplateId, portType, portNodeTemplateId);
         ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
-        translationContext.getPortConsolidationDataHandler().addConsolidationData(
-                serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId, portType);
+        translationContext.getPortConsolidationDataHandler()
+            .addConsolidationData(serviceTemplateFileName, portResourceId, portResourceType, portNodeTemplateId, portType);
     }
 
     /**
@@ -112,30 +99,27 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      * @param nodeTemplateId        the source node template id
      * @param requirementAssignment the requirement assignment
      */
-    public static void updateNodesConnectedData(TranslateTo translateTo, String targetResourceId,
-                                                       Resource targetResource, Resource sourceResource,
-                                                       String nodeTemplateId, String requirementId,
-                                                       RequirementAssignment requirementAssignment) {
+    public static void updateNodesConnectedData(TranslateTo translateTo, String targetResourceId, Resource targetResource, Resource sourceResource,
+                                                String nodeTemplateId, String requirementId, RequirementAssignment requirementAssignment) {
         ConsolidationEntityType consolidationEntityType = ConsolidationEntityType.OTHER;
         consolidationEntityType.setEntityType(sourceResource, targetResource, translateTo.getContext());
         // Add resource dependency information in nodesConnectedIn if the target node
+
         // is a consolidation entity
         if (isConsolidationEntity(consolidationEntityType.getTargetEntityType())) {
-            ConsolidationDataUtil.updateNodesConnectedIn(translateTo,
-                    nodeTemplateId, consolidationEntityType.getTargetEntityType(), targetResourceId,
-                    requirementId, requirementAssignment);
+            ConsolidationDataUtil
+                .updateNodesConnectedIn(translateTo, nodeTemplateId, consolidationEntityType.getTargetEntityType(), targetResourceId, requirementId,
+                    requirementAssignment);
         }
-
         //Add resource dependency information in nodesConnectedOut if the source node
+
         //is a consolidation entity
         if (isConsolidationEntity(consolidationEntityType.getSourceEntityType())) {
-            ConsolidationDataUtil.updateNodesConnectedOut(translateTo,
-                    requirementAssignment.getNode(), consolidationEntityType.getSourceEntityType(),
-                    requirementId, requirementAssignment);
-
+            ConsolidationDataUtil
+                .updateNodesConnectedOut(translateTo, requirementAssignment.getNode(), consolidationEntityType.getSourceEntityType(), requirementId,
+                    requirementAssignment);
         }
     }
-
 
     private static boolean isConsolidationEntity(ConsolidationEntityType consolidationEntityType) {
         return ConsolidationEntityType.getSupportedConsolidationEntities().contains(consolidationEntityType);
@@ -150,21 +134,15 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      * @param requirementId           the requirement id
      * @param requirementAssignment   the requirement assignment
      */
-    public static void updateNodesConnectedOut(TranslateTo translateTo,
-                                                      String nodeTemplateId,
-                                                      ConsolidationEntityType consolidationEntityType,
-                                                      String requirementId,
-                                                      RequirementAssignment requirementAssignment) {
+    public static void updateNodesConnectedOut(TranslateTo translateTo, String nodeTemplateId, ConsolidationEntityType consolidationEntityType,
+                                               String requirementId, RequirementAssignment requirementAssignment) {
         TranslationContext translationContext = translateTo.getContext();
-        translationContext.updateRequirementAssignmentIdIndex(
-                ToscaUtil.getServiceTemplateFileName(translateTo.getServiceTemplate()), translateTo.getResourceId(),
+        translationContext
+            .updateRequirementAssignmentIdIndex(ToscaUtil.getServiceTemplateFileName(translateTo.getServiceTemplate()), translateTo.getResourceId(),
                 requirementId);
-
-        Optional<ConsolidationDataHandler> consolidationDataHandler =
-                translationContext.getConsolidationDataHandler(consolidationEntityType);
-        consolidationDataHandler.ifPresent(handler -> handler.addNodesConnectedOut(
-                translateTo, nodeTemplateId, requirementId, requirementAssignment));
-
+        Optional<ConsolidationDataHandler> consolidationDataHandler = translationContext.getConsolidationDataHandler(consolidationEntityType);
+        consolidationDataHandler
+            .ifPresent(handler -> handler.addNodesConnectedOut(translateTo, nodeTemplateId, requirementId, requirementAssignment));
     }
 
     /**
@@ -177,20 +155,13 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      * @param requirementId           Requirement Id
      * @param requirementAssignment   the requirement assignment
      */
-    public static void updateNodesConnectedIn(TranslateTo translateTo, String sourceNodeTemplateId,
-                                                     ConsolidationEntityType consolidationEntityType,
-                                                     String targetResourceId,
-                                                     String requirementId,
-                                                     RequirementAssignment requirementAssignment) {
-
+    public static void updateNodesConnectedIn(TranslateTo translateTo, String sourceNodeTemplateId, ConsolidationEntityType consolidationEntityType,
+                                              String targetResourceId, String requirementId, RequirementAssignment requirementAssignment) {
         TranslationContext translationContext = translateTo.getContext();
-        Optional<ConsolidationDataHandler> consolidationDataHandler =
-                translationContext.getConsolidationDataHandler(consolidationEntityType);
+        Optional<ConsolidationDataHandler> consolidationDataHandler = translationContext.getConsolidationDataHandler(consolidationEntityType);
         String dependentNodeTemplateId = requirementAssignment.getNode();
-        consolidationDataHandler.ifPresent(
-                handler -> handler.addNodesConnectedIn(translateTo, sourceNodeTemplateId, dependentNodeTemplateId,
-                        targetResourceId, requirementId, requirementAssignment));
-
+        consolidationDataHandler.ifPresent(handler -> handler
+            .addNodesConnectedIn(translateTo, sourceNodeTemplateId, dependentNodeTemplateId, targetResourceId, requirementId, requirementAssignment));
     }
 
     /**
@@ -201,8 +172,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      */
     public static boolean isComputeResource(Resource resource) {
         String resourceType = resource.getType();
-        Map<String, ImplementationConfiguration> supportedComputeResources =
-                TranslationContext.getSupportedConsolidationComputeResources();
+        Map<String, ImplementationConfiguration> supportedComputeResources = TranslationContext.getSupportedConsolidationComputeResources();
         if (supportedComputeResources.containsKey(resourceType)) {
             return supportedComputeResources.get(resourceType).isEnable();
         }
@@ -217,8 +187,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      */
     public static boolean isPortResource(Resource resource) {
         String resourceType = resource.getType();
-        Map<String, ImplementationConfiguration> supportedPortResources =
-                TranslationContext.getSupportedConsolidationPortResources();
+        Map<String, ImplementationConfiguration> supportedPortResources = TranslationContext.getSupportedConsolidationPortResources();
         if (supportedPortResources.containsKey(resourceType)) {
             return supportedPortResources.get(resourceType).isEnable();
         }
@@ -233,9 +202,8 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      */
     public static boolean isVolumeResource(Resource resource) {
         String resourceType = resource.getType();
-        return resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource())
-                       || resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE
-                                                      .getHeatResource());
+        return resourceType.equals(HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource()) || resourceType
+            .equals(HeatResourcesTypes.CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE.getHeatResource());
     }
 
     /**
@@ -245,32 +213,26 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
      * @return the port type
      */
     public static String getPortType(String portNodeTemplateId, String vmType) {
-
         if (StringUtils.isBlank(portNodeTemplateId) || !portNodeTemplateId.startsWith(vmType + UNDERSCORE)) {
             return portNodeTemplateId;
         }
         String temp = portNodeTemplateId.substring(portNodeTemplateId.indexOf(vmType) + vmType.length());
-
         StringBuilder sb = new StringBuilder(vmType + UNDERSCORE);
         String[] tokens = temp.split(UNDERSCORE);
-
         if (tokens.length == 0) {
             return portNodeTemplateId;
         }
-
-        for (int i=0; i<tokens.length; i++) {
+        for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
             if (token.matches(DIGIT_REGEX) && i != 1) {
                 sb.append(token);
                 sb.append(UNDERSCORE);
             }
-
             if (StringUtils.isNotBlank(token) && !token.matches(DIGIT_REGEX)) {
                 sb.append(token);
                 sb.append(UNDERSCORE);
             }
         }
-
         return portNodeTemplateId.endsWith(UNDERSCORE) ? sb.toString() : sb.substring(0, sb.length() - 1);
     }
 
@@ -285,73 +247,57 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
         // create nested in consolidation data
         context.getNestedConsolidationDataHandler()
-                .addConsolidationData(serviceTemplateFileName, context,
-                  translateTo.getHeatFileName(), translateTo.getTranslatedId());
-
+            .addConsolidationData(serviceTemplateFileName, context, translateTo.getHeatFileName(), translateTo.getTranslatedId());
     }
 
-    public static void removeSharedResource(ServiceTemplate serviceTemplate,
-                                                   HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                   TranslationContext context,
-                                                   String paramName,
-                                                   String contrailSharedResourceId,
-                                                   String sharedTranslatedResourceId) {
-        Optional<ConsolidationDataHandler> consolidationDataHandler =
-                ConsolidationDataUtil.getConsolidationDataHandler(heatOrchestrationTemplate, context,
-                        contrailSharedResourceId);
-
-        consolidationDataHandler.ifPresent(
-                handler -> handler.removeParamNameFromAttrFuncList(serviceTemplate, heatOrchestrationTemplate,
-                        paramName, contrailSharedResourceId, sharedTranslatedResourceId));
+    public static void removeSharedResource(ServiceTemplate serviceTemplate, HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                            TranslationContext context, String paramName, String contrailSharedResourceId,
+                                            String sharedTranslatedResourceId) {
+        Optional<ConsolidationDataHandler> consolidationDataHandler = ConsolidationDataUtil
+            .getConsolidationDataHandler(heatOrchestrationTemplate, context, contrailSharedResourceId);
+        consolidationDataHandler.ifPresent(handler -> handler
+            .removeParamNameFromAttrFuncList(serviceTemplate, heatOrchestrationTemplate, paramName, contrailSharedResourceId,
+                sharedTranslatedResourceId));
     }
 
-    public static void updateNodeGetAttributeIn(FunctionTranslator functionTranslator, String resourceTranslatedId,
-            String targetResourceId, String targetResourceTranslatedId,  String attributeName) {
-
+    public static void updateNodeGetAttributeIn(FunctionTranslator functionTranslator, String resourceTranslatedId, String targetResourceId,
+                                                String targetResourceTranslatedId, String attributeName) {
         if (functionTranslator == null || functionTranslator.getServiceTemplate() == null) {
             return;
         }
-        Optional<ConsolidationDataHandler> consolidationDataHandler =
-                ConsolidationDataUtil.getConsolidationDataHandler(functionTranslator.getHeatOrchestrationTemplate(),
-                        functionTranslator.getContext(), targetResourceId);
-
-        consolidationDataHandler.ifPresent(handler -> handler.addNodesGetAttrIn(functionTranslator,
-                resourceTranslatedId, targetResourceId, targetResourceTranslatedId,
+        Optional<ConsolidationDataHandler> consolidationDataHandler = ConsolidationDataUtil
+            .getConsolidationDataHandler(functionTranslator.getHeatOrchestrationTemplate(), functionTranslator.getContext(), targetResourceId);
+        consolidationDataHandler.ifPresent(handler -> handler
+            .addNodesGetAttrIn(functionTranslator, resourceTranslatedId, targetResourceId, targetResourceTranslatedId,
                 getToscaPropertyName(functionTranslator), attributeName));
     }
 
-    public static void updateNodeGetAttributeOut(FunctionTranslator functionTranslator,
-            String targetTranslatedResourceId, String resourceTranslatedId, String attrName) {
-
+    public static void updateNodeGetAttributeOut(FunctionTranslator functionTranslator, String targetTranslatedResourceId,
+                                                 String resourceTranslatedId, String attrName) {
         if (functionTranslator == null || functionTranslator.getServiceTemplate() == null) {
             return;
         }
-
-        Optional<ConsolidationDataHandler> consolidationDataHandler =
-                ConsolidationDataUtil.getConsolidationDataHandler(functionTranslator.getHeatOrchestrationTemplate(),
-                        functionTranslator.getContext(), functionTranslator.getResourceId());
-
-        consolidationDataHandler.ifPresent(handler -> handler.addNodesGetAttrOut(functionTranslator,
-                targetTranslatedResourceId, resourceTranslatedId, getToscaPropertyName(functionTranslator), attrName));
+        Optional<ConsolidationDataHandler> consolidationDataHandler = ConsolidationDataUtil
+            .getConsolidationDataHandler(functionTranslator.getHeatOrchestrationTemplate(), functionTranslator.getContext(),
+                functionTranslator.getResourceId());
+        consolidationDataHandler.ifPresent(handler -> handler
+            .addNodesGetAttrOut(functionTranslator, targetTranslatedResourceId, resourceTranslatedId, getToscaPropertyName(functionTranslator),
+                attrName));
     }
 
-    public static void updateOutputParamGetAttrIn(FunctionTranslator functionTranslator,
-            String targetResourceId, String targetResourceTranslatedId, String propertyName, String attrName) {
+    public static void updateOutputParamGetAttrIn(FunctionTranslator functionTranslator, String targetResourceId, String targetResourceTranslatedId,
+                                                  String propertyName, String attrName) {
         if (functionTranslator == null || functionTranslator.getServiceTemplate() == null) {
             return;
         }
-
-        Optional<ConsolidationDataHandler> consolidationDataHandler =
-                ConsolidationDataUtil.getConsolidationDataHandler(functionTranslator.getHeatOrchestrationTemplate(),
-                        functionTranslator.getContext(), targetResourceId);
-
-        consolidationDataHandler.ifPresent(handler -> handler.addOutputParamGetAttrIn(functionTranslator,
-                targetResourceId, targetResourceTranslatedId, propertyName, attrName));
+        Optional<ConsolidationDataHandler> consolidationDataHandler = ConsolidationDataUtil
+            .getConsolidationDataHandler(functionTranslator.getHeatOrchestrationTemplate(), functionTranslator.getContext(), targetResourceId);
+        consolidationDataHandler.ifPresent(
+            handler -> handler.addOutputParamGetAttrIn(functionTranslator, targetResourceId, targetResourceTranslatedId, propertyName, attrName));
     }
 
-    private static Optional<ConsolidationDataHandler> getConsolidationDataHandler(
-            HeatOrchestrationTemplate heatOrchestrationTemplate, TranslationContext context,
-                    String contrailSharedResourceId) {
+    private static Optional<ConsolidationDataHandler> getConsolidationDataHandler(HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                                                  TranslationContext context, String contrailSharedResourceId) {
         Resource resource = heatOrchestrationTemplate.getResources().get(contrailSharedResourceId);
         ConsolidationEntityType consolidationEntityType = ConsolidationEntityType.OTHER;
         consolidationEntityType.setEntityType(resource, resource, context);
@@ -363,8 +309,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
         Resource resource = heatOrchestrationTemplate.getResources().get(functionTranslator.getResourceId());
         String toscaPropertyName = functionTranslator.getPropertyName();
         if (!HeatToToscaUtil.isNestedResource(resource)) {
-            return HeatToToscaUtil.getToscaPropertyName(functionTranslator.getContext(),
-                    resource.getType(), getHeatPropertyName(toscaPropertyName));
+            return HeatToToscaUtil.getToscaPropertyName(functionTranslator.getContext(), resource.getType(), getHeatPropertyName(toscaPropertyName));
         }
         return toscaPropertyName;
     }
@@ -376,12 +321,10 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
         return toscaPropertyName;
     }
 
-    public static boolean isComputeReferenceToPortId(ComputeTemplateConsolidationData compute,
-                                                            String portId) {
+    public static boolean isComputeReferenceToPortId(ComputeTemplateConsolidationData compute, String portId) {
         if (MapUtils.isEmpty(compute.getPorts())) {
             return false;
         }
-
         for (List<String> portIdsPerType : compute.getPorts().values()) {
             if (portIdsPerType.contains(portId)) {
                 return true;
@@ -389,5 +332,4 @@ import static org.openecomp.sdc.translator.services.heattotosca.ConfigConstants.
         }
         return false;
     }
-
 }

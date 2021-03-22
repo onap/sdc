@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.externaltesting.api;
 
 import lombok.Data;
@@ -23,16 +22,16 @@ import lombok.Data;
  */
 @Data
 public class VtpNameDescriptionPair {
-  private String name;
-  private String description;
 
-  VtpNameDescriptionPair() {
+    private String name;
+    private String description;
 
-  }
+    VtpNameDescriptionPair() {
+    }
 
-  public VtpNameDescriptionPair(String name, String description) {
-    this();
-    this.name = name;
-    this.description = description;
-  }
+    public VtpNameDescriptionPair(String name, String description) {
+        this();
+        this.name = name;
+        this.description = description;
+    }
 }

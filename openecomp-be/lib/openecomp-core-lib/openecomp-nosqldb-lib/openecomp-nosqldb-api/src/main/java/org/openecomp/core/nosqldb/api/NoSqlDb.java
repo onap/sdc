@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.nosqldb.api;
 
 import com.datastax.driver.core.ResultSet;
@@ -26,7 +25,6 @@ import com.datastax.driver.mapping.MappingManager;
 public interface NoSqlDb {
 
     //TODO: remove cassandra types from here!! (like done in SDC...).
-
     void insert(String tableName, String[] colNames, Object[] values);
 
     ResultSet execute(String statement);

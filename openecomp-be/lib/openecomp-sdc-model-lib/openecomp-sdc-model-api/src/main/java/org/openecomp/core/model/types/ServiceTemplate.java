@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.model.types;
 
 import lombok.Getter;
@@ -30,5 +29,4 @@ import lombok.Setter;
 public class ServiceTemplate extends ServiceElement {
 
     private String baseName;
-
 }

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet;
+
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
 
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
@@ -22,11 +23,9 @@ import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
-
 /**
- * Tracks and logs audit information when a request is being processed. An instance of this class cannot be reused, and
- * the pre- and post-request methods must be called only once.
+ * Tracks and logs audit information when a request is being processed. An instance of this class cannot be reused, and the pre- and post-request
+ * methods must be called only once.
  *
  * @author evitaliy
  * @since 31 Jul 2018
@@ -57,35 +56,27 @@ public class AuditTracker implements Tracker {
 
     @Override
     public synchronized void preRequest(HttpServletRequest request) {
-
         if (this.started > 0) {
             throw new IllegalStateException("Pre-request has been already called");
         }
-
         this.started = System.currentTimeMillis();
         this.clientIpAddress = request.getRemoteAddr();
-        AuditData auditData = AuditData.builder().startTime(started).endTime(started).statusCode(COMPLETE)
-                .clientIpAddress(clientIpAddress)
-                .build();
+        AuditData auditData = AuditData.builder().startTime(started).endTime(started).statusCode(COMPLETE).clientIpAddress(clientIpAddress).build();
         logger.auditEntry(auditData);
     }
 
     @Override
     public synchronized void postRequest(RequestProcessingResult result) {
-
         if (this.started == 0) {
             throw new IllegalStateException("Pre-request must be called first");
         }
-
         if (!logger.isAuditEnabled()) {
             return;
         }
-
         long end = System.currentTimeMillis();
         AuditData auditData = AuditData.builder().startTime(started).endTime(end).statusCode(result.getStatusCode())
-                                      .responseCode(Integer.toString(result.getStatus()))
-                                      .responseDescription(result.getStatusPhrase()).clientIpAddress(clientIpAddress)
-                                      .build();
+            .responseCode(Integer.toString(result.getStatus())).responseDescription(result.getStatusPhrase()).clientIpAddress(clientIpAddress)
+            .build();
         logger.auditExit(auditData);
     }
 }

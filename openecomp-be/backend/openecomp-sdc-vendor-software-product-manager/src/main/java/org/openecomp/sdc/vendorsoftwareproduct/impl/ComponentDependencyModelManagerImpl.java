@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -29,84 +29,68 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.ComponentDependencyModelEr
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Collection;
-
 public class ComponentDependencyModelManagerImpl implements ComponentDependencyModelManager {
 
-  private ComponentManager componentManager;
-  private ComponentDependencyModelDao componentDependencyModelDao;
+    private ComponentManager componentManager;
+    private ComponentDependencyModelDao componentDependencyModelDao;
 
-  public ComponentDependencyModelManagerImpl(
-      ComponentManager componentManager, ComponentDependencyModelDao componentDependencyModelDao) {
-    this.componentManager = componentManager;
-    this.componentDependencyModelDao = componentDependencyModelDao;
-  }
-
-  @Override
-  public Collection<ComponentDependencyModelEntity> list(String vspId, Version version) {
-    return componentDependencyModelDao
-        .list(new ComponentDependencyModelEntity(vspId, version, null));
-  }
-
-  @Override
-  public ComponentDependencyModelEntity createComponentDependency(ComponentDependencyModelEntity
-                                                                      entity, String vspId,
-                                                                  Version version) {
-
-    validateComponentDependency(entity);
-    entity.setId(CommonMethods.nextUuId());
-    componentDependencyModelDao.create(entity);
-    return entity;
-  }
-
-  private void validateComponentDependency(ComponentDependencyModelEntity entity) {
-    if (!StringUtils.isEmpty(entity.getSourceComponentId())) {
-      componentManager.validateComponentExistence(entity.getVspId(), entity.getVersion(),
-          entity.getSourceComponentId());
-      if (entity.getSourceComponentId().equals(entity.getTargetComponentId())) {
-        ErrorCode errorCode =
-            ComponentDependencyModelErrorBuilder.getSourceTargetComponentEqualErrorBuilder();
-        throw new CoreException(errorCode);
-      }
-    } else {
-      ErrorCode errorCode = ComponentDependencyModelErrorBuilder
-          .getNoSourceComponentErrorBuilder();
-      throw new CoreException(errorCode);
+    public ComponentDependencyModelManagerImpl(ComponentManager componentManager, ComponentDependencyModelDao componentDependencyModelDao) {
+        this.componentManager = componentManager;
+        this.componentDependencyModelDao = componentDependencyModelDao;
     }
 
-    if (!StringUtils.isEmpty(entity.getTargetComponentId())) {
-      componentManager.validateComponentExistence(entity.getVspId(), entity.getVersion(),
-          entity.getTargetComponentId());
+    @Override
+    public Collection<ComponentDependencyModelEntity> list(String vspId, Version version) {
+        return componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId, version, null));
     }
-  }
 
-  @Override
-  public void delete(String vspId, Version version, String dependencyId) {
-    ComponentDependencyModelEntity componentDependencyEntity = getComponentDependency(vspId,
-        version, dependencyId);
-    if (componentDependencyEntity != null) {
-      componentDependencyModelDao.delete(componentDependencyEntity);
+    @Override
+    public ComponentDependencyModelEntity createComponentDependency(ComponentDependencyModelEntity entity, String vspId, Version version) {
+        validateComponentDependency(entity);
+        entity.setId(CommonMethods.nextUuId());
+        componentDependencyModelDao.create(entity);
+        return entity;
     }
-  }
 
-  @Override
-  public void update(ComponentDependencyModelEntity entity) {
-    getComponentDependency(entity.getVspId(), entity.getVersion(), entity.getId());
-    validateComponentDependency(entity);
-    componentDependencyModelDao.update(entity);
-  }
+    private void validateComponentDependency(ComponentDependencyModelEntity entity) {
+        if (!StringUtils.isEmpty(entity.getSourceComponentId())) {
+            componentManager.validateComponentExistence(entity.getVspId(), entity.getVersion(), entity.getSourceComponentId());
+            if (entity.getSourceComponentId().equals(entity.getTargetComponentId())) {
+                ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getSourceTargetComponentEqualErrorBuilder();
+                throw new CoreException(errorCode);
+            }
+        } else {
+            ErrorCode errorCode = ComponentDependencyModelErrorBuilder.getNoSourceComponentErrorBuilder();
+            throw new CoreException(errorCode);
+        }
+        if (!StringUtils.isEmpty(entity.getTargetComponentId())) {
+            componentManager.validateComponentExistence(entity.getVspId(), entity.getVersion(), entity.getTargetComponentId());
+        }
+    }
 
-  @Override
-  public ComponentDependencyModelEntity get(String vspId, Version version, String dependencyId) {
-    return getComponentDependency(vspId, version, dependencyId);
-  }
+    @Override
+    public void delete(String vspId, Version version, String dependencyId) {
+        ComponentDependencyModelEntity componentDependencyEntity = getComponentDependency(vspId, version, dependencyId);
+        if (componentDependencyEntity != null) {
+            componentDependencyModelDao.delete(componentDependencyEntity);
+        }
+    }
 
-  private ComponentDependencyModelEntity getComponentDependency(String vspId, Version version,
-                                                                String dependencyId) {
-    ComponentDependencyModelEntity retrieved = componentDependencyModelDao.get(
-        new ComponentDependencyModelEntity(vspId, version, dependencyId));
-    VersioningUtil.validateEntityExistence(retrieved, new ComponentDependencyModelEntity(
-        vspId, version, dependencyId), VspDetails.ENTITY_TYPE);
-    return retrieved;
-  }
+    @Override
+    public void update(ComponentDependencyModelEntity entity) {
+        getComponentDependency(entity.getVspId(), entity.getVersion(), entity.getId());
+        validateComponentDependency(entity);
+        componentDependencyModelDao.update(entity);
+    }
+
+    @Override
+    public ComponentDependencyModelEntity get(String vspId, Version version, String dependencyId) {
+        return getComponentDependency(vspId, version, dependencyId);
+    }
+
+    private ComponentDependencyModelEntity getComponentDependency(String vspId, Version version, String dependencyId) {
+        ComponentDependencyModelEntity retrieved = componentDependencyModelDao.get(new ComponentDependencyModelEntity(vspId, version, dependencyId));
+        VersioningUtil.validateEntityExistence(retrieved, new ComponentDependencyModelEntity(vspId, version, dependencyId), VspDetails.ENTITY_TYPE);
+        return retrieved;
+    }
 }

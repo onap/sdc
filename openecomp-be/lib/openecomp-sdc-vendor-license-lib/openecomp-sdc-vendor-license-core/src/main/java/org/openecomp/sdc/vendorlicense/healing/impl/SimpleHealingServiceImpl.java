@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorlicense.healing.impl;
 
+import java.util.UUID;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
@@ -27,48 +27,40 @@ import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-import java.util.UUID;
-
 public class SimpleHealingServiceImpl implements HealingService {
-  private static final EntitlementPoolDao entitlementPoolDao =
-      EntitlementPoolDaoFactory.getInstance().createInterface();
-  private static final LicenseKeyGroupDao licenseKeyGroupDao =
-      LicenseKeyGroupDaoFactory.getInstance().createInterface();
-  private static final VersioningManager VERSIONING_MANAGER =
-      VersioningManagerFactory.getInstance().createInterface();
 
-  @Override
-  public VersionableEntity heal(VersionableEntity toHeal) {
-    return handleMissingVersionId(toHeal);
-  }
+    private static final EntitlementPoolDao entitlementPoolDao = EntitlementPoolDaoFactory.getInstance().createInterface();
+    private static final LicenseKeyGroupDao licenseKeyGroupDao = LicenseKeyGroupDaoFactory.getInstance().createInterface();
+    private static final VersioningManager VERSIONING_MANAGER = VersioningManagerFactory.getInstance().createInterface();
 
-  @Override
-  public void persistNoHealing(VersionableEntity alreadyHealed) {
-    if (alreadyHealed instanceof EntitlementPoolEntity) {
-      entitlementPoolDao.update((EntitlementPoolEntity) alreadyHealed);
-    } else if (alreadyHealed instanceof LicenseKeyGroupEntity) {
-      licenseKeyGroupDao.update((LicenseKeyGroupEntity) alreadyHealed);
-    }
-  }
-
-  private VersionableEntity handleMissingVersionId(VersionableEntity toHeal) {
-    if (toHeal != null && toHeal.getVersionUuId() != null) {
-      return toHeal;
+    @Override
+    public VersionableEntity heal(VersionableEntity toHeal) {
+        return handleMissingVersionId(toHeal);
     }
 
-    if (toHeal instanceof EntitlementPoolEntity) {
-      toHeal.setVersionUuId(UUID.randomUUID().toString());
-      entitlementPoolDao.update((EntitlementPoolEntity) toHeal);
-    } else if (toHeal instanceof LicenseKeyGroupEntity) {
-      toHeal.setVersionUuId(UUID.randomUUID().toString());
-      licenseKeyGroupDao.update((LicenseKeyGroupEntity) toHeal);
-    } else {
-      throw new UnsupportedOperationException(
-          "Unsupported operation for 1610 release/1607->1610 migration.");
+    @Override
+    public void persistNoHealing(VersionableEntity alreadyHealed) {
+        if (alreadyHealed instanceof EntitlementPoolEntity) {
+            entitlementPoolDao.update((EntitlementPoolEntity) alreadyHealed);
+        } else if (alreadyHealed instanceof LicenseKeyGroupEntity) {
+            licenseKeyGroupDao.update((LicenseKeyGroupEntity) alreadyHealed);
+        }
     }
 
-    VERSIONING_MANAGER.publish(toHeal.getFirstClassCitizenId(), toHeal.getVersion(), "Add missing version_uuid on ep/lkg");
-
-    return toHeal;
-  }
+    private VersionableEntity handleMissingVersionId(VersionableEntity toHeal) {
+        if (toHeal != null && toHeal.getVersionUuId() != null) {
+            return toHeal;
+        }
+        if (toHeal instanceof EntitlementPoolEntity) {
+            toHeal.setVersionUuId(UUID.randomUUID().toString());
+            entitlementPoolDao.update((EntitlementPoolEntity) toHeal);
+        } else if (toHeal instanceof LicenseKeyGroupEntity) {
+            toHeal.setVersionUuId(UUID.randomUUID().toString());
+            licenseKeyGroupDao.update((LicenseKeyGroupEntity) toHeal);
+        } else {
+            throw new UnsupportedOperationException("Unsupported operation for 1610 release/1607->1610 migration.");
+        }
+        VERSIONING_MANAGER.publish(toHeal.getFirstClassCitizenId(), toHeal.getVersion(), "Add missing version_uuid on ep/lkg");
+        return toHeal;
+    }
 }

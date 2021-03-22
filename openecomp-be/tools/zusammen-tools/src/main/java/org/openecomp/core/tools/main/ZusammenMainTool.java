@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.tools.main;
 
 import static org.openecomp.core.tools.util.Utils.printMessage;
@@ -37,7 +36,6 @@ public class ZusammenMainTool {
 
     public static void main(String[] args) {
         Command command = getCommandToRun(args);
-
         Instant startTime = Instant.now();
         SessionContextProviderFactory.getInstance().createInterface().create("GLOBAL_USER", "dox");
         if (!command.execute(args)) {
@@ -45,7 +43,6 @@ public class ZusammenMainTool {
             System.exit(-1);
         }
         Instant stopTime = Instant.now();
-
         printDuration(command, startTime, stopTime);
         System.exit(0);
     }
@@ -64,8 +61,7 @@ public class ZusammenMainTool {
         Duration duration = Duration.between(startTime, stopTime);
         long minutesPart = duration.toMinutes();
         long secondsPart = duration.minusMinutes(minutesPart).getSeconds();
-
-        printMessage(LOGGER, String.format("Zusammen tools command %s finished. Total run time was %s:%s minutes.",
-                command.getCommandName(), minutesPart, secondsPart));
+        printMessage(LOGGER, String
+            .format("Zusammen tools command %s finished. Total run time was %s:%s minutes.", command.getCommandName(), minutesPart, secondsPart));
     }
 }

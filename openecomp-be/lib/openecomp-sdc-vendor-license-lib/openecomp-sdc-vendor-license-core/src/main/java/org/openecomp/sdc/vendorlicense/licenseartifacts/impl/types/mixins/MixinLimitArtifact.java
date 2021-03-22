@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,16 +26,15 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementTimeForXml;
 
 public abstract class MixinLimitArtifact {
 
-  @JsonIgnore
-  abstract String getTime();
+    @JsonIgnore
+    abstract String getTime();
 
-  @JsonIgnore
-  abstract String getAggregationFunction();
+    @JsonIgnore
+    abstract String getAggregationFunction();
 
-  @JsonProperty(value = "aggregation-function")
-  abstract AggregationFunctionForXml getAggregationFunctionForArtifact();
+    @JsonProperty(value = "aggregation-function")
+    abstract AggregationFunctionForXml getAggregationFunctionForArtifact();
 
-  @JsonProperty(value = "time")
-  abstract EntitlementTimeForXml getTimeForArtifact();
-
+    @JsonProperty(value = "time")
+    abstract EntitlementTimeForXml getTimeForArtifact();
 }

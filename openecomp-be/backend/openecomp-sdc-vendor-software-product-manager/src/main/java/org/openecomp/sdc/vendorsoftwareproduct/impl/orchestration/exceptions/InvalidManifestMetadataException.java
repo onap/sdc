@@ -17,12 +17,11 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions;
 
-public class InvalidManifestMetadataException extends RuntimeException{
+public class InvalidManifestMetadataException extends RuntimeException {
 
-    public InvalidManifestMetadataException(String message){
+    public InvalidManifestMetadataException(String message) {
         super(message);
     }
 }

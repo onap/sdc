@@ -17,28 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.errors;
 
 class ToscaErrorCodes {
 
-  private ToscaErrorCodes() {
-    throw new IllegalStateException("Utility class");
-  }
+    static final String INVALID_SUBSTITUTE_NODE_TEMPLATE = "INVALID_SUBSTITUTE_NODE_TEMPLATE";
+    static final String INVALID_SUBSTITUTION_SERVICE_TEMPLATE = "INVALID_SUBSTITUTION_SERVICE_TEMPLATE";
+    static final String TOSCA_ENTRY_NOT_FOUND = "TOSCA_ENTRY_NOT_FOUND";
+    static final String MISSING_SUBSTITUTION_MAPPING_FOR_REQ_CAP = "MISSING_SUBSTITUTION_MAPPING_FOR_REQ_CAP";
+    static final String TOSCA_INVALID_SUBSTITUTE_NODE_TEMPLATE = "TOSCA_INVALID_SUBSTITUTE_NODE_TEMPLATE";
+    static final String TOSCA_INVALID_ADD_ACTION_NULL_ENTITY = "TOSCA_INVALID_ADD_ACTION_NULL_ENTITY";
+    static final String INVALID_INTERFACE_VALUE = "INVALID_INTERFACE_VALUE";
+    static final String INVALID_TOSCA_FILE = "INVALID_TOSCA_FILE";
+    static final String INVALID_TOSCA_META_FILE = "INVALID_TOSCA_META_FILE";
+    static final String INVALID_TOSCA_ENTRY_DEF_WAS_NOT_FOUND = "INVALID_TOSCA_ENTRY_DEF_WAS_NOT_FOUND";
 
-  static final String INVALID_SUBSTITUTE_NODE_TEMPLATE = "INVALID_SUBSTITUTE_NODE_TEMPLATE";
-  static final String INVALID_SUBSTITUTION_SERVICE_TEMPLATE =
-      "INVALID_SUBSTITUTION_SERVICE_TEMPLATE";
-  static final String TOSCA_ENTRY_NOT_FOUND = "TOSCA_ENTRY_NOT_FOUND";
-  static final String MISSING_SUBSTITUTION_MAPPING_FOR_REQ_CAP =
-      "MISSING_SUBSTITUTION_MAPPING_FOR_REQ_CAP";
-  static final String TOSCA_INVALID_SUBSTITUTE_NODE_TEMPLATE =
-      "TOSCA_INVALID_SUBSTITUTE_NODE_TEMPLATE";
-  static final String TOSCA_INVALID_ADD_ACTION_NULL_ENTITY = "TOSCA_INVALID_ADD_ACTION_NULL_ENTITY";
-  static final String INVALID_INTERFACE_VALUE = "INVALID_INTERFACE_VALUE";
-  static final String INVALID_TOSCA_FILE = "INVALID_TOSCA_FILE";
-  static final String INVALID_TOSCA_META_FILE = "INVALID_TOSCA_META_FILE";
-  static final String INVALID_TOSCA_ENTRY_DEF_WAS_NOT_FOUND = "INVALID_TOSCA_ENTRY_DEF_WAS_NOT_FOUND";
-
-
+    private ToscaErrorCodes() {
+        throw new IllegalStateException("Utility class");
+    }
 }

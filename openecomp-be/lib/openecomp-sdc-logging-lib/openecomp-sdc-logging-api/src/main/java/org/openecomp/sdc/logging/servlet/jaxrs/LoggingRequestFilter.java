@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet.jaxrs;
 
 import static org.openecomp.sdc.logging.LoggingConstants.DEFAULT_PARTNER_NAME_HEADER;
@@ -35,8 +34,7 @@ import org.openecomp.sdc.logging.servlet.Tracker;
 
 /**
  * <p>Takes care of logging initialization an HTTP request hits the application. This includes populating logging
- * context and tracking the request for audit. The filter <b>works in tandem</b> with {@link LoggingResponseFilter} or
- * a similar implementation.</p>
+ * context and tracking the request for audit. The filter <b>works in tandem</b> with {@link LoggingResponseFilter} or a similar implementation.</p>
  * <p>The filter requires a few HTTP header names to be configured. These HTTP headers are used for propagating logging
  * and tracing information between ONAP components. Sample configuration for a Spring environment:</p>
  * <pre>
@@ -59,15 +57,11 @@ import org.openecomp.sdc.logging.servlet.Tracker;
 public class LoggingRequestFilter implements ContainerRequestFilter {
 
     static final String LOGGING_TRACKER_KEY = "onap.logging.tracker";
-
     private static final String MULTI_VALUE_SEPARATOR = ",";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingRequestFilter.class);
-
     private HttpServletRequest httpRequest;
-
     private HttpHeader requestIdHeader = new HttpHeader(DEFAULT_REQUEST_ID_HEADER);
     private HttpHeader partnerNameHeader = new HttpHeader(DEFAULT_PARTNER_NAME_HEADER);
-
     private ResourceInfo resource;
 
     /**
@@ -109,9 +103,7 @@ public class LoggingRequestFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         Class<?> resourceClass = resource.getResourceMethod().getDeclaringClass();
-        Tracker tracker = new CombinedTracker(
-                new ContextTracker(partnerNameHeader, requestIdHeader),
-                new AuditTracker(resourceClass));
+        Tracker tracker = new CombinedTracker(new ContextTracker(partnerNameHeader, requestIdHeader), new AuditTracker(resourceClass));
         requestContext.setProperty(LOGGING_TRACKER_KEY, tracker);
         tracker.preRequest(httpRequest);
     }

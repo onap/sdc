@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.validation.impl.util;
 
 import org.openecomp.sdc.common.errors.Messages;
@@ -21,29 +20,25 @@ import org.yaml.snakeyaml.error.MarkedYAMLException;
 import org.yaml.snakeyaml.parser.ParserException;
 
 public class YamlValidatorUtil {
-  private YamlValidatorUtil() {
 
-  }
-
-  public static String getParserExceptionReason(Exception exception) {
-
-    String reason = null;
-
-    if (exception.getCause() instanceof MarkedYAMLException) {
-      if (exception.getCause() != null) {
-        if (exception.getCause().getCause() instanceof ParserException) {
-          reason = exception.getCause().getCause().getMessage();
-        } else {
-          reason = exception.getCause().getMessage();
-        }
-      }
-    } else if (exception instanceof MarkedYAMLException) {
-
-      reason = exception.getMessage();
-
-    } else {
-      reason = Messages.GENERAL_YAML_PARSER_ERROR.getErrorMessage();
+    private YamlValidatorUtil() {
     }
-    return reason;
-  }
+
+    public static String getParserExceptionReason(Exception exception) {
+        String reason = null;
+        if (exception.getCause() instanceof MarkedYAMLException) {
+            if (exception.getCause() != null) {
+                if (exception.getCause().getCause() instanceof ParserException) {
+                    reason = exception.getCause().getCause().getMessage();
+                } else {
+                    reason = exception.getCause().getMessage();
+                }
+            }
+        } else if (exception instanceof MarkedYAMLException) {
+            reason = exception.getMessage();
+        } else {
+            reason = Messages.GENERAL_YAML_PARSER_ERROR.getErrorMessage();
+        }
+        return reason;
+    }
 }

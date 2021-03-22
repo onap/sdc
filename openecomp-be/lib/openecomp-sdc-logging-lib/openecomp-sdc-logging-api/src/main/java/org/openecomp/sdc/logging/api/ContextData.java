@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.api;
 
 import java.util.Objects;
 
 /**
- * Builder to populate logging <i>context</i> data, i.e. data that should be available to any log writing event
- * throughout an application. This includes only data known at some point to the application (e.g. at an API call),
- * and not otherwise available to the logging framework (e.g. information about local runtime, machine, etc.).
+ * Builder to populate logging <i>context</i> data, i.e. data that should be available to any log writing event throughout an application. This
+ * includes only data known at some point to the application (e.g. at an API call), and not otherwise available to the logging framework (e.g.
+ * information about local runtime, machine, etc.).
  *
  * @author evitaliy
  * @since Mar 22, 2018
@@ -36,6 +35,10 @@ public class ContextData {
         this.requestId = builder.requestId;
         this.serviceName = builder.serviceName;
         this.partnerName = builder.partnerName;
+    }
+
+    public static ContextDataBuilder builder() {
+        return new ContextDataBuilder();
     }
 
     /**
@@ -67,18 +70,15 @@ public class ContextData {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
-
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         ContextData that = (ContextData) o;
-        return Objects.equals(requestId, that.requestId) && Objects.equals(serviceName, that.serviceName)
-                       && Objects.equals(partnerName, that.partnerName);
+        return Objects.equals(requestId, that.requestId) && Objects.equals(serviceName, that.serviceName) && Objects
+            .equals(partnerName, that.partnerName);
     }
 
     @Override
@@ -88,12 +88,7 @@ public class ContextData {
 
     @Override
     public String toString() {
-        return "ContextData{responseCode=" + requestId + ", responseDescription=" + serviceName
-                       + ", clientIpAddress=" + partnerName + '}';
-    }
-
-    public static ContextDataBuilder builder() {
-        return new ContextDataBuilder();
+        return "ContextData{responseCode=" + requestId + ", responseDescription=" + serviceName + ", clientIpAddress=" + partnerName + '}';
     }
 
     /**

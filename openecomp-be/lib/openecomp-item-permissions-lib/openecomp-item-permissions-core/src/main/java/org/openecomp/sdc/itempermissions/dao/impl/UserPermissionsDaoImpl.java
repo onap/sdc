@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.itempermissions.dao.impl;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
@@ -31,9 +28,7 @@ import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
 public class UserPermissionsDaoImpl implements UserPermissionsDao {
 
     private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static UserPermissionsAccessor accessor =
-            noSqlDb.getMappingManager().createAccessor(UserPermissionsAccessor.class);
-
+    private static UserPermissionsAccessor accessor = noSqlDb.getMappingManager().createAccessor(UserPermissionsAccessor.class);
 
     @Override
     public Set<String> listUserPermittedItems(String userId, String permission) {
@@ -46,14 +41,10 @@ public class UserPermissionsDaoImpl implements UserPermissionsDao {
     }
 
     @Override
-    public void updatePermissions(String itemId, String permission, Set<String> addedUsersIds,
-                                  Set<String> removedUsersIds) {
+    public void updatePermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds) {
         Set<String> itemSet = Collections.singleton(itemId);
-
-        addedUsersIds.forEach(userId ->
-                accessor.addItem(itemSet, userId, permission));
-        removedUsersIds.forEach(userId ->
-                accessor.removeItem(itemSet, userId, permission));
+        addedUsersIds.forEach(userId -> accessor.addItem(itemSet, userId, permission));
+        removedUsersIds.forEach(userId -> accessor.removeItem(itemSet, userId, permission));
     }
 
     @Accessor
@@ -67,7 +58,5 @@ public class UserPermissionsDaoImpl implements UserPermissionsDao {
 
         @Query("update dox.user_permission_items set item_list=item_list-? WHERE user_id = ? AND permission = ?")
         void removeItem(Set<String> items, String userId, String permission);
-
     }
-
 }

@@ -17,21 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import java.io.InputStream;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringUploadStatus;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.io.InputStream;
-
 public interface MonitoringUploadsManager {
-  void delete(String vspId, Version version, String componentId,
-              MonitoringUploadType monitoringUploadType);
 
-  void upload(InputStream object, String filename, String vspId, Version version,
-              String componentId, MonitoringUploadType monitoringUploadType);
+    void delete(String vspId, Version version, String componentId, MonitoringUploadType monitoringUploadType);
 
-  MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId);
+    void upload(InputStream object, String filename, String vspId, Version version, String componentId, MonitoringUploadType monitoringUploadType);
+
+    MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId);
 }

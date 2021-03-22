@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,15 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorlicense.dao;
 
-
+import java.util.Collection;
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
-
-import java.util.Collection;
 
 public interface EntitlementPoolDao extends VersionableDao, BaseDao<EntitlementPoolEntity> {
 
@@ -39,13 +36,11 @@ public interface EntitlementPoolDao extends VersionableDao, BaseDao<EntitlementP
 
     Collection<EntitlementPoolEntity> list(EntitlementPoolEntity entitlementPool);
 
-  long count(EntitlementPoolEntity entitlementPool);
+    long count(EntitlementPoolEntity entitlementPool);
 
-  void deleteAll(EntitlementPoolEntity entitlementPool);
+    void deleteAll(EntitlementPoolEntity entitlementPool);
 
-  void addReferencingFeatureGroup(EntitlementPoolEntity entitlementPool,
-                                  String referencingFeatureGroupId);
+    void addReferencingFeatureGroup(EntitlementPoolEntity entitlementPool, String referencingFeatureGroupId);
 
-  void removeReferencingFeatureGroup(EntitlementPoolEntity entitlementPool,
-                                     String referencingFeatureGroupId);
+    void removeReferencingFeatureGroup(EntitlementPoolEntity entitlementPool, String referencingFeatureGroupId);
 }

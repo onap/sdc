@@ -75,8 +75,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public class ExternalTestingManagerImpl implements ExternalTestingManager {
 
-    private Logger logger = LoggerFactory.getLogger(ExternalTestingManagerImpl.class);
-
+    static final String VSP_ID = "vspId";
+    static final String VSP_VERSION = "vspVersion";
     private static final String FILE_URL_PREFIX = "file://";
     private static final String HTTP_STATUS = "httpStatus";
     private static final String CODE = "code";
@@ -84,7 +84,6 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     private static final String MESSAGE = "message";
     private static final String DETAIL = "detail";
     private static final String PATH = "path";
-
     private static final String VTP_SCENARIOS_URI = "%s/v1/vtp/scenarios";
     private static final String VTP_TESTSUITE_URI = "%s/v1/vtp/scenarios/%s/testsuites";
     private static final String VTP_TESTCASES_URI = "%s/v1/vtp/scenarios/%s/testcases";
@@ -92,23 +91,15 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     private static final String VTP_EXECUTIONS_URI = "%s/v1/vtp/executions";
     private static final String VTP_EXECUTION_URI = "%s/v1/vtp/executions/%s";
     private static final String VTP_EXECUTION_ID_URL = "%s/v1/vtp/executions?requestId=%s";
-
-
     private static final String INVALIDATE_STATE_ERROR_CODE = "SDC-TEST-001";
     private static final String NO_ACCESS_CONFIGURATION_DEFINED = "No access configuration defined";
-
     private static final String NO_SUCH_ENDPOINT_ERROR_CODE = "SDC-TEST-002";
     private static final String ENDPOINT_ERROR_CODE = "SDC-TEST-003";
     private static final String TESTING_HTTP_ERROR_CODE = "SDC-TEST-004";
     private static final String SDC_RESOLVER_ERR = "SDC-TEST-005";
-
-    static final String VSP_ID = "vspId";
-    static final String VSP_VERSION = "vspVersion";
-
     private static final String VSP_CSAR = "vsp";
     private static final String VSP_HEAT = "vsp-zip";
-
-
+    private Logger logger = LoggerFactory.getLogger(ExternalTestingManagerImpl.class);
     private VersioningManager versioningManager;
     private VendorSoftwareProductManager vendorSoftwareProductManager;
     private OrchestrationTemplateCandidateManager candidateManager;
@@ -123,8 +114,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     ExternalTestingManagerImpl(VersioningManager versioningManager,
-            VendorSoftwareProductManager vendorSoftwareProductManager,
-            OrchestrationTemplateCandidateManager candidateManager) {
+                               VendorSoftwareProductManager vendorSoftwareProductManager,
+                               OrchestrationTemplateCandidateManager candidateManager) {
         this();
         this.versioningManager = versioningManager;
         this.vendorSoftwareProductManager = vendorSoftwareProductManager;
@@ -132,8 +123,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     /**
-     * Read the configuration from the yaml file for this bean.  If we get an exception during load,
-     * don't force an error starting SDC but log a warning.  Do no warm...
+     * Read the configuration from the yaml file for this bean.  If we get an exception during load, don't force an error starting SDC but log a
+     * warning.  Do no warm...
      */
     @PostConstruct
     public void init() {
@@ -173,9 +164,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     /**
-     * Load the configuration for this component.  When the SDC onboarding backend
-     * runs, it gets a system property called config.location.  We can use that
-     * to locate the config-externaltesting.yaml file.
+     * Load the configuration for this component.  When the SDC onboarding backend runs, it gets a system property called config.location.  We can use
+     * that to locate the config-externaltesting.yaml file.
      */
     private void loadConfig() {
         String loc = System.getProperty("config.location");
@@ -190,7 +180,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
             }
 
             endpoints =
-                    accessConfig.getEndpoints().stream().flatMap(this::mapEndpointString).collect(Collectors.toList());
+                accessConfig.getEndpoints().stream().flatMap(this::mapEndpointString).collect(Collectors.toList());
 
             if (logger.isInfoEnabled()) {
                 String s = new ObjectMapper().writeValueAsString(endpoints);
@@ -207,8 +197,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     /**
-     * Return the configuration of this feature that we want to
-     * expose to the client.  Treated as a JSON blob for flexibility.
+     * Return the configuration of this feature that we want to expose to the client.  Treated as a JSON blob for flexibility.
      */
     @Override
     public ClientConfiguration getConfig() {
@@ -224,9 +213,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     /**
-     * To allow for functional testing, we let a caller invoke
-     * a setConfig request to enable/disable the client.  This
-     * new value is not persisted.
+     * To allow for functional testing, we let a caller invoke a setConfig request to enable/disable the client.  This new value is not persisted.
      *
      * @return new client configuration
      */
@@ -240,8 +227,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     /**
-     * To allow for functional testing, we let a caller invoke
-     * a setEndpoints request to configure where the BE makes request to.
+     * To allow for functional testing, we let a caller invoke a setEndpoints request to configure where the BE makes request to.
      *
      * @return new endpoint definitions.
      */
@@ -273,14 +259,14 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
         try {
             logger.debug("process endpoint {}", ep.getId());
             getScenarios(ep.getId()).stream()
-                    .filter(s -> ((ep.getScenarioFilter() == null) || ep.getScenarioFilterPattern().matcher(s.getName())
-                                                                              .matches())).forEach(s -> {
+                .filter(s -> ((ep.getScenarioFilter() == null) || ep.getScenarioFilterPattern().matcher(s.getName())
+                    .matches())).forEach(s -> {
                 addScenarioToTree(root, s);
                 getTestSuites(ep.getId(), s.getName()).forEach(suite -> addSuiteToTree(root, s, suite));
                 getTestCases(ep.getId(), s.getName()).forEach(tc -> {
                     try {
                         VtpTestCase details =
-                                getTestCase(ep.getId(), s.getName(), tc.getTestSuiteName(), tc.getTestCaseName());
+                            getTestCase(ep.getId(), s.getName(), tc.getTestSuiteName(), tc.getTestCaseName());
                         addTestCaseToTree(root, ep.getId(), s.getName(), tc.getTestSuiteName(), details);
                     } catch (@SuppressWarnings("squid:S1166") ExternalTestingException ex) {
                         // Not logging stack trace on purpose.  VTP was throwing exceptions for certain test cases.
@@ -310,19 +296,19 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      * @param tc            test case to add.
      */
     private void addTestCaseToTree(TestTreeNode root, String endpointName, String scenarioName, String testSuiteName,
-            VtpTestCase tc) {
+                                   VtpTestCase tc) {
         // return quickly.
         if (tc == null) {
             return;
         }
         findNamedChild(root, scenarioName)
-                .ifPresent(scenarioNode -> findNamedChild(scenarioNode, testSuiteName).ifPresent(suiteNode -> {
-                    massageTestCaseForUI(tc, endpointName, scenarioName);
-                    if (suiteNode.getTests() == null) {
-                        suiteNode.setTests(new ArrayList<>());
-                    }
-                    suiteNode.getTests().add(tc);
-                }));
+            .ifPresent(scenarioNode -> findNamedChild(scenarioNode, testSuiteName).ifPresent(suiteNode -> {
+                massageTestCaseForUI(tc, endpointName, scenarioName);
+                if (suiteNode.getTests() == null) {
+                    suiteNode.setTests(new ArrayList<>());
+                }
+                suiteNode.getTests().add(tc);
+            }));
     }
 
     private void massageTestCaseForUI(VtpTestCase testcase, String endpoint, String scenario) {
@@ -341,7 +327,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      * @param suite    test suite to add.
      */
     private void addSuiteToTree(final TestTreeNode root, final VtpNameDescriptionPair scenario,
-            final VtpNameDescriptionPair suite) {
+                                final VtpNameDescriptionPair suite) {
         findNamedChild(root, scenario.getName()).ifPresent(parent -> {
             if (parent.getChildren() == null) {
                 parent.setChildren(new ArrayList<>());
@@ -387,7 +373,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      */
     private List<VtpNameDescriptionPair> returnNameDescriptionPairFromUrl(String url) {
         ParameterizedTypeReference<List<VtpNameDescriptionPair>> t =
-                new ParameterizedTypeReference<List<VtpNameDescriptionPair>>() { };
+            new ParameterizedTypeReference<List<VtpNameDescriptionPair>>() {
+            };
         List<VtpNameDescriptionPair> rv = proxyGetRequestToExternalTestingSite(url, t);
         if (rv == null) {
             rv = new ArrayList<>();
@@ -407,18 +394,19 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      * Get the list of test suites for an endpoint for the given scenario.
      */
     public List<VtpNameDescriptionPair> getTestSuites(final String endpoint, final String scenario) {
-        String url = buildEndpointUrl(VTP_TESTSUITE_URI, endpoint, new String[] {scenario});
+        String url = buildEndpointUrl(VTP_TESTSUITE_URI, endpoint, new String[]{scenario});
         return returnNameDescriptionPairFromUrl(url);
     }
 
     /**
-     * Get the list of test cases under a scenario.  This is the VTP API.  It would
-     * seem better to get the list of cases under a test suite but that is not supported.
+     * Get the list of test cases under a scenario.  This is the VTP API.  It would seem better to get the list of cases under a test suite but that
+     * is not supported.
      */
     @Override
     public List<VtpTestCase> getTestCases(String endpoint, String scenario) {
-        String url = buildEndpointUrl(VTP_TESTCASES_URI, endpoint, new String[] {scenario});
-        ParameterizedTypeReference<List<VtpTestCase>> t = new ParameterizedTypeReference<List<VtpTestCase>>() { };
+        String url = buildEndpointUrl(VTP_TESTCASES_URI, endpoint, new String[]{scenario});
+        ParameterizedTypeReference<List<VtpTestCase>> t = new ParameterizedTypeReference<List<VtpTestCase>>() {
+        };
         List<VtpTestCase> rv = proxyGetRequestToExternalTestingSite(url, t);
         if (rv == null) {
             rv = new ArrayList<>();
@@ -431,8 +419,9 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      */
     @Override
     public VtpTestCase getTestCase(String endpoint, String scenario, String testSuite, String testCaseName) {
-        String url = buildEndpointUrl(VTP_TESTCASE_URI, endpoint, new String[] {scenario, testSuite, testCaseName});
-        ParameterizedTypeReference<VtpTestCase> t = new ParameterizedTypeReference<VtpTestCase>() { };
+        String url = buildEndpointUrl(VTP_TESTCASE_URI, endpoint, new String[]{scenario, testSuite, testCaseName});
+        ParameterizedTypeReference<VtpTestCase> t = new ParameterizedTypeReference<VtpTestCase>() {
+        };
         return proxyGetRequestToExternalTestingSite(url, t);
     }
 
@@ -445,9 +434,10 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      */
     @Override
     public VtpTestExecutionResponse getExecution(String endpoint, String executionId) {
-        String url = buildEndpointUrl(VTP_EXECUTION_URI, endpoint, new String[] {executionId});
+        String url = buildEndpointUrl(VTP_EXECUTION_URI, endpoint, new String[]{executionId});
         ParameterizedTypeReference<VtpTestExecutionResponse> t =
-                new ParameterizedTypeReference<VtpTestExecutionResponse>() { };
+            new ParameterizedTypeReference<VtpTestExecutionResponse>() {
+            };
         return proxyGetRequestToExternalTestingSite(url, t);
     }
 
@@ -461,19 +451,19 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
 
     @Override
     public List<VtpTestExecutionResponse> execute(final List<VtpTestExecutionRequest> testsToRun, String vspId,
-            String vspVersionId, String requestId, Map<String, byte[]> fileMap) {
+                                                  String vspVersionId, String requestId, Map<String, byte[]> fileMap) {
         if (endpoints == null) {
             throw new ExternalTestingException(INVALIDATE_STATE_ERROR_CODE, 500, NO_ACCESS_CONFIGURATION_DEFINED);
         }
 
         // partition the requests by endpoint.
         Map<String, List<VtpTestExecutionRequest>> partitions =
-                testsToRun.stream().collect(Collectors.groupingBy(VtpTestExecutionRequest::getEndpoint));
+            testsToRun.stream().collect(Collectors.groupingBy(VtpTestExecutionRequest::getEndpoint));
 
         // process each group and collect the results.
         return partitions.entrySet().stream().flatMap(
-                e -> doExecute(e.getKey(), e.getValue(), vspId, vspVersionId, requestId, fileMap).stream())
-                       .collect(Collectors.toList());
+            e -> doExecute(e.getKey(), e.getValue(), vspId, vspVersionId, requestId, fileMap).stream())
+            .collect(Collectors.toList());
     }
 
     /**
@@ -481,9 +471,10 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      */
     @Override
     public List<VtpTestExecutionOutput> getExecutionIds(String endpoint, String requestId) {
-        String url = buildEndpointUrl(VTP_EXECUTION_ID_URL, endpoint, new String[] {requestId});
+        String url = buildEndpointUrl(VTP_EXECUTION_ID_URL, endpoint, new String[]{requestId});
         ParameterizedTypeReference<List<VtpTestExecutionOutput>> t =
-                new ParameterizedTypeReference<List<VtpTestExecutionOutput>>() { };
+            new ParameterizedTypeReference<List<VtpTestExecutionOutput>>() {
+            };
         List<VtpTestExecutionOutput> rv = proxyGetRequestToExternalTestingSite(url, t);
         if (rv == null) {
             rv = new ArrayList<>();
@@ -499,16 +490,17 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      * @return list of execution responses.
      */
     private List<VtpTestExecutionResponse> doExecute(final String endpointName,
-            final List<VtpTestExecutionRequest> testsToRun, String vspId, String vspVersionId, String requestId,
-            Map<String, byte[]> fileMap) {
+                                                     final List<VtpTestExecutionRequest> testsToRun, String vspId, String vspVersionId,
+                                                     String requestId,
+                                                     Map<String, byte[]> fileMap) {
         if (endpoints == null) {
             throw new ExternalTestingException(INVALIDATE_STATE_ERROR_CODE, 500, NO_ACCESS_CONFIGURATION_DEFINED);
         }
 
         RemoteTestingEndpointDefinition endpoint =
-                endpoints.stream().filter(e -> StringUtils.equals(endpointName, e.getId())).findFirst().orElseThrow(
-                        () -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 400,
-                                "No endpoint named " + endpointName + " is defined"));
+            endpoints.stream().filter(e -> StringUtils.equals(endpointName, e.getId())).findFirst().orElseThrow(
+                () -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 400,
+                    "No endpoint named " + endpointName + " is defined"));
 
         // if the endpoint requires an API key, specify it in the headers.
         HttpHeaders headers = new HttpHeaders();
@@ -520,12 +512,11 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
         // build the body.
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-
         for (VtpTestExecutionRequest test : testsToRun) {
             // it will true only noramal validation not for certification
             if ((test.getParameters() != null) && (test.getParameters().containsKey(VSP_CSAR) || test.getParameters()
-                                                                                                         .containsKey(
-                                                                                                                 VSP_HEAT))) {
+                .containsKey(
+                    VSP_HEAT))) {
                 attachArchiveContent(test, body, vspId, vspVersionId);
             }
 
@@ -555,7 +546,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
             builder = builder.queryParam("requestId", requestId);
         }
         ParameterizedTypeReference<List<VtpTestExecutionResponse>> t =
-                new ParameterizedTypeReference<List<VtpTestExecutionResponse>>() { };
+            new ParameterizedTypeReference<List<VtpTestExecutionResponse>>() {
+            };
         try {
             return proxyRequestToExternalTestingSite(builder.toUriString(), requestEntity, t);
         } catch (ExternalTestingException ex) {
@@ -582,9 +574,9 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     private String buildEndpointUrl(String format, String endpointName, String[] args) {
         if (endpoints != null) {
             RemoteTestingEndpointDefinition ep =
-                    endpoints.stream().filter(e -> e.isEnabled() && e.getId().equals(endpointName)).findFirst()
-                            .orElseThrow(() -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 500,
-                                    "No endpoint named " + endpointName + " is defined"));
+                endpoints.stream().filter(e -> e.isEnabled() && e.getId().equals(endpointName)).findFirst()
+                    .orElseThrow(() -> new ExternalTestingException(NO_SUCH_ENDPOINT_ERROR_CODE, 500,
+                        "No endpoint named " + endpointName + " is defined"));
 
             Object[] newArgs = ArrayUtils.add(args, 0, ep.getUrl());
             return String.format(format, newArgs);
@@ -614,7 +606,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      * @return instance of expected type
      */
     private <R, T> T proxyRequestToExternalTestingSite(String url, HttpEntity<R> request,
-            ParameterizedTypeReference<T> responseType) {
+                                                       ParameterizedTypeReference<T> responseType) {
         if (request != null) {
             logger.debug("POST request to {} with {} for {}", url, request, responseType.getType().getTypeName());
         } else {
@@ -636,9 +628,9 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
             // make my own exception out of this.
             logger.warn("Unexpected HTTP Status from endpoint {}", ex.getRawStatusCode());
             if ((ex.getResponseHeaders().getContentType() != null) && (
-                    (ex.getResponseHeaders().getContentType().isCompatibleWith(MediaType.APPLICATION_JSON))
-                            || (ex.getResponseHeaders().getContentType()
-                                        .isCompatibleWith(MediaType.parseMediaType("application/problem+json"))))) {
+                (ex.getResponseHeaders().getContentType().isCompatibleWith(MediaType.APPLICATION_JSON))
+                    || (ex.getResponseHeaders().getContentType()
+                    .isCompatibleWith(MediaType.parseMediaType("application/problem+json"))))) {
                 String s = ex.getResponseBodyAsString();
                 logger.warn("endpoint body content is {}", s);
                 try {
@@ -647,11 +639,11 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
                 } catch (JsonParseException e) {
                     logger.warn("unexpected JSON response", e);
                     throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(),
-                            ex.getResponseBodyAsString(), ex);
+                        ex.getResponseBodyAsString(), ex);
                 }
             } else {
                 throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(),
-                        ex.getResponseBodyAsString(), ex);
+                    ex.getResponseBodyAsString(), ex);
             }
         } catch (ResourceAccessException ex) {
             throw new ExternalTestingException(ENDPOINT_ERROR_CODE, 500, ex.getMessage(), ex);
@@ -675,8 +667,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     /**
-     * Errors from the endpoint could conform to the expected ETSI body or not.
-     * Here we try to handle various response body elements.
+     * Errors from the endpoint could conform to the expected ETSI body or not. Here we try to handle various response body elements.
      *
      * @param statusCode http status code in response.
      * @param o          JSON object parsed from the http response body
@@ -713,7 +704,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     void attachArchiveContent(VtpTestExecutionRequest test, MultiValueMap<String, Object> body, String vspId,
-            String vspVersionId) {
+                              String vspVersionId) {
         try {
             extractMetadata(test, body, vspId, vspVersionId);
         } catch (IOException ex) {
@@ -729,7 +720,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      * @param version     VSP version
      */
     private void extractMetadata(VtpTestExecutionRequest requestItem, MultiValueMap<String, Object> body, String vspId,
-            String version) throws IOException {
+                                 String version) throws IOException {
 
         Version ver = new Version(version);
         logger.debug("attempt to retrieve archive for VSP {} version {}", vspId, ver.getId());
@@ -742,12 +733,12 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
         if (!ozip.isPresent()) {
             List<Version> versions = versioningManager.list(vspId);
             String knownVersions = versions.stream()
-                                           .map(v -> String.format("%d.%d: %s (%s)", v.getMajor(), v.getMinor(),
-                                                   v.getStatus(), v.getId())).collect(Collectors.joining("\n"));
+                .map(v -> String.format("%d.%d: %s (%s)", v.getMajor(), v.getMinor(),
+                    v.getStatus(), v.getId())).collect(Collectors.joining("\n"));
 
             String detail = String.format(
-                    "Archive processing failed.  Unable to find archive for VSP ID %s and Version %s.  Known versions are:\n%s",
-                    vspId, version, knownVersions);
+                "Archive processing failed.  Unable to find archive for VSP ID %s and Version %s.  Known versions are:\n%s",
+                vspId, version, knownVersions);
 
             throw new ExternalTestingException(SDC_RESOLVER_ERR, 500, detail);
         }
@@ -758,8 +749,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
     }
 
     private void processArchive(final VtpTestExecutionRequest test, final MultiValueMap<String, Object> body,
-            final byte[] zip) {
-
+                                final byte[] zip) {
 
         // VTP does not support concurrent executions of the same test with the same associated file name.
         // It writes files to /tmp and if we were to send two requests with the same file, the results

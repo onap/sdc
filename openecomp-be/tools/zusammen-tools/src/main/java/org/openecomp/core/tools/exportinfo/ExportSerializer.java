@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@ import static org.openecomp.core.tools.importinfo.ImportSingleTable.dataTypesMap
 import com.datastax.driver.core.DataType.Name;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -32,10 +33,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openecomp.core.tools.importinfo.ImportProperties;
 import org.openecomp.core.tools.model.ColumnDefinition;
 import org.openecomp.core.tools.model.TableData;
@@ -49,11 +55,11 @@ public class ExportSerializer {
     private static final String ELEMENT_TABLE_NAME = "element";
     private static final String ELEMENT_INFO_COLUMN_NAME = "info";
 
-
     public void serializeResult(final ResultSet resultSet, final Set<String> filteredItems, final String filteredColumn, Set<String> vlms) {
         try {
             TableData tableData = new TableData();
-            tableData.getDefinitions().addAll(resultSet.getColumnDefinitions().asList().stream().map(ColumnDefinition::new).collect(Collectors.toList()));
+            tableData.getDefinitions()
+                .addAll(resultSet.getColumnDefinitions().asList().stream().map(ColumnDefinition::new).collect(Collectors.toList()));
             String table = tableData.getDefinitions().iterator().next().getTable();
             boolean isElementTable = table.equals(ELEMENT_TABLE_NAME);
             Iterator<Row> iterator = resultSet.iterator();
@@ -75,7 +81,6 @@ public class ExportSerializer {
             String fileName = ImportProperties.ROOT_DIRECTORY + File.separator + table + "_" + System.currentTimeMillis() + ".json";
             objectMapper.writeValue(Paths.get(fileName).toFile(), tableData);
             Utils.printMessage(logger, "File exported is :" + fileName);
-
         } catch (IOException e) {
             Utils.logError(logger, e);
             System.exit(1);
@@ -135,8 +140,9 @@ public class ExportSerializer {
             case MAP:
                 Map<Object, Object> map = (Map<Object, Object>) row.getObject(i);
                 Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
-                Object mapAsString = entrySet.parallelStream().map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER + entry.getValue().toString())
-                        .collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
+                Object mapAsString = entrySet.parallelStream()
+                    .map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER + entry.getValue().toString())
+                    .collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
                 data = Base64.getEncoder().encodeToString(mapAsString.toString().getBytes());
                 break;
             default:

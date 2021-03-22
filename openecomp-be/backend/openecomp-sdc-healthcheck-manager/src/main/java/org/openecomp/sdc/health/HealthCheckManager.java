@@ -17,13 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.health;
 
+import java.util.Collection;
 import org.openecomp.sdc.health.data.HealthInfo;
 
-import java.util.Collection;
-
 public interface HealthCheckManager {
+
     Collection<HealthInfo> checkHealth();
 }

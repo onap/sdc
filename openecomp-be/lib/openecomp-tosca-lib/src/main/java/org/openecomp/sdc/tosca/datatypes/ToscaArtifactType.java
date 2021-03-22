@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import org.onap.config.api.Configuration;
@@ -26,11 +25,7 @@ import org.openecomp.sdc.tosca.services.ConfigConstants;
 
 public class ToscaArtifactType {
 
-    private static Configuration config = ConfigurationManager.lookup();
-
-    public static final String ARTIFACT_TYPE_PREFIX =
-            config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_ARTIFACT_TYPE);
-
     public static final String NATIVE_DEPLOYMENT = "tosca.artifacts.Deployment";
-
+    private static Configuration config = ConfigurationManager.lookup();
+    public static final String ARTIFACT_TYPE_PREFIX = config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_ARTIFACT_TYPE);
 }

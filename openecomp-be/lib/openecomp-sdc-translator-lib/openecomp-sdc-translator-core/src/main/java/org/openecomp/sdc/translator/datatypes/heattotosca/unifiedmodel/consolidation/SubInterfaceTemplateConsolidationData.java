@@ -13,68 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
+import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
-import java.util.Optional;
-
 public class SubInterfaceTemplateConsolidationData extends EntityConsolidationData {
 
-  //Value of the property count in the resource group representing the sub-interface
-  private Object resourceGroupCount;
-  //Network role of the sub-interface
-  private String networkRole;
-  //Parent port node template id
-  private String parentPortNodeTemplateId;
+    //Value of the property count in the resource group representing the sub-interface
+    private Object resourceGroupCount;
+    //Network role of the sub-interface
+    private String networkRole;
+    //Parent port node template id
+    private String parentPortNodeTemplateId;
 
-  public Object getResourceGroupCount() {
-    return resourceGroupCount;
-  }
-
-  public void setResourceGroupCount(Object resourceGroupCount) {
-    this.resourceGroupCount = resourceGroupCount;
-  }
-
-  public String getNetworkRole() {
-    return networkRole;
-  }
-
-  public void setNetworkRole(String networkRole) {
-    this.networkRole = networkRole;
-  }
-
-  public String getParentPortNodeTemplateId() {
-    return parentPortNodeTemplateId;
-  }
-
-  public void setParentPortNodeTemplateId(String parentPortNodeTemplateId) {
-    this.parentPortNodeTemplateId = parentPortNodeTemplateId;
-  }
-
-  public Optional<PortTemplateConsolidationData> getParentPortTemplateConsolidationData(ServiceTemplate serviceTemplate,
-                                                                                        TranslationContext context) {
-    FilePortConsolidationData filePortConsolidationData = context.getConsolidationData().getPortConsolidationData()
-        .getFilePortConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
-    PortTemplateConsolidationData portTemplateConsolidationData = null;
-    if (filePortConsolidationData != null) {
-      portTemplateConsolidationData = filePortConsolidationData
-          .getPortTemplateConsolidationData(parentPortNodeTemplateId);
+    public Object getResourceGroupCount() {
+        return resourceGroupCount;
     }
-    return Optional.ofNullable(portTemplateConsolidationData);
-  }
 
-  public Optional<String> getParentPortNetworkRole(ServiceTemplate serviceTemplate,
-                                                                TranslationContext context) {
-    Optional<PortTemplateConsolidationData> subInterfacePortTemplateConsolidationData =
-        getParentPortTemplateConsolidationData(serviceTemplate, context);
-    if (!subInterfacePortTemplateConsolidationData.isPresent()) {
-      return Optional.empty();
+    public void setResourceGroupCount(Object resourceGroupCount) {
+        this.resourceGroupCount = resourceGroupCount;
     }
-    return Optional.ofNullable(subInterfacePortTemplateConsolidationData.get().getNetworkRole());
-  }
 
+    public String getNetworkRole() {
+        return networkRole;
+    }
+
+    public void setNetworkRole(String networkRole) {
+        this.networkRole = networkRole;
+    }
+
+    public String getParentPortNodeTemplateId() {
+        return parentPortNodeTemplateId;
+    }
+
+    public void setParentPortNodeTemplateId(String parentPortNodeTemplateId) {
+        this.parentPortNodeTemplateId = parentPortNodeTemplateId;
+    }
+
+    public Optional<PortTemplateConsolidationData> getParentPortTemplateConsolidationData(ServiceTemplate serviceTemplate,
+                                                                                          TranslationContext context) {
+        FilePortConsolidationData filePortConsolidationData = context.getConsolidationData().getPortConsolidationData()
+            .getFilePortConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
+        PortTemplateConsolidationData portTemplateConsolidationData = null;
+        if (filePortConsolidationData != null) {
+            portTemplateConsolidationData = filePortConsolidationData.getPortTemplateConsolidationData(parentPortNodeTemplateId);
+        }
+        return Optional.ofNullable(portTemplateConsolidationData);
+    }
+
+    public Optional<String> getParentPortNetworkRole(ServiceTemplate serviceTemplate, TranslationContext context) {
+        Optional<PortTemplateConsolidationData> subInterfacePortTemplateConsolidationData = getParentPortTemplateConsolidationData(serviceTemplate,
+            context);
+        if (!subInterfacePortTemplateConsolidationData.isPresent()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(subInterfacePortTemplateConsolidationData.get().getNetworkRole());
+    }
 }

@@ -17,21 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.enrichment.inter;
 
-
+import java.util.List;
+import java.util.Map;
 import lombok.Setter;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.AsdcModel;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 
-import java.util.List;
-import java.util.Map;
-
 @Setter
 public abstract class Enricher {
-
 
     protected EnrichmentInfo data;
     protected AsdcModel model;

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import java.util.HashMap;
@@ -34,9 +33,9 @@ public enum ResourceTypeToMessageString {
         resourcesTypesStringMap = new HashMap<>();
 
         for (ResourceTypeToMessageString resourceTypeToMessageString : ResourceTypeToMessageString
-                .values()) {
+            .values()) {
             resourcesTypesStringMap
-                    .put(resourceTypeToMessageString.type, resourceTypeToMessageString.messageString);
+                .put(resourceTypeToMessageString.type, resourceTypeToMessageString.messageString);
         }
     }
 

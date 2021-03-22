@@ -17,13 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.item.types;
 
-public enum VersionAction {
-  Sync,
-  Commit,
-  Revert,
-  Reset,
-  Clean
-}
+public enum VersionAction {Sync, Commit, Revert, Reset, Clean}

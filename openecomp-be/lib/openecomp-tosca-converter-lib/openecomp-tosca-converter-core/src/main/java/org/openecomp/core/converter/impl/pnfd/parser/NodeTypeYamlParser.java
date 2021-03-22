@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.impl.pnfd.parser;
 
 import java.util.List;
@@ -39,6 +38,7 @@ public class NodeTypeYamlParser {
 
     /**
      * Parses the given a YAML object to a {@link NodeType} instance.
+     *
      * @param nodeTypeYaml the YAML object representing a TOSCA Node Type
      * @return A new instance of {@link NodeType}.
      */
@@ -48,20 +48,13 @@ public class NodeTypeYamlParser {
         nodeType.setDerived_from((String) nodeTypeYaml.get(ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
         nodeType.setDescription((String) nodeTypeYaml.get(ToscaTagNamesEnum.DESCRIPTION.getElementName()));
         nodeType.setVersion((String) nodeTypeYaml.get("version"));
-        nodeType.setProperties(
-            (Map<String, PropertyDefinition>) nodeTypeYaml.get(ToscaTagNamesEnum.PROPERTIES.getElementName()));
+        nodeType.setProperties((Map<String, PropertyDefinition>) nodeTypeYaml.get(ToscaTagNamesEnum.PROPERTIES.getElementName()));
         nodeType.setArtifacts((Map<String, ArtifactDefinition>) nodeTypeYaml.get("artifacts"));
         nodeType.setMetadata((Map<String, String>) nodeTypeYaml.get("metadata"));
-        nodeType.setInterfaces(
-            (Map<String, Object>) nodeTypeYaml.get(ToscaTagNamesEnum.INTERFACES.getElementName()));
-        nodeType.setRequirements(
-            (List<Map<String, RequirementDefinition>>) nodeTypeYaml.get(ToscaTagNamesEnum.REQUIREMENTS.getElementName()));
-        nodeType.setCapabilities(
-            (Map<String, CapabilityDefinition>) nodeTypeYaml.get(ToscaTagNamesEnum.CAPABILITIES.getElementName()));
-        nodeType.setAttributes(
-            (Map<String, AttributeDefinition>) nodeTypeYaml.get(ToscaTagNamesEnum.ATTRIBUTES.getElementName()));
-
+        nodeType.setInterfaces((Map<String, Object>) nodeTypeYaml.get(ToscaTagNamesEnum.INTERFACES.getElementName()));
+        nodeType.setRequirements((List<Map<String, RequirementDefinition>>) nodeTypeYaml.get(ToscaTagNamesEnum.REQUIREMENTS.getElementName()));
+        nodeType.setCapabilities((Map<String, CapabilityDefinition>) nodeTypeYaml.get(ToscaTagNamesEnum.CAPABILITIES.getElementName()));
+        nodeType.setAttributes((Map<String, AttributeDefinition>) nodeTypeYaml.get(ToscaTagNamesEnum.ATTRIBUTES.getElementName()));
         return nodeType;
     }
-
 }

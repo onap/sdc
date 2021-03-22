@@ -13,8 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-
 package org.openecomp.sdc.common.session.impl;
 
 import lombok.AllArgsConstructor;
@@ -39,15 +37,11 @@ public class AsdcSessionContextProvider implements SessionContextProvider {
     @Override
     public SessionContext get() {
         if (threadUserId.get() == null) {
-            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage("UserId was not set "
-                    + "for this thread").build());
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage("UserId was not set " + "for this thread").build());
         }
-
         if (threadTenant.get() == null) {
-            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage("Tenant was not set "
-                    + "for this thread").build());
+            throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage("Tenant was not set " + "for this thread").build());
         }
-
         return new AsdcSessionContext(new User(threadUserId.get()), threadTenant.get());
     }
 

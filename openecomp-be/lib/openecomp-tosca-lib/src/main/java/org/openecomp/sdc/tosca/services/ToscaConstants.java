@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.services;
-
-
 
 public class ToscaConstants {
 
@@ -27,13 +24,10 @@ public class ToscaConstants {
     public static final String LOCAL_STORAGE_REQUIREMENT_ID = "local_storage";
     public static final String NETWORK_REQUIREMENT_ID = "network";
     public static final String PORT_REQUIREMENT_ID = "port";
-
     //TOSCA Capability Ids
     public static final String PORT_MIRRORING_CAPABILITY_ID = "port_mirroring";
-
     //TOSCA Annotation Ids
     public static final String SOURCE_ANNOTATION_ID = "source";
-
     //General
     public static final String TOSCA_DEFINITIONS_VERSION = "tosca_simple_yaml_1_0_0";
     public static final String MODELABLE_ENTITY_NAME_SELF = "SELF";
@@ -66,15 +60,14 @@ public class ToscaConstants {
     // properties valid values
     public static final String HEAT_SOURCE_TYPE = "HEAT";
     public static final String CONTRAIL_SERVICE_INSTANCE_IND = "contrail_service_instance_ind";
-    static final String ST_METADATA_FILE_NAME = "filename";
     public static final String MANDATORY_PROPERTY_NAME = "mandatory";
     public static final String HEAT_NODE_TYPE_SUFFIX = "heat.";
     public static final String CAPABILITY = "capability";
     public static final String REQUIREMENT = "requirement";
     public static final String SERVICE_TEMPLATE_FILE_POSTFIX = "ServiceTemplate.yaml";
+    static final String ST_METADATA_FILE_NAME = "filename";
 
     private ToscaConstants() {
         //Hiding the implicit public constructor
     }
-
 }

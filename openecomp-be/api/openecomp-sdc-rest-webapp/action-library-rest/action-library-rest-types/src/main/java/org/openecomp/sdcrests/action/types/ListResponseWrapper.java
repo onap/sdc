@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.action.types;
 
 import java.util.ArrayList;
@@ -27,8 +26,7 @@ import lombok.Setter;
 import org.openecomp.sdc.action.types.OpenEcompComponent;
 
 /**
- * Defines DTO used for creating Response with list of {@link ActionResponseDto } or list of {@link
- * openEcompComponent }.
+ * Defines DTO used for creating Response with list of {@link ActionResponseDto } or list of {@link openEcompComponent }.
  */
 @Getter
 @Setter

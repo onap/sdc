@@ -16,13 +16,13 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.converter.pnfd.model;
 
 /**
  * Represents a token from the transformation descriptor
  */
 public enum PnfTransformationToken {
+    // @formatter:off
     CONVERSIONS("conversions"),
     FROM("from"),
     LIST("list"),
@@ -38,6 +38,7 @@ public enum PnfTransformationToken {
     TO_GET_INPUT("to-get-input"),
     PROPERTIES("properties"),
     NODE_TYPE("node_types");
+    // @formatter:on
 
     private final String name;
 

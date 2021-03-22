@@ -23,12 +23,15 @@ import org.openecomp.sdc.health.HealthCheckManager;
 import org.openecomp.sdc.health.HealthCheckManagerFactory;
 
 public class HealthCheckManagerFactoryImpl extends HealthCheckManagerFactory {
-    private static final HealthCheckManager INSTANCE ;
+
+    private static final HealthCheckManager INSTANCE;
 
     static {
-        INSTANCE =  new HealthCheckManagerImpl();
+        INSTANCE = new HealthCheckManagerImpl();
     }
 
     @Override
-    public HealthCheckManager createInterface() {return INSTANCE;}
+    public HealthCheckManager createInterface() {
+        return INSTANCE;
+    }
 }

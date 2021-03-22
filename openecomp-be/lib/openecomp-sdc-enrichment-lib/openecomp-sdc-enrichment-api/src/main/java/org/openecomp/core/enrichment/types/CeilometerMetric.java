@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.enrichment.types;
 
 import lombok.Data;
@@ -21,11 +20,9 @@ import lombok.Data;
 @Data
 public class CeilometerMetric {
 
-  private String name;
-  private String type;
-  private String unit;
-  private String category;
-  private String description;
-
-
+    private String name;
+    private String type;
+    private String unit;
+    private String category;
+    private String description;
 }

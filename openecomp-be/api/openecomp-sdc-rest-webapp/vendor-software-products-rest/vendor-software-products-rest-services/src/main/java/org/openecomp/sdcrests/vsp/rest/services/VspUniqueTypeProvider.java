@@ -15,20 +15,18 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import org.openecomp.sdcrests.uniquevalue.types.UniqueTypesProvider;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
 
 import java.util.Collections;
 import java.util.Map;
-
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import org.openecomp.sdcrests.uniquevalue.types.UniqueTypesProvider;
 
 public class VspUniqueTypeProvider implements UniqueTypesProvider {
 
-  private static final Map<String, String> uniqueTypes =
-      Collections.singletonMap("VspName", VENDOR_SOFTWARE_PRODUCT_NAME);
+    private static final Map<String, String> uniqueTypes = Collections.singletonMap("VspName", VENDOR_SOFTWARE_PRODUCT_NAME);
 
-  @Override
-  public Map<String, String> listUniqueTypes() {
-    return uniqueTypes;
-  }
+    @Override
+    public Map<String, String> listUniqueTypes() {
+        return uniqueTypes;
+    }
 }

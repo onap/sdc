@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorlicense;
 
 import org.openecomp.sdc.vendorlicense.licenseartifacts.VendorLicenseArtifactsService;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.VendorLicenseArtifactsServiceImpl;
 
 public class VendorLicenseArtifactServiceFactoryImpl extends VendorLicenseArtifactServiceFactory {
-  private static final VendorLicenseArtifactsService INSTANCE = new VendorLicenseArtifactsServiceImpl();
 
-  @Override
-  public VendorLicenseArtifactsService createInterface() {
-    return INSTANCE;
-  }
+    private static final VendorLicenseArtifactsService INSTANCE = new VendorLicenseArtifactsServiceImpl();
 
+    @Override
+    public VendorLicenseArtifactsService createInterface() {
+        return INSTANCE;
+    }
 }

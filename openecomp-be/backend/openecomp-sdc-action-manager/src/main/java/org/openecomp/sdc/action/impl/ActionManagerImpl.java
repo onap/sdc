@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.action.impl;
 
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.ERROR;
 import static org.openecomp.sdc.action.ActionConstants.ACTION_VERSIONABLE_TYPE;
 import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_METADATA_ATTR_NAME;
 import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_METADATA_ATTR_UUID;
@@ -63,6 +64,7 @@ import static org.openecomp.sdc.action.util.ActionUtil.actionLogPostProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.actionLogPreProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.getCurrentTimeStampUtc;
 import static org.openecomp.sdc.versioning.dao.types.Version.VERSION_STRING_VIOLATION_MSG;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -88,7 +90,12 @@ import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
 import org.openecomp.sdc.action.dao.types.ActionEntity;
 import org.openecomp.sdc.action.errors.ActionErrorConstants;
 import org.openecomp.sdc.action.errors.ActionException;
-import org.openecomp.sdc.action.types.*;
+import org.openecomp.sdc.action.types.Action;
+import org.openecomp.sdc.action.types.ActionArtifact;
+import org.openecomp.sdc.action.types.ActionArtifactProtection;
+import org.openecomp.sdc.action.types.ActionStatus;
+import org.openecomp.sdc.action.types.ActionSubOperation;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -105,20 +112,10 @@ import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.slf4j.MDC;
 
-import java.util.*;
-
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.ERROR;
-import static org.openecomp.sdc.action.ActionConstants.*;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
-import static org.openecomp.sdc.action.util.ActionUtil.*;
-import static org.openecomp.sdc.versioning.dao.types.Version.VERSION_STRING_VIOLATION_MSG;
-
 /**
  * Manager Implementation for {@link ActionManager Action Library Operations}
  * <br>
- * Handles Business layer validations and acts as an interface between the REST
- * and DAO layers.
+ * Handles Business layer validations and acts as an interface between the REST and DAO layers.
  */
 public class ActionManagerImpl implements ActionManager {
 
@@ -131,94 +128,82 @@ public class ActionManagerImpl implements ActionManager {
     private final ActionArtifactDao actionArtifactDao;
     private final VersionInfoDao versionInfoDao;
     private final UniqueValueDao uniqueValueDao;
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass()
-            .getName());
+    public ActionManagerImpl() {
+        actionDao = ActionDaoFactory.getInstance().createInterface();
+        versioningManager = ActionVersioningManagerFactory.getInstance().createInterface();
+        actionArtifactDao = ActionArtifactDaoFactory.getInstance().createInterface();
+        versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
+        actionDao.registerVersioning(ACTION_VERSIONABLE_TYPE);
+        uniqueValueDao = UniqueValueDaoFactory.getInstance().createInterface();
+    }
 
-  public ActionManagerImpl() {
-    actionDao = ActionDaoFactory.getInstance().createInterface();
-    versioningManager = ActionVersioningManagerFactory.getInstance().createInterface();
-    actionArtifactDao = ActionArtifactDaoFactory.getInstance().createInterface();
-    versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
-    actionDao.registerVersioning(ACTION_VERSIONABLE_TYPE);
-    uniqueValueDao = UniqueValueDaoFactory.getInstance().createInterface();
-  }
+    public ActionManagerImpl(ActionDao actionDao, ActionVersioningManager versioningManager, ActionArtifactDao actionArtifactDao,
+                             VersionInfoDao versionInfoDao, UniqueValueDao uniqueValueDao) {
+        this.actionDao = actionDao;
+        this.versioningManager = versioningManager;
+        this.actionArtifactDao = actionArtifactDao;
+        this.versionInfoDao = versionInfoDao;
+        this.uniqueValueDao = uniqueValueDao;
+    }
 
-  public ActionManagerImpl(ActionDao actionDao, ActionVersioningManager versioningManager,
-                           ActionArtifactDao actionArtifactDao, VersionInfoDao versionInfoDao,
-                           UniqueValueDao uniqueValueDao) {
-    this.actionDao = actionDao;
-    this.versioningManager = versioningManager;
-    this.actionArtifactDao = actionArtifactDao;
-    this.versionInfoDao = versionInfoDao;
-    this.uniqueValueDao = uniqueValueDao;
-  }
-  /**
-   * List All Major, Last Minor and Candidate version (if any) for Given Action Invariant UUID
-   *
-   * @param invariantId Invariant UUID of the action for which the information is required
-   * @return List of All Major, Last Minor and Candidate version if any Of {@link Action} with given
-   * actionInvariantUuId.
-   * @throws ActionException Exception with an action library specific code, short description and
-   *                         detailed message for the error occurred during the operation
-   */
-
+    /**
+     * List All Major, Last Minor and Candidate version (if any) for Given Action Invariant UUID
+     *
+     * @param invariantId Invariant UUID of the action for which the information is required
+     * @return List of All Major, Last Minor and Candidate version if any Of {@link Action} with given actionInvariantUuId.
+     * @throws ActionException Exception with an action library specific code, short description and detailed message for the error occurred during
+     *                         the operation
+     */
     @Override
     public List<Action> getActionsByActionInvariantUuId(String invariantId) {
         List<Action> actions;
-
         log.debug(" entering getActionsByActionInvariantUuId with  invariantID = " + invariantId);
         actions = actionDao.getActionsByActionInvariantUuId(invariantId != null ? invariantId.toUpperCase() : null);
-
         if (actions != null && actions.isEmpty()) {
             throw new ActionException(ACTION_ENTITY_NOT_EXIST_CODE, ACTION_ENTITY_NOT_EXIST);
         }
-
         log.debug(" exit getActionsByActionInvariantUuId with  invariantID = " + invariantId);
         return actions;
     }
 
     /**
-     * Get list of actions based on a filter criteria. If no filter is sent all
-     * actions will be returned
+     * Get list of actions based on a filter criteria. If no filter is sent all actions will be returned
      *
-     * @param filterType
-     *            Filter by Vendor/Category/Model/Component/None
-     * @param filterValue
-     *            Filter Parameter Value (Vendor ID/Category ID/Model
-     *            ID/Component ID)
-     * @return List of {@link Action} objects based on a filter criteria <br>
-     *         Empty List if no records match the provided filter criteria
+     * @param filterType  Filter by Vendor/Category/Model/Component/None
+     * @param filterValue Filter Parameter Value (Vendor ID/Category ID/Model ID/Component ID)
+     * @return List of {@link Action} objects based on a filter criteria <br> Empty List if no records match the provided filter criteria
      */
     @Override
     public List<Action> getFilteredActions(String filterType, String filterValue) {
         List<Action> actions;
         log.debug(" entering getFilteredActions By filterType = " + filterType + WITH_VALUE + filterValue);
         switch (filterType) {
-        case FILTER_TYPE_NONE:
-            // Business validation for OPENECOMP Component type fetch (if any)
-            break;
-        case FILTER_TYPE_VENDOR:
-            // Business validation for vendor type fetch (if any)
-            break;
-        case FILTER_TYPE_CATEGORY:
-            // Business validation for Category type fetch (if any)
-            break;
-        case FILTER_TYPE_MODEL:
-            // Business validation for model type fetch (if any)
-            break;
-        case FILTER_TYPE_OPEN_ECOMP_COMPONENT:
-            // Business validation for OPENECOMP Component type fetch (if any)
-            break;
-        case FILTER_TYPE_NAME:
-            actions = actionDao.getFilteredActions(filterType, filterValue != null ? filterValue.toLowerCase() : null);
-            if (actions != null && actions.isEmpty()) {
-                throw new ActionException(ACTION_ENTITY_NOT_EXIST_CODE, ACTION_ENTITY_NOT_EXIST);
-            }
-            log.debug(" exit getFilteredActions By filterType = " + filterType + WITH_VALUE + filterValue);
-            return actions;
-        default:
-            break;
+            case FILTER_TYPE_NONE:
+                // Business validation for OPENECOMP Component type fetch (if any)
+                break;
+            case FILTER_TYPE_VENDOR:
+                // Business validation for vendor type fetch (if any)
+                break;
+            case FILTER_TYPE_CATEGORY:
+                // Business validation for Category type fetch (if any)
+                break;
+            case FILTER_TYPE_MODEL:
+                // Business validation for model type fetch (if any)
+                break;
+            case FILTER_TYPE_OPEN_ECOMP_COMPONENT:
+                // Business validation for OPENECOMP Component type fetch (if any)
+                break;
+            case FILTER_TYPE_NAME:
+                actions = actionDao.getFilteredActions(filterType, filterValue != null ? filterValue.toLowerCase() : null);
+                if (actions != null && actions.isEmpty()) {
+                    throw new ActionException(ACTION_ENTITY_NOT_EXIST_CODE, ACTION_ENTITY_NOT_EXIST);
+                }
+                log.debug(" exit getFilteredActions By filterType = " + filterType + WITH_VALUE + filterValue);
+                return actions;
+            default:
+                break;
         }
         actions = actionDao.getFilteredActions(filterType, filterValue != null ? filterValue.toLowerCase() : null);
         List<Action> majorMinorVersionList = getMajorMinorVersionActions(actions);
@@ -230,20 +215,16 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Get the properties of an action version by its UUID.
      *
-     * @param actionUuId
-     *            UUID of the specific action version
-     * @return {@link Action} object corresponding the version represented by
-     *         the UUID
+     * @param actionUuId UUID of the specific action version
+     * @return {@link Action} object corresponding the version represented by the UUID
      */
     @Override
     public Action getActionsByActionUuId(String actionUuId) {
         log.debug(" entering getActionsByActionUuId with  actionUUID = " + actionUuId);
         Action action = actionDao.getActionsByActionUuId(actionUuId != null ? actionUuId.toUpperCase() : null);
-
         if (action == null) {
             throw new ActionException(ACTION_ENTITY_NOT_EXIST_CODE, ACTION_ENTITY_NOT_EXIST);
         }
-
         log.debug(" exit getActionsByActionUuId with  actionUUID = " + actionUuId);
         return action;
     }
@@ -251,9 +232,7 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * List OPENECOMP Components supported by Action Library.
      *
-     * @return List of {@link OpenEcompComponent} objects supported by Action
-     *         Library <br>
-     *         Empty List if no components are found
+     * @return List of {@link OpenEcompComponent} objects supported by Action Library <br> Empty List if no components are found
      */
     @Override
     public List<OpenEcompComponent> getOpenEcompComponents() {
@@ -263,16 +242,13 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Delete an action.
      *
-     * @param actionInvariantUuId
-     *            Invariant UUID of the action to be deleted
-     * @param user
-     *            User id of the user performing the operation
+     * @param actionInvariantUuId Invariant UUID of the action to be deleted
+     * @param user                User id of the user performing the operation
      */
     @Override
     public void deleteAction(String actionInvariantUuId, String user) {
         try {
-            log.debug(
-                    "entering deleteAction with actionInvariantUuId = " + actionInvariantUuId + " and user = " + user);
+            log.debug("entering deleteAction with actionInvariantUuId = " + actionInvariantUuId + " and user = " + user);
             actionLogPreProcessor(ActionSubOperation.DELETE_ACTION, TARGET_ENTITY_API);
             versioningManager.delete(ACTION_VERSIONABLE_TYPE, actionInvariantUuId, user);
             actionLogPostProcessor(COMPLETE);
@@ -286,10 +262,8 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Create a new Action.
      *
-     * @param action
-     *            Action object model of the user request for creating an action
-     * @param user
-     *            AT&T id of the user sending the create request
+     * @param action Action object model of the user request for creating an action
+     * @param user   AT&T id of the user sending the create request
      * @return {@link Action} model object for the created action
      */
     @Override
@@ -300,8 +274,7 @@ public class ActionManagerImpl implements ActionManager {
             uniqueValueUtil.validateUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
             actionLogPostProcessor(COMPLETE);
         } catch (CoreException exception) {
-            String errorDesc = String.format(ACTION_ENTITY_UNIQUE_VALUE_MSG, ActionConstants.UniqueValues.ACTION_NAME,
-                    action.getName());
+            String errorDesc = String.format(ACTION_ENTITY_UNIQUE_VALUE_MSG, ActionConstants.UniqueValues.ACTION_NAME, action.getName());
             log.error(errorDesc, exception);
             actionLogPostProcessor(ERROR, ACTION_ENTITY_UNIQUE_VALUE_ERROR, errorDesc, false);
             throw new ActionException(ACTION_ENTITY_UNIQUE_VALUE_ERROR, errorDesc);
@@ -312,55 +285,47 @@ public class ActionManagerImpl implements ActionManager {
         action.setTimestamp(getCurrentTimeStampUtc());
         action.setActionInvariantUuId(CommonMethods.nextUuId());
         action.setActionUuId(CommonMethods.nextUuId());
-
         actionLogPreProcessor(ActionSubOperation.CREATE_ACTION_VERSION, TARGET_ENTITY_API);
         Version version = versioningManager.create(ACTION_VERSIONABLE_TYPE, action.getActionInvariantUuId(), user);
         actionLogPostProcessor(COMPLETE);
         log.metrics("");
-
         action.setVersion(version.toString());
         action.setStatus(ActionStatus.Locked);
         action = updateData(action);
         action = actionDao.createAction(action);
-
         actionLogPreProcessor(ActionSubOperation.CREATE_ACTION_UNIQUE_VALUE, TARGET_ENTITY_API);
         uniqueValueUtil.createUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
         actionLogPostProcessor(COMPLETE);
         log.metrics("");
-
         return action;
     }
 
     /**
      * Update an existing action.
      *
-     * @param action
-     *            Action object model of the user request for creating an action
-     * @param user
-     *            AT&T id of the user sending the update request
+     * @param action Action object model of the user request for creating an action
+     * @param user   AT&T id of the user sending the update request
      * @return {@link Action} model object for the update action
      */
     @Override
     public Action updateAction(Action action, String user) {
         try {
-            log.debug("entering updateAction to update action with invariantUuId = " + action.getActionInvariantUuId()
-                    + BY_USER + user);
+            log.debug("entering updateAction to update action with invariantUuId = " + action.getActionInvariantUuId() + BY_USER + user);
             String invariantUuId = action.getActionInvariantUuId();
             actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_API);
-            VersionInfo versionInfo = versioningManager.getEntityVersionInfo(ACTION_VERSIONABLE_TYPE, invariantUuId,
-                    user, VersionableEntityAction.Write);
+            VersionInfo versionInfo = versioningManager
+                .getEntityVersionInfo(ACTION_VERSIONABLE_TYPE, invariantUuId, user, VersionableEntityAction.Write);
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
-
             Version activeVersion = versionInfo.getActiveVersion();
             validateActions(action, activeVersion);
             action.setStatus(ActionStatus.Locked); // Status will be Checkout
-                                                   // for update
+
+            // for update
             updateData(action);
             action.setUser(user);
             action.setTimestamp(getCurrentTimeStampUtc());
             actionDao.updateAction(action);
-
         } catch (CoreException ce) {
             formAndThrowException(ce);
         }
@@ -371,10 +336,8 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Checkout an existing action.
      *
-     * @param invariantUuId
-     *            actionInvariantUuId of the action to be checked out
-     * @param user
-     *            AT&T id of the user sending the checkout request
+     * @param invariantUuId actionInvariantUuId of the action to be checked out
+     * @param user          AT&T id of the user sending the checkout request
      * @return {@link Action} model object for the checkout action
      */
     @Override
@@ -387,21 +350,15 @@ public class ActionManagerImpl implements ActionManager {
             version = versioningManager.checkout(ACTION_VERSIONABLE_TYPE, invariantUuId, user);
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
-
             actionEntity = updateUniqueIdForVersion(invariantUuId, version, ActionStatus.Locked.name(), user);
         } catch (CoreException exception) {
-            if (exception.code() != null && exception.code()
-                    .id()
-                    .equals(VersioningErrorCodes.CHECKOT_ON_LOCKED_ENTITY)) {
+            if (exception.code() != null && exception.code().id().equals(VersioningErrorCodes.CHECKOT_ON_LOCKED_ENTITY)) {
                 actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
-                VersionInfoEntity versionInfoEntity = versionInfoDao
-                        .get(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
+                VersionInfoEntity versionInfoEntity = versionInfoDao.get(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
                 actionLogPostProcessor(COMPLETE);
                 log.metrics("");
-                String checkoutUser = versionInfoEntity.getCandidate()
-                        .getUser();
-                log.debug("Actual checkout user for Action with invariantUUID= " + invariantUuId + " is = "
-                        + checkoutUser);
+                String checkoutUser = versionInfoEntity.getCandidate().getUser();
+                log.debug("Actual checkout user for Action with invariantUUID= " + invariantUuId + " is = " + checkoutUser);
                 if (!checkoutUser.equals(user)) {
                     throw new ActionException(ACTION_CHECKOUT_ON_LOCKED_ENTITY_OTHER_USER, exception.getMessage());
                 }
@@ -415,21 +372,17 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Undo an already checked out action.
      *
-     * @param invariantUuId
-     *            actionInvariantUuId of the checked out action
-     * @param user
-     *            AT&T id of the user sending the request
+     * @param invariantUuId actionInvariantUuId of the checked out action
+     * @param user          AT&T id of the user sending the request
      */
     @Override
     public void undoCheckout(String invariantUuId, String user) {
         Version version;
         try {
             log.debug("entering undoCheckout for Action with invariantUUID= " + invariantUuId + BY_USER + user);
-
             actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
             // Get list of uploaded artifacts in this checked out version
-            VersionInfoEntity versionInfoEntity = versionInfoDao
-                    .get(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
+            VersionInfoEntity versionInfoEntity = versionInfoDao.get(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
             if (versionInfoEntity == null) {
@@ -442,41 +395,35 @@ public class ActionManagerImpl implements ActionManager {
             } else {
                 activeVersion = versionInfoEntity.getActiveVersion();
             }
-
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_VERSION, TARGET_ENTITY_DB);
-            Action action = actionDao.get(new ActionEntity(invariantUuId, activeVersion))
-                    .toDto();
+            Action action = actionDao.get(new ActionEntity(invariantUuId, activeVersion)).toDto();
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
-
             // Perform undo checkout on the action
             actionLogPreProcessor(ActionSubOperation.UNDO_CHECKOUT_ACTION, TARGET_ENTITY_API);
             version = versioningManager.undoCheckout(ACTION_VERSIONABLE_TYPE, invariantUuId, user);
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
-
             if (version.equals(new Version(0, 0))) {
                 actionLogPreProcessor(ActionSubOperation.DELETE_UNIQUEVALUE, TARGET_ENTITY_API);
                 UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
                 uniqueValueUtil.deleteUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
                 actionLogPostProcessor(COMPLETE);
                 log.metrics("");
-
                 actionLogPreProcessor(ActionSubOperation.DELETE_ACTIONVERSION, TARGET_ENTITY_DB);
                 // Added for the case where Create->Undo_Checkout->Checkout
+
                 // should not get the action
                 versionInfoDao.delete(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
                 actionLogPostProcessor(COMPLETE);
                 log.metrics("");
             }
-
             List<ActionArtifact> currentVersionArtifacts = action.getArtifacts();
-
             // Delete the artifacts from action_artifact table (if any)
             if (CollectionUtils.isNotEmpty(currentVersionArtifacts) && currentVersionArtifacts.size() > 0) {
                 for (ActionArtifact artifact : currentVersionArtifacts) {
                     ActionArtifactEntity artifactDeleteEntity = new ActionArtifactEntity(artifact.getArtifactUuId(),
-                            getEffectiveVersion(activeVersion.toString()));
+                        getEffectiveVersion(activeVersion.toString()));
                     actionLogPreProcessor(ActionSubOperation.DELETE_ARTIFACT, TARGET_ENTITY_DB);
                     actionArtifactDao.delete(artifactDeleteEntity);
                     actionLogPostProcessor(COMPLETE);
@@ -492,10 +439,8 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Checkin a checked out action.
      *
-     * @param invariantUuId
-     *            actionInvariantUuId of the checked out action
-     * @param user
-     *            AT&T id of the user sending the request
+     * @param invariantUuId actionInvariantUuId of the checked out action
+     * @param user          AT&T id of the user sending the request
      * @return {@link Action} model object for the updated action
      */
     @Override
@@ -519,10 +464,8 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Submit a checked in action.
      *
-     * @param invariantUuId
-     *            actionInvariantUuId of the checked in action
-     * @param user
-     *            AT&T id of the user sending the request
+     * @param invariantUuId actionInvariantUuId of the checked in action
+     * @param user          AT&T id of the user sending the request
      * @return {@link Action} model object for the updated action
      */
     @Override
@@ -546,11 +489,8 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Download an artifact of an action.
      *
-     * @param artifactUuId
-     *            {@link ActionArtifact} object representing the artifact and
-     *            its metadata
-     * @param actionUuId
-     *            UUID of the action for which the artifact has to be downloaded
+     * @param artifactUuId {@link ActionArtifact} object representing the artifact and its metadata
+     * @param actionUuId   UUID of the action for which the artifact has to be downloaded
      * @return downloaded action artifact object
      */
     @Override
@@ -563,20 +503,17 @@ public class ActionManagerImpl implements ActionManager {
             List<ActionArtifact> artifacts = action.getArtifacts();
             String actionVersion = action.getVersion();
             int effectiveVersion = getEffectiveVersion(actionVersion);
-            ActionArtifact artifactMetadata = getArtifactMetadataFromAction(artifacts, ARTIFACT_METADATA_ATTR_UUID,
-                    artifactUuId);
+            ActionArtifact artifactMetadata = getArtifactMetadataFromAction(artifacts, ARTIFACT_METADATA_ATTR_UUID, artifactUuId);
             if (artifactMetadata != null) {
                 String artifactName = artifactMetadata.getArtifactName();
                 actionArtifact = actionArtifactDao.downloadArtifact(effectiveVersion, artifactUuId);
                 actionArtifact.setArtifactName(artifactName);
-
             } else {
                 throw new ActionException(ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE,
-                        ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST);
+                    ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST);
             }
         } else {
-            throw new ActionException(ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE,
-                    ActionErrorConstants.ACTION_ENTITY_NOT_EXIST);
+            throw new ActionException(ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE, ActionErrorConstants.ACTION_ENTITY_NOT_EXIST);
         }
         log.debug(" exit downloadArtifact with actionUUID= " + actionUuId + " and artifactUUID= " + artifactUuId);
         return actionArtifact;
@@ -585,79 +522,62 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Upload an artifact to an action.
      *
-     * @param artifact
-     *            {@link ActionArtifact} object representing the artifact and
-     *            its metadata
-     * @param actionInvariantUuId
-     *            Invariant UUID of the action to which the artifact has to be
-     *            uploaded
-     * @param user
-     *            User ID of the user sending the request
+     * @param artifact            {@link ActionArtifact} object representing the artifact and its metadata
+     * @param actionInvariantUuId Invariant UUID of the action to which the artifact has to be uploaded
+     * @param user                User ID of the user sending the request
      * @return Uploaded action artifact object
      */
     @Override
     public ActionArtifact uploadArtifact(ActionArtifact artifact, String actionInvariantUuId, String user) {
         ActionArtifact uploadArtifactResponse = new ActionArtifact();
         try {
-            log.debug("entering uploadArtifact with actionInvariantUuId= " + actionInvariantUuId + "artifactName= "
-                    + artifact.getArtifactName());
+            log.debug("entering uploadArtifact with actionInvariantUuId= " + actionInvariantUuId + "artifactName= " + artifact.getArtifactName());
             actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
-            VersionInfo versionInfo = versioningManager.getEntityVersionInfo(ACTION_VERSIONABLE_TYPE,
-                    actionInvariantUuId, user, VersionableEntityAction.Write);
+            VersionInfo versionInfo = versioningManager
+                .getEntityVersionInfo(ACTION_VERSIONABLE_TYPE, actionInvariantUuId, user, VersionableEntityAction.Write);
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
             Version activeVersion = versionInfo.getActiveVersion();
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_ACTIONINVID, TARGET_ENTITY_DB);
-            Action action = actionDao.get(new ActionEntity(actionInvariantUuId, activeVersion))
-                    .toDto();
+            Action action = actionDao.get(new ActionEntity(actionInvariantUuId, activeVersion)).toDto();
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
             String artifactUuId = generateActionArtifactUuId(action, artifact.getArtifactName());
             // Check for Unique document name
             List<ActionArtifact> actionArtifacts = action.getArtifacts();
-            ActionArtifact artifactMetadata = getArtifactMetadataFromAction(actionArtifacts,
-                    ARTIFACT_METADATA_ATTR_NAME, artifact.getArtifactName());
+            ActionArtifact artifactMetadata = getArtifactMetadataFromAction(actionArtifacts, ARTIFACT_METADATA_ATTR_NAME, artifact.getArtifactName());
             if (artifactMetadata != null) {
-                throw new ActionException(ACTION_ARTIFACT_ALREADY_EXISTS_CODE,
-                        String.format(ACTION_ARTIFACT_ALREADY_EXISTS, actionInvariantUuId));
+                throw new ActionException(ACTION_ARTIFACT_ALREADY_EXISTS_CODE, String.format(ACTION_ARTIFACT_ALREADY_EXISTS, actionInvariantUuId));
             }
-
             // Create the artifact
             artifact.setArtifactUuId(artifactUuId);
             artifact.setTimestamp(getCurrentTimeStampUtc());
             artifact.setEffectiveVersion(getEffectiveVersion(activeVersion.toString()));
             actionArtifactDao.uploadArtifact(artifact);
-
             // Update the action data field and timestamp
             addArtifactMetadataInActionData(action, artifact);
-
             // Set the response object
             uploadArtifactResponse.setArtifactUuId(artifact.getArtifactUuId());
         } catch (CoreException ce) {
             formAndThrowException(ce);
         }
-        log.debug("exit uploadArtifact with actionInvariantUuId= " + actionInvariantUuId + "artifactName= "
-                + artifact.getArtifactName());
+        log.debug("exit uploadArtifact with actionInvariantUuId= " + actionInvariantUuId + "artifactName= " + artifact.getArtifactName());
         return uploadArtifactResponse;
     }
 
     @Override
     public void deleteArtifact(String actionInvariantUuId, String artifactUuId, String user) {
-        log.debug("enter deleteArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID + artifactUuId
-                + " and user = " + user);
+        log.debug("enter deleteArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID + artifactUuId + " and user = " + user);
         Action action = actionDao.getLockedAction(actionInvariantUuId, user);
         List<ActionArtifact> actionArtifacts = action.getArtifacts();
-        ActionArtifact artifactMetadata = getArtifactMetadataFromAction(actionArtifacts, ARTIFACT_METADATA_ATTR_UUID,
-                artifactUuId);
+        ActionArtifact artifactMetadata = getArtifactMetadataFromAction(actionArtifacts, ARTIFACT_METADATA_ATTR_UUID, artifactUuId);
         if (artifactMetadata == null) {
             throw new ActionException(ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE,
-                    ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST);
+                ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST);
         }
-        if (artifactMetadata.getArtifactProtection()
-                .equals(ActionArtifactProtection.readOnly.name())) {
+        if (artifactMetadata.getArtifactProtection().equals(ActionArtifactProtection.readOnly.name())) {
             throw new ActionException(ACTION_ARTIFACT_DELETE_READ_ONLY, ACTION_ARTIFACT_DELETE_READ_ONLY_MSG);
         } else {
-
             // Update action by removing artifact metadata
             String jsonData = action.getData();
             List<ActionArtifact> artifacts = action.getArtifacts();// action.getArtifacts();
@@ -670,7 +590,6 @@ public class ActionManagerImpl implements ActionManager {
                     it.remove();
                 }
             }
-
             Map dataMap = JsonUtil.json2Object(jsonData, LinkedHashMap.class);
             dataMap.put("artifacts", artifacts);
             String data = JsonUtil.object2Json(dataMap);
@@ -681,66 +600,58 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
             // delete Artifact if it's upload and delete action on same checkout
+
             // version
             String artifactName = artifactMetadata.getArtifactName();
             String generatedArtifactUuId = generateActionArtifactUuId(action, artifactName);
             if (generatedArtifactUuId.equals(artifactUuId)) {
                 if (artifact != null) {
                     ActionArtifactEntity artifactDeleteEntity = new ActionArtifactEntity(artifact.getArtifactUuId(),
-                            getEffectiveVersion(action.getVersion()));
+                        getEffectiveVersion(action.getVersion()));
                     actionLogPreProcessor(ActionSubOperation.DELETE_ACTION_ARTIFACT, TARGET_ENTITY_DB);
                     actionArtifactDao.delete(artifactDeleteEntity);
                 }
                 actionLogPostProcessor(COMPLETE, null, "", false);
                 log.metrics("");
             }
-
         }
-        log.debug("exit deleteArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID + artifactUuId
-                + " and user = " + user);
+        log.debug("exit deleteArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID + artifactUuId + " and user = " + user);
     }
 
     /**
      * Update an existing artifact.
      *
-     * @param artifact
-     *            {@link ActionArtifact} object representing the artifact and
-     *            its metadata
-     * @param actionInvariantUuId
-     *            Invariant UUID of the action to which the artifact has to be
-     *            uploaded
-     * @param user
-     *            User ID of the user sending the request
+     * @param artifact            {@link ActionArtifact} object representing the artifact and its metadata
+     * @param actionInvariantUuId Invariant UUID of the action to which the artifact has to be uploaded
+     * @param user                User ID of the user sending the request
      */
     public void updateArtifact(ActionArtifact artifact, String actionInvariantUuId, String user) {
         try {
-            log.debug("Enter updateArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID
-                    + artifact.getArtifactUuId() + " and user = " + user);
+            log.debug(
+                "Enter updateArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID + artifact.getArtifactUuId() + " and user = "
+                    + user);
             actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_API);
-            VersionInfo versionInfo = versioningManager.getEntityVersionInfo(ACTION_VERSIONABLE_TYPE,
-                    actionInvariantUuId, user, VersionableEntityAction.Write);
+            VersionInfo versionInfo = versioningManager
+                .getEntityVersionInfo(ACTION_VERSIONABLE_TYPE, actionInvariantUuId, user, VersionableEntityAction.Write);
             actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
             Version activeVersion = versionInfo.getActiveVersion();
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_ACTIONINVID, TARGET_ENTITY_DB);
-            Action action = actionDao.get(new ActionEntity(actionInvariantUuId, activeVersion))
-                    .toDto();
+            Action action = actionDao.get(new ActionEntity(actionInvariantUuId, activeVersion)).toDto();
             actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
             List<ActionArtifact> actionArtifacts = action.getArtifacts();
-            ActionArtifact artifactMetadataByUuId = getArtifactMetadataFromAction(actionArtifacts,
-                    ARTIFACT_METADATA_ATTR_UUID, artifact.getArtifactUuId());
+            ActionArtifact artifactMetadataByUuId = getArtifactMetadataFromAction(actionArtifacts, ARTIFACT_METADATA_ATTR_UUID,
+                artifact.getArtifactUuId());
             // Check if artifact is already in action or not
             if (artifactMetadataByUuId == null) {
                 throw new ActionException(ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE,
-                        ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST);
+                    ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST);
             }
             // If user tries to change artifact name
-            if (artifact.getArtifactName() != null && !artifactMetadataByUuId.getArtifactName()
-                    .equalsIgnoreCase(artifact.getArtifactName())) {
+            if (artifact.getArtifactName() != null && !artifactMetadataByUuId.getArtifactName().equalsIgnoreCase(artifact.getArtifactName())) {
                 throw new ActionException(ACTION_UPDATE_NOT_ALLOWED_CODE, ACTION_ARTIFACT_UPDATE_NAME_INVALID);
             }
-
             byte[] payload = artifact.getArtifact();
             String artifactLabel = artifact.getArtifactLabel();
             String artifactCategory = artifact.getArtifactCategory();
@@ -748,15 +659,12 @@ public class ActionManagerImpl implements ActionManager {
             String artifactProtection = artifact.getArtifactProtection();
             String artifactName = artifact.getArtifactName();
             // If artifact read only
-            if (artifactMetadataByUuId.getArtifactProtection()
-                    .equals(ActionArtifactProtection.readOnly.name())) {
-                if (artifactName != null || artifactLabel != null || artifactCategory != null
-                        || artifactDescription != null || payload != null) {
+            if (artifactMetadataByUuId.getArtifactProtection().equals(ActionArtifactProtection.readOnly.name())) {
+                if (artifactName != null || artifactLabel != null || artifactCategory != null || artifactDescription != null || payload != null) {
                     throw new ActionException(ACTION_ARTIFACT_UPDATE_READ_ONLY, ACTION_ARTIFACT_UPDATE_READ_ONLY_MSG);
                 }
                 // Changing value from readOnly to readWrite
-                if (artifactProtection != null
-                        && artifactProtection.equals(ActionArtifactProtection.readWrite.name())) {
+                if (artifactProtection != null && artifactProtection.equals(ActionArtifactProtection.readWrite.name())) {
                     artifactMetadataByUuId.setArtifactProtection(ActionArtifactProtection.readWrite.name());
                     artifactMetadataByUuId.setTimestamp(getCurrentTimeStampUtc());
                     updateArtifactMetadataInActionData(action, artifactMetadataByUuId);
@@ -777,6 +685,7 @@ public class ActionManagerImpl implements ActionManager {
                 }
                 if (payload != null) {
                     // get artifact data from action_artifact table for updating
+
                     // the content
                     ActionArtifact artifactContent = new ActionArtifact();
                     artifactContent.setArtifactUuId(artifact.getArtifactUuId());
@@ -788,32 +697,28 @@ public class ActionManagerImpl implements ActionManager {
                 artifactMetadataByUuId.setTimestamp(getCurrentTimeStampUtc());
                 updateArtifactMetadataInActionData(action, artifactMetadataByUuId);
             }
-            log.debug("exit updateArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID
-                    + artifact.getArtifactUuId() + " and user = " + user);
+            log.debug(
+                "exit updateArtifact with actionInvariantUuId= " + actionInvariantUuId + ARTIFACT_UUID + artifact.getArtifactUuId() + " and user = "
+                    + user);
         } catch (CoreException coreException) {
             formAndThrowException(coreException);
         }
     }
 
     /**
-     * Generate artifact UUID at runtime using action name and effective
-     * version.
+     * Generate artifact UUID at runtime using action name and effective version.
      *
-     * @param action
-     *            {@link Action} for which the artifact is being
-     *            uploaded/updated/downloaded
-     * @param artifactName
-     *            Artifact name
+     * @param action       {@link Action} for which the artifact is being uploaded/updated/downloaded
+     * @param artifactName Artifact name
      * @return Generated UUID string
      */
     private String generateActionArtifactUuId(Action action, String artifactName) {
         int effectiveVersion = getEffectiveVersion(action.getVersion());
         // Upper case for maintaining case-insensitive behavior for the artifact
+
         // names
-        String artifactUuIdString = action.getName()
-                .toUpperCase() + effectiveVersion + artifactName.toUpperCase();
-        String generateArtifactUuId = UUID.nameUUIDFromBytes((artifactUuIdString).getBytes())
-                .toString();
+        String artifactUuIdString = action.getName().toUpperCase() + effectiveVersion + artifactName.toUpperCase();
+        String generateArtifactUuId = UUID.nameUUIDFromBytes((artifactUuIdString).getBytes()).toString();
         String artifactUuId = generateArtifactUuId.replace("-", "");
         return artifactUuId.toUpperCase();
     }
@@ -821,8 +726,7 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Generate the effective action version for artifact operations.
      *
-     * @param actionVersion
-     *            Version of the action as a string
+     * @param actionVersion Version of the action as a string
      * @return Effective version to be used for artifact operations
      */
     private int getEffectiveVersion(String actionVersion) {
@@ -831,11 +735,9 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     /**
-     * Update the data field of the Action object with the modified/generated
-     * fields after an operation.
+     * Update the data field of the Action object with the modified/generated fields after an operation.
      *
-     * @param action
-     *            Action object whose data field has to be updated
+     * @param action Action object whose data field has to be updated
      * @return Updated {@link Action} object
      */
     private Action updateData(Action action) {
@@ -844,9 +746,7 @@ public class ActionManagerImpl implements ActionManager {
         dataMap.put(ActionConstants.UNIQUE_ID, action.getActionUuId());
         dataMap.put(ActionConstants.VERSION, action.getVersion());
         dataMap.put(ActionConstants.INVARIANTUUID, action.getActionInvariantUuId());
-        dataMap.put(ActionConstants.STATUS, action.getStatus()
-                .name());
-
+        dataMap.put(ActionConstants.STATUS, action.getStatus().name());
         String data = action.getData();
         Map<String, String> currentDataMap = JsonUtil.json2Object(data, LinkedHashMap.class);
         dataMap.putAll(currentDataMap);
@@ -857,16 +757,12 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     /**
-     * Method to add the artifact metadata in the data attribute of action
-     * table.
+     * Method to add the artifact metadata in the data attribute of action table.
      *
-     * @param action
-     *            Action to which artifact is uploaded
-     * @param artifact
-     *            Uploaded artifact object
+     * @param action   Action to which artifact is uploaded
+     * @param artifact Uploaded artifact object
      */
     private void addArtifactMetadataInActionData(Action action, ActionArtifact artifact) {
-
         ActionArtifact artifactMetadata = new ActionArtifact();
         artifactMetadata.setArtifactUuId(artifact.getArtifactUuId());
         artifactMetadata.setArtifactName(artifact.getArtifactName());
@@ -875,7 +771,6 @@ public class ActionManagerImpl implements ActionManager {
         artifactMetadata.setArtifactDescription(artifact.getArtifactDescription());
         artifactMetadata.setArtifactCategory(artifact.getArtifactCategory());
         artifactMetadata.setTimestamp(artifact.getTimestamp());
-
         List<ActionArtifact> actionArtifacts = action.getArtifacts();
         if (actionArtifacts == null) {
             actionArtifacts = new ArrayList<>();
@@ -892,20 +787,17 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     /**
-     * Get a list of last major and last minor version (no candidate) of action
-     * from a list of actions.
+     * Get a list of last major and last minor version (no candidate) of action from a list of actions.
      *
-     * @param actions
-     *            Exhaustive list of the action versions
-     * @return List {@link Action} of last major and last minor version (no
-     *         candidate) of action from a list of actions
+     * @param actions Exhaustive list of the action versions
+     * @return List {@link Action} of last major and last minor version (no candidate) of action from a list of actions
      */
     private List<Action> getMajorMinorVersionActions(List<Action> actions) {
         log.debug(" entering getMajorMinorVersionActions for actions ");
         List<Action> list = new LinkedList<>();
         actionLogPreProcessor(ActionSubOperation.GET_VERSIONINFO_FOR_ALL_ACTIONS, TARGET_ENTITY_API);
-        Map<String, VersionInfo> actionVersionMap = versioningManager.listEntitiesVersionInfo(ACTION_VERSIONABLE_TYPE,
-                "", VersionableEntityAction.Read);
+        Map<String, VersionInfo> actionVersionMap = versioningManager
+            .listEntitiesVersionInfo(ACTION_VERSIONABLE_TYPE, "", VersionableEntityAction.Read);
         actionLogPostProcessor(COMPLETE);
         log.metrics("");
         for (Action action : actions) {
@@ -913,13 +805,11 @@ public class ActionManagerImpl implements ActionManager {
                 continue;
             }
             VersionInfo actionVersionInfo = actionVersionMap.get(action.getActionInvariantUuId());
-            if (actionVersionInfo.getActiveVersion() != null && actionVersionInfo.getActiveVersion()
-                    .equals(Version.valueOf(action.getVersion()))) {
+            if (actionVersionInfo.getActiveVersion() != null && actionVersionInfo.getActiveVersion().equals(Version.valueOf(action.getVersion()))) {
                 list.add(action);
             } else if (actionVersionInfo.getLatestFinalVersion() != null && actionVersionInfo.getLatestFinalVersion()
-                    .equals(Version.valueOf(action.getVersion()))
-                    && !actionVersionInfo.getLatestFinalVersion()
-                            .equals(actionVersionInfo.getActiveVersion())) {
+                .equals(Version.valueOf(action.getVersion())) && !actionVersionInfo.getLatestFinalVersion()
+                .equals(actionVersionInfo.getActiveVersion())) {
                 list.add(action);
             }
         }
@@ -928,99 +818,91 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     /**
-     * CoreException object wrapper from Version library to Action Library
-     * Exception.
+     * CoreException object wrapper from Version library to Action Library Exception.
      *
-     * @param exception
-     *            CoreException object from version library
+     * @param exception CoreException object from version library
      */
     private void formAndThrowException(CoreException exception) {
-        log.debug("entering formAndThrowException with input CoreException =" + exception.code()
-                .id() + " " + exception.getMessage());
+        log.debug("entering formAndThrowException with input CoreException =" + exception.code().id() + " " + exception.getMessage());
         String errorDescription = exception.getMessage();
-        String errorCode = exception.code()
-                .id();
+        String errorCode = exception.code().id();
         ActionException actionException = new ActionException();
         switch (errorCode) {
-        case VersioningErrorCodes.VERSIONABLE_ENTITY_NOT_EXIST:
-            actionException.setErrorCode(ACTION_ENTITY_NOT_EXIST_CODE);
-            actionException.setDescription(ACTION_ENTITY_NOT_EXIST);
-            break;
-        case VersioningErrorCodes.CHECKOT_ON_LOCKED_ENTITY:
-            actionException.setErrorCode(ACTION_CHECKOUT_ON_LOCKED_ENTITY);
-            actionException.setDescription(errorDescription);
-            break;
-        case VersioningErrorCodes.CHECKIN_ON_UNLOCKED_ENTITY:
-            actionException.setErrorCode(ACTION_CHECKIN_ON_UNLOCKED_ENTITY);
-            actionException.setDescription(errorDescription);
-            break;
-        case VersioningErrorCodes.SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED:
-            actionException.setErrorCode(ACTION_SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED);
-            actionException.setDescription(errorDescription);
-            break;
-        case VersioningErrorCodes.SUBMIT_LOCKED_ENTITY_NOT_ALLOWED:
-            actionException.setErrorCode(ACTION_SUBMIT_LOCKED_ENTITY_NOT_ALLOWED);
-            actionException.setDescription(errorDescription);
-            break;
-        case VersioningErrorCodes.UNDO_CHECKOUT_ON_UNLOCKED_ENTITY:
-            actionException.setErrorCode(ACTION_UNDO_CHECKOUT_ON_UNLOCKED_ENTITY);
-            actionException.setDescription(errorDescription);
-            break;
-        case VersioningErrorCodes.EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER:
-            actionException.setErrorCode(ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER);
-            actionException.setDescription(errorDescription.replace("edit", "updat"));
-            break;
-        case VersioningErrorCodes.CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER:
-            actionException.setErrorCode(ACTION_CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER);
-            actionException.setDescription(errorDescription);
-            break;
-        case VersioningErrorCodes.UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER:
-            actionException.setErrorCode(ACTION_UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER);
-            actionException.setDescription(errorDescription);
-            break;
-        case VersioningErrorCodes.EDIT_ON_UNLOCKED_ENTITY:
-            actionException.setErrorCode(ACTION_UPDATE_ON_UNLOCKED_ENTITY);
-            actionException.setDescription(errorDescription.replace("edit", "update"));
-            break;
-        case VersioningErrorCodes.DELETE_ON_LOCKED_ENTITY:
-            actionException.setErrorCode(ACTION_DELETE_ON_LOCKED_ENTITY_CODE);
-            actionException.setDescription(errorDescription);
-            break;
-        default:
-            actionException.setErrorCode(ACTION_INTERNAL_SERVER_ERR_CODE);
-            actionException.setDescription(exception.getMessage());
-
+            case VersioningErrorCodes.VERSIONABLE_ENTITY_NOT_EXIST:
+                actionException.setErrorCode(ACTION_ENTITY_NOT_EXIST_CODE);
+                actionException.setDescription(ACTION_ENTITY_NOT_EXIST);
+                break;
+            case VersioningErrorCodes.CHECKOT_ON_LOCKED_ENTITY:
+                actionException.setErrorCode(ACTION_CHECKOUT_ON_LOCKED_ENTITY);
+                actionException.setDescription(errorDescription);
+                break;
+            case VersioningErrorCodes.CHECKIN_ON_UNLOCKED_ENTITY:
+                actionException.setErrorCode(ACTION_CHECKIN_ON_UNLOCKED_ENTITY);
+                actionException.setDescription(errorDescription);
+                break;
+            case VersioningErrorCodes.SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED:
+                actionException.setErrorCode(ACTION_SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED);
+                actionException.setDescription(errorDescription);
+                break;
+            case VersioningErrorCodes.SUBMIT_LOCKED_ENTITY_NOT_ALLOWED:
+                actionException.setErrorCode(ACTION_SUBMIT_LOCKED_ENTITY_NOT_ALLOWED);
+                actionException.setDescription(errorDescription);
+                break;
+            case VersioningErrorCodes.UNDO_CHECKOUT_ON_UNLOCKED_ENTITY:
+                actionException.setErrorCode(ACTION_UNDO_CHECKOUT_ON_UNLOCKED_ENTITY);
+                actionException.setDescription(errorDescription);
+                break;
+            case VersioningErrorCodes.EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER:
+                actionException.setErrorCode(ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER);
+                actionException.setDescription(errorDescription.replace("edit", "updat"));
+                break;
+            case VersioningErrorCodes.CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER:
+                actionException.setErrorCode(ACTION_CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER);
+                actionException.setDescription(errorDescription);
+                break;
+            case VersioningErrorCodes.UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER:
+                actionException.setErrorCode(ACTION_UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER);
+                actionException.setDescription(errorDescription);
+                break;
+            case VersioningErrorCodes.EDIT_ON_UNLOCKED_ENTITY:
+                actionException.setErrorCode(ACTION_UPDATE_ON_UNLOCKED_ENTITY);
+                actionException.setDescription(errorDescription.replace("edit", "update"));
+                break;
+            case VersioningErrorCodes.DELETE_ON_LOCKED_ENTITY:
+                actionException.setErrorCode(ACTION_DELETE_ON_LOCKED_ENTITY_CODE);
+                actionException.setDescription(errorDescription);
+                break;
+            default:
+                actionException.setErrorCode(ACTION_INTERNAL_SERVER_ERR_CODE);
+                actionException.setDescription(exception.getMessage());
         }
         // Todo - Uncomment only if class to be added in ERROR Log
+
         /*
          * actionErrorLogProcessor(CategoryLogLevel.ERROR,
          * actionException.getErrorCode(), actionException.getDescription());
          * log.error("");
          */
-        log.debug("exit formAndThrowException with ActionException =" + actionException.getErrorCode() + " "
-                + actionException.getDescription());
+        log.debug("exit formAndThrowException with ActionException =" + actionException.getErrorCode() + " " + actionException.getDescription());
         throw actionException;
     }
 
     /**
-     * Validates an action object for business layer validations before an
-     * update operation.
+     * Validates an action object for business layer validations before an update operation.
      *
-     * @param action
-     *            Action object to be validated
-     * @param activeVersion
-     *            Active version of the actoin object
+     * @param action        Action object to be validated
+     * @param activeVersion Active version of the actoin object
      */
     private void validateActions(Action action, Version activeVersion) {
         try {
             // Set version if not already available in input request
+
             // If version set in input compare it with version from DB
             if (StringUtils.isEmpty(action.getVersion())) {
                 action.setVersion(activeVersion.toString());
             } else {
                 if (!activeVersion.equals(Version.valueOf(action.getVersion()))) {
-                    throw new ActionException(ACTION_UPDATE_INVALID_VERSION,
-                            String.format(ACTION_REQUESTED_VERSION_INVALID, action.getVersion()));
+                    throw new ActionException(ACTION_UPDATE_INVALID_VERSION, String.format(ACTION_REQUESTED_VERSION_INVALID, action.getVersion()));
                 }
             }
             String invariantUuId = action.getActionInvariantUuId();
@@ -1031,21 +913,18 @@ public class ActionManagerImpl implements ActionManager {
             }
             List<String> invalidParameters = new LinkedList<>();
             // Prevent update of name, version and id fields
-            if (!existingAction.getName()
-                    .equals(action.getName())) {
+            if (!existingAction.getName().equals(action.getName())) {
                 throw new ActionException(ACTION_UPDATE_NOT_ALLOWED_CODE_NAME, ACTION_UPDATE_NOT_ALLOWED_FOR_NAME);
             }
-            if (!StringUtils.isEmpty(action.getActionUuId()) && !existingAction.getActionUuId()
-                    .equals(action.getActionUuId())) {
+            if (!StringUtils.isEmpty(action.getActionUuId()) && !existingAction.getActionUuId().equals(action.getActionUuId())) {
                 invalidParameters.add(UNIQUE_ID);
             }
             if (action.getStatus() != null && (existingAction.getStatus() != action.getStatus())) {
                 invalidParameters.add(STATUS);
             }
-
             if (!invalidParameters.isEmpty()) {
                 throw new ActionException(ACTION_UPDATE_NOT_ALLOWED_CODE,
-                        String.format(ACTION_UPDATE_PARAM_INVALID, StringUtils.join(invalidParameters, ", ")));
+                    String.format(ACTION_UPDATE_PARAM_INVALID, StringUtils.join(invalidParameters, ", ")));
             }
             action.setActionUuId(existingAction.getActionUuId());
         } catch (IllegalArgumentException iae) {
@@ -1061,10 +940,8 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Get an action version entity object.
      *
-     * @param invariantUuId
-     *            Invariant UUID of the action
-     * @param version
-     *            Version of the action
+     * @param invariantUuId Invariant UUID of the action
+     * @param version       Version of the action
      * @return {@link ActionEntity} object of the action version
      */
     private ActionEntity getActionsEntityByVersion(String invariantUuId, Version version) {
@@ -1072,8 +949,7 @@ public class ActionManagerImpl implements ActionManager {
         ActionEntity entity = null;
         if (version != null) {
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_VERSION, TARGET_ENTITY_DB);
-            entity = actionDao
-                    .get(new ActionEntity(invariantUuId != null ? invariantUuId.toUpperCase() : null, version));
+            entity = actionDao.get(new ActionEntity(invariantUuId != null ? invariantUuId.toUpperCase() : null, version));
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
         }
@@ -1084,34 +960,27 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Get an action version object.
      *
-     * @param invariantUuId
-     *            Invariant UUID of the action
-     * @param version
-     *            Version of the action
+     * @param invariantUuId Invariant UUID of the action
+     * @param version       Version of the action
      * @return {@link Action} object of the action version
      */
     private Action getActions(String invariantUuId, Version version) {
-        ActionEntity actionEntity = getActionsEntityByVersion(
-                invariantUuId != null ? invariantUuId.toUpperCase() : null, version);
+        ActionEntity actionEntity = getActionsEntityByVersion(invariantUuId != null ? invariantUuId.toUpperCase() : null, version);
         return actionEntity != null ? actionEntity.toDto() : new Action();
     }
 
     /**
      * Create and set the Unique ID in for an action version row.
      *
-     * @param invariantUuId
-     *            Invariant UUID of the action
-     * @param version
-     *            Version of the action
-     * @param status
-     *            Status of the action
-     * @param user
-     *            AT&T id of the user sending the request
+     * @param invariantUuId Invariant UUID of the action
+     * @param version       Version of the action
+     * @param status        Status of the action
+     * @param user          AT&T id of the user sending the request
      * @return {@link ActionEntity} object of the action version
      */
     private ActionEntity updateUniqueIdForVersion(String invariantUuId, Version version, String status, String user) {
-        log.debug("entering updateUniqueIdForVersion to update action with invariantUuId= " + invariantUuId
-                + " with version,status and user as ::" + version + " " + status + " " + user);
+        log.debug("entering updateUniqueIdForVersion to update action with invariantUuId= " + invariantUuId + " with version,status and user as ::"
+            + version + " " + status + " " + user);
         // generate UUID AND update for newly created entity row
         ActionEntity actionEntity = getActionsEntityByVersion(invariantUuId, version);
         if (actionEntity != null) {
@@ -1123,7 +992,6 @@ public class ActionManagerImpl implements ActionManager {
             dataMap.put(ActionConstants.VERSION, version.toString());
             dataMap.put(ActionConstants.STATUS, status);
             data = JsonUtil.object2Json(dataMap);
-
             actionEntity.setData(data);
             actionEntity.setActionUuId(uniqueId);
             actionEntity.setStatus(status);
@@ -1134,7 +1002,6 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
         }
-
         log.debug("exit updateUniqueIdForVersion to update action with invariantUUID= " + invariantUuId);
         return actionEntity;
     }
@@ -1142,19 +1009,15 @@ public class ActionManagerImpl implements ActionManager {
     /**
      * Set the status for an action version row.
      *
-     * @param invariantUuId
-     *            Invariant UUID of the action
-     * @param version
-     *            Version of the action
-     * @param status
-     *            Status of the action
-     * @param user
-     *            AT&T id of the user sending the request
+     * @param invariantUuId Invariant UUID of the action
+     * @param version       Version of the action
+     * @param status        Status of the action
+     * @param user          AT&T id of the user sending the request
      * @return {@link ActionEntity} object of the action version
      */
     private ActionEntity updateStatusForVersion(String invariantUuId, Version version, String status, String user) {
-        log.debug("entering updateStatusForVersion with invariantUuId= " + invariantUuId + AND_VERSION + version
-                + " for updating status " + status + " by user " + user);
+        log.debug("entering updateStatusForVersion with invariantUuId= " + invariantUuId + AND_VERSION + version + " for updating status " + status
+            + " by user " + user);
         ActionEntity actionEntity = getActionsEntityByVersion(invariantUuId, version);
         if (actionEntity != null) {
             String data = actionEntity.getData();
@@ -1170,46 +1033,40 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPostProcessor(COMPLETE);
             log.metrics("");
         }
-        log.debug("exit updateStatusForVersion with invariantUuId= " + invariantUuId + AND_VERSION + version
-                + " for updating status " + status + " by user " + user);
+        log.debug("exit updateStatusForVersion with invariantUuId= " + invariantUuId + AND_VERSION + version + " for updating status " + status
+            + " by user " + user);
         return actionEntity;
-
     }
 
     /**
      * Gets an artifact from the action artifact metadata by artifact name.
      *
-     * @param actionArtifactList
-     *            Action's existing artifact list
-     * @param artifactFilterType
-     *            Search criteria for artifact in action artifact metadata
-     * @param artifactFilterValue
-     *            Value of Search parameter
-     * @return Artifact metadata object if artifact is present in action and
-     *         null otherwise
+     * @param actionArtifactList  Action's existing artifact list
+     * @param artifactFilterType  Search criteria for artifact in action artifact metadata
+     * @param artifactFilterValue Value of Search parameter
+     * @return Artifact metadata object if artifact is present in action and null otherwise
      */
-    private ActionArtifact getArtifactMetadataFromAction(List<ActionArtifact> actionArtifactList,
-            String artifactFilterType, String artifactFilterValue) {
+    private ActionArtifact getArtifactMetadataFromAction(List<ActionArtifact> actionArtifactList, String artifactFilterType,
+                                                         String artifactFilterValue) {
         ActionArtifact artifact = null;
         if (actionArtifactList != null && !actionArtifactList.isEmpty()) {
             for (ActionArtifact entry : actionArtifactList) {
                 switch (artifactFilterType) {
-                case ARTIFACT_METADATA_ATTR_UUID:
-                    String artifactUuId = entry.getArtifactUuId();
-                    if (artifactUuId != null && artifactUuId.equals(artifactFilterValue)) {
-                        artifact = entry;
+                    case ARTIFACT_METADATA_ATTR_UUID:
+                        String artifactUuId = entry.getArtifactUuId();
+                        if (artifactUuId != null && artifactUuId.equals(artifactFilterValue)) {
+                            artifact = entry;
+                            break;
+                        }
                         break;
-                    }
-                    break;
-                case ARTIFACT_METADATA_ATTR_NAME:
-                    String existingArtifactName = entry.getArtifactName()
-                            .toLowerCase();
-                    if (existingArtifactName.equals(artifactFilterValue.toLowerCase())) {
-                        artifact = entry;
+                    case ARTIFACT_METADATA_ATTR_NAME:
+                        String existingArtifactName = entry.getArtifactName().toLowerCase();
+                        if (existingArtifactName.equals(artifactFilterValue.toLowerCase())) {
+                            artifact = entry;
+                            break;
+                        }
                         break;
-                    }
-                    break;
-                default:
+                    default:
                 }
             }
         }
@@ -1217,18 +1074,14 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     /**
-     * Method to update the artifact metadata in the data attribute of action
-     * table.
+     * Method to update the artifact metadata in the data attribute of action table.
      *
-     * @param action
-     *            Action to which artifact is uploaded
-     * @param updatedArtifact
-     *            updated artifact object
+     * @param action          Action to which artifact is uploaded
+     * @param updatedArtifact updated artifact object
      */
     private void updateArtifactMetadataInActionData(Action action, ActionArtifact updatedArtifact) {
         for (ActionArtifact entry : action.getArtifacts()) {
-            if (entry.getArtifactUuId()
-                    .equals(updatedArtifact.getArtifactUuId())) {
+            if (entry.getArtifactUuId().equals(updatedArtifact.getArtifactUuId())) {
                 entry.setArtifactLabel(updatedArtifact.getArtifactLabel());
                 entry.setArtifactCategory(updatedArtifact.getArtifactCategory());
                 entry.setArtifactDescription(updatedArtifact.getArtifactDescription());

@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.model.types;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Frozen;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
-import org.openecomp.sdc.common.errors.SdcRuntimeException;
-import org.openecomp.sdc.versioning.dao.types.Version;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 @Table(keyspace = "dox", name = "vsp_service_template")
 public class ServiceTemplateEntity implements ServiceElementEntity {
@@ -36,18 +38,14 @@ public class ServiceTemplateEntity implements ServiceElementEntity {
     @PartitionKey
     @Column(name = "vsp_id")
     public String id;
-
     @PartitionKey(value = 1)
     @Frozen
     public Version version;
-
     @ClusteringColumn
     @Column(name = "name")
     public String name;
-
     @Column(name = "content_data")
     public ByteBuffer contentData;
-
     @Column(name = "base_name")
     private String baseName;
 
@@ -75,7 +73,6 @@ public class ServiceTemplateEntity implements ServiceElementEntity {
         } catch (IOException ioException) {
             throw new SdcRuntimeException(ioException);
         }
-
     }
 
     public String getBaseName() {

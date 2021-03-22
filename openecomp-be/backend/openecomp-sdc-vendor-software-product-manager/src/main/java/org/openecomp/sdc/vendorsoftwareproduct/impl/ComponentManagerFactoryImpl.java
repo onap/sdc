@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
@@ -28,16 +27,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 
 public class ComponentManagerFactoryImpl extends ComponentManagerFactory {
-  private static final ComponentManager INSTANCE =
-      new ComponentManagerImpl(
-          ComponentDaoFactory.getInstance().createInterface(),
-          CompositionEntityDataManagerFactory.getInstance().createInterface(),
-          NicManagerFactory.getInstance().createInterface(),
-          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface()
-      );
 
-  @Override
-  public ComponentManager createInterface() {
-    return INSTANCE;
-  }
+    private static final ComponentManager INSTANCE = new ComponentManagerImpl(ComponentDaoFactory.getInstance().createInterface(),
+        CompositionEntityDataManagerFactory.getInstance().createInterface(), NicManagerFactory.getInstance().createInterface(),
+        VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
+
+    @Override
+    public ComponentManager createInterface() {
+        return INSTANCE;
+    }
 }

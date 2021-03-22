@@ -16,27 +16,25 @@
 
 package org.openecomp.core.externaltesting.api;
 
+import java.util.Map;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Map;
-
 
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 public class VtpTestCaseInput extends VtpNameDescriptionPair {
 
-  private String type;
-  private String defaultValue;
-  private boolean isOptional;
-  private Map<String,Object> metadata;
+    private String type;
+    private String defaultValue;
+    private boolean isOptional;
+    private Map<String, Object> metadata;
 
-  /**
-   * The VTP API has a field called isOptional, not just optional so
-   * we need to add getter and setter.
-   */
-  @SuppressWarnings({"unused", "WeakerAccess"})
-  public boolean getIsOptional() {
-    return isOptional;
-  }
+    /**
+     * The VTP API has a field called isOptional, not just optional so we need to add getter and setter.
+     */
+    @SuppressWarnings({"unused", "WeakerAccess"})
+    public boolean getIsOptional() {
+        return isOptional;
+    }
 }

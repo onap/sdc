@@ -17,75 +17,74 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.notifications.types;
 
 import java.util.Map;
 import java.util.UUID;
 
 public class NotificationEntityDto {
-  private boolean read;
-  private UUID eventId;
-  private String dateTime;
-  private String eventType;
-  private Map<String, Object> eventAttributes;
 
-  public NotificationEntityDto() {
-  }
-  public NotificationEntityDto(boolean read, UUID eventId, String eventType,
-                               Map<String, Object> eventAttributes) {
-    this.read = read;
-    this.eventId = eventId;
-    this.eventType = eventType;
-    this.eventAttributes = eventAttributes;
-  }
+    private boolean read;
+    private UUID eventId;
+    private String dateTime;
+    private String eventType;
+    private Map<String, Object> eventAttributes;
 
-  public NotificationEntityDto(boolean read, UUID eventId,String eventType,
-                               Map<String, Object> eventAttributes, String dateTime) {
-    this.read = read;
-    this.eventId = eventId;
-    this.dateTime = dateTime;
-    this.eventType = eventType;
-    this.eventAttributes = eventAttributes;
-  }
+    public NotificationEntityDto() {
+    }
 
-  public boolean isRead() {
-    return read;
-  }
+    public NotificationEntityDto(boolean read, UUID eventId, String eventType, Map<String, Object> eventAttributes) {
+        this.read = read;
+        this.eventId = eventId;
+        this.eventType = eventType;
+        this.eventAttributes = eventAttributes;
+    }
 
-  public void setRead(boolean read) {
-    this.read = read;
-  }
+    public NotificationEntityDto(boolean read, UUID eventId, String eventType, Map<String, Object> eventAttributes, String dateTime) {
+        this.read = read;
+        this.eventId = eventId;
+        this.dateTime = dateTime;
+        this.eventType = eventType;
+        this.eventAttributes = eventAttributes;
+    }
 
-  public UUID getEventId() {
-    return eventId;
-  }
+    public boolean isRead() {
+        return read;
+    }
 
-  public void setEventId(UUID eventId) {
-    this.eventId = eventId;
-  }
+    public void setRead(boolean read) {
+        this.read = read;
+    }
 
-  public String getEventType() {
-    return eventType;
-  }
+    public UUID getEventId() {
+        return eventId;
+    }
 
-  public void setEventType(String eventType) {
-    this.eventType = eventType;
-  }
+    public void setEventId(UUID eventId) {
+        this.eventId = eventId;
+    }
 
-  public Map<String, Object> getEventAttributes() {
-    return eventAttributes;
-  }
+    public String getEventType() {
+        return eventType;
+    }
 
-  public void setEventAttributes(Map<String, Object> eventAttributes) {
-    this.eventAttributes = eventAttributes;
-  }
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
-  public String getDateTime() {
-    return dateTime;
-  }
+    public Map<String, Object> getEventAttributes() {
+        return eventAttributes;
+    }
 
-  public void setDateTime(String dateTime) {
-    this.dateTime = dateTime;
-  }
+    public void setEventAttributes(Map<String, Object> eventAttributes) {
+        this.eventAttributes = eventAttributes;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
 }

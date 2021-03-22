@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.core.impl;
 
 import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
@@ -35,15 +34,14 @@ import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypes
 
 public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
 
-    public static final String GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME =
-        "GlobalSubstitutionTypesServiceTemplate.yaml";
+    public static final String GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME = "GlobalSubstitutionTypesServiceTemplate.yaml";
     public static final String TEMPLATE_NAME_PROPERTY = "template_name";
     public static final String DEFINITION_VERSION = "tosca_simple_yaml_1_0_0";
     public static final String HEAT_INDEX = "openecomp_heat_index";
     public static final String HEAT_INDEX_IMPORT_FILE = "openecomp-heat/_index.yml";
     public static final String ONAP_INDEX_IMPORT_FILE = "onap/_index.yml";
-
     // transient needed to avoid being parsed as a YAML String. Used parser is reading fields instead of getters,
+
     // although it ignores static or transient fields.
     private final transient Map<String, ServiceTemplate> globalServiceTemplates;
     private final transient Map<String, DataType> globalDataTypeMap;
@@ -51,12 +49,11 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
     public GlobalSubstitutionServiceTemplate() {
         super();
         init();
-        globalServiceTemplates =
-            GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.CSAR);
+        globalServiceTemplates = GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.CSAR);
         globalDataTypeMap = loadGlobalDataTypes();
     }
 
-    public void init()   {
+    public void init() {
         writeDefinitionSection();
         writeMetadataSection();
         writeImportsSection();
@@ -73,12 +70,10 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
         if (MapUtils.isEmpty(dataTypeMap)) {
             return;
         }
-        dataTypeMap.entrySet().stream()
-            .filter(dataTypeEntry -> !isGlobalDataType(dataTypeEntry.getKey()))
-            .forEach(dataTypeEntry -> {
-                final Optional<DataType> dataType = parseDataTypeToYamlObject(dataTypeEntry);
-                dataType.ifPresent(dataType1 -> getData_types().put(dataTypeEntry.getKey(), dataType1));
-            });
+        dataTypeMap.entrySet().stream().filter(dataTypeEntry -> !isGlobalDataType(dataTypeEntry.getKey())).forEach(dataTypeEntry -> {
+            final Optional<DataType> dataType = parseDataTypeToYamlObject(dataTypeEntry);
+            dataType.ifPresent(dataType1 -> getData_types().put(dataTypeEntry.getKey(), dataType1));
+        });
     }
 
     private void writeImportsSection() {
@@ -94,7 +89,6 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
         stringImportMap.put(ONAP_INDEX, onapDefinitionsImport);
     }
 
-
     private void writeMetadataSection() {
         Map<String, String> metadata = new HashMap<>();
         metadata.put(TEMPLATE_NAME_PROPERTY, "GlobalSubstitutionTypes");
@@ -105,22 +99,18 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
         setTosca_definitions_version(DEFINITION_VERSION);
     }
 
-    private Optional<Map<String, NodeType>> findNonGlobalTypesNodes(final Map<String, NodeType> nodes){
+    private Optional<Map<String, NodeType>> findNonGlobalTypesNodes(final Map<String, NodeType> nodes) {
         final Map<String, NodeType> globalNodeTypes = getAllGlobalNodeTypes();
         if (MapUtils.isEmpty(globalNodeTypes)) {
             return Optional.of(nodes);
         }
-
         final Map<String, NodeType> nodeTypesToAdd = new HashMap<>();
-
-        for(Map.Entry<String, NodeType> nodeTypeEntry : nodes.entrySet()){
-            if(!globalNodeTypes.containsKey(nodeTypeEntry.getKey())){
+        for (Map.Entry<String, NodeType> nodeTypeEntry : nodes.entrySet()) {
+            if (!globalNodeTypes.containsKey(nodeTypeEntry.getKey())) {
                 Optional<NodeType> nodeType = parseNodeTypeToYamlObject(nodeTypeEntry);
-                nodeType
-                    .ifPresent(nodeTypeValue -> nodeTypesToAdd.put(nodeTypeEntry.getKey(), nodeTypeValue));
+                nodeType.ifPresent(nodeTypeValue -> nodeTypesToAdd.put(nodeTypeEntry.getKey(), nodeTypeValue));
             }
         }
-
         return Optional.of(nodeTypesToAdd);
     }
 
@@ -128,37 +118,30 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
         if (MapUtils.isEmpty(globalDataTypeMap)) {
             return false;
         }
-
         return globalDataTypeMap.containsKey(dataType);
     }
 
     private Optional<NodeType> parseNodeTypeToYamlObject(final Entry<String, NodeType> nodeTypeEntry) {
-        return ToscaConverterUtil
-            .createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(), NodeType.class);
+        return ToscaConverterUtil.createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(), NodeType.class);
     }
 
     private Optional<DataType> parseDataTypeToYamlObject(final Entry<String, DataType> dataTypeEntry) {
-        return ToscaConverterUtil
-            .createObjectFromClass(dataTypeEntry.getKey(), dataTypeEntry.getValue(), DataType.class);
+        return ToscaConverterUtil.createObjectFromClass(dataTypeEntry.getKey(), dataTypeEntry.getValue(), DataType.class);
     }
 
     private Map<String, DataType> loadGlobalDataTypes() {
-        return globalServiceTemplates.values().stream()
-            .map(ServiceTemplate::getData_types)
-            .filter(MapUtils::isNotEmpty)
+        return globalServiceTemplates.values().stream().map(ServiceTemplate::getData_types).filter(MapUtils::isNotEmpty)
             .flatMap(stringDataTypeMap -> stringDataTypeMap.entrySet().stream())
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (dataType, dataType2) -> dataType));
     }
 
-    private Map<String, NodeType> getAllGlobalNodeTypes(){
+    private Map<String, NodeType> getAllGlobalNodeTypes() {
         Map<String, NodeType> globalNodeTypes = new HashMap<>();
-
-        for(Map.Entry<String, ServiceTemplate> serviceTemplateEntry : globalServiceTemplates.entrySet()){
-            if(isNodesServiceTemplate(serviceTemplateEntry.getKey())){
+        for (Map.Entry<String, ServiceTemplate> serviceTemplateEntry : globalServiceTemplates.entrySet()) {
+            if (isNodesServiceTemplate(serviceTemplateEntry.getKey())) {
                 globalNodeTypes.putAll(serviceTemplateEntry.getValue().getNode_types());
             }
         }
-
         return globalNodeTypes;
     }
 

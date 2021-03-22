@@ -16,11 +16,10 @@
 package org.openecomp.sdc.validation.type;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.validation.ValidationContext;
-
-import lombok.Getter;
-import lombok.EqualsAndHashCode;
 
 /**
  * Created by TALIO on 2/23/2017.
@@ -30,6 +29,6 @@ import lombok.EqualsAndHashCode;
 @AllArgsConstructor
 public class NamingConventionValidationContext implements ValidationContext {
 
-  private HeatOrchestrationTemplate heatOrchestrationTemplate;
-  private String envFileName;
+    private HeatOrchestrationTemplate heatOrchestrationTemplate;
+    private String envFileName;
 }

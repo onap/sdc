@@ -13,31 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.services;
 
 public class ConfigConstants {
-  //namespaces
-  public static final String NAMESPACE = "ToscaModel";
 
-  //keys
-  public static final String PREFIX = "tosca.entity.namespace.prefix";
-  public static final String PREFIX_CAPABILITY_TYPE = PREFIX + ".capabilityType";
-  public static final String PREFIX_DATA_TYPE = PREFIX + ".dataType";
-  public static final String PREFIX_GROUP_TYPE = PREFIX + ".groupType";
-  public static final String PREFIX_POLICY_TYPE = PREFIX + ".policyType";
-  public static final String PREFIX_ARTIFACT_TYPE = PREFIX + ".artifactType";
-  public static final String PREFIX_RELATIONSHIP_TYPE = PREFIX + ".relationshipType";
-  public static final String PREFIX_ANNOTATION_TYPE = PREFIX + ".annotationType";
+    //namespaces
+    public static final String NAMESPACE = "ToscaModel";
+    //keys
+    public static final String PREFIX = "tosca.entity.namespace.prefix";
+    public static final String PREFIX_CAPABILITY_TYPE = PREFIX + ".capabilityType";
+    public static final String PREFIX_DATA_TYPE = PREFIX + ".dataType";
+    public static final String PREFIX_GROUP_TYPE = PREFIX + ".groupType";
+    public static final String PREFIX_POLICY_TYPE = PREFIX + ".policyType";
+    public static final String PREFIX_ARTIFACT_TYPE = PREFIX + ".artifactType";
+    public static final String PREFIX_RELATIONSHIP_TYPE = PREFIX + ".relationshipType";
+    public static final String PREFIX_ANNOTATION_TYPE = PREFIX + ".annotationType";
+    public static final String PREFIX_NODE_TYPE_VFC = PREFIX + ".nodeType.vfc";
+    public static final String PREFIX_NODE_TYPE_NETWORK = PREFIX + ".nodeType.network";
+    public static final String PREFIX_NODE_TYPE_CP = PREFIX + ".nodeType.connectionPoint";
+    public static final String PREFIX_NODE_TYPE_EXTERNAL_CP = PREFIX + ".nodeType" + ".external.connectionPoint";
+    public static final String PREFIX_NODE_TYPE_ABSTARCT = PREFIX + ".nodeType.abstract";
+    public static final String PREFIX_NODE_TYPE_RULE = PREFIX + ".nodeType.rule";
 
-  public static final String PREFIX_NODE_TYPE_VFC = PREFIX + ".nodeType.vfc";
-  public static final String PREFIX_NODE_TYPE_NETWORK = PREFIX + ".nodeType.network";
-  public static final String PREFIX_NODE_TYPE_CP = PREFIX + ".nodeType.connectionPoint";
-  public static final String PREFIX_NODE_TYPE_EXTERNAL_CP = PREFIX + ".nodeType"
-      + ".external.connectionPoint";
-  public static final String PREFIX_NODE_TYPE_ABSTARCT = PREFIX + ".nodeType.abstract";
-  public static final String PREFIX_NODE_TYPE_RULE = PREFIX + ".nodeType.rule";
-
-  private ConfigConstants() {
-  }
+    private ConfigConstants() {
+    }
 }

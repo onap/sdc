@@ -13,73 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to;
 
+import java.util.List;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
 
-import java.util.List;
-
 public class UnifiedCompositionTo {
-  private ServiceTemplate serviceTemplate;
-  private ServiceTemplate substitutionServiceTemplate;
-  private List<UnifiedCompositionData> unifiedCompositionDataList;
-  private TranslationContext context;
-  private NodeTemplate nodeTemplate;
 
-  public UnifiedCompositionTo(ServiceTemplate serviceTemplate,
-                              ServiceTemplate substitutionServiceTemplate,
-                              List<UnifiedCompositionData> unifiedCompositionDataList,
-                              TranslationContext context,
-                              NodeTemplate nodeTemplate) {
-    this.serviceTemplate = serviceTemplate;
-    this.substitutionServiceTemplate = substitutionServiceTemplate;
-    this.unifiedCompositionDataList = unifiedCompositionDataList;
-    this.context = context;
-    this.nodeTemplate = nodeTemplate;
-  }
+    private ServiceTemplate serviceTemplate;
+    private ServiceTemplate substitutionServiceTemplate;
+    private List<UnifiedCompositionData> unifiedCompositionDataList;
+    private TranslationContext context;
+    private NodeTemplate nodeTemplate;
 
-  public ServiceTemplate getServiceTemplate() {
-    return serviceTemplate;
-  }
+    public UnifiedCompositionTo(ServiceTemplate serviceTemplate, ServiceTemplate substitutionServiceTemplate,
+                                List<UnifiedCompositionData> unifiedCompositionDataList, TranslationContext context, NodeTemplate nodeTemplate) {
+        this.serviceTemplate = serviceTemplate;
+        this.substitutionServiceTemplate = substitutionServiceTemplate;
+        this.unifiedCompositionDataList = unifiedCompositionDataList;
+        this.context = context;
+        this.nodeTemplate = nodeTemplate;
+    }
 
-  public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-    this.serviceTemplate = serviceTemplate;
-  }
+    public ServiceTemplate getServiceTemplate() {
+        return serviceTemplate;
+    }
 
-  public ServiceTemplate getSubstitutionServiceTemplate() {
-    return substitutionServiceTemplate;
-  }
+    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
+        this.serviceTemplate = serviceTemplate;
+    }
 
-  public void setSubstitutionServiceTemplate(ServiceTemplate substitutionServiceTemplate) {
-    this.substitutionServiceTemplate = substitutionServiceTemplate;
-  }
+    public ServiceTemplate getSubstitutionServiceTemplate() {
+        return substitutionServiceTemplate;
+    }
 
-  public List<UnifiedCompositionData> getUnifiedCompositionDataList() {
-    return unifiedCompositionDataList;
-  }
+    public void setSubstitutionServiceTemplate(ServiceTemplate substitutionServiceTemplate) {
+        this.substitutionServiceTemplate = substitutionServiceTemplate;
+    }
 
-  public void setUnifiedCompositionDataList(
-      List<UnifiedCompositionData> unifiedCompositionDataList) {
-    this.unifiedCompositionDataList = unifiedCompositionDataList;
-  }
+    public List<UnifiedCompositionData> getUnifiedCompositionDataList() {
+        return unifiedCompositionDataList;
+    }
 
-  public TranslationContext getContext() {
-    return context;
-  }
+    public void setUnifiedCompositionDataList(List<UnifiedCompositionData> unifiedCompositionDataList) {
+        this.unifiedCompositionDataList = unifiedCompositionDataList;
+    }
 
-  public void setContext(TranslationContext context) {
-    this.context = context;
-  }
+    public TranslationContext getContext() {
+        return context;
+    }
 
-  public NodeTemplate getNodeTemplate() {
-    return nodeTemplate;
-  }
+    public void setContext(TranslationContext context) {
+        this.context = context;
+    }
 
-  public void setNodeTemplate(NodeTemplate nodeTemplate) {
-    this.nodeTemplate=nodeTemplate;
-  }
+    public NodeTemplate getNodeTemplate() {
+        return nodeTemplate;
+    }
+
+    public void setNodeTemplate(NodeTemplate nodeTemplate) {
+        this.nodeTemplate = nodeTemplate;
+    }
 }

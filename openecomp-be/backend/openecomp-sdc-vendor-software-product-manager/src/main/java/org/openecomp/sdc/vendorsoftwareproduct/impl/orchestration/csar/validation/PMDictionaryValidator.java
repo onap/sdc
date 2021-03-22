@@ -30,19 +30,14 @@ import org.onap.validation.yaml.error.YamlDocumentValidationError;
 public class PMDictionaryValidator {
 
     public void validate(Stream<byte[]> pmDictionaryFiles, Consumer<String> errorReporter) {
-        pmDictionaryFiles
-            .map(this::validate)
-            .flatMap(Collection::stream)
-            .forEach(errorReporter);
+        pmDictionaryFiles.map(this::validate).flatMap(Collection::stream).forEach(errorReporter);
     }
 
     private List<String> validate(byte[] fileContent) {
         List<String> errors = new ArrayList<>();
         try {
             List<YamlDocumentValidationError> validationErrors = new YamlContentValidator().validate(fileContent);
-            validationErrors.stream()
-                .map(this::formatErrorMessage)
-                .forEach(errors::add);
+            validationErrors.stream().map(this::formatErrorMessage).forEach(errors::add);
         } catch (Exception e) {
             errors.add(e.getMessage());
         }
@@ -50,9 +45,6 @@ public class PMDictionaryValidator {
     }
 
     private String formatErrorMessage(YamlDocumentValidationError error) {
-        return String.format("Document number: %d, Path: %s, Message: %s",
-                error.getYamlDocumentNumber(),
-                error.getPath(),
-                error.getMessage());
+        return String.format("Document number: %d, Path: %s, Message: %s", error.getYamlDocumentNumber(), error.getPath(), error.getMessage());
     }
 }

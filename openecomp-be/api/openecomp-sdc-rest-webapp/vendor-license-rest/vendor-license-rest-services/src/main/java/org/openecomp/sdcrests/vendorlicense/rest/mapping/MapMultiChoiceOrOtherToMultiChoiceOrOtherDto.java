@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,19 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
 
-public class MapMultiChoiceOrOtherToMultiChoiceOrOtherDto
-    extends MappingBase<MultiChoiceOrOther, MultiChoiceOrOtherDto> {
+public class MapMultiChoiceOrOtherToMultiChoiceOrOtherDto extends MappingBase<MultiChoiceOrOther, MultiChoiceOrOtherDto> {
 
-  @Override
-  public void doMapping(MultiChoiceOrOther source, MultiChoiceOrOtherDto target) {
-    target.setChoices(source.getChoices());
-    target.setOther(source.getOther());
-  }
+    @Override
+    public void doMapping(MultiChoiceOrOther source, MultiChoiceOrOtherDto target) {
+        target.setChoices(source.getChoices());
+        target.setOther(source.getOther());
+    }
 }

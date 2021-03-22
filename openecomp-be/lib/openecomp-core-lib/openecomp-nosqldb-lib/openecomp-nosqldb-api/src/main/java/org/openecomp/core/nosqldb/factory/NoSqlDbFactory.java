@@ -17,18 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.nosqldb.factory;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 
-
 public abstract class NoSqlDbFactory extends AbstractComponentFactory<NoSqlDb> {
 
     public static NoSqlDbFactory getInstance() {
-
         return AbstractFactory.getInstance(NoSqlDbFactory.class);
     }
 }

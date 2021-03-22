@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.csar;
 
 public class ToscaMetadataFileInfo {
@@ -25,7 +24,5 @@ public class ToscaMetadataFileInfo {
     public static final String TOSCA_META_FILE_VERSION_1_0 = "1.0";
 
     private ToscaMetadataFileInfo() {
-
     }
-
 }

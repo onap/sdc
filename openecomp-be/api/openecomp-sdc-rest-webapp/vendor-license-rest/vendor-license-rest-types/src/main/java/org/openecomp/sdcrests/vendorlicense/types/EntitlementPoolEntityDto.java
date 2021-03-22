@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,41 +17,39 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.vendorlicense.types;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.Set;
 
 @Schema(description = "EntitlementPoolEntity")
 public class EntitlementPoolEntityDto extends EntitlementPoolRequestDto {
-  private String id;
-  private Set<String> referencingFeatureGroups;
-  private String versionUUID;
 
-  public String getId() {
-    return id;
-  }
+    private String id;
+    private Set<String> referencingFeatureGroups;
+    private String versionUUID;
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public Set<String> getReferencingFeatureGroups() {
-    return referencingFeatureGroups;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
-    this.referencingFeatureGroups = referencingFeatureGroups;
-  }
+    public Set<String> getReferencingFeatureGroups() {
+        return referencingFeatureGroups;
+    }
 
-  public String getversionUUID() {
-    return versionUUID;
-  }
+    public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
+        this.referencingFeatureGroups = referencingFeatureGroups;
+    }
 
-  public void setVersionUUID(String versionUUID) {
-    this.versionUUID = versionUUID;
-  }
+    public String getversionUUID() {
+        return versionUUID;
+    }
+
+    public void setVersionUUID(String versionUUID) {
+        this.versionUUID = versionUUID;
+    }
 }

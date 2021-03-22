@@ -17,12 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.notification.config;
-
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,83 +25,68 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 public class ConfigurationManager {
 
     private static final String CONFIGURATION_YAML_FILE = "onboarding_configuration.yaml";
     private static final String NOTIFICATIONS_CONFIG = "notifications";
-
-    private LinkedHashMap<String, Object> notificationsConfiguration;
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationManager.class);
     private static final ConfigurationManager SINGLETON = new ConfigurationManager();
-
-    public static ConfigurationManager getInstance() {
-        return SINGLETON;
-    }
+    private LinkedHashMap<String, Object> notificationsConfiguration;
 
     private ConfigurationManager() {
         initConfiguration();
     }
 
-    private void initConfiguration() {
+    public static ConfigurationManager getInstance() {
+        return SINGLETON;
+    }
 
+    private void initConfiguration() {
         YamlUtil yamlUtil = new YamlUtil();
         readConfigurationFromStream(yamlUtil, (filename, stream) -> {
-
             if (stream == null) {
                 LOGGER.warn("Configuration not found: " + filename + ". Using defaults");
                 return;
             }
-
             Map<String, LinkedHashMap<String, Object>> configurationMap = yamlUtil.yamlToMap(stream);
             if (configurationMap == null) {
                 LOGGER.warn("Configuration cannot be parsed: " + filename + ". Using defaults");
                 return;
             }
-
             notificationsConfiguration = configurationMap.get(NOTIFICATIONS_CONFIG);
             if (notificationsConfiguration == null) {
-                LOGGER.error(NOTIFICATIONS_CONFIG +
-                        " is missing in configuration file '" + filename + "'. Using defaults");
+                LOGGER.error(NOTIFICATIONS_CONFIG + " is missing in configuration file '" + filename + "'. Using defaults");
             }
         });
     }
 
-    private void readConfigurationFromStream(YamlUtil yamlUtil,
-                                             BiConsumer<String, InputStream> reader) {
-
+    private void readConfigurationFromStream(YamlUtil yamlUtil, BiConsumer<String, InputStream> reader) {
         String configurationYamlFile = System.getProperty(CONFIGURATION_YAML_FILE);
-
         try {
-
             if (configurationYamlFile == null) {
-
-                try (InputStream inputStream =
-                             yamlUtil.loadYamlFileIs("/" + CONFIGURATION_YAML_FILE)) {
+                try (InputStream inputStream = yamlUtil.loadYamlFileIs("/" + CONFIGURATION_YAML_FILE)) {
                     reader.accept(CONFIGURATION_YAML_FILE, inputStream);
                 }
-
             } else {
-
                 try (InputStream inputStream = new FileInputStream(configurationYamlFile)) {
                     reader.accept(configurationYamlFile, inputStream);
                 }
             }
-
         } catch (IOException e) {
             LOGGER.error("Failed to read configuration", e);
         }
     }
 
     public <T> T getConfigValue(String name, T defaultValue) {
-
         Object value = notificationsConfiguration.get(name);
-
         try {
             return value == null ? defaultValue : (T) value;
         } catch (ClassCastException e) {
-            LOGGER.warn(String.format("Failed to read configuration property '%s' as requested type. Using default '%s'",
-                    name, defaultValue), e);
+            LOGGER.warn(String.format("Failed to read configuration property '%s' as requested type. Using default '%s'", name, defaultValue), e);
             return defaultValue;
         }
     }

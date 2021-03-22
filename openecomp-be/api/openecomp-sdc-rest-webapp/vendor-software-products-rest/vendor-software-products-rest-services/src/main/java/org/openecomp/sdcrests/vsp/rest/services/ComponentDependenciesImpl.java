@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import java.util.Collection;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
@@ -31,103 +33,73 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
-
 @Named
 @Service("componentDependencies")
 @Scope(value = "prototype")
 public class ComponentDependenciesImpl implements ComponentDependencies {
 
-  private final ComponentDependencyModelManager componentDependencyModelManager;
+    private final ComponentDependencyModelManager componentDependencyModelManager;
 
-  public ComponentDependenciesImpl() {
-    this.componentDependencyModelManager =
-        ComponentDependencyModelManagerFactory.getInstance().createInterface();
-  }
-
-  public ComponentDependenciesImpl(ComponentDependencyModelManager componentDependencyModelManager) {
-    this.componentDependencyModelManager = componentDependencyModelManager;
-  }
-
-  @Override
-  public Response create(ComponentDependencyModel request, String vspId, String versionId,
-                         String user) {
-    final Version version = new Version(versionId);
-
-    ComponentDependencyModelEntity modelEntity =
-        new MapComponentDependencyModelRequestToEntity().applyMapping(request,
-            ComponentDependencyModelEntity.class);
-
-    modelEntity.setVspId(vspId);
-    modelEntity.setVersion(version);
-
-    ComponentDependencyModelEntity componentDependency =
-        componentDependencyModelManager.createComponentDependency(modelEntity, vspId, version);
-
-    MapComponentDependencyEntityToCreationDto mapping =
-        new MapComponentDependencyEntityToCreationDto();
-    ComponentDependencyCreationDto createdComponentDependencyDto = mapping.applyMapping(
-        componentDependency, ComponentDependencyCreationDto.class);
-    return Response.ok(componentDependency != null ? createdComponentDependencyDto : null)
-        .build();
-  }
-
-  @Override
-  public Response list(String vspId, String versionId, String user) {
-
-    Version vspVersion = new Version(versionId);
-
-    Collection<ComponentDependencyModelEntity> componentDependencies =
-        componentDependencyModelManager.list(vspId, vspVersion);
-
-    MapComponentDependencyEntityToDto mapper = new MapComponentDependencyEntityToDto();
-    GenericCollectionWrapper<ComponentDependencyResponseDto> results = new GenericCollectionWrapper
-        <>();
-    for (ComponentDependencyModelEntity entity : componentDependencies) {
-      results.add(mapper.applyMapping(entity, ComponentDependencyResponseDto.class));
+    public ComponentDependenciesImpl() {
+        this.componentDependencyModelManager = ComponentDependencyModelManagerFactory.getInstance().createInterface();
     }
 
-    return Response.ok(results).build();
-  }
+    public ComponentDependenciesImpl(ComponentDependencyModelManager componentDependencyModelManager) {
+        this.componentDependencyModelManager = componentDependencyModelManager;
+    }
 
-  @Override
-  public Response delete(String vspId, String versionId, String dependencyId, String user) {
+    @Override
+    public Response create(ComponentDependencyModel request, String vspId, String versionId, String user) {
+        final Version version = new Version(versionId);
+        ComponentDependencyModelEntity modelEntity = new MapComponentDependencyModelRequestToEntity()
+            .applyMapping(request, ComponentDependencyModelEntity.class);
+        modelEntity.setVspId(vspId);
+        modelEntity.setVersion(version);
+        ComponentDependencyModelEntity componentDependency = componentDependencyModelManager.createComponentDependency(modelEntity, vspId, version);
+        MapComponentDependencyEntityToCreationDto mapping = new MapComponentDependencyEntityToCreationDto();
+        ComponentDependencyCreationDto createdComponentDependencyDto = mapping
+            .applyMapping(componentDependency, ComponentDependencyCreationDto.class);
+        return Response.ok(componentDependency != null ? createdComponentDependencyDto : null).build();
+    }
 
-    Version vspVersion = new Version(versionId);
-    componentDependencyModelManager.delete(vspId, vspVersion, dependencyId);
-    return Response.ok().build();
-  }
+    @Override
+    public Response list(String vspId, String versionId, String user) {
+        Version vspVersion = new Version(versionId);
+        Collection<ComponentDependencyModelEntity> componentDependencies = componentDependencyModelManager.list(vspId, vspVersion);
+        MapComponentDependencyEntityToDto mapper = new MapComponentDependencyEntityToDto();
+        GenericCollectionWrapper<ComponentDependencyResponseDto> results = new GenericCollectionWrapper<>();
+        for (ComponentDependencyModelEntity entity : componentDependencies) {
+            results.add(mapper.applyMapping(entity, ComponentDependencyResponseDto.class));
+        }
+        return Response.ok(results).build();
+    }
 
-  @Override
-  public Response update(ComponentDependencyModel request, String vspId, String versionId, String
-      dependencyId, String user) {
+    @Override
+    public Response delete(String vspId, String versionId, String dependencyId, String user) {
+        Version vspVersion = new Version(versionId);
+        componentDependencyModelManager.delete(vspId, vspVersion, dependencyId);
+        return Response.ok().build();
+    }
 
-    final Version version = new Version(versionId);
-    ComponentDependencyModelEntity modelEntity =
-        new MapComponentDependencyModelRequestToEntity().applyMapping(request,
-            ComponentDependencyModelEntity.class);
+    @Override
+    public Response update(ComponentDependencyModel request, String vspId, String versionId, String dependencyId, String user) {
+        final Version version = new Version(versionId);
+        ComponentDependencyModelEntity modelEntity = new MapComponentDependencyModelRequestToEntity()
+            .applyMapping(request, ComponentDependencyModelEntity.class);
+        modelEntity.setId(dependencyId);
+        modelEntity.setVspId(vspId);
+        modelEntity.setVersion(version);
+        componentDependencyModelManager.update(modelEntity);
+        return Response.ok().build();
+    }
 
-    modelEntity.setId(dependencyId);
-    modelEntity.setVspId(vspId);
-    modelEntity.setVersion(version);
-    componentDependencyModelManager.update(modelEntity);
-    return Response.ok().build();
-  }
-
-  @Override
-  public Response get(String vspId, String version, String dependencyId, String user) {
-
-    ComponentDependencyModelEntity componentDependencyModelEntity = componentDependencyModelManager
-        .get(vspId, new Version(version), dependencyId);
-
-    MapComponentDependencyEntityToDto mapper = new MapComponentDependencyEntityToDto();
-    ComponentDependencyResponseDto componentDependencyResponseDto =
-        mapper.applyMapping(componentDependencyModelEntity, ComponentDependencyResponseDto.class);
-
-    return Response.ok(componentDependencyModelEntity != null ? componentDependencyResponseDto :
-        null).build();
-  }
-
+    @Override
+    public Response get(String vspId, String version, String dependencyId, String user) {
+        ComponentDependencyModelEntity componentDependencyModelEntity = componentDependencyModelManager
+            .get(vspId, new Version(version), dependencyId);
+        MapComponentDependencyEntityToDto mapper = new MapComponentDependencyEntityToDto();
+        ComponentDependencyResponseDto componentDependencyResponseDto = mapper
+            .applyMapping(componentDependencyModelEntity, ComponentDependencyResponseDto.class);
+        return Response.ok(componentDependencyModelEntity != null ? componentDependencyResponseDto : null).build();
+    }
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.net.InetAddress;
@@ -35,16 +34,13 @@ class GlobalContextProvider implements ContextProvider {
 
     @Override
     public Map<ContextField, String> values() {
-
         Map<ContextField, String> values = new EnumMap<>(ContextField.class);
         values.put(ContextField.INSTANCE_ID, InstanceId.get());
-
         Optional<InetAddress> hostAddress = HOST_ADDRESS_CACHE.get();
         hostAddress.ifPresent(address -> {
             values.put(ContextField.SERVER, address.getHostName());
             values.put(ContextField.SERVER_IP_ADDRESS, address.getHostAddress());
         });
-
         return values;
     }
 }

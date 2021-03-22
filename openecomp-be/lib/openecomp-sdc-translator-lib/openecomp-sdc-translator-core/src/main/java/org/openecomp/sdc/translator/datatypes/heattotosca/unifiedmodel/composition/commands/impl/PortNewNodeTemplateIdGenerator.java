@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.impl;
 
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewPortNodeTemplateId;
+
+import java.util.Objects;
+import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.commands.UnifiedSubstitutionNodeTemplateIdGenerator;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to.UnifiedCompositionTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 
-import java.util.Objects;
-import java.util.Optional;
-
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getConnectedComputeConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionUtil.getNewPortNodeTemplateId;
-
 public class PortNewNodeTemplateIdGenerator implements UnifiedSubstitutionNodeTemplateIdGenerator {
 
-  @Override
-  public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId) {
-    ComputeTemplateConsolidationData connectedComputeConsolidationData =
-        getConnectedComputeConsolidationData(unifiedCompositionTo.getUnifiedCompositionDataList(),
-            originalNodeTemplateId);
-    if (Objects.nonNull(connectedComputeConsolidationData)) {
-      NodeTemplate connectedComputeNodeTemplate = DataModelUtil.getNodeTemplate(unifiedCompositionTo
-              .getServiceTemplate(), connectedComputeConsolidationData.getNodeTemplateId());
-      return Optional.of(getNewPortNodeTemplateId(originalNodeTemplateId, connectedComputeNodeTemplate.getType(),
-          connectedComputeConsolidationData));
+    @Override
+    public Optional<String> generate(UnifiedCompositionTo unifiedCompositionTo, String originalNodeTemplateId) {
+        ComputeTemplateConsolidationData connectedComputeConsolidationData = getConnectedComputeConsolidationData(
+            unifiedCompositionTo.getUnifiedCompositionDataList(), originalNodeTemplateId);
+        if (Objects.nonNull(connectedComputeConsolidationData)) {
+            NodeTemplate connectedComputeNodeTemplate = DataModelUtil
+                .getNodeTemplate(unifiedCompositionTo.getServiceTemplate(), connectedComputeConsolidationData.getNodeTemplateId());
+            return Optional
+                .of(getNewPortNodeTemplateId(originalNodeTemplateId, connectedComputeNodeTemplate.getType(), connectedComputeConsolidationData));
+        }
+        return Optional.empty();
     }
-    return Optional.empty();
-  }
 }

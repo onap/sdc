@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -21,17 +20,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateMan
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 
-public class OrchestrationTemplateCandidateManagerFactoryImpl extends
-    OrchestrationTemplateCandidateManagerFactory {
+public class OrchestrationTemplateCandidateManagerFactoryImpl extends OrchestrationTemplateCandidateManagerFactory {
 
-  private static final OrchestrationTemplateCandidateManager INSTANCE =
-      new OrchestrationTemplateCandidateManagerImpl(
-          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(),
-          CandidateServiceFactory.getInstance().createInterface()
-      );
+    private static final OrchestrationTemplateCandidateManager INSTANCE = new OrchestrationTemplateCandidateManagerImpl(
+        VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(), CandidateServiceFactory.getInstance().createInterface());
 
-  @Override
-  public OrchestrationTemplateCandidateManager createInterface() {
-    return INSTANCE;
-  }
+    @Override
+    public OrchestrationTemplateCandidateManager createInterface() {
+        return INSTANCE;
+    }
 }

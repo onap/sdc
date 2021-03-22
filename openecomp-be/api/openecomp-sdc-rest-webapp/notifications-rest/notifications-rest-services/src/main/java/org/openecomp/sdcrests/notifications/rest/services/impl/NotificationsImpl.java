@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdcrests.notifications.rest.services.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -38,13 +43,6 @@ import org.openecomp.sdcrests.notifications.types.UpdateNotificationResponseStat
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
 /**
  * @author Avrahamg
  * @since June 22, 2017
@@ -54,54 +52,41 @@ import java.util.UUID;
 @Scope(value = "prototype")
 public class NotificationsImpl implements Notifications {
 
-	private static int selectionLimit = 10;
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationsImpl.class);
-	private NotificationsService notificationsService = NotificationsServiceFactory.getInstance().createInterface();
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationsImpl.class);
+    private static int selectionLimit = 10;
+    private NotificationsService notificationsService = NotificationsServiceFactory.getInstance().createInterface();
 
     @Override
     public Response getNotifications(String user, UUID lastDelivered, UUID endOfPage) {
-        NotificationsStatus notificationsStatus = notificationsService
-            .getNotificationsStatus(user, lastDelivered, selectionLimit, endOfPage);
+        NotificationsStatus notificationsStatus = notificationsService.getNotificationsStatus(user, lastDelivered, selectionLimit, endOfPage);
         MapNotificationsStatusToDto converter = new MapNotificationsStatusToDto();
         NotificationsStatusDto notificationsStatusDto = new NotificationsStatusDto();
         converter.doMapping(notificationsStatus, notificationsStatusDto);
-
         return Response.ok(notificationsStatusDto).build();
     }
 
     @Override
-    public Response updateLastSeenNotification(String notificationId, String user)
-        throws InvocationTargetException, IllegalAccessException {
-        UpdateNotificationResponseStatus
-            updateNotificationResponseStatus = new UpdateNotificationResponseStatus();
+    public Response updateLastSeenNotification(String notificationId, String user) throws InvocationTargetException, IllegalAccessException {
+        UpdateNotificationResponseStatus updateNotificationResponseStatus = new UpdateNotificationResponseStatus();
         try {
             notificationsService.updateLastSeenNotification(user, UUID.fromString(notificationId));
         } catch (Exception ex) {
-            LOGGER.error(
-                String.format(Messages.FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION.getErrorMessage(),
-                    user), ex);
+            LOGGER.error(String.format(Messages.FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION.getErrorMessage(), user), ex);
             updateNotificationResponseStatus.addStructureError(notificationId,
-                new ErrorMessage(ErrorLevel.ERROR,
-                    Messages.FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION.getErrorMessage()));
+                new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION.getErrorMessage()));
         }
         return Response.ok(updateNotificationResponseStatus).build();
     }
 
     @Override
-    public Response markAsRead(String notificationId, String user)
-        throws InvocationTargetException, IllegalAccessException {
-
-        UpdateNotificationResponseStatus
-            updateNotificationResponseStatus = new UpdateNotificationResponseStatus();
+    public Response markAsRead(String notificationId, String user) throws InvocationTargetException, IllegalAccessException {
+        UpdateNotificationResponseStatus updateNotificationResponseStatus = new UpdateNotificationResponseStatus();
         try {
             notificationsService.markAsRead(user, notificationId);
         } catch (NotificationNotExistException ex) {
             LOGGER.error(Messages.FAILED_TO_MARK_NOTIFICATION_AS_READ.getErrorMessage(), ex);
-            updateNotificationResponseStatus.addStructureError(
-                notificationId, new ErrorMessage(ErrorLevel.ERROR, Messages
-                    .FAILED_TO_MARK_NOTIFICATION_AS_READ
-                    .getErrorMessage()));
+            updateNotificationResponseStatus.addStructureError(notificationId,
+                new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_MARK_NOTIFICATION_AS_READ.getErrorMessage()));
         }
         return Response.ok(updateNotificationResponseStatus).build();
     }
@@ -109,24 +94,18 @@ public class NotificationsImpl implements Notifications {
     @Override
     public Response getNewNotificationsByOwnerId(String user, String eventId, String limitStr) {
         int limit = selectionLimit;
-
         if (Objects.nonNull(limitStr)) {
             try {
                 limit = Integer.parseInt(limitStr);
-            }
-	    catch (NumberFormatException f) {
+            } catch (NumberFormatException f) {
                 LOGGER.error("Non numeric selection list size value specified: " + limitStr);
             }
         }
-
-        List<NotificationEntity> notifications = Objects.isNull(eventId)
-            ? notificationsService.getNotificationsByOwnerId(user, limit)
+        List<NotificationEntity> notifications = Objects.isNull(eventId) ? notificationsService.getNotificationsByOwnerId(user, limit)
             : notificationsService.getNewNotificationsByOwnerId(user, UUID.fromString(eventId), limit);
-
         MapNotificationsToDto converter = new MapNotificationsToDto();
         NotificationsStatusDto notificationsStatusDto = new NotificationsStatusDto();
         converter.doMapping(notifications, notificationsStatusDto);
-
         return Response.ok(notificationsStatusDto).build();
     }
 }

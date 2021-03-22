@@ -17,7 +17,6 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.utils;
 
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_TYPE_PNF;
@@ -32,15 +31,11 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions.Inv
 public class ValidatorUtils {
 
     public boolean isPnfMetadata(List<String> keys) {
-        keys = keys.stream().filter(key -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(key))
-            .collect(Collectors.toList());
-        final String expectedMetadataType =
-            keys.get(0).contains(TOSCA_TYPE_PNF) ? TOSCA_TYPE_PNF : TOSCA_TYPE_VNF;
-        if (keys.stream()
-            .anyMatch(k -> !k.startsWith(expectedMetadataType))) {
+        keys = keys.stream().filter(key -> !COMPATIBLE_SPECIFICATION_VERSIONS.getToken().equals(key)).collect(Collectors.toList());
+        final String expectedMetadataType = keys.get(0).contains(TOSCA_TYPE_PNF) ? TOSCA_TYPE_PNF : TOSCA_TYPE_VNF;
+        if (keys.stream().anyMatch(k -> !k.startsWith(expectedMetadataType))) {
             throw new InvalidManifestMetadataException(Messages.MANIFEST_METADATA_INVALID_ENTRY.getErrorMessage());
         }
         return expectedMetadataType.equals(TOSCA_TYPE_PNF);
     }
-
 }

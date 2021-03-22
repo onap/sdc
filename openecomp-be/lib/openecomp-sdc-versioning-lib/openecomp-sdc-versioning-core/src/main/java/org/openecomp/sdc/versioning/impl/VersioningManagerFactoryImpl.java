@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.versioning.ItemManagerFactory;
@@ -24,12 +23,9 @@ import org.openecomp.sdc.versioning.dao.VersionDaoFactory;
 
 public class VersioningManagerFactoryImpl extends VersioningManagerFactory {
 
-
-  @Override
-  public VersioningManager createInterface() {
-    return new VersioningManagerImpl(
-        VersionDaoFactory.getInstance().createInterface(),
-        VersionCalculatorFactory.getInstance().createInterface(),
-        ItemManagerFactory.getInstance().createInterface());
-  }
+    @Override
+    public VersioningManager createInterface() {
+        return new VersioningManagerImpl(VersionDaoFactory.getInstance().createInterface(), VersionCalculatorFactory.getInstance().createInterface(),
+            ItemManagerFactory.getInstance().createInterface());
+    }
 }

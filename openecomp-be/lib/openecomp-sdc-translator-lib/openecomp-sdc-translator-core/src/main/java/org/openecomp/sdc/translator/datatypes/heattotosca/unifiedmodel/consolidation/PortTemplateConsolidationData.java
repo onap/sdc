@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 public class PortTemplateConsolidationData extends EntityConsolidationData {
-
     // key - sub-interface type - for ResourceGroup it is the nested file name
+
     // value - List of sub-interfaces of that type in the port
-    private final ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData =
-            Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
-
+    private final ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceConsolidationData = Multimaps
+        .synchronizedListMultimap(ArrayListMultimap.create());
     private String portType;
-
     private String networkRole;
 
     public String getNetworkRole() {
@@ -61,60 +57,51 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
     }
 
     /**
-    * Create Sub interface template consolidation data base on given parameters - if it doesn't exist yet.
-    *
-    * @param resource resource of sub Interface
-    * @param subInterfaceNodeTemplateId template id of sub interface
-    * @param parentPortNodeTemplateId node template id of port node to which sub interface is related
-    * @return sub interface template consolidation data entity
-    */
-    public SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(
-            Resource resource, String subInterfaceNodeTemplateId, String parentPortNodeTemplateId) {
+     * Create Sub interface template consolidation data base on given parameters - if it doesn't exist yet.
+     *
+     * @param resource                   resource of sub Interface
+     * @param subInterfaceNodeTemplateId template id of sub interface
+     * @param parentPortNodeTemplateId   node template id of port node to which sub interface is related
+     * @return sub interface template consolidation data entity
+     */
+    public SubInterfaceTemplateConsolidationData addSubInterfaceTemplateConsolidationData(Resource resource, String subInterfaceNodeTemplateId,
+                                                                                          String parentPortNodeTemplateId) {
         String subInterfaceType = createSubInterfaceType(resource);
-        List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-                subInterfaceConsolidationData.get(subInterfaceType);
+        List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList = subInterfaceConsolidationData.get(subInterfaceType);
         SubInterfaceTemplateConsolidationData consolidationData = null;
         if (CollectionUtils.isNotEmpty(subInterfaceTemplateConsolidationDataList)) {
-            Optional<SubInterfaceTemplateConsolidationData> optionalConsolidationData =
-                    subInterfaceTemplateConsolidationDataList.stream()
-                    .filter(s -> s.getNodeTemplateId().equals(subInterfaceNodeTemplateId))
-                    .findFirst();
+            Optional<SubInterfaceTemplateConsolidationData> optionalConsolidationData = subInterfaceTemplateConsolidationDataList.stream()
+                .filter(s -> s.getNodeTemplateId().equals(subInterfaceNodeTemplateId)).findFirst();
             if (optionalConsolidationData.isPresent()) {
                 consolidationData = optionalConsolidationData.get();
             }
         }
-
         if (Objects.isNull(consolidationData)) {
-            consolidationData =
-                    createSubInterfaceConsolidationData(subInterfaceNodeTemplateId, parentPortNodeTemplateId);
+            consolidationData = createSubInterfaceConsolidationData(subInterfaceNodeTemplateId, parentPortNodeTemplateId);
             addSubInterfaceConsolidationData(subInterfaceType, consolidationData);
         }
         return consolidationData;
     }
 
     private String createSubInterfaceType(Resource resource) {
-        return ToscaNodeType.VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX
-            + FileUtils.getFileWithoutExtention(
-            HeatToToscaUtil.getSubInterfaceResourceType(resource));
+        return ToscaNodeType.VLAN_SUB_INTERFACE_RESOURCE_TYPE_PREFIX + FileUtils
+            .getFileWithoutExtention(HeatToToscaUtil.getSubInterfaceResourceType(resource));
     }
 
-    private SubInterfaceTemplateConsolidationData createSubInterfaceConsolidationData(
-            String subInterfaceNodeTemplateId, String parentPortNodeTemplateId) {
+    private SubInterfaceTemplateConsolidationData createSubInterfaceConsolidationData(String subInterfaceNodeTemplateId,
+                                                                                      String parentPortNodeTemplateId) {
         SubInterfaceTemplateConsolidationData data = new SubInterfaceTemplateConsolidationData();
         data.setNodeTemplateId(subInterfaceNodeTemplateId);
         data.setParentPortNodeTemplateId(parentPortNodeTemplateId);
         return data;
     }
 
-    public void addSubInterfaceConsolidationData(String subPortType,
-                                               SubInterfaceTemplateConsolidationData
-                                                   subInterfaceTemplateConsolidationData) {
+    public void addSubInterfaceConsolidationData(String subPortType, SubInterfaceTemplateConsolidationData subInterfaceTemplateConsolidationData) {
         this.subInterfaceConsolidationData.put(subPortType, subInterfaceTemplateConsolidationData);
     }
 
     public boolean hasSameSubInterfaceTypes(PortTemplateConsolidationData other) {
-        return other != null && this.subInterfaceConsolidationData.keySet().equals(
-        other.subInterfaceConsolidationData.keySet());
+        return other != null && this.subInterfaceConsolidationData.keySet().equals(other.subInterfaceConsolidationData.keySet());
     }
 
     public void copyMappedInto(ListMultimap<String, SubInterfaceTemplateConsolidationData> subInterfaceTypeToEntity) {
@@ -127,28 +114,23 @@ public class PortTemplateConsolidationData extends EntityConsolidationData {
 
     public boolean isNumberOfSubInterfacesPerTypeSimilar(PortTemplateConsolidationData other) {
         return isBothSubInterfaceConsolidationDataEmpty(this, other)
-               || isBothSubInterfaceConsolidationDataNotEmpty(this, other)
-                 && this.subInterfaceConsolidationData.keySet().stream().allMatch(
-                         subInterfaceType -> calculateSize(other.subInterfaceConsolidationData.get(subInterfaceType))
-                         ==  calculateSize(this.subInterfaceConsolidationData.get(subInterfaceType)));
-
+            || isBothSubInterfaceConsolidationDataNotEmpty(this, other) && this.subInterfaceConsolidationData.keySet().stream().allMatch(
+            subInterfaceType -> calculateSize(other.subInterfaceConsolidationData.get(subInterfaceType)) == calculateSize(
+                this.subInterfaceConsolidationData.get(subInterfaceType)));
     }
 
-    private boolean isBothSubInterfaceConsolidationDataEmpty(
-            PortTemplateConsolidationData object, PortTemplateConsolidationData other) {
+    private boolean isBothSubInterfaceConsolidationDataEmpty(PortTemplateConsolidationData object, PortTemplateConsolidationData other) {
         return object.subInterfaceConsolidationData.isEmpty() && other.subInterfaceConsolidationData.isEmpty();
     }
 
-    private boolean isBothSubInterfaceConsolidationDataNotEmpty(
-            PortTemplateConsolidationData object, PortTemplateConsolidationData other) {
+    private boolean isBothSubInterfaceConsolidationDataNotEmpty(PortTemplateConsolidationData object, PortTemplateConsolidationData other) {
         return !object.subInterfaceConsolidationData.isEmpty() && !other.subInterfaceConsolidationData.isEmpty();
     }
 
     public boolean isSubInterfaceNodeTemplateIdParameter(String nodeTemplateType) {
-        List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList =
-                this.subInterfaceConsolidationData.get(nodeTemplateType);
-        return (Objects.nonNull(subInterfaceTemplateConsolidationDataList)
-            && subInterfaceTemplateConsolidationDataList.size() > 1);
+        List<SubInterfaceTemplateConsolidationData> subInterfaceTemplateConsolidationDataList = this.subInterfaceConsolidationData
+            .get(nodeTemplateType);
+        return (Objects.nonNull(subInterfaceTemplateConsolidationDataList) && subInterfaceTemplateConsolidationDataList.size() > 1);
     }
 
     private int calculateSize(List<SubInterfaceTemplateConsolidationData> subInterfaces) {

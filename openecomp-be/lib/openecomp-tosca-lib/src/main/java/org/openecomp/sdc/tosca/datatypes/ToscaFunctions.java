@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.datatypes;
 
 import lombok.AllArgsConstructor;
@@ -33,30 +32,24 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ToscaFunctions {
-
+    // @formatter:off
     // Intrinsic functions, section 4.3 in TOSCA 1.3
     CONCAT("concat"),
     JOIN("join"),   //  since 1.2
     TOKEN("token"),
-
     // Property functions, section 4.4 in TOSCA 1.3
-    GET_INPUT("get_input"),
-    GET_PROPERTY("get_property"),
-
+    GET_INPUT("get_input"), GET_PROPERTY("get_property"),
     // Attribute functions, section 4.5 in TOSCA 1.3
     GET_ATTRIBUTE("get_attribute"),
-
     // Operation functions, section 4.6 in TOSCA 1.3
     GET_OPERATION_OUTPUT("get_operation_output"),
-
     // Navigation functions, section 4.7 in TOSCA 1.3
     GET_NODES_OF_TYPE("get_nodes_of_type"),
-
     // Artifact functions, section 4.8 in TOSCA 1.3
     GET_ARTIFACT("get_artifact"),
-
     // non TOSCA-compliant function
     GET_POLICY("get_policy");
+    // @formatter:of
 
     private String functionName;
 }

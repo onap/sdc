@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
 import org.onap.sdc.tosca.datatypes.model.PolicyDefinition;
@@ -37,14 +35,14 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
 public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslationBase {
+
     private static final String AFFINITY = "affinity";
     private static final String ANTI_AFFINITY = "anti-affinity";
     private static final List<String> supportedPolicies = Arrays.asList(AFFINITY, ANTI_AFFINITY);
 
     @Override
     protected String generateTranslatedId(TranslateTo translateTo) {
-        return isEssentialRequirementsValid(translateTo) ? getTranslatedGroupId(
-                translateTo.getResourceId()) : null;
+        return isEssentialRequirementsValid(translateTo) ? getTranslatedGroupId(translateTo.getResourceId()) : null;
     }
 
     @Override
@@ -53,8 +51,7 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
     }
 
     @Override
-    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(
-            TranslateTo translateTo) {
+    protected Optional<ToscaTopologyTemplateElements> getTranslatedToscaTopologyElement(TranslateTo translateTo) {
         if (isEssentialRequirementsValid(translateTo)) {
             return Optional.of(ToscaTopologyTemplateElements.GROUP);
         } else {
@@ -64,16 +61,13 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
 
     private boolean validatePolicyType(TranslateTo translateTo) {
         Map<String, Object> properties = translateTo.getResource().getProperties();
-        if (Objects.isNull(properties)
-                || Objects.isNull(properties.get(HeatConstants.SERVER_GROUP_POLICIES_PROPERTY_NAME))) {
+        if (Objects.isNull(properties) || Objects.isNull(properties.get(HeatConstants.SERVER_GROUP_POLICIES_PROPERTY_NAME))) {
             return true;
         }
-
         Object policies = properties.get(HeatConstants.SERVER_GROUP_POLICIES_PROPERTY_NAME);
         if (!(policies instanceof List)) {
             return false;
         }
-
         for (Object policy : (List) policies) {
             if (!isValidPolicyType(policy, translateTo.getResourceId(), translateTo.getResource())) {
                 return false;
@@ -86,14 +80,12 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
         if (!(policy instanceof String)) {
             return false;
         }
-
         if (!supportedPolicies.contains(policy)) {
             String unsupportedPolicy = policy.toString();
-            logger.warn("Resource '{}'({})  contains unsupported policy '{}'. This resource is been ignored during "
-                    + "the translation", resourceId, resource.getType(), unsupportedPolicy);
+            logger.warn("Resource '{}'({})  contains unsupported policy '{}'. This resource is been ignored during " + "the translation", resourceId,
+                resource.getType(), unsupportedPolicy);
             return false;
         }
-
         return true;
     }
 
@@ -107,10 +99,8 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
         }
     }
 
-    private void addPoliciesToTopology(TranslateTo translateTo, String policyTargetEntityId,
-                                       List<String> toscaPolicyTypes) {
-        logger.info("******** Start creating policies for resource '%s' ********",
-                translateTo.getResourceId());
+    private void addPoliciesToTopology(TranslateTo translateTo, String policyTargetEntityId, List<String> toscaPolicyTypes) {
+        logger.info("******** Start creating policies for resource '%s' ********", translateTo.getResourceId());
         for (int i = 0; i < toscaPolicyTypes.size(); i++) {
             String policy = toscaPolicyTypes.get(i);
             logger.info("******** Creating policy '%s' ********", policy);
@@ -118,29 +108,19 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
             policyDefinition.setType(policy);
             policyDefinition.setTargets(Collections.singletonList(policyTargetEntityId));
             policyDefinition.setProperties(TranslatorHeatToToscaPropertyConverter
-                    .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
-                            translateTo.getResourceId(), translateTo.getResource().getProperties(),
-                            policyDefinition.getProperties(), translateTo.getHeatFileName(),
-                            translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
-                            policyDefinition, translateTo.getContext()));
-            policyDefinition.getProperties().put(
-                    policy.equals(ToscaPolicyType.PLACEMENT_ANTILOCATE) ? "container_type"
-                            : AFFINITY, "host");
+                .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(), translateTo.getResourceId(),
+                    translateTo.getResource().getProperties(), policyDefinition.getProperties(), translateTo.getHeatFileName(),
+                    translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(), policyDefinition, translateTo.getContext()));
+            policyDefinition.getProperties().put(policy.equals(ToscaPolicyType.PLACEMENT_ANTILOCATE) ? "container_type" : AFFINITY, "host");
             String policyId = getTranslatedPolicyId(translateTo, toscaPolicyTypes, i);
-            DataModelUtil
-                    .addPolicyDefinition(translateTo.getServiceTemplate(), policyId, policyDefinition);
+            DataModelUtil.addPolicyDefinition(translateTo.getServiceTemplate(), policyId, policyDefinition);
             logger.info("******** Policy '%s' created ********", policy);
         }
-
-        logger
-                .info("******** All policies for resource '%s' created successfully ********",
-                        translateTo.getResourceId());
+        logger.info("******** All policies for resource '%s' created successfully ********", translateTo.getResourceId());
     }
 
-    private String getTranslatedPolicyId(TranslateTo translateTo, List<String> toscaPolicyTypes,
-                                         int policyIndex) {
-        return translateTo.getResourceId() + (toscaPolicyTypes.size() > 1 ? policyIndex : "")
-                + "_policy";
+    private String getTranslatedPolicyId(TranslateTo translateTo, List<String> toscaPolicyTypes, int policyIndex) {
+        return translateTo.getResourceId() + (toscaPolicyTypes.size() > 1 ? policyIndex : "") + "_policy";
     }
 
     private String addGroupToTopology(TranslateTo translateTo, String resourceId) {
@@ -149,9 +129,7 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
         group.setMembers(new ArrayList<>());
         group.setType(ToscaGroupType.NATIVE_ROOT);
         String translatedGroupId = getTranslatedGroupId(resourceId);
-        DataModelUtil
-                .addGroupDefinitionToTopologyTemplate(translateTo.getServiceTemplate(),
-                        translatedGroupId, group);
+        DataModelUtil.addGroupDefinitionToTopologyTemplate(translateTo.getServiceTemplate(), translatedGroupId, group);
         logger.info("******** Creating group '%s' for resource '%s' ********", resourceId, resourceId);
         return translatedGroupId;
     }
@@ -162,11 +140,9 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
 
     private List<String> getToscaPolicies(Resource resource, String resourceId) {
         Map<String, Object> properties = resource.getProperties();
-        if (Objects.isNull(properties)
-                || Objects.isNull(properties.get(HeatConstants.SERVER_GROUP_POLICIES_PROPERTY_NAME))) {
+        if (Objects.isNull(properties) || Objects.isNull(properties.get(HeatConstants.SERVER_GROUP_POLICIES_PROPERTY_NAME))) {
             return Collections.singletonList(ToscaPolicyType.PLACEMENT_ANTILOCATE);
         }
-
         List<Object> policies = (List) properties.get(HeatConstants.SERVER_GROUP_POLICIES_PROPERTY_NAME);
         List<String> retList = new ArrayList<>();
         policies.forEach(policy -> {
@@ -184,5 +160,4 @@ public class ResourceTranslationNovaServerGroupsImpl extends ResourceTranslation
             return ToscaPolicyType.PLACEMENT_ANTILOCATE;
         }
     }
-
 }

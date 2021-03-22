@@ -17,17 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.tosca.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
-
 public class InvalidToscaFile {
 
-    private static final String INVALID_TOSCA_FILE =
-            "Tosca file '%s' is not following TOSCA spec, can't be parsed. Related error - '%s'";
+    private static final String INVALID_TOSCA_FILE = "Tosca file '%s' is not following TOSCA spec, can't be parsed. Related error - '%s'";
     private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
     /**

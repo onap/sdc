@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic;
 
 import lombok.Getter;
@@ -32,5 +31,4 @@ public class AcceptableJitter {
     private int mean;
     private int max;
     private int variable;
-
 }

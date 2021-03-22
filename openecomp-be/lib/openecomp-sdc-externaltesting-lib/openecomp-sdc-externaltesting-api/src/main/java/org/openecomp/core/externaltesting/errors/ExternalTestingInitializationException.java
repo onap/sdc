@@ -21,13 +21,13 @@ import java.io.IOException;
 @SuppressWarnings("unused")
 public class ExternalTestingInitializationException extends IOException {
 
-  private static final long serialVersionUID = -2422448175010311433L;
+    private static final long serialVersionUID = -2422448175010311433L;
 
-  public ExternalTestingInitializationException(String message) {
-    super(message);
-  }
+    public ExternalTestingInitializationException(String message) {
+        super(message);
+    }
 
-  public ExternalTestingInitializationException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public ExternalTestingInitializationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

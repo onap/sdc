@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.servlet.spring;
 
-import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.*;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.ERROR;
 import static org.springframework.http.HttpStatus.Series.REDIRECTION;
 import static org.springframework.http.HttpStatus.Series.SUCCESSFUL;
 
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -42,8 +41,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * <p><b>IMPORTANT</b>: For this interceptor to work, all exceptions must be properly handled before being returned to a
  * client. Any unexpected, automatically handled exception bypasses the interceptor and will not be logged.</p>
  * <p>The interceptor must be either registered in Spring configuration XML as a bean, or programmatically as described
- * in <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-interceptors">
- * Spring MVC Config: Interceptors</a>.</p>
+ * in <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-config-interceptors"> Spring MVC Config:
+ * Interceptors</a>.</p>
  *
  * @author evitaliy
  * @since 02 Aug 2018
@@ -52,9 +51,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public class LoggingInterceptor extends HandlerInterceptorAdapter {
 
     static final String LOGGING_TRACKER_KEY = "onap.logging.tracker";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingInterceptor.class);
-
     private final HttpHeader partnerNameHeader;
     private final HttpHeader requestIdHeader;
 
@@ -66,34 +63,26 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Class<?> resourceClass = getResourceType(handler);
-        Tracker tracker = new CombinedTracker(
-                new ContextTracker(partnerNameHeader, requestIdHeader),
-                new AuditTracker(resourceClass));
+        Tracker tracker = new CombinedTracker(new ContextTracker(partnerNameHeader, requestIdHeader), new AuditTracker(resourceClass));
         request.setAttribute(LOGGING_TRACKER_KEY, tracker);
         tracker.preRequest(request);
         return true;
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-            Exception ex) {
-
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         Tracker tracker = (Tracker) request.getAttribute(LOGGING_TRACKER_KEY);
-
         if (tracker == null) {
             LOGGER.debug("No logging tracker received");
             return;
         }
-
         tracker.postRequest(new ServletResponseResult(response.getStatus()));
     }
 
     private Class<?> getResourceType(Object handler) {
-
         if (handler instanceof HandlerMethod) {
             return ((HandlerMethod) handler).getMethod().getDeclaringClass();
         }
-
         return LoggingInterceptor.class;
     }
 
@@ -106,7 +95,6 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         }
 
         private StatusInfo init(int status) {
-
             try {
                 return new StatusInfo(HttpStatus.valueOf(status));
             } catch (IllegalArgumentException e) {

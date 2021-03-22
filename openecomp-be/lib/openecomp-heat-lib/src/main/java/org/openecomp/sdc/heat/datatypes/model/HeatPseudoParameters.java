@@ -17,21 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.heat.datatypes.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
 public enum HeatPseudoParameters {
+    // @formatter:off
     OS_STACK_NAME("OS::stack_name"),
     OS_STACK_ID("OS::stack_id"),
     OS_PROJECT_ID("OS::project_id");
+    // @formatter:on
 
     private static final List<String> pseudoParameterNames = new ArrayList<>();
     private final String pseudoParameter;
@@ -42,8 +42,8 @@ public enum HeatPseudoParameters {
         }
     }
 
+
     public static List<String> getPseudoParameterNames() {
         return pseudoParameterNames;
     }
-
 }

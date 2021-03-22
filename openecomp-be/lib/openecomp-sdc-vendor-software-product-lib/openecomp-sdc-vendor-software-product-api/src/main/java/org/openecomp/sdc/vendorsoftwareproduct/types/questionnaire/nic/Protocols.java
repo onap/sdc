@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic;
 
 import java.util.ArrayList;
@@ -35,5 +34,4 @@ public class Protocols {
 
     private List<String> protocols = new ArrayList<>();
     private String protocolWithHighestTrafficProfile;
-
 }

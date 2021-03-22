@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
 import java.util.List;
@@ -34,5 +33,4 @@ public class Component {
     private List<Nic> nics;
     private List<Image> images;
     private List<ComputeData> compute;
-
 }

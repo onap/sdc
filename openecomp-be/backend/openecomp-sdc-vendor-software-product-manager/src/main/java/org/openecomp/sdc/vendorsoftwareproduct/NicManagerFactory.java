@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 
 public abstract class NicManagerFactory extends AbstractComponentFactory<NicManager> {
 
-  public static NicManagerFactory getInstance() {
-    return getInstance(NicManagerFactory.class);
-  }
+    public static NicManagerFactory getInstance() {
+        return getInstance(NicManagerFactory.class);
+    }
 }

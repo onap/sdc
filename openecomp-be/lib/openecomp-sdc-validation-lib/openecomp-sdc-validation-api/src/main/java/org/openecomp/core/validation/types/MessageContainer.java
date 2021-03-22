@@ -17,15 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.validation.types;
-
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 public class MessageContainer {
 
@@ -40,16 +38,13 @@ public class MessageContainer {
     }
 
     /**
-     * Gets error message list by level.
-     * Only this level, not this level and above
+     * Gets error message list by level. Only this level, not this level and above
      *
      * @param level the level
      * @return the error message list by level
      */
     public List<ErrorMessage> getErrorMessageListByLevel(ErrorLevel level) {
-        return errorMessageList.stream()
-                .filter(message -> message.getLevel().equals(level))
-                .collect(Collectors.toList());
+        return errorMessageList.stream().filter(message -> message.getLevel().equals(level)).collect(Collectors.toList());
     }
 
     public class MessageBuilder {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.tosca.errors;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -23,27 +22,27 @@ import org.openecomp.sdc.common.errors.ErrorCode;
  * The Tosca file not found error builder.
  */
 public class ToscaFileNotFoundErrorBuilder {
-  private static final String ENTRY_NOT_FOUND_MSG =
-      "Tosca file '%s' was not found in tosca service model";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  /**
-   * Instantiates a new Tosca file not found error builder.
-   *
-   * @param fileName the file name
-   */
-  public ToscaFileNotFoundErrorBuilder(String fileName) {
-    builder.withId(ToscaErrorCodes.TOSCA_ENTRY_NOT_FOUND);
-    builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(ENTRY_NOT_FOUND_MSG, fileName));
-  }
+    private static final String ENTRY_NOT_FOUND_MSG = "Tosca file '%s' was not found in tosca service model";
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
+    /**
+     * Instantiates a new Tosca file not found error builder.
+     *
+     * @param fileName the file name
+     */
+    public ToscaFileNotFoundErrorBuilder(String fileName) {
+        builder.withId(ToscaErrorCodes.TOSCA_ENTRY_NOT_FOUND);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(String.format(ENTRY_NOT_FOUND_MSG, fileName));
+    }
+
+    /**
+     * Build error code.
+     *
+     * @return the error code
+     */
+    public ErrorCode build() {
+        return builder.build();
+    }
 }

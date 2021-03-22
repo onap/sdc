@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.logging.slf4j;
 
 import java.util.EnumMap;
@@ -39,21 +38,16 @@ class RequestContextProvider implements ContextProvider {
     }
 
     static ContextData to(Map<ContextField, String> values) {
-        return ContextData.builder()
-                .requestId(values.get(ContextField.REQUEST_ID))
-                .serviceName(values.get(ContextField.SERVICE_NAME))
-                .partnerName(values.get(ContextField.PARTNER_NAME)).build();
+        return ContextData.builder().requestId(values.get(ContextField.REQUEST_ID)).serviceName(values.get(ContextField.SERVICE_NAME))
+            .partnerName(values.get(ContextField.PARTNER_NAME)).build();
     }
 
     @Override
     public Map<ContextField, String> values() {
-
         Map<ContextField, String> values = new EnumMap<>(ContextField.class);
-
         putIfNotNull(values, ContextField.REQUEST_ID, data.getRequestId());
         putIfNotNull(values, ContextField.SERVICE_NAME, data.getServiceName());
         putIfNotNull(values, ContextField.PARTNER_NAME, data.getPartnerName());
-
         return values;
     }
 

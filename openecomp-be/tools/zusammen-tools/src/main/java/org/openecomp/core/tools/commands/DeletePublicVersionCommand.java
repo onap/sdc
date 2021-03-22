@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.core.tools.commands;
 
 import static org.openecomp.core.tools.commands.CommandName.DELETE_PUBLIC_VERSION;
@@ -39,10 +38,16 @@ public class DeletePublicVersionCommand extends Command {
     private static final String VERSION_ID_OPTION = "v";
 
     DeletePublicVersionCommand() {
-        options.addOption(Option.builder(ITEM_ID_OPTION).hasArg().argName("item_id")
-                                .desc("id of the item to delete from public, mandatory").build());
-        options.addOption(Option.builder(VERSION_ID_OPTION).hasArg().argName("version_id")
-                                .desc("id of the version to delete from public, mandatory").build());
+        options.addOption(Option.builder(ITEM_ID_OPTION).hasArg().argName("item_id").desc("id of the item to delete from public, mandatory").build());
+        options.addOption(
+            Option.builder(VERSION_ID_OPTION).hasArg().argName("version_id").desc("id of the version to delete from public, mandatory").build());
+    }
+
+    private static SessionContext createSessionContext() {
+        SessionContext sessionContext = new SessionContext();
+        sessionContext.setUser(new UserInfo("public"));
+        sessionContext.setTenant("dox");
+        return sessionContext;
     }
 
     @Override
@@ -54,15 +59,12 @@ public class DeletePublicVersionCommand extends Command {
         }
         String itemId = cmd.getOptionValue(ITEM_ID_OPTION);
         String versionId = cmd.getOptionValue(VERSION_ID_OPTION);
-
         SessionContext context = createSessionContext();
         ZusammenConnector zusammenConnector = ZusammenConnectorFactory.getInstance().createInterface();
-
         try {
             zusammenConnector.cleanVersion(context, new Id(itemId), new Id(versionId));
         } catch (Exception e) {
-            LOGGER.error(String.format("Error occurred while deleting item %s version %s from public space", itemId,
-                    versionId), e);
+            LOGGER.error(String.format("Error occurred while deleting item %s version %s from public space", itemId, versionId), e);
         }
         return true;
     }
@@ -70,12 +72,5 @@ public class DeletePublicVersionCommand extends Command {
     @Override
     public CommandName getCommandName() {
         return DELETE_PUBLIC_VERSION;
-    }
-
-    private static SessionContext createSessionContext() {
-        SessionContext sessionContext = new SessionContext();
-        sessionContext.setUser(new UserInfo("public"));
-        sessionContext.setTenant("dox");
-        return sessionContext;
     }
 }

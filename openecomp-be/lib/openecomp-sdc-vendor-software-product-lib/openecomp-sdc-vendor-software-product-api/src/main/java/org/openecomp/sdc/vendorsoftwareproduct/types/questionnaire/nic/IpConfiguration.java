@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic;
 
 import lombok.Getter;
@@ -31,5 +30,4 @@ public class IpConfiguration {
 
     private boolean ipv4Required;
     private boolean ipv6Required;
-
 }

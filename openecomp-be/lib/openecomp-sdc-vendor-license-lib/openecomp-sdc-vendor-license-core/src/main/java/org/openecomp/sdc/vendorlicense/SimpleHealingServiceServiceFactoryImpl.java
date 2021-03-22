@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.vendorlicense;
 
 import org.openecomp.sdc.vendorlicense.healing.HealingService;
 import org.openecomp.sdc.vendorlicense.healing.impl.SimpleHealingServiceImpl;
 
 public class SimpleHealingServiceServiceFactoryImpl extends HealingServiceFactory {
-  private static final HealingService INSTANCE = new SimpleHealingServiceImpl();
 
-  @Override
-  public HealingService createInterface() {
-    return INSTANCE;
-  }
+    private static final HealingService INSTANCE = new SimpleHealingServiceImpl();
 
+    @Override
+    public HealingService createInterface() {
+        return INSTANCE;
+    }
 }

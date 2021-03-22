@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
@@ -27,35 +26,27 @@ import org.openecomp.convertor.ElementConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ComponentDependencyModelPropertyName;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 
-public class ElementToComponentDependencyModelConvertor extends ElementConvertor <ComponentDependencyModelEntity>{
+public class ElementToComponentDependencyModelConvertor extends ElementConvertor<ComponentDependencyModelEntity> {
 
-  @Override
-  public ComponentDependencyModelEntity convert( Element element) {
-    ComponentDependencyModelEntity componentDependencyModelEntity = new ComponentDependencyModelEntity();
-    componentDependencyModelEntity.setId(element.getElementId().getValue());
-    mapInfoToComponentDependencyModelEntity(componentDependencyModelEntity,element.getInfo());
-    return componentDependencyModelEntity;
-  }
+    @Override
+    public ComponentDependencyModelEntity convert(Element element) {
+        ComponentDependencyModelEntity componentDependencyModelEntity = new ComponentDependencyModelEntity();
+        componentDependencyModelEntity.setId(element.getElementId().getValue());
+        mapInfoToComponentDependencyModelEntity(componentDependencyModelEntity, element.getInfo());
+        return componentDependencyModelEntity;
+    }
 
-  @Override
-  public ComponentDependencyModelEntity convert(ElementInfo elementInfo) {
-    ComponentDependencyModelEntity componentDependencyModelEntity = new ComponentDependencyModelEntity();
+    @Override
+    public ComponentDependencyModelEntity convert(ElementInfo elementInfo) {
+        ComponentDependencyModelEntity componentDependencyModelEntity = new ComponentDependencyModelEntity();
+        componentDependencyModelEntity.setId(elementInfo.getId().getValue());
+        mapInfoToComponentDependencyModelEntity(componentDependencyModelEntity, elementInfo.getInfo());
+        return componentDependencyModelEntity;
+    }
 
-    componentDependencyModelEntity.setId(elementInfo.getId().getValue());
-    mapInfoToComponentDependencyModelEntity(componentDependencyModelEntity,elementInfo.getInfo());
-    return componentDependencyModelEntity;
-  }
-
-
-  public void mapInfoToComponentDependencyModelEntity(ComponentDependencyModelEntity componentDependencyModelEntity,Info info){
-
-    componentDependencyModelEntity.setSourceComponentId(info
-        .getProperty(ComponentDependencyModelPropertyName.sourcecomponent_id.name()));
-    componentDependencyModelEntity.setTargetComponentId(info
-        .getProperty(ComponentDependencyModelPropertyName.targetcomponent_id.name()));
-    componentDependencyModelEntity.setRelation(info
-        .getProperty(ComponentDependencyModelPropertyName.relation.name()));
-
-  }
-
+    public void mapInfoToComponentDependencyModelEntity(ComponentDependencyModelEntity componentDependencyModelEntity, Info info) {
+        componentDependencyModelEntity.setSourceComponentId(info.getProperty(ComponentDependencyModelPropertyName.sourcecomponent_id.name()));
+        componentDependencyModelEntity.setTargetComponentId(info.getProperty(ComponentDependencyModelPropertyName.targetcomponent_id.name()));
+        componentDependencyModelEntity.setRelation(info.getProperty(ComponentDependencyModelPropertyName.relation.name()));
+    }
 }
