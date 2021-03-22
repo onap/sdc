@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fb1e8dc_34e5bafd",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T09:44:12Z",
+      "side": 1,
+      "message": "avoid mixing Juint 4 and Junit 5 in same class",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 32
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac2f2ea6_68862244",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T09:44:12Z",
+      "side": 1,
+      "message": "replace with assertTrue",
+      "range": {
+        "startLine": 123,
+        "startChar": 8,
+        "endLine": 123,
+        "endChar": 20
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a049e36_4efc50e2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T09:44:12Z",
+      "side": 1,
+      "message": "replace with assertFalse",
+      "range": {
+        "startLine": 126,
+        "startChar": 8,
+        "endLine": 126,
+        "endChar": 20
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b5c519e_240f17bf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/ComponentPropertyDeclaratorTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T09:44:12Z",
+      "side": 1,
+      "message": "swap \u0027actual\u0027 and \u0027expected\u0027 (12 in total)",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 81
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cebd762c_a927558f",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/resources/JsonParserUtilsTests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T09:44:12Z",
+      "side": 1,
+      "message": "simplify assertions using assertEquals",
+      "range": {
+        "startLine": 70,
+        "startChar": 2,
+        "endLine": 70,
+        "endChar": 12
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01b22e01_8718a2c5",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/resources/data/TagDataTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T09:44:12Z",
+      "side": 1,
+      "message": "simplify assertions using assertNotEquals/assertEquals",
+      "range": {
+        "startLine": 99,
+        "startChar": 2,
+        "endLine": 112,
+        "endChar": 2
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e6644e4_67dfa156",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/test/java/org/openecomp/sdc/heat/datatypes/model/HeatResourcesTypesTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-22T09:44:12Z",
+      "side": 1,
+      "message": "Assertion arguments should be passed in the correct order",
+      "range": {
+        "startLine": 34,
+        "startChar": 8,
+        "endLine": 34,
+        "endChar": 20
+      },
+      "revId": "22f9dd07bca8a3cde5ebbb8dad129f99e4658427",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
