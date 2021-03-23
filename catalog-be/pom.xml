@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>catalog-be</artifactId>
@@ -14,7 +14,7 @@
 
     <properties>
         <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
-        <swagger.version>2.1.1</swagger.version>
+        <swagger.version>${swagger-core-mvn-plugin.version}</swagger.version>
         <swagger-ui.version>3.25.0</swagger-ui.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
@@ -945,7 +945,9 @@
                                         <include>src/test/resources/**/*.y*ml</include>
                                     </includes>
                                     <excludes>
-                                        <exclude>src/test/resources/artifacts/pnfSoftwareInformation/**</exclude>
+                                        <exclude>
+                                            src/test/resources/artifacts/pnfSoftwareInformation/**
+                                        </exclude>
                                     </excludes>
                                 </validationSet>
                                 <validationSet>
@@ -1017,7 +1019,8 @@
                         <configuration>
                             <filesets>
                                 <fileset>
-                                    <directory>sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
+                                    <directory>
+                                        sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
                                     </directory>
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
@@ -1032,6 +1035,7 @@
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
+                <version>${swagger-core-mvn-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>sdce-2-sdce-5</id>
@@ -1044,7 +1048,10 @@
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-2-sdce-5</outputFileName>
                             <outputFormat>JSON</outputFormat>
-                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-2-sdce-5.yaml</configurationFilePath>
+                            <configurationFilePath>
+                                ${project.basedir}/src/main/resources/swagger-config/sdce-2-sdce-5.yaml
+                            </configurationFilePath>
+                            <skip>${swagger.skip}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -1058,7 +1065,10 @@
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-4</outputFileName>
                             <outputFormat>JSON</outputFormat>
-                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-4.yaml</configurationFilePath>
+                            <configurationFilePath>
+                                ${project.basedir}/src/main/resources/swagger-config/sdce-4.yaml
+                            </configurationFilePath>
+                            <skip>${swagger.skip}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -1072,7 +1082,10 @@
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-6</outputFileName>
                             <outputFormat>JSON</outputFormat>
-                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-6.yaml</configurationFilePath>
+                            <configurationFilePath>
+                                ${project.basedir}/src/main/resources/swagger-config/sdce-6.yaml
+                            </configurationFilePath>
+                            <skip>${swagger.skip}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -1086,7 +1099,10 @@
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-7</outputFileName>
                             <outputFormat>JSON</outputFormat>
-                            <configurationFilePath>${project.basedir}/src/main/resources/swagger-config/sdce-7.yaml</configurationFilePath>
+                            <configurationFilePath>
+                                ${project.basedir}/src/main/resources/swagger-config/sdce-7.yaml
+                            </configurationFilePath>
+                            <skip>${swagger.skip}</skip>
                         </configuration>
                     </execution>
                 </executions>
@@ -1162,7 +1178,8 @@
                                     </outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${project.parent.basedir}/catalog-be/target</directory>
+                                            <directory>${project.parent.basedir}/catalog-be/target
+                                            </directory>
                                             <includes>
                                                 <include>normatives.tar.gz</include>
                                             </includes>
@@ -1182,7 +1199,8 @@
                                     </outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${project.parent.basedir}/catalog-be/src/main/resources/
+                                            <directory>
+                                                ${project.parent.basedir}/catalog-be/src/main/resources/
                                             </directory>
                                             <includes>
                                                 <include>scripts/sdcBePy/**</include>
@@ -1220,7 +1238,9 @@
                                             <tag>
                                                 ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                                             </tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
+                                            </tag>
                                         </tags>
                                         <assembly>
                                             <descriptor>backend/backend-files.xml</descriptor>
@@ -1234,13 +1254,16 @@
                                     <alias>sdc-backend-init</alias>
                                     <build>
                                         <cleanup>try</cleanup>
-                                        <dockerFileDir>${project.basedir}/sdc-backend-init</dockerFileDir>
+                                        <dockerFileDir>${project.basedir}/sdc-backend-init
+                                        </dockerFileDir>
                                         <tags>
                                             <tag>latest</tag>
                                             <tag>
                                                 ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                                             </tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
+                                            </tag>
                                         </tags>
                                     </build>
                                 </image>

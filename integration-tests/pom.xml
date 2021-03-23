@@ -21,8 +21,8 @@ limitations under the License.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sdc-integration-tests</artifactId>
@@ -302,10 +302,13 @@ limitations under the License.
                             <outputDirectory>${it.sdc-be.plugins}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../catalog-be-plugins/etsi-nfv-nsd-csar-plugin/target</directory>
+                                    <directory>
+                                        ../catalog-be-plugins/etsi-nfv-nsd-csar-plugin/target
+                                    </directory>
                                     <filtering>false</filtering>
                                     <includes>
-                                        <include>etsi-nfv-nsd-csar-plugin-${project.version}.jar</include>
+                                        <include>etsi-nfv-nsd-csar-plugin-${project.version}.jar
+                                        </include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -335,8 +338,9 @@ limitations under the License.
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>set-folder-permission</id>
@@ -346,7 +350,9 @@ limitations under the License.
                                 <mkdir dir="/tmp/sdc-integration-tests"/>
                                 <chmod dir="/tmp/sdc-integration-tests" type="dir" perm="ugo+rwx"/>
                                 <mkdir dir="/tmp/sdc-integration-tests/downloadAutomation"/>
-                                <chmod dir="/tmp/sdc-integration-tests/downloadAutomation" type="dir" perm="ugo+rwx"/>
+                                <chmod dir="/tmp/sdc-integration-tests/downloadAutomation"
+                                    type="dir"
+                                    perm="ugo+rwx"/>
                             </target>
                         </configuration>
                         <goals>
@@ -358,9 +364,11 @@ limitations under the License.
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <target>
-                                <untar src="${project.build.directory}/gecko/geckodriver-v${gecko.driver.version}-linux64.tar.gz"
-                                       compression="gzip" dest="${project.build.directory}/gecko/"/>
-                                <chmod dir="${project.build.directory}/gecko/geckodriver" type="dir" perm="ugo+rwx"/>
+                                <untar
+                                    src="${project.build.directory}/gecko/geckodriver-v${gecko.driver.version}-linux64.tar.gz"
+                                    compression="gzip" dest="${project.build.directory}/gecko/"/>
+                                <chmod dir="${project.build.directory}/gecko/geckodriver" type="dir"
+                                    perm="ugo+rwx"/>
                             </target>
                         </configuration>
                         <goals>
@@ -416,7 +424,8 @@ limitations under the License.
                                 <hostname>sdc-cs</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/root/chef-solo/environments</volume>
+                                        <volume>${it.chef.config}:/root/chef-solo/environments
+                                        </volume>
                                     </bind>
                                 </volumes>
                                 <ulimits>
@@ -468,7 +477,8 @@ limitations under the License.
                                 <hostname>sdc-cs-init</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/home/sdc/chef-solo/environments</volume>
+                                        <volume>${it.chef.config}:/home/sdc/chef-solo/environments
+                                        </volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -501,7 +511,8 @@ limitations under the License.
                                 <hostname>sdc-cs-onboard-init</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/home/sdc/chef-solo/environments</volume>
+                                        <volume>${it.chef.config}:/home/sdc/chef-solo/environments
+                                        </volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -523,19 +534,26 @@ limitations under the License.
                                     <container>sdc-cassandra-onboard-init</container>
                                 </dependsOn>
                                 <env>
-                                    <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}</cassandra_ssl_enabled>
+                                    <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}
+                                    </cassandra_ssl_enabled>
                                     <SDC_CLUSTER_NAME>${it.sdc.cluster.name}</SDC_CLUSTER_NAME>
                                     <SDC_USER>${it.sdc.user}</SDC_USER>
                                     <SDC_PASSWORD>${it.sdc.password}</SDC_PASSWORD>
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                     <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
-                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4001 -Xmx1g -Xms1g</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>
+                                        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4001
+                                        -Xmx1g -Xms1g
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
-                                        <volume>${project.basedir}/src/test/resources/cert/onboarding-be:/var/lib/jetty/onap/cert
+                                        <volume>
+                                            ${it.chef.config}:/var/lib/jetty/chef-solo/environments
+                                        </volume>
+                                        <volume>
+                                            ${project.basedir}/src/test/resources/cert/onboarding-be:/var/lib/jetty/onap/cert
                                         </volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
                                     </bind>
@@ -572,19 +590,26 @@ limitations under the License.
                                     <container>sdc-cassandra-init</container>
                                 </dependsOn>
                                 <env>
-                                    <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}</cassandra_ssl_enabled>
+                                    <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}
+                                    </cassandra_ssl_enabled>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4000
-                                        -Xmx1536m -Xms1536m</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>
+                                        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4000
+                                        -Xmx1536m -Xms1536m
+                                    </JAVA_OPTIONS>
                                     <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
                                     <SDC_NSD_CERT_NAME>nsdCert</SDC_NSD_CERT_NAME>
                                 </env>
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
+                                        <volume>
+                                            ${it.chef.config}:/var/lib/jetty/chef-solo/environments
+                                        </volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
-                                        <volume>${project.basedir}/src/test/resources/cert/catalog-be:/var/lib/jetty/onap/cert</volume>
+                                        <volume>
+                                            ${project.basedir}/src/test/resources/cert/catalog-be:/var/lib/jetty/onap/cert
+                                        </volume>
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -624,7 +649,9 @@ limitations under the License.
                                 <hostname>sdc-BE-init</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/home/onap/chef-solo/environments</volume>
+                                        <volume>
+                                            ${it.chef.config}:/home/onap/chef-solo/environments
+                                        </volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
                                     </bind>
                                 </volumes>
@@ -645,13 +672,17 @@ limitations under the License.
                             <run>
                                 <env>
                                     <ENVNAME>${it.env.name}</ENVNAME>
-                                    <JAVA_OPTIONS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6000
-                                     -Xmx256m -Xms256m</JAVA_OPTIONS>
+                                    <JAVA_OPTIONS>
+                                        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6000
+                                        -Xmx256m -Xms256m
+                                    </JAVA_OPTIONS>
                                 </env>
                                 <hostname>sdc-FE</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/var/lib/jetty/chef-solo/environments</volume>
+                                        <volume>
+                                            ${it.chef.config}:/var/lib/jetty/chef-solo/environments
+                                        </volume>
                                         <volume>${it.shared.volume}:/var/lib/jetty/logs</volume>
                                         <volume>
                                             ${it.chef.config}/plugins-configuration.yaml:/var/lib/jetty/config/catalog-fe/plugins-configuration.yaml
@@ -697,7 +728,8 @@ limitations under the License.
                                 <hostname>sdc-sim</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/root/chef-solo/environments</volume>
+                                        <volume>${it.chef.config}:/root/chef-solo/environments
+                                        </volume>
                                     </bind>
                                 </volumes>
                                 <wait>

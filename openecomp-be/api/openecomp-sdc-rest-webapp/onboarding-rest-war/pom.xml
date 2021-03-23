@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.openecomp.sdc.onboarding</groupId>
@@ -30,12 +30,12 @@
             <artifactId>openecomp-sdc-notification-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-	    <dependency>
+        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-notification-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>vnf-repository-rest-services</artifactId>
             <version>${project.version}</version>
@@ -231,17 +231,21 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <property name="version" value="${project.version}"/>
                                 <mkdir dir="target/docs"/>
-                                <echo file="target/docs/build-info.json">{"Version": "${project.version}"}</echo>
-                            </tasks>
+                                <echo file="target/docs/build-info.json">{"Version":
+                                    "${project.version}"}
+                                </echo>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -252,11 +256,15 @@
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
+                <version>${swagger-core-mvn-plugin.version}</version>
                 <configuration>
                     <outputPath>${project.build.directory}/generated/swagger-ui</outputPath>
                     <outputFileName>swagger-sdce-1</outputFileName>
                     <outputFormat>JSON</outputFormat>
-                    <configurationFilePath>${project.basedir}/src/main/resources/swagger-config.yaml</configurationFilePath>  
+                    <configurationFilePath>
+                        ${project.basedir}/src/main/resources/swagger-config.yaml
+                    </configurationFilePath>
+                    <skip>${swagger.skip}</skip>
                 </configuration>
                 <executions>
                     <execution>
