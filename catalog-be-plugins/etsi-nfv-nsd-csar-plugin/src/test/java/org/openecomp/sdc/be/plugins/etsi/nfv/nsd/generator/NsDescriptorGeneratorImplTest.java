@@ -26,6 +26,10 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
@@ -59,6 +63,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraint;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintValidValues;
+import org.openecomp.sdc.be.tosca.model.ToscaRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
@@ -70,6 +75,9 @@ class NsDescriptorGeneratorImplTest {
 
     private static final String VNFD_AMF_NODE_NAME = "vnfd_amf";
     private static final String VIRTUAL_LINK_REQUIREMENT_NAME = "virtual_link";
+    private static final String VIRTUAL_BINDING_REQUIREMENT_NAME = "virtual_binding";
+    private static final String DOT = ".";
+    private static final String PREFIX = "VNF";
     private final ObjectProvider<ToscaTemplateYamlGenerator> toscaTemplateYamlGeneratorProvider = new ObjectProvider<>() {
         @Override
         public ToscaTemplateYamlGenerator getObject(Object... args) {
@@ -142,8 +150,8 @@ class NsDescriptorGeneratorImplTest {
         componentToscaTopologyTemplate.setNode_templates(nodeTemplateMap);
         final SubstitutionMapping substitutionMapping = mock(SubstitutionMapping.class);
         Map<String, String[]> requirements = new HashMap<>();
-        String[] requirementAssignment = {"VNF1", VIRTUAL_LINK_REQUIREMENT_NAME};
-        requirements.put(VIRTUAL_LINK_REQUIREMENT_NAME, requirementAssignment);
+        String[] requirementAssignmentVl = {"VNF1", PREFIX + DOT + VIRTUAL_LINK_REQUIREMENT_NAME};
+        requirements.put("VNF1" + DOT + VIRTUAL_LINK_REQUIREMENT_NAME, requirementAssignmentVl);
         when(substitutionMapping.getRequirements()).thenReturn(requirements);
         Map<String, String[]> capabilities = new HashMap<>();
         String[] capabilitiesAssignment = {"VNF1", "capability1"};
@@ -157,6 +165,12 @@ class NsDescriptorGeneratorImplTest {
         final String invariantIdPropertyValue = "invariantIdValue";
         final ToscaNodeType interfaceToscaNodeType = createDefaultInterfaceToscaNodeType(designerPropertyValue, versionPropertyValue,
             namePropertyValue, invariantIdPropertyValue);
+        List<Map<String, ToscaRequirement>> interfaceNodeTypeRequirements = new ArrayList<>();
+        Map<String, ToscaRequirement> interfaceNodeTypeRequirementMap = new HashMap<>();
+        interfaceNodeTypeRequirementMap.put("VNF1" + DOT + VIRTUAL_LINK_REQUIREMENT_NAME, mock(ToscaRequirement.class));
+        interfaceNodeTypeRequirementMap.put("VNF1" + DOT + VIRTUAL_BINDING_REQUIREMENT_NAME, mock(ToscaRequirement.class));
+        interfaceNodeTypeRequirements.add(interfaceNodeTypeRequirementMap);
+        interfaceToscaNodeType.setRequirements(interfaceNodeTypeRequirements);
         final String nsNodeTypeName = "nsNodeTypeName";
         componentInterfaceToscaTemplate.setNode_types(ImmutableMap.of(nsNodeTypeName, interfaceToscaNodeType));
         when(toscaExportHandler.convertToToscaTemplate(component)).thenReturn(Either.left(componentToscaTemplate));
@@ -185,14 +199,15 @@ class NsDescriptorGeneratorImplTest {
         assertThat("substitution_mappings->node_type should not be null", substitutionMappings.get("node_type"), is(notNullValue()));
         assertThat("substitution_mappings->node_type should be as expected", substitutionMappings.get("node_type"), is(nsNodeTypeName));
         final Map<String, List<String>> subMappingRequirements = (Map<String, List<String>>) substitutionMappings.get("requirements");
-        assertThat(subMappingRequirements.get(VIRTUAL_LINK_REQUIREMENT_NAME).get(0), is("VNF1"));
-        assertThat(subMappingRequirements.get(VIRTUAL_LINK_REQUIREMENT_NAME).get(1), is(VIRTUAL_LINK_REQUIREMENT_NAME));
+        assertThat(subMappingRequirements.get("VNF1" + DOT + VIRTUAL_LINK_REQUIREMENT_NAME).get(0), is("VNF1"));
+        assertThat(subMappingRequirements.get("VNF1" + DOT + VIRTUAL_LINK_REQUIREMENT_NAME).get(1), is(VIRTUAL_LINK_REQUIREMENT_NAME));
+        assertEquals(1, subMappingRequirements.size());
         final Map<String, List<String>> subMappingCapabilities = (Map<String, List<String>>) substitutionMappings.get("capabilities");
-        assertThat(subMappingCapabilities.get("capability").get(0), is("VNF1"));
-        assertThat(subMappingCapabilities.get("capability").get(1), is("capability1"));
-        @SuppressWarnings("unchecked") final Map<String, Object> nodeTemplates = (Map<String, Object>) topologyTemplate.get("node_templates");
-        @SuppressWarnings("unchecked") final Map<String, Object> nodeTemplate = (Map<String, Object>) nodeTemplates.get(VNFD_AMF_NODE_NAME);
-        assertThat("capabilities should be null", nodeTemplate.get("capabilities"), is(nullValue()));
+        assertNull(subMappingCapabilities);
+        
+        @SuppressWarnings("unchecked") final Map<String, Object> nodeType = (Map<String, Object>) ((Map<String, Object>) toscaTemplateYaml.get("node_types")).get(nsNodeTypeName);
+        assertTrue(((List<Map<String, Map>>)nodeType.get("requirements")).get(0).containsKey("VNF1" + DOT + VIRTUAL_LINK_REQUIREMENT_NAME));
+        assertFalse(((List<Map<String, Map>>)nodeType.get("requirements")).get(0).containsKey("VNF1" + DOT + VIRTUAL_BINDING_REQUIREMENT_NAME));
     }
 
     private ToscaNodeType createDefaultInterfaceToscaNodeType(final String designerPropertyValue, final String versionPropertyValue,
