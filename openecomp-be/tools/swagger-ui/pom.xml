@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>api-docs</artifactId>
     <groupId>org.openecomp.sdc.onboarding</groupId>
@@ -14,7 +14,8 @@
 
     <properties>
         <plugin.name>api-docs</plugin.name>
-        <rest.api.dir>${basedir}/../../api/openecomp-sdc-rest-webapp/onboarding-rest-war</rest.api.dir>
+        <rest.api.dir>${basedir}/../../api/openecomp-sdc-rest-webapp/onboarding-rest-war
+        </rest.api.dir>
         <api.json.file>api.json</api.json.file>
     </properties>
     <build>
@@ -39,16 +40,20 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy</id>
                         <phase>package</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <echo message="Copy api json files"/>
-                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger-sdce-1.json" tofile="${basedir}/target/${plugin.name}/${api.json.file}"/>
-                            </tasks>
+                                <copy
+                                    file="${rest.api.dir}/target/generated/swagger-ui/swagger-sdce-1.json"
+                                    tofile="${basedir}/target/${plugin.name}/${api.json.file}"/>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -64,7 +69,7 @@
                     <descriptor>assembly/swagger.xml</descriptor>
                     <finalName>${plugin.name}</finalName>
                     <outputDirectory>${basedir}/target/${plugin.name}</outputDirectory>
-					<appendAssemblyId>false</appendAssemblyId>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>

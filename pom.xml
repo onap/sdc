@@ -20,15 +20,15 @@ Modifications copyright (c) 2018-2019 Nokia
 ================================================================================
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.openecomp.sdc</groupId>
-  <artifactId>sdc-main</artifactId>
-  <version>1.9.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>sdc</name>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>sdc-main</artifactId>
+    <version>1.9.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>sdc</name>
 
     <parent>
         <groupId>org.onap.oparent</groupId>
@@ -65,6 +65,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <io.vavr.version>0.10.3</io.vavr.version>
         <groovy.version>3.0.7</groovy.version>
         <swagger-core-mvn-plugin.version>2.1.7</swagger-core-mvn-plugin.version>
+        <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
 
         <commons.collections.version>4.1</commons.collections.version>
         <ws.rs.version>2.1</ws.rs.version>
@@ -86,7 +87,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <json-simple.version>1.1</json-simple.version>
 
         <!-- PM Dictionary validation -->
-        <onap.vnfsdk.validation.pmdictionary.version>1.2.15</onap.vnfsdk.validation.pmdictionary.version>
+        <onap.vnfsdk.validation.pmdictionary.version>1.2.15
+        </onap.vnfsdk.validation.pmdictionary.version>
 
         <!-- Logging start -->
         <!-- logback -->
@@ -250,7 +252,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
                 <version>${swagger-core-mvn-plugin.version}</version>
-            </dependency>            
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -417,7 +419,8 @@ Modifications copyright (c) 2018-2019 Nokia
                 <version>2.17</version>
                 <configuration>
                     <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
-                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                    <suppressionsFileExpression>checkstyle.suppressions.file
+                    </suppressionsFileExpression>
                     <skip>${checkstyle.skip}</skip>
                 </configuration>
             </plugin>
@@ -493,12 +496,12 @@ Modifications copyright (c) 2018-2019 Nokia
                         <configuration>
                             <source>
                                 pom.properties['deploy.url'] =
-                                        pom.version.contains('-SNAPSHOT') ?
-                                                project.distributionManagement.snapshotRepository.url :
-                                                project.distributionManagement.repository.url;
+                                    pom.version.contains('-SNAPSHOT') ?
+                                        project.distributionManagement.snapshotRepository.url :
+                                        project.distributionManagement.repository.url;
                                 pom.properties['repo.id'] = pom.version.contains('-SNAPSHOT') ?
-                                        project.distributionManagement.snapshotRepository.id :
-                                        project.distributionManagement.repository.id;
+                                    project.distributionManagement.snapshotRepository.id :
+                                    project.distributionManagement.repository.id;
                             </source>
                         </configuration>
                     </execution>
@@ -526,7 +529,8 @@ Modifications copyright (c) 2018-2019 Nokia
                 <configuration>
                     <printSummary>false</printSummary>
                     <systemPropertyVariables>
-                        <jacoco-agent.destfile>${project.build.directory}/jacoco.exec</jacoco-agent.destfile>
+                        <jacoco-agent.destfile>${project.build.directory}/jacoco.exec
+                        </jacoco-agent.destfile>
                     </systemPropertyVariables>
                     <forkCount>${surefire.forkCount}</forkCount>
                     <reuseForks>${surefire.reuseForks}</reuseForks>
@@ -546,7 +550,8 @@ Modifications copyright (c) 2018-2019 Nokia
                 </executions>
                 <configuration>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/META-INF/git.properties
+                    <generateGitPropertiesFilename>
+                        ${project.build.outputDirectory}/META-INF/git.properties
                     </generateGitPropertiesFilename>
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <verbose>false</verbose>
@@ -682,6 +687,8 @@ Modifications copyright (c) 2018-2019 Nokia
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
                 <jacoco.skip>true</jacoco.skip>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
                 <module>onboarding</module>

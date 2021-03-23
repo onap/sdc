@@ -52,12 +52,10 @@
     <mvn.license.version>1.10</mvn.license.version>
     <mvn.shade.version>2.3</mvn.shade.version>
     <maven.dependency.version>2.8</maven.dependency.version>
-    <mvn.swagger.version>3.1.0</mvn.swagger.version>
     <mvn.war.version>2.1.1</mvn.war.version>
     <maven-core.version>3.5.3</maven-core.version>
     <maven-plugin-plugin.version>3.5.1</maven-plugin-plugin.version>
     <maven-plugin-annotations.version>3.5.1</maven-plugin-annotations.version>
-    <mvn.antrun.version>1.8</mvn.antrun.version>
 
     <!-- Onboarding 3rd party versions -->
     <aspectjrt.version>${aspectj.version}</aspectjrt.version>
@@ -90,7 +88,7 @@
     <org.everit.json.schema.version>1.5.1</org.everit.json.schema.version>
     <slf4j.version>1.7.21</slf4j.version>
     <spring.framework.version>${spring.version}</spring.framework.version>
-    <swagger.version>2.0.8</swagger.version>
+    <swagger.version>${swagger-core-mvn-plugin.version}</swagger.version>
     <woodstox.version>4.4.1</woodstox.version>
     <zusammen.version>1.0.2</zusammen.version>
     <zusammen-state-store.version>1.0.2</zusammen-state-store.version>
