@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b99c2ff2_59d07015",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/converters/MapConverterTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-23T15:55:10Z",
+      "side": 1,
+      "message": "add Assertions",
+      "range": {
+        "startLine": 39,
+        "startChar": 2,
+        "endLine": 39,
+        "endChar": 38
+      },
+      "revId": "49b29dddb63e5a48de21cea5887185a3b15b714b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
