@@ -19,19 +19,22 @@
  */
 package org.openecomp.sdc.action.errors;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.action.util.ActionUtil;
 
 /**
  * Custom Exception class for handling Action Library error scenarios.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class ActionException extends RuntimeException {
 
     private String errorCode;
     private String description;
     private int logResponseCode;
-
-    public ActionException() {
-    }
 
     /**
      * Instantiates a new Action exception.
@@ -45,27 +48,4 @@ public class ActionException extends RuntimeException {
         this.logResponseCode = ActionUtil.getLogResponseCode(this.errorCode);
     }
 
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getLogResponseCode() {
-        return logResponseCode;
-    }
-
-    public void setLogResponseCode(int logResponseCode) {
-        this.logResponseCode = logResponseCode;
-    }
 }

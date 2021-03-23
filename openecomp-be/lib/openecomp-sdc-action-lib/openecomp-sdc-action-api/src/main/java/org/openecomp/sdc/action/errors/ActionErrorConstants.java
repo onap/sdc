@@ -81,8 +81,7 @@ public class ActionErrorConstants {
     public static final String ACTION_ARTIFACT_ENTITY_NOT_EXIST = "Specified artifact is not found";
     public static final String ACTION_REQUEST_ARTIFACT_CHECKSUM_ERROR = "Checksum error";
     public static final String ACTION_REQUEST_ARTIFACT_INVALID_PROTECTION_VALUE = "Invalid artifact protection value";
-    public static final String ACTION_ARTIFACT_INVALID_NAME =
-        "Artifact name cannot contain any of the following characters : #<>$+%!`&*'|{}?=/:@ including" + " whitespaces, double quotes and back-slash";
+    public static final String ACTION_ARTIFACT_INVALID_NAME = "Artifact name cannot contain any of the following characters : #<>$+%!`&*'|{}?=/:@ including whitespaces, double quotes and back-slash";
     public static final String ACTION_ARTIFACT_READ_FILE_ERROR = "Error Occurred while reading file";
     public static final String ACTION_REQUEST_ARTIFACT_OPERATION_ALLOWED = "Artifacts cannot be created/updated using this operation";
     public static final String ACTION_ARTIFACT_TOO_BIG_ERROR = "Operation is not allowed. Artifact size exceeds the maximum file size limit (20MB).";
@@ -94,15 +93,12 @@ public class ActionErrorConstants {
     public static final String ACTION_UNSUPPORTED_OPERATION = "Operation %s not supported";
     public static final String ACTION_ENTITY_UNIQUE_VALUE_MSG = "%s with the value '%s' already exists.";
     public static final String ACTION_ARTIFACT_ALREADY_EXISTS = "Artifact name already exists for Action with id %s. Please use another name.";
-    public static final String ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG =
-        "The request failed due to an internal ASDC problem. Open ECOMP Component should continue the "
-            + "attempts, with corrected data if required, to create the resource.";
+    public static final String ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG = "The request failed due to an internal ASDC problem. Open ECOMP Component should continue the attempts, with corrected data if required, to create the resource.";
     public static final String ACTION_ARTIFACT_DELETE_READ_ONLY_MSG = "Cannot delete read only artifact.";
     public static final String ACTION_ARTIFACT_UPDATE_READ_ONLY_MSG = "Cannot update read only artifact.";
     public static final String ACTION_NOT_LOCKED_MSG = "Operation is not allowed. Action status should be Locked.";
     public static final String ACTION_ARTIFACT_UPDATE_NAME_INVALID = "Artifact name cannot be updated.";
     public static final String ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER = "Cannot delete artifact since it is locked by other user %s.";
     public static final String UNDO_CHECKOUT_ON_UNLOCKED_ENTITY_MSG = "Can not undo checkout on versionable entity %s with id %s since it is not checked out.";
-    public static final String UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
-        "Can not undo checkout on versionable entity %s with id %s since it is checked out by other " + "user: %s.";
+    public static final String UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG = "Can not undo checkout on versionable entity %s with id %s since it is checked out by other user: %s.";
 }

@@ -62,10 +62,12 @@ import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import lombok.NoArgsConstructor;
 
 /**
  * Mapper class to map Action Library exceptions to corresponding HTTP Response objects.
  */
+@NoArgsConstructor
 public class ActionExceptionMapper implements ExceptionMapper<ActionException> {
 
     @Override
