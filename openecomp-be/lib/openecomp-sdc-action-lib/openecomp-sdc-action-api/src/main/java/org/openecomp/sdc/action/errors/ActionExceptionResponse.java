@@ -19,46 +19,12 @@
  */
 package org.openecomp.sdc.action.errors;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class ActionExceptionResponse {
 
-    private String code;
-    private String description;
-    private String message;
-
-    /**
-     * Instantiates a new Action exception response.
-     *
-     * @param code        the code
-     * @param description the description
-     * @param message     the message
-     */
-    public ActionExceptionResponse(String code, String description, String message) {
-        this.code = code;
-        this.description = description;
-        this.message = message;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    private final String code;
+    private final String description;
+    private final String message;
 }
