@@ -2,27 +2,28 @@
 @import '../../../../../assets/styles/mixins_old';
 
 :host ::ng-deep .sdc-loader-wrapper {
-    position:static; 
+  position: static;
 }
 
 .component-details-panel-tabs {
-    flex: 1;
-    display:flex;
-    overflow:hidden;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.component-details-panel-tabs /deep/ .sdc-tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  /deep/ .sdc-tab {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
   }
 
-.component-details-panel-tabs /deep/ sdc-tabs {
-    display:flex;
-    flex-direction:column;
-    width: 100%;
-
-    /deep/ sdc-tab {
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-    }
-    .svg-icon-wrapper.label-placement-left .svg-icon-label {
-        margin-right: 0;
-    }
+  .svg-icon-wrapper.label-placement-left .svg-icon-label {
+    margin-right: 0;
+  }
 }
 
