@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.jsongraph.types;
 
 import lombok.AllArgsConstructor;
@@ -26,10 +25,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum EdgePropertyEnum {
-
-    STATE("state"),
-    INSTANCES("instances");
-
+    STATE("state"), INSTANCES("instances");
     private final String property;
 
     public static EdgePropertyEnum getByProperty(String property) {

@@ -17,17 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
 
 @Getter
 @Setter
@@ -37,26 +35,19 @@ public class MigrationTaskEntry {
     @PartitionKey(0)
     @Column(name = "major_version")
     private Long majorVersion;
-
     @ClusteringColumn
     @Column(name = "minor_version")
     private Long minorVersion;
-
     @Column(name = "timestamp")
     private Date timestamp;
-
     @Column(name = "task_name")
     private String taskName;
-
     @Column(name = "execution_time")
     private double executionTime;
-
     @Column(name = "task_status")
     private String taskStatus;
-
     @Column(name = "msg")
     private String message;
-
     @Column(name = "description")
     private String description;
 }

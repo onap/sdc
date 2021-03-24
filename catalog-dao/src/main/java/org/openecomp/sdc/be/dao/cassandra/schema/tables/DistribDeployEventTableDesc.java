@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,50 +17,46 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
-import java.util.Map;
-
 public class DistribDeployEventTableDesc extends DistribBaseEventTableDesc {
 
-	@Override
-	public String getTableName() {
-		return AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE;
-	}
-
-	@Override
-	protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
-		for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
-			columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
-		}
-		//replace the base indexed flag value with the correct one for a given table:
-		columns.put(DistFieldsDescription.STATUS.getName(),
-                new ImmutablePair<>(DistFieldsDescription.STATUS.getType(), true));
-        columns.put(DistFieldsDescription.SERVICE_INST_ID.getName(),
-                new ImmutablePair<>(DistFieldsDescription.SERVICE_INST_ID.getType(), true));
-
+    @Override
+    public String getTableName() {
+        return AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE;
     }
 
-	@Getter
-	@AllArgsConstructor
-	enum DSEFieldsDescription {
-		MODIFIER("modifier", DataType.varchar(), false),
-		CURR_VERSION("curr_version", DataType.varchar(), false), 
-		DID("did", DataType.varchar(), true), 
-		RESOURCE_NAME("resource_name", DataType.varchar(), false), 
-		RESOURCE_TYPE("resource_type", DataType.varchar(), false);
+    @Override
+    protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
+        for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
+            columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
+        }
+        //replace the base indexed flag value with the correct one for a given table:
+        columns.put(DistFieldsDescription.STATUS.getName(), new ImmutablePair<>(DistFieldsDescription.STATUS.getType(), true));
+        columns.put(DistFieldsDescription.SERVICE_INST_ID.getName(), new ImmutablePair<>(DistFieldsDescription.SERVICE_INST_ID.getType(), true));
+    }
 
-		private final String name;
-		private final DataType type;
-		private final boolean indexed;
+    @Getter
+    @AllArgsConstructor
+    enum DSEFieldsDescription {
+        // @formatter:off
+        MODIFIER("modifier", DataType.varchar(), false),
+        CURR_VERSION("curr_version", DataType.varchar(), false),
+        DID("did", DataType.varchar(), true),
+        RESOURCE_NAME("resource_name", DataType.varchar(), false),
+        RESOURCE_TYPE("resource_type", DataType.varchar(), false);
+        // @formatter:on
 
-	}
+        private final String name;
+        private final DataType type;
+        private final boolean indexed;
 
+    }
 }

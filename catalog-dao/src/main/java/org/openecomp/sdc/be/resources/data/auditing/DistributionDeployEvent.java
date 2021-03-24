@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -25,17 +24,16 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -45,35 +43,26 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
-
     @ClusteringColumn
     protected Date timestamp1;
-
     @Column(name = "request_id")
     protected String requestId;
-
     @Column(name = "service_instance_id")
     protected String serviceInstanceId;
     @Column
     protected String action;
     @Column
     protected String status;
-
     @Column(name = "description")
     protected String desc;
-
     @Column(name = "resource_name")
     private String resourceName;
-
     @Column(name = "resource_type")
     private String resourceType;
-
     @Column(name = "curr_version")
     private String currVersion;
-
     @Column
     private String modifier;
-
     @Column
     private String did;
 
@@ -112,7 +101,6 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
         fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
         fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
-
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID.getDisplayName(), getDid());
         fields.put(AuditingFieldsKey.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_VERSION.getDisplayName(), getCurrVersion());

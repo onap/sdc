@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -25,15 +24,14 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-import lombok.Getter;
-import lombok.Setter;
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 @Getter
 @Setter
@@ -42,35 +40,26 @@ public class CategoryEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
-
     @ClusteringColumn
     protected Date timestamp1;
-
     @Column
     String action;
     @Column
     String status;
     @Column(name = "description")
     String desc;
-
     @Column(name = "category_name")
     String categoryName;
-
     @Column(name = "sub_category_name")
     String subCategoryName;
-
     @Column(name = "grouping_name")
     String groupingName;
-
     @Column
     String modifier;
-
     @Column(name = "service_instance_id")
     String serviceInstanceId;
-
     @Column(name = "resource_type")
     String resourceType;
-
     @Column(name = "request_id")
     String requestId;
 
@@ -105,7 +94,6 @@ public class CategoryEvent extends AuditingGenericEvent {
 
     @Override
     public void fillFields() {
-
         fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
         fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
         fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
@@ -119,6 +107,5 @@ public class CategoryEvent extends AuditingGenericEvent {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
-
     }
 }

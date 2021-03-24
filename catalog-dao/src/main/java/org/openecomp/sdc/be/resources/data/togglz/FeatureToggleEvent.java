@@ -17,14 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.togglz;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,27 +35,21 @@ import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
-import com.datastax.driver.mapping.annotations.Transient;
-
-import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(keyspace = AuditingTypesConstants.REPO_KEYSPACE, name = AuditingTypesConstants.FEATURE_TOGGLE_STATE)
 public class FeatureToggleEvent {
-    private static final Logger logger = Logger.getLogger(FeatureToggleEvent.class);
 
+    private static final Logger logger = Logger.getLogger(FeatureToggleEvent.class);
     @PartitionKey
     @Column(name = "feature_name")
     private String featureName;
-
     @Column(name = "enabled")
     private String enabled;
-
     @Column(name = "strategy_id")
     private String strategyId;
-
     @Column(name = "parameters")
     private String parameters;
 
@@ -74,22 +69,16 @@ public class FeatureToggleEvent {
         }
         FeatureState featureState = new FeatureState(feature, Boolean.valueOf(enabled));
         featureState.setStrategyId(strategyId);
-
         setParameters(featureState);
         return featureState;
-
     }
 
     private void setParameters(FeatureState featureState) {
         try {
             Map<String, String> paramMap = Splitter.on(",").withKeyValueSeparator("=").split(parameters);
-            paramMap.keySet().forEach(p->featureState.setParameter(p, paramMap.get(p)));
-        }
-        catch(IllegalArgumentException e) {
-            logger.warn(EcompLoggerErrorCode.DATA_ERROR, "FeatureToggle",
-                    "FeatureState Object generating", e.getMessage());
+            paramMap.keySet().forEach(p -> featureState.setParameter(p, paramMap.get(p)));
+        } catch (IllegalArgumentException e) {
+            logger.warn(EcompLoggerErrorCode.DATA_ERROR, "FeatureToggle", "FeatureState Object generating", e.getMessage());
         }
     }
-
-
 }

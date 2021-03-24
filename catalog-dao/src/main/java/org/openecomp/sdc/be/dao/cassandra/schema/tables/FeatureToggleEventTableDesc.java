@@ -17,22 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
 import com.google.common.collect.Lists;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 public class FeatureToggleEventTableDesc implements ITableDescription {
 
@@ -54,7 +52,7 @@ public class FeatureToggleEventTableDesc implements ITableDescription {
     public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
         Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
         Arrays.stream(FeatureToggleEventFieldsDescription.values())
-                .forEach(column -> columns.put(column.getName(), ImmutablePair.of(column.getType(), column.isIndexed())));
+            .forEach(column -> columns.put(column.getName(), ImmutablePair.of(column.getType(), column.isIndexed())));
         return columns;
     }
 

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.jsongraph.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,46 +26,40 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Strings;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class JsonParserUtils {
-    private static Logger log = Logger.getLogger(JsonParserUtils.class.getName());
+
     private static final ObjectMapper mapper = buildObjectMapper();
+    private static Logger log = Logger.getLogger(JsonParserUtils.class.getName());
 
     private JsonParserUtils() {
         // No instances allowed
     }
 
     private static ObjectMapper buildObjectMapper() {
-        return new ObjectMapper()
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     public static <T> String toJson(T object) throws IOException {
-        return mapper.writer()
-                     .writeValueAsString(object);
+        return mapper.writer().writeValueAsString(object);
     }
 
     public static Map<String, Object> toMap(String json) {
         if (Strings.isNullOrEmpty(json)) {
             return null;
         }
-
         Map<String, Object> object = null;
         try {
             TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {
             };
-            object = mapper.readerFor(typeRef)
-                           .readValue(json);
-        }
-        catch (Exception e) {
+            object = mapper.readerFor(typeRef).readValue(json);
+        } catch (Exception e) {
             log.debug("Failed to parse json {}", json, e);
         }
         return object;
@@ -76,32 +69,25 @@ public class JsonParserUtils {
         if (Strings.isNullOrEmpty(json)) {
             return null;
         }
-
         Map<String, T> object = null;
         try {
-            JavaType type = mapper.getTypeFactory()
-                                  .constructMapType(Map.class, String.class, clazz);
-            object = mapper.readerFor(type)
-                           .readValue(json);
-        }
-        catch (Exception e) {
+            JavaType type = mapper.getTypeFactory().constructMapType(Map.class, String.class, clazz);
+            object = mapper.readerFor(type).readValue(json);
+        } catch (Exception e) {
             log.debug("Failed to parse json {} to map", json, e);
         }
         return object;
     }
+
     public static <T> List<T> toList(String json, Class<T> clazz) {
         if (Strings.isNullOrEmpty(json)) {
             return null;
         }
         List<T> object = null;
         try {
-            JavaType type = mapper.getTypeFactory()
-                                  .constructCollectionType(List.class, clazz);
-
-            object = mapper.readerFor(type)
-                    .readValue(json);
-        }
-        catch (Exception e) {
+            JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+            object = mapper.readerFor(type).readValue(json);
+        } catch (Exception e) {
             log.debug("Failed to parse json {} to list", json, e);
         }
         return object;

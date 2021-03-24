@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing.model;
 
 public class CommonAuditData {
+
     private String description;
     private String requestId;
     private String serviceInstanceId;
@@ -28,6 +28,10 @@ public class CommonAuditData {
 
     private CommonAuditData() {
         //for builder
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     public String getStatus() {
@@ -38,12 +42,12 @@ public class CommonAuditData {
         return description;
     }
 
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
     public String getRequestId() {
         return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 
     public String getServiceInstanceId() {
@@ -51,14 +55,11 @@ public class CommonAuditData {
     }
 
     public void setServiceInstanceId(String serviceInstanceId) {
-        this.serviceInstanceId = serviceInstanceId ;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
+        this.serviceInstanceId = serviceInstanceId;
     }
 
     public static class Builder {
+
         private final CommonAuditData instance;
 
         private Builder() {
@@ -93,7 +94,5 @@ public class CommonAuditData {
         public CommonAuditData build() {
             return instance;
         }
-
     }
-
 }

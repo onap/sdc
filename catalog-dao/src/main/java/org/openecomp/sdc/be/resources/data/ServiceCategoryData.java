@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,31 +17,28 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data;
 
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 public class ServiceCategoryData extends CategoryData {
 
-	public ServiceCategoryData() {
-		super(NodeTypeEnum.ServiceCategory);
-	}
+    public ServiceCategoryData() {
+        super(NodeTypeEnum.ServiceCategory);
+    }
 
-	public ServiceCategoryData(String categoryName) {
-		super(categoryName, "", NodeTypeEnum.ServiceCategory);
-		createUniqueId();
-	}
+    public ServiceCategoryData(String categoryName) {
+        super(categoryName, "", NodeTypeEnum.ServiceCategory);
+        createUniqueId();
+    }
 
-	public ServiceCategoryData(Map<String, Object> properties) {
-		super(properties, NodeTypeEnum.ServiceCategory);
-	}
+    public ServiceCategoryData(Map<String, Object> properties) {
+        super(properties, NodeTypeEnum.ServiceCategory);
+    }
 
-	@Override
-	protected void createUniqueId() {
-		setUniqueId(getLabel() + "." + getName());
-	}
-
+    @Override
+    protected void createUniqueId() {
+        setUniqueId(getLabel() + "." + getName());
+    }
 }

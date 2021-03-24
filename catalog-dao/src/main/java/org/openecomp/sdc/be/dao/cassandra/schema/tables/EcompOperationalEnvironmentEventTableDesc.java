@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,17 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-
-import java.util.*;
 
 public class EcompOperationalEnvironmentEventTableDesc implements ITableDescription {
 
@@ -55,9 +57,8 @@ public class EcompOperationalEnvironmentEventTableDesc implements ITableDescript
     @Override
     public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
         Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
-
         Arrays.stream(EcompOpEnvFieldsDescription.values())
-                .forEach(column -> columns.put(column.getName(), ImmutablePair.of(column.getType(), column.isIndexed())));
+            .forEach(column -> columns.put(column.getName(), ImmutablePair.of(column.getType(), column.isIndexed())));
         return columns;
     }
 
@@ -69,11 +70,13 @@ public class EcompOperationalEnvironmentEventTableDesc implements ITableDescript
     @Getter
     @AllArgsConstructor
     enum EcompOpEnvFieldsDescription {
+        // @formatter:off
         ACTION("action", DataType.varchar(), false),
         OPERATIONAL_ENVIRONMENT_NAME("operational_environment_name", DataType.varchar(), false),
         OPERATIONAL_ENVIRONMENT_TYPE("operational_environment_type", DataType.varchar(), false),
         OPERATIONAL_ENVIRONMENT_ACTION("operational_environment_action", DataType.varchar(), false),
         TENANT_CONTEXT("tenant_context", DataType.varchar(), false);
+        // @formatter:on
 
         private final String name;
         private final DataType type;

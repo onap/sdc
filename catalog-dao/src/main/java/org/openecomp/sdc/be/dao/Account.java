@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -39,5 +38,4 @@ public class Account {
     @PartitionKey
     private String email;
     private String name;
-
 }

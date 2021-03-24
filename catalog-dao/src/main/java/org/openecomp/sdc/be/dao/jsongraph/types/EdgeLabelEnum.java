@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.jsongraph.types;
 
 public enum EdgeLabelEnum {
+    // @formatter:off
     ARTIFACTS,
     DEPLOYMENT_ARTIFACTS,
     INST_DEPLOYMENT_ARTIFACTS,
@@ -70,6 +70,7 @@ public enum EdgeLabelEnum {
     NODE_FILTER_TEMPLATE,
     SUBSTITUTION_FILTER_TEMPLATE,
     DATA_TYPES;
+    // @formatter:on
 
     /**
      * Returns EdgeLabelEnum according received name

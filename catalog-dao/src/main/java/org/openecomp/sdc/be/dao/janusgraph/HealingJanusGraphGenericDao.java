@@ -15,13 +15,13 @@
  */
 package org.openecomp.sdc.be.dao.janusgraph;
 
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.util.List;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
@@ -53,8 +53,13 @@ public class HealingJanusGraphGenericDao extends JanusGraphGenericDao {
     }
 
     @Override
-    public <T extends GraphNode> Either<List<ImmutablePair<T, GraphEdge>>, JanusGraphOperationStatus> getChildrenNodes(String key, String uniqueId, GraphEdgeLabels edgeType, NodeTypeEnum nodeTypeEnum, Class<T> clazz, boolean withEdges) {
-        Either<List<ImmutablePair<T, GraphEdge>>, JanusGraphOperationStatus> either = super.getChildrenNodes(key, uniqueId, edgeType, nodeTypeEnum, clazz, withEdges);
+    public <T extends GraphNode> Either<List<ImmutablePair<T, GraphEdge>>, JanusGraphOperationStatus> getChildrenNodes(String key, String uniqueId,
+                                                                                                                       GraphEdgeLabels edgeType,
+                                                                                                                       NodeTypeEnum nodeTypeEnum,
+                                                                                                                       Class<T> clazz,
+                                                                                                                       boolean withEdges) {
+        Either<List<ImmutablePair<T, GraphEdge>>, JanusGraphOperationStatus> either = super
+            .getChildrenNodes(key, uniqueId, edgeType, nodeTypeEnum, clazz, withEdges);
         if (either.isRight()) {
             return either;
         }
@@ -64,7 +69,9 @@ public class HealingJanusGraphGenericDao extends JanusGraphGenericDao {
     }
 
     @Override
-    public <T extends GraphNode> Either<ImmutablePair<T, GraphEdge>, JanusGraphOperationStatus> getChild(String key, String uniqueId, GraphEdgeLabels edgeType, NodeTypeEnum nodeTypeEnum, Class<T> clazz) {
+    public <T extends GraphNode> Either<ImmutablePair<T, GraphEdge>, JanusGraphOperationStatus> getChild(String key, String uniqueId,
+                                                                                                         GraphEdgeLabels edgeType,
+                                                                                                         NodeTypeEnum nodeTypeEnum, Class<T> clazz) {
         Either<ImmutablePair<T, GraphEdge>, JanusGraphOperationStatus> eitherChild = super.getChild(key, uniqueId, edgeType, nodeTypeEnum, clazz);
         if (eitherChild.isRight()) {
             return eitherChild;
@@ -87,7 +94,8 @@ public class HealingJanusGraphGenericDao extends JanusGraphGenericDao {
     }
 
     @Override
-    public Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getChildrenVertecies(String key, String uniqueId, GraphEdgeLabels edgeType) {
+    public Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getChildrenVertecies(String key, String uniqueId,
+                                                                                                               GraphEdgeLabels edgeType) {
         Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> either = super.getChildrenVertecies(key, uniqueId, edgeType);
         if (either.isRight()) {
             return either;

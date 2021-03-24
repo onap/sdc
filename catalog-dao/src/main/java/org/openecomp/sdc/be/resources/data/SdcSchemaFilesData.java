@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
@@ -25,72 +24,67 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+import java.nio.ByteBuffer;
+import java.util.Date;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.nio.ByteBuffer;
-import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(keyspace = "sdcartifact", name = "sdcschemafiles")
 public class SdcSchemaFilesData {
-	@PartitionKey(0)
-	@Column(name = "sdcreleasenum")
-	private String sdcReleaseNum;
 
-	@ClusteringColumn
-	@Column(name = "timestamp")
-	private Date timestamp;
+    @PartitionKey(0)
+    @Column(name = "sdcreleasenum")
+    private String sdcReleaseNum;
+    @ClusteringColumn
+    @Column(name = "timestamp")
+    private Date timestamp;
+    @PartitionKey(1)
+    @Column(name = "conformanceLevel")
+    private String conformanceLevel;
+    @Column(name = "fileName")
+    private String fileName;
+    @Column(name = "payload")
+    @Setter(AccessLevel.NONE)
+    private ByteBuffer payload;
+    @Column(name = "checksum")
+    private String checksum;
 
-	@PartitionKey(1)
-	@Column(name = "conformanceLevel")
-	private String conformanceLevel;
+    public SdcSchemaFilesData(String sdcReleaseNum, Date timestamp, String conformanceLevel, String fileName, byte[] payload, String checksum) {
+        this.sdcReleaseNum = sdcReleaseNum;
+        this.timestamp = timestamp;
+        this.conformanceLevel = conformanceLevel;
+        this.fileName = fileName;
+        if (payload != null) {
+            this.payload = ByteBuffer.wrap(payload.clone());
+        }
+        this.checksum = checksum;
+    }
 
-	@Column(name = "fileName")
-	private String fileName;
+    public void setPayload(ByteBuffer payload) {
+        if (payload != null) {
+            this.payload = payload.duplicate();
+        }
+    }
 
-	@Column(name = "payload")
-	@Setter(AccessLevel.NONE)private ByteBuffer payload;
+    @Transient
+    public byte[] getPayloadAsArray() {
+        return payload != null ? payload.array() : null;
+    }
 
-	@Column(name = "checksum")
-	private String checksum;
+    public void setPayloadAsArray(byte[] payload) {
+        if (payload != null) {
+            this.payload = ByteBuffer.wrap(payload.clone());
+        }
+    }
 
-	public SdcSchemaFilesData(String sdcReleaseNum, Date timestamp, String conformanceLevel, String fileName, byte[] payload, String checksum){
-		this.sdcReleaseNum = sdcReleaseNum;
-		this.timestamp = timestamp;
-		this.conformanceLevel = conformanceLevel;
-		this.fileName = fileName;
-		if(payload != null) {
-			this.payload = ByteBuffer.wrap(payload.clone());
-		}
-		this.checksum = checksum;
-	}
-
-
-	public void setPayload(ByteBuffer payload) {
-		if(payload != null) {
-			this.payload = payload.duplicate();
-		}
-	}
-
-	public void setPayloadAsArray(byte[] payload) {
-		if(payload != null) {
-			this.payload = ByteBuffer.wrap(payload.clone());
-		}
-	}
-
-	@Transient
-	public byte[] getPayloadAsArray() {
-		return payload != null ? payload.array() : null;
-	}
-
-	@Override
-	public String toString() {
-		return "SdcSchemaFilesData [sdcReleaseNum=" + sdcReleaseNum + ", timestamp=" + timestamp + ", conformanceLevel="
-				+ conformanceLevel + ", fileName=" + fileName + ", checksum=" + checksum + "]";
-	}
+    @Override
+    public String toString() {
+        return "SdcSchemaFilesData [sdcReleaseNum=" + sdcReleaseNum + ", timestamp=" + timestamp + ", conformanceLevel=" + conformanceLevel
+            + ", fileName=" + fileName + ", checksum=" + checksum + "]";
+    }
 }

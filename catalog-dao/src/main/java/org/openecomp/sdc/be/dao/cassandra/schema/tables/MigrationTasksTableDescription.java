@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,20 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
+import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MAJOR_VERSION;
+import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MINOR_VERSION;
+
 import com.datastax.driver.core.DataType;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-
-import java.util.*;
-
-import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MAJOR_VERSION;
-import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MINOR_VERSION;
 
 public class MigrationTasksTableDescription implements ITableDescription {
 
@@ -49,9 +51,8 @@ public class MigrationTasksTableDescription implements ITableDescription {
     @Override
     public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
         Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
-        Arrays.stream(SdcRepoFieldsDescription.values())
-                .filter(column -> !column.equals(MAJOR_VERSION) && !column.equals(MINOR_VERSION))
-                .forEach(column -> columns.put(column.getFieldName(), ImmutablePair.of(column.getFieldType(), column.isIndexed())));
+        Arrays.stream(SdcRepoFieldsDescription.values()).filter(column -> !column.equals(MAJOR_VERSION) && !column.equals(MINOR_VERSION))
+            .forEach(column -> columns.put(column.getFieldName(), ImmutablePair.of(column.getFieldType(), column.isIndexed())));
         return columns;
     }
 
