@@ -51,6 +51,11 @@ public class HomePage extends AbstractPageObject {
         this.topNavComponent = topNavComponent;
     }
 
+    public HomePage(final WebDriver webDriver) {
+        super(webDriver);
+        this.topNavComponent = new TopNavComponent(webDriver);
+    }
+
     @Override
     public void isLoaded() {
         new Actions(webDriver).pause(Duration.ofSeconds(2)).perform();
@@ -93,22 +98,26 @@ public class HomePage extends AbstractPageObject {
     }
 
     /**
+     * Clicks on the Import VFC button.
+     *
+     * @return the following resource create page
+     */
+    public ResourceCreatePage clickOnImportVfc(final String fullFileName) {
+        clickOnImport(By.xpath(XpathSelector.IMPORT_VFC_BTN.getXpath()), fullFileName);
+        return new ResourceCreatePage(webDriver);
+    }
+
+    private void clickOnImport(final By locator, final String fullFileName) {
+        hoverToImportArea().findElement(locator).sendKeys(fullFileName);
+    }
+
+    /**
      * Clicks on the add PNF button.
      *
      * @return the following resource create page
      */
     public ResourceCreatePage clickOnAddPnf() {
         clickOnAdd(By.xpath(XpathSelector.ADD_PNF_BTN.getXpath()));
-        return new ResourceCreatePage(webDriver);
-    }
-
-    /**
-     * Clicks on the Import VFC button.
-     *
-     * @return the following resource create page
-     */
-    public ResourceCreatePage clickOnImportVfc() {
-        clickOnImport(By.xpath(XpathSelector.IMPORT_VFC_BTN.getXpath()));
         return new ResourceCreatePage(webDriver);
     }
 
@@ -125,17 +134,12 @@ public class HomePage extends AbstractPageObject {
         throw new UnsupportedOperationException("Return not yet implemented for " + text);
     }
 
-
     private void clickOnAdd(final By locator) {
-        hoverToAddArea();
-        waitForElementVisibility(locator);
-        findElement(locator).click();
+        hoverToAddArea().findElement(locator).click();
     }
 
     private void clickOnImport(final By locator) {
-        hoverToImportArea();
-        waitForElementVisibility(locator);
-        findElement(locator).click();
+        hoverToImportArea().findElement(locator).click();
     }
 
     /**
@@ -143,7 +147,7 @@ public class HomePage extends AbstractPageObject {
      *
      * @return the add buttons area element
      */
-    public WebElement hoverToAddArea() {
+    private WebElement hoverToAddArea() {
         return hoverTo(By.xpath(XpathSelector.ADD_BUTTONS_AREA.getXpath()));
     }
 
@@ -152,10 +156,9 @@ public class HomePage extends AbstractPageObject {
      *
      * @return the Import buttons area element
      */
-    public WebElement hoverToImportArea() {
+    private WebElement hoverToImportArea() {
         return hoverTo(By.xpath(XpathSelector.IMPORT_BUTTONS_AREA.getXpath()));
     }
-
 
     private WebElement hoverTo(final By locator) {
         final WebElement addButtonsAreaElement = findElement(locator);

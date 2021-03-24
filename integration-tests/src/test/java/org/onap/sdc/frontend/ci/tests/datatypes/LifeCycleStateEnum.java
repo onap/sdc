@@ -20,6 +20,11 @@
 
 package org.onap.sdc.frontend.ci.tests.datatypes;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum LifeCycleStateEnum {
 
     CHECKOUT("IN DESIGN CHECK OUT"),
@@ -33,15 +38,6 @@ public enum LifeCycleStateEnum {
     DISTRIBUTED("DISTRIBUTED"),
     IN_DESIGN("IN DESIGN");
 
-    private String value;
-    private String value2;
-
-    public String getValue() {
-        return value;
-    }
-
-    LifeCycleStateEnum(String value) {
-        this.value = value;
-    }
+    private final String value;
 
 }
