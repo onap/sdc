@@ -45,6 +45,7 @@ public class ImportVspFlow extends AbstractUiTestFlow {
     public Optional<ResourceCreatePage> run(final PageObject... pageObjects) {
         final VspRepositoryModalComponent vspRepositoryModalComponent = openVspRepository();
         searchForVsp(vspRepositoryModalComponent);
+        extendTest.log(Status.INFO, String.format("Importing VSP '%s'", resourceName));
         resourceCreatePage = importVsp(vspRepositoryModalComponent);
         return Optional.of(resourceCreatePage);
     }

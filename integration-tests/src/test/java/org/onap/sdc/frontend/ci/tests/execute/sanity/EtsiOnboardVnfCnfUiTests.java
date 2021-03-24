@@ -24,18 +24,23 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 
-import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.onap.sdc.backend.ci.tests.data.providers.OnboardingDataProviders;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
+import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
+import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFromVspFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadToscaCsarFlow;
@@ -43,10 +48,11 @@ import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceLeftSideMenu;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent;
+import org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
@@ -60,6 +66,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
 
     private WebDriver webDriver;
     private TopNavComponent topNavComponent;
+    private HomePage homePage;
 
     @BeforeMethod
     public void init() {
@@ -69,8 +76,6 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
 
     @Test
     public void createVlm() {
-        final ExtentTest extendTest = getExtendTest();
-        extendTest.log(Status.INFO, String.format("Starting flow to create a VLM"));
         final CreateVlmFlow createVlmFlow = new CreateVlmFlow(webDriver);
         createVlmFlow.run();
     }
@@ -80,6 +85,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
         setLog(vnfFile);
         final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
         runOnboardEtsiVnfCnf(resourceName, rootFolder, vnfFile);
+        runDistribution(resourceName);
     }
 
     /**
@@ -89,38 +95,83 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      * @param rootFolder VNF/CNF package location
      * @param vnfCnfFile file to be onboarded
      */
-    public void runOnboardEtsiVnfCnf(final String resourceName, final String rootFolder, final String vnfCnfFile) {
-        final ExtentTest extendTest = getExtendTest();
-        extendTest.log(Status.INFO,
-            String.format("Creating VSP '%s' by onboarding ETSI VNF/CNF package '%s'", resourceName, vnfCnfFile));
+    private void runOnboardEtsiVnfCnf(final String resourceName, final String rootFolder, final String vnfCnfFile) {
         final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, vnfCnfFile, rootFolder);
         createVspFlow.run(topNavComponent);
-
-        extendTest.log(Status.INFO, String.format("Importing VSP '%s'", resourceName));
         final ImportVspFlow importVspFlow = new ImportVspFlow(webDriver, resourceName);
-
-        extendTest.log(Status.INFO, "Creating ResourceCreatePage");
-        final ResourceCreatePage resourceCreatePage = importVspFlow.run()
+        ResourceCreatePage resourceCreatePage = importVspFlow.run()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
-
-        extendTest.log(Status.INFO, String.format("Onboarding '%s' package", vnfCnfFile));
         final CreateResourceFromVspFlow createResourceFlow = new CreateResourceFromVspFlow(webDriver, resourceName);
-        createResourceFlow.run(resourceCreatePage);
-        extendTest.log(Status.INFO, String.format("Successfully onboarded the package '%s'", vnfCnfFile));
+        resourceCreatePage = createResourceFlow.run(resourceCreatePage)
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        resourceCreatePage.isLoaded();
+        resourceCreatePage.certifyComponent();
+        ExtentTestActions.takeScreenshot(Status.INFO, "resource-certified",
+            String.format("Resource '%s' was certified", resourceName));
+        downloadAndVerifyOnboardedPackage(loadComponentPage());
+    }
 
-        extendTest.log(Status.INFO, "Loading Component Page");
-        final ComponentPage componentPage = loadComponentPage();
-        extendTest.log(Status.INFO, "Downloading Tosca CSAR generated");
+    private void runDistribution(final String resourceName) {
+        final ServiceCreateData serviceCreateData = createServiceFormData();
+        final ServiceCreatePage serviceCreatePage = createService(goToHomePage(topNavComponent), serviceCreateData);
+        final ComponentData parentComponent = new ComponentData();
+        parentComponent.setName(serviceCreateData.getName());
+        parentComponent.setVersion("0.1");
+        parentComponent.setComponentType(ComponentType.SERVICE);
+        final ComponentData componentToAdd = new ComponentData();
+        componentToAdd.setName(resourceName);
+        componentToAdd.setVersion("1.0");
+        componentToAdd.setComponentType(ComponentType.RESOURCE);
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, parentComponent, componentToAdd);
+        ComponentPage componentPage = loadComponentPage();
+        final CompositionPage compositionPage = (CompositionPage) addNodeToCompositionFlow.run(componentPage.goToComposition())
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
+        compositionPage.isLoaded();
+	      ExtentTestActions.takeScreenshot(Status.INFO, "node-added-to-composition",
+		    String.format("Resource '%s' was added to composition", serviceCreateData.getName()));
+        componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        ExtentTestActions.takeScreenshot(Status.INFO, "service-certified",
+            String.format("Service '%s' was certified", serviceCreateData.getName()));
+
+        downloadAndVerifyOnboardedPackage(componentPage);
+    }
+
+    private void downloadAndVerifyOnboardedPackage(final ComponentPage componentPage) {
         final DownloadToscaCsarFlow downloadToscaCsarFlow = downloadToscaCsar(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadToscaCsarFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
-        extendTest.log(Status.INFO, "Tosca CSAR was successfully downloaded");
-
         final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
-        extendTest.log(Status.INFO, String
-            .format("Verifying if the onboarded package is included in the downloaded csar '%s'", downloadedCsarName));
         verifyOnboardedPackage(downloadedCsarName);
+    }
+
+    private ServiceCreatePage createService(final HomePage homePage, final ServiceCreateData serviceCreateData) {
+        final CreateServiceFlow createServiceFlow = new CreateServiceFlow(webDriver, serviceCreateData);
+        return createServiceFlow.run(homePage)
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+    }
+
+    private ServiceCreateData createServiceFormData() {
+        final ServiceCreateData serviceCreateData = new ServiceCreateData();
+        serviceCreateData.setRandomName(ElementFactory.addRandomSuffixToName(ElementFactory.getServicePrefix()));
+        serviceCreateData.setCategory(ServiceCategoriesEnum.E2E_SERVICE.getValue());
+        serviceCreateData.setDescription("aDescription");
+        return serviceCreateData;
+    }
+
+    /**
+     * Go to the system home page through the top nav menu.
+     *
+     * @param topNavComponent the top nav component
+     */
+    private HomePage goToHomePage(final TopNavComponent topNavComponent) {
+        topNavComponent.isLoaded();
+        homePage = topNavComponent.clickOnHome();
+        homePage.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "home-is-loaded", "The Home page is loaded.");
+        return homePage;
     }
 
     /**
@@ -129,14 +180,8 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      * @return ComponentPage
      */
     private ComponentPage loadComponentPage() {
-        final ResourceLeftSideMenu resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
-        resourceLeftSideMenu.isLoaded();
-        final ResourceWorkspaceTopBarComponent workspaceTopBarComponent = new ResourceWorkspaceTopBarComponent(
-            webDriver);
-        workspaceTopBarComponent.isLoaded();
-        final ComponentPage componentPage = Optional
-            .of(new ComponentPage(webDriver))
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ComponentPage"));
+        final ComponentPage componentPage = Optional.of(new ComponentPage(webDriver))
+        	.orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ComponentPage"));
         componentPage.isLoaded();
         return componentPage;
     }
@@ -173,10 +218,5 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
             LOGGER.info(errorMsg, e);
             fail(String.format("%s Error: %s", errorMsg, e.getMessage()));
         }
-    }
-
-    @Override
-    protected UserRoleEnum getRole() {
-        return UserRoleEnum.DESIGNER;
     }
 }

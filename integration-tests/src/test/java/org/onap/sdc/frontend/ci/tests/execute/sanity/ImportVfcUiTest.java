@@ -30,8 +30,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
+import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
@@ -42,6 +44,7 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
@@ -93,8 +96,12 @@ public class ImportVfcUiTest extends SetupCDTest {
         final CreateVfFlow createVfFlow = createVF();
 
         final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(createVfFlow);
-
-        createVfFlow.getLandedPage().get().clickOnCertify();
+        final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
+        compositionPage.isLoaded();
+        final ResourceCreatePage resourceCreatePage = compositionPage.goToGeneral();
+        resourceCreatePage.isLoaded();
+        resourceCreatePage.clickOnCertify();
         yamlObject = downloadToscaArtifact(createVfFlow.getLandedPage().get());
         checkMetadata(yamlObject, vfCreateData);
         checkTopologyTemplate(yamlObject);
@@ -102,8 +109,18 @@ public class ImportVfcUiTest extends SetupCDTest {
     }
 
     private AddNodeToCompositionFlow addNodeToCompositionFlow(final CreateVfFlow createVfFlow) {
-        final AddNodeToCompositionFlow addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, vfCreateData, vfcCreateData);
-        addNodeToCompositionFlow.run(createVfFlow.getLandedPage().get());
+        final ComponentData parentComponent = new ComponentData();
+        parentComponent.setName(vfCreateData.getName());
+        parentComponent.setVersion("0.1");
+        parentComponent.setComponentType(ComponentType.RESOURCE);
+        final ComponentData componentToAdd = new ComponentData();
+        componentToAdd.setName(vfcCreateData.getName());
+        componentToAdd.setVersion("1.0");
+        componentToAdd.setComponentType(ComponentType.RESOURCE);
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, parentComponent, componentToAdd);
+        final ResourceCreatePage resourceCreatePage = createVfFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ResourceCreatePage"));
+        addNodeToCompositionFlow.run(resourceCreatePage.goToComposition());
         return addNodeToCompositionFlow;
     }
 

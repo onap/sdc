@@ -37,7 +37,7 @@ import org.openqa.selenium.support.ui.Select;
 /**
  * Represents the Service Create Page
  */
-public class ServiceCreatePage extends AbstractPageObject {
+public class ServiceCreatePage extends ComponentPage {
 
     private final LoaderHelper loaderHelper;
     private final NotificationComponent notificationComponent;
