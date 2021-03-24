@@ -22,7 +22,6 @@ package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent;
-import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
@@ -80,6 +79,7 @@ public class CompositionPage extends AbstractPageObject {
         topNavComponent.clickOnBreadCrumb(1);
         return new ResourceCreatePage(webDriver);
     }
+
 
     /**
      * Get the composition page detail sidebar component

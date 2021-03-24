@@ -20,13 +20,11 @@
 package org.onap.sdc.frontend.ci.tests.flow;
 
 import com.aventstack.extentreports.Status;
-import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
+import java.util.Optional;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
+import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.openqa.selenium.WebDriver;
-
-import java.util.Optional;
 
 /**
  * UI Flow for Resource creation

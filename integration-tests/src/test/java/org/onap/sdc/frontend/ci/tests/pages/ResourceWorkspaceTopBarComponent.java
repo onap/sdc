@@ -20,6 +20,8 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -33,6 +35,8 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceWorkspaceTopBarComponent.class);
 
+    private final NotificationComponent notificationComponent;
+
     private WebElement wrappingElement;
     private WebElement lifecycleStateDiv;
     private WebElement versionContainerDiv;
@@ -40,6 +44,7 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
 
     public ResourceWorkspaceTopBarComponent(final WebDriver webDriver) {
         super(webDriver);
+        notificationComponent = new NotificationComponent(webDriver);
     }
 
     @Override
@@ -57,6 +62,15 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
 
     public void clickOnCertify() {
         waitToBeClickable(XpathSelector.CERTIFY_BTN.getXpath()).click();
+    }
+
+    public void certifyComponent() {
+        clickOnCertify();
+        final ComponentCertificationModal componentCertificationModal = new ComponentCertificationModal(webDriver);
+        componentCertificationModal.isLoaded();
+        componentCertificationModal.fillCommentWithDefaultMessage();
+        componentCertificationModal.submit();
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
     }
 
     public String getLifecycleState() {

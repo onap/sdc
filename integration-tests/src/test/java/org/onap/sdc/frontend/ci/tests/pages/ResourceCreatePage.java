@@ -19,20 +19,12 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.startsWithIgnoringCase;
-import static org.hamcrest.core.Is.is;
-
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
-import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
-import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
@@ -66,10 +58,10 @@ public class ResourceCreatePage extends ComponentPage {
 
     @Override
     public void isLoaded() {
-        topBarComponent.isLoaded();
-        final String lifeCycleState = topBarComponent.getLifecycleState();
-        assertThat("Life cycle state should be as expected",
-            lifeCycleState, is(startsWithIgnoringCase(LifeCycleStateEnum.IN_DESIGN.getValue())));
+        super.isLoaded();
+        waitForElementVisibility(By.xpath(XpathSelector.NAME_INPUT.getXpath()));
+        waitForElementVisibility(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath()));
+        waitForElementVisibility(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()));
     }
 
     /**
@@ -82,12 +74,15 @@ public class ResourceCreatePage extends ComponentPage {
     }
 
     /**
-     * Certify the resource and wait for success notification.
+     * Certifies the resource and wait for success notification.
      */
     public void clickOnCertify() {
         topBarComponent.clickOnCertify();
-        findElement(By.xpath(XpathSelector.APPROVE_MESSAGE.getXpath())).sendKeys("Resource certified successfully");
-        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.OK.getValue()).click();
+        final ComponentCertificationModal componentCertificationModal = new ComponentCertificationModal(webDriver);
+        componentCertificationModal.isLoaded();
+        componentCertificationModal.fillCommentWithDefaultMessage();
+        componentCertificationModal.submit();
+        loaderHelper.waitForLoader(20);
         notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
     }
 

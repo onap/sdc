@@ -49,4 +49,9 @@ public class ComponentPage extends AbstractPageObject {
     public CompositionPage goToComposition() {
         return resourceLeftSideMenu.clickOnCompositionMenuItem();
     }
+
+    public void certifyComponent() {
+        workspaceTopBarComponent.certifyComponent();
+    }
+
 }

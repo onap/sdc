@@ -115,7 +115,7 @@ public final class OnboardingDataProviders {
         return parametersArray;
     }
 
-    @DataProvider(name = "etsiVnfCnfOnboardPackages", parallel = true)
+    @DataProvider(name = "etsiVnfCnfOnboardPackages")
     private static Object[][] etsiVnf() {
         final List<String> vnfPackageFileNameList = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.ETSI);
         if (CollectionUtils.isEmpty(vnfPackageFileNameList)) {
