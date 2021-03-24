@@ -5,6 +5,113 @@
 Release Notes
 =============
 
+Version: 1.8.4
+==============
+
+:Release Date: 2021-04-08
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.2
+
+-  sdc-tosca
+
+   :Version: 1.6.5
+
+Release Purpose
+----------------
+SDC Honolulu Release
+
+**Epics**
+
+*  `SDC-3338 <https://jira.onap.org/browse/SDC-3338>`_ - Design ETSI SOL007 compliant Network Service Descriptor packages
+*  `SDC-3279 <https://jira.onap.org/browse/SDC-3279>`_ - SDC Enhancements for ETSI-Alignment for Honolulu
+*  `SDC-2813 <https://jira.onap.org/browse/SDC-2813>`_ - Support additional package artifact Indicators for ETSI packages and Non-ETSI packages
+*  `SDC-2613 <https://jira.onap.org/browse/SDC-2613>`_ - SDC supports ETSI 3.3.1 Package security and validation for SOL007 and SOL004 packages
+*  `SDC-2610 <https://jira.onap.org/browse/SDC-2610>`_ - Support Onboard ETSI 3.3.1 SOL004 compliant VNF / CNF packages
+
+**Stories**
+
+*  `SDC-3491 <https://jira.onap.org/browse/SDC-3491>`_ - Integration Tests - ETSI NSD Design
+*  `SDC-3484 <https://jira.onap.org/browse/SDC-3484>`_ - Increase SDC unit test coverage
+*  `SDC-3471 <https://jira.onap.org/browse/SDC-3471>`_ - Creation of Vendor Licensing Model is an optional step in VSP onboarding
+*  `SDC-3470 <https://jira.onap.org/browse/SDC-3470>`_ - Update node and data types in ONAP for ETSI SOL001 3.3.1 + minimum CNF enhancements
+*  `SDC-3466 <https://jira.onap.org/browse/SDC-3466>`_ - Improve import and export VFC TOSCA attributes
+*  `SDC-3447 <https://jira.onap.org/browse/SDC-3447>`_ - Handle ETSI versions in NSD Plugin
+*  `SDC-3446 <https://jira.onap.org/browse/SDC-3446>`_ - Support for updating interface operations in component instances
+*  `SDC-3435 <https://jira.onap.org/browse/SDC-3435>`_ - Initial support for relationship_templates
+*  `SDC-3432 <https://jira.onap.org/browse/SDC-3432>`_ - Enable updating of existing categories
+*  `SDC-3417 <https://jira.onap.org/browse/SDC-3417>`_ - SDC Distribution Client - enable test pipeline and add artifact consumption tests
+*  `SDC-3412 <https://jira.onap.org/browse/SDC-3412>`_ - Support for category specific metadata
+*  `SDC-3404 <https://jira.onap.org/browse/SDC-3404>`_ - Set directives and node_filters in any node type
+*  `SDC-3402 <https://jira.onap.org/browse/SDC-3402>`_ - Adapt SDC-BE to support new SDC Distribution Client notifications format
+*  `SDC-3401 <https://jira.onap.org/browse/SDC-3401>`_ - Adapt SDC FE Distribution Status to support new notifications format
+*  `SDC-3400 <https://jira.onap.org/browse/SDC-3400>`_ - SDC Distribution Client - Migrate to Java 11
+*  `SDC-3399 <https://jira.onap.org/browse/SDC-3399>`_ - Support for metadata in topology inputs
+*  `SDC-3380 <https://jira.onap.org/browse/SDC-3380>`_ - Support the SOL001 vnf_profile properties
+*  `SDC-3373 <https://jira.onap.org/browse/SDC-3373>`_ - Allow to set directives and node_filters in any node type
+*  `SDC-3372 <https://jira.onap.org/browse/SDC-3372>`_ - Support for interface input during import VFC
+*  `SDC-3352 <https://jira.onap.org/browse/SDC-3352>`_ - Support for mapping of ETSI v3.3.1 SOL001 VNF Descriptor with minimum CNF enhancements from 4.1.1 into SDC AID Data Model
+*  `SDC-3351 <https://jira.onap.org/browse/SDC-3351>`_ - Support for onboarding ETSI v3.3.1 SOL001 VNF Descriptors with minimum CNF enhancements from 4.1.1
+*  `SDC-3342 <https://jira.onap.org/browse/SDC-3342>`_ - Support for mapping of ETSI v3.3.1 SOL001 Network Service Descriptor in the SOL007 package into SDC AID Data Model
+*  `SDC-3341 <https://jira.onap.org/browse/SDC-3341>`_ - Support for using VNFs with CNF enhancements
+*  `SDC-3340 <https://jira.onap.org/browse/SDC-3340>`_ - Compose of one or more VNFs and the Virtual Links that connect them
+*  `SDC-3339 <https://jira.onap.org/browse/SDC-3339>`_ - Support for designing an ETSI SOL001 v3.3.1 compliant Network Service that can be deployed with an ETSI compliant NFVO
+*  `SDC-3337 <https://jira.onap.org/browse/SDC-3337>`_ - Support for onboarding ETSI v3.3.1 SOL004 VNF CSAR Packages with minimum CNF enhancements from 4.1.1
+*  `SDC-3335 <https://jira.onap.org/browse/SDC-3335>`_ - Fix Node Filter for capabilities
+*  `SDC-3303 <https://jira.onap.org/browse/SDC-3303>`_ - Allow hot reloading of specific config properties
+*  `SDC-3103 <https://jira.onap.org/browse/SDC-3103>`_ - Change creation of VLM to be optional
+*  `SDC-2815 <https://jira.onap.org/browse/SDC-2815>`_ - SDC client supports additional filtering on the artifact types for distinguishing between ETSI packages and Non-ETSI packages
+*  `SDC-2814 <https://jira.onap.org/browse/SDC-2814>`_ - SDC Notification supports additional package artifact types to split ETSI package from other non-ETSI TOSCA packages
+*  `SDC-2614 <https://jira.onap.org/browse/SDC-2614>`_ - SDC supports SOL007 NS Package security
+*  `SDC-2611 <https://jira.onap.org/browse/SDC-2611>`_ - Support for onboarding ETSI v3.3.1 SOL001 VNF Descriptors
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA HONOLULU TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22Honolulu%20Release%22>`_
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA HONOLULU BUGS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22Honolulu%20Release%22>`_
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+-  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
+
+*Known Security Issues*
+
+-  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.7.3
 ==============
 
