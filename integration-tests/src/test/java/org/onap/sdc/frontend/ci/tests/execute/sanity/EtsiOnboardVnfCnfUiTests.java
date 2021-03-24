@@ -135,7 +135,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
             webDriver);
         workspaceTopBarComponent.isLoaded();
         final ComponentPage componentPage = Optional
-            .of(new ComponentPage(webDriver, topNavComponent, resourceLeftSideMenu, workspaceTopBarComponent))
+            .of(new ComponentPage(webDriver))
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ComponentPage"));
         componentPage.isLoaded();
         return componentPage;

@@ -21,33 +21,46 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.startsWithIgnoringCase;
 import static org.hamcrest.core.Is.is;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
+import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles the Resource Create Page UI actions
  */
-public class ResourceCreatePage extends AbstractPageObject {
+public class ResourceCreatePage extends ComponentPage {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCreatePage.class);
     private final LoaderHelper loaderHelper;
     private final NotificationComponent notificationComponent;
     private final ResourceWorkspaceTopBarComponent topBarComponent;
+    private final ResourceLeftSideMenu resourceLeftSideMenu;
 
     public ResourceCreatePage(final WebDriver webDriver) {
         super(webDriver);
-        loaderHelper = new LoaderHelper(webDriver);
-        notificationComponent = new NotificationComponent(webDriver);
-        topBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
+        this.loaderHelper = new LoaderHelper(webDriver);
+        this.notificationComponent = new NotificationComponent(webDriver);
+        this.resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
+        this.topBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
         timeoutInSeconds = 5;
     }
 
@@ -56,7 +69,7 @@ public class ResourceCreatePage extends AbstractPageObject {
         topBarComponent.isLoaded();
         final String lifeCycleState = topBarComponent.getLifecycleState();
         assertThat("Life cycle state should be as expected",
-            lifeCycleState, is(equalToIgnoringCase(LifeCycleStateEnum.IN_DESIGN.getValue())));
+            lifeCycleState, is(startsWithIgnoringCase(LifeCycleStateEnum.IN_DESIGN.getValue())));
     }
 
     /**
@@ -68,9 +81,30 @@ public class ResourceCreatePage extends AbstractPageObject {
         notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
     }
 
+    /**
+     * Certify the resource and wait for success notification.
+     */
+    public void clickOnCertify() {
+        topBarComponent.clickOnCertify();
+        findElement(By.xpath(XpathSelector.APPROVE_MESSAGE.getXpath())).sendKeys("Resource certified successfully");
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.OK.getValue()).click();
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
+    }
+
+    public ToscaArtifactsPage goToToscaArtifacts() {
+        resourceLeftSideMenu.isLoaded();
+        return resourceLeftSideMenu.clickOnToscaArtifactsMenuItem();
+    }
+
+    public CompositionPage goToComposition() {
+        resourceLeftSideMenu.isLoaded();
+        return resourceLeftSideMenu.clickOnCompositionMenuItem();
+    }
+
     public void fillForm(final ResourceCreateData resourceCreateData) {
         fillName(resourceCreateData.getName());
         setCategory(resourceCreateData.getCategory());
+        defineTags(resourceCreateData.getTagList());
         fillDescription(resourceCreateData.getDescription());
         fillContactId(resourceCreateData.getContactId());
         fillVendorName(resourceCreateData.getVendorName());
@@ -78,31 +112,40 @@ public class ResourceCreatePage extends AbstractPageObject {
         fillVendorModelNumber(resourceCreateData.getVendorModelNumber());
     }
 
-    public void fillName(final String name) {
+    private void fillName(final String name) {
         setInputField(By.xpath(XpathSelector.NAME_INPUT.getXpath()), name);
     }
 
-    public void setCategory(final String category) {
+    private void setCategory(final String category) {
         setSelectField(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath()), category);
     }
 
-    public void fillDescription(final String description) {
+    private void defineTags(final List<String> tagList) {
+        final WebElement tagsTextbox = findElement(By.xpath(XpathSelector.TAGS.getXpath()));
+        for (final String tag : tagList) {
+            tagsTextbox.clear();
+            tagsTextbox.sendKeys(tag);
+            tagsTextbox.sendKeys(Keys.ENTER);
+        }
+    }
+
+    private void fillDescription(final String description) {
         setTextAreaField(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()), description);
     }
 
-    public void fillContactId(final String contactId) {
+    private void fillContactId(final String contactId) {
         setInputField(By.xpath(XpathSelector.CONTACT_ID_INPUT.getXpath()), contactId);
     }
 
-    public void fillVendorName(final String vendorName) {
+    private void fillVendorName(final String vendorName) {
         setInputField(By.xpath(XpathSelector.VENDOR_NAME_INPUT.getXpath()), vendorName);
     }
 
-    public void fillVendorRelease(final String vendorRelease) {
+    private void fillVendorRelease(final String vendorRelease) {
         setInputField(By.xpath(XpathSelector.VENDOR_RELEASE_INPUT.getXpath()), vendorRelease);
     }
 
-    public void fillVendorModelNumber(final String vendorModelNumber) {
+    private void fillVendorModelNumber(final String vendorModelNumber) {
         setInputField(By.xpath(XpathSelector.VENDOR_MODEL_NUMBER_INPUT.getXpath()), vendorModelNumber);
     }
 
@@ -131,10 +174,12 @@ public class ResourceCreatePage extends AbstractPageObject {
     private enum XpathSelector {
         NAME_INPUT("name", "//input[@data-tests-id='%s']"),
         CATEGORY_SELECT("selectGeneralCategory", "//select[@data-tests-id='%s']"),
+        TAGS("i-sdc-tag-input", "//input[@data-tests-id='%s']"),
         DESCRIPTION_TEXT_AREA("description", "//textarea[@data-tests-id='%s']"),
         CONTACT_ID_INPUT("contactId", "//input[@data-tests-id='%s']"),
         VENDOR_NAME_INPUT("vendorName", "//input[@data-tests-id='%s']"),
         VENDOR_RELEASE_INPUT("vendorRelease", "//input[@data-tests-id='%s']"),
+        APPROVE_MESSAGE("checkindialog", "//textarea[@data-tests-id='%s']"),
         VENDOR_MODEL_NUMBER_INPUT("resourceVendorModelNumber", "//input[@data-tests-id='%s']");
 
         @Getter

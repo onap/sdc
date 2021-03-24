@@ -20,13 +20,12 @@
 
 package org.onap.sdc.frontend.ci.tests.datatypes;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.onap.sdc.frontend.ci.tests.pages.TopSearchComponent;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.pages.TopSearchComponent;
 
 public final class DataTestIdEnum {
 
@@ -42,7 +41,7 @@ public final class DataTestIdEnum {
         BUTTON_ADD_SERVICE("createServiceButton"),
         IMPORT_VFC("importVFCbutton"),
         IMPORT_VF("importVFbutton"),
-        IMPORT_VFC_FILE("file-importVFCbutton"),
+        IMPORT_VFC_FILE("fileimportVFCbutton"),
         IMPORT_VF_FILE("file-importVFbutton"),
         BUTTON_ADD_PRODUCT("createProductButton"),
         BUTTON_ADD_PNF("createPNFButton"),

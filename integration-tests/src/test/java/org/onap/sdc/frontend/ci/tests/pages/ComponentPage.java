@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.frontend.ci.tests.pages;
 
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
@@ -28,13 +27,11 @@ public class ComponentPage extends AbstractPageObject {
     private final ResourceLeftSideMenu resourceLeftSideMenu;
     private final ResourceWorkspaceTopBarComponent workspaceTopBarComponent;
 
-    public ComponentPage(final WebDriver webDriver, final TopNavComponent topNavComponent,
-                         final ResourceLeftSideMenu resourceLeftSideMenu,
-                         final ResourceWorkspaceTopBarComponent workspaceTopBarComponent) {
+    public ComponentPage(final WebDriver webDriver) {
         super(webDriver);
-        this.topNavComponent = topNavComponent;
-        this.resourceLeftSideMenu = resourceLeftSideMenu;
-        this.workspaceTopBarComponent = workspaceTopBarComponent;
+        this.topNavComponent = new TopNavComponent(webDriver);
+        this.resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
+        this.workspaceTopBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
     }
 
     @Override
@@ -47,5 +44,4 @@ public class ComponentPage extends AbstractPageObject {
     public ToscaArtifactsPage goToToscaArtifacts() {
         return resourceLeftSideMenu.clickOnToscaArtifactsMenuItem();
     }
-
 }
