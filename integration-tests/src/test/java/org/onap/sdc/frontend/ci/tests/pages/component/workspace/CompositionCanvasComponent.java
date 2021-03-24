@@ -19,6 +19,8 @@
 
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
+import static org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum.DESIGNER;
+
 import com.aventstack.extentreports.Status;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -31,7 +33,6 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasNodeElement;
 import org.onap.sdc.frontend.ci.tests.exception.CompositionCanvasRuntimeException;
@@ -151,13 +152,31 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
         try {
             final Service service =
-                AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceName, serviceVersion);
+                AtomicOperationUtils.getServiceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
             final Resource resourceToAdd =
-                AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceName, resourceVersion);
+                AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
             final ComponentInstance componentInstance = AtomicOperationUtils
-                .addComponentInstanceToComponentContainer(resourceToAdd, service, UserRoleEnum.DESIGNER, true,
+                .addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
                     String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY()))
                 .left().value();
+
+            LOGGER.debug("Created instance {} in the Service {}", componentInstance.getName(), serviceName);
+            return componentInstance;
+        } catch (final Exception e) {
+            throw new CompositionCanvasRuntimeException("Could not create node through the API", e);
+        }
+    }
+
+    public ComponentInstance createNodeOnResourceCanvas(final String serviceName, final String serviceVersion, final String resourceName,
+                                                        final String resourceVersion) {
+        final Point freePositionInCanvas = getFreePositionInCanvas(20);
+        final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
+        try {
+            final Resource service = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
+            final Resource resourceToAdd = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
+            final ComponentInstance componentInstance =
+                AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
+                    String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY())).left().value();
 
             LOGGER.debug("Created instance {} in the Service {}", componentInstance.getName(), serviceName);
             return componentInstance;

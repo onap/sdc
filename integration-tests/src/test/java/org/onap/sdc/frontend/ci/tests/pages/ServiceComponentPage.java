@@ -23,7 +23,7 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.openqa.selenium.WebDriver;
 
-public class ServiceComponentPage extends AbstractPageObject {
+public class ServiceComponentPage extends ComponentPage {
 
     private final TopNavComponent topNavComponent;
     private final ResourceLeftSideMenu resourceLeftSideMenu;
