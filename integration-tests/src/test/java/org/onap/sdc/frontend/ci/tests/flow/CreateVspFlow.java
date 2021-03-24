@@ -53,6 +53,8 @@ public class CreateVspFlow extends AbstractUiTestFlow {
 
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
+        extendTest.log(Status.INFO,
+            String.format("Creating VSP '%s' by onboarding ETSI VNF/CNF package '%s'", resourceName, packageFile));
         final TopNavComponent topNavComponent = findParameter(pageObjects, TopNavComponent.class);
         extendTest.log(Status.INFO, "Accessing the Onboard Home Page");
         topNavComponent.isLoaded();

@@ -24,7 +24,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
-import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -129,12 +128,12 @@ public class TopNavComponent extends AbstractPageObject {
      * @return the hovered breadcrumb arrow element
      */
     public WebElement hoverToBreadcrumbArrow(final int arrowPosition) {
-        final Actions actions = new Actions(GeneralUIUtils.getDriver());
+        final Actions actions = new Actions(webDriver);
         final List<WebElement> arrowElementList = getWait()
             .until(
                 ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(XpathSelector.ARROW_DROPDOWN.getXpath())));
         final WebElement selectedArrowElement = arrowElementList.get(arrowPosition);
-        actions.moveToElement(selectedArrowElement).perform();
+        actions.moveByOffset(20, 20).moveToElement(selectedArrowElement).perform();
         return selectedArrowElement;
     }
 

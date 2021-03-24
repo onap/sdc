@@ -48,7 +48,9 @@ public class DownloadToscaCsarFlow extends AbstractUiTestFlow {
 
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
+        extendTest.log(Status.INFO, "Downloading Tosca CSAR generated");
         final ComponentPage componentPage = findParameter(pageObjects, ComponentPage.class);
+        componentPage.isLoaded();
         toscaArtifactsPage = componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
         toscaArtifactsPage.clickOnDownload("Tosca Model");
@@ -57,8 +59,8 @@ public class DownloadToscaCsarFlow extends AbstractUiTestFlow {
         assertThat("The downloaded CSAR should exist", downloadedCsar, is(notNullValue()));
         assertThat("The downloaded CSAR should exist", downloadedCsar.exists(), is(true));
         toscaArtifactsPage.addToDownloadedArtifactList(downloadedCsar.getName());
+        extendTest.log(Status.INFO, "Tosca CSAR was successfully downloaded");
         ExtentTestActions.takeScreenshot(Status.INFO, "tosca-csar-downloaded", "TOSCA CSAR Downloaded");
-
         return Optional.of(toscaArtifactsPage);
     }
 

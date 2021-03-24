@@ -44,6 +44,7 @@ public class CreateVlmFlow extends AbstractUiTestFlow {
 
     @Override
     public Optional<? extends PageObject> run(PageObject... pageObjects) {
+        extendTest.log(Status.INFO, String.format("Starting flow to create a VLM"));
         final TopNavComponent topNavComponent = getParameter(pageObjects, TopNavComponent.class)
             .orElse(new TopNavComponent(webDriver));
         extendTest.log(Status.INFO, "Accessing the Onboard Home Page to create a VLM");
