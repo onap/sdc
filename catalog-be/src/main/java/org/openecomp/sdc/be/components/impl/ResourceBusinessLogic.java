@@ -1870,7 +1870,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                  String nodeName) {
         try {
             for (Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
-                if (nodeTypeEntry.getValue().isNested()) {
+                if (nodeTypeEntry.getValue().isNested() && !nodeTypeAlreadyExists(nodeTypeEntry.getKey())) {
                     handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
                         nodeTypeEntry.getKey());
                     log.trace("************* finished to create node {}", nodeTypeEntry.getKey());
@@ -1896,6 +1896,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         }
+    }
+    
+    private boolean nodeTypeAlreadyExists(final String toscaResourceName) {
+        return toscaOperationFacade.getLatestByToscaResourceName(toscaResourceName).isLeft();
     }
 
     private Either<Resource, ResponseFormat> handleVfCsarArtifacts(Resource resource, CsarInfo csarInfo, List<ArtifactDefinition> createdArtifacts,
