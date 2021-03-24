@@ -27,17 +27,21 @@ import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.time.Duration;
 import java.util.Optional;
+import lombok.Setter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
+import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
-import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.FluentWait;
 
 public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
 
     private ToscaArtifactsPage toscaArtifactsPage;
+    @Setter
+    private long waitBeforeGetTheFile = 0L;
 
     public DownloadCsarArtifactFlow(final WebDriver webDriver) {
         super(webDriver);
@@ -45,11 +49,11 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
 
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
-        final ServiceComponentPage serviceComponentPage = findParameter(pageObjects, ServiceComponentPage.class);
-        toscaArtifactsPage = serviceComponentPage.goToToscaArtifacts();
+        final ComponentPage componentPage = findParameter(pageObjects, ComponentPage.class);
+        toscaArtifactsPage = (ToscaArtifactsPage) componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
-        toscaArtifactsPage.clickOnDownload("Tosca Model");
 
+        toscaArtifactsPage.clickOnDownload("Tosca Model");
         final File downloadedCsar = waitAndGetDowloadedCsar();
         assertThat("The downloaded CSAR should exist", downloadedCsar, is(notNullValue()));
         assertThat("The downloaded CSAR should exist", downloadedCsar.exists(), is(true));
@@ -65,8 +69,8 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
     }
 
     private File waitAndGetDowloadedCsar() {
-        final FluentWait<String> fluentWait = new FluentWait<>("")
-            .withTimeout(Duration.ofSeconds(5)).pollingEvery(Duration.ofSeconds(1));
+        new Actions(webDriver).pause(Duration.ofSeconds(waitBeforeGetTheFile)).perform();
+        final FluentWait<String> fluentWait = new FluentWait<>("").withTimeout(Duration.ofSeconds(5)).pollingEvery(Duration.ofSeconds(1));
         fluentWait.until(s -> FileHandling.getLastModifiedFileNameFromDir() != null);
         return FileHandling.getLastModifiedFileNameFromDir();
     }

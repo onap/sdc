@@ -32,7 +32,7 @@ public class LoaderHelper extends AbstractPageObject {
     }
 
     public void waitForLoader(final int timeout) {
-        waitForElementVisibility(loaderLocator, 5);
+        waitForElementVisibility(loaderLocator, timeout);
         waitForElementInvisibility(loaderLocator, timeout);
     }
 

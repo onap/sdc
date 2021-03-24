@@ -3,18 +3,17 @@ url: http://sdc-sim:8080/sdc1
 remoteTestingMachineIP: 127.0.0.1
 remoteTestingMachinePort: 4444
 remoteTesting: true
-useBrowserMobProxy: false
-captureTraffic: false
 downloadAutomationFolder: /tmp/sdc-integration-tests/downloadAutomation
-uiSimulator: true
 
 #### Local Front end testing
 #url: http://localhost:8285/sdc1
 #remoteTesting: false
-#useBrowserMobProxy: false
-#captureTraffic: false
 #downloadAutomationFolder: /tmp/sdc-integration-tests/downloadAutomation
-#uiSimulator: true
+
+#####################
+useBrowserMobProxy: false
+captureTraffic: false
+uiSimulator: true
 
 #### Backend Testing
 outputFolder: target

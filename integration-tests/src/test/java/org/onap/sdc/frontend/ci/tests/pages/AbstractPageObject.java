@@ -16,16 +16,14 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.List;
 
 /**
  * Base UI test object that represents a page or component in a html page
@@ -90,7 +88,7 @@ public abstract class AbstractPageObject implements PageObject {
      * Find an element inside the provided element using the provided xpath.
      *
      * @param element the parent element
-     * @param xpath the xpath expression to search for the internal element
+     * @param xpath   the xpath expression to search for the internal element
      * @return the WebElement if found, otherwise throws an exception
      */
     protected WebElement findSubElement(final WebElement element, final String xpath) {
@@ -143,7 +141,7 @@ public abstract class AbstractPageObject implements PageObject {
     /**
      * Waits for element visibility with the provided timeout.
      *
-     * @param locator the By locator to search for the element
+     * @param locator          the By locator to search for the element
      * @param timeoutInSeconds the wait timeout in seconds
      * @return the WebElement if visible before timeout, otherwise throws an exception
      */
@@ -166,7 +164,7 @@ public abstract class AbstractPageObject implements PageObject {
     /**
      * Waits for element invisibility with the provided timeout.
      *
-     * @param locator the By locator to search for the element
+     * @param locator          the By locator to search for the element
      * @param timeoutInSeconds the wait timeout in seconds
      * @return the WebElement if invisible before timeout, false otherwise
      */
@@ -177,6 +175,7 @@ public abstract class AbstractPageObject implements PageObject {
 
     /**
      * Waits elements to be clickable with the default timeout.
+     *
      * @param xpath the xpath to find the element(s)
      * @return the WebElement if clickable before timeout, otherwise throws an exception
      */
@@ -186,6 +185,7 @@ public abstract class AbstractPageObject implements PageObject {
 
     /**
      * Waits elements to be clickable with the default timeout.
+     *
      * @param locator the By locator to search for the element(s)
      * @return the WebElement if clickable before timeout, otherwise throws an exception
      */

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.frontend.ci.tests.pages;
 
 import lombok.AllArgsConstructor;
@@ -56,6 +55,10 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
         waitToBeClickable(XpathSelector.CREATE_BTN.getXpath()).click();
     }
 
+    public void clickOnCertify() {
+        waitToBeClickable(XpathSelector.CERTIFY_BTN.getXpath()).click();
+    }
+
     public String getLifecycleState() {
         return lifecycleStateDiv.findElement(By.xpath(XpathSelector.FORM_LIFE_CYCLE_STATE.getXpath())).getText();
     }
@@ -70,6 +73,7 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
         VERSION_CONTAINER_DIV("version-container", "//div[@class='%s']"),
         ACTION_BUTTON_DIV("sdc-workspace-top-bar-buttons", "//div[@class='%s']"),
         CREATE_BTN("create/save", "//button[@data-tests-id='%s']"),
+        CERTIFY_BTN("certify", "//button[@data-tests-id='%s']"),
         FORM_LIFE_CYCLE_STATE("formlifecyclestate", "//span[@data-tests-id='%s']");
 
         @Getter
