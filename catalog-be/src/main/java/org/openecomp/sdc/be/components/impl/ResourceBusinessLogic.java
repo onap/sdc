@@ -2224,8 +2224,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 								 CsarInfo csarInfo, String nodeName) {
 		try {
 			for (Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
-				if (nodeTypeEntry.getValue()
-						.isNested()) {
+				if (nodeTypeEntry.getValue().isNested() && !nodeTypeAlreadyExists(nodeTypeEntry.getKey())) {
 
 					handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo,
 							csarInfo, nodeTypeEntry.getKey());
@@ -2255,6 +2254,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					AuditingActionEnum.IMPORT_RESOURCE);
 			throw e;
 		}
+	}
+	
+	private boolean nodeTypeAlreadyExists(final String toscaResourceName) {
+		return toscaOperationFacade.getLatestByToscaResourceName(toscaResourceName).isLeft();
 	}
 
 	private Either<Resource, ResponseFormat> handleVfCsarArtifacts(Resource resource, CsarInfo csarInfo,
