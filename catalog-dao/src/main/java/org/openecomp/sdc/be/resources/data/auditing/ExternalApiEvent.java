@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -25,6 +24,10 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
@@ -33,72 +36,50 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.UUID;
-
 /**
  * This class Represents the Audit for External API
- *
  */
 @Getter
 @Setter
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE)
 public class ExternalApiEvent extends AuditingGenericEvent {
+
     @PartitionKey
     protected UUID timebaseduuid;
-
     @ClusteringColumn()
     protected Date timestamp1;
-
     @Column
     protected String action;
     @Column
     protected String status;
-
     @Column(name = "description")
     protected String desc;
-
-    @Column(name = "consumer_id")
-    private String consumerId;
-
-    @Column(name = "resource_url")
-    private String resourceURL;
-
-    @Column(name = "resource_name")
-    private String resourceName;
-
-    @Column(name = "resource_type")
-    private String resourceType;
-
     @Column(name = "service_instance_id")
     protected String serviceInstanceId;
-
     @Column(name = "invariant_uuid")
     protected String invariantUuid;
-
-    @Column(name = "modifier")
-    private String modifier;
-
     @Column(name = "prev_version")
     protected String prevVersion;
-
-    @Column(name = "curr_version")
-    private String currVersion;
-
     @Column(name = "prev_state")
     protected String prevState;
-
     @Column(name = "curr_state")
     protected String currState;
-
+    @Column(name = "consumer_id")
+    private String consumerId;
+    @Column(name = "resource_url")
+    private String resourceURL;
+    @Column(name = "resource_name")
+    private String resourceName;
+    @Column(name = "resource_type")
+    private String resourceType;
+    @Column(name = "modifier")
+    private String modifier;
+    @Column(name = "curr_version")
+    private String currVersion;
     @Column(name = "prev_artifact_uuid")
     private String prevArtifactUuid;
-
     @Column(name = "curr_artifact_uuid")
     private String currArtifactUuid;
-
     @Column(name = "artifact_data")
     private String artifactData;
 
@@ -108,9 +89,9 @@ public class ExternalApiEvent extends AuditingGenericEvent {
         timebaseduuid = UUIDs.timeBased();
     }
 
-    public ExternalApiEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
-                            DistributionData distributionData, ResourceVersionInfo prevParams, ResourceVersionInfo currParams,
-                            String modifier, String invariantUuid, String artifactData) {
+    public ExternalApiEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo, DistributionData distributionData,
+                            ResourceVersionInfo prevParams, ResourceVersionInfo currParams, String modifier, String invariantUuid,
+                            String artifactData) {
         this();
         this.action = action;
         this.status = commonAuditData.getStatus();
@@ -147,12 +128,10 @@ public class ExternalApiEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME.getDisplayName(), getResourceName());
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_TYPE.getDisplayName(), getResourceType());
         fields.put(AuditingFieldsKey.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
-
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_PREV_VERSION.getDisplayName(), getPrevVersion());
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_VERSION.getDisplayName(), getCurrVersion());
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_PREV_STATE.getDisplayName(), getPrevState());
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_STATE.getDisplayName(), getCurrState());
-
         fields.put(AuditingFieldsKey.AUDIT_PREV_ARTIFACT_UUID.getDisplayName(), getPrevArtifactUuid());
         fields.put(AuditingFieldsKey.AUDIT_CURR_ARTIFACT_UUID.getDisplayName(), getCurrArtifactUuid());
         fields.put(AuditingFieldsKey.AUDIT_ARTIFACT_DATA.getDisplayName(), getArtifactData());
@@ -160,13 +139,10 @@ public class ExternalApiEvent extends AuditingGenericEvent {
 
     @Override
     public String toString() {
-        return "ExternalApiEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", action=" + action
-                + ", status=" + status + ", desc=" + desc + ", consumerId=" + consumerId + ", resourceURL="
-                + resourceURL + ", resourceName=" + resourceName + ", resourceType=" + resourceType
-                + ", serviceInstanceId=" + serviceInstanceId + ", invariantUuid=" + invariantUuid + ", modifier=" + modifier
-                + ", prevVersion=" + prevVersion+ ", currVersion=" + currVersion
-                + ", prevState=" + prevState + ", currState=" + currState
-                + ", prevArtifactUuid="
-                + prevArtifactUuid + ", currArtifactUuid=" + currArtifactUuid + ", artifactData=" + artifactData + "]";
+        return "ExternalApiEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", action=" + action + ", status=" + status
+            + ", desc=" + desc + ", consumerId=" + consumerId + ", resourceURL=" + resourceURL + ", resourceName=" + resourceName + ", resourceType="
+            + resourceType + ", serviceInstanceId=" + serviceInstanceId + ", invariantUuid=" + invariantUuid + ", modifier=" + modifier
+            + ", prevVersion=" + prevVersion + ", currVersion=" + currVersion + ", prevState=" + prevState + ", currState=" + currState
+            + ", prevArtifactUuid=" + prevArtifactUuid + ", currArtifactUuid=" + currArtifactUuid + ", artifactData=" + artifactData + "]";
     }
 }

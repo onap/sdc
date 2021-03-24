@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.dao.jsongraph.heal;
 
 import com.google.common.base.MoreObjects;
@@ -34,25 +33,20 @@ class HealVersionImpl<T extends Comparable> implements HealVersion<T> {
         return version;
     }
 
-
     @Override
     public int compareTo(HealVersion o) {
-        return this.version.compareTo( o.getVersion());
+        return this.version.compareTo(o.getVersion());
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-
         if (!(o instanceof HealVersionImpl)) {
             return false;
         }
-
         HealVersionImpl that = (HealVersionImpl) o;
-
         return new EqualsBuilder().append(getVersion(), that.getVersion()).isEquals();
     }
 

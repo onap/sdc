@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,137 +17,124 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-
 import java.nio.ByteBuffer;
 import java.util.Date;
 
 @Table(keyspace = "sdccomponent", name = "componentcache")
 public class ComponentCacheData {
-	public static final String RESOURCE_ID_FIELD = "resourceId";
 
-	public static final String SERVICE_NAME_FIELD = "serviceName";
-	public static final String SERVICE_VERSION_FIELD = "serviceVersion";
-	public static final String ARTIFACT_NAME_FIELD = "artifactName";
+    public static final String RESOURCE_ID_FIELD = "resourceId";
+    public static final String SERVICE_NAME_FIELD = "serviceName";
+    public static final String SERVICE_VERSION_FIELD = "serviceVersion";
+    public static final String ARTIFACT_NAME_FIELD = "artifactName";
+    public static final String delim = ":";
+    @PartitionKey
+    @Column(name = "id")
+    private String id;
+    @Column
+    private ByteBuffer data;
+    @Column(name = "modification_time")
+    private Date modificationTime;
+    @Column
+    private String type;
+    @Column(name = "is_dirty")
+    private boolean isDirty;
+    @Column(name = "is_zipped")
+    private boolean isZipped;
 
-	public static final String delim = ":";
+    public ComponentCacheData() {
+    }
 
-	@PartitionKey
-	@Column(name = "id")
-	private String id;
+    public ComponentCacheData(String id, byte[] data, Date modificationTime, String type, boolean isDirty, boolean isZipped) {
+        super();
+        this.id = id;
+        if (data != null) {
+            this.data = ByteBuffer.wrap(data.clone());
+        }
+        this.modificationTime = modificationTime;
+        this.type = type;
+        this.isDirty = isDirty;
+        this.isZipped = isZipped;
+    }
 
-	@Column
-	private ByteBuffer data;
+    public ComponentCacheData(String id) {
+        this.id = id;
+    }
 
-	@Column(name = "modification_time")
-	private Date modificationTime;
+    public ComponentCacheData(String artifactId, byte[] data) {
+        super();
+        this.id = artifactId;
+        if (data != null) {
+            this.data = ByteBuffer.wrap(data.clone());
+            // this.data = data.clone();
+        }
+    }
 
-	@Column
-	private String type;
+    public byte[] getDataAsArray() {
+        if (data != null) {
+            return data.array();
+        }
+        return null;
+    }
 
-	@Column(name = "is_dirty")
-	private boolean isDirty;
+    public void setDataAsArray(byte[] data) {
+        if (data != null) {
+            this.data = ByteBuffer.wrap(data.clone());
+        }
+    }
 
-	@Column(name = "is_zipped")
-	private boolean isZipped;
+    public ByteBuffer getData() {
+        return data;
+    }
 
-	public ComponentCacheData() {
+    public void setData(ByteBuffer data) {
+        if (data != null) {
+            this.data = data.duplicate();
+        }
+    }
 
-	}
+    public String getId() {
+        return id;
+    }
 
-	public ComponentCacheData(String id, byte[] data, Date modificationTime, String type, boolean isDirty,
-			boolean isZipped) {
-		super();
-		this.id = id;
-		if (data != null) {
-			this.data = ByteBuffer.wrap(data.clone());
-		}
-		this.modificationTime = modificationTime;
-		this.type = type;
-		this.isDirty = isDirty;
-		this.isZipped = isZipped;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public ComponentCacheData(String id) {
+    public Date getModificationTime() {
+        return modificationTime;
+    }
 
-		this.id = id;
-	}
+    public void setModificationTime(Date modificationTime) {
+        this.modificationTime = modificationTime;
+    }
 
-	public ComponentCacheData(String artifactId, byte[] data) {
-		super();
-		this.id = artifactId;
-		if (data != null) {
-			this.data = ByteBuffer.wrap(data.clone());
-			// this.data = data.clone();
-		}
-	}
+    public String getType() {
+        return type;
+    }
 
-	public byte[] getDataAsArray() {
-		if (data != null) {
-			return data.array();
-		}
-		return null;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setDataAsArray(byte[] data) {
-		if (data != null) {
-			this.data = ByteBuffer.wrap(data.clone());
-		}
-	}
+    public boolean getIsDirty() {
+        return isDirty;
+    }
 
-	public ByteBuffer getData() {
-		return data;
-	}
+    public void setIsDirty(boolean isDirty) {
+        this.isDirty = isDirty;
+    }
 
-	public void setData(ByteBuffer data) {
-		if (data != null) {
-			this.data = data.duplicate();
-		}
-	}
+    public boolean getIsZipped() {
+        return isZipped;
+    }
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Date getModificationTime() {
-		return modificationTime;
-	}
-
-	public void setModificationTime(Date modificationTime) {
-		this.modificationTime = modificationTime;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public boolean getIsDirty() {
-		return isDirty;
-	}
-
-	public void setIsDirty(boolean isDirty) {
-		this.isDirty = isDirty;
-	}
-
-	public boolean getIsZipped() {
-		return isZipped;
-	}
-
-	public void setIsZipped(boolean isZipped) {
-		this.isZipped = isZipped;
-	}
-
+    public void setIsZipped(boolean isZipped) {
+        this.isZipped = isZipped;
+    }
 }

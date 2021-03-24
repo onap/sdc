@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.impl.heal;
 
 import org.janusgraph.core.JanusGraphVertex;
@@ -40,19 +39,16 @@ public class HealJanusGraphDao implements HealGraphDao<JanusGraphVertex, GraphEd
 
     @Override
     public JanusGraphVertex performGraphReadHealing(JanusGraphVertex childVertex, GraphEdgeLabels graphEdgeLabels) {
-        final Integer healingVersionInt = (Integer) childVertex.property(GraphPropertyEnum.HEALING_VERSION.getProperty()).orElse(HealConstants.DEFAULT_HEAL_VERSION);
+        final Integer healingVersionInt = (Integer) childVertex.property(GraphPropertyEnum.HEALING_VERSION.getProperty())
+            .orElse(HealConstants.DEFAULT_HEAL_VERSION);
         HealVersion<Integer> healingVersion = HealVersionBuilder.build(healingVersionInt);
-        healingPipelineDao.getHealersForVertex(graphEdgeLabels.name(), healingVersion)
-                .forEach(heal -> healGraphVertex(childVertex, heal));
-        childVertex.property(GraphPropertyEnum.HEALING_VERSION.getProperty(),
-                healingPipelineDao.getCurrentHealVersion().getVersion());
-
+        healingPipelineDao.getHealersForVertex(graphEdgeLabels.name(), healingVersion).forEach(heal -> healGraphVertex(childVertex, heal));
+        childVertex.property(GraphPropertyEnum.HEALING_VERSION.getProperty(), healingPipelineDao.getCurrentHealVersion().getVersion());
         return childVertex;
     }
 
-
     private JanusGraphVertex healGraphVertex(JanusGraphVertex childVertex, Heal<JanusGraphVertex> heal) {
-        if(ToggleableFeature.HEALING.isActive()) {
+        if (ToggleableFeature.HEALING.isActive()) {
             heal.healData(childVertex);
             final HealVersion<Integer> healVersion = heal.fromVersion();
             HealVersion<Integer> newerVersion = HealVersionBuilder.build(healVersion.getVersion() + 1);

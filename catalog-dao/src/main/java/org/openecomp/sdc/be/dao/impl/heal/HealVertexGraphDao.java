@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.impl.heal;
 
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
@@ -38,15 +37,14 @@ public class HealVertexGraphDao implements HealGraphDao<GraphVertex, EdgeLabelEn
     }
 
     @Override
-    public GraphVertex performGraphReadHealing( GraphVertex childVertex, EdgeLabelEnum edgeLabelEnum) {
+    public GraphVertex performGraphReadHealing(GraphVertex childVertex, EdgeLabelEnum edgeLabelEnum) {
         final Integer healingVersionInt = (Integer) childVertex.getMetadataProperties()
-                .getOrDefault(GraphPropertyEnum.HEALING_VERSION, HealConstants.DEFAULT_HEAL_VERSION);
+            .getOrDefault(GraphPropertyEnum.HEALING_VERSION, HealConstants.DEFAULT_HEAL_VERSION);
         HealVersion<Integer> healingVersion = HealVersionBuilder.build(healingVersionInt);
         healingPipelineDao.getHealersForVertex(edgeLabelEnum.name(), healingVersion).forEach(heal -> healGraphVertex(childVertex, heal));
         childVertex.addMetadataProperty(GraphPropertyEnum.HEALING_VERSION, healingPipelineDao.getCurrentHealVersion().getVersion());
         return childVertex;
     }
-
 
     private GraphVertex healGraphVertex(GraphVertex childVertex, Heal<GraphVertex> heal) {
         heal.healData(childVertex);

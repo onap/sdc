@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.config;
 
 import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
@@ -35,9 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan({
-        "org.openecomp.sdc.be.dao.jsongraph",
-})
+@ComponentScan({"org.openecomp.sdc.be.dao.jsongraph",})
 @EnableTransactionManagement
 public class JanusGraphSpringConfig {
 
@@ -49,8 +46,7 @@ public class JanusGraphSpringConfig {
 
     @Bean(name = "janusgraph-client", initMethod = "createGraph")
     @Primary
-    public JanusGraphClient janusGraphClient(@Qualifier("dao-client-strategy")
-                                                 JanusGraphClientStrategy janusGraphClientStrategy) {
+    public JanusGraphClient janusGraphClient(@Qualifier("dao-client-strategy") JanusGraphClientStrategy janusGraphClientStrategy) {
         return new JanusGraphClient(janusGraphClientStrategy);
     }
 
@@ -65,7 +61,7 @@ public class JanusGraphSpringConfig {
     }
 
     @Bean(name = "healingPipelineDao")
-    public HealingPipelineDao  healingPipeline(){
+    public HealingPipelineDao healingPipeline() {
         HealingPipelineDao healingPipelineDao = new HealingPipelineDao();
         healingPipelineDao.setHealVersion(1);
         healingPipelineDao.initHealVersion();

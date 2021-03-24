@@ -17,13 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.jsongraph.types;
 
-public enum JsonParseFlagEnum {
-
-    NoParse,
-    ParseAll,
-    ParseJson,
-    ParseMetadata
-}
+public enum JsonParseFlagEnum {NoParse, ParseAll, ParseJson, ParseMetadata}

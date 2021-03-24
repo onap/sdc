@@ -1,5 +1,4 @@
-package org.openecomp.sdc.be.resources.data;
-/*-
+package org.openecomp.sdc.be.resources.data; /*-
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
@@ -19,14 +18,13 @@ package org.openecomp.sdc.be.resources.data;
  * ============LICENSE_END=========================================================
  */
 
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ConsumerData extends GraphNode {
 
@@ -40,25 +38,19 @@ public class ConsumerData extends GraphNode {
     public ConsumerData(ConsumerDataDefinition consumerDataDefinition) {
         super(NodeTypeEnum.ConsumerCredentials);
         this.consumerDataDefinition = consumerDataDefinition;
-
     }
 
     public ConsumerData(Map<String, Object> properties) {
         super(NodeTypeEnum.ConsumerCredentials);
         consumerDataDefinition = new ConsumerDataDefinition();
-        consumerDataDefinition.setConsumerDetailsLastupdatedtime(
-                (Long) properties.get(GraphPropertiesDictionary.CONSUMER_DETAILS_LAST_UPDATED_TIME.getProperty()));
-        consumerDataDefinition.setConsumerLastAuthenticationTime(
-                (Long) properties.get(GraphPropertiesDictionary.CONSUMER_LAST_AUTHENTICATION_TIME.getProperty()));
         consumerDataDefinition
-                .setConsumerName((String) properties.get(GraphPropertiesDictionary.CONSUMER_NAME.getProperty()));
-        consumerDataDefinition.setConsumerPassword(
-                (String) properties.get(GraphPropertiesDictionary.CONSUMER_PASSWORD.getProperty()));
+            .setConsumerDetailsLastupdatedtime((Long) properties.get(GraphPropertiesDictionary.CONSUMER_DETAILS_LAST_UPDATED_TIME.getProperty()));
         consumerDataDefinition
-                .setConsumerSalt((String) properties.get(GraphPropertiesDictionary.CONSUMER_SALT.getProperty()));
-        consumerDataDefinition.setLastModfierAtuid(
-                (String) properties.get(GraphPropertiesDictionary.LAST_MODIFIER_USER_ID.getProperty()));
-
+            .setConsumerLastAuthenticationTime((Long) properties.get(GraphPropertiesDictionary.CONSUMER_LAST_AUTHENTICATION_TIME.getProperty()));
+        consumerDataDefinition.setConsumerName((String) properties.get(GraphPropertiesDictionary.CONSUMER_NAME.getProperty()));
+        consumerDataDefinition.setConsumerPassword((String) properties.get(GraphPropertiesDictionary.CONSUMER_PASSWORD.getProperty()));
+        consumerDataDefinition.setConsumerSalt((String) properties.get(GraphPropertiesDictionary.CONSUMER_SALT.getProperty()));
+        consumerDataDefinition.setLastModfierAtuid((String) properties.get(GraphPropertiesDictionary.LAST_MODIFIER_USER_ID.getProperty()));
     }
 
     @Override
@@ -79,16 +71,13 @@ public class ConsumerData extends GraphNode {
     public Map<String, Object> toGraphMap() {
         Map<String, Object> map = new HashMap<>();
         addIfExists(map, GraphPropertiesDictionary.CONSUMER_NAME, this.consumerDataDefinition.getConsumerName());
-        addIfExists(map, GraphPropertiesDictionary.CONSUMER_PASSWORD,
-                this.consumerDataDefinition.getConsumerPassword());
+        addIfExists(map, GraphPropertiesDictionary.CONSUMER_PASSWORD, this.consumerDataDefinition.getConsumerPassword());
         addIfExists(map, GraphPropertiesDictionary.CONSUMER_SALT, this.consumerDataDefinition.getConsumerSalt());
         addIfExists(map, GraphPropertiesDictionary.CONSUMER_LAST_AUTHENTICATION_TIME,
-                this.consumerDataDefinition.getConsumerLastAuthenticationTime());
+            this.consumerDataDefinition.getConsumerLastAuthenticationTime());
         addIfExists(map, GraphPropertiesDictionary.CONSUMER_DETAILS_LAST_UPDATED_TIME,
-                this.consumerDataDefinition.getConsumerDetailsLastupdatedtime());
-        addIfExists(map, GraphPropertiesDictionary.LAST_MODIFIER_USER_ID,
-                this.consumerDataDefinition.getLastModfierAtuid());
-
+            this.consumerDataDefinition.getConsumerDetailsLastupdatedtime());
+        addIfExists(map, GraphPropertiesDictionary.LAST_MODIFIER_USER_ID, this.consumerDataDefinition.getLastModfierAtuid());
         return map;
     }
 
@@ -103,5 +92,3 @@ public class ConsumerData extends GraphNode {
         return "ConsumerData [consumerDataDefinition=" + consumerDataDefinition + "]";
     }
 }
-
-

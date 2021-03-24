@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,23 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
-
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import com.datastax.driver.mapping.annotations.Transient;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 public class AuditingGenericEvent {
+
+    protected static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS z";
     @Transient
     protected SimpleDateFormat simpleDateFormat;
-    protected static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS z";
-
     @Transient
     protected String requestId;
     @Transient
@@ -49,14 +47,12 @@ public class AuditingGenericEvent {
     @Transient
     protected Map<String, Object> fields = new HashMap<>();
 
-
     public AuditingGenericEvent() {
         super();
         simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         this.timestamp = simpleDateFormat.format(new Date());
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), this.timestamp);
-
     }
 
     public String getRequestId() {
@@ -65,7 +61,6 @@ public class AuditingGenericEvent {
 
     public void setRequestId(String requestId) {
         this.requestId = requestId;
-
     }
 
     public String getServiceInstanceId() {
@@ -101,14 +96,12 @@ public class AuditingGenericEvent {
     }
 
     public void fillFields() {
-
     }
 
     protected Date parseDateFromString(final String timestamp) {
         try {
             return simpleDateFormat.parse(timestamp);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new Date();
         }
     }
@@ -128,6 +121,4 @@ public class AuditingGenericEvent {
     public void setFields(Map<String, Object> fields) {
         this.fields = fields;
     }
-
-
 }

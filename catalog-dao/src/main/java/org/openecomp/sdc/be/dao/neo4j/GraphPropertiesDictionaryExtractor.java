@@ -17,23 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.neo4j;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
 public class GraphPropertiesDictionaryExtractor {
 
     private Map<String, Object> properties;
-
     private Gson gson = new Gson();
 
     public GraphPropertiesDictionaryExtractor(Map<String, Object> properties) {
@@ -75,10 +70,11 @@ public class GraphPropertiesDictionaryExtractor {
     @SuppressWarnings("unchecked")
     public List<String> getTags() {
         List<String> tagsFromJson;
-        if(properties.get(GraphPropertiesDictionary.TAGS.getProperty()) instanceof List<?>){
+        if (properties.get(GraphPropertiesDictionary.TAGS.getProperty()) instanceof List<?>) {
             tagsFromJson = (List<String>) properties.get(GraphPropertiesDictionary.TAGS.getProperty());
         } else {
-            Type listType = new TypeToken<List<String>>() {}.getType();
+            Type listType = new TypeToken<List<String>>() {
+            }.getType();
             tagsFromJson = gson.fromJson((String) properties.get(GraphPropertiesDictionary.TAGS.getProperty()), listType);
         }
         return tagsFromJson;
@@ -146,7 +142,7 @@ public class GraphPropertiesDictionaryExtractor {
 
     public ResourceTypeEnum getResourceType() {
         if (properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty()) != null) {
-           return ResourceTypeEnum.valueOf((String) properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty()));
+            return ResourceTypeEnum.valueOf((String) properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty()));
         } else {
             return null;
         }
@@ -177,12 +173,12 @@ public class GraphPropertiesDictionaryExtractor {
     }
 
     public List<String> getContacts() {
-        Type listType = new TypeToken<List<String>>() {}.getType();
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
         return gson.fromJson((String) properties.get(GraphPropertiesDictionary.CONTACTS.getProperty()), listType);
     }
 
     public Boolean isActive() {
         return (Boolean) properties.get(GraphPropertiesDictionary.IS_ACTIVE.getProperty());
     }
-
 }

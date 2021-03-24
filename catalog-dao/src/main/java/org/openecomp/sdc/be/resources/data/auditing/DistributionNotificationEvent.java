@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -25,6 +24,10 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,11 +37,6 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.UUID;
-
 @Getter
 @Setter
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_NOTIFICATION_EVENT_TYPE)
@@ -46,50 +44,37 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
-
     @ClusteringColumn
-    @Setter(AccessLevel.NONE)protected Date timestamp1;
-
+    @Setter(AccessLevel.NONE)
+    protected Date timestamp1;
     @Column(name = "request_id")
     protected String requestId;
-
     @Column(name = "service_instance_id")
     protected String serviceInstanceId;
     @Column
     protected String action;
     @Column
     protected String status;
-
     @Column(name = "description")
     protected String desc;
-
     @Column(name = "resource_name")
     private String resourceName;
-
     @Column(name = "resource_type")
     private String resourceType;
-
     @Column(name = "curr_version")
     private String currVersion;
-
     @Column
     private String modifier;
-
     @Column(name = "curr_state")
     private String currState;
-
     @Column(name = "topic_name")
     private String topicName;
-
     @Column
     private String did;
-
     @Column(name = "env_id")
     private String envId;
-
     @Column(name = "vnf_workload_context")
     private String vnfWorkloadContext;
-
     @Column(name = "tenant")
     private String tenant;
 
@@ -99,8 +84,7 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
     }
 
     public DistributionNotificationEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
-                                         ResourceVersionInfo resourceVersionInfo,
-                                         String did, String modifier, String topicName,
+                                         ResourceVersionInfo resourceVersionInfo, String did, String modifier, String topicName,
                                          OperationalEnvAuditData opEnvFields) {
         this();
         this.action = action;
@@ -118,7 +102,6 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
         this.envId = opEnvFields.getEnvId();
         this.vnfWorkloadContext = opEnvFields.getVnfWorkloadContext();
         this.tenant = opEnvFields.getTenant();
-
     }
 
     public void setTimestamp1(String timestamp) {
@@ -132,7 +115,6 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-
         fields.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
         fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
         fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
@@ -140,7 +122,6 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ENVIRONMENT_ID.getDisplayName(), getEnvId());
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_VNF_WORKLOAD_CONTEXT.getDisplayName(), getVnfWorkloadContext());
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_TENANT.getDisplayName(), getTenant());
-
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_ID.getDisplayName(), getDid());
         fields.put(AuditingFieldsKey.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_CURR_STATE.getDisplayName(), getCurrState());
@@ -155,12 +136,10 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
 
     @Override
     public String toString() {
-        return "DistributionNotificationEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1
-                + ", requestId=" + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action
-                + ", status=" + status + ", desc=" + desc + ", resourceName=" + resourceName + ", resourceType="
-                + resourceType + ", currVersion=" + currVersion + ", modifier=" + modifier + ", currState=" + currState
-                + ", topicName=" + topicName + ", did=" + did
-                + ", envId=" + envId + ", vnfWorkloadContext=" + vnfWorkloadContext + ", tenant=" + tenant + "]";
+        return "DistributionNotificationEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId=" + requestId
+            + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status + ", desc=" + desc + ", resourceName="
+            + resourceName + ", resourceType=" + resourceType + ", currVersion=" + currVersion + ", modifier=" + modifier + ", currState=" + currState
+            + ", topicName=" + topicName + ", did=" + did + ", envId=" + envId + ", vnfWorkloadContext=" + vnfWorkloadContext + ", tenant=" + tenant
+            + "]";
     }
-
 }

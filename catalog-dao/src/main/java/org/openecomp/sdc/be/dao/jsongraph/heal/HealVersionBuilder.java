@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.dao.jsongraph.heal;
 
 public class HealVersionBuilder {
@@ -24,5 +23,4 @@ public class HealVersionBuilder {
     public static HealVersion<Integer> build(Integer version) {
         return new HealVersionImpl(version);
     }
-
 }

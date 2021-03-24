@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,14 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 //TODO rename to AuditAction
 public enum AuditingActionEnum {
-
+    // @formatter:off
     // User administration
     ADD_USER("AddUser", AuditingTypesConstants.USER_ADMIN_EVENT_TYPE),
     UPDATE_USER("UpdateUser", AuditingTypesConstants.USER_ADMIN_EVENT_TYPE),
@@ -52,7 +51,7 @@ public enum AuditingActionEnum {
     ARTIFACT_UPLOAD_BY_API("ArtifactUploadByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     ARTIFACT_UPDATE_BY_API("ArtifactUpdateByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     ARTIFACT_DELETE_BY_API("ArtifactDeleteByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
-    DOWNLOAD_ARTIFACT("DownloadArtifact",AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+    DOWNLOAD_ARTIFACT("DownloadArtifact", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     CREATE_RESOURCE_BY_API("CreateResourceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     CREATE_SERVICE_BY_API("CreateServiceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     CHANGE_LIFECYCLE_BY_API("ChangeLifecycleByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
@@ -63,7 +62,7 @@ public enum AuditingActionEnum {
     ARTIFACT_DELETE("ArtifactDelete", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     ARTIFACT_DOWNLOAD("ArtifactDownload", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
 
-	//Automated upgrade
+    //Automated upgrade
     UPDATE_SERVICE_REFERENCE("UpdateServiceReference", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     VF_UPGRADE_SERVICES("VfUpgradeServices", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
 
@@ -83,7 +82,7 @@ public enum AuditingActionEnum {
     DISTRIBUTION_UN_REGISTER("DUnRegister", AuditingTypesConstants.DISTRIBUTION_ENGINE_EVENT_TYPE),
     DISTRIBUTION_NOTIFY("DNotify", AuditingTypesConstants.DISTRIBUTION_NOTIFICATION_EVENT_TYPE),
     DISTRIBUTION_STATUS("DStatus", AuditingTypesConstants.DISTRIBUTION_STATUS_EVENT_TYPE),
-    DISTRIBUTION_DEPLOY("DResult",AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE),
+    DISTRIBUTION_DEPLOY("DResult", AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE),
     GET_UEB_CLUSTER("GetUebCluster", AuditingTypesConstants.DISTRIBUTION_GET_UEB_CLUSTER_EVENT_TYPE),
     GET_VALID_ARTIFACT_TYPES("GetValidArtifactTypes", AuditingTypesConstants.DISTRIBUTION_GET_VALID_ARTIFACT_TYPES_EVENT_TYPE),
 
@@ -118,24 +117,15 @@ public enum AuditingActionEnum {
     Import_Replace_Service("ImportReplaceService", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     Replace_VNF("ReplaceVNF", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     Import_Replace_Resource("ReplaceVNF", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE);
-
-	private final String name;
-	private final String auditingEsType;
-
+    // @formatter:on
 
     private static Logger log = Logger.getLogger(AuditingActionEnum.class.getName());
+    private final String name;
+    private final String auditingEsType;
 
     AuditingActionEnum(String name, String auditingEsType) {
         this.name = name;
         this.auditingEsType = auditingEsType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAuditingEsType() {
-        return auditingEsType;
     }
 
     public static AuditingActionEnum fromName(String name) {
@@ -151,5 +141,13 @@ public enum AuditingActionEnum {
             log.debug("No auditing action is mapped to name {}", name);
         }
         return res;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAuditingEsType() {
+        return auditingEsType;
     }
 }

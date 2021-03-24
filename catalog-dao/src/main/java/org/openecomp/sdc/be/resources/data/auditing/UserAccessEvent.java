@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -25,16 +24,15 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -44,25 +42,18 @@ public class UserAccessEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
-
     @ClusteringColumn
     protected Date timestamp1;
-
     @Column(name = "REQUEST_ID")
     protected String requestId;
-
     @Column(name = "USER")
     private String userUid;
-
     @Column
     private String status;
-
     @Column(name = "DESCRIPTION")
     private String desc;
-
     @Column
     private String action;
-
     @Column(name = "service_instance_id")
     private String serviceInstanceId;
 
@@ -93,7 +84,6 @@ public class UserAccessEvent extends AuditingGenericEvent {
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-
         fields.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
         fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
         fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());

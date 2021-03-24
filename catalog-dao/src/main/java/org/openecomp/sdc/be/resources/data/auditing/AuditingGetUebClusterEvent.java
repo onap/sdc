@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -25,16 +24,15 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -43,23 +41,19 @@ public class AuditingGetUebClusterEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
-
     @ClusteringColumn
-    @Setter(AccessLevel.NONE)protected Date timestamp1;
-
+    @Setter(AccessLevel.NONE)
+    protected Date timestamp1;
     @Column(name = "request_id")
     protected String requestId;
-
     @Column(name = "service_instance_id")
     protected String serviceInstanceId;
     @Column
     protected String action;
     @Column
     protected String status;
-
     @Column(name = "description")
     protected String desc;
-
     @Column(name = "consumer_id")
     private String consumerId;
 
@@ -82,6 +76,7 @@ public class AuditingGetUebClusterEvent extends AuditingGenericEvent {
     public void setTimestamp1(String timestamp) {
         this.timestamp1 = parseDateFromString(timestamp);
     }
+
     public void setTimestamp1(Date timestamp) {
         this.timestamp1 = timestamp;
     }
@@ -89,7 +84,6 @@ public class AuditingGetUebClusterEvent extends AuditingGenericEvent {
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_REQUEST_ID.getDisplayName(), getRequestId());
-
         fields.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
         fields.put(AuditingFieldsKey.AUDIT_ACTION.getDisplayName(), getAction());
         fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
@@ -98,14 +92,12 @@ public class AuditingGetUebClusterEvent extends AuditingGenericEvent {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
-
     }
 
     @Override
     public String toString() {
-        return "AuditingGetUebClusterEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1
-                + ", requestId=" + requestId + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action
-                + ", status=" + status + ", desc=" + desc + ", consumerId=" + consumerId + "]";
+        return "AuditingGetUebClusterEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId=" + requestId
+            + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status + ", desc=" + desc + ", consumerId="
+            + consumerId + "]";
     }
-
 }

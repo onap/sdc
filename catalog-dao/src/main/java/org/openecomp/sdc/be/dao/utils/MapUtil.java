@@ -17,26 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.utils;
 
-import java.util.*;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 /**
  * Utility class to ease map manipulation.
  */
 public final class MapUtil {
+
     private MapUtil() {
     }
 
     /**
-     * Try to get a value following a path in the map. For example :
-     * MapUtil.get(map, "a.b.c") correspond to: map.get(a).get(b).get(c)
+     * Try to get a value following a path in the map. For example : MapUtil.get(map, "a.b.c") correspond to: map.get(a).get(b).get(c)
      *
      * @param map  the map to search for path
      * @param path keys in the map separated by '.'
@@ -51,8 +55,7 @@ public final class MapUtil {
                 if (!(value instanceof Map)) {
                     return null;
                 } else {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> nested = (Map<String, Object>) value;
+                    @SuppressWarnings("unchecked") Map<String, Object> nested = (Map<String, Object>) value;
                     if (nested.containsKey(token)) {
                         value = nested.get(token);
                     } else {
@@ -81,11 +84,10 @@ public final class MapUtil {
     public static <K, V> Map<K, V> toMap(Collection<V> valuesToMap, Function<V, K> mappingFunction) {
         return toMap(valuesToMap, mappingFunction, throwingMerger());
     }
-    
+
     public static <K, V> Map<K, V> toMap(Collection<V> valuesToMap, Function<V, K> mappingFunction, BinaryOperator<V> mergeFunction) {
         return streamOfNullable(valuesToMap).collect(Collectors.toMap(mappingFunction, Function.identity(), mergeFunction));
     }
-
 
     /**
      * merge two maps. if a key exists in both maps, takes the value from {@code first}
@@ -122,19 +124,15 @@ public final class MapUtil {
      * @return a map with converted keys.
      */
     public static <K, U, V> Map<U, List<V>> convertMapKeys(Map<K, List<V>> map, Function<K, U> keyMappingFunction) {
-        return map.entrySet().stream()
-                .collect(Collectors.toMap(entry -> keyMappingFunction.apply(entry.getKey()),
-                        Map.Entry::getValue));
+        return map.entrySet().stream().collect(Collectors.toMap(entry -> keyMappingFunction.apply(entry.getKey()), Map.Entry::getValue));
     }
 
     /**
-     * Create a new hash map and fills it from the given keys and values
-     * (keys[index] -> values[index].
+     * Create a new hash map and fills it from the given keys and values (keys[index] -> values[index].
      *
      * @param keys   The array of keys.
      * @param values The array of values.
-     * @return A map that contains for each key element in the keys array a
-     * value from the values array at the same index.
+     * @return A map that contains for each key element in the keys array a value from the values array at the same index.
      */
     public static <K, V> Map<K, V> newHashMap(K[] keys, V[] values) {
         Map<K, V> map = new HashMap<>();
@@ -146,27 +144,26 @@ public final class MapUtil {
         }
         return map;
     }
-    
-    
+
     /**
-     * Returns a merge function, suitable for use in
-     * {@link Map#merge(Object, Object, BiFunction) Map.merge()} or
-     * {@link #toMap(Function, Function, BinaryOperator) toMap()}, which always
-     * throws {@code IllegalStateException}.  This can be used to enforce the
-     * assumption that the elements being collected are distinct.
+     * Returns a merge function, suitable for use in {@link Map#merge(Object, Object, BiFunction) Map.merge()} or {@link #toMap(Function, Function,
+     * BinaryOperator) toMap()}, which always throws {@code IllegalStateException}.  This can be used to enforce the assumption that the elements
+     * being collected are distinct.
      *
      * @param <T> the type of input arguments to the merge function
      * @return a merge function which always throw {@code IllegalStateException}
      */
     private static <T> BinaryOperator<T> throwingMerger() {
-        return (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); };
+        return (u, v) -> {
+            throw new IllegalStateException(String.format("Duplicate key %s", u));
+        };
     }
 
     public static <V> Stream<V> streamOfNullable(Collection<V> collection) {
-        return collection == null? Stream.empty(): collection.stream();
+        return collection == null ? Stream.empty() : collection.stream();
     }
-    
-    public static<T> Stream<T> streamOfNullable(T t) {
+
+    public static <T> Stream<T> streamOfNullable(T t) {
         return t == null ? Stream.empty() : Stream.of(t);
     }
 }

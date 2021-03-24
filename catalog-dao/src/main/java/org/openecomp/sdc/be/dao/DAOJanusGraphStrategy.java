@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao;
 
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -28,5 +27,4 @@ public class DAOJanusGraphStrategy implements JanusGraphClientStrategy {
     public String getConfigFile() {
         return ConfigurationManager.getConfigurationManager().getConfiguration().getJanusGraphCfgFile();
     }
-
 }

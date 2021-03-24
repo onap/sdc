@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,11 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.janusgraph.transactions;
 
-import org.janusgraph.core.JanusGraphException;
+import javax.annotation.PostConstruct;
 import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphException;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -32,11 +32,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.SimpleTransactionStatus;
 
-import javax.annotation.PostConstruct;
-
 /**
- * Simple transaction manager for the janusgraph database.
- * This manager does not deal with transactions propagation and relies on the fact that transactions are automatically created with the first operation on the graph
+ * Simple transaction manager for the janusgraph database. This manager does not deal with transactions propagation and relies on the fact that
+ * transactions are automatically created with the first operation on the graph
  */
 @Component
 public class SimpleJanusGraphTransactionManager implements PlatformTransactionManager {
@@ -86,5 +84,4 @@ public class SimpleJanusGraphTransactionManager implements PlatformTransactionMa
         log.debug("#onFailingToStartJanusGraph - could not open janusgraph client");
         throw new IllegalStateException("janusgraph could not be initialized: " + err);
     }
-
 }

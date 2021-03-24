@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,119 +17,90 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data;
 
 import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class CapabilityTypeData extends GraphNode {
 
-	CapabilityTypeDataDefinition capabilityTypeDataDefinition;
+    CapabilityTypeDataDefinition capabilityTypeDataDefinition;
 
-	// private List<String> constraints;
+    // private List<String> constraints;
+    public CapabilityTypeData() {
+        super(NodeTypeEnum.CapabilityType);
+        capabilityTypeDataDefinition = new CapabilityTypeDataDefinition();
+    }
 
-	public CapabilityTypeData() {
-		super(NodeTypeEnum.CapabilityType);
-		capabilityTypeDataDefinition = new CapabilityTypeDataDefinition();
-	}
+    public CapabilityTypeData(CapabilityTypeDataDefinition capabilityTypeDataDefinition) {
+        super(NodeTypeEnum.CapabilityType);
+        this.capabilityTypeDataDefinition = capabilityTypeDataDefinition;
+        // this.constraints = constraints;
+    }
 
-	public CapabilityTypeData(CapabilityTypeDataDefinition capabilityTypeDataDefinition) {
-		super(NodeTypeEnum.CapabilityType);
-		this.capabilityTypeDataDefinition = capabilityTypeDataDefinition;
-		// this.constraints = constraints;
-	}
+    public CapabilityTypeData(Map<String, Object> properties) {
+        this();
+        capabilityTypeDataDefinition.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
+        capabilityTypeDataDefinition.setType((String) properties.get(GraphPropertiesDictionary.TYPE.getProperty()));
+        capabilityTypeDataDefinition.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
+        capabilityTypeDataDefinition.setVersion((String) properties.get(GraphPropertiesDictionary.VERSION.getProperty()));
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
+        List<String> validSourceTypesfromJson = getGson()
+            .fromJson((String) properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES.getProperty()), listType);
+        capabilityTypeDataDefinition.setValidSourceTypes(validSourceTypesfromJson);
+        // capabilityTypeDataDefinition.setValidSourceTypes((List<String>)
 
-	public CapabilityTypeData(Map<String, Object> properties) {
+        // properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES
 
-		this();
+        // .getProperty()));
+        capabilityTypeDataDefinition.setCreationTime((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
+        capabilityTypeDataDefinition.setModificationTime((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
+        // capabilityTypeDataDefinition.setVersion(version);
+    }
 
-		capabilityTypeDataDefinition
-				.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
+    @Override
+    public Map<String, Object> toGraphMap() {
+        Map<String, Object> map = new HashMap<>();
+        addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, capabilityTypeDataDefinition.getUniqueId());
+        addIfExists(map, GraphPropertiesDictionary.TYPE, capabilityTypeDataDefinition.getType());
+        addIfExists(map, GraphPropertiesDictionary.DESCRIPTION, capabilityTypeDataDefinition.getDescription());
+        addIfExists(map, GraphPropertiesDictionary.VERSION, capabilityTypeDataDefinition.getVersion());
+        // String validSourceTypesToJson =
 
-		capabilityTypeDataDefinition.setType((String) properties.get(GraphPropertiesDictionary.TYPE.getProperty()));
+        // getGson().toJson(capabilityTypeDataDefinition.getValidSourceTypes());
 
-		capabilityTypeDataDefinition
-				.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
-		
-		capabilityTypeDataDefinition
-		        .setVersion((String) properties.get(GraphPropertiesDictionary.VERSION.getProperty()));
+        // addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES,
 
-		Type listType = new TypeToken<List<String>>() {
-		}.getType();
-		List<String> validSourceTypesfromJson = getGson().fromJson(
-				(String) properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES.getProperty()), listType);
+        // validSourceTypesToJson);
+        addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES, capabilityTypeDataDefinition.getValidSourceTypes());
+        addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, capabilityTypeDataDefinition.getCreationTime());
+        addIfExists(map, GraphPropertiesDictionary.LAST_UPDATE_DATE, capabilityTypeDataDefinition.getModificationTime());
+        return map;
+    }
 
-		capabilityTypeDataDefinition.setValidSourceTypes(validSourceTypesfromJson);
+    public CapabilityTypeDataDefinition getCapabilityTypeDataDefinition() {
+        return capabilityTypeDataDefinition;
+    }
 
-		// capabilityTypeDataDefinition.setValidSourceTypes((List<String>)
-		// properties.get(GraphPropertiesDictionary.VALID_SOURCE_TYPES
-		// .getProperty()));
+    public void setCapabilityTypeDataDefinition(CapabilityTypeDataDefinition capabilityTypeDataDefinition) {
+        this.capabilityTypeDataDefinition = capabilityTypeDataDefinition;
+    }
 
-		capabilityTypeDataDefinition
-				.setCreationTime((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
+    @Override
+    public String toString() {
+        return "CapabilityTypeData [capabilityTypeDataDefinition=" + capabilityTypeDataDefinition + "]";
+    }
 
-		capabilityTypeDataDefinition
-				.setModificationTime((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
-
-		// capabilityTypeDataDefinition.setVersion(version);
-
-	}
-
-	@Override
-	public Map<String, Object> toGraphMap() {
-
-		Map<String, Object> map = new HashMap<>();
-
-		addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, capabilityTypeDataDefinition.getUniqueId());
-
-		addIfExists(map, GraphPropertiesDictionary.TYPE, capabilityTypeDataDefinition.getType());
-
-		addIfExists(map, GraphPropertiesDictionary.DESCRIPTION, capabilityTypeDataDefinition.getDescription());
-		
-		addIfExists(map, GraphPropertiesDictionary.VERSION, capabilityTypeDataDefinition.getVersion());
-
-		// String validSourceTypesToJson =
-		// getGson().toJson(capabilityTypeDataDefinition.getValidSourceTypes());
-
-		// addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES,
-		// validSourceTypesToJson);
-
-		addIfExists(map, GraphPropertiesDictionary.VALID_SOURCE_TYPES,
-				capabilityTypeDataDefinition.getValidSourceTypes());
-
-		addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, capabilityTypeDataDefinition.getCreationTime());
-
-		addIfExists(map, GraphPropertiesDictionary.LAST_UPDATE_DATE,
-				capabilityTypeDataDefinition.getModificationTime());
-
-		return map;
-	}
-
-	public CapabilityTypeDataDefinition getCapabilityTypeDataDefinition() {
-		return capabilityTypeDataDefinition;
-	}
-
-	public void setCapabilityTypeDataDefinition(CapabilityTypeDataDefinition capabilityTypeDataDefinition) {
-		this.capabilityTypeDataDefinition = capabilityTypeDataDefinition;
-	}
-
-	@Override
-	public String toString() {
-		return "CapabilityTypeData [capabilityTypeDataDefinition=" + capabilityTypeDataDefinition + "]";
-	}
-
-	@Override
-	public String getUniqueId() {
-		return this.capabilityTypeDataDefinition.getUniqueId();
-	}
-
+    @Override
+    public String getUniqueId() {
+        return this.capabilityTypeDataDefinition.getUniqueId();
+    }
 }

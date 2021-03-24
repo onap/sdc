@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.jsongraph.types;
 
 import lombok.AllArgsConstructor;
@@ -50,6 +49,7 @@ import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 @Getter
 @AllArgsConstructor
 public enum VertexTypeEnum {
+    // @formatter:off
 	NODE_TYPE					("node_type",					null),
 	TOPOLOGY_TEMPLATE			("topology_template", 		CompositionDataDefinition.class),
 	ARTIFACTS					("artifacts",					ArtifactDataDefinition.class),
@@ -93,16 +93,17 @@ public enum VertexTypeEnum {
 	SUBSTITUTION_FILTER_TEMPLATE ("substitution_mapping",     SubstitutionFilterDataDefinition.class),
 	INST_INTERFACES             ("InstInterfaces",            MapInterfaceDataDefinition.class),
 	DATA_TYPES					("data_types", 				DataTypeDataDefinition.class);
+    // @formatter:on
 
-	private final String name;
-	private final Class classOfJson;
+    private final String name;
+    private final Class classOfJson;
 
-	public static VertexTypeEnum getByName(String name){
-		for ( VertexTypeEnum inst : VertexTypeEnum.values() ){
-			if ( inst.getName().equals(name) ){
-				return inst;
-			}
-		}
-		return null;
-	}
+    public static VertexTypeEnum getByName(String name) {
+        for (VertexTypeEnum inst : VertexTypeEnum.values()) {
+            if (inst.getName().equals(name)) {
+                return inst;
+            }
+        }
+        return null;
+    }
 }

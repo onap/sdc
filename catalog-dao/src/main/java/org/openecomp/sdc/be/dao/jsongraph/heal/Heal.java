@@ -17,11 +17,7 @@ package org.openecomp.sdc.be.dao.jsongraph.heal;
 
 public interface Heal<V> {
 
-
     HealVersion fromVersion();
 
     void healData(V parentV);
-
-
-
 }

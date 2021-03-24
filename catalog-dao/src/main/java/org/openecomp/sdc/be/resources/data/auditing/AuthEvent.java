@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -25,15 +24,14 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-import lombok.Getter;
-import lombok.Setter;
-import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 @Getter
 @Setter
@@ -42,30 +40,24 @@ public class AuthEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
-
     @ClusteringColumn
     protected Date timestamp1;
-
-    @Column
-    private String url;
-    @Column
-    private String user;
-
-    @Column(name = "auth_status")
-    private String authStatus;
-
-    @Column
-    private String realm;
     @Column
     protected String action;
     @Column
     protected String status;
-
     @Column(name = "description")
     protected String desc;
-
     @Column(name = "request_id")
     protected String requestId;
+    @Column
+    private String url;
+    @Column
+    private String user;
+    @Column(name = "auth_status")
+    private String authStatus;
+    @Column
+    private String realm;
 
     public AuthEvent(String action, CommonAuditData commonAuditData, String user, String authUrl, String realm, String authStatus) {
         this();
@@ -96,7 +88,6 @@ public class AuthEvent extends AuditingGenericEvent {
     @Override
     public void fillFields() {
         fields.put(AuditingFieldsKey.AUDIT_AUTH_URL.getDisplayName(), getUrl());
-
         fields.put(AuditingFieldsKey.AUDIT_AUTH_USER.getDisplayName(), getUser());
         fields.put(AuditingFieldsKey.AUDIT_AUTH_STATUS.getDisplayName(), getAuthStatus());
         fields.put(AuditingFieldsKey.AUDIT_AUTH_REALM.getDisplayName(), getRealm());

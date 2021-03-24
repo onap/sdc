@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,51 +17,41 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
-
 @Getter
 @Setter
 @ToString
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE)
-public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
+public class EcompOperationalEnvironmentEvent extends AuditingGenericEvent {
 
     @PartitionKey
     @Column(name = "operational_environment_id")
     protected String operationalEnvironmentId;
-
     @ClusteringColumn
     protected Date timestamp1;
-
     @Column
     protected String action;
-
     @Column(name = "operational_environment_action")
     protected String operationalEnvironmentAction;
-
     @Column(name = "operational_environment_name")
     protected String operationalEnvironmentName;
-
     @Column(name = "operational_environment_type")
     protected String operationalEnvironmentType;
-
     @Column(name = "tenant_context")
     protected String tenantContext;
-
 
     //Required to be public as it is used by Cassandra driver on get operation
     public EcompOperationalEnvironmentEvent() {

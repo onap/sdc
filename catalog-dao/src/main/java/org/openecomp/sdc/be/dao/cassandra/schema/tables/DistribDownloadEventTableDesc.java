@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,41 +17,35 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
-import java.util.Map;
-
 public class DistribDownloadEventTableDesc extends DistribBaseEventTableDesc {
 
-	@Override
-	protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
-		for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
-			columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
-		}
-	}
+    @Override
+    protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
+        for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
+            columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
+        }
+    }
 
-	@Override
-	public String getTableName() {
-		return AuditingTypesConstants.DISTRIBUTION_DOWNLOAD_EVENT_TYPE;
-	}
+    @Override
+    public String getTableName() {
+        return AuditingTypesConstants.DISTRIBUTION_DOWNLOAD_EVENT_TYPE;
+    }
 
-	@Getter
-	@AllArgsConstructor
-	enum DSEFieldsDescription {
-		CONSUMER_ID("consumer_Id", DataType.varchar(), false),
-		RESOURCE_URL("resource_URL", DataType.varchar(), false);
-
-		private final String name;
-		private final DataType type;
-		private final boolean indexed;
-
-	}
-
+    @Getter
+    @AllArgsConstructor
+    enum DSEFieldsDescription {
+        CONSUMER_ID("consumer_Id", DataType.varchar(), false), RESOURCE_URL("resource_URL", DataType.varchar(), false);
+        private final String name;
+        private final DataType type;
+        private final boolean indexed;
+    }
 }

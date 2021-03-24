@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.dao.jsongraph;
 
 import fj.data.Either;
@@ -22,9 +21,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +32,6 @@ public class HealingJanusGraphDao extends JanusGraphDao {
 
     private HealingPipelineDao healingPipelineDao;
 
-
     @Autowired
     public HealingJanusGraphDao(HealingPipelineDao healingPipelineDao, JanusGraphClient janusGraphClient) {
         super(janusGraphClient);
@@ -41,14 +39,11 @@ public class HealingJanusGraphDao extends JanusGraphDao {
     }
 
     @Override
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> getChildrenVertices(GraphVertex parentVertex,
-                                                                                     EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies =
-                super.getChildrenVertices(parentVertex, edgeLabel, parseFlag);
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getChildrenVertices(GraphVertex parentVertex, EdgeLabelEnum edgeLabel,
+                                                                                    JsonParseFlagEnum parseFlag) {
+        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = super.getChildrenVertices(parentVertex, edgeLabel, parseFlag);
         return Either.iif(childrenVertecies.isRight(), () -> childrenVertecies.right().value(),
-                () -> childrenVertecies.left().value().stream()
-                              .map(graphVertex -> transformVertex(graphVertex, edgeLabel))
-                              .collect(Collectors.toList()));
+            () -> childrenVertecies.left().value().stream().map(graphVertex -> transformVertex(graphVertex, edgeLabel)).collect(Collectors.toList()));
     }
 
     private GraphVertex transformVertex(GraphVertex graphVertex, EdgeLabelEnum edgeLabelEnum) {
@@ -56,9 +51,7 @@ public class HealingJanusGraphDao extends JanusGraphDao {
         return optional.orElse(graphVertex);
     }
 
-
     public void setHealingPipelineDao(HealingPipelineDao healingPipelineDao) {
         this.healingPipelineDao = healingPipelineDao;
     }
-
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,31 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.*;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.ArtifactTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.AuthEventTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.CategoryEventTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribDeployEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribDownloadEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribEngineEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribNotifEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribStatusEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.EcompOperationalEnvironmentEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.ExternalApiEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.FeatureToggleEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetCatHierEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUebClusterEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUsersListEventTableDesc;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.OperationalEnvironmentsTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.ResAdminEventTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.SdcSchemaFilesTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAccessEventTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAdminEventTableDescription;
 
 public enum Table {
-
+    // @formatter:off
     ARTIFACT(new ArtifactTableDescription()),
     USER_ADMIN_EVENT(new UserAdminEventTableDescription()),
     USER_ACCESS_EVENT(new UserAccessEventTableDescription()),
@@ -44,15 +62,15 @@ public enum Table {
     SDC_OPERATIONAL_ENVIRONMENT(new OperationalEnvironmentsTableDescription()),
     AUDIT_ECOMP_OPERATIONAL_ENVIRONMENT(new EcompOperationalEnvironmentEventTableDesc()),
     FEATURE_TOGGLE_STATE(new FeatureToggleEventTableDesc());
+    // @formatter:on
 
-	ITableDescription tableDescription;
+    ITableDescription tableDescription;
 
-	Table(ITableDescription tableDescription) {
-		this.tableDescription = tableDescription;
-	}
+    Table(ITableDescription tableDescription) {
+        this.tableDescription = tableDescription;
+    }
 
-	public ITableDescription getTableDescription() {
-		return tableDescription;
-	}
-
+    public ITableDescription getTableDescription() {
+        return tableDescription;
+    }
 }
