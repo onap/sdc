@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "743f382b_affa9993",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ComponentInstInputsMapTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-25T10:18:31Z",
+      "side": 1,
+      "message": "replace with \n        assertThrows(IllegalStateException.class, () -\u003e {\n            testSubject.resolvePropertiesToDeclare();\n        });\nand remove \u0027throws Exception \u0027 from method",
+      "range": {
+        "startLine": 67,
+        "startChar": 2,
+        "endLine": 71,
+        "endChar": 3
+      },
+      "revId": "87b1d2b837f85f57e08b1a66bb1787c291b4ac73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13311b47_801dc6f9",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/datatypes/heattotosca/unifiedmodel/composition/to/UnifiedCompositionToTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-03-25T10:18:31Z",
+      "side": 1,
+      "message": "wouldn\u0027t be better to use lombok instead?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 0
+      },
+      "revId": "87b1d2b837f85f57e08b1a66bb1787c291b4ac73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
