@@ -29,17 +29,45 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.ArgumentMatchers;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -49,13 +77,15 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -63,11 +93,13 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.OutputDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
@@ -76,41 +108,10 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.Collections;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ToscaOperationFacadeTest {
+
     private static final String COMPONENT_ID = "componentId";
     private static final String PROPERTY1_NAME = "prop1";
     private static final String PROPERTY1_TYPE = "string";
@@ -151,10 +152,12 @@ public class ToscaOperationFacadeTest {
         List<GraphVertex> mockVertices = getMockVertices(2);
         Either<List<GraphVertex>, JanusGraphOperationStatus> returnedVertices = Either.left(mockVertices);
 
-        when(janusGraphDaoMock.getByCriteria(eq(null), criteriaCapture.capture(), criteriaNotCapture.capture(), eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(returnedVertices);
+        when(janusGraphDaoMock.getByCriteria(eq(null), criteriaCapture.capture(), criteriaNotCapture.capture(), eq(JsonParseFlagEnum.ParseMetadata)))
+            .thenReturn(returnedVertices);
         when(topologyTemplateOperationMock.getToscaElement(mockVertices.get(0), dataFilter)).thenReturn(Either.left(getResourceToscaElement("0")));
         when(topologyTemplateOperationMock.getToscaElement(mockVertices.get(1), dataFilter)).thenReturn(Either.left(getResourceToscaElement("1")));
-        Either<List<Component>, StorageOperationStatus> fetchedComponents = testInstance.fetchMetaDataByResourceType(ResourceTypeEnum.VF.getValue(), dataFilter);
+        Either<List<Component>, StorageOperationStatus> fetchedComponents = testInstance
+            .fetchMetaDataByResourceType(ResourceTypeEnum.VF.getValue(), dataFilter);
 
         verifyCriteriaForHighestVersionAndVfResourceType(criteriaCapture);
         verifyCriteriaNotIsDeleted(criteriaNotCapture);
@@ -167,16 +170,16 @@ public class ToscaOperationFacadeTest {
     }
 
     private void verifyCriteriaForHighestVersionAndVfResourceType(ArgumentCaptor<Map> criteriaCapture) {
-        Map<GraphPropertyEnum, Object> criteria = (Map<GraphPropertyEnum, Object>)criteriaCapture.getValue();
+        Map<GraphPropertyEnum, Object> criteria = (Map<GraphPropertyEnum, Object>) criteriaCapture.getValue();
         assertEquals(2, criteria.size());
-        assertEquals(criteria.get(GraphPropertyEnum.RESOURCE_TYPE), "VF");
-        assertEquals(criteria.get(GraphPropertyEnum.IS_HIGHEST_VERSION), true);
+        assertEquals("VF", criteria.get(GraphPropertyEnum.RESOURCE_TYPE));
+        assertEquals(true, criteria.get(GraphPropertyEnum.IS_HIGHEST_VERSION));
     }
 
     private void verifyCriteriaNotIsDeleted(ArgumentCaptor<Map> criteriaNotCapture) {
-        Map<GraphPropertyEnum, Object> notCriteria = (Map<GraphPropertyEnum, Object>)criteriaNotCapture.getValue();
+        Map<GraphPropertyEnum, Object> notCriteria = (Map<GraphPropertyEnum, Object>) criteriaNotCapture.getValue();
         assertEquals(1, notCriteria.size());
-        assertEquals(notCriteria.get(GraphPropertyEnum.IS_DELETED), true);
+        assertEquals(true, notCriteria.get(GraphPropertyEnum.IS_DELETED));
     }
 
     @SuppressWarnings("unchecked")
@@ -184,47 +187,48 @@ public class ToscaOperationFacadeTest {
     public void fetchMetaDataByResourceType_failedToGetData() throws Exception {
         when(janusGraphDaoMock.getByCriteria(eq(null), anyMap(), anyMap(), eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(Either.right(
             JanusGraphOperationStatus.GENERAL_ERROR));
-        Either<List<Component>, StorageOperationStatus> fetchedComponents = testInstance.fetchMetaDataByResourceType(ResourceTypeEnum.VF.getValue(), new ComponentParametersView());
+        Either<List<Component>, StorageOperationStatus> fetchedComponents = testInstance
+            .fetchMetaDataByResourceType(ResourceTypeEnum.VF.getValue(), new ComponentParametersView());
         assertTrue(fetchedComponents.isRight());
         assertEquals(StorageOperationStatus.GENERAL_ERROR, fetchedComponents.right().value());
     }
 
     @Test
-    public void associatePolicyToComponentSuccessTest(){
+    public void associatePolicyToComponentSuccessTest() {
         Either<PolicyDefinition, StorageOperationStatus> result = associatePolicyToComponentWithStatus(StorageOperationStatus.OK);
         assertTrue(result.isLeft());
     }
 
     @Test
-    public void associatePolicyToComponentFailureTest(){
+    public void associatePolicyToComponentFailureTest() {
         Either<PolicyDefinition, StorageOperationStatus> result = associatePolicyToComponentWithStatus(StorageOperationStatus.BAD_REQUEST);
         assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.BAD_REQUEST);
     }
 
     @Test
-    public void updatePolicyOfComponentSuccessTest(){
+    public void updatePolicyOfComponentSuccessTest() {
         Either<PolicyDefinition, StorageOperationStatus> result = updatePolicyOfComponentWithStatus(StorageOperationStatus.OK);
         assertTrue(result.isLeft());
     }
 
     @Test
-    public void updatePolicyOfComponentFailureTest(){
+    public void updatePolicyOfComponentFailureTest() {
         Either<PolicyDefinition, StorageOperationStatus> result = updatePolicyOfComponentWithStatus(StorageOperationStatus.NOT_FOUND);
         assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.NOT_FOUND);
     }
 
     @Test
-    public void removePolicyFromComponentSuccessTest(){
+    public void removePolicyFromComponentSuccessTest() {
         removePolicyFromComponentWithStatus(StorageOperationStatus.OK);
     }
 
     @Test
-    public void removePolicyFromComponentFailureTest(){
+    public void removePolicyFromComponentFailureTest() {
         removePolicyFromComponentWithStatus(StorageOperationStatus.NOT_FOUND);
     }
 
     @Test
-    public void testFindLastCertifiedToscaElementByUUID(){
+    public void testFindLastCertifiedToscaElementByUUID() {
         Either<Component, StorageOperationStatus> result;
         Component component = new Resource();
         List<GraphVertex> list = new ArrayList<>();
@@ -235,15 +239,16 @@ public class ToscaOperationFacadeTest {
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
         ToscaElement toscaElement = getToscaElementForTest();
-        when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex),any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(toscaElement));
         when(janusGraphDaoMock.getByCriteria(ModelConverter.getVertexType(component), props)).thenReturn(Either.left(list));
         result = testInstance.findLastCertifiedToscaElementByUUID(component);
         Component resultComp = result.left().value();
-        assertEquals(resultComp.getToscaType(),ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+        assertEquals(resultComp.getToscaType(), ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
     }
 
     @Test
-    public void testLatestComponentByToscaResourceName(){
+    public void testLatestComponentByToscaResourceName() {
         Either<Component, StorageOperationStatus> result;
         TopologyTemplate toscaElement = new TopologyTemplate();
         toscaElement.setComponentType(ComponentTypeEnum.SERVICE);
@@ -260,11 +265,13 @@ public class ToscaOperationFacadeTest {
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
-        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
-        when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex),any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll))
+            .thenReturn(Either.left(list));
+        when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(toscaElement));
 
         result = testInstance.getFullLatestComponentByToscaResourceName("toscaResourceName");
-        assertThat(result.isLeft());
+        assertTrue(result.isLeft());
     }
 
     @Test
@@ -309,9 +316,10 @@ public class ToscaOperationFacadeTest {
         topologyTemplate.setComponentType(ComponentTypeEnum.SERVICE);
         when(janusGraphDaoMock.getByCriteria(VertexTypeEnum.NODE_TYPE, props, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(vertexList));
         when(janusGraphDaoMock.getVertexById(uniqueId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
-        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(topologyTemplate));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(topologyTemplate));
         result = testInstance.getLatestCertifiedNodeTypeByToscaResourceName(toscaResourceName);
-        assertThat(result.isLeft());
+        assertTrue(result.isLeft());
     }
 
     @Test
@@ -393,7 +401,8 @@ public class ToscaOperationFacadeTest {
         GraphVertex graphVertex = getTopologyTemplateVertex();
         ToscaElement toscaElement = getToscaElementForTest();
         when(janusGraphDaoMock.getVertexById(id, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
-        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(toscaElement));
         result = testInstance.getToscaElement(id, JsonParseFlagEnum.ParseAll);
         assertTrue(result.isLeft());
     }
@@ -408,7 +417,7 @@ public class ToscaOperationFacadeTest {
         when(janusGraphDaoMock.getVertexById(id, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
         when(nodeTypeOperationMock.markComponentToDelete(graphVertex)).thenReturn(Either.left(graphVertex));
         result = testInstance.markComponentToDelete(component);
-        assertEquals(result, StorageOperationStatus.OK);
+        assertEquals(StorageOperationStatus.OK, result);
     }
 
     @Test
@@ -443,8 +452,10 @@ public class ToscaOperationFacadeTest {
         graphVertex.setMetadataProperties(props);
         graphVertexList.add(graphVertex);
 
-        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(graphVertexList));
-        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata))
+            .thenReturn(Either.left(graphVertexList));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(toscaElement));
         result = testInstance.getLatestByToscaResourceName(toscaResourceName);
         assertTrue(result.isLeft());
     }
@@ -468,11 +479,13 @@ public class ToscaOperationFacadeTest {
         graphVertex.setUniqueId(toscaResourceName);
         Map<JsonPresentationFields, Object> props = new HashMap<>();
         props.put(JsonPresentationFields.VERSION, "1.0");
-        graphVertex.setJsonMetadataField(JsonPresentationFields.VERSION,  props.get(JsonPresentationFields.VERSION));
+        graphVertex.setJsonMetadataField(JsonPresentationFields.VERSION, props.get(JsonPresentationFields.VERSION));
         graphVertexList.add(graphVertex);
 
-        when(janusGraphDaoMock.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(graphVertexList));
-        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(janusGraphDaoMock.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata))
+            .thenReturn(Either.left(graphVertexList));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(toscaElement));
 
         when(janusGraphDaoMock.getVertexById(toscaResourceName, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
 
@@ -517,8 +530,10 @@ public class ToscaOperationFacadeTest {
 
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
-        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(componentVertices));
-        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll))
+            .thenReturn(Either.left(componentVertices));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(toscaElement));
         result = testInstance.getBySystemName(componentTypeEnum, sysName);
         assertTrue(result.isLeft());
         assertEquals(1, result.left().value().size());
@@ -543,7 +558,8 @@ public class ToscaOperationFacadeTest {
         hasNotProperties.put(GraphPropertyEnum.IS_DELETED, true);
         hasProperties.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
         when(janusGraphDaoMock.getByCriteria(null, hasProperties, hasNotProperties, parseFlag)).thenReturn(Either.left(graphVertexList));
-        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class))).thenReturn(Either.left(toscaElement));
+        when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(toscaElement));
         result = testInstance.getComponentByNameAndVersion(componentType, name, version, parseFlag);
         assertTrue(result.isLeft());
     }
@@ -555,13 +571,13 @@ public class ToscaOperationFacadeTest {
     }
 
     @Test
-    public void addDataTypesToComponentSuccessTest(){
+    public void addDataTypesToComponentSuccessTest() {
         Either<List<DataTypeDefinition>, StorageOperationStatus> result = addDataTypesToComponentWithStatus(StorageOperationStatus.OK);
         assertTrue(result.isLeft());
     }
 
     @Test
-    public void addDataTypesToComponentFailureTest_BadRequest(){
+    public void addDataTypesToComponentFailureTest_BadRequest() {
         Either<List<DataTypeDefinition>, StorageOperationStatus> result = addDataTypesToComponentWithStatus(StorageOperationStatus.BAD_REQUEST);
         assertTrue(result.isRight() && result.right().value() == StorageOperationStatus.BAD_REQUEST);
     }
@@ -609,7 +625,7 @@ public class ToscaOperationFacadeTest {
         dataTypes.put("dataType3", dataType3);
 
         GraphVertex vertex;
-        if(status == StorageOperationStatus.OK){
+        if (status == StorageOperationStatus.OK) {
             vertex = getTopologyTemplateVertex();
         } else {
             vertex = getNodeTypeVertex();
@@ -617,7 +633,7 @@ public class ToscaOperationFacadeTest {
         Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = Either.left(vertex);
         when(janusGraphDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(getVertexEither);
         when(topologyTemplateOperationMock.addToscaDataToToscaElement(eq(vertex),
-                eq(EdgeLabelEnum.DATA_TYPES), eq(VertexTypeEnum.DATA_TYPES), anyMap(), eq(JsonPresentationFields.NAME))).thenReturn(status);
+            eq(EdgeLabelEnum.DATA_TYPES), eq(VertexTypeEnum.DATA_TYPES), anyMap(), eq(JsonPresentationFields.NAME))).thenReturn(status);
         return testInstance.addDataTypesToComponent(dataTypes, componentId);
     }
 
@@ -635,21 +651,20 @@ public class ToscaOperationFacadeTest {
 
     @Test
     public void testDeleteDataTypeOfComponent() {
-        StorageOperationStatus result;
         Component component = new Resource();
         String id = "id";
         component.setUniqueId(id);
-        String datatype = null;
 
         DataTypeDefinition dataType1 = new DataTypeDefinition();
         dataType1.setName("name1");
         Map<String, DataTypeDataDefinition> dataTypeDataMap = new HashMap<>();
         dataTypeDataMap.put("datatype1", dataType1);
-        List<DataTypeDefinition> dataTypeMap = dataTypeDataMap.values().stream().map(e -> { DataTypeDefinition dataType = new DataTypeDefinition(e);return dataType; }).collect(Collectors.toList());
+        List<DataTypeDefinition> dataTypeMap = dataTypeDataMap.values().stream().map(e -> {
+            return new DataTypeDefinition(e);
+        }).collect(Collectors.toList());
         component.setDataTypes(dataTypeMap);
         GraphVertex graphVertex = getTopologyTemplateVertex();
-        result = testInstance.deleteDataTypeOfComponent(component, "datatype1");
-        assertEquals(datatype, result);
+        assertNull(testInstance.deleteDataTypeOfComponent(component, "datatype1"));
     }
 
     @Test
@@ -717,12 +732,13 @@ public class ToscaOperationFacadeTest {
                 containerComponent, originalComponent, componentInstance, false, user);
 
         assertTrue(result.isLeft());
-        assertEquals(componentInstance.getIcon(), ICON_NAME);
-        assertEquals(result.left().value().getRight(), COMPONENT_ID);
+        assertEquals(ICON_NAME, componentInstance.getIcon());
+        assertEquals(COMPONENT_ID, result.left().value().getRight());
         // the instance counter must be 1 because the service proxy instance with suffix 0 already exists.
         verify(nodeTemplateOperationMock, times(1))
             .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(user));
     }
+
     @Test
     public void testAddComponentInstanceToTopologyTemplate_ServiceSubstitution() {
         Component containerComponent = new Service();
@@ -766,26 +782,29 @@ public class ToscaOperationFacadeTest {
     @Test
     public void testUpdateComponentInstanceRequirement() {
         String containerComponentId = "containerComponentId";
-        String componentInstanceUniqueId= "componentInstanceUniqueId";
-        RequirementDataDefinition requirementDataDefinition= Mockito.mock(RequirementDataDefinition.class);
+        String componentInstanceUniqueId = "componentInstanceUniqueId";
+        RequirementDataDefinition requirementDataDefinition = Mockito.mock(RequirementDataDefinition.class);
 
-        when(nodeTemplateOperationMock.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition)).thenReturn(StorageOperationStatus.OK);
-        StorageOperationStatus result = testInstance.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
+        when(nodeTemplateOperationMock.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition))
+            .thenReturn(StorageOperationStatus.OK);
+        StorageOperationStatus result = testInstance
+            .updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
         assertEquals(StorageOperationStatus.OK, result);
-        verify(nodeTemplateOperationMock, times(1)).updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
+        verify(nodeTemplateOperationMock, times(1))
+            .updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
 
     }
 
     @Test
-    public void associateCapabilitiesToServiceFailureTest(){
+    public void associateCapabilitiesToServiceFailureTest() {
         StorageOperationStatus result = associateCapabilitiesToServiceWithStatus(StorageOperationStatus.BAD_REQUEST);
-        assertTrue(result == StorageOperationStatus.BAD_REQUEST);
+        assertSame(StorageOperationStatus.BAD_REQUEST, result);
     }
 
     @Test
-    public void associateCapabilitiesToServiceSuccessTest(){
+    public void associateCapabilitiesToServiceSuccessTest() {
         StorageOperationStatus result = associateCapabilitiesToServiceWithStatus(StorageOperationStatus.OK);
-        assertTrue(result == StorageOperationStatus.OK);
+        assertSame(StorageOperationStatus.OK, result);
     }
 
     private StorageOperationStatus associateCapabilitiesToServiceWithStatus(StorageOperationStatus status) {
@@ -796,7 +815,7 @@ public class ToscaOperationFacadeTest {
         capabilitiesMap.put("capabilities1", listCapabilityDataDefinition1);
 
         GraphVertex vertex;
-        if(status == StorageOperationStatus.OK){
+        if (status == StorageOperationStatus.OK) {
             vertex = getTopologyTemplateVertex();
         } else {
             vertex = getNodeTypeVertex();
@@ -810,15 +829,15 @@ public class ToscaOperationFacadeTest {
     }
 
     @Test
-    public void associateRequirementsToServiceFailureTest(){
+    public void associateRequirementsToServiceFailureTest() {
         StorageOperationStatus result = associateRequirementsToServiceWithStatus(StorageOperationStatus.BAD_REQUEST);
-        assertTrue(result == StorageOperationStatus.BAD_REQUEST);
+        assertSame(StorageOperationStatus.BAD_REQUEST, result);
     }
 
     @Test
     public void associateRequirementsToServiceSuccessTest() {
         StorageOperationStatus result = associateRequirementsToServiceWithStatus(StorageOperationStatus.OK);
-        assertTrue(result == StorageOperationStatus.OK);
+        assertSame(StorageOperationStatus.OK, result);
     }
 
     @Test
@@ -1062,13 +1081,13 @@ public class ToscaOperationFacadeTest {
         String componentId = "componentId";
         int counter = 0;
         GraphVertex vertex;
-        if(status == StorageOperationStatus.OK){
+        if (status == StorageOperationStatus.OK) {
             vertex = getTopologyTemplateVertex();
         } else {
             vertex = getNodeTypeVertex();
         }
         Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = Either.left(vertex);
-        when(janusGraphDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(getVertexEither);
+        when(janusGraphDaoMock.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata)).thenReturn(getVertexEither);
         when(topologyTemplateOperationMock.addPolicyToToscaElement(eq(vertex), any(PolicyDefinition.class), anyInt())).thenReturn(status);
         return testInstance.associatePolicyToComponent(componentId, policy, counter);
     }
@@ -1077,7 +1096,7 @@ public class ToscaOperationFacadeTest {
         PolicyDefinition policy = new PolicyDefinition();
         String componentId = "componentId";
         GraphVertex vertex = getTopologyTemplateVertex();
-        when(janusGraphDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.NoParse))).thenReturn(Either.left(vertex));
+        when(janusGraphDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(vertex));
         when(topologyTemplateOperationMock.updatePolicyOfToscaElement(eq(vertex), any(PolicyDefinition.class))).thenReturn(status);
         return testInstance.updatePolicyOfComponent(componentId, policy, PromoteVersionEnum.NONE);
     }
@@ -1087,8 +1106,8 @@ public class ToscaOperationFacadeTest {
         String policyId = "policyId";
         GraphVertex vertex = getTopologyTemplateVertex();
         Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = Either.left(vertex);
-        when(janusGraphDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.NoParse))).thenReturn(getVertexEither);
-        when(topologyTemplateOperationMock.removePolicyFromToscaElement(eq(vertex), eq(policyId))).thenReturn(status);
+        when(janusGraphDaoMock.getVertexById(componentId, JsonParseFlagEnum.NoParse)).thenReturn(getVertexEither);
+        when(topologyTemplateOperationMock.removePolicyFromToscaElement(vertex, policyId)).thenReturn(status);
         StorageOperationStatus result = testInstance.removePolicyFromComponent(componentId, policyId);
         assertSame(result, status);
     }

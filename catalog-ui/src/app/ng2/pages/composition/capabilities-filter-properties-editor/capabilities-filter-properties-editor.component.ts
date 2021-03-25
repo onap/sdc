@@ -19,24 +19,23 @@
 *  ============LICENSE_END=========================================================
 */
 
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {InputBEModel, PropertyBEModel, PropertyModel} from 'app/models';
-import { OPERATOR_TYPES } from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
-import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
-import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
-import { PROPERTY_DATA } from 'app/utils';
-import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
+import {OPERATOR_TYPES} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
+import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
+import {PROPERTY_DATA} from 'app/utils';
+import {ServiceInstanceObject} from '../../../../models/service-instance-properties-and-interfaces';
 import {CapabilitiesConstraintObjectUI} from "../../../components/logic/capabilities-constraint/capabilities-constraint.component";
 
 export class UIDropDownSourceTypesElement extends DropdownValue {
   options: any[];
   assignedLabel: string;
   type: string;
+
   constructor(input?: any) {
+    super(input ? input.value || '' : "", input ? input.label || '' : "");
     if (input) {
-      const value = input.value || '';
-      const label = input.label || '';
-      super(value, label);
       this.options = input.options;
       this.assignedLabel = input.assignedLabel;
       this.type = input.type;
@@ -51,9 +50,6 @@ export class UIDropDownSourceTypesElement extends DropdownValue {
   providers: [ServiceServiceNg2]
 })
 export class CapabilitiesFilterPropertiesEditorComponent {
-
-  constructor() {
-  }
 
   input: {
     serviceRuleIndex: number,
@@ -100,7 +96,8 @@ export class CapabilitiesFilterPropertiesEditorComponent {
           capabilityName: this.SOURCE_TYPES.CAPABILITY_NAME.value,
           sourceName: this.SOURCE_TYPES.STATIC.value,
           sourceType: this.SOURCE_TYPES.STATIC.value, value: '',
-          constraintOperator: OPERATOR_TYPES.EQUAL});
+          constraintOperator: OPERATOR_TYPES.EQUAL
+        });
     this.currentServiceName = this.input.currentServiceName;
     this.operatorTypes = this.input.operatorTypes;
 
@@ -111,8 +108,13 @@ export class CapabilitiesFilterPropertiesEditorComponent {
   }
 
   initSourceTypes() {
-    this.sourceTypes.push({label: this.SOURCE_TYPES.STATIC.label, value: this.SOURCE_TYPES.STATIC.value,
-      options: [], assignedLabel: this.SOURCE_TYPES.STATIC.label, type: this.SOURCE_TYPES.STATIC.value});
+    this.sourceTypes.push({
+      label: this.SOURCE_TYPES.STATIC.label,
+      value: this.SOURCE_TYPES.STATIC.value,
+      options: [],
+      assignedLabel: this.SOURCE_TYPES.STATIC.label,
+      type: this.SOURCE_TYPES.STATIC.value
+    });
     this.sourceTypes.push({
       label: this.input.compositeServiceName,
       value: this.input.compositeServiceName,
@@ -135,7 +137,7 @@ export class CapabilitiesFilterPropertiesEditorComponent {
     if (!this.currentRule.sourceName && this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value) {
       this.currentRule.sourceName = this.SOURCE_TYPES.STATIC.value;
     }
-    if (!this.input.componentInstanceCapabilitiesMap){
+    if (!this.input.componentInstanceCapabilitiesMap) {
       this.selectedCapabilitiesPropertyObject = Array.from(this.input.componentInstanceCapabilitiesMap
       .get(this.currentRule.capabilityName))
       .find(property => property.name == this.currentRule.servicePropertyName);
@@ -158,7 +160,7 @@ export class CapabilitiesFilterPropertiesEditorComponent {
       const selectedSourceType: UIDropDownSourceTypesElement = this.sourceTypes.find(
           (t) => t.value === this.currentRule.sourceName && t.type === this.currentRule.sourceType
       );
-      if(selectedSourceType) {
+      if (selectedSourceType) {
         this.listOfSourceOptions = selectedSourceType.options || [];
         this.assignedValueLabel = selectedSourceType.assignedLabel || this.SOURCE_TYPES.STATIC.label;
         this.filterOptionsByType();
@@ -166,7 +168,7 @@ export class CapabilitiesFilterPropertiesEditorComponent {
     }
   }
 
-  onCapabilityNameChanged= (value: any): void => {
+  onCapabilityNameChanged = (value: any): void => {
     this.selectedPropertiesByCapabilityName = this.input.componentInstanceCapabilitiesMap.get(value);
     this.capabilityProperties = _.map(this.selectedPropertiesByCapabilityName, (prop) => new DropdownValue(prop.name, prop.name));
     this.selectedCapabilityName = value;
@@ -193,7 +195,7 @@ export class CapabilitiesFilterPropertiesEditorComponent {
       this.listOfValuesToAssign = [];
       return;
     }
-    this.listOfValuesToAssign =  this.listOfSourceOptions.reduce((result, op: PropertyModel) => {
+    this.listOfValuesToAssign = this.listOfSourceOptions.reduce((result, op: PropertyModel) => {
       if (op.type === this.selectedCapabilitiesPropertyObject.type && (!op.schemaType || op.schemaType === this.selectedCapabilitiesPropertyObject.schemaType)) {
         result.push(new DropdownValue(op.name, op.name));
       }
