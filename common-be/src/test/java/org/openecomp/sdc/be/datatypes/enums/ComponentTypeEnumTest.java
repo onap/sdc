@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ComponentTypeEnumTest {
 
@@ -30,48 +34,43 @@ public class ComponentTypeEnumTest {
 
 	@Test
 	public void testGetValue() throws Exception {
-		ComponentTypeEnum testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getValue();
+		ComponentTypeEnum testSubject = createTestSubject();
+		assertEquals("Product", testSubject.getValue());
 	}
 
 	@Test
-	public void testGetNodeType() throws Exception {
-		ComponentTypeEnum testSubject;
-		NodeTypeEnum result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getNodeType();
+	public void testGetNodeType() {
+		assertEquals(NodeTypeEnum.Resource, ComponentTypeEnum.RESOURCE.getNodeType());
+		assertEquals(NodeTypeEnum.Product, ComponentTypeEnum.PRODUCT.getNodeType());
+		assertEquals(NodeTypeEnum.Service, ComponentTypeEnum.SERVICE.getNodeType());
+		assertEquals(NodeTypeEnum.ResourceInstance, ComponentTypeEnum.RESOURCE_INSTANCE.getNodeType());
+		assertThrows(UnsupportedOperationException.class, () -> {
+			ComponentTypeEnum.SERVICE_INSTANCE.getNodeType();
+		});
 	}
 
 	@Test
-	public void testFindByValue() throws Exception {
-		String value = "";
-		ComponentTypeEnum result;
-
-		// default test
-		result = ComponentTypeEnum.findByValue(value);
+	public void testFindByValue() {
+		assertNull(ComponentTypeEnum.findByValue(""));
+		assertEquals(ComponentTypeEnum.RESOURCE, ComponentTypeEnum.findByValue("Resource"));
+		assertEquals(ComponentTypeEnum.SERVICE, ComponentTypeEnum.findByValue("Service"));
+		assertEquals(ComponentTypeEnum.PRODUCT, ComponentTypeEnum.findByValue("Product"));
 	}
 
 	@Test
-	public void testFindByParamName() throws Exception {
-		String paramName = "";
-		ComponentTypeEnum result;
-
-		// default test
-		result = ComponentTypeEnum.findByParamName(paramName);
+	public void testFindByParamName() {
+		assertNull(ComponentTypeEnum.findByParamName(""));
+		assertEquals(ComponentTypeEnum.RESOURCE, ComponentTypeEnum.findByParamName("resources"));
+		assertEquals(ComponentTypeEnum.SERVICE, ComponentTypeEnum.findByParamName("services"));
+		assertEquals(ComponentTypeEnum.PRODUCT, ComponentTypeEnum.findByParamName("products"));
 	}
 
 	@Test
-	public void testFindParamByType() throws Exception {
-		ComponentTypeEnum type = null;
-		String result;
-
-		// default test
-		result = ComponentTypeEnum.findParamByType(type);
+	public void testFindParamByType() {
+		assertNull(ComponentTypeEnum.findParamByType(null));
+		assertNull(ComponentTypeEnum.findParamByType(ComponentTypeEnum.RESOURCE_INSTANCE));
+		assertEquals("resources", ComponentTypeEnum.findParamByType(ComponentTypeEnum.RESOURCE));
+		assertEquals("services", ComponentTypeEnum.findParamByType(ComponentTypeEnum.SERVICE));
+		assertEquals("products", ComponentTypeEnum.findParamByType(ComponentTypeEnum.PRODUCT));
 	}
 }

@@ -20,13 +20,128 @@
 
 package org.openecomp.sdc.exception;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.exception.ResponseFormat.RequestErrorWrapper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResponseFormatTest {
 
 	private ResponseFormat createTestSubject() {
 		return new ResponseFormat();
+	}
+	@Test
+	public void testGetFormattedMessage() {
+		// okResponseInfo not null
+		ResponseFormat responseFormat1 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper = responseFormat1.new RequestErrorWrapper();
+		OkResponseInfo okResponseInfo = new OkResponseInfo("1", "text", new String[2]);
+		requestErrorWrapper.setOkResponseInfo(okResponseInfo);
+		responseFormat1.setRequestError(requestErrorWrapper);
+
+		assertEquals("text", responseFormat1.getFormattedMessage());
+
+		// okResponseInfo null, serviceException not null
+		ResponseFormat responseFormat2 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper2 = responseFormat2.new RequestErrorWrapper();
+		ServiceException serviceException = new ServiceException("1", "text2", new String[2]);
+		requestErrorWrapper2.setServiceException(serviceException);
+		responseFormat2.setRequestError(requestErrorWrapper2);
+
+		assertEquals("text2", responseFormat2.getFormattedMessage());
+
+		// okResponseInfo null, serviceException null, policyException not null
+		ResponseFormat responseFormat3 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper3 = responseFormat3.new RequestErrorWrapper();
+		PolicyException policyException = new PolicyException("1", "text3", new String[2]);
+		requestErrorWrapper3.setPolicyException(policyException);
+		responseFormat3.setRequestError(requestErrorWrapper3);
+
+		assertEquals("text3", responseFormat3.getFormattedMessage());
+	}
+
+	@Test
+	public void testGetVariables() {
+		// okResponseInfo not null
+		ResponseFormat responseFormat1 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper = responseFormat1.new RequestErrorWrapper();
+		OkResponseInfo okResponseInfo = new OkResponseInfo("1", "text", new String[2]);
+		requestErrorWrapper.setOkResponseInfo(okResponseInfo);
+		responseFormat1.setRequestError(requestErrorWrapper);
+
+		assertEquals(0, responseFormat1.getVariables().length);
+
+		// okResponseInfo null, serviceException not null
+		ResponseFormat responseFormat2 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper2 = responseFormat2.new RequestErrorWrapper();
+		ServiceException serviceException = new ServiceException("1", "text2", new String[2]);
+		requestErrorWrapper2.setServiceException(serviceException);
+		responseFormat2.setRequestError(requestErrorWrapper2);
+
+		assertEquals(0, responseFormat2.getVariables().length);
+
+		// okResponseInfo null, serviceException null, policyException not null
+		ResponseFormat responseFormat3 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper3 = responseFormat3.new RequestErrorWrapper();
+		PolicyException policyException = new PolicyException("1", "text3", new String[2]);
+		requestErrorWrapper3.setPolicyException(policyException);
+		responseFormat3.setRequestError(requestErrorWrapper3);
+
+		assertEquals(0, responseFormat3.getVariables().length);
+	}
+
+	@Test
+	public void testGetMessageId() {
+		// okResponseInfo not null
+		ResponseFormat responseFormat1 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper = responseFormat1.new RequestErrorWrapper();
+		OkResponseInfo okResponseInfo = new OkResponseInfo("1", "text", new String[2]);
+		requestErrorWrapper.setOkResponseInfo(okResponseInfo);
+		responseFormat1.setRequestError(requestErrorWrapper);
+
+		assertEquals("1", responseFormat1.getMessageId());
+
+		// okResponseInfo null, serviceException not null
+		ResponseFormat responseFormat2 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper2 = responseFormat2.new RequestErrorWrapper();
+		ServiceException serviceException = new ServiceException("2", "text2", new String[2]);
+		requestErrorWrapper2.setServiceException(serviceException);
+		responseFormat2.setRequestError(requestErrorWrapper2);
+
+		assertEquals("2", responseFormat2.getMessageId());
+
+		// okResponseInfo null, serviceException null, policyException not null
+		ResponseFormat responseFormat3 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper3 = responseFormat3.new RequestErrorWrapper();
+		PolicyException policyException = new PolicyException("3", "text3", new String[2]);
+		requestErrorWrapper3.setPolicyException(policyException);
+		responseFormat3.setRequestError(requestErrorWrapper3);
+
+		assertEquals("3", responseFormat3.getMessageId());
+	}
+
+	@Test
+	public void testRequestErrorWrapper() {
+		ResponseFormat responseFormat1 = new ResponseFormat();
+		RequestErrorWrapper requestErrorWrapper = responseFormat1.new RequestErrorWrapper();
+		ResponseFormat.RequestError requestError = responseFormat1.new RequestError();
+		requestErrorWrapper.setRequestError(requestError);
+		assertEquals(requestError, requestErrorWrapper.getRequestError());
+	}
+
+	@Test
+	public void testRequestError() {
+		ResponseFormat responseFormat1 = new ResponseFormat();
+		ResponseFormat.RequestError requestError = responseFormat1.new RequestError();
+		ServiceException serviceException = new ServiceException("2", "text2", new String[2]);
+		requestError.setServiceException(serviceException);
+		OkResponseInfo okResponseInfo = new OkResponseInfo("1", "text", new String[2]);
+		requestError.setOkResponseInfo(okResponseInfo);
+		PolicyException policyException = new PolicyException("1", "text3", new String[2]);
+		requestError.setPolicyException(policyException);
+		assertEquals(serviceException, requestError.getServiceException());
+		assertEquals(okResponseInfo, requestError.getOkResponseInfo());
+		assertEquals(policyException, requestError.getPolicyException());
 	}
 
 	@Test
@@ -50,7 +165,7 @@ public class ResponseFormatTest {
 	}
 
 	@Test
-	public void testGetRequestError() throws Exception {
+	public void testGetRequestError() {
 		ResponseFormat testSubject;
 		RequestErrorWrapper result;
 
@@ -60,7 +175,7 @@ public class ResponseFormatTest {
 	}
 
 	@Test
-	public void testSetRequestError() throws Exception {
+	public void testSetRequestError() {
 		ResponseFormat testSubject;
 		RequestErrorWrapper requestErrorWrapper = null;
 
@@ -70,7 +185,7 @@ public class ResponseFormatTest {
 	}
 
 	@Test
-	public void testSetPolicyException() throws Exception {
+	public void testSetPolicyException() {
 		ResponseFormat testSubject;
 		PolicyException policyException = null;
 
@@ -80,7 +195,7 @@ public class ResponseFormatTest {
 	}
 
 	@Test
-	public void testSetServiceException() throws Exception {
+	public void testSetServiceException() {
 		ResponseFormat testSubject;
 		ServiceException serviceException = null;
 
@@ -90,7 +205,7 @@ public class ResponseFormatTest {
 	}
 
 	@Test
-	public void testSetOkResponseInfo() throws Exception {
+	public void testSetOkResponseInfo() {
 		ResponseFormat testSubject;
 		OkResponseInfo okResponseInfo = null;
 
