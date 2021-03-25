@@ -21,59 +21,67 @@
 package org.openecomp.sdc.be.dao.utils;
 
 import org.apache.tinkerpop.gremlin.structure.T;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CollectionUtilsTest {
 
 	@Test
 	public void testMerge() throws Exception {
-		Set<T> source = null;
-		Set<T> target = null;
-		Set<T> result;
+		Set<T> source = new HashSet<>();
+		Set<T> target = new HashSet<>();
+		assertNull(CollectionUtils.merge(source, target));
 
-		// test 1
-		target = null;
-		result = CollectionUtils.merge(source, target);
-		Assert.assertEquals(null, result);
-
-		// test 2
-		source = null;
-		result = CollectionUtils.merge(source, target);
-		Assert.assertEquals(null, result);
+		T t = null;
+		source.add(t);
+		assertNotNull(CollectionUtils.merge(source, target));
 	}
 
 	@Test
 	public void testMerge_1() throws Exception {
 		Map<String, String> source = new HashMap();
 		Map<String, String> target = new HashMap();
-		boolean override = false;
-		Map<String, String> result;
 
-		result = CollectionUtils.merge(source, target, override);
-		Assert.assertEquals(null, result);
-		
-		// test 1
-		target = null;
-		result = CollectionUtils.merge(source, target, override);
-		Assert.assertEquals(null, result);
-
-		// test 2
-		source = null;
-		result = CollectionUtils.merge(source, target, override);
-		Assert.assertEquals(null, result);
+		source.put("key", "value");
+		target.put("key", "value2");
+		assertEquals("value2", CollectionUtils.merge(source, target, false).get("key"));
+		assertEquals("value", CollectionUtils.merge(source, target, true).get("key"));
 	}
 
 	@Test
 	public void testMerge_2() throws Exception {
-		List<T> source = new LinkedList<>();
-		List<T> target = new LinkedList<>();
-		List<T> result;
+		List<String> source = null;
+		List<String> target = null;
+		assertEquals(0, CollectionUtils.merge(source, target).size());
 
-		// test 1
-		result = CollectionUtils.merge(source, target);
-		Assert.assertEquals(target, result);
+		source = new LinkedList<>();
+		target = new LinkedList<>();
+		assertEquals(0, CollectionUtils.merge(source, target).size());
+
+		source.add("test1");
+		target.add("test2");
+		assertEquals("test2", CollectionUtils.merge(source, target).get(0));
+		assertEquals("test1", CollectionUtils.merge(source, target).get(1));
+	}
+
+	@Test
+	public void testUnion() throws Exception {
+		List<String> source = new LinkedList<>();
+		List<String> target = new LinkedList<>();
+
+		source.add("test1");
+		target.add("test2");
+		assertEquals("test1", CollectionUtils.union(source, target).get(0));
+		assertEquals("test2", CollectionUtils.union(source, target).get(1));
 	}
 }
