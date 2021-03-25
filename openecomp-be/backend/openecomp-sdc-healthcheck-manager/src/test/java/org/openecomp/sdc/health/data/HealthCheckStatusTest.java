@@ -19,10 +19,11 @@
  */
 package org.openecomp.sdc.health.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HealthCheckStatusTest {
 
@@ -36,5 +37,10 @@ public class HealthCheckStatusTest {
     public void shouldReturnNullIfNotSuchEnum() {
         HealthCheckStatus status = HealthCheckStatus.toValue("MAYBE");
         assertNull(status);
+    }
+
+    @Test
+    public void toStringTest() {
+        assertEquals("UP", HealthCheckStatus.UP.toString());
     }
 }
