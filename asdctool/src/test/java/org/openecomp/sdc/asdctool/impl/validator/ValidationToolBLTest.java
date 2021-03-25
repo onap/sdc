@@ -21,33 +21,60 @@
 package org.openecomp.sdc.asdctool.impl.validator;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import org.openecomp.sdc.asdctool.impl.validator.executor.TopologyTemplateValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.ValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.*;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
 import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
 
 public class ValidationToolBLTest {
 
+    private List<ValidatorExecutor> validators = new ArrayList<>();
+    private Report report = Report.make();
+    private ValidatorExecutor executor = Mockito.mock(ValidatorExecutor.class);
+    private ReportFile.TXTFile file= makeTxtFile(makeConsoleWriter());
+
+    @Test
+    public void testValidateAllOK() {
+        when(executor.executeValidations(report, file)).thenReturn(true);
+        validators.add(executor);
+        ValidationToolBL testSubject = new ValidationToolBL(validators);
+
+        verify(executor, Mockito.times(0)).executeValidations(report, file);
+        assertTrue(testSubject.validateAll(report, file));
+    }
+
+    @Test
+    public void testValidateAllNOK() {
+        when(executor.executeValidations(report, file)).thenReturn(false);
+        validators.add(executor);
+        ValidationToolBL testSubject = new ValidationToolBL(validators);
+
+        verify(executor, Mockito.times(0)).executeValidations(report, file);
+        assertFalse(testSubject.validateAll(report, file));
+    }
+
     @Test
     public void testValidateAll() {
-        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-
-        List<ValidatorExecutor> validators = new ArrayList<>();
+        JanusGraphDao janusGraphDaoMock = Mockito.mock(JanusGraphDao.class);
         validators.add(TopologyTemplateValidatorExecutor.serviceValidatorExecutor(janusGraphDaoMock));
         ValidationToolBL testSubject = new ValidationToolBL(validators);
 
-        Report report = Report.make();
         assertThrows(
                 NullPointerException.class,
-                () -> testSubject.validateAll(report, makeTxtFile(makeConsoleWriter()))
+                () -> testSubject.validateAll(report, file)
         );
     }
 }
