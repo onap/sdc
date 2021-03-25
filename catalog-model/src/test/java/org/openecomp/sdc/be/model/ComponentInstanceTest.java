@@ -20,12 +20,23 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ComponentInstanceTest {
 
@@ -35,127 +46,81 @@ public class ComponentInstanceTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new ComponentInstance(new ComponentInstanceDataDefinition());
+		assertNotNull(new ComponentInstance(new ComponentInstanceDataDefinition()));
 	}
 	
 	@Test
-	public void testGetCapabilities() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, List<CapabilityDefinition>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCapabilities();
-	}
-
-	@Test
-	public void testSetCapabilities() throws Exception {
+	public void testCapabilities() throws Exception {
 		ComponentInstance testSubject;
 		Map<String, List<CapabilityDefinition>> capabilities = null;
 
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setCapabilities(capabilities);
+		assertNull(testSubject.getCapabilities());
 	}
 
 	@Test
-	public void testGetRequirements() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, List<RequirementDefinition>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getRequirements();
-	}
-
-	@Test
-	public void testSetRequirements() throws Exception {
+	public void testRequirements() throws Exception {
 		ComponentInstance testSubject;
 		Map<String, List<RequirementDefinition>> requirements = null;
 
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setRequirements(requirements);
+		assertNull(testSubject.getRequirements());
 	}
 
 	@Test
-	public void testGetDeploymentArtifacts() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, ArtifactDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDeploymentArtifacts();
+	public void testDeploymentArtifacts() throws Exception {
+		ComponentInstance testSubject = createTestSubject();
+		Map<String, ArtifactDefinition> deploymentArtifacts = null;
+		testSubject.setDeploymentArtifacts(deploymentArtifacts);
+		assertNull(testSubject.getDeploymentArtifacts());
 	}
 
 	@Test
-	public void testSafeGetDeploymentArtifacts() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, ArtifactDefinition> result;
+	public void testSafeGetDeploymentArtifacts() {
+		ComponentInstance testSubject = createTestSubject();
+		assertEquals(0, testSubject.safeGetDeploymentArtifacts().size());
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.safeGetDeploymentArtifacts();
+		Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap();
+        deploymentArtifacts.put("test", new ArtifactDefinition());
+        testSubject.setDeploymentArtifacts(deploymentArtifacts);
+        assertEquals(1, testSubject.safeGetDeploymentArtifacts().size());
 	}
 
 	@Test
 	public void testSafeGetInformationalArtifacts() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, ArtifactDefinition> result;
+        ComponentInstance testSubject = createTestSubject();
+        assertEquals(0, testSubject.safeGetInformationalArtifacts().size());
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.safeGetInformationalArtifacts();
+        Map<String, ArtifactDefinition> informationArtifacts = new HashMap();
+        informationArtifacts.put("test", new ArtifactDefinition());
+        testSubject.setArtifacts(informationArtifacts);
+        assertNull(testSubject.safeGetInformationalArtifacts());
 	}
 
-	@Test
-	public void testSetDeploymentArtifacts() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, ArtifactDefinition> deploymentArtifacts = null;
+    @Test
+    public void testSafeGetArtifacts() throws Exception {
+        ComponentInstance testSubject = createTestSubject();
+        assertEquals(0, testSubject.safeGetArtifacts().size());
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDeploymentArtifacts(deploymentArtifacts);
-	}
-
-	@Test
-	public void testGetArtifacts() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, ArtifactDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getArtifacts();
-	}
+        Map<String, ArtifactDefinition> artifacts = new HashMap();
+		artifacts.put("test", new ArtifactDefinition());
+        testSubject.setArtifacts(artifacts);
+		assertEquals(1, testSubject.safeGetArtifacts().size());
+    }
 
 	@Test
-	public void testSafeGetArtifacts() throws Exception {
-		ComponentInstance testSubject;
-		Map<String, ArtifactDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.safeGetArtifacts();
-	}
-
-	@Test
-	public void testSetArtifacts() throws Exception {
+	public void testArtifacts() throws Exception {
 		ComponentInstance testSubject;
 		Map<String, ArtifactDefinition> artifacts = null;
 
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setArtifacts(artifacts);
-	}
-
-	@Test
-	public void testGetGroupInstances() throws Exception {
-		ComponentInstance testSubject;
-		List<GroupInstance> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getGroupInstances();
+		assertNull(testSubject.getArtifacts());
 	}
 
 	@Test
@@ -166,29 +131,65 @@ public class ComponentInstanceTest {
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setGroupInstances(groupInstances);
+		assertNull(testSubject.getGroupInstances());
 	}
 
 	@Test
 	public void testGetActualComponentUid() throws Exception {
-		ComponentInstance testSubject;
-		String result;
+		ComponentInstance testSubject = createTestSubject();
+		testSubject.setOriginType(OriginTypeEnum.ServiceSubstitution);
+		testSubject.setSourceModelUid("sourceModelUid");
+		testSubject.setComponentUid("componentUid");
+		assertEquals("sourceModelUid", testSubject.getActualComponentUid());
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getActualComponentUid();
+		testSubject.setOriginType(OriginTypeEnum.VFC);
+		assertEquals("componentUid", testSubject.getActualComponentUid());
 	}
 
 	@Test
 	public void testIsArtifactExists() throws Exception {
 		ComponentInstance testSubject;
-		ArtifactGroupTypeEnum groupType = null;
-		String artifactLabel = "";
-		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.isArtifactExists(groupType, artifactLabel);
+		assertFalse(testSubject.isArtifactExists(null, ""));
+		Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap();
+		deploymentArtifacts.put("test", new ArtifactDefinition());
+		testSubject.setDeploymentArtifacts(deploymentArtifacts);
+		testSubject.setArtifacts(deploymentArtifacts);
+		assertTrue(testSubject.isArtifactExists(null, "test"));
+
 		testSubject = createTestSubject();
-		result = testSubject.isArtifactExists(ArtifactGroupTypeEnum.DEPLOYMENT, artifactLabel);
+		assertFalse(testSubject.isArtifactExists(ArtifactGroupTypeEnum.DEPLOYMENT, ""));
+		testSubject.setDeploymentArtifacts(deploymentArtifacts);
+		assertTrue(testSubject.isArtifactExists(ArtifactGroupTypeEnum.DEPLOYMENT, "test"));
 	}
+
+	@Test
+	public void testAddInterface() throws Exception {
+		ComponentInstance testSubject = createTestSubject();
+		assertNull(testSubject.getInterfaces());
+		testSubject.addInterface("test", new InterfaceDefinition());
+		assertEquals(1, testSubject.getInterfaces().size());
+	}
+
+	@Test
+	public void testGetComponentMetadataForSupportLog() throws Exception {
+		ComponentInstance testSubject = createTestSubject();
+		testSubject.setName("testName");
+		testSubject.setToscaPresentationValue(JsonPresentationFields.VERSION, "1.0");
+		testSubject.setSourceModelUuid("sourceModelUuid");
+		assertEquals(3, testSubject.getComponentMetadataForSupportLog().size());
+		assertEquals("testName", testSubject.getComponentMetadataForSupportLog().get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME));
+		assertEquals("1.0", testSubject.getComponentMetadataForSupportLog().get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION));
+		assertEquals("sourceModelUuid", testSubject.getComponentMetadataForSupportLog().get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID));
+	}
+
+	@Test
+	public void testIsCreatedFromCsar() throws Exception {
+		ComponentInstance testSubject = createTestSubject();
+		testSubject.setCreatedFrom(CreatedFrom.CSAR);
+		assertTrue(testSubject.isCreatedFromCsar());
+		testSubject.setCreatedFrom(CreatedFrom.UI);
+		assertFalse(testSubject.isCreatedFromCsar());}
 }
