@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.openecomp.sdc.asdctool.impl.validator.executor.IArtifactValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -29,13 +30,39 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class ArtifactToolBLTest {
 
     @Test
-    public void testValidateAll() {
+    public void testValidateAllOK() {
+        List<IArtifactValidatorExecutor> validators = new ArrayList<>();
+        NodeToscaArtifactsValidatorExecutor executor = Mockito.mock(NodeToscaArtifactsValidatorExecutor.class);
+        when(executor.executeValidations(Mockito.anyString())).thenReturn(true);
+        validators.add(executor);
+        ArtifactToolBL testSubject = new ArtifactToolBL(validators);
+
+        verify(executor, Mockito.times(0)).executeValidations(Mockito.anyString());
+        assertTrue(testSubject.validateAll(""));
+    }
+
+    @Test
+    public void testValidateAllNOK() {
+        List<IArtifactValidatorExecutor> validators = new ArrayList<>();
+        NodeToscaArtifactsValidatorExecutor executor = Mockito.mock(NodeToscaArtifactsValidatorExecutor.class);
+        when(executor.executeValidations(Mockito.anyString())).thenReturn(false);
+        validators.add(executor);
+        ArtifactToolBL testSubject = new ArtifactToolBL(validators);
+
+        verify(executor, Mockito.times(0)).executeValidations(Mockito.anyString());
+        assertFalse(testSubject.validateAll(""));
+    }
+
+    @Test
+    public void testValidateAllException() {
         JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
         ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
 

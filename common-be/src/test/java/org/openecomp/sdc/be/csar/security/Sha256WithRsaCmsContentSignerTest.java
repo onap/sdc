@@ -19,10 +19,6 @@
 
 package org.openecomp.sdc.be.csar.security;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -47,6 +43,11 @@ import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.csar.security.api.CertificateReader;
 import org.openecomp.sdc.be.csar.security.api.PrivateKeyReader;
 import org.openecomp.sdc.be.csar.security.exception.CmsSignatureException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class Sha256WithRsaCmsContentSignerTest {
 
@@ -82,6 +83,21 @@ class Sha256WithRsaCmsContentSignerTest {
 
         assertTrue(verifySignature(Files.readAllBytes(fileToSign.toPath()), actualSignatureBytes,
             (X509Certificate) certificate));
+    }
+
+    @Test
+    void formatToPemSignatureTest() throws OperatorCreationException, CMSException, IOException, CmsSignatureException {
+        final File certFile = getResourceFile(certFilesPath.resolve("realCert1.cert"));
+        final File keyFile = getResourceFile(certFilesPath.resolve("realCert1.key"));
+        final File fileToSign = getResourceFile(testFilesPath.resolve("fileToSign.txt"));
+        final Key privateKey = privateKeyReader.loadPrivateKey(keyFile);
+        final Certificate certificate = certificateReader.loadCertificate(certFile);
+        final byte[] actualSignatureBytes = cmsContentSigner
+                .signData(Files.readAllBytes(fileToSign.toPath()), certificate, privateKey);
+
+        assertNotNull(cmsContentSigner.formatToPemSignature(actualSignatureBytes));
+        assertThrows(CmsSignatureException.class,
+                () -> cmsContentSigner.formatToPemSignature(new byte[10]));
     }
 
     @Test

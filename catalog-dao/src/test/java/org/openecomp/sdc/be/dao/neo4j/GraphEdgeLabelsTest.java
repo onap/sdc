@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-package org.openecomp.sdc.be.datatypes.elements;
+package org.openecomp.sdc.be.dao.neo4j;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MapListRequirementDataDefinitionTest {
-
-	private MapListRequirementDataDefinition createTestSubject() {
-		Map map = new HashMap<>();
-		return new MapListRequirementDataDefinition(map);
+public class GraphEdgeLabelsTest {
+	@Test
+	public void testGetAllProperties() throws Exception {
+		assertEquals(55, GraphEdgeLabels.getAllProperties().size());
 	}
 
 	@Test
-	public void testAdd() throws Exception {
-		MapListRequirementDataDefinition testSubject = new MapListRequirementDataDefinition();
-		RequirementDataDefinition value = null;
-
-		testSubject.add("key1", value);
-		testSubject.add("key2", value);
-		testSubject.add("key2", value);
-		Map<String, ListRequirementDataDefinition> result = testSubject.getMapToscaDataDefinition();
-		assertEquals(2, result.size());
-		assertEquals(2, result.get("key2").getListToscaDataDefinition().size());
+	public void testGetByName() throws Exception {
+		assertNotNull(GraphEdgeLabels.getByName("STATE"));
+		assertNull(GraphEdgeLabels.getByName("state"));
 	}
 }

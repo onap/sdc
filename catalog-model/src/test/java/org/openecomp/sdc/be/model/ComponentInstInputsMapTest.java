@@ -20,13 +20,16 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComponentInstInputsMapTest {
 
@@ -35,85 +38,123 @@ public class ComponentInstInputsMapTest {
 	}
 
 	@Test
-	public void testGetComponentInstanceInputsMap() throws Exception {
-		ComponentInstInputsMap testSubject;
-		Map<String, List<ComponentInstancePropInput>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getComponentInstanceInputsMap();
-	}
-
-	@Test
-	public void testSetComponentInstanceInputsMap() throws Exception {
-		ComponentInstInputsMap testSubject;
+	public void testComponentInstanceInputsMap() throws Exception {
+		ComponentInstInputsMap testSubject = createTestSubject();
 		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = null;
 
 		// default test
-		testSubject = createTestSubject();
 		testSubject.setComponentInstanceInputsMap(componentInstanceInputsMap);
+
+		Map<String, List<ComponentInstancePropInput>> result = testSubject.getComponentInstanceInputsMap();
+		assertEquals(0, result.size());
 	}
 
 	@Test
-	public void testGetComponentInstanceProperties() throws Exception {
-		ComponentInstInputsMap testSubject;
-		Map<String, List<ComponentInstancePropInput>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getComponentInstanceProperties();
-	}
-
-	@Test
-	public void testSetComponentInstancePropInput() throws Exception {
-		ComponentInstInputsMap testSubject;
+	public void testComponentInstanceProperties() throws Exception {
+		ComponentInstInputsMap testSubject = createTestSubject();
 		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
-
-		// default test
-		testSubject = createTestSubject();
 		testSubject.setComponentInstancePropertiesToPolicies(componentInstanceProperties);
+		Map<String, List<ComponentInstancePropInput>> result = testSubject.getComponentInstanceProperties();
+		assertEquals(0, result.size());
 	}
 
 	@Test
 	public void testResolvePropertiesToDeclareEmpty() throws Exception {
 		ComponentInstInputsMap testSubject;
-		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = null;
 
 		// default test
 		testSubject = createTestSubject();
 		try {
 			testSubject.resolvePropertiesToDeclare();
 		} catch (Exception e) {
-            Assert.assertTrue(e.getClass() == IllegalStateException.class);
+            assertTrue(e instanceof IllegalStateException);
 		}
 	}
 
 	@Test
 	public void testResolvePropertiesToDeclare() throws Exception {
 		ComponentInstInputsMap testSubject;
-		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = null;
-
 		Map<String, List<ComponentInstancePropInput>> inputs = new HashMap<>();
-		inputs.put("mock", new LinkedList<>());
+		inputs.put("test", new LinkedList<>());
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setComponentInstanceInputsMap(inputs);
-		testSubject.resolvePropertiesToDeclare();
+		Pair<String, List<ComponentInstancePropInput>> result = testSubject.resolvePropertiesToDeclare();
+		assertEquals(0, result.getValue().size());
+
 		testSubject = createTestSubject();
 		testSubject.setComponentInstancePropertiesToPolicies(inputs);
-		testSubject.resolvePropertiesToDeclare();
+		result = testSubject.resolvePropertiesToDeclare();
+		assertEquals(0, result.getValue().size());
+
 		testSubject = createTestSubject();
 		testSubject.setPolicyProperties(inputs);
-		testSubject.resolvePropertiesToDeclare();
+		result = testSubject.resolvePropertiesToDeclare();
+		assertEquals(0, result.getValue().size());
+
+		testSubject = createTestSubject();
+		testSubject.setComponentInstancePropInput(inputs);
+		result = testSubject.resolvePropertiesToDeclare();
+		assertEquals(0, result.getValue().size());
+
+		testSubject = createTestSubject();
+		testSubject.setServiceProperties(inputs);
+		result = testSubject.resolvePropertiesToDeclare();
+		assertEquals(0, result.getValue().size());
+
+		testSubject = createTestSubject();
+		testSubject.setGroupProperties(inputs);
+		result = testSubject.resolvePropertiesToDeclare();
+		assertEquals(0, result.getValue().size());
+
+		testSubject = createTestSubject();
+		testSubject.setComponentPropertiesToPolicies(inputs);
+		result = testSubject.resolvePropertiesToDeclare();
+		assertEquals(0, result.getValue().size());
 	}
 	
 	@Test
-	public void testGetPolicyProperties() throws Exception {
-		ComponentInstInputsMap testSubject;
-		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = null;
+	public void testPolicyProperties() {
+		ComponentInstInputsMap testSubject = createTestSubject();
+		Map<String, List<ComponentInstancePropInput>> policyProperties = new HashMap<>();
+		testSubject.setPolicyProperties(policyProperties);
+		Map<String, List<ComponentInstancePropInput>> result = testSubject.getPolicyProperties();
+		assertEquals(0, result.size());
+	}
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.getPolicyProperties();
+	@Test
+	public void testServiceProperties() {
+		ComponentInstInputsMap testSubject = createTestSubject();
+		Map<String, List<ComponentInstancePropInput>> serviceProperties = new HashMap<>();
+		testSubject.setServiceProperties(serviceProperties);
+		Map<String, List<ComponentInstancePropInput>> result = testSubject.getServiceProperties();
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testGroupProperties() {
+		ComponentInstInputsMap testSubject = createTestSubject();
+		Map<String, List<ComponentInstancePropInput>> groupProperties = new HashMap<>();
+		testSubject.setGroupProperties(groupProperties);
+		Map<String, List<ComponentInstancePropInput>> result = testSubject.getGroupProperties();
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testComponentPropertiesToPolicies() {
+		ComponentInstInputsMap testSubject = createTestSubject();
+		Map<String, List<ComponentInstancePropInput>> componentPropertiesToPolicies = new HashMap<>();
+		testSubject.setComponentPropertiesToPolicies(componentPropertiesToPolicies);
+		Map<String, List<ComponentInstancePropInput>> result = testSubject.getComponentPropertiesToPolicies();
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testComponentInstancePropertiesToPolicies() {
+		ComponentInstInputsMap testSubject = createTestSubject();
+		Map<String, List<ComponentInstancePropInput>> componentInstancePropertiesToPolicies = new HashMap<>();
+		testSubject.setComponentInstancePropertiesToPolicies(componentInstancePropertiesToPolicies);
+		Map<String, List<ComponentInstancePropInput>> result = testSubject.getComponentInstancePropertiesToPolicies();
+		assertEquals(0, result.size());
 	}
 }
