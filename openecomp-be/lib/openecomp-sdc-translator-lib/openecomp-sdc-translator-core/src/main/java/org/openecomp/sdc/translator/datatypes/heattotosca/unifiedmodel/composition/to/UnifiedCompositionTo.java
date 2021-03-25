@@ -16,11 +16,18 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to;
 
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.UnifiedCompositionData;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class UnifiedCompositionTo {
 
     private ServiceTemplate serviceTemplate;
@@ -28,53 +35,4 @@ public class UnifiedCompositionTo {
     private List<UnifiedCompositionData> unifiedCompositionDataList;
     private TranslationContext context;
     private NodeTemplate nodeTemplate;
-
-    public UnifiedCompositionTo(ServiceTemplate serviceTemplate, ServiceTemplate substitutionServiceTemplate,
-                                List<UnifiedCompositionData> unifiedCompositionDataList, TranslationContext context, NodeTemplate nodeTemplate) {
-        this.serviceTemplate = serviceTemplate;
-        this.substitutionServiceTemplate = substitutionServiceTemplate;
-        this.unifiedCompositionDataList = unifiedCompositionDataList;
-        this.context = context;
-        this.nodeTemplate = nodeTemplate;
-    }
-
-    public ServiceTemplate getServiceTemplate() {
-        return serviceTemplate;
-    }
-
-    public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-        this.serviceTemplate = serviceTemplate;
-    }
-
-    public ServiceTemplate getSubstitutionServiceTemplate() {
-        return substitutionServiceTemplate;
-    }
-
-    public void setSubstitutionServiceTemplate(ServiceTemplate substitutionServiceTemplate) {
-        this.substitutionServiceTemplate = substitutionServiceTemplate;
-    }
-
-    public List<UnifiedCompositionData> getUnifiedCompositionDataList() {
-        return unifiedCompositionDataList;
-    }
-
-    public void setUnifiedCompositionDataList(List<UnifiedCompositionData> unifiedCompositionDataList) {
-        this.unifiedCompositionDataList = unifiedCompositionDataList;
-    }
-
-    public TranslationContext getContext() {
-        return context;
-    }
-
-    public void setContext(TranslationContext context) {
-        this.context = context;
-    }
-
-    public NodeTemplate getNodeTemplate() {
-        return nodeTemplate;
-    }
-
-    public void setNodeTemplate(NodeTemplate nodeTemplate) {
-        this.nodeTemplate = nodeTemplate;
-    }
 }

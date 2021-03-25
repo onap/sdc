@@ -22,14 +22,15 @@
 
 package org.openecomp.sdc.common.config;
 
-import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.HashMap;
-import org.junit.Before;
-import org.junit.Test;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -42,7 +43,7 @@ public class EcompErrorConfigurationTest {
 
     private ConfigurationManager configurationManager;
 
-    @Before
+    @BeforeEach
     public void loadEcompErrorConfiguration() {
         String appConfigDir = "src/test/resources/config/common";
         ConfigurationSource configurationSource =
@@ -76,20 +77,62 @@ public class EcompErrorConfigurationTest {
         //when
         String result = ecompErrorConfiguration.toString();
         //then
-        assertThat(result, containsString(
+        assertTrue(result.contains(
                 "EcompErrorConfiguration [errors={BeRestApiGeneralError=org.openecomp.sdc.common.config.EcompErrorInfo@"));
     }
 
     @Test
     public void testValidateEcompoErrorInfo() {
-        //given
+        Map<String, EcompErrorInfo> errors = new HashMap();
         EcompErrorInfo ecompErrorInfo = ecompErrorConfiguration.getEcompErrorInfo("BeInitializationError");
-        Map<String, EcompErrorInfo> errors = new HashMap<>();
         errors.put("BeInitializationError", ecompErrorInfo);
         //when
         ecompErrorConfiguration.setErrors(errors);
         //then
-        assertEquals(ecompErrorConfiguration.getErrors(), errors);
+        assertEquals(errors, ecompErrorConfiguration.getErrors());
+
+        // error info is null
+        errors.clear();
+        ecompErrorConfiguration.setErrors(new HashMap());
+        errors.put("error1", null);
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+        assertNull(ecompErrorConfiguration.getEcompErrorInfo("error1"));
+        errors.clear();
+
+        // type is null or invalid
+        EcompErrorInfo errorInfo = new EcompErrorInfo();
+        errors.put("error1", errorInfo);
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+        errorInfo.setType("type");
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+
+        // severity is null or invalid
+        errorInfo.setType(EcompErrorConfiguration.EcompErrorType.CONFIG_ERROR.name());
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+        errorInfo.setSeverity("severity");
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+
+        // alarmSeverify is null or invalid
+        errorInfo.setSeverity(EcompErrorConfiguration.EcompErrorSeverity.INFO.name());
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+        errorInfo.setAlarmSeverity("alarmSeverify");
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+
+        // code is null or invalid
+        errorInfo.setAlarmSeverity(EcompErrorConfiguration.EcompAlarmSeverity.CRITICAL.name());
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+        errorInfo.setCode("ASDC_0001");
+        ecompErrorConfiguration.setErrors(errors);
+        assertEquals(0, ecompErrorConfiguration.getErrors().size());
+
     }
 
 }
