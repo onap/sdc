@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 Nokia. All rights reserved.
+ * Copyright (C) 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.health.data;
-
+package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.to;
 
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition.NodeTemplateInformation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-public class HealthCheckStatusTest {
-
+public class NodeTemplateInformationTest {
     @Test
-    public void shouldReturnEnumFromStringValue() {
-        HealthCheckStatus status = HealthCheckStatus.toValue("UP");
-        assertEquals(status, HealthCheckStatus.UP);
-    }
-
-    @Test
-    public void shouldReturnNullIfNotSuchEnum() {
-        HealthCheckStatus status = HealthCheckStatus.toValue("MAYBE");
-        assertNull(status);
-    }
-
-    @Test
-    public void toStringTest() {
-        assertEquals("UP", HealthCheckStatus.UP.toString());
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(NodeTemplateInformation.class, hasValidGettersAndSetters());
+        assertThat(NodeTemplateInformation.class, hasValidBeanConstructor());
     }
 }
