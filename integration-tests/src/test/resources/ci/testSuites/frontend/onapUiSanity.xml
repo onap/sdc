@@ -37,6 +37,7 @@
           <include name="onboardEtsiVnfCnfFlow"/>
         </methods>
       </class>
+      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.ImportVfcUiTest"/>
     </classes>
   </test>
 </suite>
