@@ -20,45 +20,45 @@
 
 package org.openecomp.core.model.types;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.openecomp.sdc.common.errors.SdcRuntimeException;
-import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.io.IOException;
-
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 
 public class ServiceArtifactEntityTest {
 
-    private static final byte[] BYTE_ARRAY = new byte[] {0xA, 0xB, 0xC, 0xD};
+    private static final byte[] BYTE_ARRAY = new byte[]{0xA, 0xB, 0xC, 0xD};
 
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(ServiceArtifactEntity.class,
-                hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId", "serviceArtifact"));
+    private static ServiceArtifact createServiceArtifact() {
+        ServiceArtifact serviceArtifact = new ServiceArtifact();
+        serviceArtifact.setVspId("someIdd");
+        serviceArtifact.setVersion(new Version("best"));
+        serviceArtifact.setName("name");
+        serviceArtifact.setContentData(BYTE_ARRAY);
+        return serviceArtifact;
     }
 
     @Test
     public void shouldReturnNonEmptyEntityType() {
         ServiceArtifactEntity entity =
-                new ServiceArtifactEntity();
+            new ServiceArtifactEntity();
         assertTrue(StringUtils.isNoneEmpty(entity.getEntityType()));
     }
 
     @Test
     public void shouldHaveFirstClassCitizenIdEqualToVspId() {
         ServiceArtifactEntity entity =
-                new ServiceArtifactEntity(createServiceArtifact());
+            new ServiceArtifactEntity(createServiceArtifact());
         assertEquals(entity.getId(), entity.getFirstClassCitizenId());
     }
 
@@ -66,7 +66,7 @@ public class ServiceArtifactEntityTest {
     public void serviceArtifactGetterShouldReturnCorrectData() throws IOException {
         ServiceArtifact serviceArtifact = createServiceArtifact();
         ServiceArtifactEntity entity =
-                new ServiceArtifactEntity(serviceArtifact);
+            new ServiceArtifactEntity(serviceArtifact);
 
         ServiceArtifact actual = entity.getServiceArtifact();
 
@@ -76,20 +76,14 @@ public class ServiceArtifactEntityTest {
         assertArrayEquals(IOUtils.toByteArray(serviceArtifact.getContent()), IOUtils.toByteArray(actual.getContent()));
     }
 
-    @Test(expected = SdcRuntimeException.class)
+    @Test
     public void shouldFailOnNullContentBytesSupplied() {
         ServiceArtifact serviceArtifactMock = mock(ServiceArtifact.class);
-        given(serviceArtifactMock.getContent()).willAnswer(invocation -> { throw new IOException("Test exception"); } );
-        ServiceArtifactEntity entity =
-                new ServiceArtifactEntity(serviceArtifactMock);
-    }
-
-    private static ServiceArtifact createServiceArtifact() {
-        ServiceArtifact serviceArtifact = new ServiceArtifact();
-        serviceArtifact.setVspId("someIdd");
-        serviceArtifact.setVersion(new Version("best"));
-        serviceArtifact.setName("name");
-        serviceArtifact.setContentData(BYTE_ARRAY);
-        return serviceArtifact;
+        given(serviceArtifactMock.getContent()).willAnswer(invocation -> {
+            throw new IOException("Test exception");
+        });
+        assertThrows(SdcRuntimeException.class, () -> {
+            new ServiceArtifactEntity(serviceArtifactMock);
+        });
     }
 }

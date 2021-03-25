@@ -23,17 +23,19 @@ import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_service_artifact")
 public class ServiceArtifactEntity implements ServiceElementEntity {
 
-    private static final String ENTITY_TYPE;
-
-    static {
-        ENTITY_TYPE = "Vendor Software Product Service artifact";
-    }
+    private static final String ENTITY_TYPE = "Vendor Software Product Service artifact";
 
     @PartitionKey
     @Column(name = "vsp_id")
@@ -46,15 +48,6 @@ public class ServiceArtifactEntity implements ServiceElementEntity {
     public String name;
     @Column(name = "content_data")
     public ByteBuffer contentData;
-
-    /**
-     * Every entity class must have a default constructor according to
-     * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-     * Definition of mapped classes</a>.
-     */
-    public ServiceArtifactEntity() {
-        // Don't delete! Default constructor is required by DataStax driver
-    }
 
     /**
      * Instantiates a new Service artifact entity.
@@ -80,44 +73,6 @@ public class ServiceArtifactEntity implements ServiceElementEntity {
     @Override
     public String getFirstClassCitizenId() {
         return getId();
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public Version getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Version version) {
-        this.version = version;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public ByteBuffer getContentData() {
-        return contentData;
-    }
-
-    public void setContentData(ByteBuffer contentData) {
-        this.contentData = contentData;
     }
 
     public ServiceArtifact getServiceArtifact() {

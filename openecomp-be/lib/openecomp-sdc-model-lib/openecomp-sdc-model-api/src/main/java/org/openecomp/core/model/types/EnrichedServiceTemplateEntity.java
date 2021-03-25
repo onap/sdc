@@ -23,17 +23,19 @@ import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(keyspace = "dox", name = "vsp_enriched_service_template")
 public class EnrichedServiceTemplateEntity implements ServiceElementEntity {
 
-    private static final String ENTITY_TYPE;
-
-    static {
-        ENTITY_TYPE = "Vendor Software Product Service model";
-    }
+    private static final String ENTITY_TYPE = "Vendor Software Product Service model";
 
     @PartitionKey
     @Column(name = "vsp_id")
@@ -48,15 +50,6 @@ public class EnrichedServiceTemplateEntity implements ServiceElementEntity {
     public ByteBuffer contentData;
     @Column(name = "base_name")
     private String baseName;
-
-    /**
-     * Every entity class must have a default constructor according to
-     * <a href="http://docs.datastax.com/en/developer/java-driver/2.1/manual/object_mapper/creating/">
-     * Definition of mapped classes</a>.
-     */
-    public EnrichedServiceTemplateEntity() {
-        // Don't delete! Default constructor is required by DataStax driver
-    }
 
     /**
      * Instantiates a new Enriched service template entity.
@@ -75,14 +68,6 @@ public class EnrichedServiceTemplateEntity implements ServiceElementEntity {
         }
     }
 
-    public String getBaseName() {
-        return baseName;
-    }
-
-    public void setBaseName(String baseName) {
-        this.baseName = baseName;
-    }
-
     @Override
     public String getEntityType() {
         return ENTITY_TYPE;
@@ -91,44 +76,6 @@ public class EnrichedServiceTemplateEntity implements ServiceElementEntity {
     @Override
     public String getFirstClassCitizenId() {
         return getId();
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public Version getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Version version) {
-        this.version = version;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public ByteBuffer getContentData() {
-        return contentData;
-    }
-
-    public void setContentData(ByteBuffer contentData) {
-        this.contentData = contentData;
     }
 
     public ServiceTemplate getServiceTemplate() {
