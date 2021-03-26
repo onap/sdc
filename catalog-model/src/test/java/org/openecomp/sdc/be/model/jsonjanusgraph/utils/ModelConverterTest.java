@@ -29,41 +29,36 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.HashMap;
-import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceOutput;
-import org.openecomp.sdc.be.model.OutputDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.*;
+
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(MockitoJUnitRunner.class)
+
+@ExtendWith(MockitoExtension.class)
 public class ModelConverterTest {
     @InjectMocks
     private ModelConverter test;
@@ -74,7 +69,7 @@ public class ModelConverterTest {
         Service service = new Service();
         service.setComponentType(ComponentTypeEnum.SERVICE);
         TopologyTemplate template = test.convertToToscaElement(service);
-        assertThat(template.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE);
+        assertEquals(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, template.getToscaType());
     }
 
     @Test
@@ -83,7 +78,7 @@ public class ModelConverterTest {
         Resource resource = new Resource();
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         NodeType nodeType = test.convertToToscaElement(resource);
-        assertThat(nodeType.getToscaType()).isEqualTo(ToscaElementTypeEnum.NODE_TYPE);
+        assertEquals(ToscaElementTypeEnum.NODE_TYPE, nodeType.getToscaType());
     }
 
     @Test
@@ -92,7 +87,20 @@ public class ModelConverterTest {
         TopologyTemplate topologyTemplate = new TopologyTemplate();
         topologyTemplate.setComponentType(ComponentTypeEnum.SERVICE);
         Component component = test.convertFromToscaElement(topologyTemplate);
-        assertThat(component.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+        assertEquals(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue(), component.getToscaType());
+
+        topologyTemplate.setComponentType(ComponentTypeEnum.PRODUCT);
+        component = test.convertFromToscaElement(topologyTemplate);
+        assertEquals(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue(), component.getToscaType());
+
+        NodeType nodeType = new NodeType();
+        nodeType.setComponentType(ComponentTypeEnum.RESOURCE);
+        topologyTemplate.setToscaType(ToscaElementTypeEnum.NODE_TYPE);
+        component = test.convertFromToscaElement(nodeType);
+        assertEquals(ToscaElementTypeEnum.NODE_TYPE.getValue(), component.getToscaType());
+
+        topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE_INSTANCE);
+        assertNull(test.convertFromToscaElement(topologyTemplate));
     }
 
     @Test
@@ -107,7 +115,7 @@ public class ModelConverterTest {
 
         topologyTemplate.setComponentType(ComponentTypeEnum.SERVICE);
         Component component = test.convertFromToscaElement(topologyTemplate);
-        assertThat(component.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+        assertEquals(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue(), component.getToscaType());
     }
 
     @Test
@@ -116,7 +124,7 @@ public class ModelConverterTest {
         TopologyTemplate topologyTemplate = new TopologyTemplate();
         topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
         Component component = test.convertFromToscaElement(topologyTemplate);
-        assertThat(component.getToscaType()).isEqualTo(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+        assertEquals(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue(), component.getToscaType());
     }
 
     @Test
@@ -125,7 +133,7 @@ public class ModelConverterTest {
         topologyTemplate.setComponentType(ComponentTypeEnum.RESOURCE);
         topologyTemplate.setResourceType(ResourceTypeEnum.PNF);
         Resource resource = test.convertFromToscaElement(topologyTemplate);
-        assertSame(ResourceTypeEnum.PNF, resource.getResourceType());
+        assertEquals(ResourceTypeEnum.PNF, resource.getResourceType());
     }
 
     @Test
@@ -168,9 +176,14 @@ public class ModelConverterTest {
     @Test
     public void testIsAtomicComponent() {
         Resource component = new Resource();
+        component.setComponentType(ComponentTypeEnum.SERVICE);
+        assertFalse(test.isAtomicComponent(component));
+
         component.setComponentType(ComponentTypeEnum.RESOURCE);
-        boolean result = test.isAtomicComponent(component);
-        assertTrue(result);
+        assertTrue(test.isAtomicComponent(component));
+
+        ResourceTypeEnum resourceType = null;
+        assertFalse(test.isAtomicComponent(resourceType));
     }
 
     @Test
@@ -178,8 +191,140 @@ public class ModelConverterTest {
     {
         VertexTypeEnum result;
         Resource component = new Resource();
+        component.setComponentType(ComponentTypeEnum.SERVICE);
+        assertEquals("topology_template", test.getVertexType(component).getName());
         component.setComponentType(ComponentTypeEnum.RESOURCE);
-        result = test.getVertexType(component);
-        assertThat(result.getName()).isEqualTo("node_type");
+        assertEquals("node_type", test.getVertexType(component).getName());
+
+        assertEquals(VertexTypeEnum.TOPOLOGY_TEMPLATE, test.getVertexType("Service"));
+        assertEquals(VertexTypeEnum.NODE_TYPE, test.getVertexType("VFC"));
+    }
+
+    @Test
+    public void testConvertRelation()
+    {
+        RelationshipTypeDefinition relationshipDef = new RelationshipTypeDefinition();
+        relationshipDef.setFromId("formId");
+        relationshipDef.setToId("toId");
+        relationshipDef.setOriginUI(true);
+        RequirementCapabilityRelDef result = ModelConverter.convertRelation(relationshipDef);
+
+        assertEquals("formId", result.getFromNode());
+        assertEquals("toId", result.getToNode());
+        assertEquals(true, result.isOriginUI());
+        assertEquals(1, result.getRelationships().size());
+    }
+
+    @Test
+    public void testConvertRelationToToscaRelation()
+    {
+        RequirementCapabilityRelDef reqCap = new RequirementCapabilityRelDef();
+        reqCap.setOriginUI(true);
+        reqCap.setFromNode("fromNode");
+        reqCap.setToNode("toNode");
+        List<CapabilityRequirementRelationship> list = new LinkedList<>();
+        CapabilityRequirementRelationship relationship = new CapabilityRequirementRelationship();
+        RelationshipInfo info = new RelationshipInfo();
+        info.setCapabilityOwnerId("capOwnerId");
+        info.setId("id");
+        info.setCapabilityUid("capUid");
+        info.setRequirementOwnerId("reqOwnerId");
+        info.setRequirementUid("reqUid");
+        info.setRequirement("req");
+        info.setCapability("cap");
+        RelationshipImpl relationshipImpl = new RelationshipImpl();
+        relationshipImpl.setType("type");
+        info.setRelationships(relationshipImpl);
+        relationship.setRelation(info);
+        list.add(relationship);
+        reqCap.setRelationships(list);
+
+        List<RelationshipInstDataDefinition> result = ModelConverter.convertRelationToToscaRelation(reqCap);
+        assertEquals(1, result.size());
+        assertEquals("capOwnerId", result.get(0).getCapabilityOwnerId());
+        assertEquals("id", result.get(0).getUniqueId());
+        assertEquals("capUid", result.get(0).getCapabilityId());
+        assertEquals("reqOwnerId", result.get(0).getRequirementOwnerId());
+        assertEquals("reqUid", result.get(0).getRequirementId());
+        assertEquals("req", result.get(0).getRequirement());
+        assertEquals("cap", result.get(0).getCapability());
+        assertEquals("type", result.get(0).getType());
+        assertEquals(true, result.get(0).isOriginUI());
+        assertEquals("fromNode", result.get(0).getFromId());
+        assertEquals("toNode", result.get(0).getToId());
+    }
+
+    @Test
+    public void testConvertToMapOfMapCapabilityPropertiesonvertRelation()
+    {
+        Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
+        MapCapabilityProperty result = ModelConverter.convertToMapOfMapCapabilityProperties(capabilities, "ownerId", true);
+        assertNotNull(result);
+        assertEquals(0, result.getMapToscaDataDefinition().size());
+
+        List<CapabilityDefinition> list = new LinkedList<>();
+        CapabilityDefinition capDef = new CapabilityDefinition();
+        List<ComponentInstanceProperty> properties = new LinkedList<>();
+        ComponentInstanceProperty property = new ComponentInstanceProperty();
+        properties.add(property);
+        capDef.setProperties(properties);
+        list.add(capDef);
+        capabilities.put("test", list);
+        result = ModelConverter.convertToMapOfMapCapabilityProperties(capabilities, "ownerId", true);
+        assertEquals(1, result.getMapToscaDataDefinition().size());
+    }
+
+    @Test
+    public void testBuildCapabilityPropertyKey()
+    {
+        CapabilityDefinition capDef = new CapabilityDefinition();
+        capDef.setOwnerId("owner");
+        String result = ModelConverter.buildCapabilityPropertyKey(true,"type","name", "capId", capDef);
+
+        assertEquals("capId#owner#type#name", result);
+    }
+
+    @Test
+    public void testConvertToMapOfMapCapabiltyProperties()
+    {
+        Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
+        List<CapabilityDefinition> list = new LinkedList<>();
+        CapabilityDefinition capDef = new CapabilityDefinition();
+        List<ComponentInstanceProperty> properties = new LinkedList<>();
+        ComponentInstanceProperty property = new ComponentInstanceProperty();
+        properties.add(property);
+        capDef.setProperties(properties);
+        list.add(capDef);
+        capabilities.put("test", list);
+
+        MapCapabilityProperty result = ModelConverter.convertToMapOfMapCapabiltyProperties(capabilities, "ownerId", true);
+
+        assertEquals(1, result.getMapToscaDataDefinition().size());
+        assertNotNull(result.getMapToscaDataDefinition().get("ownerId#ownerId#test#null"));
+    }
+
+    @Test
+    public void testGetCapabilitiesMapFromMapObject()
+    {
+        assertNull(ModelConverter.getCapabilitiesMapFromMapObject(null, null));
+
+        Map<String, ListCapabilityDataDefinition> toscaCapabilities = new HashMap<>();
+        Map<String, MapPropertiesDataDefinition> toscaCapPropMap = new HashMap<>();
+        ListCapabilityDataDefinition dataDefList = new ListCapabilityDataDefinition();
+        List<CapabilityDataDefinition> capDataDefList = new LinkedList<>();
+        CapabilityDataDefinition capDataDef = new CapabilityDataDefinition();
+        capDataDef.setName("test");
+        capDataDefList.add(capDataDef);
+        dataDefList.setListToscaDataDefinition(capDataDefList);
+        MapPropertiesDataDefinition dataDefMap = new MapPropertiesDataDefinition();
+        Map<String, PropertyDataDefinition> propDataMap = new HashMap<>();
+        PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition();
+        propDataMap.put("propMap", propertyDataDefinition);
+        dataDefMap.setMapToscaDataDefinition(propDataMap);
+        toscaCapabilities.put("prop", dataDefList);
+        toscaCapPropMap.put("prop#test", dataDefMap);
+
+        Map<String, List<CapabilityDefinition>> result = ModelConverter.getCapabilitiesMapFromMapObject(toscaCapabilities, toscaCapPropMap);
+        assertEquals(1, result.size());
     }
 }

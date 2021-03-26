@@ -19,10 +19,15 @@
  */
 package org.openecomp.sdcrests.wrappers;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class GenericCollectionWrapper<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,22 +50,6 @@ public class GenericCollectionWrapper<T> implements Serializable {
         } else {
             this.results = new ArrayList<>();
         }
-    }
-
-    public List<T> getResults() {
-        return results;
-    }
-
-    public void setResults(List<T> results) {
-        this.results = results;
-    }
-
-    public int getListCount() {
-        return listCount;
-    }
-
-    public void setListCount(int listCount) {
-        this.listCount = listCount;
     }
 
     /**

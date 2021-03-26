@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 Nokia. All rights reserved.
+ * Copyright (C) 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,26 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdcrests.wrappers;
+
+package org.openecomp.sdc.vendorlicense.errors;
 
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.common.errors.ErrorCode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class GenericCollectionWrapperTest {
+public class LimitErrorBuilderTest {
+    @Test
+    public void testGetInvalidValueErrorBuilder() {
+        ErrorCode res = LimitErrorBuilder.getInvalidValueErrorBuilder("attrebute", "404");
+        assertEquals("The attrebute value doesn't meet the expected attribute value.", res.message());
+        assertEquals("404", res.id());
+    }
 
     @Test
-    public void addTest() {
-        GenericCollectionWrapper wrapper = new GenericCollectionWrapper(new LinkedList());
-        assertTrue(wrapper.add("test"));
-        assertEquals(1, wrapper.getResults().size());
-        assertEquals(1, wrapper.getListCount());
-
-        List<Integer> list = new LinkedList<>();
-        list.add(1);
-        GenericCollectionWrapper wrapper2 = new GenericCollectionWrapper(list);
-        assertTrue(wrapper2.add("test"));
-        assertEquals(2, wrapper2.getResults().size());
-        assertEquals(2, wrapper2.getListCount());
+    public void testGetDuplicateNameErrorbuilder() {
+        ErrorCode res = LimitErrorBuilder.getDuplicateNameErrorbuilder("name", "type");
+        assertEquals("Invalid request, Limit with name name already exists for type type.", res.message());
+        assertEquals("DUPLICATE_LIMIT_NAME_NOT_ALLOWED", res.id());
     }
 }
