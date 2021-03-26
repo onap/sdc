@@ -22,12 +22,14 @@ package org.openecomp.sdc.be.components.validation;
 
 import fj.data.Either;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -37,13 +39,15 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NodeFilterValidationTest {
 
@@ -63,10 +67,34 @@ public class NodeFilterValidationTest {
     @InjectMocks
     private NodeFilterValidator nodeFilterValidator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         componentsUtils = Mockito.mock(ComponentsUtils.class);
         MockitoAnnotations.initMocks(this);
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
+    }
+
+    @Test
+    public void testValidateComponentInstanceExist() {
+        Either<Boolean, ResponseFormat> either =
+                nodeFilterValidator.validateComponentInstanceExist(null, INNER_SERVICE);
+        assertTrue(either.isRight());
+        assertEquals("Error: Internal Server Error. Please try again later.", either.right().value().getText());
+        assertEquals(500, either.right().value().getStatus());
+
+        Service service = createService("booleanIncorrect");
+        either = nodeFilterValidator.validateComponentInstanceExist(service, INNER_SERVICE);
+        assertTrue(either.isRight());
+        assertEquals("Error: Internal Server Error. Please try again later.", either.right().value().getText());
+        assertEquals(500, either.right().value().getStatus());
+
+        List<ComponentInstance> list = new LinkedList<>();
+        ComponentInstance instance = new ComponentInstance();
+        instance.setUniqueId("uniqueId");
+        list.add(instance);
+        service.setComponentInstances(list);
+        either = nodeFilterValidator.validateComponentInstanceExist(service, "uniqueId");
+        assertTrue(either.isLeft());
     }
 
     @Test
@@ -76,8 +104,50 @@ public class NodeFilterValidationTest {
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
                         Collections.singletonList(UI_CONSTRAINT_STATIC.replace(VALUE, "true")),
                         NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES);
+        assertTrue(either.isRight());
 
-        Assert.assertFalse(either.isLeft());
+        either =
+                nodeFilterValidator.validateFilter(service, INNER_SERVICE,
+                        Collections.singletonList(UI_CONSTRAINT_STATIC.replace(VALUE, "true")),
+                        NodeFilterConstraintAction.ADD, NodeFilterConstraintType.CAPABILITIES);
+        assertTrue(either.isRight());
+    }
+
+    @Test
+    public void testValidateComponentFilter() {
+        Service service = createService("booleanIncorrect");
+        String property = "Prop1: {equal: {get_property: ['test','test2']}}";
+        Either<Boolean, ResponseFormat> either =
+                nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(property),
+                        NodeFilterConstraintAction.ADD);
+        assertTrue(either.isRight());
+
+        property = "Prop1: {equal: {get_property: ['parentservice','Prop1']}}";
+        either =
+                nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(property),
+                        NodeFilterConstraintAction.ADD);
+        assertTrue(either.isLeft());
+
+        String staticStr = "Prop1: {equal: 1}";
+        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+                        NodeFilterConstraintAction.ADD);
+        assertTrue(either.isLeft());
+        assertTrue(either.left().value());
+
+        staticStr = "Prop1: {equal: 'true'}";
+        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+                        NodeFilterConstraintAction.ADD);
+        assertTrue(either.isRight());
+
+        staticStr = "Prop1: {greater_than: '3'}";
+        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+                NodeFilterConstraintAction.ADD);
+        assertTrue(either.isRight());
+
+        staticStr = "test: {greater_than: '3'}";
+        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+                NodeFilterConstraintAction.ADD);
+        assertTrue(either.isRight());
     }
 
     @Test
