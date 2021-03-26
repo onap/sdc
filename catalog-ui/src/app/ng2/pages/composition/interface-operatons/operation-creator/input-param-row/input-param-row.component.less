@@ -21,52 +21,52 @@
 @import '../../../../../../../assets/styles/variables.less';
 
 .remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  .svg-icon {
-    position: relative;
-    right: -3px;
+    svg-icon {
+        position: relative;
+        right: -3px;
 
-    &:hover {
-      cursor: pointer;
+        &:hover {
+            cursor: pointer;
+        }
     }
-  }
 }
 
 .cell {
-  min-height: 50px;
-  padding: 10px;
-  display: flex;
-  align-items: center;
+    min-height: 50px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
 
-  > * {
-    flex-basis: 100%;
-  }
-
-  /deep/ select {
-    height: 30px;
-  }
-
-  input {
-    height: 30px;
-    border: none;
-    padding-left: 10px;
-  }
-
-  select {
-    width: 100%;
-  }
-
-  &.field-property {
-    &:last-child {
-      flex: 1;
+    > * {
+        flex-basis: 100%;
     }
 
-    .no-properties-error {
-      color: @func_color_q;
-      font-style: italic;
+    /deep/ select {
+        height: 30px;
     }
-  }
+
+    input {
+        height: 30px;
+        border: none;
+        padding-left: 10px;
+    }
+
+    select {
+        width: 100%;
+    }
+
+    &.field-property {
+        &:last-child {
+            flex: 1;
+        }
+
+        .no-properties-error {
+            color: @func_color_q;
+            font-style: italic;
+        }
+    }
 }

@@ -1,292 +1,264 @@
 @import './../../../../../assets/styles/mixins.less';
 @import '../../../../../assets/styles/sprite';
-
 @smaller-screen: ~"only screen and (max-width: 1580px)";
 
-:host /deep/ input {
-  width: 100%;
-}
+:host /deep/ input { width:100%;}
 
 .attributes-table {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  height: 100%;
-  text-align: left;
-
-
-  .inner-cell-div {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    height: 20px;
-  }
-
-  .inner-cell-div-multiline {
-    max-width: 100%;
-  }
-
-  .table-header {
-    display: flex;
-    flex-direction: row;
-    flex: 0 0 auto;
-    font-weight: bold;
-    border-top: #d2d2d2 solid 1px;
-    background-color: #f2f2f2;
-
-    .table-cell {
-      color: #191919;
-      font-size: 13px;
-
-      .table-header-sort-arrow {
-        display: inline-block;
-        background-color: transparent;
-        border: none;
-        color: #AAA;
-        margin: 8px 0 0 5px;
-
-        &.up {
-          border-left: 5px solid transparent;
-          border-right: 5px solid transparent;
-          border-bottom: 5px solid;
-          height: 5px;
-        }
-
-        &.down {
-          border-left: 5px solid transparent;
-          border-right: 5px solid transparent;
-          border-top: 5px solid;
-        }
-      }
-    }
-  }
-
-  .table-rows-header {
-    border: #d2d2d2 solid 1px;
-    border-top: none;
-    display: flex;
-    align-items: center;
-
-    .archive-label {
-      margin-left: 10px;
-    }
-  }
-
-  .table-body {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     flex: 1;
-    background-color: @main_color_p;
+    height: 100%;
+    text-align: left;
 
-    .no-data {
-      border: #d2d2d2 solid 1px;
-      border-top: none;
-      text-align: center;
-      height: 100%;
-      padding: 20px;
+
+    .inner-cell-div {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 20px;
     }
 
-    /deep/ .selected {
-      background-color: #e6f6fb;
-      color: #009fdb;
+    .inner-cell-div-multiline {
+        max-width: 100%;
     }
 
-    &.view-mode {
-      /deep/ .dynamic-property-row:not(.selected) {
-        background-color: #f8f8f8;
-      }
+    .table-header {
+        display: flex;
+        flex-direction:row;
+        flex: 0 0 auto;
+        font-weight:bold;
+        border-top: #d2d2d2 solid 1px;
+        background-color: #f2f2f2;
+
+        .table-cell {
+            color:#191919;
+            font-size:13px;
+            .table-header-sort-arrow {
+                display: inline-block;
+                background-color: transparent;
+                border: none;
+                color: #AAA;
+                margin: 8px 0 0 5px;
+                &.up {
+                    border-left: 5px solid transparent;
+                    border-right: 5px solid transparent;
+                    border-bottom: 5px solid;
+                    height:5px;
+                }
+                &.down {
+                    border-left: 5px solid transparent;
+                    border-right: 5px solid transparent;
+                    border-top: 5px solid;
+                }
+            }
+        }
+    }
+
+    .table-rows-header {
+        border: #d2d2d2 solid 1px;
+        border-top:none;
+        display: flex;
+        align-items: center;
+        .archive-label{
+            margin-left: 10px;
+        }
+    }
+
+    .table-body {
+        display:flex;
+        flex-direction: column;
+        overflow-y:auto;
+        flex: 1;
+        background-color: @main_color_p;
+
+        .no-data {
+            border: #d2d2d2 solid 1px;
+            border-top:none;
+            text-align: center;
+            height: 100%;
+            padding: 20px;
+        }
+        /deep/.selected{
+            background-color: #e6f6fb;
+            color:  #009fdb;
+        }
+        &.view-mode{
+            /deep/ .dynamic-property-row:not(.selected){
+                background-color:#f8f8f8;
+            }
+        }
+        .table-row {
+            display: flex;
+            flex-direction:row;
+            flex: 0 0 auto;
+            &.readonly{
+                background-color: #f8f8f8;
+                cursor: auto;
+            }
+
+            &:hover:not(.selected){
+                background-color:#f8f8f8; cursor:pointer;
+                /deep/ .dynamic-property-row:not(.selected){
+                    background-color:#f8f8f8; cursor:pointer;
+                }
+            }
+
+            .selected-row {
+                background-color:#e6f6fb;
+            }
+
+            .table-cell.valueCol {
+                padding:0px;
+
+            }
+        }
+    }
+    .table-cell {
+        font-size:13px;
+        flex:1;
+        border: #d2d2d2 solid 1px;
+        border-right:none;
+        border-top:none;
+        padding:10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow:hidden;
+        display: flex;
+        min-height:40px;
+
+        &:last-child {
+            border-right:#d2d2d2 solid 1px;
+        }
+
+        // Column: Property Name
+        &.col1 {
+            flex: 1 0 190px;
+            max-width:300px;
+            display: flex;
+            @media @smaller-screen { flex: 0 0 25%;}
+
+            .attribute-name {
+                flex: 1;
+                display: flex;
+                overflow: hidden;
+                //max-width: 90%; fix bug 327139
+            }
+
+            .property-description-icon {
+                float: right;
+                margin-top: 4px;
+                margin-left: 15px;
+                flex: 0 0 auto;
+            }
+        }
+
+        // Column: Type
+        &.col2 {
+            flex: 0 0 150px;
+            max-width:150px;
+            @media @smaller-screen { flex: 0 0 20%;}
+        }
+
+        // Column: ES
+        &.col3 {
+            flex:0 0 120px;
+            max-width:120px;
+            @media @smaller-screen { flex: 0 0 15%;}
+        }
+
+        // Column: Value
+        &.valueCol {
+            flex: 2 0 250px;
+            display: flex;
+            @media @smaller-screen { flex: 1 0 40%;}
+        }
+
+
+        /deep/ .checkbox-container {
+            margin-right: 10px;
+        }
+
+        /deep/ &.round-checkbox {
+            .checkbox-container input[type=checkbox].checkbox-hidden {
+                &:checked ~ .checkbox-icon::before {
+                    .sprite-new;
+                    .round-checked-icon;
+                }
+                &[disabled] ~ .checkbox-icon::before {
+                    .sprite-new;
+                    .round-checked-icon.disabled;
+                    background-color:inherit;
+                    border:none;
+                    //animation: addDisabledCheck 4s linear;
+                }
+            }
+        }
+    }
+
+    .delete-button-container {
+        max-height: 24px;
+        cursor: pointer;
+    }
+
+    .filtered {
+        /deep/ .checkbox-label-content{
+            background-color: yellow;
+        }
+    }
+
+    dynamic-property {
+        width:100%;
+        &:last-child /deep/ .dynamic-property-row {
+            border-bottom:none;
+        }
     }
 
     .table-row {
-      display: flex;
-      flex-direction: row;
-      flex: 0 0 auto;
-
-      &.readonly {
-        background-color: #f8f8f8;
-        cursor: auto;
-      }
-
-      &:hover:not(.selected) {
-        background-color: #f8f8f8;
-        cursor: pointer;
-
-        /deep/ .dynamic-property-row:not(.selected) {
-          background-color: #f8f8f8;
-          cursor: pointer;
-        }
-      }
-
-      .selected-row {
-        background-color: #e6f6fb;
-      }
-
-      .table-cell.valueCol {
-        padding: 0px;
-
-      }
-    }
-  }
-
-  .table-cell {
-    font-size: 13px;
-    flex: 1;
-    border: #d2d2d2 solid 1px;
-    border-right: none;
-    border-top: none;
-    padding: 10px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    display: flex;
-    min-height: 40px;
-
-    &:last-child {
-      border-right: #d2d2d2 solid 1px;
-    }
-
-    // Column: Property Name
-    &.col1 {
-      flex: 1 0 190px;
-      max-width: 300px;
-      display: flex;
-      @media @smaller-screen {
-        flex: 0 0 25%;
-      }
-
-      .attribute-name {
-        flex: 1;
-        display: flex;
-        overflow: hidden;
-        //max-width: 90%; fix bug 327139
-      }
-
-      .property-description-icon {
-        float: right;
-        margin-top: 4px;
-        margin-left: 15px;
-        flex: 0 0 auto;
-      }
-    }
-
-    // Column: Type
-    &.col2 {
-      flex: 0 0 150px;
-      max-width: 150px;
-      @media @smaller-screen {
-        flex: 0 0 20%;
-      }
-    }
-
-    // Column: ES
-    &.col3 {
-      flex: 0 0 120px;
-      max-width: 120px;
-      @media @smaller-screen {
-        flex: 0 0 15%;
-      }
-    }
-
-    // Column: Value
-    &.valueCol {
-      flex: 2 0 250px;
-      display: flex;
-      @media @smaller-screen {
-        flex: 1 0 40%;
-      }
-    }
-
-
-    /deep/ .checkbox-container {
-      margin-right: 10px;
-    }
-
-    /deep/ &.round-checkbox {
-      .checkbox-container input[type=checkbox].checkbox-hidden {
-        &:checked ~ .checkbox-icon::before {
-          .sprite-new;
-          .round-checked-icon;
+        /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #ffffff 80%);
+            padding-left: 1em;
         }
 
-        &[disabled] ~ .checkbox-icon::before {
-          .sprite-new;
-          .round-checked-icon.disabled;
-          background-color: inherit;
-          border: none;
-          //animation: addDisabledCheck 4s linear;
+        &.selected /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #e6f6fb 80%);
+            padding-left: 1em;
         }
-      }
-    }
-  }
 
-  .delete-button-container {
-    max-height: 24px;
-    cursor: pointer;
-  }
+        &.readonly /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #f8f8f8 80%);
+            padding-left: 1em;
+        }
 
-  .filtered {
-    /deep/ .checkbox-label-content {
-      background-color: yellow;
-    }
-  }
-
-  .dynamic-property {
-    width: 100%;
-
-    &:last-child /deep/ .dynamic-property-row {
-      border-bottom: none;
-    }
-  }
-
-  .table-row {
-    /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
-      background: linear-gradient(to right, transparent 0%, #ffffff 80%);
-      padding-left: 1em;
+        &:hover:not(.selected) /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
+            background: linear-gradient(to right, transparent 0%, #f8f8f8 80%);
+            padding-left: 1em;
+        }
     }
 
-    &.selected /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
-      background: linear-gradient(to right, transparent 0%, #e6f6fb 80%);
-      padding-left: 1em;
+    .prop-instance-icon {
+        vertical-align: middle;
+        margin-right: 7px;
+        &.defaulticon.small {
+            background-color: @main_color_q;
+            border-radius:14px;
+        }
+        // square icons
+        &.icon-group {
+            .square-icon();
+            background-color: @main_color_a;
+
+            &::before {
+                content: "G";
+            }
+        }
+        &.icon-policy {
+            .square-icon();
+            background-color: @main_color_r;
+
+            &::before {
+                content: "P";
+            }
+        }
+
     }
-
-    &.readonly /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
-      background: linear-gradient(to right, transparent 0%, #f8f8f8 80%);
-      padding-left: 1em;
-    }
-
-    &:hover:not(.selected) /deep/ .table-cell-multiline-ellipsis .multiline-ellipsis-dots {
-      background: linear-gradient(to right, transparent 0%, #f8f8f8 80%);
-      padding-left: 1em;
-    }
-  }
-
-  .prop-instance-icon {
-    vertical-align: middle;
-    margin-right: 7px;
-
-    &.defaulticon.small {
-      background-color: @main_color_q;
-      border-radius: 14px;
-    }
-
-    // square icons
-    &.icon-group {
-      .square-icon();
-      background-color: @main_color_a;
-
-      &::before {
-        content: "G";
-      }
-    }
-
-    &.icon-policy {
-      .square-icon();
-      background-color: @main_color_r;
-
-      &::before {
-        content: "P";
-      }
-    }
-
-  }
 }

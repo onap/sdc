@@ -1,5 +1,4 @@
 @import './../../../../../../../../assets/styles/variables.less';
-
 .sdc-hierarchy-tab {
   padding: 15px 0 0 0;
   background-color: #f8f8f8;
@@ -68,7 +67,7 @@
     }
   }
 
-  .sdc-accordion.selected {
+  sdc-accordion.selected {
     /deep/ .expand-collapse-container {
       .sdc-accordion-header {
         background-color: @main_color_a;
@@ -103,7 +102,6 @@
     border: 1px solid @main_color_a;
     border-top: 4px solid @main_color_a;
     box-shadow: 0.3px 1px 2px rgba(24, 24, 25, 0.32);
-
     .module-data {
       color: @main_color_a;
       padding: 10px 0 10px 0;
@@ -141,7 +139,7 @@
           height: 20px;
           padding-left: 12px;
 
-          .svg-icon {
+          svg-icon {
             padding-top: 3px;
             fill: @main_color_s;
 
