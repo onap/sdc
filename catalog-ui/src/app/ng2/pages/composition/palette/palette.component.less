@@ -1,20 +1,19 @@
 @import "./../../../../../assets/styles/override";
 
-:host(.composition-palette) {
-  display: flex;
+:host(composition-palette) {
+  display:flex;
   flex: 0 0 244px;
 }
 
-.sdc-loader.inactive {
-  display: none;
+sdc-loader.inactive {
+  display:none;
 }
 
 :host ::ng-deep .sdc-filter-bar .sdc-input {
-  margin-bottom: 0px;
+  margin-bottom:0px;
 }
-
 :host ::ng-deep .sdc-loader-wrapper {
-  position: static;
+  position:static; 
 }
 
 .composition-palette-component {
@@ -23,7 +22,7 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  position: relative;
+  position:relative;
   width: 244px;
   box-shadow: 7px -3px 6px -8px @sdcui_color_gray;
 
@@ -32,7 +31,6 @@
     line-height: 40px;
     padding: 0 17px;
     color: @sdcui_color_white;
-
     .palette-elements-count-value {
       float: right;
     }
@@ -43,23 +41,19 @@
     .no-elements-found {
       padding-left: 40px;
     }
-
     /deep/ .palette-category {
       display: flex;
       margin: 0px;
-
       .sdc-accordion-header {
         background-color: @sdcui_color_silver;
         margin: 0px;
         line-height: 40px;
         padding: 0px 10px;
       }
-
       .sdc-accordion-body {
         padding: 0px;
       }
     }
-
     .palette-subcategory {
       padding: 0 10px;
       background-color: @sdcui_color_lighter-silver;

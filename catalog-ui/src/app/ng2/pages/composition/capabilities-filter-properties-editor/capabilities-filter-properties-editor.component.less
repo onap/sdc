@@ -14,7 +14,6 @@
 
   .i-sdc-form-item {
     width: 250px;
-
     &.operation {
       width: 60px;
     }
@@ -23,25 +22,20 @@
   .rule-builder-content {
     display: flex;
     align-items: flex-end;
-
     .rule-input-field {
       flex: 1;
-
       &:not(:last-of-type) {
         margin-right: 20px;
       }
-
-      &.operator {
+      &.operator{
         width: 55px;
         flex: 0 1 auto;
       }
-
       &.assigned-value-field {
         margin-bottom: 10px;
       }
-
-      /deep/ .ui-element-dropdown select,
-      /deep/ .ui-element-input input {
+      /deep/ ui-element-dropdown select,
+      /deep/ ui-element-input input {
         height: 30px;
       }
     }

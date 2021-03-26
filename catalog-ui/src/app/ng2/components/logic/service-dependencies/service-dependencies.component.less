@@ -12,26 +12,22 @@
     color: @main_color_a;
     box-shadow: 0 2px 7px @main_color_o;
     border-bottom: 1px solid @main_color_o;
-
     .checkbox-label {
       margin-top: 14px;
-
       .checkbox-label-content {
         font-size: 14px;
       }
     }
-
     .checkbox-container input[type=checkbox].checkbox-hidden[disabled] ~ .checkbox-label-content {
       opacity: 0.5;
     }
-
     .delete-btn {
       background-position: -137px -415px;
       width: 24px;
       height: 24px
     }
 
-    .loader {
+    loader {
       top: 20px;
     }
   }
@@ -54,24 +50,19 @@
         justify-content: space-between;
         margin-left: 5px;
         width: 180px;
-
         .delete-icon {
           visibility: hidden;
         }
-
         &:not(.readonly):hover {
           .a_1;
         }
-
-        &:hover .delete-icon {
+        &:hover .delete-icon{
           visibility: visible;
         }
-
         &.readonly {
           opacity: 0.5;
         }
       }
-
       .filter-desc {
         .sdc-ellipsis;
         width: 220px;
@@ -81,21 +72,19 @@
 
     }
   }
-
   .w-sdc-designer-sidebar-section-node-filter-footer {
     margin-top: 10px;
     margin-bottom: 10px;
     text-align: center;
     width: 100%;
   }
-
   .w-sdc-designer-sidebar-section-node-filter-footer-action {
     width: 180px;
     margin-top: 10px;
   }
 }
 
-/deep/ .sdc-accordion {
+/deep/.sdc-accordion {
   margin-bottom: 0;
   display: grid;
 
@@ -115,12 +104,11 @@
   .sdc-accordion-body.open {
     padding-left: 0;
     padding-top: 0;
-
     .sdc-accordion-header { /*Second level - nested accordion */
       background-color: #f8f8f8;
       padding: 4px 20px 4px 37px;
       border-bottom: 1px solid #d2d2d2;
-      border-left: none;
+      border-left:none;
       height: 30px;
     }
   }
