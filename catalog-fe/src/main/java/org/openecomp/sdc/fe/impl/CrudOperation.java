@@ -17,10 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.impl;
 
-public enum CrudOperation {
-
-    CREATE, RETRIEVE, UPDATE, DELETE
-}
+public enum CrudOperation {CREATE, RETRIEVE, UPDATE, DELETE}

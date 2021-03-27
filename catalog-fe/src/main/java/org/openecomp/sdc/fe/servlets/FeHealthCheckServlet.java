@@ -17,25 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.servlets;
 
-import com.jcabi.aspects.Loggable;
-import org.openecomp.sdc.common.servlets.BasicServlet;
-import org.openecomp.sdc.fe.impl.HealthCheckService;
+import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
 
+import com.jcabi.aspects.Loggable;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
-import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
+import org.openecomp.sdc.common.servlets.BasicServlet;
+import org.openecomp.sdc.fe.impl.HealthCheckService;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/healthCheck")
 public class FeHealthCheckServlet extends BasicServlet {
+
     @GET
     public Response getFEandBeHealthCheck(@Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();

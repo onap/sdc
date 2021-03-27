@@ -17,15 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.servlets;
-
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
-import org.openecomp.sdc.common.servlets.BasicServlet;
-import org.openecomp.sdc.fe.config.Configuration;
-import org.openecomp.sdc.fe.config.ConfigurationManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +27,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
+import org.openecomp.sdc.common.servlets.BasicServlet;
+import org.openecomp.sdc.fe.config.Configuration;
+import org.openecomp.sdc.fe.config.ConfigurationManager;
 
 /**
  * Root resource (exposed at "/" path)
@@ -42,46 +40,32 @@ import javax.ws.rs.core.MediaType;
 @Path("/configmgr")
 public class ConfigMgrServlet extends BasicServlet {
 
-	private static Logger log = Logger.getLogger(ConfigMgrServlet.class.getName());
+    private static Logger log = Logger.getLogger(ConfigMgrServlet.class.getName());
 
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public String getConfig(@Context final HttpServletRequest request, @QueryParam("type") String type) {
-
         String result = null;
-
         ServletContext context = request.getSession().getServletContext();
-
-        ConfigurationManager configurationManager = (ConfigurationManager) context
-                .getAttribute(Constants.CONFIGURATION_MANAGER_ATTR);
-
+        ConfigurationManager configurationManager = (ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR);
         if (type == null || type.equals("configuration")) {
-
             Configuration configuration = configurationManager.getConfiguration();
             if (configuration == null) {
                 log.warn("Configuration of type {} was not found", Configuration.class);
             } else {
                 log.info("The value returned from getConfig is {}", configuration);
-
                 result = gson.toJson(configuration);
-
             }
         } else if (type.equals("rest")) {
-
             RestConfigurationInfo configuration = configurationManager.getRestClientConfiguration();
             if (configuration == null) {
                 log.warn("Configuration of type {} was not found", RestConfigurationInfo.class);
             } else {
                 log.info("The value returned from getConfig is {}", configuration);
-
                 result = gson.toJson(configuration);
-
             }
-
         }
         return result;
-
     }
-
 }

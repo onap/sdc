@@ -27,6 +27,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class MdcData {
+
     private String serviceInstanceID;
     private String userId;
     private String remoteAddr;

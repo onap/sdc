@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.servlets;
-
-import org.openecomp.sdc.common.servlets.BasicServlet;
-import org.openecomp.sdc.fe.impl.LogHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import org.openecomp.sdc.common.servlets.BasicServlet;
+import org.openecomp.sdc.fe.impl.LogHandler;
 
 public abstract class LoggingServlet extends BasicServlet {
 
@@ -33,16 +31,18 @@ public abstract class LoggingServlet extends BasicServlet {
 
     /**
      * log incoming requests
+     *
      * @param httpRequest the http request
      */
-    void logFeRequest(HttpServletRequest httpRequest){
+    void logFeRequest(HttpServletRequest httpRequest) {
         LogHandler.logFeRequest(httpRequest);
         inHttpRequest(httpRequest);
     }
 
     /**
      * log response
-     * @param request orig request
+     *
+     * @param request  orig request
      * @param response returned response
      */
     void logFeResponse(HttpServletRequest request, Response response) {
@@ -52,13 +52,14 @@ public abstract class LoggingServlet extends BasicServlet {
 
     /**
      * Extracted for purpose of clear method name, for logback %M parameter
+     *
      * @param httpRequest http request
      */
-    protected abstract void inHttpRequest(HttpServletRequest httpRequest) ;
-
+    protected abstract void inHttpRequest(HttpServletRequest httpRequest);
 
     /**
      * Extracted for purpose of clear method name, for logback %M parameter
+     *
      * @param response http response
      */
     protected abstract void outHttpResponse(Response response);

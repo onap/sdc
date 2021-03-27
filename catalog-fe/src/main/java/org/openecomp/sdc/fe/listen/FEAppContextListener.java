@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.listen;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
@@ -29,61 +32,40 @@ import org.openecomp.sdc.fe.impl.HealthCheckService;
 import org.openecomp.sdc.fe.impl.PluginStatusBL;
 import org.openecomp.sdc.fe.monitoring.FeMonitoringService;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class FEAppContextListener extends AppContextListener implements ServletContextListener {
 
-	private static Logger log = Logger.getLogger(FEAppContextListener.class.getName());
     private static final int HEALTH_CHECHK_INTERVALE = 5;
     private static final int PROBE_INTERVALE = 15;
+    private static Logger log = Logger.getLogger(FEAppContextListener.class.getName());
 
     public void contextInitialized(ServletContextEvent context) {
-
         super.contextInitialized(context);
-
-        ConfigurationManager configurationManager = new ConfigurationManager(
-                ExternalConfiguration.getConfigurationSource());
-        log.debug("loading configuration from configDir:{} appName:{}", ExternalConfiguration.getConfigDir(),
-                ExternalConfiguration.getAppName());
+        ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());
+        log.debug("loading configuration from configDir:{} appName:{}", ExternalConfiguration.getConfigDir(), ExternalConfiguration.getAppName());
         context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
-
         PluginStatusBL pbl = new PluginStatusBL();
         context.getServletContext().setAttribute(Constants.PLUGIN_BL_COMPONENT, pbl);
-
         // Health Check service
         HealthCheckService hcs = new HealthCheckService(context.getServletContext());
         hcs.start(configurationManager.getConfiguration().getHealthCheckIntervalInSeconds(HEALTH_CHECHK_INTERVALE));
         context.getServletContext().setAttribute(Constants.HEALTH_CHECK_SERVICE_ATTR, hcs);
-
         // Monitoring service
         FeMonitoringService fms = new FeMonitoringService(context.getServletContext());
         fms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(PROBE_INTERVALE));
-
         if (configurationManager.getConfiguration() == null) {
             log.debug("ERROR: configuration was not properly loaded");
             return;
         }
-
-        ExecutorService executorPool = Executors
-                .newFixedThreadPool(configurationManager.getConfiguration().getThreadpoolSize());
+        ExecutorService executorPool = Executors.newFixedThreadPool(configurationManager.getConfiguration().getThreadpoolSize());
         context.getServletContext().setAttribute(Constants.THREAD_EXECUTOR_ATTR, executorPool);
-
         log.debug("After executing {}", this.getClass());
     }
 
     public void contextDestroyed(ServletContextEvent context) {
-
-        ExecutorService executorPool = (ExecutorService) context.getServletContext()
-                .getAttribute(Constants.THREAD_EXECUTOR_ATTR);
+        ExecutorService executorPool = (ExecutorService) context.getServletContext().getAttribute(Constants.THREAD_EXECUTOR_ATTR);
         if (executorPool != null) {
             executorPool.shutdown();
         }
-
         super.contextDestroyed(context);
-
     }
-
 }
