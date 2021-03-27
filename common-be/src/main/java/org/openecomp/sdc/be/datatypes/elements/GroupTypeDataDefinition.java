@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -40,12 +39,10 @@ public class GroupTypeDataDefinition extends ToscaTypeDataDefinition {
     private Map<String, String> metadata;
     private String description;
     private boolean highestVersion;
-
     /**
      * Timestamp of data type creation
      */
     private Long creationTime;
-
     /**
      * Timestamp of the data type last update
      */
@@ -63,5 +60,4 @@ public class GroupTypeDataDefinition extends ToscaTypeDataDefinition {
         this.highestVersion = other.highestVersion;
         this.derivedFrom = other.derivedFrom;
     }
-
 }

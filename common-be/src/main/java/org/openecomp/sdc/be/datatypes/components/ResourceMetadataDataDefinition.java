@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.components;
 
 import lombok.EqualsAndHashCode;
@@ -31,7 +30,9 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
     private String vendorRelease;
     private String resourceVendorModelNumber;
     private ResourceTypeEnum resourceType = ResourceTypeEnum.VFC; // ResourceType.VFC
+
     // is
+
     // default
     private Boolean isAbstract;
     private String cost;
@@ -129,14 +130,12 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 
     @Override
     public String toString() {
-        return "ResourceMetadataDataDefinition [vendorName=" + vendorName + ", vendorRelease=" + vendorRelease
-            + ", resourceVendorModelNumber=" + resourceVendorModelNumber + ", resourceType=" + resourceType
-            + ", isAbstract=" + isAbstract + super.toString() + "]";
+        return "ResourceMetadataDataDefinition [vendorName=" + vendorName + ", vendorRelease=" + vendorRelease + ", resourceVendorModelNumber="
+            + resourceVendorModelNumber + ", resourceType=" + resourceType + ", isAbstract=" + isAbstract + super.toString() + "]";
     }
 
     @Override
     public String getActualComponentType() {
         return getResourceType().getValue();
     }
-
 }

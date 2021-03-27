@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security;
 
 import java.io.File;
@@ -49,5 +48,4 @@ public class PrivateKeyReaderImpl implements PrivateKeyReader {
         final String errorMsg = "Could not load the private key from given file '%s'. Unsupported format.";
         throw new UnsupportedKeyFormatException(String.format(errorMsg, privateKeyFile));
     }
-
 }

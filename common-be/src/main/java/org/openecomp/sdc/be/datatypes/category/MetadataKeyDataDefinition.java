@@ -19,12 +19,12 @@
 package org.openecomp.sdc.be.datatypes.category;
 
 import java.util.List;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @Getter
 @Setter
@@ -32,11 +32,12 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class MetadataKeyDataDefinition extends ToscaDataDefinition {
+
     private String name;
     private List<String> validValues;
     private boolean mandatory;
     private String defaultValue;
-    
+
     public MetadataKeyDataDefinition(MetadataKeyDataDefinition metadataKeyDataDefinition) {
         this.name = metadataKeyDataDefinition.name;
         this.validValues = metadataKeyDataDefinition.validValues;

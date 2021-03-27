@@ -28,10 +28,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum NodeFilterConstraintType {
-
-    PROPERTIES(NodeFilterConstraintType.PROPERTIES_PARAM_NAME),
-    CAPABILITIES(NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
-
+    PROPERTIES(NodeFilterConstraintType.PROPERTIES_PARAM_NAME), CAPABILITIES(NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
     // Those values are needed as constants for Swagger allowedValues param
     public static final String PROPERTIES_PARAM_NAME = "properties";
     public static final String CAPABILITIES_PARAM_NAME = "capabilities";

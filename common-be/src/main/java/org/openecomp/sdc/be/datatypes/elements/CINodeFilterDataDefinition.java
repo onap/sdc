@@ -44,8 +44,7 @@ public class CINodeFilterDataDefinition extends ToscaDataDefinition implements S
     }
 
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
-            JsonPresentationFields.PROPERTIES);
+        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {
@@ -68,5 +67,4 @@ public class CINodeFilterDataDefinition extends ToscaDataDefinition implements S
     public void setID(String name) {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, name);
     }
-
 }

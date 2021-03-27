@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security.api;
 
 import java.util.Optional;
@@ -25,5 +24,4 @@ import org.openecomp.sdc.be.csar.security.api.model.CertificateInfo;
 public interface CertificateManager {
 
     Optional<CertificateInfo> getCertificate(String certName);
-
 }

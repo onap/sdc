@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +20,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum OriginTypeEnum {
+    // @formatter:off
     PRODUCT("Product", "Product", "product instance", ComponentTypeEnum.PRODUCT, false),
     SERVICE("Service", "Service", "service instance", ComponentTypeEnum.SERVICE, false),
     VF("VF", "VF (Virtual Function)", "resource instance", ComponentTypeEnum.RESOURCE, false),
@@ -34,6 +34,7 @@ public enum OriginTypeEnum {
     CR("CR", "CR (Complex Resource)", "resource instance", ComponentTypeEnum.RESOURCE, false),
     ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE, false),
     ServiceSubstitution("Service Substitution", "Service Substitution", "service substitution", ComponentTypeEnum.RESOURCE, false);
+    // @formatter:on
 
     private final String value;
     private final String displayValue;
@@ -51,5 +52,4 @@ public enum OriginTypeEnum {
         }
         return ret;
     }
-
 }

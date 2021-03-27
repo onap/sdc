@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -36,7 +35,6 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
 
     public ListDataDefinition(ListDataDefinition<T> cdt) {
         listToscaDataDefinition = cdt.listToscaDataDefinition;
-
     }
 
     public ListDataDefinition(List<T> listToscaDataDefinition) {
@@ -93,14 +91,12 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
     public <T extends ToscaDataDefinition> T removeByOwnerId(Set<String> ownerIdList) {
         List<T> collect1 = (List<T>) listToscaDataDefinition.stream().filter(e -> ownerIdList.contains(e.getOwnerId())).collect(Collectors.toList());
         ListDataDefinition listDef = new ListDataDefinition(collect1);
-
         listToscaDataDefinition.removeIf(e -> ownerIdList.contains(e.getOwnerId()));
         return (T) listDef;
     }
 
     @Override
     public <T extends ToscaDataDefinition> T updateIfExist(T other, boolean allowDefaultValueOverride) {
-
         List<T> list = ((ListDataDefinition) other).getListToscaDataDefinition();
         list.forEach(e -> {
             String nameFromPrev = (String) e.getToscaPresentationValue(JsonPresentationFields.NAME);

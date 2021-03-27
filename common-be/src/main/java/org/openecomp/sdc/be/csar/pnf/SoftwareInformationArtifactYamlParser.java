@@ -16,9 +16,13 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.pnf;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation.PnfSoftwareInformationField;
@@ -27,28 +31,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * Handles the parsing of the non-mano software information file.
  */
 public class SoftwareInformationArtifactYamlParser {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SoftwareInformationArtifactYamlParser.class);
 
     private SoftwareInformationArtifactYamlParser() {
-
     }
 
     /**
      * Parses the non-mano software information yaml file.
      *
      * @param softwareInformationYamlFileBytes the file byte array
-     * @return an {@code Optional<PnfSoftwareInformation>} if the file was successful parsed, otherwise {@code
-     * Optional.empty()}
+     * @return an {@code Optional<PnfSoftwareInformation>} if the file was successful parsed, otherwise {@code Optional.empty()}
      */
     @SuppressWarnings("unchecked")
     public static Optional<PnfSoftwareInformation> parse(final byte[] softwareInformationYamlFileBytes) {
@@ -58,23 +55,17 @@ public class SoftwareInformationArtifactYamlParser {
             if (!(yaml instanceof Map)) {
                 return Optional.empty();
             }
-
             softwareVersionYamlObject = (Map<String, Object>) yaml; // unchecked warning suppressed
         } catch (final IOException | YAMLException e) {
             LOGGER.warn("Could not parse the software information yaml file", e);
             return Optional.empty();
         }
-
         final PnfSoftwareInformation pnfSoftwareInformation = new PnfSoftwareInformation();
-        pnfSoftwareInformation.setDescription(
-            (String) softwareVersionYamlObject.get(PnfSoftwareInformationField.DESCRIPTION.getFieldName()));
-        pnfSoftwareInformation.setProvider(
-            (String) softwareVersionYamlObject.get(PnfSoftwareInformationField.PROVIDER.getFieldName()));
-        pnfSoftwareInformation.setVersion(
-            (String) softwareVersionYamlObject.get(PnfSoftwareInformationField.VERSION.getFieldName()));
+        pnfSoftwareInformation.setDescription((String) softwareVersionYamlObject.get(PnfSoftwareInformationField.DESCRIPTION.getFieldName()));
+        pnfSoftwareInformation.setProvider((String) softwareVersionYamlObject.get(PnfSoftwareInformationField.PROVIDER.getFieldName()));
+        pnfSoftwareInformation.setVersion((String) softwareVersionYamlObject.get(PnfSoftwareInformationField.VERSION.getFieldName()));
         final List<Map<String, String>> pnfSoftwareInformationYaml = (List<Map<String, String>>) softwareVersionYamlObject
             .get(PnfSoftwareInformationField.PNF_SOFTWARE_INFORMATION.getFieldName()); // unchecked warning suppressed
-
         if (CollectionUtils.isNotEmpty(pnfSoftwareInformationYaml)) {
             pnfSoftwareInformationYaml.forEach(stringStringMap -> {
                 final String description = stringStringMap.get(PnfSoftwareVersionField.DESCRIPTION.getFieldName());
@@ -82,9 +73,6 @@ public class SoftwareInformationArtifactYamlParser {
                 pnfSoftwareInformation.addToSoftwareVersionSet(new PnfSoftwareVersion(version, description));
             });
         }
-
         return Optional.of(pnfSoftwareInformation);
     }
-
-
 }

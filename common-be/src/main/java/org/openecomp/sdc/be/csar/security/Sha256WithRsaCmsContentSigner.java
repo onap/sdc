@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security;
 
 import java.io.IOException;
@@ -48,24 +47,17 @@ import org.springframework.stereotype.Component;
 public class Sha256WithRsaCmsContentSigner implements CmsContentSigner {
 
     @Override
-    public byte[] signData(final byte[] data, final Certificate signingCertificate, final Key signingKey)
-        throws CmsSignatureException {
-
+    public byte[] signData(final byte[] data, final Certificate signingCertificate, final Key signingKey) throws CmsSignatureException {
         final CMSTypedData cmsData = new CMSProcessableByteArray(data);
         final JcaCertStore certStore = createCertificateStore(signingCertificate);
         try {
-            final ContentSigner contentSigner
-                = new JcaContentSignerBuilder("SHA256withRSA")
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME).build((PrivateKey) signingKey);
-
+            final ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256withRSA").setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                .build((PrivateKey) signingKey);
             final CMSSignedDataGenerator cmsGenerator = new CMSSignedDataGenerator();
             cmsGenerator.addSignerInfoGenerator(
-                new JcaSignerInfoGeneratorBuilder(
-                    new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build()
-                ).build(contentSigner, (X509Certificate) signingCertificate)
-            );
+                new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build())
+                    .build(contentSigner, (X509Certificate) signingCertificate));
             cmsGenerator.addCertificates(certStore);
-
             final CMSSignedData cms = cmsGenerator.generate(cmsData, false);
             return cms.getEncoded();
         } catch (final Exception e) {
@@ -89,10 +81,8 @@ public class Sha256WithRsaCmsContentSigner implements CmsContentSigner {
         try {
             return new JcaCertStore(Collections.singletonList(signingCertificate));
         } catch (final CertificateEncodingException e) {
-            final String errorMsg = String
-                .format("Could not create certificate store from certificate '%s'", signingCertificate);
+            final String errorMsg = String.format("Could not create certificate store from certificate '%s'", signingCertificate);
             throw new CmsSignatureException(errorMsg, e);
         }
     }
-
 }

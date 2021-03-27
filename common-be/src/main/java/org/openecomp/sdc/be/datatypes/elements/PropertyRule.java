@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -62,12 +61,10 @@ public class PropertyRule extends ToscaDataDefinition {
     }
 
     public String getToken(int tokenNumber) {
-
         int index = tokenNumber - 1;
         if (rule == null || index >= rule.size() || index < 0) {
             return null;
         }
-
         return rule.get(index);
     }
 
@@ -85,16 +82,13 @@ public class PropertyRule extends ToscaDataDefinition {
     }
 
     public boolean compareRule(PropertyRule comparedPropertyRule) {
-
         if (comparedPropertyRule == null) {
             return false;
         }
-
         List<String> comparedRule = comparedPropertyRule.getRule();
         if (rule == null && comparedRule == null) {
             return true;
         }
-
         if (rule != null && comparedRule != null) {
             if (rule.size() != comparedRule.size()) {
                 return false;
@@ -114,15 +108,11 @@ public class PropertyRule extends ToscaDataDefinition {
         } else {
             return false;
         }
-
     }
 
     public void replaceFirstToken(String token) {
-
         if (rule != null && rule.size() > 0) {
             rule.set(0, token);
         }
-
     }
-
 }

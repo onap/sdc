@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.EqualsAndHashCode;
@@ -35,11 +34,9 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class HeatParameterDataDefinition extends ToscaDataDefinition {
 
     private String uniqueId;
-
     private String name;
     private String type;
     private String description;
-
     private String currentValue;
     private String defaultValue;
 
@@ -51,5 +48,4 @@ public class HeatParameterDataDefinition extends ToscaDataDefinition {
         this.currentValue = hp.currentValue;
         this.defaultValue = hp.defaultValue;
     }
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.google.common.collect.Lists;
@@ -55,32 +54,27 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         this.setName(other.getName());
         this.setParentName(other.getParentName());
         this.setPreviousName(other.getPreviousName());
-
         if (other.getValidSourceTypes() == null) {
             this.setValidSourceTypes(Lists.newArrayList());
         } else {
             this.setValidSourceTypes(Lists.newArrayList(other.getValidSourceTypes()));
         }
-
         if (other.getCapabilitySources() == null) {
             this.setCapabilitySources(Lists.newArrayList());
         } else {
             this.setCapabilitySources(Lists.newArrayList(other.getCapabilitySources()));
         }
-
         this.setOwnerId(other.getOwnerId());
         this.setOwnerName(other.getOwnerName());
         this.setOwnerType(other.getOwnerType());
         this.setMinOccurrences(other.getMinOccurrences());
         this.setMaxOccurrences(other.getMaxOccurrences());
         this.setLeftOccurrences(other.getLeftOccurrences());
-
         if (other.getPath() == null) {
             this.setPath(Lists.newArrayList());
         } else {
             this.setPath(Lists.newArrayList(other.getPath()));
         }
-
         this.setSource(other.getSource());
         this.setOwnerType(other.getOwnerType());
     }
@@ -244,12 +238,10 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         setPath(path);
     }
 
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-
         String uniqueId = this.getUniqueId();
         String description = this.getDescription();
         String name = this.getName();
@@ -257,14 +249,12 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         List<String> validSourceTypes = this.getValidSourceTypes();
         List<String> capabilitySources = this.getCapabilitySources();
         List<String> path = this.getPath();
-
         String ownerId = this.getOwnerId();
         String ownerName = this.getOwnerName();
         String minOccurrences = this.getMinOccurrences();
         String maxOccurrences = this.getMaxOccurrences();
         String leftOccurrences = getLeftOccurrences();
         String source = getSource();
-
         result = prime * result + ((capabilitySources == null) ? 0 : capabilitySources.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((maxOccurrences == null) ? 0 : maxOccurrences.hashCode());
@@ -272,7 +262,6 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
         result = prime * result + ((ownerName == null) ? 0 : ownerName.hashCode());
-
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
         result = prime * result + ((validSourceTypes == null) ? 0 : validSourceTypes.hashCode());
@@ -284,7 +273,6 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
 
     @Override
     public boolean equals(Object obj) {
-
         String uniqueId = this.getUniqueId();
         String description = this.getDescription();
         String name = this.getName();
@@ -298,7 +286,6 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         String leftOccurrences = getLeftOccurrences();
         List<String> path = this.getPath();
         String source = getSource();
-
         if (this == obj) {
             return true;
         }
@@ -414,18 +401,13 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         String minOccurrences = this.getMinOccurrences();
         String maxOccurrences = this.getMaxOccurrences();
         String source = this.getSource();
-
-        return "CapabilityDefinition [uniqueId=" + uniqueId + ", description=" + description + ", name=" + name
-            + ", type=" + type + ", validSourceTypes=" + validSourceTypes + ", capabilitySources="
-            + capabilitySources + ", ownerId=" + ownerId + ", ownerName=" + ownerName
-            + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + ", path=" + path + ", source=" + source + "]";
+        return "CapabilityDefinition [uniqueId=" + uniqueId + ", description=" + description + ", name=" + name + ", type=" + type
+            + ", validSourceTypes=" + validSourceTypes + ", capabilitySources=" + capabilitySources + ", ownerId=" + ownerId + ", ownerName="
+            + ownerName + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + ", path=" + path + ", source=" + source + "]";
     }
 
     public enum OwnerType {
-        GROUP("group"),
-        COMPONENT_INSTANCE("component instance"),
-        RESOURCE("resource");
-
+        GROUP("group"), COMPONENT_INSTANCE("component instance"), RESOURCE("resource");
         private String value;
 
         OwnerType(String value) {
@@ -444,7 +426,5 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         public String getValue() {
             return value;
         }
-
     }
-
 }

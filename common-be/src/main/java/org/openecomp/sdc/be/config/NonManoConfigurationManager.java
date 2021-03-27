@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
 
 import java.io.IOException;
@@ -30,11 +29,19 @@ import org.yaml.snakeyaml.Yaml;
  * Singleton that loads and stores the Non Mano configuration
  */
 public class NonManoConfigurationManager {
+
     private static NonManoConfigurationManager nonManoConfigurationManager = null;
     private NonManoConfiguration nonManoConfiguration;
 
     private NonManoConfigurationManager() {
         loadConfiguration();
+    }
+
+    public static NonManoConfigurationManager getInstance() {
+        if (nonManoConfigurationManager == null) {
+            nonManoConfigurationManager = new NonManoConfigurationManager();
+        }
+        return nonManoConfigurationManager;
     }
 
     /**
@@ -54,14 +61,6 @@ public class NonManoConfigurationManager {
         nonManoConfiguration = convertFromString(data, NonManoConfiguration.class);
     }
 
-    public static NonManoConfigurationManager getInstance() {
-        if (nonManoConfigurationManager == null) {
-            nonManoConfigurationManager = new NonManoConfigurationManager();
-        }
-
-        return nonManoConfigurationManager;
-    }
-
     public NonManoConfiguration getNonManoConfiguration() {
         return nonManoConfiguration;
     }
@@ -70,9 +69,7 @@ public class NonManoConfigurationManager {
         try {
             return (new Yaml()).loadAs(yamlContents, className);
         } catch (final Exception e) {
-            throw new
-                LoadConfigurationException(String.format("Failed to convert YAML %s to object.", yamlContents), e);
+            throw new LoadConfigurationException(String.format("Failed to convert YAML %s to object.", yamlContents), e);
         }
     }
-
 }

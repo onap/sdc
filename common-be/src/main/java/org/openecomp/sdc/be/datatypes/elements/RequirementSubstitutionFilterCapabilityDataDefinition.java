@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
@@ -28,8 +27,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class RequirementSubstitutionFilterCapabilityDataDefinition extends ToscaDataDefinition implements Serializable {
 
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
-            JsonPresentationFields.PROPERTIES);
+        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {

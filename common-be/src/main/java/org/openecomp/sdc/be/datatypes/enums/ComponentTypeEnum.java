@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.AllArgsConstructor;
@@ -21,13 +20,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ComponentTypeEnum {
-    RESOURCE("Resource"),
-    SERVICE("Service"),
-    RESOURCE_INSTANCE("Resource Instance"),
-    PRODUCT("Product"),
-    SERVICE_INSTANCE("Service Instance");
-
+    RESOURCE("Resource"), SERVICE("Service"), RESOURCE_INSTANCE("Resource Instance"), PRODUCT("Product"), SERVICE_INSTANCE("Service Instance");
     // Those values cannot be another field in enum, because they are needed
+
     // as constants for Swagger allowedValues param
     public static final String RESOURCE_PARAM_NAME = "resources";
     public static final String SERVICE_PARAM_NAME = "services";
@@ -68,7 +63,6 @@ public enum ComponentTypeEnum {
         if (type == null) {
             return ret;
         }
-
         switch (type) {
             case RESOURCE:
                 ret = RESOURCE_PARAM_NAME;
@@ -86,7 +80,6 @@ public enum ComponentTypeEnum {
     }
 
     public NodeTypeEnum getNodeType() {
-
         switch (this) {
             case RESOURCE:
                 return NodeTypeEnum.Resource;

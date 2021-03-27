@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import static java.util.Collections.emptyList;
@@ -203,5 +202,4 @@ public class PolicyDataDefinition extends PropertyDataDefinition {
         Map<PolicyTargetType, List<String>> targets = getTargets();
         return targets == null || !targets.containsKey(targetType) ? emptyList() : targets.get(targetType);
     }
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -54,7 +53,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String label;
     private Boolean immutable = Boolean.FALSE;
     private Boolean mappedToComponentProperty = Boolean.TRUE;
-
     private String inputPath;
     private String status;
     private String inputId;
@@ -62,21 +60,15 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String propertyId;
     private String parentPropertyType;
     private String subPropertyInputPath;
-
     private List<Annotation> annotations;
     /**
      * The resource id which this property belongs to
      */
     private String parentUniqueId;
-
     private List<GetInputValueDataDefinition> getInputValues;
-
     private Boolean isDeclaredListInput = Boolean.FALSE;
-
     private List<GetPolicyValueDataDefinition> getPolicyValues;
-
     private List<String> propertyConstraints;
-
     private Map<String, String> metadata;
 
     public PropertyDataDefinition() {
@@ -157,7 +149,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         if (schema != null) {
             return schema.getProperty();
         }
-
         return null;
     }
 
@@ -169,7 +160,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return immutable;
     }
 
-    public Boolean isMappedToComponentProperty() { return mappedToComponentProperty; }
+    public Boolean isMappedToComponentProperty() {
+        return mappedToComponentProperty;
+    }
 
     public String getParentUniqueId() {
         return getOwnerId();
@@ -267,13 +260,10 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
     @Override
     public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride) {
-        if (this.getType() != null
-            && this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE))
-            && compareSchemaType(other)) {
+        if (this.getType() != null && this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE)) && compareSchemaType(
+            other)) {
             other.setOwnerId(getOwnerId());
-            if (allowDefaultValueOverride
-                && getDefaultValue() != null
-                && !getDefaultValue().isEmpty()) {
+            if (allowDefaultValueOverride && getDefaultValue() != null && !getDefaultValue().isEmpty()) {
                 other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
             }
             return other;
@@ -301,7 +291,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         if (this.annotations != null) {
             annotationSet.addAll(this.annotations);
         }
-
         this.annotations = new ArrayList<>(annotationSet);
         setToscaPresentationValue(JsonPresentationFields.ANNOTATIONS, this.annotations);
     }

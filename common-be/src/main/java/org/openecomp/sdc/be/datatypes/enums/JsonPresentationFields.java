@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -25,7 +24,7 @@ import lombok.ToString;
 @Getter
 @ToString(onlyExplicitlyIncluded = true)
 public enum JsonPresentationFields {
-
+    // @formatter:off
     UNIQUE_ID("uniqueId", GraphPropertyEnum.UNIQUE_ID),
     HIGHEST_VERSION("highestVersion", GraphPropertyEnum.IS_HIGHEST_VERSION),
     LIFECYCLE_STATE("lifecycleState", GraphPropertyEnum.STATE),
@@ -74,7 +73,6 @@ public enum JsonPresentationFields {
 
     ////Inputs
     ANNOTATIONS("annotations", null),
-
     ////Artifact
     ARTIFACT_TYPE("artifactType", null),
     ARTIFACT_REF("artifactRef", null),
@@ -160,13 +158,8 @@ public enum JsonPresentationFields {
     TOSCA_ID("tosca_id", null),
 
     //Relation
-    CAPABILTY_OWNER_ID("capabilityOwnerId", null),
-    REQUIREMENT_OWNER_ID("requirementOwnerId", null),
-    FROM_ID("fromId", null),
-    TO_ID("toId", null),
-    REQUIREMENT("requirement", null),
-    ORIGIN_UI("originUI", null),
-
+    CAPABILTY_OWNER_ID("capabilityOwnerId", null), REQUIREMENT_OWNER_ID("requirementOwnerId", null), FROM_ID("fromId", null), TO_ID("toId",
+        null), REQUIREMENT("requirement", null), ORIGIN_UI("originUI", null),
     //Groups
 
     GROUP_INVARIANT_UUID("invariantUUID", null),
@@ -225,9 +218,7 @@ public enum JsonPresentationFields {
     TARGETS("targets", null),
 
     //External Refs
-    EXTERNAL_REF("externalRef", null),
-    CREATED_FROM("createdFrom", null),
-
+    EXTERNAL_REF("externalRef", null), CREATED_FROM("createdFrom", null),
     //Archive
     IS_ARCHIVED("isArchived", GraphPropertyEnum.IS_ARCHIVED),
     ARCHIVE_TIME("archiveTime", GraphPropertyEnum.ARCHIVE_TIME),
@@ -266,6 +257,7 @@ public enum JsonPresentationFields {
     ATTRIBUTES("attributes", null),
 
     TOSCA_DEFINITIONS_VERSION("tosca_definitions_version", null);
+    // @formatter:on
 
     @ToString.Include
     private final String presentation;
@@ -295,5 +287,4 @@ public enum JsonPresentationFields {
     public String getPresentation() {
         return presentation;
     }
-
 }

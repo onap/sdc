@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.ArrayList;
@@ -180,7 +179,6 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         OriginTypeEnum originType = null;
         String origType = (String) getToscaPresentationValue(JsonPresentationFields.CI_ORIGIN_TYPE);
         if (origType != null && !origType.isEmpty()) {
-
             originType = OriginTypeEnum.findByValue(origType);
         }
         return originType;
@@ -333,15 +331,12 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "ComponentInstanceDataDefinition [icon=" + getIcon() + ", uniqueId=" + getUniqueId() + ", name="
-            + getName() + ", normalizedName=" + getNormalizedName() + ", componentUid=" + getComponentUid()
-            + ", creationTime=" + getCreationTime() + ", modificationTime=" + getModificationTime()
-            + ", description=" + getDescription() + ", posX=" + getPosX() + ", posY=" + getPosY()
-            + ", propertyValueCounter=" + getPropertyValueCounter() + ", attributeValueCounter="
-            + getAttributeValueCounter() + ", inputValueCounter=" + getInputValueCounter() + ", originType="
-            + getOriginType() + ", customizationUUID=" + getCustomizationUUID() + ", componentName="
-            + getComponentName() + ", componentVersion=" + getComponentVersion() + ", toscaComponentName="
-            + getToscaComponentName() + ", directives =" + getDirectivesString() + "]";
+        return "ComponentInstanceDataDefinition [icon=" + getIcon() + ", uniqueId=" + getUniqueId() + ", name=" + getName() + ", normalizedName="
+            + getNormalizedName() + ", componentUid=" + getComponentUid() + ", creationTime=" + getCreationTime() + ", modificationTime="
+            + getModificationTime() + ", description=" + getDescription() + ", posX=" + getPosX() + ", posY=" + getPosY() + ", propertyValueCounter="
+            + getPropertyValueCounter() + ", attributeValueCounter=" + getAttributeValueCounter() + ", inputValueCounter=" + getInputValueCounter()
+            + ", originType=" + getOriginType() + ", customizationUUID=" + getCustomizationUUID() + ", componentName=" + getComponentName()
+            + ", componentVersion=" + getComponentVersion() + ", toscaComponentName=" + getToscaComponentName() + ", directives ="
+            + getDirectivesString() + "]";
     }
-
 }

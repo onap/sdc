@@ -23,17 +23,18 @@ import org.apache.commons.lang.StringUtils;
 
 @Data
 public class NonManoFolderType {
+
     private String location;
     private String type;
 
     /**
      * Gets the expected folder path
+     *
      * @return
      */
     public String getPath() {
         return String.format("Artifacts/%s/%s", type, location);
     }
-
 
     public boolean isValid() {
         return StringUtils.isNotBlank(location) && StringUtils.isNotBlank(type);

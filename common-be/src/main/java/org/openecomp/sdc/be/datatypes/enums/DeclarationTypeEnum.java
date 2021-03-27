@@ -17,14 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum DeclarationTypeEnum {
-    INPUT,
-    OUTPUT,
-    POLICY
-}
+public enum DeclarationTypeEnum {INPUT, OUTPUT, POLICY}

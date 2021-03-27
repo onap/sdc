@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.List;
@@ -166,5 +165,4 @@ public class JsonPresentationFieldsExtractor {
     public String getServiceFunction() {
         return (String) properties.get(JsonPresentationFields.SERVICE_FUNCTION.getPresentation());
     }
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -34,7 +33,6 @@ public class ListMapPropertiesDataDefinition extends ListDataDefinition<MapPrope
 
     public ListMapPropertiesDataDefinition(ListMapPropertiesDataDefinition cdt) {
         super(cdt);
-
     }
 
     @JsonCreator
@@ -48,10 +46,7 @@ public class ListMapPropertiesDataDefinition extends ListDataDefinition<MapPrope
         return listToscaDataDefinition;
     }
 
-
     public void setMapToscaDataDefinition(List<MapPropertiesDataDefinition> listToscaDataDefinition) {
         this.listToscaDataDefinition = listToscaDataDefinition;
     }
-
-
 }

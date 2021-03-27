@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.Getter;
@@ -33,15 +32,11 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class AnnotationTypeDataDefinition extends ToscaDataDefinition {
 
     protected String uniqueId;
-
     @ToString.Exclude
     protected String type;
-
     protected String description;
-
     protected Long creationTime;
     protected Long modificationTime;
-
     protected String version;
     protected boolean highestVersion;
 
@@ -54,5 +49,4 @@ public class AnnotationTypeDataDefinition extends ToscaDataDefinition {
         modificationTime = other.modificationTime;
         highestVersion = other.highestVersion;
     }
-
 }

@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.AllArgsConstructor;
@@ -28,9 +27,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PortMirroringEnum {
-    CISCO_VENDOR_NAME("CISCO"),
-    CISCO_VENDOR_MODEL_NUMBER("4500x");
-
+    CISCO_VENDOR_NAME("CISCO"), CISCO_VENDOR_MODEL_NUMBER("4500x");
     private final String value;
-
 }

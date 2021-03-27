@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.AllArgsConstructor;
@@ -26,9 +25,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ExternalCategoryTypeEnum {
-
     PARTNER_DOMAIN_SERVICE("Partner Domain Service", true);
-
     private final String value;
     private final boolean isAtomicType;
 
@@ -72,7 +69,6 @@ public enum ExternalCategoryTypeEnum {
      * @return
      */
     public static boolean containsName(String type) {
-
         for (ExternalCategoryTypeEnum e : ExternalCategoryTypeEnum.values()) {
             if (e.getValue().equals(type)) {
                 return true;
@@ -88,7 +84,6 @@ public enum ExternalCategoryTypeEnum {
      * @return
      */
     public static boolean containsIgnoreCase(String type) {
-
         for (ExternalCategoryTypeEnum e : ExternalCategoryTypeEnum.values()) {
             if (e.getValue().equalsIgnoreCase(type)) {
                 return true;
@@ -96,6 +91,4 @@ public enum ExternalCategoryTypeEnum {
         }
         return false;
     }
-
 }
-

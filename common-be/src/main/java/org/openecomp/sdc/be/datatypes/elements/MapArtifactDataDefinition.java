@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -50,9 +49,7 @@ public class MapArtifactDataDefinition extends MapDataDefinition<ArtifactDataDef
         return mapToscaDataDefinition;
     }
 
-
     public void setMapToscaDataDefinition(Map<String, ArtifactDataDefinition> mapToscaDataDefinition) {
         this.mapToscaDataDefinition = mapToscaDataDefinition;
     }
-
 }

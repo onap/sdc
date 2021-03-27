@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +20,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum NodeTypeEnum {
+    // @formatter:off
     User("user"),
     Service("service"),
     Resource("resource"),
@@ -64,6 +64,7 @@ public enum NodeTypeEnum {
     GroupInstance("groupInstance"),
     AnnotationType("annotationType"),
     Component("component");
+    // @formatter:on
 
     private final String name;
 

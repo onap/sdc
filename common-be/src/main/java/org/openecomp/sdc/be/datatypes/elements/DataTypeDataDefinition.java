@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -34,24 +33,18 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class DataTypeDataDefinition extends ToscaDataDefinition {
 
     private String name;
-
     private String uniqueId;
-
     // "boolean", "string", "float", "integer", "version" })
     private String derivedFromName;
-
     private String description;
-
     /**
      * Timestamp of data type creation
      */
     private Long creationTime;
-
     /**
      * Timestamp of the data type last update
      */
     private Long modificationTime;
-
     private List<PropertyDataDefinition> propertiesData;
 
     public DataTypeDataDefinition(DataTypeDataDefinition p) {
@@ -62,6 +55,4 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
         this.creationTime = p.creationTime;
         this.modificationTime = p.modificationTime;
     }
-
-
 }

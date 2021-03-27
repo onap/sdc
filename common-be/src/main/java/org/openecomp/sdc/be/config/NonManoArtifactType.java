@@ -16,14 +16,12 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Stores non mano artifact types.
@@ -31,6 +29,7 @@ import java.util.Optional;
 @Getter
 @AllArgsConstructor
 public enum NonManoArtifactType {
+    // @formatter:off
     ONAP_VES_EVENTS("onap_ves_events"),
     ONAP_PM_DICTIONARY("onap_pm_dictionary"),
     ONAP_YANG_MODULES("onap_yang_modules"),
@@ -39,6 +38,7 @@ public enum NonManoArtifactType {
     ONAP_OTHERS("onap_others"),
     ONAP_SW_INFORMATION("onap_pnf_sw_information"),
     ONAP_CNF_HELM("onap_cnf_helm");
+    // @formatter:on
 
     private final String type;
 

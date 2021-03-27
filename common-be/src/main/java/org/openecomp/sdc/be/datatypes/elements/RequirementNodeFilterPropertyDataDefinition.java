@@ -22,7 +22,6 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class RequirementNodeFilterPropertyDataDefinition extends ToscaDataDefinition implements Serializable {
 
-
     public List<String> getConstraints() {
         return (List<String>) getToscaPresentationValue(JsonPresentationFields.PROPERTY_FILTER_CONSTRAINT);
     }
