@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2020 Nordix Foundation
  * ================================================================================
  */
-
 package org.openecomp.sdc.common.log.enums;
 
 import java.util.Arrays;
@@ -45,8 +44,7 @@ public enum EcompLoggerErrorCode {
 
     public static EcompLoggerErrorCode getByValue(String ecompErrorCode) {
         String errorPrefix = parseCode(ecompErrorCode);
-        Optional<EcompLoggerErrorCode> optionalCode = Arrays.stream(values()).filter(v -> isCode(v, errorPrefix))
-            .findFirst();
+        Optional<EcompLoggerErrorCode> optionalCode = Arrays.stream(values()).filter(v -> isCode(v, errorPrefix)).findFirst();
         return optionalCode.orElse(UNKNOWN_ERROR);
     }
 
@@ -61,5 +59,4 @@ public enum EcompLoggerErrorCode {
             return UNKNOWN_ERROR.name();
         }
     }
-
 }

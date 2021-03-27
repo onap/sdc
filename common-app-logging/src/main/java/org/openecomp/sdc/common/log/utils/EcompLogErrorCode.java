@@ -21,7 +21,6 @@
  */
 package org.openecomp.sdc.common.log.utils;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,7 +29,5 @@ import lombok.Getter;
 public enum EcompLogErrorCode {
     E_399("Internal Invalid Object. Description: %s"),
     E_210("Connection problem towards U-EB server. Reason: %s");
-
     private final String description;
-
 }

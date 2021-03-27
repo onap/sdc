@@ -47,8 +47,7 @@ public class LoggerSupportability extends LoggerBase {
         ILogConfiguration.MDC_SUPPORTABLITY_STATUS_CODE));
 
     public LoggerSupportability(ILogFieldsHandler ecompLogFieldsHandler, Logger logger) {
-        super(ecompLogFieldsHandler, MarkerFactory.getMarker(LogMarkers.SUPPORTABILITY_MARKER.getText()),
-            logger);
+        super(ecompLogFieldsHandler, MarkerFactory.getMarker(LogMarkers.SUPPORTABILITY_MARKER.getText()), logger);
     }
 
     public static LoggerSupportability getLogger(Class<?> clazz) {
@@ -56,12 +55,11 @@ public class LoggerSupportability extends LoggerBase {
     }
 
     public static LoggerSupportability getLogger(String className) {
-        return LoggerFactory.getMdcLogger(LoggerSupportability.class,
-            org.slf4j.LoggerFactory.getLogger(className));
+        return LoggerFactory.getMdcLogger(LoggerSupportability.class, org.slf4j.LoggerFactory.getLogger(className));
     }
 
-    public void log(LoggerSupportabilityActions action, Map<String, String> componentMetaData, StatusCode statusCode,
-                    String message, Object... params) {
+    public void log(LoggerSupportabilityActions action, Map<String, String> componentMetaData, StatusCode statusCode, String message,
+                    Object... params) {
         fillFieldsBeforeLogging(action, componentMetaData, statusCode);
         super.log(LogLevel.INFO, message, params);
     }
@@ -70,20 +68,14 @@ public class LoggerSupportability extends LoggerBase {
         log(action, null, statusCode, message, params);
     }
 
-    private void fillFieldsBeforeLogging(LoggerSupportabilityActions action, Map<String, String> componentMetaData,
-                                         StatusCode statusCode) {
+    private void fillFieldsBeforeLogging(LoggerSupportabilityActions action, Map<String, String> componentMetaData, StatusCode statusCode) {
         clear();
         if (componentMetaData != null) {
-            ecompLogFieldsHandler
-                .setSupportablityCsarUUID(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID));
-            ecompLogFieldsHandler
-                .setSupportablityCsarVersion(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION));
-            ecompLogFieldsHandler.setSupportablityComponentName(
-                componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME));
-            ecompLogFieldsHandler.setSupportablityComponentUUID(
-                componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID));
-            ecompLogFieldsHandler.setSupportablityComponentVersion(
-                componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION));
+            ecompLogFieldsHandler.setSupportablityCsarUUID(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID));
+            ecompLogFieldsHandler.setSupportablityCsarVersion(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION));
+            ecompLogFieldsHandler.setSupportablityComponentName(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME));
+            ecompLogFieldsHandler.setSupportablityComponentUUID(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID));
+            ecompLogFieldsHandler.setSupportablityComponentVersion(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION));
         }
         ecompLogFieldsHandler.setSupportablityAction(action.getName());
         ecompLogFieldsHandler.setSupportablityStatusCode(statusCode.getStatusCode());
@@ -101,7 +93,6 @@ public class LoggerSupportability extends LoggerBase {
         return this;
     }
 
-
     @Override
     public List<String> getMandatoryFields() {
         return Collections.unmodifiableList(mandatoryFields);
@@ -111,5 +102,4 @@ public class LoggerSupportability extends LoggerBase {
     public LoggerSupportability startTimer() {
         return this;
     }
-
 }

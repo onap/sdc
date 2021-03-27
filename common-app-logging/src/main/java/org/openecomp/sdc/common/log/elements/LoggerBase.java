@@ -38,10 +38,9 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-
 /**
- * Created by mm288v on 12/27/2017. This class holds the common behavior of all Loger-Typed classes. The Concrete
- * loggers shoudl derive from this one.
+ * Created by mm288v on 12/27/2017. This class holds the common behavior of all Loger-Typed classes. The Concrete loggers shoudl derive from this
+ * one.
  */
 public abstract class LoggerBase implements ILogger {
 
@@ -66,16 +65,16 @@ public abstract class LoggerBase implements ILogger {
         String requestId = httpRequest.getHeader(ConstantsLogging.X_REQUEST_ID);
         String transactionReId = httpRequest.getHeader(ConstantsLogging.X_TRANSACTION_ID_HEADER);
         String ecompRequestId = httpRequest.getHeader(ConstantsLogging.X_ECOMP_REQUEST_ID_HEADER);
-        return Arrays.asList(onapRequestId, requestId, transactionReId, ecompRequestId).stream()
-            .filter(id -> !StringUtils.isEmpty(id)).findFirst().orElse(generateKeyRequestId());
+        return Arrays.asList(onapRequestId, requestId, transactionReId, ecompRequestId).stream().filter(id -> !StringUtils.isEmpty(id)).findFirst()
+            .orElse(generateKeyRequestId());
     }
 
     public static String getPartnerName(HttpServletRequest httpRequest) {
         String userId = httpRequest.getHeader(ConstantsLogging.USER_ID_HEADER);
         String onapPartnerName = httpRequest.getHeader(ONAPLogConstants.Headers.PARTNER_NAME);
         String reqUri = httpRequest.getHeader(ConstantsLogging.USER_AGENT_HEADER);
-        return Arrays.asList(userId, onapPartnerName, reqUri).stream()
-            .filter(pn -> !StringUtils.isEmpty(pn)).findFirst().orElse(ConstantsLogging.PartnerName_Unknown);
+        return Arrays.asList(userId, onapPartnerName, reqUri).stream().filter(pn -> !StringUtils.isEmpty(pn)).findFirst()
+            .orElse(ConstantsLogging.PartnerName_Unknown);
     }
 
     protected void setKeyRequestIdIfNotSetYet() {
@@ -87,7 +86,6 @@ public abstract class LoggerBase implements ILogger {
     private void validateMandatoryFields(String originMsg) {
         // this method only checks if the mandatory fields have been initialized
         String filedNameThatHasNotBeenInitialized = checkMandatoryFieldsExistInMDC();
-
         if (myLogger.isDebugEnabled() && !"".equalsIgnoreCase(filedNameThatHasNotBeenInitialized)) {
             myLogger.debug(MarkerFactory.getMarker(LogMarkers.DEBUG_MARKER.getText()),
                 String.format(missingLogFieldsMsg, filedNameThatHasNotBeenInitialized, originMsg));
@@ -127,7 +125,6 @@ public abstract class LoggerBase implements ILogger {
     @Override
     public void log(LogLevel logLevel, String message, Object... params) {
         validateMandatoryFields(message);
-
         switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
@@ -153,7 +150,6 @@ public abstract class LoggerBase implements ILogger {
     @Override
     public void log(LogLevel logLevel, String message, Throwable throwable) {
         validateMandatoryFields(message);
-
         switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
@@ -179,7 +175,6 @@ public abstract class LoggerBase implements ILogger {
     @Override
     public void log(Marker marker, LogLevel logLevel, String message, Object... params) {
         validateMandatoryFields(message);
-
         switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
@@ -206,7 +201,6 @@ public abstract class LoggerBase implements ILogger {
         return String.format("%s: %s", message, throwable.getLocalizedMessage());
     }
 
-
     @Override
     public ILogger clear() {
         ecompLogFieldsHandler.clear();
@@ -219,12 +213,9 @@ public abstract class LoggerBase implements ILogger {
         return this;
     }
 
-
     @Override
     public ILogger setKeyInvocationId(String keyInvocationId) {
         ecompLogFieldsHandler.setKeyInvocationId(keyInvocationId);
         return this;
     }
-
-
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,26 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.log.utils;
-
 
 public class LoggingThreadLocalsHolder {
 
-	private static final ThreadLocal<String> uuidThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<String> uuidThreadLocal = new ThreadLocal<>();
 
-	public static void setUuid(String uuid) {
-		uuidThreadLocal.set(uuid);
-	}
+    public static String getUuid() {
+        return uuidThreadLocal.get();
+    }
 
-	public static String getUuid() {
-		return uuidThreadLocal.get();
-	}
+    public static void setUuid(String uuid) {
+        uuidThreadLocal.set(uuid);
+    }
 
-
-
-	public static void cleanup() {
-		uuidThreadLocal.remove();
-	}
-
+    public static void cleanup() {
+        uuidThreadLocal.remove();
+    }
 }

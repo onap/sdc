@@ -72,61 +72,42 @@ public class LoggerError extends LoggerBase {
         return this;
     }
 
-    public void log(LogLevel logLevel,
-                    EcompLoggerErrorCode errorCodeEnum,
-                    String serviceName,
-                    String targetEntity,
-                    String message, Object... params) {
+    public void log(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName, String targetEntity, String message,
+                    Object... params) {
         fillFieldsBeforeLogging(logLevel, errorCodeEnum, serviceName, targetEntity, null);
         super.log(logLevel, message, params);
     }
 
-    public void log(LogLevel logLevel,
-                    EcompLoggerErrorCode errorCodeEnum,
-                    String serviceName,
-                    ErrorLogOptionalData errorLogOptionalData,
-                    String description,
-                    Object... params) {
-        fillFieldsBeforeLogging(logLevel, errorCodeEnum, serviceName,
-            errorLogOptionalData.getTargetEntity(), errorLogOptionalData.getTargetServiceName());
+    public void log(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName, ErrorLogOptionalData errorLogOptionalData,
+                    String description, Object... params) {
+        fillFieldsBeforeLogging(logLevel, errorCodeEnum, serviceName, errorLogOptionalData.getTargetEntity(),
+            errorLogOptionalData.getTargetServiceName());
         super.log(logLevel, description, params);
     }
 
-    private void fillFieldsBeforeLogging(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName,
-                                         String targetEntity, String targetServiceName) {
+    private void fillFieldsBeforeLogging(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName, String targetEntity,
+                                         String targetServiceName) {
         clear();
         ecompLogFieldsHandler.setErrorCode(errorCodeEnum.getErrorCode());
         ecompLogFieldsHandler.setErrorCategory(logLevel.name());
-
         ecompLogFieldsHandler.setTargetEntity(targetEntity);
         ecompLogFieldsHandler.setTargetServiceName(targetServiceName);
-
         if (StringUtils.isEmpty(ecompLogFieldsHandler.getServiceName())) {
             ecompLogFieldsHandler.setServiceName(serviceName);
         }
-
         setKeyRequestIdIfNotSetYet();
     }
 
-    public void log(EcompErrorSeverity errorSeverity,
-                    EcompLoggerErrorCode errorCodeEnum,
-                    String serviceName,
-                    String targetEntity,
-                    String message, Object... params) {
+    public void log(EcompErrorSeverity errorSeverity, EcompLoggerErrorCode errorCodeEnum, String serviceName, String targetEntity, String message,
+                    Object... params) {
         log(convertFromSeverityErrorLevel(errorSeverity), errorCodeEnum, serviceName, targetEntity, message, params);
     }
 
-    public void log(LogLevel logLevel,
-                    EcompLoggerErrorCode errorCodeEnum,
-                    String serviceName,
-                    String message, Object... params) {
+    public void log(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName, String message, Object... params) {
         log(logLevel, errorCodeEnum, serviceName, (String) null, message, params);
     }
 
-    public void log(LogLevel logLevel,
-                    EcompLoggerErrorCode errorCodeEnum,
-                    String serviceName,
-                    String message) {
+    public void log(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName, String message) {
         log(logLevel, errorCodeEnum, serviceName, message);
     }
 
@@ -160,5 +141,4 @@ public class LoggerError extends LoggerBase {
         }
         return LogLevel.ERROR;
     }
-
 }
