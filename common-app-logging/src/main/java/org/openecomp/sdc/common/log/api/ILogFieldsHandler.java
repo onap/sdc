@@ -6,6 +6,7 @@ import org.openecomp.sdc.common.log.enums.Severity;
  * Created by dd4296 on 12/25/2017.
  */
 public interface ILogFieldsHandler {
+
     void startAuditTimer();
 
     void startMetricTimer();
@@ -36,15 +37,7 @@ public interface ILogFieldsHandler {
 
     void setOutgoingInvocationId(String outgoingInvocationId);
 
-    void setKeyRequestId(String keyRequestId);
-
-    void setRemoteHost(String remoteHost);
-
-    void setServiceName(String serviceName);
-
     void setStatusCode(String statusCode);
-
-    void setPartnerName(String partnerName);
 
     void setResponseCode(int responseCode);
 
@@ -52,25 +45,27 @@ public interface ILogFieldsHandler {
 
     void setServiceInstanceId(String serviceInstanceId);
 
-    void setTargetEntity(String targetEntity);
-
-    void setTargetServiceName(String targetServiceName);
-
     void setTargetVirtualEntity(String targetVirtualEntity);
-
-    void setErrorCode(int errorCode);
-
-    void setErrorCategory(String errorCategory);
 
     String getErrorCode();
 
+    void setErrorCode(int errorCode);
+
     String getServiceName();
+
+    void setServiceName(String serviceName);
 
     String getTargetEntity();
 
+    void setTargetEntity(String targetEntity);
+
     String getTargetServiceName();
 
+    void setTargetServiceName(String targetServiceName);
+
     String getErrorCategory();
+
+    void setErrorCategory(String errorCategory);
 
     void clear();
 
@@ -81,6 +76,8 @@ public interface ILogFieldsHandler {
     String getHostAddress();
 
     String getKeyRequestId();
+
+    void setKeyRequestId(String keyRequestId);
 
     void removeStatusCode();
 
@@ -104,37 +101,36 @@ public interface ILogFieldsHandler {
 
     void removeErrorDescription();
 
-    void setAuditMessage(String message);
-
     String getAuditMessage();
 
+    void setAuditMessage(String message);
+
     //service supportability [US 496441]
-
     String getSupportablityAction();
-
-    String getSupportablityCsarUUID();
-
-    String getSupportablityCsarVersion();
-
-    String getSupportablityComponentName();
-
-    String getSupportablityComponentUUID();
-
-    String getSupportablityComponentVersion();
-
-    String getSupportablityStatusCode();
 
     void setSupportablityAction(String action);
 
+    String getSupportablityCsarUUID();
+
     void setSupportablityCsarUUID(String uuid);
+
+    String getSupportablityCsarVersion();
 
     void setSupportablityCsarVersion(String version);
 
+    String getSupportablityComponentName();
+
     void setSupportablityComponentName(String name);
+
+    String getSupportablityComponentUUID();
 
     void setSupportablityComponentUUID(String UUID);
 
+    String getSupportablityComponentVersion();
+
     void setSupportablityComponentVersion(String version);
+
+    String getSupportablityStatusCode();
 
     void setSupportablityStatusCode(String statusCode);
 
@@ -154,11 +150,15 @@ public interface ILogFieldsHandler {
 
     String getPartnerName();
 
+    void setPartnerName(String partnerName);
+
     String getRemoteHost();
+
+    void setRemoteHost(String remoteHost);
 
     String getServerIpAddress();
 
-    void setKeyInvocationId(String invocationId);
-
     CharSequence getKeyInvocationId();
+
+    void setKeyInvocationId(String invocationId);
 }

@@ -27,11 +27,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum StatusCode {
-    ERROR("ERROR"),
-    STARTED("STARTED"),
-    COMPLETE("COMPLETE"),
-    INPROGRESS("INPROGRESS");
-
+    ERROR("ERROR"), STARTED("STARTED"), COMPLETE("COMPLETE"), INPROGRESS("INPROGRESS");
     private final String statusCode;
-
 }

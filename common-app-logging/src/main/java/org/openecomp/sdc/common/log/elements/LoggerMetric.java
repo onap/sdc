@@ -56,7 +56,6 @@ import org.openecomp.sdc.common.log.enums.Severity;
 import org.slf4j.Logger;
 import org.slf4j.MarkerFactory;
 
-
 public class LoggerMetric extends LoggerBase {
 
     private static ArrayList<String> mandatoryFields = new ArrayList<>(Arrays.asList(
@@ -96,11 +95,7 @@ public class LoggerMetric extends LoggerBase {
         ecompMdcWrapper.setServerFQDNInternally();
     }
 
-    public void log(Response.StatusType statusInfo,
-                    String className,
-                    LogLevel logLevel,
-                    Severity securityLevel,
-                    String message) {
+    public void log(Response.StatusType statusInfo, String className, LogLevel logLevel, Severity securityLevel, String message) {
         log(statusInfo, className, logLevel, securityLevel, message);
     }
 
@@ -142,12 +137,10 @@ public class LoggerMetric extends LoggerBase {
         return this;
     }
 
-
     public LoggerMetric setInstanceUUID(String instanceUUID) {
         ecompLogFieldsHandler.setInstanceUUID(instanceUUID);
         return this;
     }
-
 
     public LoggerMetric setOutgoingInvocationId(String out_invocationId) {
         ecompLogFieldsHandler.setOutgoingInvocationId(out_invocationId);
@@ -208,6 +201,4 @@ public class LoggerMetric extends LoggerBase {
         ecompLogFieldsHandler.setTargetVirtualEntity(targetVirtualEntity);
         return this;
     }
-
-
 }

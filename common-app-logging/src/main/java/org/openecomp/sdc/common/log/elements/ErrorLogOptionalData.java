@@ -1,10 +1,15 @@
 package org.openecomp.sdc.common.log.elements;
 
 public class ErrorLogOptionalData {
+
     private String targetEntity;
     private String targetServiceName;
 
     public ErrorLogOptionalData() {
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     String getTargetEntity() {
@@ -23,11 +28,8 @@ public class ErrorLogOptionalData {
         this.targetServiceName = targetServiceName;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
     public static class Builder {
+
         private final ErrorLogOptionalData instance;
 
         private Builder() {

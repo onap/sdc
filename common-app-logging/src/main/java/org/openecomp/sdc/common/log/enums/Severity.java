@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2020 Nordix Foundation
  * ================================================================================
  */
-
 package org.openecomp.sdc.common.log.enums;
 
 import lombok.AllArgsConstructor;
@@ -31,12 +30,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Severity {
-    OK(0),
-    WARNING(1),
-    CRITICAL(2),
-    DOWN(3),
-    UNREACHABLE(4);
-
+    OK(0), WARNING(1), CRITICAL(2), DOWN(3), UNREACHABLE(4);
     private final int severityType;
-
 }

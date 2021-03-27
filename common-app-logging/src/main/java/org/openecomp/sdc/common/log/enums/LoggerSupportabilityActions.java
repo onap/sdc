@@ -27,6 +27,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum LoggerSupportabilityActions {
+    // @formatter:off
     IMPORT_CSAR("CREATE RESOURCE FROM CSAR"),
     CREATE_RESOURCE_FROM_YAML("CREATE RESOURCE FROM YAML"),
     CREATE_RI_AND_RELATIONS("CREATE RI AND RELATIONS"),
@@ -80,6 +81,7 @@ public enum LoggerSupportabilityActions {
     UPDATE_INSTANCE_REQUIREMENT("UPDATE INSTANCE REQUIREMENT"),
     UPDATE_POLICY_TARGET("UPDATE POLICY TARGET"),
     UPDATE_POLICIES_PROPERTIES("UPDATE POLICIES PROPERTIES");
+    // @formatter:on
 
     private final String name;
 

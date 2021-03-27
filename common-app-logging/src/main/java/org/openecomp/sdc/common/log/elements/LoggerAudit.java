@@ -1,6 +1,9 @@
 package org.openecomp.sdc.common.log.elements;
 
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.openecomp.sdc.common.log.api.ILogFieldsHandler;
@@ -10,40 +13,36 @@ import org.slf4j.Logger;
 import org.slf4j.MDC;
 import org.slf4j.MarkerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 public class LoggerAudit extends LoggerBase {
+
     private static ArrayList<String> mandatoryFields = new ArrayList<>(Arrays.asList(
-            ONAPLogConstants.MDCs.ENTRY_TIMESTAMP,
-            ILogConfiguration.MDC_END_TIMESTAMP,
-            ONAPLogConstants.MDCs.REQUEST_ID,
-            ONAPLogConstants.MDCs.SERVICE_NAME,
-            ONAPLogConstants.MDCs.PARTNER_NAME,
-            ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE,
-            ONAPLogConstants.MDCs.RESPONSE_CODE,
-            ILogConfiguration.MDC_SERVICE_INSTANCE_ID,
-            ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,
-            ILogConfiguration.MDC_ELAPSED_TIME,
-            ILogConfiguration.MDC_SERVER_IP_ADDRESS,
-            ONAPLogConstants.MDCs.SERVER_FQDN));
+        ONAPLogConstants.MDCs.ENTRY_TIMESTAMP,
+        ILogConfiguration.MDC_END_TIMESTAMP,
+        ONAPLogConstants.MDCs.REQUEST_ID,
+        ONAPLogConstants.MDCs.SERVICE_NAME,
+        ONAPLogConstants.MDCs.PARTNER_NAME,
+        ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE,
+        ONAPLogConstants.MDCs.RESPONSE_CODE,
+        ILogConfiguration.MDC_SERVICE_INSTANCE_ID,
+        ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,
+        ILogConfiguration.MDC_ELAPSED_TIME,
+        ILogConfiguration.MDC_SERVER_IP_ADDRESS,
+        ONAPLogConstants.MDCs.SERVER_FQDN));
 
     private static ArrayList<String> optionalFields = new ArrayList<>(Arrays.asList(
-            ONAPLogConstants.MDCs.INSTANCE_UUID,
-            ONAPLogConstants.MDCs.RESPONSE_SEVERITY,
-            ILogConfiguration.MDC_REMOTE_HOST,
-            ILogConfiguration.MDC_CLASS_NAME,
-            ILogConfiguration.MDC_PROCESS_KEY,
-            ILogConfiguration.MDC_OPT_FIELD1,
-            ILogConfiguration.MDC_OPT_FIELD2,
-            ILogConfiguration.MDC_OPT_FIELD3,
-            ILogConfiguration.MDC_OPT_FIELD4));
+        ONAPLogConstants.MDCs.INSTANCE_UUID,
+        ONAPLogConstants.MDCs.RESPONSE_SEVERITY,
+        ILogConfiguration.MDC_REMOTE_HOST,
+        ILogConfiguration.MDC_CLASS_NAME,
+        ILogConfiguration.MDC_PROCESS_KEY,
+        ILogConfiguration.MDC_OPT_FIELD1,
+        ILogConfiguration.MDC_OPT_FIELD2,
+        ILogConfiguration.MDC_OPT_FIELD3,
+        ILogConfiguration.MDC_OPT_FIELD4));
 
     LoggerAudit(ILogFieldsHandler ecompMdcWrapper, Logger logger) {
         //TODO Andrey, set default marker
-        super (ecompMdcWrapper, MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName()), logger);
+        super(ecompMdcWrapper, MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName()), logger);
         //put the remote host and FQDN values from another thread if they are set
         ecompMdcWrapper.setServerIPAddressInternally();
         ecompMdcWrapper.setServerFQDNInternally();
@@ -102,7 +101,8 @@ public class LoggerAudit extends LoggerBase {
     }
 
     public LoggerAudit setStatusCodeByResponseCode(String responseCode) {
-        String respStatus = Integer.parseInt(responseCode) / 100 == 2 ? ONAPLogConstants.ResponseStatus.COMPLETE.name() : ONAPLogConstants.ResponseStatus.ERROR.name();
+        String respStatus = Integer.parseInt(responseCode) / 100 == 2 ? ONAPLogConstants.ResponseStatus.COMPLETE.name()
+            : ONAPLogConstants.ResponseStatus.ERROR.name();
         ecompLogFieldsHandler.setStatusCode(respStatus);
         return this;
     }
@@ -111,7 +111,6 @@ public class LoggerAudit extends LoggerBase {
         ecompLogFieldsHandler.setStatusCode(statusCode);
         return this;
     }
-
 
     public LoggerAudit setPartnerName(String partnerName) {
         ecompLogFieldsHandler.setPartnerName(partnerName);
@@ -137,7 +136,6 @@ public class LoggerAudit extends LoggerBase {
         return ecompLogFieldsHandler.getAuditMessage();
     }
 
-
     @Override
     public List<String> getMandatoryFields() {
         return Collections.unmodifiableList(mandatoryFields);
@@ -150,5 +148,4 @@ public class LoggerAudit extends LoggerBase {
         ecompLogFieldsHandler.setServerIPAddressInternally();
         return this;
     }
-
 }
